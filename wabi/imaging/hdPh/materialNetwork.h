@@ -42,6 +42,7 @@ using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
 class HdPhMaterialNetwork final
 {
  public:
+
   HDPH_API
   HdPhMaterialNetwork();
 
@@ -100,6 +101,7 @@ class HdPhMaterialNetwork final
   TextureDescriptorVector const &GetTextureDescriptors() const;
 
  private:
+
   TfToken _materialTag;
   std::string _fragmentSource;
   std::string _geometrySource;

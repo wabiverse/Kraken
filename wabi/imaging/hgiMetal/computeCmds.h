@@ -51,6 +51,7 @@ class HgiMetalComputePipeline;
 class HgiMetalComputeCmds final : public HgiComputeCmds
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalComputeCmds() override;
 
@@ -79,6 +80,7 @@ class HgiMetalComputeCmds final : public HgiComputeCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API
@@ -88,6 +90,7 @@ class HgiMetalComputeCmds final : public HgiComputeCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiMetalComputeCmds() = delete;
   HgiMetalComputeCmds &operator=(const HgiMetalComputeCmds &) = delete;
   HgiMetalComputeCmds(const HgiMetalComputeCmds &) = delete;

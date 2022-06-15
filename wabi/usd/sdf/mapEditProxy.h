@@ -60,10 +60,10 @@ SDF_DECLARE_HANDLES(SdfSpec);
 /// the map proxy;  it's never used when returning keys or values from
 /// the proxy.
 ///
-template<class T>
-class SdfIdentityMapEditProxyValuePolicy
+template<class T> class SdfIdentityMapEditProxyValuePolicy
 {
  public:
+
   typedef T Type;
   typedef typename Type::key_type key_type;
   typedef typename Type::mapped_type mapped_type;
@@ -118,6 +118,7 @@ template<class T, class _ValuePolicy = SdfIdentityMapEditProxyValuePolicy<T>>
 class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>, T>
 {
  public:
+
   typedef T Type;
   typedef _ValuePolicy ValuePolicy;
   typedef SdfMapEditProxy<Type, ValuePolicy> This;
@@ -126,6 +127,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   typedef typename Type::value_type value_type;
 
  private:
+
   // Note:  We're playing a dangerous game with copy-on-write and
   //        iterators.  Our iterators wrap iterators on the proxied
   //        Type.  When and if we copy-on-write then all of our
@@ -151,6 +153,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   class _ValueProxy
   {
    public:
+
     _ValueProxy(This *owner, const Type *data, inner_iterator i)
       : _owner(owner),
         _data(data),
@@ -159,14 +162,11 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
       // Do nothing
     }
 
-    template<class U>
-    _ValueProxy &operator=(const U &other)
+    template<class U> _ValueProxy &operator=(const U &other)
     {
-      if (!_owner)
-      {
+      if (!_owner) {
         TF_CODING_ERROR("Assignment to invalid map proxy");
-      } else
-      {
+      } else {
         _owner->_Set(_data, _pos, other);
       }
       return *this;
@@ -180,8 +180,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     // Required for _PairProxy::operator value_type().
     mapped_type Get() const
     {
-      if (!_owner)
-      {
+      if (!_owner) {
         TF_CODING_ERROR("Read from invalid map proxy");
         return mapped_type();
       }
@@ -189,6 +188,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     }
 
    private:
+
     This *_owner;
     const Type *_data;
     inner_iterator _pos;
@@ -197,6 +197,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   class _PairProxy
   {
    public:
+
     explicit _PairProxy(This *owner, const Type *data, inner_iterator i)
       : first(i->first),
         second(_ValueProxy(owner, data, i))
@@ -219,19 +220,20 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   class Traits
   {
    public:
+
     static _PairProxy Dereference(This *owner, const Type *data, inner_iterator i)
     {
-      if (!owner)
-      {
+      if (!owner) {
         TF_FATAL_ERROR("Dereferenced an invalid map proxy iterator");
       }
       return _PairProxy(owner, data, i);
     }
 
-    static const value_type &Dereference(const This *owner, const Type *data, const_inner_iterator i)
+    static const value_type &Dereference(const This *owner,
+                                         const Type *data,
+                                         const_inner_iterator i)
     {
-      if (!owner)
-      {
+      if (!owner) {
         TF_FATAL_ERROR("Dereferenced an invalid map proxy iterator");
       }
       return owner->_Get(data, i);
@@ -243,15 +245,10 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     : public boost::iterator_facade<_Iterator<Owner, I, R>, R, std::bidirectional_iterator_tag, R>
   {
    public:
-    _Iterator()
-      : _owner(NULL),
-        _data(NULL)
-    {}
 
-    _Iterator(Owner owner, const Type *data, I i)
-      : _owner(owner),
-        _data(data),
-        _pos(i)
+    _Iterator() : _owner(NULL), _data(NULL) {}
+
+    _Iterator(Owner owner, const Type *data, I i) : _owner(owner), _data(data), _pos(i)
     {
       // Do nothing
     }
@@ -271,6 +268,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     }
 
    private:
+
     R dereference() const
     {
       return Traits::Dereference(_owner, _data, _pos);
@@ -279,11 +277,9 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     template<class Owner2, class I2, class R2>
     bool equal(const _Iterator<Owner2, I2, R2> &other) const
     {
-      if (_owner == other._owner && _pos == other._pos)
-      {
+      if (_owner == other._owner && _pos == other._pos) {
         return true;
-      } else
-      {
+      } else {
         // All iterators at the end compare equal.
         return atEnd() && other.atEnd();
       }
@@ -306,16 +302,17 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     }
 
    private:
+
     Owner _owner;
     const Type *_data;
     I _pos;
 
     friend class boost::iterator_core_access;
-    template<class Owner2, class I2, class R2>
-    friend class _Iterator;
+    template<class Owner2, class I2, class R2> friend class _Iterator;
   };
 
  public:
+
   typedef _ValueProxy reference;
   typedef const value_type &const_reference;
   typedef size_t size_type;
@@ -338,18 +335,15 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   This &operator=(const This &other)
   {
-    if (other._Validate())
-    {
+    if (other._Validate()) {
       _Copy(*other._ConstData());
     }
     return *this;
   }
 
-  template<class U, class UVP>
-  This &operator=(const SdfMapEditProxy<U, UVP> &other)
+  template<class U, class UVP> This &operator=(const SdfMapEditProxy<U, UVP> &other)
   {
-    if (other._Validate())
-    {
+    if (other._Validate()) {
       _Copy(Type(other._ConstData()->begin(), other._ConstData()->end()));
     }
     return *this;
@@ -377,11 +371,13 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   }
   const_iterator begin() const
   {
-    return _Validate() ? const_iterator(this, _ConstData(), _ConstData()->begin()) : const_iterator();
+    return _Validate() ? const_iterator(this, _ConstData(), _ConstData()->begin()) :
+                         const_iterator();
   }
   const_iterator end() const
   {
-    return _Validate() ? const_iterator(this, _ConstData(), _ConstData()->end()) : const_iterator();
+    return _Validate() ? const_iterator(this, _ConstData(), _ConstData()->end()) :
+                         const_iterator();
   }
 
   reverse_iterator rbegin()
@@ -426,18 +422,14 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     return _Insert(value).first;
   }
 
-  template<class InputIterator>
-  void insert(InputIterator first, InputIterator last)
+  template<class InputIterator> void insert(InputIterator first, InputIterator last)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       SdfChangeBlock block;
-      for (; first != last; ++first)
-      {
+      for (; first != last; ++first) {
         const value_type &v = ValuePolicy::CanonicalizePair(_Owner(), *first);
 
-        if (_ValidateInsert(v))
-        {
+        if (_ValidateInsert(v)) {
           _editor->Insert(v);
         }
       }
@@ -446,19 +438,16 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   void erase(iterator pos)
   {
-    if (_Validate() && _ValidateErase(pos->first))
-    {
+    if (_Validate() && _ValidateErase(pos->first)) {
       _Erase(pos->first);
     }
   }
 
   size_type erase(const key_type &key)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       const key_type &k = ValuePolicy::CanonicalizeKey(_Owner(), key);
-      if (_ValidateErase(k))
-      {
+      if (_ValidateErase(k)) {
         return _editor->Erase(k) ? 1 : 0;
       }
     }
@@ -467,15 +456,12 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   void erase(iterator first, iterator last)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       SdfChangeBlock block;
-      while (first != last)
-      {
+      while (first != last) {
         const key_type &key = first->first;
         ++first;
-        if (_ValidateErase(key))
-        {
+        if (_ValidateErase(key)) {
           _editor->Erase(key);
         }
       }
@@ -496,10 +482,11 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   const_iterator find(const key_type &key) const
   {
-    return _Validate() ? const_iterator(this,
-                                        _ConstData(),
-                                        _ConstData()->find(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
-                         const_iterator();
+    return _Validate() ?
+             const_iterator(this,
+                            _ConstData(),
+                            _ConstData()->find(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+             const_iterator();
   }
 
   size_type count(const key_type &key) const
@@ -510,58 +497,59 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   iterator lower_bound(const key_type &key)
   {
     return _Validate() ?
-             iterator(this, _Data(), _Data()->lower_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+             iterator(this,
+                      _Data(),
+                      _Data()->lower_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
              iterator();
   }
 
   const_iterator lower_bound(const key_type &key) const
   {
-    return _Validate() ?
-             const_iterator(this,
-                            _ConstData(),
-                            _ConstData()->lower_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
-             const_iterator();
+    return _Validate() ? const_iterator(this,
+                                        _ConstData(),
+                                        _ConstData()->lower_bound(
+                                          ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+                         const_iterator();
   }
 
   iterator upper_bound(const key_type &key)
   {
     return _Validate() ?
-             iterator(this, _Data(), _Data()->upper_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+             iterator(this,
+                      _Data(),
+                      _Data()->upper_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
              iterator();
   }
 
   const_iterator upper_bound(const key_type &key) const
   {
-    return _Validate() ?
-             const_iterator(this,
-                            _ConstData(),
-                            _ConstData()->upper_bound(ValuePolicy::CanonicalizeKey(_Owner(), key))) :
-             const_iterator();
+    return _Validate() ? const_iterator(this,
+                                        _ConstData(),
+                                        _ConstData()->upper_bound(
+                                          ValuePolicy::CanonicalizeKey(_Owner(), key))) :
+                         const_iterator();
   }
 
   std::pair<iterator, iterator> equal_range(const key_type &key)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       std::pair<inner_iterator, inner_iterator> result = _Data()->equal_range(
         ValuePolicy::CanonicalizeKey(_Owner(), key));
-      return std::make_pair(iterator(this, _Data(), result.first), iterator(this, _Data(), result.second));
-    } else
-    {
+      return std::make_pair(iterator(this, _Data(), result.first),
+                            iterator(this, _Data(), result.second));
+    } else {
       return std::make_pair(iterator(), iterator());
     }
   }
 
   std::pair<const_iterator, const_iterator> equal_range(const key_type &key) const
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       std::pair<const_inner_iterator, const_inner_iterator> result = _ConstData()->equal_range(
         ValuePolicy::CanonicalizeKey(_Owner(), key));
       return std::make_pair(const_iterator(this, _ConstData(), result.first),
                             const_iterator(this, _ConstData(), result.second));
-    } else
-    {
+    } else {
       return std::make_pair(const_iterator(), const_iterator());
     }
   }
@@ -588,38 +576,32 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     return _Validate() ? _Compare(other) > 0 : false;
   }
 
-  template<class U, class UVP>
-  bool operator==(const SdfMapEditProxy<U, UVP> &other) const
+  template<class U, class UVP> bool operator==(const SdfMapEditProxy<U, UVP> &other) const
   {
     return _Validate() && other._Validate() ? _CompareEqual(*other._ConstData()) : false;
   }
 
-  template<class U, class UVP>
-  bool operator!=(const SdfMapEditProxy<U, UVP> &other) const
+  template<class U, class UVP> bool operator!=(const SdfMapEditProxy<U, UVP> &other) const
   {
     return !(*this == other);
   }
 
-  template<class U, class UVP>
-  bool operator<(const SdfMapEditProxy<U, UVP> &other) const
+  template<class U, class UVP> bool operator<(const SdfMapEditProxy<U, UVP> &other) const
   {
     return _Validate() && other._Validate() ? _Compare(*other._ConstData()) < 0 : false;
   }
 
-  template<class U, class UVP>
-  bool operator<=(const SdfMapEditProxy<U, UVP> &other) const
+  template<class U, class UVP> bool operator<=(const SdfMapEditProxy<U, UVP> &other) const
   {
     return _Validate() && other._Validate() ? _Compare(*other._ConstData()) <= 0 : false;
   }
 
-  template<class U, class UVP>
-  bool operator>(const SdfMapEditProxy<U, UVP> &other) const
+  template<class U, class UVP> bool operator>(const SdfMapEditProxy<U, UVP> &other) const
   {
     return !(*this <= other);
   }
 
-  template<class U, class UVP>
-  bool operator>=(const SdfMapEditProxy<U, UVP> &other) const
+  template<class U, class UVP> bool operator>=(const SdfMapEditProxy<U, UVP> &other) const
   {
     return !(*this < other);
   }
@@ -639,13 +621,12 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   }
 
  private:
+
   bool _Validate()
   {
-    if (_ConstData() && !IsExpired())
-    {
+    if (_ConstData() && !IsExpired()) {
       return true;
-    } else
-    {
+    } else {
       TF_CODING_ERROR("Editing an invalid map proxy");
       return false;
     }
@@ -653,11 +634,9 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   bool _Validate() const
   {
-    if (_ConstData() && !IsExpired())
-    {
+    if (_ConstData() && !IsExpired()) {
       return true;
-    } else
-    {
+    } else {
       TF_CODING_ERROR("Accessing an invalid map proxy");
       return false;
     }
@@ -685,60 +664,49 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   bool _CompareEqual(const Type &other) const
   {
-    if (_ConstData()->size() < other.size())
-    {
+    if (_ConstData()->size() < other.size()) {
       return false;
     }
-    if (_ConstData()->size() > other.size())
-    {
+    if (_ConstData()->size() > other.size()) {
       return false;
     }
 
     // Same size -- find the first mismatch.
     const Type &x = ValuePolicy::CanonicalizeType(_Owner(), other);
-    std::pair<const_inner_iterator, const_inner_iterator> result = std::mismatch(_ConstData()->begin(),
-                                                                                 _ConstData()->end(),
-                                                                                 x.begin());
+    std::pair<const_inner_iterator, const_inner_iterator> result =
+      std::mismatch(_ConstData()->begin(), _ConstData()->end(), x.begin());
     return result.first == _ConstData()->end();
   }
 
   int _Compare(const Type &other) const
   {
-    if (_ConstData()->size() < other.size())
-    {
+    if (_ConstData()->size() < other.size()) {
       return -1;
     }
-    if (_ConstData()->size() > other.size())
-    {
+    if (_ConstData()->size() > other.size()) {
       return 1;
     }
 
     // Same size -- find the first mismatch.
     const Type &x = ValuePolicy::CanonicalizeType(_Owner(), other);
-    std::pair<const_inner_iterator, const_inner_iterator> result = std::mismatch(_ConstData()->begin(),
-                                                                                 _ConstData()->end(),
-                                                                                 x.begin());
-    if (*result.first < *result.second)
-    {
+    std::pair<const_inner_iterator, const_inner_iterator> result =
+      std::mismatch(_ConstData()->begin(), _ConstData()->end(), x.begin());
+    if (*result.first < *result.second) {
       return -1;
-    } else if (*result.first > *result.second)
-    {
+    } else if (*result.first > *result.second) {
       return 1;
-    } else
-    {
+    } else {
       return 0;
     }
   }
 
-  template<class D>
-  bool _CompareEqual(const D &other) const
+  template<class D> bool _CompareEqual(const D &other) const
   {
     // This is expensive but yields reliable results.
     return _CompareEqual(Type(other.begin(), other.end()));
   }
 
-  template<class D>
-  int _Compare(const D &other) const
+  template<class D> int _Compare(const D &other) const
   {
     // This is expensive but yields reliable ordering.
     return _Compare(Type(other.begin(), other.end()));
@@ -746,13 +714,10 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   mapped_type _Get(const Type *data, const inner_iterator &i)
   {
-    if (_Validate())
-    {
-      if (data == _ConstData())
-      {
+    if (_Validate()) {
+      if (data == _ConstData()) {
         return i->second;
-      } else
-      {
+      } else {
         // Data has changed since we created the iterator.
         // Look up same key in new data.
         return _ConstData()->find(i->first)->second;
@@ -770,19 +735,16 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   void _Copy(const Type &other)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       // Canonicalize the given map before copying it into ourselves.
       // If multiple keys in the given map would conflict with each
       // other in the canonicalized map, we consider this an error.
       // This is primarily to avoid confusing the consumer, who would
       // otherwise observe a key/value pair to be missing entirely.
       Type canonicalOther;
-      TF_FOR_ALL (it, other)
-      {
+      TF_FOR_ALL (it, other) {
         const value_type canonicalValue = ValuePolicy::CanonicalizePair(_Owner(), *it);
-        if (!canonicalOther.insert(canonicalValue).second)
-        {
+        if (!canonicalOther.insert(canonicalValue).second) {
           TF_CODING_ERROR(
             "Can't copy to %s: Duplicate key '%s' "
             "exists in map.",
@@ -792,8 +754,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
         }
       }
 
-      if (_ValidateCopy(canonicalOther))
-      {
+      if (_ValidateCopy(canonicalOther)) {
         _editor->Copy(canonicalOther);
       }
     }
@@ -802,21 +763,17 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   bool _ValidateCopy(const Type &other)
   {
     SdfSpecHandle owner = _Owner();
-    if (owner && !owner->PermissionToEdit())
-    {
+    if (owner && !owner->PermissionToEdit()) {
       TF_CODING_ERROR("Can't copy to %s: Permission denied.", _Location().c_str());
       return false;
     }
 
-    if (other.empty())
-    {
+    if (other.empty()) {
       return true;
     }
 
-    TF_FOR_ALL (it, other)
-    {
-      if (!_ValidateInsert(*it))
-      {
+    TF_FOR_ALL (it, other) {
+      if (!_ValidateInsert(*it)) {
         return false;
       }
     }
@@ -824,14 +781,11 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
     return true;
   }
 
-  template<class U>
-  void _Set(const Type *data, const inner_iterator &i, const U &value)
+  template<class U> void _Set(const Type *data, const inner_iterator &i, const U &value)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       const mapped_type &x = ValuePolicy::CanonicalizeValue(_Owner(), value);
-      if (_ValidateSet(i->first, x))
-      {
+      if (_ValidateSet(i->first, x)) {
         _editor->Set(i->first, x);
       }
     }
@@ -840,18 +794,17 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   bool _ValidateSet(const key_type &key, const mapped_type &value)
   {
     SdfSpecHandle owner = _Owner();
-    if (owner && !owner->PermissionToEdit())
-    {
+    if (owner && !owner->PermissionToEdit()) {
       TF_CODING_ERROR("Can't set value in %s: Permission denied.", _Location().c_str());
       return false;
     }
 
-    if (SdfAllowed allowed = _editor->IsValidValue(value))
-    {
+    if (SdfAllowed allowed = _editor->IsValidValue(value)) {
       // Do nothing
-    } else
-    {
-      TF_CODING_ERROR("Can't set value in %s: %s", _Location().c_str(), allowed.GetWhyNot().c_str());
+    } else {
+      TF_CODING_ERROR("Can't set value in %s: %s",
+                      _Location().c_str(),
+                      allowed.GetWhyNot().c_str());
       return false;
     }
 
@@ -860,15 +813,12 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   std::pair<iterator, bool> _Insert(const value_type &value)
   {
-    if (_Validate())
-    {
+    if (_Validate()) {
       const value_type &v = ValuePolicy::CanonicalizePair(_Owner(), value);
-      if (_ValidateInsert(v))
-      {
+      if (_ValidateInsert(v)) {
         std::pair<inner_iterator, bool> status = _editor->Insert(v);
         return std::make_pair(iterator(this, _Data(), status.first), status.second);
-      } else
-      {
+      } else {
         return std::make_pair(iterator(), false);
       }
     }
@@ -878,27 +828,26 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   bool _ValidateInsert(const value_type &value)
   {
     SdfSpecHandle owner = _Owner();
-    if (owner && !owner->PermissionToEdit())
-    {
+    if (owner && !owner->PermissionToEdit()) {
       TF_CODING_ERROR("Can't insert value in %s: Permission denied.", _Location().c_str());
       return false;
     }
 
-    if (SdfAllowed allowed = _editor->IsValidKey(value.first))
-    {
+    if (SdfAllowed allowed = _editor->IsValidKey(value.first)) {
       // Do nothing
-    } else
-    {
-      TF_CODING_ERROR("Can't insert key in %s: %s", _Location().c_str(), allowed.GetWhyNot().c_str());
+    } else {
+      TF_CODING_ERROR("Can't insert key in %s: %s",
+                      _Location().c_str(),
+                      allowed.GetWhyNot().c_str());
       return false;
     }
 
-    if (SdfAllowed allowed = _editor->IsValidValue(value.second))
-    {
+    if (SdfAllowed allowed = _editor->IsValidValue(value.second)) {
       // Do nothing
-    } else
-    {
-      TF_CODING_ERROR("Can't insert value in %s: %s", _Location().c_str(), allowed.GetWhyNot().c_str());
+    } else {
+      TF_CODING_ERROR("Can't insert value in %s: %s",
+                      _Location().c_str(),
+                      allowed.GetWhyNot().c_str());
       return false;
     }
 
@@ -907,8 +856,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
 
   void _Erase(const key_type &key)
   {
-    if (_Validate() && _ValidateErase(key))
-    {
+    if (_Validate() && _ValidateErase(key)) {
       _editor->Erase(key);
     }
   }
@@ -916,8 +864,7 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   bool _ValidateErase(const key_type &key)
   {
     SdfSpecHandle owner = _Owner();
-    if (owner && !owner->PermissionToEdit())
-    {
+    if (owner && !owner->PermissionToEdit()) {
       TF_CODING_ERROR("Can't erase value from %s: Permission denied.", _Location().c_str());
       return false;
     }
@@ -926,8 +873,8 @@ class SdfMapEditProxy : boost::totally_ordered<SdfMapEditProxy<T, _ValuePolicy>,
   }
 
  private:
-  template<class ProxyT>
-  friend class SdfPyWrapMapEditProxy;
+
+  template<class ProxyT> friend class SdfPyWrapMapEditProxy;
 
   boost::shared_ptr<Sdf_MapEditor<T>> _editor;
 };

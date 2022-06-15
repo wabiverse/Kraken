@@ -90,7 +90,8 @@ std::string TfNormPath(std::string const &path, bool stripDriveSpecifier = false
 /// reason for the error. If the error string is set, the returned index is
 /// the path separator before the element at which the error occurred.
 TF_API
-std::string::size_type TfFindLongestAccessiblePrefix(std::string const &path, std::string *error = 0);
+std::string::size_type TfFindLongestAccessiblePrefix(std::string const &path,
+                                                     std::string *error = 0);
 
 /// Returns the canonical absolute path of the specified filename.
 ///

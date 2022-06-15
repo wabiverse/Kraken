@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class UsdSkelTopology
 {
  public:
+
   /// Construct an empty topology.
   UsdSkelTopology() = default;
 
@@ -110,6 +111,7 @@ class UsdSkelTopology
   }
 
  private:
+
   VtIntArray _parentIndices;
 };
 

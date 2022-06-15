@@ -32,6 +32,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldBasisCurves : public HdArnoldRprim<HdBasisCurves>
 {
  public:
+
   /// Constructor for HdArnoldBasisCurves.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
@@ -61,6 +62,7 @@ class HdArnoldBasisCurves : public HdArnoldRprim<HdBasisCurves>
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HdArnoldPrimvarMap _primvars;  ///< Precomputed list of primvars.
   TfToken _interpolation;        ///< Interpolation of the curve.
   VtIntArray _vertexCounts;      ///< Stored vertex counts for curves.

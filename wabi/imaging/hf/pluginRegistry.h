@@ -75,6 +75,7 @@ class HfPluginRegistry
 {
 
  public:
+
   ///
   /// Returns an ordered list of all registered plugins.
   /// The plugins are ordered by priority then alphabetically
@@ -113,6 +114,7 @@ class HfPluginRegistry
   TfToken GetPluginId(const HfPluginBase *plugin) const;
 
  protected:
+
   // Must be derived.
 
   ///
@@ -141,10 +143,10 @@ class HfPluginRegistry
   ///
   /// Bases optionally specifies other classes that T is derived from.
   ///
-  template<typename T, typename PluginBaseType, typename... Bases>
-  static void Define();
+  template<typename T, typename PluginBaseType, typename... Bases> static void Define();
 
  private:
+
   typedef std::vector<Hf_PluginEntry> _PluginEntryVector;
   typedef std::map<TfToken, size_t> _TokenMap;
 
@@ -155,8 +157,7 @@ class HfPluginRegistry
   ///
   typedef std::function<HfPluginBase *()> _FactoryFn;
 
-  template<typename T>
-  static HfPluginBase *_CreatePlugin();
+  template<typename T> static HfPluginBase *_CreatePlugin();
   HF_API
   static void _SetFactory(TfType &type, _FactoryFn &func);
 
@@ -186,15 +187,13 @@ class HfPluginRegistry
   HfPluginRegistry &operator=(const HfPluginRegistry &) = delete;
 };
 
-template<typename T>
-HfPluginBase *HfPluginRegistry::_CreatePlugin()
+template<typename T> HfPluginBase *HfPluginRegistry::_CreatePlugin()
 {
   HF_MALLOC_TAG_FUNCTION();
   return new T;
 }
 
-template<typename T, typename PluginBaseType, typename... Bases>
-void HfPluginRegistry::Define()
+template<typename T, typename PluginBaseType, typename... Bases> void HfPluginRegistry::Define()
 {
   TfType type = TfType::Define<T, TfType::Bases<PluginBaseType, Bases...>>();
 

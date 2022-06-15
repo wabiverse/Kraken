@@ -59,10 +59,10 @@ void TfPyConvertPythonExceptionToTfErrors();
 /// required for wrapped functions and methods that do not appear directly in an
 /// extension module.  For instance, the map and sequence proxy objects use
 /// this, since they are created on the fly.
-template<typename Base = boost::python::default_call_policies>
-struct TfPyRaiseOnError : Base
+template<typename Base = boost::python::default_call_policies> struct TfPyRaiseOnError : Base
 {
  public:
+
   // This call policy provides a customized argument_package.  We need to do
   // this to store the TfErrorMark that we use to collect TfErrors that
   // occurred during the call and convert them to a python exception at the
@@ -72,12 +72,9 @@ struct TfPyRaiseOnError : Base
   // Using the argument_package solves this since it is a local variable it
   // will be destroyed whether or not the call throws.  This is not really a
   // publicly documented boost.python feature, however.  :-/
-  template<class BaseArgs>
-  struct ErrorMarkAndArgs
+  template<class BaseArgs> struct ErrorMarkAndArgs
   {
-    /* implicit */ ErrorMarkAndArgs(BaseArgs base_)
-      : base(base_)
-    {}
+    /* implicit */ ErrorMarkAndArgs(BaseArgs base_) : base(base_) {}
     operator const BaseArgs &() const
     {
       return base;
@@ -92,8 +89,7 @@ struct TfPyRaiseOnError : Base
   typedef ErrorMarkAndArgs<typename Base::argument_package> argument_package;
 
   /// Default constructor.
-  TfPyRaiseOnError()
-  {}
+  TfPyRaiseOnError() {}
 
   // Only accept our argument_package type, since we must ensure that we're
   // using it so we track a TfErrorMark.
@@ -107,8 +103,7 @@ struct TfPyRaiseOnError : Base
   PyObject *postcall(argument_package const &a, PyObject *result)
   {
     result = Base::postcall(a, result);
-    if (result && TfPyConvertTfErrorsToPythonException(a.errorMark))
-    {
+    if (result && TfPyConvertTfErrorsToPythonException(a.errorMark)) {
       Py_DECREF(result);
       result = NULL;
     }
@@ -118,9 +113,7 @@ struct TfPyRaiseOnError : Base
 
 struct Tf_PyErrorClearer
 {
-  Tf_PyErrorClearer()
-    : clearOnDestruction(true)
-  {}
+  Tf_PyErrorClearer() : clearOnDestruction(true) {}
   ~Tf_PyErrorClearer()
   {
     if (clearOnDestruction)

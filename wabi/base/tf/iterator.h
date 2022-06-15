@@ -40,10 +40,8 @@ WABI_NAMESPACE_BEGIN
 
 // May be specialized by container proxies and container "views" to indicate
 // they should be copied for TfIterator iteration.
-template<class T>
-struct Tf_ShouldIterateOverCopy : std::false_type
-{
-};
+template<class T> struct Tf_ShouldIterateOverCopy : std::false_type
+{};
 
 // IteratorInterface abstracts the differences between forward/backward and
 // const/non-const iteration so that TfIterator doesn't have to think about
@@ -51,8 +49,7 @@ struct Tf_ShouldIterateOverCopy : std::false_type
 // const_iterator, reverse_iterator, or reverse_const_iterator) and Begin and
 // End which call the correct functions in the container (begin, rbegin, end,
 // rend).
-template<class T, bool Reverse>
-struct Tf_IteratorInterface
+template<class T, bool Reverse> struct Tf_IteratorInterface
 {
   typedef typename T::iterator IteratorType;
   static IteratorType Begin(T &c)
@@ -65,8 +62,7 @@ struct Tf_IteratorInterface
   }
 };
 
-template<class T, bool Reverse>
-struct Tf_IteratorInterface<const T, Reverse>
+template<class T, bool Reverse> struct Tf_IteratorInterface<const T, Reverse>
 {
   typedef typename T::const_iterator IteratorType;
   static IteratorType Begin(T const &c)
@@ -79,8 +75,7 @@ struct Tf_IteratorInterface<const T, Reverse>
   }
 };
 
-template<class T>
-struct Tf_IteratorInterface<T, true>
+template<class T> struct Tf_IteratorInterface<T, true>
 {
   typedef typename T::reverse_iterator IteratorType;
   static IteratorType Begin(T &c)
@@ -93,8 +88,7 @@ struct Tf_IteratorInterface<T, true>
   }
 };
 
-template<class T>
-struct Tf_IteratorInterface<const T, true>
+template<class T> struct Tf_IteratorInterface<const T, true>
 {
   typedef typename T::const_reverse_iterator IteratorType;
   static IteratorType Begin(T const &c)
@@ -202,8 +196,7 @@ struct Tf_IteratorInterface<const T, true>
 ///
 /// \param T  container type
 ///
-template<class T, bool Reverse = false>
-class TfIterator
+template<class T, bool Reverse = false> class TfIterator
 {
 
   // Forward declare implementation structs.
@@ -212,11 +205,12 @@ class TfIterator
 
   // Select the correct data storage depending on whether we should iterate
   // over a copy of the container.
-  typedef
-    typename std::conditional<Tf_ShouldIterateOverCopy<T>::value, _IteratorPairAndCopy, _IteratorPair>::type
-      _Data;
+  typedef typename std::conditional<Tf_ShouldIterateOverCopy<T>::value,
+                                    _IteratorPairAndCopy,
+                                    _IteratorPair>::type _Data;
 
  public:
+
   // Choose either iterator or const_iterator for Iterator depending on
   // whether T is const.
   typedef Tf_IteratorInterface<T, Reverse> IterInterface;
@@ -225,19 +219,15 @@ class TfIterator
   typedef typename std::iterator_traits<Iterator>::reference Reference;
 
   /// Default constructor.  This iterator is uninitialized.
-  TfIterator()
-  {}
+  TfIterator() {}
 
   /// Constructs an iterator to traverse each element of the specified
   /// \c STL container object.
   /// \param container  container object
-  TfIterator(T &container)
-    : _data(container)
-  {}
+  TfIterator(T &container) : _data(container) {}
 
   /// Allow rvalues only if the container type T should be copied by TfIterator.
-  TfIterator(T &&container)
-    : _data(container)
+  TfIterator(T &&container) : _data(container)
   {
     static_assert(Tf_ShouldIterateOverCopy<typename std::decay<T>::type>::value,
                   "TfIterator only allows rvalues that it has been told to copy "
@@ -249,9 +239,7 @@ class TfIterator
   /// iterator.
   /// \param begin  iterator at the beginning of the sequence
   /// \param end  iterator at the end of the sequence
-  TfIterator(Iterator const &begin, Iterator const &end)
-    : _data(begin, end)
-  {}
+  TfIterator(Iterator const &begin, Iterator const &end) : _data(begin, end) {}
 
   /// Returns true if this iterator is exhausted.
   /// \return true if this iterator is exhausted
@@ -281,8 +269,7 @@ class TfIterator
   /// \return this iterator
   TfIterator &operator++()
   {
-    if (!*this)
-    {
+    if (!*this) {
       TF_CODING_ERROR("iterator exhausted");
       return *this;
     }
@@ -362,11 +349,11 @@ class TfIterator
   }
 
  private:  // state
+
   // Normal iteration just holds onto the begin/end pair of iterators.
   struct _IteratorPair
   {
-    _IteratorPair()
-    {}
+    _IteratorPair() {}
     explicit _IteratorPair(T &c)
     {
       // Use assignment rather than initializer-list here to work around
@@ -374,10 +361,7 @@ class TfIterator
       current = IterInterface::Begin(c);
       end = IterInterface::End(c);
     }
-    _IteratorPair(Iterator const &b, Iterator const &e)
-      : current(b),
-        end(e)
-    {}
+    _IteratorPair(Iterator const &b, Iterator const &e) : current(b), end(e) {}
     Iterator current;
     Iterator end;
   };
@@ -386,11 +370,8 @@ class TfIterator
   // 'container' and iterators into the copy.
   struct _IteratorPairAndCopy : public _IteratorPair
   {
-    _IteratorPairAndCopy()
-    {}
-    explicit _IteratorPairAndCopy(T const &c)
-      : _IteratorPair(),
-        _copy(c)
+    _IteratorPairAndCopy() {}
+    explicit _IteratorPairAndCopy(T const &c) : _IteratorPair(), _copy(c)
     {
       current = IterInterface::Begin(_copy);
       end = IterInterface::End(_copy);
@@ -399,6 +380,7 @@ class TfIterator
     using _IteratorPair::end;
 
    private:
+
     T _copy;
   };
 
@@ -407,8 +389,7 @@ class TfIterator
 
 /// Helper functions for creating TfIterator objects.
 /// \ingroup group_tf_Containers
-template<class T>
-TfIterator<typename std::remove_reference<T>::type> TfMakeIterator(T &&container)
+template<class T> TfIterator<typename std::remove_reference<T>::type> TfMakeIterator(T &&container)
 {
   return TfIterator<typename std::remove_reference<T>::type>(std::forward<T>(container));
 }
@@ -451,8 +432,7 @@ TfIterator<typename std::remove_reference<T>::type, /* Reverse = */ true> TfMake
 ///
 /// This function is an implementation of the array version of C++17's
 /// std::size()
-template<class T, size_t N>
-constexpr size_t TfArraySize(const T (&array)[N]) noexcept
+template<class T, size_t N> constexpr size_t TfArraySize(const T (&array)[N]) noexcept
 {
   return N;
 }

@@ -68,6 +68,7 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 class HdPhInstancer : public HdInstancer
 {
  public:
+
   /// Constructor.
   HDPH_API
   HdPhInstancer(HdSceneDelegate *delegate, SdfPath const &id);
@@ -76,7 +77,9 @@ class HdPhInstancer : public HdInstancer
   // XXX: Note, this is currently called from rprimUtils instead of the
   // render index sync phase, so it needs to take a mutex.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HdBufferArrayRangeSharedPtr GetInstancePrimvarRange() const
   {
@@ -89,13 +92,16 @@ class HdPhInstancer : public HdInstancer
   VtIntArray GetInstanceIndices(SdfPath const &prototypeId);
 
  protected:
+
   HDPH_API
-  void _GetInstanceIndices(SdfPath const &prototypeId, std::vector<VtIntArray> *instanceIndicesArray);
+  void _GetInstanceIndices(SdfPath const &prototypeId,
+                           std::vector<VtIntArray> *instanceIndicesArray);
 
   HDPH_API
   void _SyncPrimvars(HdSceneDelegate *sceneDelegate, HdDirtyBits *dirtyBits);
 
  private:
+
   // # of entries in an instance primvar.  This should be consistent between
   // all primvars, and also consistent with the instance indices (meaning
   // no instance index is out-of-range).

@@ -50,6 +50,7 @@ TF_DECLARE_WEAK_PTRS(SdfFileFormat);
 class PcpDynamicFileFormatDependencyData
 {
  public:
+
   /// Default constructor. This data will be empty.
   PCP_API
   PcpDynamicFileFormatDependencyData() = default;
@@ -124,6 +125,7 @@ class PcpDynamicFileFormatDependencyData
                                                const VtValue &newValue) const;
 
  private:
+
   // Struct containing the entire contents of the dependency.
   struct _Data
   {

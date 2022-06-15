@@ -71,9 +71,11 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
   VT_VEC_FLOAT_VALUE_TYPES \
   VT_VEC_DOUBLE_VALUE_TYPES
 
-#define VT_MATRIX_FLOAT_VALUE_TYPES ((GfMatrix4f, Matrix4f))((GfMatrix3f, Matrix3f))((GfMatrix2f, Matrix2f))
+#define VT_MATRIX_FLOAT_VALUE_TYPES \
+  ((GfMatrix4f, Matrix4f))((GfMatrix3f, Matrix3f))((GfMatrix2f, Matrix2f))
 
-#define VT_MATRIX_DOUBLE_VALUE_TYPES ((GfMatrix4d, Matrix4d))((GfMatrix3d, Matrix3d))((GfMatrix2d, Matrix2d))
+#define VT_MATRIX_DOUBLE_VALUE_TYPES \
+  ((GfMatrix4d, Matrix4d))((GfMatrix3d, Matrix3d))((GfMatrix2d, Matrix2d))
 
 #define VT_MATRIX_VALUE_TYPES \
   VT_MATRIX_FLOAT_VALUE_TYPES \
@@ -99,7 +101,8 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 #define VT_TYPE_NAME(elem) BOOST_PP_TUPLE_ELEM(2, 1, elem)
 
 // Composite groups of types.
-#define VT_BUILTIN_NUMERIC_VALUE_TYPES VT_INTEGRAL_BUILTIN_VALUE_TYPES VT_FLOATING_POINT_BUILTIN_VALUE_TYPES
+#define VT_BUILTIN_NUMERIC_VALUE_TYPES \
+  VT_INTEGRAL_BUILTIN_VALUE_TYPES VT_FLOATING_POINT_BUILTIN_VALUE_TYPES
 
 #define VT_BUILTIN_VALUE_TYPES VT_BUILTIN_NUMERIC_VALUE_TYPES VT_STRING_VALUE_TYPES
 
@@ -116,24 +119,24 @@ VT_TYPE_IS_CHEAP_TO_COPY(TfToken);
 //
 // typedef VtArray<int> VtIntArray;
 // typedef VtArray<double> VtDoubleArray;
-template<typename T>
-class VtArray;
+template<typename T> class VtArray;
 #define VT_ARRAY_TYPEDEF(r, unused, elem) \
   typedef VtArray<VT_TYPE(elem)> BOOST_PP_CAT(Vt, BOOST_PP_CAT(VT_TYPE_NAME(elem), Array));
 BOOST_PP_SEQ_FOR_EACH(VT_ARRAY_TYPEDEF, ~, VT_SCALAR_VALUE_TYPES)
 
 // The following preprocessor code generates the boost pp sequence for
 // all array value types (VT_ARRAY_VALUE_TYPES)
-#define VT_ARRAY_TYPE_TUPLE(r, unused, elem) \
-  ((BOOST_PP_CAT(Vt, BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)), BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)))
+#define VT_ARRAY_TYPE_TUPLE(r, unused, elem)                   \
+  ((BOOST_PP_CAT(Vt, BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)), \
+    BOOST_PP_CAT(VT_TYPE_NAME(elem), Array)))
 #define VT_ARRAY_VALUE_TYPES BOOST_PP_SEQ_FOR_EACH(VT_ARRAY_TYPE_TUPLE, ~, VT_SCALAR_VALUE_TYPES)
 
-#define VT_CLASS_VALUE_TYPES VT_ARRAY_VALUE_TYPES VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES
+#define VT_CLASS_VALUE_TYPES \
+  VT_ARRAY_VALUE_TYPES VT_SCALAR_CLASS_VALUE_TYPES VT_NONARRAY_VALUE_TYPES
 
 // Free functions to represent "zero" for various base types.  See
 // specializations in Types.cpp
-template<typename T>
-T VtZero();
+template<typename T> T VtZero();
 
 // Shape representation used in VtArray for legacy code.  This is not supported
 // at the pxr level or in usd.  Shape is represented by a total size, plus sized
@@ -143,9 +146,7 @@ struct Vt_ShapeData
 {
   unsigned int GetRank() const
   {
-    return otherDims[0] == 0 ? 1 : otherDims[1] == 0 ? 2 :
-                                 otherDims[2] == 0   ? 3 :
-                                                       4;
+    return otherDims[0] == 0 ? 1 : otherDims[1] == 0 ? 2 : otherDims[2] == 0 ? 3 : 4;
   }
   bool operator==(Vt_ShapeData const &other) const
   {

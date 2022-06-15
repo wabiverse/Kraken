@@ -26,9 +26,11 @@ WABI_NAMESPACE_BEGIN
 class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode
 {
  public:
-  static std::unique_ptr<RprUsd_RprArithmeticNode> Create(rpr::MaterialNodeArithmeticOperation operation,
-                                                          RprUsd_MaterialBuilderContext *ctx,
-                                                          std::map<TfToken, VtValue> const &parameters = {});
+
+  static std::unique_ptr<RprUsd_RprArithmeticNode> Create(
+    rpr::MaterialNodeArithmeticOperation operation,
+    RprUsd_MaterialBuilderContext *ctx,
+    std::map<TfToken, VtValue> const &parameters = {});
 
   ~RprUsd_RprArithmeticNode() override = default;
 
@@ -46,9 +48,8 @@ class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode
   bool SetInput(int index, VtValue const &value);
 
  protected:
-  RprUsd_RprArithmeticNode(RprUsd_MaterialBuilderContext *ctx)
-    : m_ctx(ctx)
-  {}
+
+  RprUsd_RprArithmeticNode(RprUsd_MaterialBuilderContext *ctx) : m_ctx(ctx) {}
 
   // Provided by concrete operation node
   virtual int GetNumArguments() const = 0;
@@ -56,6 +57,7 @@ class RprUsd_RprArithmeticNode : public RprUsd_MaterialNode
   virtual rpr::MaterialNodeArithmeticOperation GetOp() const = 0;
 
  protected:
+
   RprUsd_MaterialBuilderContext *m_ctx;
   VtValue m_args[4];
   VtValue m_output;

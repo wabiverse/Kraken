@@ -27,6 +27,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 HdBufferResource::HdBufferResource(TfToken const &role,
                                    HdTupleType tupleType,
                                    int offset,

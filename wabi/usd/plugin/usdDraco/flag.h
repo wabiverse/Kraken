@@ -32,18 +32,12 @@ WABI_NAMESPACE_BEGIN
 /// Stores command-line flag value and whether it has been explicitly specified
 /// by the user.
 ///
-template<class T>
-class UsdDracoFlag
+template<class T> class UsdDracoFlag
 {
  public:
-  UsdDracoFlag()
-    : _specified(false),
-      _value()
-  {}
-  UsdDracoFlag(const T &value)
-    : _specified(true),
-      _value(value)
-  {}
+
+  UsdDracoFlag() : _specified(false), _value() {}
+  UsdDracoFlag(const T &value) : _specified(true), _value(value) {}
   bool HasValue() const
   {
     return _specified;
@@ -61,6 +55,7 @@ class UsdDracoFlag
   }
 
  private:
+
   const bool _specified;
   const T _value;
 };

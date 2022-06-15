@@ -53,6 +53,7 @@ class HdRenderIndex;
 class HdPhTexture : public HdTexture
 {
  public:
+
   HDPH_API
   HdPhTexture(SdfPath const &id);
   HDPH_API
@@ -61,7 +62,9 @@ class HdPhTexture : public HdTexture
   /// Synchronizes state from the delegate to Hydra, for example, allocating
   /// parameters into GPU memory.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.

@@ -108,10 +108,11 @@ const char *_HdInterpolationStr(const HdInterpolation &i);
  * @param id
  * @return Cycles Transform
  */
-HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(ccl::Object *object,
-                                                                           HdSceneDelegate *delegate,
-                                                                           const SdfPath &id,
-                                                                           bool use_motion);
+HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MOTION_STEPS> HdCyclesSetTransform(
+  ccl::Object *object,
+  HdSceneDelegate *delegate,
+  const SdfPath &id,
+  bool use_motion);
 
 ccl::Transform HdCyclesExtractTransform(HdSceneDelegate *delegate, const SdfPath &id);
 
@@ -139,43 +140,26 @@ ccl::Transform mat4d_to_transform(const GfMatrix4d &mat);
  */
 ccl::Transform mat4f_to_transform(const GfMatrix4f &mat);
 
-template<typename T, typename U>
-inline U to_cycles(const T &vec) noexcept
-{}
+template<typename T, typename U> inline U to_cycles(const T &vec) noexcept {}
 
-template<>
-inline float to_cycles<float, float>(const float &v) noexcept;
-template<>
-inline float to_cycles<double, float>(const double &v) noexcept;
-template<>
-inline float to_cycles<int, float>(const int &v) noexcept;
+template<> inline float to_cycles<float, float>(const float &v) noexcept;
+template<> inline float to_cycles<double, float>(const double &v) noexcept;
+template<> inline float to_cycles<int, float>(const int &v) noexcept;
 
-template<>
-inline ccl::float2 to_cycles<GfVec2f, ccl::float2>(const GfVec2f &v) noexcept;
-template<>
-inline ccl::float2 to_cycles<GfVec2h, ccl::float2>(const GfVec2h &v) noexcept;
-template<>
-inline ccl::float2 to_cycles<GfVec2d, ccl::float2>(const GfVec2d &v) noexcept;
-template<>
-inline ccl::float2 to_cycles<GfVec2i, ccl::float2>(const GfVec2i &v) noexcept;
+template<> inline ccl::float2 to_cycles<GfVec2f, ccl::float2>(const GfVec2f &v) noexcept;
+template<> inline ccl::float2 to_cycles<GfVec2h, ccl::float2>(const GfVec2h &v) noexcept;
+template<> inline ccl::float2 to_cycles<GfVec2d, ccl::float2>(const GfVec2d &v) noexcept;
+template<> inline ccl::float2 to_cycles<GfVec2i, ccl::float2>(const GfVec2i &v) noexcept;
 
-template<>
-inline ccl::float3 to_cycles<GfVec3f, ccl::float3>(const GfVec3f &v) noexcept;
-template<>
-inline ccl::float3 to_cycles<GfVec3h, ccl::float3>(const GfVec3h &v) noexcept;
-template<>
-inline ccl::float3 to_cycles<GfVec3d, ccl::float3>(const GfVec3d &v) noexcept;
-template<>
-inline ccl::float3 to_cycles<GfVec3i, ccl::float3>(const GfVec3i &v) noexcept;
+template<> inline ccl::float3 to_cycles<GfVec3f, ccl::float3>(const GfVec3f &v) noexcept;
+template<> inline ccl::float3 to_cycles<GfVec3h, ccl::float3>(const GfVec3h &v) noexcept;
+template<> inline ccl::float3 to_cycles<GfVec3d, ccl::float3>(const GfVec3d &v) noexcept;
+template<> inline ccl::float3 to_cycles<GfVec3i, ccl::float3>(const GfVec3i &v) noexcept;
 
-template<>
-inline ccl::float4 to_cycles<GfVec3f, ccl::float4>(const GfVec3f &v) noexcept;
-template<>
-inline ccl::float4 to_cycles<GfVec3h, ccl::float4>(const GfVec3h &v) noexcept;
-template<>
-inline ccl::float4 to_cycles<GfVec3d, ccl::float4>(const GfVec3d &v) noexcept;
-template<>
-inline ccl::float4 to_cycles<GfVec3i, ccl::float4>(const GfVec3i &v) noexcept;
+template<> inline ccl::float4 to_cycles<GfVec3f, ccl::float4>(const GfVec3f &v) noexcept;
+template<> inline ccl::float4 to_cycles<GfVec3h, ccl::float4>(const GfVec3h &v) noexcept;
+template<> inline ccl::float4 to_cycles<GfVec3d, ccl::float4>(const GfVec3d &v) noexcept;
+template<> inline ccl::float4 to_cycles<GfVec3i, ccl::float4>(const GfVec3i &v) noexcept;
 
 /**
  * @brief Convert GfVec2i to Cycles int2 representation
@@ -376,65 +360,50 @@ using HdCyclesSampledPrimvarType = HdTimeSampleArray<VtValue, HD_CYCLES_MAX_PRIM
 
 /* ======== VtValue Utils ========= */
 
-template<typename F>
-void _CheckForBoolValue(const VtValue &value, F &&f)
+template<typename F> void _CheckForBoolValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<bool>())
-  {
+  if (value.IsHolding<bool>()) {
     f(value.UncheckedGet<bool>());
-  } else if (value.IsHolding<int>())
-  {
+  } else if (value.IsHolding<int>()) {
     f(value.UncheckedGet<int>() != 0);
-  } else if (value.IsHolding<long>())
-  {
+  } else if (value.IsHolding<long>()) {
     f(value.UncheckedGet<long>() != 0);
   }
 }
 
-template<typename F>
-void _CheckForIntValue(const VtValue &value, F &&f)
+template<typename F> void _CheckForIntValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<int>())
-  {
+  if (value.IsHolding<int>()) {
     f(value.UncheckedGet<int>());
-  } else if (value.IsHolding<long>())
-  {
+  } else if (value.IsHolding<long>()) {
     f(static_cast<int>(value.UncheckedGet<long>()));
   }
 }
 
-template<typename F>
-void _CheckForFloatValue(const VtValue &value, F &&f)
+template<typename F> void _CheckForFloatValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<float>())
-  {
+  if (value.IsHolding<float>()) {
     f(value.UncheckedGet<float>());
   }
 }
 
-template<typename F>
-void _CheckForDoubleValue(const VtValue &value, F &&f)
+template<typename F> void _CheckForDoubleValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<double>())
-  {
+  if (value.IsHolding<double>()) {
     f(value.UncheckedGet<double>());
   }
 }
 
-template<typename F>
-void _CheckForStringValue(const VtValue &value, F &&f)
+template<typename F> void _CheckForStringValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<std::string>())
-  {
+  if (value.IsHolding<std::string>()) {
     f(value.UncheckedGet<std::string>());
   }
 }
 
-template<typename F>
-void _CheckForVec2iValue(const VtValue &value, F &&f)
+template<typename F> void _CheckForVec2iValue(const VtValue &value, F &&f)
 {
-  if (value.IsHolding<GfVec2i>())
-  {
+  if (value.IsHolding<GfVec2i>()) {
     f(value.UncheckedGet<GfVec2i>());
   }
 }
@@ -447,13 +416,10 @@ T _HdCyclesGetVtValue(VtValue a_value,
                       bool *a_hasChanged = nullptr,
                       bool a_checkWithDefault = false)
 {
-  if (!a_value.IsEmpty())
-  {
-    if (a_value.IsHolding<T>())
-    {
+  if (!a_value.IsEmpty()) {
+    if (a_value.IsHolding<T>()) {
       T val = a_value.UncheckedGet<T>();
-      if (a_hasChanged)
-      {
+      if (a_hasChanged) {
         if (a_checkWithDefault && val != a_default)
           *a_hasChanged = true;
         else
@@ -468,7 +434,10 @@ T _HdCyclesGetVtValue(VtValue a_value,
 // Bool specialization
 
 template<>
-bool _HdCyclesGetVtValue<bool>(VtValue a_value, bool a_default, bool *a_hasChanged, bool a_checkWithDefault);
+bool _HdCyclesGetVtValue<bool>(VtValue a_value,
+                               bool a_default,
+                               bool *a_hasChanged,
+                               bool a_checkWithDefault);
 
 // Get abitrary param
 
@@ -498,10 +467,8 @@ T _HdCyclesGetMeshParam(const HdPrimvarDescriptor &a_pvd,
   // however the HdPrimvarDescriptor omits this.
   // Solution could be to remove from usdCycles schema and add in all settings
   // providers (houdini_cycles, blender exporter)
-  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString())
-  {
-    if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token))
-    {
+  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString()) {
+    if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token)) {
       VtValue v;
       v = a_mesh->GetPrimvar(a_scene, a_token);
       return _HdCyclesGetVtValue<T>(v, a_default);
@@ -526,15 +493,12 @@ T _HdCyclesGetCurvePrimvar(const HdPrimvarDescriptor &a_pvd,
   // however the HdPrimvarDescriptor omits this.
   // Solution could be to remove from usdCycles schema and add in all settings
   // providers (houdini_cycles, blender exporter)
-  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString())
-  {
+  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString()) {
     VtValue v;
     v = a_curve->GetPrimvar(a_scene, a_token);
-    if (v.IsHolding<T>())
-    {
+    if (v.IsHolding<T>()) {
       return v.UncheckedGet<T>();
-    } else
-    {
+    } else {
       return a_default;
     }
   }
@@ -551,8 +515,7 @@ T _HdCyclesGetCurveParam(HdDirtyBits *a_dirtyBits,
                          TfToken a_token,
                          T a_default)
 {
-  if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token))
-  {
+  if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token)) {
     VtValue v;
     v = a_curves->GetPrimvar(a_scene, a_token);
     return _HdCyclesGetVtValue<T>(v, a_default);
@@ -563,7 +526,10 @@ T _HdCyclesGetCurveParam(HdDirtyBits *a_dirtyBits,
 // Get light param
 
 template<typename T>
-T _HdCyclesGetLightParam(const SdfPath &a_id, HdSceneDelegate *a_scene, TfToken a_token, T a_default)
+T _HdCyclesGetLightParam(const SdfPath &a_id,
+                         HdSceneDelegate *a_scene,
+                         TfToken a_token,
+                         T a_default)
 {
   VtValue v = a_scene->GetLightParamValue(a_id, a_token);
   return _HdCyclesGetVtValue<T>(v, a_default);
@@ -594,10 +560,8 @@ T _HdCyclesGetVolumeParam(const HdPrimvarDescriptor &a_pvd,
   // however the HdPrimvarDescriptor omits this.
   // Solution could be to remove from usdCycles schema and add in all settings
   // providers (houdini_cycles, blender exporter)
-  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString())
-  {
-    if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token))
-    {
+  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString()) {
+    if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token)) {
       VtValue v;
       v = a_volume->GetPrimvar(a_scene, a_token);
       return _HdCyclesGetVtValue<T>(v, a_default);
@@ -622,10 +586,8 @@ T _HdCyclesGetPointsParam(const HdPrimvarDescriptor &a_pvd,
   // however the HdPrimvarDescriptor omits this.
   // Solution could be to remove from usdCycles schema and add in all settings
   // providers (houdini_cycles, blender exporter)
-  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString())
-  {
-    if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token))
-    {
+  if ("primvars:" + a_pvd.name.GetString() == a_token.GetString()) {
+    if (HdChangeTracker::IsPrimvarDirty(*a_dirtyBits, a_id, a_token)) {
       VtValue v;
       v = a_point->GetPrimvar(a_scene, a_token);
       return _HdCyclesGetVtValue<T>(v, a_default);
@@ -654,7 +616,10 @@ void mikk_get_texture_coordinate(const SMikkTSpaceContext *context,
                                  const int face_num,
                                  const int vert_num);
 
-void mikk_get_normal(const SMikkTSpaceContext *context, float N[3], const int face_num, const int vert_num);
+void mikk_get_normal(const SMikkTSpaceContext *context,
+                     float N[3],
+                     const int face_num,
+                     const int vert_num);
 
 void mikk_set_tangent_space(const SMikkTSpaceContext *context,
                             const float T[],
@@ -662,7 +627,10 @@ void mikk_set_tangent_space(const SMikkTSpaceContext *context,
                             const int face_num,
                             const int vert_num);
 
-void mikk_compute_tangents(const char *layer_name, ccl::Mesh *mesh, bool need_sign, bool active_render);
+void mikk_compute_tangents(const char *layer_name,
+                           ccl::Mesh *mesh,
+                           bool need_sign,
+                           bool active_render);
 
 WABI_NAMESPACE_END
 

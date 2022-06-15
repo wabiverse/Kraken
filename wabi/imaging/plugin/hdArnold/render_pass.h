@@ -52,6 +52,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldRenderPass : public HdRenderPass
 {
  public:
+
   /// Constructor for HdArnoldRenderPass.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
@@ -74,6 +75,7 @@ class HdArnoldRenderPass : public HdRenderPass
   }
 
  protected:
+
   /// Executing the Render Pass.
   ///
   /// This function is continously executed, until IsConverged returns true.
@@ -81,7 +83,8 @@ class HdArnoldRenderPass : public HdRenderPass
   /// @param renderPassState Pointer to the Hydra Render Pass State.
   /// @param renderTags List of tags to render, currently unused.
   HDARNOLD_API
-  void _Execute(const HdRenderPassStateSharedPtr &renderPassState, const TfTokenVector &renderTags) override;
+  void _Execute(const HdRenderPassStateSharedPtr &renderPassState,
+                const TfTokenVector &renderTags) override;
 
   /// Tells if the aov bindings has changed.
   ///
@@ -95,18 +98,21 @@ class HdArnoldRenderPass : public HdRenderPass
   void _ClearRenderBuffers();
 
  private:
-  HdArnoldRenderBufferStorage _renderBuffers;    ///< Render buffer storage.
-  HdArnoldRenderBufferStorage _fallbackBuffers;  ///< Render buffer storage if there are no aov bindings.
-  HdArnoldRenderBuffer _fallbackColor;           ///< Color render buffer if there are no aov bindings.
-  HdArnoldRenderBuffer _fallbackDepth;           ///< Depth render buffer if there are no aov bindings.
-  HdArnoldRenderBuffer _fallbackPrimId;          ///< Prim ID buffer if there are no aov bindings.
-  AtArray *_fallbackOutputs;                     ///< AtArray storing the fallback outputs definitions.
+
+  HdArnoldRenderBufferStorage _renderBuffers;  ///< Render buffer storage.
+  HdArnoldRenderBufferStorage
+    _fallbackBuffers;                    ///< Render buffer storage if there are no aov bindings.
+  HdArnoldRenderBuffer _fallbackColor;   ///< Color render buffer if there are no aov bindings.
+  HdArnoldRenderBuffer _fallbackDepth;   ///< Depth render buffer if there are no aov bindings.
+  HdArnoldRenderBuffer _fallbackPrimId;  ///< Prim ID buffer if there are no aov bindings.
+  AtArray *_fallbackOutputs;             ///< AtArray storing the fallback outputs definitions.
 
   HdArnoldRenderDelegate *_renderDelegate;  ///< Pointer to the Render Delegate.
   AtNode *_camera = nullptr;                ///< Pointer to the Arnold Camera.
   AtNode *_defaultFilter = nullptr;         ///< Pointer to the default Arnold Filter.
   AtNode *_closestFilter = nullptr;         ///< Pointer to the closest Arnold Filter.
-  AtNode *_mainDriver = nullptr;            ///< Pointer to the Arnold Driver writing color, position and depth.
+  AtNode *_mainDriver =
+    nullptr;  ///< Pointer to the Arnold Driver writing color, position and depth.
 
   struct DeepRenderVar
   {

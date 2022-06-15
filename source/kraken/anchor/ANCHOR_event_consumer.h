@@ -29,10 +29,10 @@
 class AnchorIEventConsumer
 {
  public:
+
   /**
    * Destructor. */
-  virtual ~AnchorIEventConsumer()
-  {}
+  virtual ~AnchorIEventConsumer() {}
 
   /**
    * This method is called by the system when it has events to dispatch.
@@ -52,6 +52,7 @@ AnchorEventConsumerHandle ANCHOR_CreateEventConsumer(AnchorEventCallbackProcPtr 
 class ANCHOR_CallbackEventConsumer : public AnchorIEventConsumer
 {
  public:
+
   /**
    * Constructor.
    * @param eventCallback: The call-back routine invoked.
@@ -60,8 +61,7 @@ class ANCHOR_CallbackEventConsumer : public AnchorIEventConsumer
 
   /**
    * Destructor. */
-  ~ANCHOR_CallbackEventConsumer(void)
-  {}
+  ~ANCHOR_CallbackEventConsumer(void) {}
 
   /**
    * This method is called by an event producer when an event is available.
@@ -70,6 +70,7 @@ class ANCHOR_CallbackEventConsumer : public AnchorIEventConsumer
   bool processEvent(AnchorIEvent *event);
 
  protected:
+
   /** The call-back routine invoked. */
   AnchorEventCallbackProcPtr m_eventCallback;
   /** The data passed back through the call-back routine. */

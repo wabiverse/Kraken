@@ -110,6 +110,7 @@ struct NdrNodeDiscoveryResult;
 class RmanOslParserPlugin : public NdrParserPlugin
 {
  public:
+
   RmanOslParserPlugin();
   ~RmanOslParserPlugin();
 
@@ -120,6 +121,7 @@ class RmanOslParserPlugin : public NdrParserPlugin
   const TfToken &GetSourceType() const override;
 
  private:
+
   // Gets a vector of properties that are present on the specified OSL
   // query object
   NdrPropertyUniquePtrVec _getNodeProperties(const RixShaderQuery *sq,

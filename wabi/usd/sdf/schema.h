@@ -63,9 +63,11 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
 {
 
  protected:
+
   class _SpecDefiner;
 
  public:
+
   /// \class FieldDefinition
   ///
   /// Class defining various attributes for a field.
@@ -73,7 +75,10 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   class FieldDefinition
   {
    public:
-    FieldDefinition(const SdfSchemaBase &schema, const TfToken &name, const VtValue &fallbackValue);
+
+    FieldDefinition(const SdfSchemaBase &schema,
+                    const TfToken &name,
+                    const VtValue &fallbackValue);
 
     typedef std::vector<std::pair<TfToken, JsValue>> InfoVec;
 
@@ -89,26 +94,23 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     /// the registered validator or if no validator has been set.
     /// @{
 
-    template<class T>
-    SdfAllowed IsValidValue(const T &value) const
+    template<class T> SdfAllowed IsValidValue(const T &value) const
     {
       return (_valueValidator ? _valueValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
 
-    template<class T>
-    SdfAllowed IsValidListValue(const T &value) const
+    template<class T> SdfAllowed IsValidListValue(const T &value) const
     {
-      return (_listValueValidator ? _listValueValidator(_schema, VtValue(value)) : SdfAllowed(true));
+      return (_listValueValidator ? _listValueValidator(_schema, VtValue(value)) :
+                                    SdfAllowed(true));
     }
 
-    template<class T>
-    SdfAllowed IsValidMapKey(const T &value) const
+    template<class T> SdfAllowed IsValidMapKey(const T &value) const
     {
       return (_mapKeyValidator ? _mapKeyValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
 
-    template<class T>
-    SdfAllowed IsValidMapValue(const T &value) const
+    template<class T> SdfAllowed IsValidMapValue(const T &value) const
     {
       return (_mapValueValidator ? _mapValueValidator(_schema, VtValue(value)) : SdfAllowed(true));
     }
@@ -134,6 +136,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     /// @}
 
    private:
+
     const SdfSchemaBase &_schema;
     TfToken _name;
     VtValue _fallbackValue;
@@ -153,10 +156,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   // spec this object defines.
   struct _FieldInfo
   {
-    _FieldInfo()
-      : required(false),
-        metadata(false)
-    {}
+    _FieldInfo() : required(false), metadata(false) {}
     bool required;
     bool metadata;
     TfToken metadataDisplayGroup;
@@ -171,6 +171,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   class SpecDefinition
   {
    public:
+
     /// Returns all fields for this spec.
     SDF_API TfTokenVector GetFields() const;
 
@@ -199,6 +200,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     SDF_API bool IsRequiredField(const TfToken &name) const;
 
    private:
+
     typedef TfHashMap<TfToken, _FieldInfo, TfToken::HashFunctor> _FieldMap;
     _FieldMap _fields;
 
@@ -207,6 +209,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     TfTokenVector _requiredFields;
 
    private:
+
     friend class _SpecDefiner;
     void _AddField(const TfToken &name, const _FieldInfo &fieldInfo);
   };
@@ -270,8 +273,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   /// special handling).
   inline bool IsRequiredFieldName(const TfToken &fieldName) const
   {
-    for (size_t i = 0; i != _requiredFieldNames.size(); ++i)
-    {
+    for (size_t i = 0; i != _requiredFieldNames.size(); ++i) {
       if (_requiredFieldNames[i] == fieldName)
         return true;
     }
@@ -340,6 +342,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   /// @}
 
  protected:
+
   /// \class _SpecDefiner
   ///
   /// Class that defines fields for a spec type.
@@ -347,18 +350,22 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   class _SpecDefiner
   {
    public:
+
     /// Functions for setting spec attributes during registration
     /// @{
 
     _SpecDefiner &Field(const TfToken &name, bool required = false);
     _SpecDefiner &MetadataField(const TfToken &name, bool required = false);
-    _SpecDefiner &MetadataField(const TfToken &name, const TfToken &displayGroup, bool required = false);
+    _SpecDefiner &MetadataField(const TfToken &name,
+                                const TfToken &displayGroup,
+                                bool required = false);
 
     _SpecDefiner &CopyFrom(const SpecDefinition &other);
 
     /// @}
 
    private:
+
     friend class SdfSchemaBase;
     explicit _SpecDefiner(SdfSchemaBase *schema, SpecDefinition *definition)
       : _schema(schema),
@@ -372,11 +379,13 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   class _ValueTypeRegistrar
   {
    public:
+
     explicit _ValueTypeRegistrar(Sdf_ValueTypeRegistry *);
 
     class Type
     {
      public:
+
       ~Type();
 
       // Specify a type with the given name, default value, and default
@@ -411,6 +420,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
       Type &NoArrays();
 
      private:
+
       Type(const TfToken &name, const VtValue &defaultValue, const VtValue &defaultArrayValue);
 
       class _Impl;
@@ -423,6 +433,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     void AddType(const Type &type);
 
    private:
+
     Sdf_ValueTypeRegistry *_registry;
   };
 
@@ -431,8 +442,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   /// Construct an SdfSchemaBase but does not populate it with standard
   /// fields and types.
   class EmptyTag
-  {
-  };
+  {};
   SdfSchemaBase(EmptyTag);
 
   virtual ~SdfSchemaBase();
@@ -492,6 +502,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
     const _DefaultValueFactoryFn &defFactory = _DefaultValueFactoryFn());
 
  private:
+
   friend class _SpecDefiner;
 
   void _OnDidRegisterPlugins(const PlugNotice::DidRegisterPlugins &n);
@@ -507,10 +518,11 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   const SpecDefinition *_CheckAndGetSpecDefinition(SdfSpecType type) const;
 
   friend struct Sdf_SchemaFieldTypeRegistrar;
-  FieldDefinition &_CreateField(const TfToken &fieldKey, const VtValue &fallback, bool plugin = false);
+  FieldDefinition &_CreateField(const TfToken &fieldKey,
+                                const VtValue &fallback,
+                                bool plugin = false);
 
-  template<class T>
-  FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const T &fallback)
+  template<class T> FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const T &fallback)
   {
     return _DoRegisterField(fieldKey, VtValue(fallback));
   }
@@ -518,7 +530,9 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
   FieldDefinition &_DoRegisterField(const TfToken &fieldKey, const VtValue &fallback);
 
  private:
-  typedef TfHashMap<TfToken, SdfSchemaBase::FieldDefinition, TfToken::HashFunctor> _FieldDefinitionMap;
+
+  typedef TfHashMap<TfToken, SdfSchemaBase::FieldDefinition, TfToken::HashFunctor>
+    _FieldDefinitionMap;
   _FieldDefinitionMap _fieldDefinitions;
 
   // Pair of definition and flag indicating validity.
@@ -536,6 +550,7 @@ class SdfSchemaBase : public TfWeakBase, public boost::noncopyable
 class SdfSchema : public SdfSchemaBase
 {
  public:
+
   SDF_API
   static const SdfSchema &GetInstance()
   {
@@ -543,6 +558,7 @@ class SdfSchema : public SdfSchemaBase
   }
 
  private:
+
   friend class TfSingleton<SdfSchema>;
   SdfSchema();
   virtual ~SdfSchema();
@@ -553,29 +569,33 @@ SDF_API_TEMPLATE_CLASS(TfSingleton<SdfSchema>);
 ///
 /// The following fields are pre-registered by Sdf.
 /// \showinitializer
-#define SDF_FIELD_KEYS                                                                                     \
-  ((Active, "active"))((AllowedTokens, "allowedTokens"))((AssetInfo, "assetInfo"))(                        \
-    (ColorConfiguration, "colorConfiguration"))((ColorManagementSystem, "colorManagementSystem"))(         \
-    (ColorSpace, "colorSpace"))((Comment, "comment"))((ConnectionPaths, "connectionPaths"))(               \
-    (Custom, "custom"))((CustomData, "customData"))((CustomLayerData, "customLayerData"))(                 \
-    (Default, "default"))((DefaultPrim, "defaultPrim"))((DisplayGroup, "displayGroup"))(                   \
-    (DisplayGroupOrder, "displayGroupOrder"))((DisplayName, "displayName"))((DisplayUnit, "displayUnit"))( \
-    (Documentation, "documentation"))((EndTimeCode, "endTimeCode"))((FramePrecision, "framePrecision"))(   \
-    (FramesPerSecond, "framesPerSecond"))((Hidden, "hidden"))((HasOwnedSubLayers, "hasOwnedSubLayers"))(   \
-    (InheritPaths, "inheritPaths"))((Instanceable, "instanceable"))((Kind, "kind"))(                       \
-    (PrimOrder, "primOrder"))((NoLoadHint, "noLoadHint"))((Owner, "owner"))((Payload, "payload"))(         \
-    (Permission, "permission"))((Prefix, "prefix"))((PrefixSubstitutions, "prefixSubstitutions"))(         \
-    (PropertyOrder, "propertyOrder"))((References, "references"))((Relocates, "relocates"))(               \
-    (SessionOwner, "sessionOwner"))((Specializes, "specializes"))((Specifier, "specifier"))(               \
-    (StartTimeCode, "startTimeCode"))((SubLayers, "subLayers"))((SubLayerOffsets, "subLayerOffsets"))(     \
-    (Suffix, "suffix"))((SuffixSubstitutions, "suffixSubstitutions"))((SymmetricPeer, "symmetricPeer"))(   \
-    (SymmetryArgs, "symmetryArgs"))((SymmetryArguments, "symmetryArguments"))(                             \
-    (SymmetryFunction, "symmetryFunction"))((TargetPaths, "targetPaths"))((TimeSamples, "timeSamples"))(   \
-    (TimeCodesPerSecond, "timeCodesPerSecond"))((TypeName, "typeName"))(                                   \
-    (VariantSelection, "variantSelection"))((Variability, "variability"))(                                 \
-    (VariantSetNames, "variantSetNames"))                                                                  \
-                                                                                                           \
-    /* XXX: These fields should move into Sd. See bug 123508. */                                           \
+#define SDF_FIELD_KEYS                                                                         \
+  ((Active, "active"))((AllowedTokens, "allowedTokens"))((AssetInfo, "assetInfo"))(            \
+    (ColorConfiguration, "colorConfiguration"))(                                               \
+    (ColorManagementSystem, "colorManagementSystem"))((ColorSpace, "colorSpace"))(             \
+    (Comment, "comment"))((ConnectionPaths, "connectionPaths"))((Custom, "custom"))(           \
+    (CustomData, "customData"))((CustomLayerData, "customLayerData"))((Default, "default"))(   \
+    (DefaultPrim, "defaultPrim"))((DisplayGroup, "displayGroup"))(                             \
+    (DisplayGroupOrder, "displayGroupOrder"))((DisplayName, "displayName"))(                   \
+    (DisplayUnit, "displayUnit"))((Documentation, "documentation"))(                           \
+    (EndTimeCode, "endTimeCode"))((FramePrecision, "framePrecision"))(                         \
+    (FramesPerSecond, "framesPerSecond"))((Hidden, "hidden"))(                                 \
+    (HasOwnedSubLayers, "hasOwnedSubLayers"))((InheritPaths, "inheritPaths"))(                 \
+    (Instanceable, "instanceable"))((Kind, "kind"))((PrimOrder, "primOrder"))(                 \
+    (NoLoadHint, "noLoadHint"))((Owner, "owner"))((Payload, "payload"))(                       \
+    (Permission, "permission"))((Prefix, "prefix"))(                                           \
+    (PrefixSubstitutions, "prefixSubstitutions"))((PropertyOrder, "propertyOrder"))(           \
+    (References, "references"))((Relocates, "relocates"))((SessionOwner, "sessionOwner"))(     \
+    (Specializes, "specializes"))((Specifier, "specifier"))((StartTimeCode, "startTimeCode"))( \
+    (SubLayers, "subLayers"))((SubLayerOffsets, "subLayerOffsets"))((Suffix, "suffix"))(       \
+    (SuffixSubstitutions, "suffixSubstitutions"))((SymmetricPeer, "symmetricPeer"))(           \
+    (SymmetryArgs, "symmetryArgs"))((SymmetryArguments, "symmetryArguments"))(                 \
+    (SymmetryFunction, "symmetryFunction"))((TargetPaths, "targetPaths"))(                     \
+    (TimeSamples, "timeSamples"))((TimeCodesPerSecond, "timeCodesPerSecond"))(                 \
+    (TypeName, "typeName"))((VariantSelection, "variantSelection"))(                           \
+    (Variability, "variability"))((VariantSetNames, "variantSetNames"))                        \
+                                                                                               \
+    /* XXX: These fields should move into Sd. See bug 123508. */                               \
     ((EndFrame, "endFrame"))((StartFrame, "startFrame"))
 
 #define SDF_CHILDREN_KEYS                                                                   \

@@ -37,9 +37,7 @@ class UsdStageCache;
 // Private helper wrapper class, holds a const reference to a stage cache.
 struct Usd_NonPopulatingStageCacheWrapper
 {
-  explicit Usd_NonPopulatingStageCacheWrapper(const UsdStageCache &cache)
-    : cache(cache)
-  {}
+  explicit Usd_NonPopulatingStageCacheWrapper(const UsdStageCache &cache) : cache(cache) {}
   const UsdStageCache &cache;
 };
 
@@ -122,6 +120,7 @@ enum UsdStageCacheContextBlockType
 TF_DEFINE_STACKED(UsdStageCacheContext, true, USD_API)
 {
  public:
+
   /// Bind a cache for calls to UsdStage::Open() to read from and write to.
   explicit UsdStageCacheContext(UsdStageCache & cache)
     : _rwCache(&cache),
@@ -139,11 +138,10 @@ TF_DEFINE_STACKED(UsdStageCacheContext, true, USD_API)
 
   /// Disable cache use completely (with UsdBlockStageCaches) or only
   /// for writing (with UsdBlockStageCacheWrites).
-  explicit UsdStageCacheContext(UsdStageCacheContextBlockType blockType)
-    : _blockType(blockType)
-  {}
+  explicit UsdStageCacheContext(UsdStageCacheContextBlockType blockType) : _blockType(blockType) {}
 
  private:
+
   friend class UsdStage;
 
   static std::vector<const UsdStageCache *> _GetReadOnlyCaches();

@@ -467,8 +467,8 @@ __extension__ typedef unsigned long long uint64_t;
 #      ifndef PRINTF_INT64_MODIFIER
 #        define PRINTF_INT64_MODIFIER "ll"
 #      endif
-#    elif defined(__MWERKS__) || defined(__SUNPRO_C) || defined(__SUNPRO_CC) || defined(__APPLE_CC__) || \
-      defined(_LONG_LONG) || defined(_CRAYC) || defined(S_SPLINT_S)
+#    elif defined(__MWERKS__) || defined(__SUNPRO_C) || defined(__SUNPRO_CC) || \
+      defined(__APPLE_CC__) || defined(_LONG_LONG) || defined(_CRAYC) || defined(S_SPLINT_S)
 #      define stdint_int64_defined
 typedef long long int64_t;
 typedef unsigned long long uint64_t;
@@ -477,9 +477,9 @@ typedef unsigned long long uint64_t;
 #      ifndef PRINTF_INT64_MODIFIER
 #        define PRINTF_INT64_MODIFIER "ll"
 #      endif
-#    elif (defined(__WATCOMC__) && defined(__WATCOM_INT64__)) ||                                            \
-      (defined(_MSC_VER) && _INTEGRAL_MAX_BITS >= 64) || (defined(__BORLANDC__) && __BORLANDC__ > 0x460) || \
-      defined(__alpha) || defined(__DECC)
+#    elif (defined(__WATCOMC__) && defined(__WATCOM_INT64__)) || \
+      (defined(_MSC_VER) && _INTEGRAL_MAX_BITS >= 64) ||         \
+      (defined(__BORLANDC__) && __BORLANDC__ > 0x460) || defined(__alpha) || defined(__DECC)
 #      define stdint_int64_defined
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
@@ -694,7 +694,8 @@ typedef uint_least64_t uint_fast64_t;
 #      define stdint_intptr_glue3_i(a, b, c) a##b##c
 #      define stdint_intptr_glue3(a, b, c) stdint_intptr_glue3_i(a, b, c)
 #      ifndef PRINTF_INTPTR_MODIFIER
-#        define PRINTF_INTPTR_MODIFIER stdint_intptr_glue3(PRINTF_INT, stdint_intptr_bits, _MODIFIER)
+#        define PRINTF_INTPTR_MODIFIER \
+          stdint_intptr_glue3(PRINTF_INT, stdint_intptr_bits, _MODIFIER)
 #      endif
 #      ifndef PTRDIFF_MAX
 #        define PTRDIFF_MAX stdint_intptr_glue3(INT, stdint_intptr_bits, _MAX)
@@ -717,10 +718,8 @@ typedef uint_least64_t uint_fast64_t;
 #      ifndef UINTPTR_C
 #        define UINTPTR_C(x) stdint_intptr_glue3(UINT, stdint_intptr_bits, _C)(x)
 #      endif
-typedef stdint_intptr_glue3(uint, stdint_intptr_bits, _t)
-uintptr_t;
-typedef stdint_intptr_glue3(int, stdint_intptr_bits, _t)
-intptr_t;
+typedef stdint_intptr_glue3(uint, stdint_intptr_bits, _t) uintptr_t;
+typedef stdint_intptr_glue3(int, stdint_intptr_bits, _t) intptr_t;
 #    else
 /* TODO -- This following is likely wrong for some platforms, and does
    nothing for the definition of uintptr_t. */

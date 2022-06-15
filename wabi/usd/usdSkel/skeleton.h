@@ -70,6 +70,7 @@ class SdfAssetPath;
 class UsdSkelSkeleton : public UsdGeomBoundable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -80,16 +81,12 @@ class UsdSkelSkeleton : public UsdGeomBoundable
   /// Equivalent to UsdSkelSkeleton::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelSkeleton(const UsdPrim &prim = UsdPrim())
-    : UsdGeomBoundable(prim)
-  {}
+  explicit UsdSkelSkeleton(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim) {}
 
   /// Construct a UsdSkelSkeleton on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelSkeleton(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelSkeleton(const UsdSchemaBase &schemaObj)
-    : UsdGeomBoundable(schemaObj)
-  {}
+  explicit UsdSkelSkeleton(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj) {}
 
   /// Destructor.
   USDSKEL_API
@@ -139,6 +136,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable
   static UsdSkelSkeleton Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -146,6 +144,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSKEL_API
@@ -155,9 +154,11 @@ class UsdSkelSkeleton : public UsdGeomBoundable
 
   // override SchemaBase virtuals.
   USDSKEL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // JOINTS
   // --------------------------------------------------------------------- //
@@ -183,9 +184,11 @@ class UsdSkelSkeleton : public UsdGeomBoundable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // JOINTNAMES
   // --------------------------------------------------------------------- //
@@ -212,6 +215,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BINDTRANSFORMS
   // --------------------------------------------------------------------- //
@@ -237,6 +241,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RESTTRANSFORMS
   // --------------------------------------------------------------------- //
@@ -265,6 +270,7 @@ class UsdSkelSkeleton : public UsdGeomBoundable
                                         bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

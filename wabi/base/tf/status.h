@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class TfStatus : public TfDiagnosticBase
 {
  private:
+
   TfStatus(TfEnum statusCode,
            char const *statusCodeString,
            TfCallContext const &context,

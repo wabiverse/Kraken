@@ -45,15 +45,11 @@ WABI_NAMESPACE_BEGIN
  *
  * @tparam T
  */
-template<typename T>
-struct HdCyclesEnvValue
+template<typename T> struct HdCyclesEnvValue
 {
   HdCyclesEnvValue() = default;
 
-  HdCyclesEnvValue(const char *a_envName, T a_default)
-    : value{a_default},
-      envName{a_envName}
-  {}
+  HdCyclesEnvValue(const char *a_envName, T a_default) : value{a_default}, envName{a_envName} {}
 
   T value;
   bool hasOverride;
@@ -61,14 +57,12 @@ struct HdCyclesEnvValue
 
   bool eval(T &a_previous, bool a_forceInit = false) const
   {
-    if (a_forceInit)
-    {
+    if (a_forceInit) {
       a_previous = value;
       return true;
     }
 
-    if (hasOverride)
-    {
+    if (hasOverride) {
       a_previous = value;
       std::cout << "[" << envName << "] has been set: " << a_previous << '\n';
     }
@@ -85,6 +79,7 @@ struct HdCyclesEnvValue
 class HdCyclesConfig
 {
  public:
+
   /// Return an instance of HdCyclesConfig.
   static const HdCyclesConfig &GetInstance();
 
@@ -429,6 +424,7 @@ class HdCyclesConfig
   HdCyclesEnvValue<int> texture_max_size;
 
  private:
+
   /**
    * @brief Constructor for reading the values from the environment variables.
    *

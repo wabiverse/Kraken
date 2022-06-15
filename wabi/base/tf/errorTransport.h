@@ -46,11 +46,11 @@ WABI_NAMESPACE_BEGIN
 class TfErrorTransport
 {
  public:
+
   typedef TfDiagnosticMgr::ErrorList ErrorList;
 
   /// Construct an empty TfErrorTransport.
-  TfErrorTransport()
-  {}
+  TfErrorTransport() {}
 
   /// Post all contained errors to the current thread's error list, leaving
   /// this TfErrorTransport empty.
@@ -76,6 +76,7 @@ class TfErrorTransport
   }
 
  private:
+
   friend class TfErrorMark;
 
   TfErrorTransport(ErrorList &src, ErrorList::iterator first, ErrorList::iterator last)

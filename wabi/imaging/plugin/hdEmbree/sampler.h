@@ -57,9 +57,9 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeTypeHelper
 {
  public:
+
   /// Return the HdTupleType corresponding to the given C++ type.
-  template<typename T>
-  static HdTupleType GetTupleType();
+  template<typename T> static HdTupleType GetTupleType();
 
   /// Define a type that can hold one sample of any primvar.
   typedef char PrimvarTypeContainer[sizeof(GfMatrix4d)];
@@ -67,11 +67,10 @@ class HdEmbreeTypeHelper
 
 // Define template specializations of HdEmbreeTypeHelper methods for
 // all our supported types...
-#define TYPE_HELPER(T, type)                               \
-  template<>                                               \
-  inline HdTupleType HdEmbreeTypeHelper::GetTupleType<T>() \
-  {                                                        \
-    return HdTupleType{type, 1};                           \
+#define TYPE_HELPER(T, type)                                          \
+  template<> inline HdTupleType HdEmbreeTypeHelper::GetTupleType<T>() \
+  {                                                                   \
+    return HdTupleType{type, 1};                                      \
   }
 
 TYPE_HELPER(bool, HdTypeBool)
@@ -106,13 +105,12 @@ TYPE_HELPER(GfMatrix4d, HdTypeDoubleMat4)
 class HdEmbreeBufferSampler
 {
  public:
+
   /// The constructor takes a reference to a buffer source. The data is
   /// owned externally; the caller is responsible for ensuring the buffer
   /// is alive while Sample() is being called.
   /// \param buffer The buffer being sampled.
-  HdEmbreeBufferSampler(HdVtBufferSource const &buffer)
-    : _buffer(buffer)
-  {}
+  HdEmbreeBufferSampler(HdVtBufferSource const &buffer) : _buffer(buffer) {}
 
   /// Sample the buffer at element index \p index, and write the sample to
   /// \p value. Interpret \p value as having arity \p numComponents, each of
@@ -130,13 +128,13 @@ class HdEmbreeBufferSampler
   bool Sample(int index, void *value, HdTupleType dataType) const;
 
   // Convenient, templated frontend for Sample().
-  template<typename T>
-  bool Sample(int index, T *value) const
+  template<typename T> bool Sample(int index, T *value) const
   {
     return Sample(index, static_cast<void *>(value), HdEmbreeTypeHelper::GetTupleType<T>());
   }
 
  private:
+
   HdVtBufferSource const &_buffer;
 };
 
@@ -149,6 +147,7 @@ class HdEmbreeBufferSampler
 class HdEmbreePrimvarSampler
 {
  public:
+
   /// Default constructor.
   HdEmbreePrimvarSampler() = default;
   /// Default destructor.
@@ -170,16 +169,24 @@ class HdEmbreePrimvarSampler
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const = 0;
+  virtual bool Sample(unsigned int element,
+                      float u,
+                      float v,
+                      void *value,
+                      HdTupleType dataType) const = 0;
 
   // Convenient, templated frontend for Sample().
-  template<typename T>
-  bool Sample(unsigned int element, float u, float v, T *value) const
+  template<typename T> bool Sample(unsigned int element, float u, float v, T *value) const
   {
-    return Sample(element, u, v, static_cast<void *>(value), HdEmbreeTypeHelper::GetTupleType<T>());
+    return Sample(element,
+                  u,
+                  v,
+                  static_cast<void *>(value),
+                  HdEmbreeTypeHelper::GetTupleType<T>());
   }
 
  protected:
+
   /// Utility function for derived classes: combine multiple samples with
   /// blend weights: \p out = sum_i { \p samples[i] * \p weights[i] }.
   /// \param out The memory to write the output to (only written on success).

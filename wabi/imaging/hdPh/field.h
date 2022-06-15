@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhField : public HdField
 {
  public:
+
   /// For now, only fieldType HdPhTokens->openvdbAsset is supported.
   HDPH_API
   HdPhField(SdfPath const &id, TfToken const &fieldType);
@@ -47,7 +48,9 @@ class HdPhField : public HdField
 
   /// Loads field as 3d texture to generate GetFieldResource.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   HdDirtyBits GetInitialDirtyBitsMask() const override;
@@ -74,6 +77,7 @@ class HdPhField : public HdField
   static bool IsSupportedBprimType(const TfToken &bprimType);
 
  private:
+
   const TfToken _fieldType;
 
   HdPhTextureIdentifier _textureId;

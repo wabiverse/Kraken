@@ -91,6 +91,7 @@ char const *GlfDebugEnumToString(GLenum debugEnum);
 class GlfDebugGroup
 {
  public:
+
   /// Pushes a new debug group onto the GL api debug trace stack
   GLF_API
   GlfDebugGroup(char const *message);
@@ -123,6 +124,7 @@ void GlfDebugLabelProgram(GLuint id, char const *label);
 class GlfGLQueryObject
 {
  public:
+
   GLF_API
   GlfGLQueryObject();
   GLF_API
@@ -173,6 +175,7 @@ class GlfGLQueryObject
   GlfGLQueryObject &operator=(GlfGLQueryObject const &) = delete;
 
  private:
+
   GLuint _id;
   GLenum _target;
 };

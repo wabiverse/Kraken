@@ -24,16 +24,16 @@
 #ifndef WABI_IMAGING_HD_SELECTION_H
 #define WABI_IMAGING_HD_SELECTION_H
 
-#include "wabi/base/gf/vec4f.h"
-#include "wabi/base/vt/array.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/gf/vec4f.h"
+#include "wabi/base/vt/array.h"
 
 #include <memory>
-#include <unordered_map>
 #include <vector>
+#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
 
@@ -52,6 +52,7 @@ using HdSelectionSharedPtr = std::shared_ptr<class HdSelection>;
 class HdSelection
 {
  public:
+
   /// Selection modes allow differentiation in selection highlight behavior.
   enum HighlightMode
   {
@@ -81,10 +82,14 @@ class HdSelection
                    VtIntArray const &elementIndices);
 
   HD_API
-  void AddEdges(HighlightMode const &mode, SdfPath const &renderIndexPath, VtIntArray const &edgeIndices);
+  void AddEdges(HighlightMode const &mode,
+                SdfPath const &renderIndexPath,
+                VtIntArray const &edgeIndices);
 
   HD_API
-  void AddPoints(HighlightMode const &mode, SdfPath const &renderIndexPath, VtIntArray const &pointIndices);
+  void AddPoints(HighlightMode const &mode,
+                 SdfPath const &renderIndexPath,
+                 VtIntArray const &pointIndices);
 
   // Special handling for points: we allow a set of selected point indices to
   // also specify a color to use for highlighting.
@@ -100,9 +105,7 @@ class HdSelection
   // the same subprim highlighting.
   struct PrimSelectionState
   {
-    PrimSelectionState()
-      : fullySelected(false)
-    {}
+    PrimSelectionState() : fullySelected(false) {}
 
     bool fullySelected;
     // Use a vector of VtIntArray to avoid copying the indices data.
@@ -140,6 +143,7 @@ class HdSelection
   bool IsEmpty() const;
 
  private:
+
   void _AddPoints(HighlightMode const &mode,
                   SdfPath const &renderIndexPath,
                   VtIntArray const &pointIndices,
@@ -148,6 +152,7 @@ class HdSelection
   void _GetSelectionPrimPathsForMode(HighlightMode const &mode, SdfPathVector *paths) const;
 
  protected:
+
   typedef std::unordered_map<SdfPath, PrimSelectionState, SdfPath::Hash> _PrimSelectionStateMap;
   // Keep track of selection per selection mode.
   _PrimSelectionStateMap _selMap[HighlightModeCount];

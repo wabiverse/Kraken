@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_UNIT_TEST_NULL_RENDER_PASS_H
 #define WABI_IMAGING_HD_UNIT_TEST_NULL_RENDER_PASS_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/renderPass.h"
 
@@ -39,13 +39,14 @@ WABI_NAMESPACE_BEGIN
 class Hd_UnitTestNullRenderPass : public HdRenderPass
 {
  public:
+
   Hd_UnitTestNullRenderPass(HdRenderIndex *index, HdRprimCollection const &collection)
     : HdRenderPass(index, collection)
   {}
-  virtual ~Hd_UnitTestNullRenderPass()
-  {}
+  virtual ~Hd_UnitTestNullRenderPass() {}
 
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
+                TfTokenVector const &renderTags) override
   {}
 };
 

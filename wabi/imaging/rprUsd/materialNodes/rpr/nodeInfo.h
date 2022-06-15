@@ -41,14 +41,13 @@ namespace std
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T>
-struct ToRprUsdMaterialNodeInputType;
+template<typename T> struct ToRprUsdMaterialNodeInputType;
 
-#define DEFINE_TYPE_CONVERSION(c_type, material_type)                                                 \
-  template<>                                                                                          \
-  struct ToRprUsdMaterialNodeInputType<c_type>                                                        \
-  {                                                                                                   \
-    static constexpr RprUsdMaterialNodeInput::Type value = RprUsdMaterialNodeInput::k##material_type; \
+#define DEFINE_TYPE_CONVERSION(c_type, material_type)      \
+  template<> struct ToRprUsdMaterialNodeInputType<c_type>  \
+  {                                                        \
+    static constexpr RprUsdMaterialNodeInput::Type value = \
+      RprUsdMaterialNodeInput::k##material_type;           \
   };
 
 DEFINE_TYPE_CONVERSION(bool, Boolean);
@@ -60,9 +59,7 @@ DEFINE_TYPE_CONVERSION(TfToken, Token);
 
 struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput
 {
-  RprUsd_RprNodeInput(RprUsdMaterialNodeInput::Type type)
-    : RprUsdMaterialNodeInput(type)
-  {}
+  RprUsd_RprNodeInput(RprUsdMaterialNodeInput::Type type) : RprUsdMaterialNodeInput(type) {}
   const char *GetName() const override
   {
     return GetCStr(name);
@@ -109,20 +106,19 @@ struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput
                       T defaultValue,
                       RprUsdMaterialNodeInput::Type type = RprUsdMaterialNodeInput::kInvalid,
                       const char *uiName = nullptr)
-    : RprUsdMaterialNodeInput(
-        type != RprUsdMaterialNodeInput::kInvalid ? type : ToRprUsdMaterialNodeInputType<T>::value),
+    : RprUsdMaterialNodeInput(type != RprUsdMaterialNodeInput::kInvalid ?
+                                type :
+                                ToRprUsdMaterialNodeInputType<T>::value),
       name(name),
       uiSoftMin("0"),
       uiSoftMax("1"),
       value(VtValue(defaultValue)),
       valueString(std::to_string(defaultValue))
   {
-    if (!uiName)
-    {
+    if (!uiName) {
       this->uiName = name.GetString();
       this->uiName[0] = ::toupper(this->uiName[0]);
-    } else
-    {
+    } else {
       this->uiName = uiName;
     }
   }
@@ -142,9 +138,7 @@ struct RprUsd_RprNodeInput : public RprUsdMaterialNodeInput
 
 struct RprUsd_RprNodeOutput : public RprUsdMaterialNodeElement
 {
-  RprUsd_RprNodeOutput(RprUsdMaterialNodeElement::Type type)
-    : RprUsdMaterialNodeElement(type)
-  {}
+  RprUsd_RprNodeOutput(RprUsdMaterialNodeElement::Type type) : RprUsdMaterialNodeElement(type) {}
   const char *GetName() const override
   {
     return !name.empty() ? name.c_str() : nullptr;

@@ -47,6 +47,7 @@ using HdBindingRequestVector = std::vector<HdBindingRequest>;
 class HdPh_IndirectDrawBatch : public HdPh_DrawBatch
 {
  public:
+
   HDPH_API
   HdPh_IndirectDrawBatch(HdPhDrawItemInstance *drawItemInstance);
   HDPH_API
@@ -86,37 +87,40 @@ class HdPh_IndirectDrawBatch : public HdPh_DrawBatch
   static bool IsEnabledGPUInstanceFrustumCulling();
 
  protected:
+
   HDPH_API
   void _Init(HdPhDrawItemInstance *drawItemInstance) override;
 
  private:
-  void _ValidateCompatibility(HdPhBufferArrayRangeSharedPtr const &constantBar,
-                              HdPhBufferArrayRangeSharedPtr const &indexBar,
-                              HdPhBufferArrayRangeSharedPtr const &topologyVisibilityBar,
-                              HdPhBufferArrayRangeSharedPtr const &elementBar,
-                              HdPhBufferArrayRangeSharedPtr const &fvarBar,
-                              HdPhBufferArrayRangeSharedPtr const &varyingBar,
-                              HdPhBufferArrayRangeSharedPtr const &vertexBar,
-                              int instancerNumLevels,
-                              HdPhBufferArrayRangeSharedPtr const &instanceIndexBar,
-                              std::vector<HdPhBufferArrayRangeSharedPtr> const &instanceBars) const;
+
+  void _ValidateCompatibility(
+    HdPhBufferArrayRangeSharedPtr const &constantBar,
+    HdPhBufferArrayRangeSharedPtr const &indexBar,
+    HdPhBufferArrayRangeSharedPtr const &topologyVisibilityBar,
+    HdPhBufferArrayRangeSharedPtr const &elementBar,
+    HdPhBufferArrayRangeSharedPtr const &fvarBar,
+    HdPhBufferArrayRangeSharedPtr const &varyingBar,
+    HdPhBufferArrayRangeSharedPtr const &vertexBar,
+    int instancerNumLevels,
+    HdPhBufferArrayRangeSharedPtr const &instanceIndexBar,
+    std::vector<HdPhBufferArrayRangeSharedPtr> const &instanceBars) const;
 
   // Culling requires custom resource binding.
   class _CullingProgram : public _DrawingProgram
   {
    public:
-    _CullingProgram()
-      : _useDrawArrays(false),
-        _useInstanceCulling(false),
-        _bufferArrayHash(0)
-    {}
+
+    _CullingProgram() : _useDrawArrays(false), _useInstanceCulling(false), _bufferArrayHash(0) {}
     void Initialize(bool useDrawArrays, bool useInstanceCulling, size_t bufferArrayHash);
 
    protected:
+
     // _DrawingProgram overrides
-    void _GetCustomBindings(HdBindingRequestVector *customBindings, bool *enableInstanceDraw) const override;
+    void _GetCustomBindings(HdBindingRequestVector *customBindings,
+                            bool *enableInstanceDraw) const override;
 
    private:
+
     bool _useDrawArrays;
     bool _useInstanceCulling;
     size_t _bufferArrayHash;
@@ -138,7 +142,8 @@ class HdPh_IndirectDrawBatch : public HdPh_DrawBatch
 
   void _BeginGPUCountVisibleInstances(HdPhResourceRegistrySharedPtr const &resourceRegistry);
 
-  void _EndGPUCountVisibleInstances(HdPhResourceRegistrySharedPtr const &resourceRegistry, size_t *result);
+  void _EndGPUCountVisibleInstances(HdPhResourceRegistrySharedPtr const &resourceRegistry,
+                                    size_t *result);
 
   HdPhDispatchBufferSharedPtr _dispatchBuffer;
   HdPhDispatchBufferSharedPtr _dispatchBufferCullInput;

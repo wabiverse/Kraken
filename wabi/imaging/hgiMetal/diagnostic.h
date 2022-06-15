@@ -41,14 +41,14 @@ WABI_NAMESPACE_BEGIN
 /// Posts diagnostic errors for all Metal errors in the current context.
 /// This macro tags the diagnostic errors with the name of the calling
 /// function.
-#define HGIMETAL_POST_PENDING_METAL_ERRORS() HgiMetalPostPendingMetalErrors(__ARCH_PRETTY_FUNCTION__)
+#define HGIMETAL_POST_PENDING_METAL_ERRORS() \
+  HgiMetalPostPendingMetalErrors(__ARCH_PRETTY_FUNCTION__)
 
 HGIMETAL_API
 bool HgiMetalDebugEnabled();
 
 #define HGIMETAL_DEBUG_LABEL(_obj, label) \
-  if (HgiMetalDebugEnabled())             \
-  {                                       \
+  if (HgiMetalDebugEnabled()) {           \
     [_obj setLabel:@(label)];             \
   }
 

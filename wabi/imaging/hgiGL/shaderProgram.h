@@ -48,6 +48,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLShaderProgram final : public HgiShaderProgram
 {
  public:
+
   HGIGL_API
   ~HgiGLShaderProgram() override;
 
@@ -80,17 +81,20 @@ class HgiGLShaderProgram final : public HgiShaderProgram
   uint32_t GetUniformBuffer(size_t sizeHint);
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
   HgiGLShaderProgram(HgiShaderProgramDesc const &desc);
 
  private:
+
   HgiGLShaderProgram() = delete;
   HgiGLShaderProgram &operator=(const HgiGLShaderProgram &) = delete;
   HgiGLShaderProgram(const HgiGLShaderProgram &) = delete;
 
  private:
+
   std::string _errors;
   uint32_t _programId;
   size_t _programByteSize;

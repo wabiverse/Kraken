@@ -45,15 +45,13 @@ WABI_NAMESPACE_BEGIN
 class Usd_InterpolatorBase;
 
 /// Returns true if \p value contains an SdfValueBlock, false otherwise.
-template<class T>
-inline bool Usd_ValueContainsBlock(const T *value)
+template<class T> inline bool Usd_ValueContainsBlock(const T *value)
 {
   return false;
 }
 
 /// \overload
-template<class T>
-inline bool Usd_ValueContainsBlock(const SdfValueBlock *value)
+template<class T> inline bool Usd_ValueContainsBlock(const SdfValueBlock *value)
 {
   return value;
 }
@@ -78,8 +76,7 @@ inline bool Usd_ValueContainsBlock(const SdfAbstractDataConstValue *value)
 
 /// If \p value contains an SdfValueBlock, clear the value and
 /// return true. Otherwise return false.
-template<class T>
-inline bool Usd_ClearValueIfBlocked(T *value)
+template<class T> inline bool Usd_ClearValueIfBlocked(T *value)
 {
   // We can't actually clear the value here, since there's
   // no good API for doing so. If the value is holding a
@@ -91,8 +88,7 @@ inline bool Usd_ClearValueIfBlocked(T *value)
 /// \overload
 inline bool Usd_ClearValueIfBlocked(VtValue *value)
 {
-  if (Usd_ValueContainsBlock(value))
-  {
+  if (Usd_ValueContainsBlock(value)) {
     *value = VtValue();
     return true;
   }
@@ -102,8 +98,7 @@ inline bool Usd_ClearValueIfBlocked(VtValue *value)
 
 /// Helper function for setting a value into an SdfAbstractDataValue
 /// for generic programming.
-template<class T>
-inline bool Usd_SetValue(SdfAbstractDataValue *dv, T const &val)
+template<class T> inline bool Usd_SetValue(SdfAbstractDataValue *dv, T const &val)
 {
   return dv->StoreValue(val);
 }
@@ -111,8 +106,7 @@ inline bool Usd_SetValue(SdfAbstractDataValue *dv, T const &val)
 /// \overload
 /// Helper function for setting a value into a VtValue
 /// for generic programming.
-template<class T>
-inline bool Usd_SetValue(VtValue *value, T const &val)
+template<class T> inline bool Usd_SetValue(VtValue *value, T const &val)
 {
   *value = val;
   return true;
@@ -126,8 +120,7 @@ template<class T,
                                      !std::is_same<T, VtValue>::value>>
 inline bool Usd_SetValue(T *value, VtValue const &val)
 {
-  if (val.IsHolding<T>())
-  {
+  if (val.IsHolding<T>()) {
     *value = val.UncheckedGet<T>();
     return true;
   }
@@ -145,27 +138,20 @@ template<class T, class Source>
 Usd_DefaultValueResult Usd_HasDefault(const Source &source, const SdfPath &specPath, T *value)
 {
 
-  if (!value)
-  {
+  if (!value) {
     // Caller is not interested in the value, so avoid fetching it.
     std::type_info const &ti = source->GetFieldTypeid(specPath, SdfFieldKeys->Default);
-    if (ti == typeid(void))
-    {
+    if (ti == typeid(void)) {
       return Usd_DefaultValueResult::None;
-    } else if (ti == typeid(SdfValueBlock))
-    {
+    } else if (ti == typeid(SdfValueBlock)) {
       return Usd_DefaultValueResult::Blocked;
-    } else
-    {
+    } else {
       return Usd_DefaultValueResult::Found;
     }
-  } else
-  {
+  } else {
     // Caller requests the value.
-    if (source->HasField(specPath, SdfFieldKeys->Default, value))
-    {
-      if (Usd_ClearValueIfBlocked(value))
-      {
+    if (source->HasField(specPath, SdfFieldKeys->Default, value)) {
+      if (Usd_ClearValueIfBlocked(value)) {
         return Usd_DefaultValueResult::Blocked;
       }
       return Usd_DefaultValueResult::Found;
@@ -204,12 +190,13 @@ void Usd_MergeTimeSamples(std::vector<double> *const timeSamples,
 // If the item already exists in the list, but not in the requested
 // position, it will be moved to the requested position.
 template<class PROXY>
-void Usd_InsertListItem(PROXY proxy, const typename PROXY::value_type &item, UsdListPosition position)
+void Usd_InsertListItem(PROXY proxy,
+                        const typename PROXY::value_type &item,
+                        UsdListPosition position)
 {
   typename PROXY::ListProxy list(/* unused */ SdfListOpTypeExplicit);
   bool atFront = false;
-  switch (position)
-  {
+  switch (position) {
     case UsdListPositionBackOfPrependList:
       list = proxy.GetPrependedItems();
       atFront = false;
@@ -232,22 +219,17 @@ void Usd_InsertListItem(PROXY proxy, const typename PROXY::value_type &item, Usd
   // update the explicit list if the list op was in explicit mode. Clients
   // currently expect this behavior, so we need to maintain it regardless
   // of the list specified in the postiion enum.
-  if (proxy.IsExplicit())
-  {
+  if (proxy.IsExplicit()) {
     list = proxy.GetExplicitItems();
   }
 
-  if (list.empty())
-  {
+  if (list.empty()) {
     list.Insert(-1, item);
-  } else
-  {
+  } else {
     const size_t pos = list.Find(item);
-    if (pos != size_t(-1))
-    {
+    if (pos != size_t(-1)) {
       const size_t targetPos = atFront ? 0 : list.size() - 1;
-      if (pos == targetPos)
-      {
+      if (pos == targetPos) {
         // Item already exists in the right position.
         return;
       }
@@ -261,20 +243,16 @@ void Usd_InsertListItem(PROXY proxy, const typename PROXY::value_type &item, Usd
 /// resolve function.
 /// Fn type is equivalent to:
 ///     void resolveFunc(VtValue *)
-template<typename Fn>
-void Usd_ResolveValuesInDictionary(VtDictionary *dict, const Fn &resolveFunc)
+template<typename Fn> void Usd_ResolveValuesInDictionary(VtDictionary *dict, const Fn &resolveFunc)
 {
-  for (auto &entry : *dict)
-  {
+  for (auto &entry : *dict) {
     VtValue &v = entry.second;
-    if (v.IsHolding<VtDictionary>())
-    {
+    if (v.IsHolding<VtDictionary>()) {
       VtDictionary resolvedDict;
       v.UncheckedSwap(resolvedDict);
       Usd_ResolveValuesInDictionary(&resolvedDict, resolveFunc);
       v.UncheckedSwap(resolvedDict);
-    } else
-    {
+    } else {
       resolveFunc(&v);
     }
   }
@@ -294,8 +272,7 @@ inline void Usd_ApplyLayerOffsetToValue(SdfTimeCode *value, const SdfLayerOffset
 /// \overload
 inline void Usd_ApplyLayerOffsetToValue(VtArray<SdfTimeCode> *value, const SdfLayerOffset &offset)
 {
-  for (SdfTimeCode &timeCode : *value)
-  {
+  for (SdfTimeCode &timeCode : *value) {
     timeCode = offset * timeCode;
   }
 }
@@ -307,8 +284,7 @@ inline void Usd_ApplyLayerOffsetToValue(SdfTimeSampleMap *value, const SdfLayerO
   // value.
   SdfTimeSampleMap origValue;
   std::swap(origValue, *value);
-  for (const auto &sample : origValue)
-  {
+  for (const auto &sample : origValue) {
     // Each time sample key must be mapped by the layer offset.
     VtValue &newSample = (*value)[offset * sample.first];
     newSample = std::move(sample.second);
@@ -320,7 +296,9 @@ inline void Usd_ApplyLayerOffsetToValue(SdfTimeSampleMap *value, const SdfLayerO
 /// \overload
 inline void Usd_ApplyLayerOffsetToValue(VtDictionary *value, const SdfLayerOffset &offset)
 {
-  Usd_ResolveValuesInDictionary(value, [&offset](VtValue *v) { Usd_ApplyLayerOffsetToValue(v, offset); });
+  Usd_ResolveValuesInDictionary(value, [&offset](VtValue *v) {
+    Usd_ApplyLayerOffsetToValue(v, offset);
+  });
 }
 
 WABI_NAMESPACE_END

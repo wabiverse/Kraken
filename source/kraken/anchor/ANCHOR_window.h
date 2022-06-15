@@ -30,10 +30,10 @@
 class AnchorISystemWindow
 {
  public:
+
   /**
    * Destructor. */
-  virtual ~AnchorISystemWindow()
-  {}
+  virtual ~AnchorISystemWindow() {}
 
   /**
    * Returns indication as to whether the window is valid.
@@ -132,7 +132,10 @@ class AnchorISystemWindow
    * @param inY: The y-coordinate on the screen.
    * @param outX: The x-coordinate in the client rectangle.
    * @param outY: The y-coordinate in the client rectangle. */
-  virtual void screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const = 0;
+  virtual void screenToClient(AnchorS32 inX,
+                              AnchorS32 inY,
+                              AnchorS32 &outX,
+                              AnchorS32 &outY) const = 0;
 
   /**
    * Converts a point in screen coordinates to client rectangle coordinates
@@ -140,7 +143,10 @@ class AnchorISystemWindow
    * @param inY: The y-coordinate in the client rectangle.
    * @param outX: The x-coordinate on the screen.
    * @param outY: The y-coordinate on the screen. */
-  virtual void clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const = 0;
+  virtual void clientToScreen(AnchorS32 inX,
+                              AnchorS32 inY,
+                              AnchorS32 &outX,
+                              AnchorS32 &outY) const = 0;
 
   /**
    * Returns the client rectangle dimensions.
@@ -177,6 +183,7 @@ class AnchorISystemWindow
 class AnchorSystemWindow : public AnchorISystemWindow
 {
  public:
+
   /**
    * Constructor.
    * Creates a new window and opens it.
@@ -286,6 +293,7 @@ class AnchorSystemWindow : public AnchorISystemWindow
   virtual bool getModifiedState();
 
  protected:
+
   /**
    * Tries to install a rendering context in this window.
    * @param type: The type of rendering context installed.
@@ -293,6 +301,7 @@ class AnchorSystemWindow : public AnchorISystemWindow
   virtual void newDrawingContext(eAnchorDrawingContextType type) = 0;
 
  protected:
+
   /** The drawing context installed in this window. */
   eAnchorDrawingContextType m_drawingContextType;
 

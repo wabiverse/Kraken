@@ -57,6 +57,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeInstancer : public HdInstancer
 {
  public:
+
   /// Constructor.
   ///   \param delegate The scene delegate backing this instancer's data.
   ///   \param id The unique id of this instancer.
@@ -77,9 +78,12 @@ class HdEmbreeInstancer : public HdInstancer
   ///   \param sceneDelegate The scene delegate for this prim.
   ///   \param renderParam The hdEmbree render param.
   ///   \param dirtyBits The dirty bits for this instancer.
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
  private:
+
   // Updates the cached primvars in _primvarMap based on scene delegate
   // data.  This is a helper function for Sync().
   void _SyncPrimvars(HdSceneDelegate *delegate, HdDirtyBits dirtyBits);

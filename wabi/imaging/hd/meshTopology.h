@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HD_MESH_TOPOLOGY_H
 #define WABI_IMAGING_HD_MESH_TOPOLOGY_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/geomSubset.h"
-#include "wabi/imaging/hd/topology.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
+#include "wabi/imaging/hd/topology.h"
 
 #include "wabi/imaging/pxOsd/meshTopology.h"
 
@@ -40,6 +40,7 @@
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdMeshTopologySharedPtr = std::shared_ptr<class HdMeshTopology>;
 
@@ -54,6 +55,7 @@ using HdMeshTopologySharedPtr = std::shared_ptr<class HdMeshTopology>;
 class HdMeshTopology : public HdTopology
 {
  public:
+
   HD_API
   HdMeshTopology();
   HD_API
@@ -229,6 +231,7 @@ class HdMeshTopology : public HdTopology
   /// @}
 
  protected:
+
   PxOsdMeshTopology _topology;
   HdGeomSubsets _geomSubsets;
   VtIntArray _invisiblePoints;
@@ -236,6 +239,7 @@ class HdMeshTopology : public HdTopology
   int _refineLevel;
   int _numPoints;
 };
+
 
 WABI_NAMESPACE_END
 

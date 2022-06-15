@@ -65,6 +65,7 @@ class UsdImagingGLLegacyEngine : public TfWeakBase
   typedef UsdImagingGLLegacyEngine This;
 
  public:
+
   USDIMAGINGGL_API
   UsdImagingGLLegacyEngine(const SdfPathVector &excludedPaths);
 
@@ -114,9 +115,11 @@ class UsdImagingGLLegacyEngine : public TfWeakBase
                         int *outHitInstanceIndex = NULL);
 
  private:
+
   bool _SupportsPrimitiveRestartIndex();
 
  private:
+
   // Extracts all data necessary for drawing the stage.
   void _TraverseStage(const UsdPrim &root);
 
@@ -177,6 +180,7 @@ class UsdImagingGLLegacyEngine : public TfWeakBase
   void _OnObjectsChanged(UsdNotice::ObjectsChanged const &, UsdStageWeakPtr const &sender);
 
  private:
+
   UsdImagingGLRenderParams _params;
 
   GfMatrix4d _ctm;

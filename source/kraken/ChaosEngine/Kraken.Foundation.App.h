@@ -39,6 +39,7 @@ namespace winrt::Kraken::Foundation::implementation
     void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs const &args);
 
    private:
+
     UIResponder m_UIResponder;
   };
 }  // namespace winrt::Kraken::Foundation::implementation

@@ -53,6 +53,7 @@ class SdfRelationshipSpec : public SdfPropertySpec
   SDF_DECLARE_SPEC(SdfRelationshipSpec, SdfPropertySpec);
 
  public:
+
   typedef SdfRelationshipSpec This;
   typedef SdfPropertySpec Parent;
 
@@ -119,6 +120,7 @@ class SdfRelationshipSpec : public SdfPropertySpec
   void SetNoLoadHint(bool noload);
 
  private:
+
   SdfPath _CanonicalizeTargetPath(const SdfPath &path) const;
 
   SdfPath _MakeCompleteTargetSpecPath(const SdfPath &srcPath) const;

@@ -33,24 +33,25 @@ namespace winrt::Kraken::UIKit::implementation
   struct UIEvent : UIEventT<UIEvent>
   {
     UIEvent() = default();
-    UIEvent(winrt::CoreApplicationViewTitleBar const& titleBar);
-    UIEvent(winrt::NavigationView const& view);
-    UIEvent(IInspectable const& window);
+    UIEvent(winrt::CoreApplicationViewTitleBar const &titleBar);
+    UIEvent(winrt::NavigationView const &view);
+    UIEvent(IInspectable const &window);
 
     winrt::CoreApplicationViewTitleBar TitleBar();
     winrt::NavigationView NavigationView();
     IInspectable Window();
 
    private:
-    winrt::CoreApplicationViewTitleBar m_titleBar{ nullptr };
-    winrt::NavigationView m_navigationView{ nullptr };
-    IInspectable m_window{ nullptr };
+
+    winrt::CoreApplicationViewTitleBar m_titleBar{nullptr};
+    winrt::NavigationView m_navigationView{nullptr};
+    IInspectable m_window{nullptr};
   };
-}  // namespace winrt::Kraken::implementation
+}  // namespace winrt::Kraken::UIKit::implementation
 
 
 namespace winrt::Kraken::UIKit::factory_implementation
 {
   struct UIEvent : UIEventT<UIEvent, implementation::UIEvent>
   {};
-}  // namespace winrt::Kraken::factory_implementation
+}  // namespace winrt::Kraken::UIKit::factory_implementation

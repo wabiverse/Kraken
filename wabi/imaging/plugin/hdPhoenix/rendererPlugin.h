@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhoenixRendererPlugin final : public HdRendererPlugin
 {
  public:
+
   HdPhoenixRendererPlugin() = default;
   virtual ~HdPhoenixRendererPlugin() = default;
 
@@ -50,6 +51,7 @@ class HdPhoenixRendererPlugin final : public HdRendererPlugin
   virtual bool IsSupported() const override;
 
  private:
+
   HdPhoenixRendererPlugin(const HdPhoenixRendererPlugin &) = delete;
   HdPhoenixRendererPlugin &operator=(const HdPhoenixRendererPlugin &) = delete;
 };

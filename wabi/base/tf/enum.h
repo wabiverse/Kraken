@@ -139,11 +139,9 @@ WABI_NAMESPACE_BEGIN
 class TfEnum : boost::totally_ordered<TfEnum>
 {
  public:
+
   /// Default constructor assigns integer value zero.
-  TfEnum()
-    : _typeInfo(&typeid(int)),
-      _value(0)
-  {}
+  TfEnum() : _typeInfo(&typeid(int)), _value(0) {}
 
   /// Initializes value to enum variable \c value of enum type \c T.
   template<class T>
@@ -157,10 +155,7 @@ class TfEnum : boost::totally_ordered<TfEnum>
   /// \warning This is only for use in extreme circumstances; there is no
   /// way for an implementation to guarantee that \p ti is really an enum
   /// type, and/or that \p value is a valid value for that enum type.
-  TfEnum(const std::type_info &ti, int value)
-    : _typeInfo(&ti),
-      _value(value)
-  {}
+  TfEnum(const std::type_info &ti, int value) : _typeInfo(&ti), _value(value) {}
 
   /// True if \c *this and \c t have both the same type and value.
   bool operator==(const TfEnum &t) const
@@ -174,19 +169,18 @@ class TfEnum : boost::totally_ordered<TfEnum>
   /// may vary between program runs.
   bool operator<(const TfEnum &t) const
   {
-    return _typeInfo->before(*t._typeInfo) || (!t._typeInfo->before(*_typeInfo) && _value < t._value);
+    return _typeInfo->before(*t._typeInfo) ||
+           (!t._typeInfo->before(*_typeInfo) && _value < t._value);
   }
 
   /// True if \c *this has been assigned with \c value.
-  template<class T>
-  std::enable_if_t<std::is_enum<T>::value, bool> operator==(T value) const
+  template<class T> std::enable_if_t<std::is_enum<T>::value, bool> operator==(T value) const
   {
     return int(value) == _value && IsA<T>();
   }
 
   /// False if \c *this has been assigned with \c value.
-  template<class T>
-  std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T value) const
+  template<class T> std::enable_if_t<std::is_enum<T>::value, bool> operator!=(T value) const
   {
     return int(value) != _value || !IsA<T>();
   }
@@ -206,8 +200,7 @@ class TfEnum : boost::totally_ordered<TfEnum>
   }
 
   /// True if \c *this has been assigned any enumerated value of type \c T.
-  template<class T>
-  bool IsA() const
+  template<class T> bool IsA() const
   {
     return TfSafeTypeCompare(*_typeInfo, typeid(T));
   }
@@ -242,8 +235,7 @@ class TfEnum : boost::totally_ordered<TfEnum>
   ///
   /// Note that if \c IsA<T>() succeeds, then \c GetValue<T>() will also
   /// succeed.
-  template<typename T>
-  T GetValue() const
+  template<typename T> T GetValue() const
   {
     if (!IsA<T>())
       _FatalGetValueError(typeid(T));
@@ -252,8 +244,9 @@ class TfEnum : boost::totally_ordered<TfEnum>
   }
 
   /// Conversion operator for enum and integral types only.
-  template<typename T,
-           typename = typename std::enable_if<std::is_integral<T>::value || std::is_enum<T>::value>::type>
+  template<
+    typename T,
+    typename = typename std::enable_if<std::is_integral<T>::value || std::is_enum<T>::value>::type>
   operator T() const
   {
     return T(_value);
@@ -309,8 +302,7 @@ class TfEnum : boost::totally_ordered<TfEnum>
   /// containing "SPRING", "SUMMER", "AUTUMN", and "WINTER".
   ///
   /// If there are no such names registered, an empty vector is returned.
-  template<class T>
-  static std::vector<std::string> GetAllNames()
+  template<class T> static std::vector<std::string> GetAllNames()
   {
     return GetAllNames(typeid(T));
   }
@@ -328,8 +320,7 @@ class TfEnum : boost::totally_ordered<TfEnum>
   /// If there is no such name registered, this returns -1. Since -1 can
   /// sometimes be a valid value, the \p foundIt flag pointer, if not \c
   /// NULL, is set to \c true if the name was found and \c false otherwise.
-  template<class T>
-  static T GetValueFromName(const std::string &name, bool *foundIt = NULL)
+  template<class T> static T GetValueFromName(const std::string &name, bool *foundIt = NULL)
   {
     TfEnum e = GetValueFromName(typeid(T), name, foundIt);
     return T(e.GetValueAsInt());
@@ -339,7 +330,9 @@ class TfEnum : boost::totally_ordered<TfEnum>
   ///
   /// This is a template-independent version of \c GetValueFromName().
   TF_API
-  static TfEnum GetValueFromName(const std::type_info &ti, const std::string &name, bool *foundIt = NULL);
+  static TfEnum GetValueFromName(const std::type_info &ti,
+                                 const std::string &name,
+                                 bool *foundIt = NULL);
 
   /// Returns the enumerated value for a fully-qualified name.
   ///
@@ -398,7 +391,9 @@ class TfEnum : boost::totally_ordered<TfEnum>
   /// should NOT be called directly. Instead, call AddName(), which does
   /// exactly the same thing.
   TF_API
-  static void _AddName(TfEnum val, const std::string &valName, const std::string &displayName = "");
+  static void _AddName(TfEnum val,
+                       const std::string &valName,
+                       const std::string &displayName = "");
 
   /// Associates a name with an enumerated value.
   /// \see _AddName().
@@ -407,8 +402,7 @@ class TfEnum : boost::totally_ordered<TfEnum>
     _AddName(val, valName, displayName);
   }
 
-  template<typename T>
-  static TfEnum IntegralEnum(T value)
+  template<typename T> static TfEnum IntegralEnum(T value)
   {
     TfEnum e;
     e._typeInfo = &typeid(T);
@@ -417,17 +411,12 @@ class TfEnum : boost::totally_ordered<TfEnum>
   }
 
  private:
+
   // Internal constructor for int values.
-  explicit TfEnum(int value)
-    : _typeInfo(&typeid(int)),
-      _value(value)
-  {}
+  explicit TfEnum(int value) : _typeInfo(&typeid(int)), _value(value) {}
 
   // Internal constructor for size_t values.
-  explicit TfEnum(size_t value)
-    : _typeInfo(&typeid(size_t)),
-      _value(static_cast<int>(value))
-  {}
+  explicit TfEnum(size_t value) : _typeInfo(&typeid(size_t)), _value(static_cast<int>(value)) {}
 
   TF_API
   void _FatalGetValueError(std::type_info const &typeInfo) const;
@@ -475,10 +464,12 @@ TF_API std::ostream &operator<<(std::ostream &out, const TfEnum &e);
 ///
 /// \ingroup group_tf_RuntimeTyping
 /// \hideinitializer
-#define TF_ADD_USER_INTERFACE_ENUM(VAL, IDENT, ICO, NAME, DESC) TfEnum::_AddName(VAL, IDENT, ICO, NAME, DESC)
+#define TF_ADD_USER_INTERFACE_ENUM(VAL, IDENT, ICO, NAME, DESC) \
+  TfEnum::_AddName(VAL, IDENT, ICO, NAME, DESC)
 
 #define TF_ADD_ENUM_NAME(VAL, ...) \
-  TfEnum::_AddName(VAL, TF_PP_STRINGIZE(VAL) BOOST_PP_COMMA_IF(TF_NUM_ARGS(__VA_ARGS__)) __VA_ARGS__)
+  TfEnum::_AddName(VAL,            \
+                   TF_PP_STRINGIZE(VAL) BOOST_PP_COMMA_IF(TF_NUM_ARGS(__VA_ARGS__)) __VA_ARGS__)
 
 WABI_NAMESPACE_END
 

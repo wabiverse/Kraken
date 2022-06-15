@@ -53,6 +53,7 @@ TF_DECLARE_WEAK_PTRS(GlfBindingMap);
 class GlfUniformBlock : public TfRefBase, public TfWeakBase
 {
  public:
+
   /// Returns a new instance.
   GLF_API
   static GlfUniformBlockRefPtr New(char const *label = nullptr);
@@ -70,10 +71,12 @@ class GlfUniformBlock : public TfRefBase, public TfWeakBase
   void Update(const void *data, int size);
 
  protected:
+
   GLF_API
   GlfUniformBlock(char const *label);
 
  private:
+
   GLuint _buffer;
   int _size;
   std::string _debugLabel;

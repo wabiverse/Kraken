@@ -49,6 +49,7 @@ class HgiMetal;
 class HgiMetalShaderFunction final : public HgiShaderFunction
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalShaderFunction() override;
 
@@ -69,17 +70,20 @@ class HgiMetalShaderFunction final : public HgiShaderFunction
   id<MTLFunction> GetShaderId() const;
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API
   HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionDesc const &desc);
 
  private:
+
   HgiMetalShaderFunction() = delete;
   HgiMetalShaderFunction &operator=(const HgiMetalShaderFunction &) = delete;
   HgiMetalShaderFunction(const HgiMetalShaderFunction &) = delete;
 
  private:
+
   std::string _errors;
 
   id<MTLFunction> _shaderId;

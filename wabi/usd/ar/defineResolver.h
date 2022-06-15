@@ -66,24 +66,25 @@ WABI_NAMESPACE_BEGIN
 class Ar_ResolverFactoryBase : public TfType::FactoryBase
 {
  public:
+
   AR_API
   virtual ArResolver *New() const = 0;
 };
 
-template<class T>
-class Ar_ResolverFactory : public Ar_ResolverFactoryBase
+template<class T> class Ar_ResolverFactory : public Ar_ResolverFactoryBase
 {
  public:
+
   virtual ArResolver *New() const override
   {
     return new T;
   }
 };
 
-template<class Resolver, class... Bases>
-void Ar_DefineResolver()
+template<class Resolver, class... Bases> void Ar_DefineResolver()
 {
-  TfType::Define<Resolver, TfType::Bases<Bases...>>().template SetFactory<Ar_ResolverFactory<Resolver>>();
+  TfType::Define<Resolver, TfType::Bases<Bases...>>()
+    .template SetFactory<Ar_ResolverFactory<Resolver>>();
 }
 
 WABI_NAMESPACE_END

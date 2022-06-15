@@ -63,6 +63,7 @@ WABI_NAMESPACE_BEGIN
 class Sdf_ParserValueContext
 {
  public:
+
   typedef Sdf_ParserHelpers::Value Value;
   typedef std::function<void(const std::string &)> ErrorReporter;
 
@@ -135,6 +136,7 @@ class Sdf_ParserValueContext
   void SetRecordedString(const std::string &text);
 
  private:
+
   bool _needComma, _isRecordingString;
   std::string _recordedString;
 };

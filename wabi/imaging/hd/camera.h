@@ -1,47 +1,39 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HD_CAMERA_H
 #define WABI_IMAGING_HD_CAMERA_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/sprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/sprim.h"
 
 #include "wabi/imaging/cameraUtil/conformWindow.h"
 
+#include "wabi/base/tf/staticTokens.h"
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/range1f.h"
-#include "wabi/base/tf/staticTokens.h"
-#include "wabi/usd/sdf/path.h"
 
 #include <vector>
 
@@ -64,10 +56,7 @@ WABI_NAMESPACE_BEGIN
     (shutterOpen)(shutterClose)(exposure)                                                                       \
                                                                                                                 \
     /* how to match window with different aspect */                                                             \
-    (windowPolicy)                                                                                              \
-                                                                                                                \
-    /* OpenGL-style matrices, deprecated */                                                                     \
-    (worldToViewMatrix)(projectionMatrix)
+    (windowPolicy)
 
 TF_DECLARE_PUBLIC_TOKENS(HdCameraTokens, HD_API, HD_CAMERA_TOKENS);
 
@@ -81,6 +70,7 @@ TF_DECLARE_PUBLIC_TOKENS(HdCameraTokens, HD_API, HD_CAMERA_TOKENS);
 class HdCamera : public HdSprim
 {
  public:
+
   using ClipPlanesVector = std::vector<GfVec4d>;
 
   HD_API
@@ -93,12 +83,10 @@ class HdCamera : public HdSprim
   {
     Clean = 0,
     DirtyTransform = 1 << 0,
-    DirtyViewMatrix = DirtyTransform,  // deprecated
-    DirtyProjMatrix = 1 << 1,          // deprecated
-    DirtyWindowPolicy = 1 << 2,
-    DirtyClipPlanes = 1 << 3,
-    DirtyParams = 1 << 4,
-    AllDirty = (DirtyTransform | DirtyProjMatrix | DirtyWindowPolicy | DirtyClipPlanes | DirtyParams)
+    DirtyParams = 1 << 1,
+    DirtyClipPlanes = 1 << 2,
+    DirtyWindowPolicy = 1 << 3,
+    AllDirty = (DirtyTransform | DirtyParams | DirtyClipPlanes | DirtyWindowPolicy)
   };
 
   enum Projection
@@ -113,7 +101,10 @@ class HdCamera : public HdSprim
 
   /// Synchronizes state from the delegate to this object.
   HD_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
+
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.
@@ -214,25 +205,16 @@ class HdCamera : public HdSprim
   }
 
   // ---------------------------------------------------------------------- //
-  /// Legacy camera parameters accessor API
+  /// Convenience API for rasterizers
   // ---------------------------------------------------------------------- //
 
-  /// Returns the matrix transformation from world to camera space.
-  /// \deprecated Use GetTransform instead
+  /// Computes the projection matrix for a camera from its physical
+  /// properties.
   HD_API
-  GfMatrix4d GetViewMatrix() const;
-
-  /// Returns the matrix transformation from camera to world space.
-  /// \deprecated Use GetTransform and invert instead
-  HD_API
-  GfMatrix4d GetViewInverseMatrix() const;
-
-  /// Returns the projection matrix for the camera.
-  /// \deprecated Compute from above physically based attributes
-  HD_API
-  GfMatrix4d GetProjectionMatrix() const;
+  GfMatrix4d ComputeProjectionMatrix() const;
 
  protected:
+
   // frustum
   GfMatrix4d _transform;
   Projection _projection;
@@ -256,11 +238,6 @@ class HdCamera : public HdSprim
   // Camera's opinion how it display in a window with
   // a different aspect ratio
   CameraUtilConformWindowPolicy _windowPolicy;
-
-  // OpenGL-style matrices
-  GfMatrix4d _worldToViewMatrix;
-  GfMatrix4d _worldToViewInverseMatrix;
-  GfMatrix4d _projectionMatrix;
 };
 
 WABI_NAMESPACE_END

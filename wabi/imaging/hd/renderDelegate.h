@@ -24,13 +24,13 @@
 #ifndef WABI_IMAGING_HD_RENDER_DELEGATE_H
 #define WABI_IMAGING_HD_RENDER_DELEGATE_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/base/vt/dictionary.h"
-#include "wabi/imaging/hd/aov.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/aov.h"
 #include "wabi/imaging/hd/changeTracker.h"
 #include "wabi/imaging/hd/command.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/dictionary.h"
+#include "wabi/base/tf/token.h"
 
 #include <memory>
 
@@ -59,12 +59,13 @@ using HdDriverVector = std::vector<HdDriver *>;
 class HdRenderParam
 {
  public:
-  HdRenderParam()
-  {}
+
+  HdRenderParam() {}
   HD_API
   virtual ~HdRenderParam();
 
  private:
+
   // Hydra will not attempt to copy the class.
   HdRenderParam(const HdRenderParam &) = delete;
   HdRenderParam &operator=(const HdRenderParam &) = delete;
@@ -93,6 +94,7 @@ typedef std::vector<HdRenderSettingDescriptor> HdRenderSettingDescriptorList;
 class HdRenderDelegate
 {
  public:
+
   HD_API
   virtual ~HdRenderDelegate();
 
@@ -115,6 +117,7 @@ class HdRenderDelegate
   /// delegate.
   ///
   virtual const TfTokenVector &GetSupportedSprimTypes() const = 0;
+
 
   ///
   /// Returns a list of typeId's of all supported Bprims by this render
@@ -159,8 +162,7 @@ class HdRenderDelegate
   /// Get the current value for a render setting, taking a desired type
   /// and a fallback value in case of type mismatch.
   ///
-  template<typename T>
-  T GetRenderSetting(TfToken const &key, T const &defValue) const
+  template<typename T> T GetRenderSetting(TfToken const &key, T const &defValue) const
   {
     return GetRenderSetting(key).Cast<T>().GetWithDefault(defValue);
   }
@@ -197,6 +199,13 @@ class HdRenderDelegate
   virtual bool IsPauseSupported() const;
 
   ///
+  /// Query the delegate's pause state. Returns true if the background
+  /// rendering threads are currently paused.
+  ///
+  HD_API
+  virtual bool IsPaused() const;
+
+  ///
   /// Pause all of this delegate's background rendering threads. Default
   /// implementation does nothing.
   ///
@@ -222,13 +231,21 @@ class HdRenderDelegate
   virtual bool IsStopSupported() const;
 
   ///
-  /// Stop all of this delegate's background rendering threads. Default
-  /// implementation does nothing.
-  ///
-  /// Returns \c true if successful.
+  /// Query the delegate's stop state. Returns true if the background
+  /// rendering threads are not currently active.
   ///
   HD_API
-  virtual bool Stop();
+  virtual bool IsStopped() const;
+
+  ///
+  /// Stop all of this delegate's background rendering threads; if blocking
+  /// is true, the function waits until they exit.
+  /// Default implementation does nothing.
+  ///
+  /// Returns \c true if successfully stopped.
+  ///
+  HD_API
+  virtual bool Stop(bool blocking = true);
 
   ///
   /// Restart all of this delegate's background rendering threads previously
@@ -286,6 +303,7 @@ class HdRenderDelegate
   ///
   ////////////////////////////////////////////////////////////////////////////
 
+
   ///
   /// Request to Allocate and Construct a new Rprim.
   /// \param typeId the type identifier of the prim to allocate
@@ -330,6 +348,7 @@ class HdRenderDelegate
   /// \return A pointer to the new prim or nullptr on error.
   ///
   virtual HdBprim *CreateBprim(TfToken const &typeId, SdfPath const &bprimId) = 0;
+
 
   ///
   /// Request to Allocate and Construct a Bprim to use as a standin, if there
@@ -379,6 +398,7 @@ class HdRenderDelegate
   ///
   HD_API
   virtual TfToken GetMaterialBindingPurpose() const;
+
 
   /// \deprecated use GetMaterialRenderContexts()
   HD_API
@@ -446,7 +466,16 @@ class HdRenderDelegate
   HD_API
   virtual bool InvokeCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs());
 
+  ///
+  /// Populated when instantiated via the HdRendererPluginRegistry
+  HD_API
+  const std::string &GetRendererDisplayName()
+  {
+    return _displayName;
+  }
+
  protected:
+
   /// This class must be derived from.
   HD_API
   HdRenderDelegate();
@@ -466,6 +495,19 @@ class HdRenderDelegate
   /// Render settings state.
   HdRenderSettingsMap _settingsMap;
   unsigned int _settingsVersion;
+
+ private:
+
+  friend class HdRendererPluginRegistry;
+  ///
+  /// Populated when instantiated via the HdRendererPluginRegistry and
+  /// currently used to associate a renderer delegate instance with related
+  /// code and resources.
+  void _SetRendererDisplayName(const std::string &displayName)
+  {
+    _displayName = displayName;
+  }
+  std::string _displayName;
 };
 
 WABI_NAMESPACE_END

@@ -26,6 +26,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 HdResourceRegistry::HdResourceRegistry() {}
 
 HdResourceRegistry::~HdResourceRegistry() {}
@@ -66,5 +67,6 @@ VtDictionary HdResourceRegistry::GetResourceAllocation() const
 void HdResourceRegistry::_Commit() {}
 
 void HdResourceRegistry::_GarbageCollect() {}
+
 
 WABI_NAMESPACE_END

@@ -41,10 +41,10 @@ class TfToken;
 ///
 /// Interface for private implementations used by SdfMapEditProxy.
 ///
-template<class MapType>
-class Sdf_MapEditor
+template<class MapType> class Sdf_MapEditor
 {
  public:
+
   typedef typename MapType::key_type key_type;
   typedef typename MapType::mapped_type mapped_type;
   typedef typename MapType::value_type value_type;
@@ -85,11 +85,13 @@ class Sdf_MapEditor
   /// @}
 
  protected:
+
   Sdf_MapEditor();
 };
 
 template<class T>
-boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner, const TfToken &field);
+boost::shared_ptr<Sdf_MapEditor<T>> Sdf_CreateMapEditor(const SdfSpecHandle &owner,
+                                                        const TfToken &field);
 
 WABI_NAMESPACE_END
 

@@ -63,6 +63,7 @@ using HdPhDrawTargetPtrVector = std::vector<class HdPhDrawTarget *>;
 class HdPhDrawTarget : public HdSprim
 {
  public:
+
   HDPH_API
   HdPhDrawTarget(SdfPath const &id);
   HDPH_API
@@ -88,7 +89,9 @@ class HdPhDrawTarget : public HdSprim
 
   /// Synchronizes state from the delegate to this object.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.
@@ -129,6 +132,7 @@ class HdPhDrawTarget : public HdSprim
   }
 
  private:
+
   bool _enabled;
   GfVec2i _resolution;
   HdRprimCollection _collection;

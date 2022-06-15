@@ -24,21 +24,20 @@
 #ifndef WABI_IMAGING_HD_TIME_SAMPLE_ARRAY_H
 #define WABI_IMAGING_HD_TIME_SAMPLE_ARRAY_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/base/vt/array.h"
+#include "wabi/base/vt/value.h"
 #include "wabi/base/gf/math.h"
 #include "wabi/base/gf/quatf.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/smallVector.h"
-#include "wabi/base/vt/array.h"
-#include "wabi/base/vt/value.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
 /// Resample two neighboring samples.
-template<typename T>
-inline T HdResampleNeighbors(float alpha, const T &v0, const T &v1)
+template<typename T> inline T HdResampleNeighbors(float alpha, const T &v0, const T &v1)
 {
   return GfLerp(alpha, v0, v1);
 }
@@ -55,8 +54,7 @@ template<typename T>
 inline VtArray<T> HdResampleNeighbors(float alpha, const VtArray<T> &v0, const VtArray<T> &v1)
 {
   VtArray<T> r(v0.size());
-  for (size_t i = 0; i < r.size(); ++i)
-  {
+  for (size_t i = 0; i < r.size(); ++i) {
     r[i] = HdResampleNeighbors(alpha, v0[i], v1[i]);
   }
   return r;
@@ -73,35 +71,28 @@ VtValue HdResampleNeighbors(float alpha, const VtValue &v0, const VtValue &v1);
 template<typename T>
 T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T *vs)
 {
-  if (numSamples == 0)
-  {
+  if (numSamples == 0) {
     TF_CODING_ERROR("HdResampleRawTimeSamples: Zero samples provided");
     return T();
   }
 
   size_t i = 0;
-  for (; i < numSamples; ++i)
-  {
-    if (us[i] == u)
-    {
+  for (; i < numSamples; ++i) {
+    if (us[i] == u) {
       // Fast path for exact parameter match.
       return vs[i];
     }
-    if (us[i] > u)
-    {
+    if (us[i] > u) {
       break;
     }
   }
-  if (i == 0)
-  {
+  if (i == 0) {
     // u is before the first sample.
     return vs[0];
-  } else if (i == numSamples)
-  {
+  } else if (i == numSamples) {
     // u is after the last sample.
     return vs[numSamples - 1];
-  } else if (us[i] == us[i - 1])
-  {
+  } else if (us[i] == us[i - 1]) {
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
     TF_WARN(
@@ -109,10 +100,9 @@ T HdResampleRawTimeSamples(float u, size_t numSamples, const float *us, const T 
       "using first sample",
       us[i]);
     return vs[i - 1];
-  } else
-  {
+  } else {
     // Linear blend of neighboring samples.
-    float alpha = (us[i] - u) / (us[i] - us[i - 1]);
+    float alpha = (u - us[i - 1]) / (us[i] - us[i - 1]);
     return HdResampleNeighbors(alpha, vs[i - 1], vs[i]);
   }
 }
@@ -128,35 +118,28 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
                                                   const T *vs,
                                                   const VtIntArray *is)
 {
-  if (numSamples == 0)
-  {
+  if (numSamples == 0) {
     TF_CODING_ERROR("HdResampleRawTimeSamples: Zero samples provided");
     return std::pair<T, VtIntArray>(T(), VtIntArray(0));
   }
 
   size_t i = 0;
-  for (; i < numSamples; ++i)
-  {
-    if (us[i] == u)
-    {
+  for (; i < numSamples; ++i) {
+    if (us[i] == u) {
       // Fast path for exact parameter match.
       return std::pair<T, VtIntArray>(vs[i], is[i]);
     }
-    if (us[i] > u)
-    {
+    if (us[i] > u) {
       break;
     }
   }
-  if (i == 0)
-  {
+  if (i == 0) {
     // u is before the first sample.
     return std::pair<T, VtIntArray>(vs[0], is[0]);
-  } else if (i == numSamples)
-  {
+  } else if (i == numSamples) {
     // u is after the last sample.
     return std::pair<T, VtIntArray>(vs[numSamples - 1], is[numSamples - 1]);
-  } else if (us[i] == us[i - 1])
-  {
+  } else if (us[i] == us[i - 1]) {
     // Neighboring samples have identical parameter.
     // Arbitrarily choose a sample.
     TF_WARN(
@@ -164,8 +147,7 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
       "using first sample",
       us[i]);
     return std::pair<T, VtIntArray>(vs[i - 1], is[i - 1]);
-  } else
-  {
+  } else {
     // Linear blend of neighboring samples for values
     // Hold earlier value for indices
     float alpha = (us[i] - u) / (us[i] - us[i - 1]);
@@ -178,8 +160,7 @@ std::pair<T, VtIntArray> HdResampleRawTimeSamples(float u,
 /// This type has static capacity but dynamic size, providing
 /// a limited ability to handle variable sampling without requiring
 /// heap allocation.
-template<typename TYPE, unsigned int CAPACITY>
-struct HdTimeSampleArray
+template<typename TYPE, unsigned int CAPACITY> struct HdTimeSampleArray
 {
   HdTimeSampleArray()
   {
@@ -219,26 +200,23 @@ struct HdTimeSampleArray
   }
 
   /// Unbox an HdTimeSampleArray holding boxed VtValue<VtArray<T>>
-  /// samples into an array holding VtArray<T> samples.
-  ///
-  /// Similar to VtValue::Get(), this will issue a coding error if the
-  /// VtValue is not holding the expected type.
-  ///
-  /// \see VtValue::Get()
-  void UnboxFrom(HdTimeSampleArray<VtValue, CAPACITY> const &box)
+  /// samples into an array holding VtArray<T> samples. If any of the values
+  /// contain the wrong type, their data is discarded. The function returns
+  /// true if all samples have the correct type.
+  bool UnboxFrom(HdTimeSampleArray<VtValue, CAPACITY> const &box)
   {
+    bool ret = true;
     Resize(box.count);
     times = box.times;
-    for (size_t i = 0; i < box.count; ++i)
-    {
-      if (box.values[i].GetArraySize() > 0)
-      {
+    for (size_t i = 0; i < box.count; ++i) {
+      if (box.values[i].template IsHolding<TYPE>() && box.values[i].GetArraySize() > 0) {
         values[i] = box.values[i].template Get<TYPE>();
-      } else
-      {
+      } else {
         values[i] = TYPE();
+        ret = false;
       }
     }
+    return ret;
   }
 
   size_t count;
@@ -251,8 +229,7 @@ struct HdTimeSampleArray
 template<typename TYPE, unsigned int CAPACITY>
 struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY>
 {
-  HdIndexedTimeSampleArray()
-    : HdTimeSampleArray<TYPE, CAPACITY>()
+  HdIndexedTimeSampleArray() : HdTimeSampleArray<TYPE, CAPACITY>()
   {
     indices.resize(CAPACITY);
   }
@@ -283,31 +260,32 @@ struct HdIndexedTimeSampleArray : public HdTimeSampleArray<TYPE, CAPACITY>
   /// on this HdIndexedTimeSampleArray.
   std::pair<TYPE, VtIntArray> ResampleIndexed(float u) const
   {
-    return HdResampleRawTimeSamples(u, this->count, this->times.data(), this->values.data(), indices.data());
+    return HdResampleRawTimeSamples(u,
+                                    this->count,
+                                    this->times.data(),
+                                    this->values.data(),
+                                    indices.data());
   }
 
   /// Unbox an HdIndexedTimeSampleArray holding boxed VtValue<VtArray<T>>
-  /// samples into an array holding VtArray<T> samples.
-  ///
-  /// Similar to VtValue::Get(), this will issue a coding error if the
-  /// VtValue is not holding the expected type.
-  ///
-  /// \see VtValue::Get()
-  void UnboxFrom(HdIndexedTimeSampleArray<VtValue, CAPACITY> const &box)
+  /// samples into an array holding VtArray<T> samples. If any of the values
+  /// contain the wrong type, their data is discarded. The function returns
+  /// true if all samples have the correct type.
+  bool UnboxFrom(HdIndexedTimeSampleArray<VtValue, CAPACITY> const &box)
   {
+    bool ret = true;
     Resize(box.count);
     this->times = box.times;
     indices = box.indices;
-    for (size_t i = 0; i < box.count; ++i)
-    {
-      if (box.values[i].GetArraySize() > 0)
-      {
+    for (size_t i = 0; i < box.count; ++i) {
+      if (box.values[i].template IsHolding<TYPE>() && box.values[i].GetArraySize() > 0) {
         this->values[i] = box.values[i].template Get<TYPE>();
-      } else
-      {
+      } else {
         this->values[i] = TYPE();
+        ret = false;
       }
     }
+    return ret;
   }
 
   TfSmallVector<VtIntArray, CAPACITY> indices;

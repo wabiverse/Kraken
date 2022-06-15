@@ -62,6 +62,7 @@ namespace rif
   class Filter
   {
    public:
+
     static std::unique_ptr<Filter> Create(FilterType type,
                                           Context *rifContext,
                                           std::uint32_t width,
@@ -72,7 +73,9 @@ namespace rif
 
     void SetInput(FilterInputType inputType, Filter *filter);
     void SetInput(FilterInputType inputType, rif_image rifImage, float sigma = 1.0f);
-    void SetInput(FilterInputType inputType, HdRprApiFramebuffer *rprFrameBuffer, float sigma = 1.0f);
+    void SetInput(FilterInputType inputType,
+                  HdRprApiFramebuffer *rprFrameBuffer,
+                  float sigma = 1.0f);
     void SetInput(const char *name, HdRprApiFramebuffer *rprFrameBuffer);
     void SetInput(const char *name, rif_image rifImage);
     void SetOutput(rif_image rifImage);
@@ -89,9 +92,8 @@ namespace rif
     void Resolve();
 
    protected:
-    Filter(Context *rifContext)
-      : m_rifContext(rifContext)
-    {}
+
+    Filter(Context *rifContext) : m_rifContext(rifContext) {}
 
     void DetachFilter();
     virtual void AttachFilter(rif_image inputImage);
@@ -99,6 +101,7 @@ namespace rif
     void ApplyParameters();
 
    protected:
+
     Context *m_rifContext;
     rif_image_filter m_rifFilter = nullptr;
 
@@ -115,11 +118,7 @@ namespace rif
 
       std::unique_ptr<rif::Image> retainedImage;
 
-      InputTraits()
-        : rifImage(nullptr),
-          rprFrameBuffer(nullptr),
-          sigma(0.0f)
-      {}
+      InputTraits() : rifImage(nullptr), rprFrameBuffer(nullptr), sigma(0.0f) {}
       InputTraits(rif_image rifImage, float sigma)
         : rifImage(rifImage),
           rprFrameBuffer(nullptr),
@@ -134,7 +133,9 @@ namespace rif
       }
     };
 
-    std::unordered_map<FilterInputType, InputTraits, std::hash<std::underlying_type<FilterInputType>::type>>
+    std::unordered_map<FilterInputType,
+                       InputTraits,
+                       std::hash<std::underlying_type<FilterInputType>::type>>
       m_inputs;
     std::map<std::string, InputTraits> m_namedInputs;
     std::unordered_map<std::string, FilterParam> m_params;

@@ -92,7 +92,8 @@ enum HdPhComputeQueue
   HdPhComputeQueueCount
 };
 
-using HdPhComputationSharedPtrVector = std::vector<std::pair<HdComputationSharedPtr, HdPhComputeQueue>>;
+using HdPhComputationSharedPtrVector =
+  std::vector<std::pair<HdComputationSharedPtr, HdPhComputeQueue>>;
 
 /// \class HdPhResourceRegistry
 ///
@@ -101,6 +102,7 @@ using HdPhComputationSharedPtrVector = std::vector<std::pair<HdComputationShared
 class HdPhResourceRegistry final : public HdResourceRegistry
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdPhResourceRegistry");
 
   HDPH_API
@@ -191,9 +193,10 @@ class HdPhResourceRegistry final : public HdResourceRegistry
   /// specs using the chosen aggregation strategy.
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr AllocateNonUniformBufferArrayRange(TfToken const &role,
-                                                                 HdBufferSpecVector const &bufferSpecs,
-                                                                 HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr AllocateNonUniformBufferArrayRange(
+    TfToken const &role,
+    HdBufferSpecVector const &bufferSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr AllocateNonUniformImmutableBufferArrayRange(
@@ -202,14 +205,16 @@ class HdPhResourceRegistry final : public HdResourceRegistry
     HdBufferArrayUsageHint usageHint);
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr AllocateUniformBufferArrayRange(TfToken const &role,
-                                                              HdBufferSpecVector const &bufferSpecs,
-                                                              HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr AllocateUniformBufferArrayRange(
+    TfToken const &role,
+    HdBufferSpecVector const &bufferSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr AllocateShaderStorageBufferArrayRange(TfToken const &role,
-                                                                    HdBufferSpecVector const &bufferSpecs,
-                                                                    HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr AllocateShaderStorageBufferArrayRange(
+    TfToken const &role,
+    HdBufferSpecVector const &bufferSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr AllocateSingleBufferArrayRange(TfToken const &role,
@@ -233,11 +238,12 @@ class HdPhResourceRegistry final : public HdResourceRegistry
   /// Otherwise, just return the same range.
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr UpdateNonUniformBufferArrayRange(TfToken const &role,
-                                                               HdBufferArrayRangeSharedPtr const &curRange,
-                                                               HdBufferSpecVector const &updatedOrAddedSpecs,
-                                                               HdBufferSpecVector const &removedSpecs,
-                                                               HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr UpdateNonUniformBufferArrayRange(
+    TfToken const &role,
+    HdBufferArrayRangeSharedPtr const &curRange,
+    HdBufferSpecVector const &updatedOrAddedSpecs,
+    HdBufferSpecVector const &removedSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr UpdateNonUniformImmutableBufferArrayRange(
@@ -248,11 +254,12 @@ class HdPhResourceRegistry final : public HdResourceRegistry
     HdBufferArrayUsageHint usageHint);
 
   HDPH_API
-  HdBufferArrayRangeSharedPtr UpdateUniformBufferArrayRange(TfToken const &role,
-                                                            HdBufferArrayRangeSharedPtr const &curRange,
-                                                            HdBufferSpecVector const &updatedOrAddedSpecs,
-                                                            HdBufferSpecVector const &removedSpecs,
-                                                            HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr UpdateUniformBufferArrayRange(
+    TfToken const &role,
+    HdBufferArrayRangeSharedPtr const &curRange,
+    HdBufferSpecVector const &updatedOrAddedSpecs,
+    HdBufferSpecVector const &removedSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   HDPH_API
   HdBufferArrayRangeSharedPtr UpdateShaderStorageBufferArrayRange(
@@ -268,7 +275,8 @@ class HdPhResourceRegistry final : public HdResourceRegistry
 
   /// Append source data for given range to be committed later.
   HDPH_API
-  void AddSources(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtrVector &&sources);
+  void AddSources(HdBufferArrayRangeSharedPtr const &range,
+                  HdBufferSourceSharedPtrVector &&sources);
 
   /// Append a source data for given range to be committed later.
   HDPH_API
@@ -296,7 +304,9 @@ class HdPhResourceRegistry final : public HdResourceRegistry
   /// Register a buffer allocated with \a count * \a commandNumUints *
   /// sizeof(uint32_t) to be used as an indirect dispatch buffer.
   HDPH_API
-  HdPhDispatchBufferSharedPtr RegisterDispatchBuffer(TfToken const &role, int count, int commandNumUints);
+  HdPhDispatchBufferSharedPtr RegisterDispatchBuffer(TfToken const &role,
+                                                     int count,
+                                                     int commandNumUints);
 
   /// Register a misc buffer resource.
   /// Usually buffers are part of a buffer array (buffer aggregation) and are
@@ -331,7 +341,8 @@ class HdPhResourceRegistry final : public HdResourceRegistry
 
   /// Topology instancing
   HDPH_API
-  HdInstance<HdPh_MeshTopologySharedPtr> RegisterMeshTopology(HdInstance<HdPh_MeshTopologySharedPtr>::ID id);
+  HdInstance<HdPh_MeshTopologySharedPtr> RegisterMeshTopology(
+    HdInstance<HdPh_MeshTopologySharedPtr>::ID id);
 
   HDPH_API
   HdInstance<HdPh_BasisCurvesTopologySharedPtr> RegisterBasisCurvesTopology(
@@ -378,7 +389,8 @@ class HdPhResourceRegistry final : public HdResourceRegistry
 
   /// Register a GLSL program into the program registry.
   HDPH_API
-  HdInstance<HdPhGLSLProgramSharedPtr> RegisterGLSLProgram(HdInstance<HdPhGLSLProgramSharedPtr>::ID id);
+  HdInstance<HdPhGLSLProgramSharedPtr> RegisterGLSLProgram(
+    HdInstance<HdPhGLSLProgramSharedPtr>::ID id);
 
   /// Register a GLSLFX file.
   HDPH_API
@@ -432,6 +444,7 @@ class HdPhResourceRegistry final : public HdResourceRegistry
   void SubmitComputeWork(HgiSubmitWaitType wait = HgiSubmitWaitTypeNoWait);
 
  public:
+
   //
   // Unit test API
   //
@@ -478,10 +491,12 @@ class HdPhResourceRegistry final : public HdResourceRegistry
   friend std::ostream &operator<<(std::ostream &out, const HdPhResourceRegistry &self);
 
  protected:
+
   void _Commit() override;
   void _GarbageCollect() override;
 
  private:
+
   void _CommitTextures();
   // Wrapper function for BAR allocation
   HdBufferArrayRangeSharedPtr _AllocateBufferArrayRange(HdAggregationStrategy *strategy,
@@ -491,13 +506,14 @@ class HdPhResourceRegistry final : public HdResourceRegistry
                                                         HdBufferArrayUsageHint usageHint);
 
   /// Wrapper function for BAR allocation/reallocation-migration.
-  HdBufferArrayRangeSharedPtr _UpdateBufferArrayRange(HdAggregationStrategy *strategy,
-                                                      HdBufferArrayRegistry &bufferArrayRegistry,
-                                                      TfToken const &role,
-                                                      HdBufferArrayRangeSharedPtr const &curRange,
-                                                      HdBufferSpecVector const &updatedOrAddedSpecs,
-                                                      HdBufferSpecVector const &removedSpecs,
-                                                      HdBufferArrayUsageHint usageHint);
+  HdBufferArrayRangeSharedPtr _UpdateBufferArrayRange(
+    HdAggregationStrategy *strategy,
+    HdBufferArrayRegistry &bufferArrayRegistry,
+    TfToken const &role,
+    HdBufferArrayRangeSharedPtr const &curRange,
+    HdBufferSpecVector const &updatedOrAddedSpecs,
+    HdBufferSpecVector const &removedSpecs,
+    HdBufferArrayUsageHint usageHint);
 
   // Tally resources by key into the given dictionary. Any additions should
   // be cumulative with the existing key values.
@@ -507,17 +523,15 @@ class HdPhResourceRegistry final : public HdResourceRegistry
   // interface later.
   struct _PendingSource
   {
-    _PendingSource(HdBufferArrayRangeSharedPtr const &range)
-      : range(range),
-        sources()
-    {}
+    _PendingSource(HdBufferArrayRangeSharedPtr const &range) : range(range), sources() {}
 
     _PendingSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtr const &source)
       : range(range),
         sources(1, source)
     {}
 
-    _PendingSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtrVector &&sources)
+    _PendingSource(HdBufferArrayRangeSharedPtr const &range,
+                   HdBufferSourceSharedPtrVector &&sources)
       : range(range),
         sources(std::move(sources))
     {}
@@ -534,7 +548,8 @@ class HdPhResourceRegistry final : public HdResourceRegistry
 
   struct _PendingComputation
   {
-    _PendingComputation(HdBufferArrayRangeSharedPtr const &range, HdComputationSharedPtr const &computation)
+    _PendingComputation(HdBufferArrayRangeSharedPtr const &range,
+                        HdComputationSharedPtr const &computation)
       : range(range),
         computation(computation)
     {}
@@ -579,8 +594,9 @@ class HdPhResourceRegistry final : public HdResourceRegistry
 
   // Register topology index buffers.
   typedef HdInstanceRegistry<HdBufferArrayRangeSharedPtr> _TopologyIndexRangeInstanceRegistry;
-  typedef tbb::concurrent_unordered_map<TfToken, _TopologyIndexRangeInstanceRegistry, TfToken::HashFunctor>
-    _TopologyIndexRangeInstanceRegMap;
+  typedef tbb::
+    concurrent_unordered_map<TfToken, _TopologyIndexRangeInstanceRegistry, TfToken::HashFunctor>
+      _TopologyIndexRangeInstanceRegMap;
 
   _TopologyIndexRangeInstanceRegMap _meshTopologyIndexRangeRegistry;
   _TopologyIndexRangeInstanceRegMap _basisCurvesTopologyIndexRangeRegistry;

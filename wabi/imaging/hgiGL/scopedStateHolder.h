@@ -52,6 +52,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGL_ScopedStateHolder final
 {
  public:
+
   HGIGL_API
   HgiGL_ScopedStateHolder();
 
@@ -59,6 +60,7 @@ class HgiGL_ScopedStateHolder final
   ~HgiGL_ScopedStateHolder();
 
  private:
+
   HgiGL_ScopedStateHolder &operator=(const HgiGL_ScopedStateHolder &) = delete;
   HgiGL_ScopedStateHolder(const HgiGL_ScopedStateHolder &) = delete;
 

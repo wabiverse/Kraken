@@ -49,6 +49,7 @@ class HgiVulkanDevice;
 class HgiVulkanTexture final : public HgiTexture
 {
  public:
+
   static const uint32_t NO_PENDING_WRITES = 0;
 
   HGIVULKAN_API
@@ -129,6 +130,7 @@ class HgiVulkanTexture final : public HgiTexture
   static VkAccessFlags GetDefaultAccessFlags(HgiTextureUsage usage);
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
@@ -139,6 +141,7 @@ class HgiVulkanTexture final : public HgiTexture
   HgiVulkanTexture(HgiVulkan *hgi, HgiVulkanDevice *device, HgiTextureViewDesc const &desc);
 
  private:
+
   HgiVulkanTexture() = delete;
   HgiVulkanTexture &operator=(const HgiVulkanTexture &) = delete;
   HgiVulkanTexture(const HgiVulkanTexture &) = delete;

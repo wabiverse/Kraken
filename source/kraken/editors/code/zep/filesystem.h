@@ -18,6 +18,7 @@ namespace Zep
   class IZepFileSystem
   {
    public:
+
     virtual ~IZepFileSystem(){};
     virtual std::string Read(const ZepPath &filePath) = 0;
     virtual bool Write(const ZepPath &filePath, const void *pData, size_t size) = 0;
@@ -57,6 +58,7 @@ namespace Zep
   class ZepFileSystemCPP : public IZepFileSystem
   {
    public:
+
     ZepFileSystemCPP(const ZepPath &configPath);
     ~ZepFileSystemCPP();
     virtual std::string Read(const ZepPath &filePath) override;
@@ -76,6 +78,7 @@ namespace Zep
     virtual ZepPath Canonical(const ZepPath &path) const override;
 
    private:
+
     ZepPath m_workingDirectory;
     ZepPath m_configPath;
   };

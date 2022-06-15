@@ -118,6 +118,7 @@ struct NdrNodeDiscoveryResult;
 class SdrOslParserPlugin : public NdrParserPlugin
 {
  public:
+
   typedef OSL::OSLQuery::Parameter OslParameter;
 
   SDROSL_API
@@ -135,6 +136,7 @@ class SdrOslParserPlugin : public NdrParserPlugin
   const TfToken &GetSourceType() const override;
 
  private:
+
   // Gets a vector of properties that are present on the specified OSL
   // query object
   NdrPropertyUniquePtrVec _getNodeProperties(const OSL::OSLQuery &query,
@@ -158,7 +160,8 @@ class SdrOslParserPlugin : public NdrParserPlugin
   std::string _getParamAsString(const OslParameter &param) const;
 
   // Gets a common type + array size (if array) from the OSL parameter
-  std::tuple<TfToken, size_t> _getTypeName(const OslParameter *param, const NdrTokenMap &metadata) const;
+  std::tuple<TfToken, size_t> _getTypeName(const OslParameter *param,
+                                           const NdrTokenMap &metadata) const;
 
   // Gets the default value of the specified param.
   VtValue _getDefaultValue(const SdrOslParserPlugin::OslParameter &param,

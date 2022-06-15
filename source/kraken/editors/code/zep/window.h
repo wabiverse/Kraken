@@ -28,14 +28,15 @@ namespace Zep
   // A collection of spans that show split lines on the display
   struct SpanInfo
   {
-    ByteRange lineByteRange;                   // Begin/end range of the text buffer for this line, as always end is
-                                               // one beyond the end.
+    ByteRange lineByteRange;  // Begin/end range of the text buffer for this line, as always end is
+                              // one beyond the end.
     std::vector<LineCharInfo> lineCodePoints;  // Codepoints
     long bufferLineNumber = 0;                 // Line in the original buffer, not the screen line
-    float yOffsetPx = 0.0f;                    // Position in the buffer in pixels, if the screen was as big as the buffer.
-    NVec2f lineTextSizePx = NVec2f(0.0f);      // Pixel size of the text
-    int spanLineIndex = 0;                     // The index of this line in spans; might be more than buffer index
-    NVec2f padding = NVec2f(1.0f, 1.0f);       // Padding above and below the line
+    float yOffsetPx =
+      0.0f;  // Position in the buffer in pixels, if the screen was as big as the buffer.
+    NVec2f lineTextSizePx = NVec2f(0.0f);  // Pixel size of the text
+    int spanLineIndex = 0;  // The index of this line in spans; might be more than buffer index
+    NVec2f padding = NVec2f(1.0f, 1.0f);  // Padding above and below the line
     bool isSplitContinuation = false;
     NVec2f lineWidgetHeights;
     ZepFont *pFont = nullptr;
@@ -60,8 +61,7 @@ namespace Zep
 
   inline bool operator<(const SpanInfo &lhs, const SpanInfo &rhs)
   {
-    if (lhs.lineByteRange.first != rhs.lineByteRange.first)
-    {
+    if (lhs.lineByteRange.first != rhs.lineByteRange.first) {
       return lhs.lineByteRange.first < rhs.lineByteRange.first;
     }
     return lhs.lineByteRange.second < rhs.lineByteRange.second;
@@ -133,6 +133,7 @@ namespace Zep
   class ZepWindow : public ZepComponent
   {
    public:
+
     ZepWindow(ZepTabWindow &window, ZepBuffer *buffer);
     virtual ~ZepWindow();
 
@@ -145,7 +146,8 @@ namespace Zep
     // Cursor
     virtual GlyphIterator GetBufferCursor();
     virtual void SetBufferCursor(GlyphIterator location);
-    virtual void MoveCursorY(int yDistance, LineLocation clampLocation = LineLocation::LineLastNonCR);
+    virtual void MoveCursorY(int yDistance,
+                             LineLocation clampLocation = LineLocation::LineLastNonCR);
     virtual NVec2i BufferToDisplay();
 
     // Flags
@@ -165,6 +167,7 @@ namespace Zep
     void DirtyLayout();
 
    private:
+
     void UpdateLayout(bool force = false);
     void UpdateMarkers();
     void UpdateAirline();
@@ -221,6 +224,7 @@ namespace Zep
     NVec2f GetSpanPixelRange(SpanInfo &span) const;
 
    private:
+
     NRectf m_displayRect;
     std::shared_ptr<Region> m_bufferRegion;         // region of the display we are showing on.
     std::shared_ptr<Region> m_editRegion;           // region of the window buffer editing
@@ -263,8 +267,8 @@ namespace Zep
     // Setup of displayed lines
     std::vector<SpanInfo *> m_windowLines;  // Information about the currently displayed lines
     float m_textOffsetPx = 0.0f;            // The Scroll position within the text
-    NVec2f m_textSizePx;                    // The calculated size of the buffer text, containing just the text
-    NVec2i m_visibleLineIndices = {0, 0};   // Index of the line spans that are visible
+    NVec2f m_textSizePx;  // The calculated size of the buffer text, containing just the text
+    NVec2i m_visibleLineIndices = {0, 0};  // Index of the line spans that are visible
     long m_maxDisplayLines = 0;
     int m_defaultLineSize = 0;
     float m_xPad = 0.0f;
@@ -274,7 +278,8 @@ namespace Zep
     NVec2f m_mouseHoverPos;               // Current location for the tip
     GlyphIterator m_mouseBufferLocation;  // The character in the buffer the tip pos is over, or -1
     NVec2f m_lastTipQueryPos;             // last query location for the tip
-    bool m_tipDisabledTillMove = false;   // Certain operations will stop the tip until the mouse is moved
+    bool m_tipDisabledTillMove =
+      false;  // Certain operations will stop the tip until the mouse is moved
     std::map<NVec2f, std::shared_ptr<RangeMarker>>
       m_toolTips;  // All tooltips for a given position, currently only 1 at a time
   };

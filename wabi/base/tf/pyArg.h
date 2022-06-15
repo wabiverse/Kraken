@@ -43,6 +43,7 @@ WABI_NAMESPACE_BEGIN
 class TfPyArg
 {
  public:
+
   /// Create a TfPyArg representing an argument with the given \p name.
   /// \p typeDoc and \p defaultValueDoc are optional documentation strings
   /// describing the expected type and default value of this argument.
@@ -73,6 +74,7 @@ class TfPyArg
   }
 
  private:
+
   std::string _name;
   std::string _typeDoc;
   std::string _defaultValueDoc;

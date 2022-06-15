@@ -45,13 +45,13 @@ WABI_NAMESPACE_BEGIN
 class TfPyMethodResult
 {
  private:
+
   /// Clients must hold GIL to construct.
   friend class TfPyOverride;
-  explicit TfPyMethodResult(PyObject *x)
-    : m_obj(x)
-  {}
+  explicit TfPyMethodResult(PyObject *x) : m_obj(x) {}
 
  public:
+
   /// Implement copy to do python refcounting while holding the GIL.
   TfPyMethodResult(TfPyMethodResult const &other);
 
@@ -61,38 +61,35 @@ class TfPyMethodResult
   /// Implement assign to do python refcounting while holding the GIL.
   TfPyMethodResult &operator=(TfPyMethodResult const &other);
 
-  template<class T>
-  operator T()
+  template<class T> operator T()
   {
     TfPyLock lock;
     boost::python::converter::return_from_python<T> converter;
     return converter(m_obj.release());
   }
 
-  template<class T>
-  operator T &() const
+  template<class T> operator T &() const
   {
     TfPyLock lock;
     boost::python::converter::return_from_python<T &> converter;
     return converter(const_cast<boost::python::handle<> &>(m_obj).release());
   }
 
-  template<class T>
-  T as(boost::type<T> * = 0)
+  template<class T> T as(boost::type<T> * = 0)
   {
     TfPyLock lock;
     boost::python::converter::return_from_python<T> converter;
     return converter(m_obj.release());
   }
 
-  template<class T>
-  T unchecked(boost::type<T> * = 0)
+  template<class T> T unchecked(boost::type<T> * = 0)
   {
     TfPyLock lock;
     return boost::python::extract<T>(m_obj)();
   }
 
  private:
+
   mutable boost::python::handle<> m_obj;
 };
 
@@ -113,31 +110,30 @@ class TfPyMethodResult
 class TfPyOverride : public TfPyObjWrapper
 {
   // Helper to generate Py_BuildValue-style format strings at compile time.
-  template<typename Arg>
-  constexpr static char _PyObjArg()
+  template<typename Arg> constexpr static char _PyObjArg()
   {
     return 'O';
   }
 
  public:
+
   /// Clients must hold the GIL to construct.
-  TfPyOverride(boost::python::handle<> callable)
-    : TfPyObjWrapper(boost::python::object(callable))
+  TfPyOverride(boost::python::handle<> callable) : TfPyObjWrapper(boost::python::object(callable))
   {}
 
   /// Call the override.
   /// Clients need not hold the GIL to invoke the call operator.
-  template<typename... Args>
-  TfPyMethodResult operator()(Args const &...args) const
+  template<typename... Args> TfPyMethodResult operator()(Args const &...args) const
   {
     TfPyLock lock;
     // Use the Args parameter pack together with the _PyObjArg helper to
     // unpack the right number of 'O' elements into the format string.
     static const char pyCallFormat[] = {'(', _PyObjArg<Args>()..., ')', '\0'};
 
-    TfPyMethodResult x(PyEval_CallFunction(this->ptr(),
-                                           const_cast<char *>(pyCallFormat),
-                                           boost::python::converter::arg_to_python<Args>(args).get()...));
+    TfPyMethodResult x(
+      PyEval_CallFunction(this->ptr(),
+                          const_cast<char *>(pyCallFormat),
+                          boost::python::converter::arg_to_python<Args>(args).get()...));
     return x;
   }
 };

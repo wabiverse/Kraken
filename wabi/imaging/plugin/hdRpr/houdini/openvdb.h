@@ -23,6 +23,7 @@ WABI_NAMESPACE_BEGIN
 class HoudiniOpenvdbLoader
 {
  public:
+
   static HoudiniOpenvdbLoader const &Instance()
   {
     static HoudiniOpenvdbLoader instance;
@@ -34,9 +35,11 @@ class HoudiniOpenvdbLoader
   openvdb::GridBase const *GetGrid(const char *filepath, const char *name) const;
 
  private:
+
   HoudiniOpenvdbLoader();
 
  private:
+
   void *m_sopVolLibHandle = nullptr;
 
   typedef void *(*sopVdbGetterFunction)(const char *filepath, const char *name);

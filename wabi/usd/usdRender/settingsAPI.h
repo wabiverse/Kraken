@@ -64,6 +64,7 @@ class SdfAssetPath;
 class UsdRenderSettingsAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -74,16 +75,12 @@ class UsdRenderSettingsAPI : public UsdAPISchemaBase
   /// Equivalent to UsdRenderSettingsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderSettingsAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdRenderSettingsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdRenderSettingsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderSettingsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderSettingsAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdRenderSettingsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRENDER_API
@@ -125,6 +122,7 @@ class UsdRenderSettingsAPI : public UsdAPISchemaBase
   static UsdRenderSettingsAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -132,6 +130,7 @@ class UsdRenderSettingsAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRENDER_API
@@ -141,9 +140,11 @@ class UsdRenderSettingsAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDRENDER_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

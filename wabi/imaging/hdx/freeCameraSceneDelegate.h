@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class HdxFreeCameraSceneDelegate : public HdSceneDelegate
 {
  public:
+
   /// Constructs delegate and adds camera to render index if
   /// cameras are supported by render delegate.
   HDX_API
@@ -80,6 +81,7 @@ class HdxFreeCameraSceneDelegate : public HdSceneDelegate
   VtValue GetCameraParamValue(SdfPath const &id, TfToken const &key) override;
 
  private:
+
   // Mark camera dirty in render index.
   void _MarkDirty(HdDirtyBits bits);
 

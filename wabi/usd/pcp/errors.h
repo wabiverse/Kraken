@@ -89,6 +89,7 @@ typedef std::vector<PcpErrorBasePtr> PcpErrorVector;
 class PcpErrorBase
 {
  public:
+
   /// Destructor.
   PCP_API virtual ~PcpErrorBase();
   /// Converts error to string message.
@@ -116,6 +117,7 @@ class PcpErrorBase
   }
 
  protected:
+
   /// Constructor.
   PcpErrorBase(TfEnum errorType);
 };
@@ -133,6 +135,7 @@ typedef std::shared_ptr<PcpErrorArcCycle> PcpErrorArcCyclePtr;
 class PcpErrorArcCycle : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorArcCyclePtr New();
   /// Destructor.
@@ -143,6 +146,7 @@ class PcpErrorArcCycle : public PcpErrorBase
   PcpSiteTracker cycle;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorArcCycle();
 };
@@ -161,6 +165,7 @@ typedef std::shared_ptr<PcpErrorArcPermissionDenied> PcpErrorArcPermissionDenied
 class PcpErrorArcPermissionDenied : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorArcPermissionDeniedPtr New();
   /// Destructor.
@@ -176,6 +181,7 @@ class PcpErrorArcPermissionDenied : public PcpErrorBase
   PcpArcType arcType;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorArcPermissionDenied();
 };
@@ -193,6 +199,7 @@ typedef std::shared_ptr<PcpErrorCapacityExceeded> PcpErrorCapacityExceededPtr;
 class PcpErrorCapacityExceeded : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorCapacityExceededPtr New(PcpErrorType errorType);
   /// Destructor.
@@ -201,6 +208,7 @@ class PcpErrorCapacityExceeded : public PcpErrorBase
   PCP_API virtual std::string ToString() const;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorCapacityExceeded(PcpErrorType errorType);
 };
@@ -210,6 +218,7 @@ class PcpErrorCapacityExceeded : public PcpErrorBase
 class PcpErrorInconsistentPropertyBase : public PcpErrorBase
 {
  public:
+
   /// Destructor.
   PCP_API virtual ~PcpErrorInconsistentPropertyBase();
 
@@ -224,6 +233,7 @@ class PcpErrorInconsistentPropertyBase : public PcpErrorBase
   SdfPath conflictingSpecPath;
 
  protected:
+
   /// Constructor.
   PcpErrorInconsistentPropertyBase(TfEnum errorType);
 };
@@ -241,6 +251,7 @@ typedef std::shared_ptr<PcpErrorInconsistentPropertyType> PcpErrorInconsistentPr
 class PcpErrorInconsistentPropertyType : public PcpErrorInconsistentPropertyBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInconsistentPropertyTypePtr New();
   /// Destructor.
@@ -254,6 +265,7 @@ class PcpErrorInconsistentPropertyType : public PcpErrorInconsistentPropertyBase
   SdfSpecType conflictingSpecType;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInconsistentPropertyType();
 };
@@ -271,6 +283,7 @@ typedef std::shared_ptr<PcpErrorInconsistentAttributeType> PcpErrorInconsistentA
 class PcpErrorInconsistentAttributeType : public PcpErrorInconsistentPropertyBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInconsistentAttributeTypePtr New();
   /// Destructor.
@@ -284,6 +297,7 @@ class PcpErrorInconsistentAttributeType : public PcpErrorInconsistentPropertyBas
   TfToken conflictingValueType;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInconsistentAttributeType();
 };
@@ -302,6 +316,7 @@ typedef std::shared_ptr<PcpErrorInconsistentAttributeVariability>
 class PcpErrorInconsistentAttributeVariability : public PcpErrorInconsistentPropertyBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInconsistentAttributeVariabilityPtr New();
   /// Destructor.
@@ -315,6 +330,7 @@ class PcpErrorInconsistentAttributeVariability : public PcpErrorInconsistentProp
   SdfVariability conflictingVariability;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInconsistentAttributeVariability();
 };
@@ -332,6 +348,7 @@ typedef std::shared_ptr<PcpErrorInternalAssetPath> PcpErrorInternalAssetPathPtr;
 class PcpErrorInternalAssetPath : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInternalAssetPathPtr New();
   /// Destructor.
@@ -347,6 +364,7 @@ class PcpErrorInternalAssetPath : public PcpErrorBase
   PcpArcType arcType;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInternalAssetPath();
 };
@@ -364,6 +382,7 @@ typedef std::shared_ptr<PcpErrorInvalidPrimPath> PcpErrorInvalidPrimPathPtr;
 class PcpErrorInvalidPrimPath : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidPrimPathPtr New();
   /// Destructor.
@@ -377,6 +396,7 @@ class PcpErrorInvalidPrimPath : public PcpErrorBase
   PcpArcType arcType;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidPrimPath();
 };
@@ -390,6 +410,7 @@ typedef std::shared_ptr<PcpErrorInvalidAssetPathBase> PcpErrorInvalidAssetPathBa
 class PcpErrorInvalidAssetPathBase : public PcpErrorBase
 {
  public:
+
   /// Destructor.
   PCP_API ~PcpErrorInvalidAssetPathBase();
 
@@ -403,6 +424,7 @@ class PcpErrorInvalidAssetPathBase : public PcpErrorBase
   std::string messages;
 
  protected:
+
   /// Constructor.
   PcpErrorInvalidAssetPathBase(TfEnum errorType);
 };
@@ -420,6 +442,7 @@ typedef std::shared_ptr<PcpErrorInvalidAssetPath> PcpErrorInvalidAssetPathPtr;
 class PcpErrorInvalidAssetPath : public PcpErrorInvalidAssetPathBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidAssetPathPtr New();
   /// Destructor.
@@ -428,6 +451,7 @@ class PcpErrorInvalidAssetPath : public PcpErrorInvalidAssetPathBase
   PCP_API virtual std::string ToString() const;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidAssetPath();
 };
@@ -445,6 +469,7 @@ typedef std::shared_ptr<PcpErrorMutedAssetPath> PcpErrorMutedAssetPathPtr;
 class PcpErrorMutedAssetPath : public PcpErrorInvalidAssetPathBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorMutedAssetPathPtr New();
   /// Destructor.
@@ -453,6 +478,7 @@ class PcpErrorMutedAssetPath : public PcpErrorInvalidAssetPathBase
   PCP_API virtual std::string ToString() const;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorMutedAssetPath();
 };
@@ -470,6 +496,7 @@ typedef std::shared_ptr<PcpErrorTargetPathBase> PcpErrorTargetPathBasePtr;
 class PcpErrorTargetPathBase : public PcpErrorBase
 {
  public:
+
   /// Destructor.
   PCP_API ~PcpErrorTargetPathBase();
 
@@ -489,6 +516,7 @@ class PcpErrorTargetPathBase : public PcpErrorBase
   SdfPath composedTargetPath;
 
  protected:
+
   PcpErrorTargetPathBase(TfEnum errorType);
 };
 
@@ -506,6 +534,7 @@ typedef std::shared_ptr<PcpErrorInvalidInstanceTargetPath> PcpErrorInvalidInstan
 class PcpErrorInvalidInstanceTargetPath : public PcpErrorTargetPathBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidInstanceTargetPathPtr New();
   /// Destructor.
@@ -514,6 +543,7 @@ class PcpErrorInvalidInstanceTargetPath : public PcpErrorTargetPathBase
   PCP_API virtual std::string ToString() const;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidInstanceTargetPath();
 };
@@ -532,6 +562,7 @@ typedef std::shared_ptr<PcpErrorInvalidExternalTargetPath> PcpErrorInvalidExtern
 class PcpErrorInvalidExternalTargetPath : public PcpErrorTargetPathBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidExternalTargetPathPtr New();
   /// Destructor.
@@ -543,6 +574,7 @@ class PcpErrorInvalidExternalTargetPath : public PcpErrorTargetPathBase
   SdfPath ownerIntroPath;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidExternalTargetPath();
 };
@@ -560,6 +592,7 @@ typedef std::shared_ptr<PcpErrorInvalidTargetPath> PcpErrorInvalidTargetPathPtr;
 class PcpErrorInvalidTargetPath : public PcpErrorTargetPathBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidTargetPathPtr New();
   /// Destructor.
@@ -568,6 +601,7 @@ class PcpErrorInvalidTargetPath : public PcpErrorTargetPathBase
   PCP_API virtual std::string ToString() const;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidTargetPath();
 };
@@ -585,6 +619,7 @@ typedef std::shared_ptr<PcpErrorInvalidSublayerOffset> PcpErrorInvalidSublayerOf
 class PcpErrorInvalidSublayerOffset : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidSublayerOffsetPtr New();
   /// Destructor.
@@ -597,6 +632,7 @@ class PcpErrorInvalidSublayerOffset : public PcpErrorBase
   SdfLayerOffset offset;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidSublayerOffset();
 };
@@ -614,6 +650,7 @@ typedef std::shared_ptr<PcpErrorInvalidReferenceOffset> PcpErrorInvalidReference
 class PcpErrorInvalidReferenceOffset : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidReferenceOffsetPtr New();
   /// Destructor.
@@ -628,6 +665,7 @@ class PcpErrorInvalidReferenceOffset : public PcpErrorBase
   SdfLayerOffset offset;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidReferenceOffset();
 };
@@ -645,6 +683,7 @@ typedef std::shared_ptr<PcpErrorInvalidSublayerOwnership> PcpErrorInvalidSublaye
 class PcpErrorInvalidSublayerOwnership : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidSublayerOwnershipPtr New();
   /// Destructor.
@@ -657,6 +696,7 @@ class PcpErrorInvalidSublayerOwnership : public PcpErrorBase
   SdfLayerHandleVector sublayers;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidSublayerOwnership();
 };
@@ -674,6 +714,7 @@ typedef std::shared_ptr<PcpErrorInvalidSublayerPath> PcpErrorInvalidSublayerPath
 class PcpErrorInvalidSublayerPath : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidSublayerPathPtr New();
   /// Destructor.
@@ -686,6 +727,7 @@ class PcpErrorInvalidSublayerPath : public PcpErrorBase
   std::string messages;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidSublayerPath();
 };
@@ -703,6 +745,7 @@ typedef std::shared_ptr<PcpErrorInvalidVariantSelection> PcpErrorInvalidVariantS
 class PcpErrorInvalidVariantSelection : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorInvalidVariantSelectionPtr New();
   /// Destructor.
@@ -715,6 +758,7 @@ class PcpErrorInvalidVariantSelection : public PcpErrorBase
   std::string vset, vsel;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorInvalidVariantSelection();
 };
@@ -732,6 +776,7 @@ typedef std::shared_ptr<PcpErrorOpinionAtRelocationSource> PcpErrorOpinionAtRelo
 class PcpErrorOpinionAtRelocationSource : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorOpinionAtRelocationSourcePtr New();
   /// Destructor.
@@ -743,6 +788,7 @@ class PcpErrorOpinionAtRelocationSource : public PcpErrorBase
   SdfPath path;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorOpinionAtRelocationSource();
 };
@@ -760,6 +806,7 @@ typedef std::shared_ptr<PcpErrorPrimPermissionDenied> PcpErrorPrimPermissionDeni
 class PcpErrorPrimPermissionDenied : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorPrimPermissionDeniedPtr New();
   /// Destructor.
@@ -773,6 +820,7 @@ class PcpErrorPrimPermissionDenied : public PcpErrorBase
   PcpSiteStr privateSite;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorPrimPermissionDenied();
 };
@@ -790,6 +838,7 @@ typedef std::shared_ptr<PcpErrorPropertyPermissionDenied> PcpErrorPropertyPermis
 class PcpErrorPropertyPermissionDenied : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorPropertyPermissionDeniedPtr New();
   /// Destructor.
@@ -802,6 +851,7 @@ class PcpErrorPropertyPermissionDenied : public PcpErrorBase
   std::string layerPath;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorPropertyPermissionDenied();
 };
@@ -819,6 +869,7 @@ typedef std::shared_ptr<PcpErrorSublayerCycle> PcpErrorSublayerCyclePtr;
 class PcpErrorSublayerCycle : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorSublayerCyclePtr New();
   /// Destructor.
@@ -830,6 +881,7 @@ class PcpErrorSublayerCycle : public PcpErrorBase
   SdfLayerHandle sublayer;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorSublayerCycle();
 };
@@ -847,6 +899,7 @@ typedef std::shared_ptr<PcpErrorTargetPermissionDenied> PcpErrorTargetPermission
 class PcpErrorTargetPermissionDenied : public PcpErrorTargetPathBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorTargetPermissionDeniedPtr New();
   /// Destructor.
@@ -855,6 +908,7 @@ class PcpErrorTargetPermissionDenied : public PcpErrorTargetPathBase
   PCP_API virtual std::string ToString() const;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorTargetPermissionDenied();
 };
@@ -872,6 +926,7 @@ typedef std::shared_ptr<PcpErrorUnresolvedPrimPath> PcpErrorUnresolvedPrimPathPt
 class PcpErrorUnresolvedPrimPath : public PcpErrorBase
 {
  public:
+
   /// Returns a new error object.
   static PcpErrorUnresolvedPrimPathPtr New();
   /// Destructor.
@@ -885,6 +940,7 @@ class PcpErrorUnresolvedPrimPath : public PcpErrorBase
   PcpArcType arcType;
 
  private:
+
   /// Constructor is private. Use New() instead.
   PcpErrorUnresolvedPrimPath();
 };

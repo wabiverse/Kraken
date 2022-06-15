@@ -40,6 +40,7 @@ struct HdxPrman_InteractiveContext;
 class HdxPrman_RenderPass final : public HdRenderPass
 {
  public:
+
   HdxPrman_RenderPass(HdRenderIndex *index,
                       HdRprimCollection const &collection,
                       std::shared_ptr<HdPrman_Context> context);
@@ -48,9 +49,12 @@ class HdxPrman_RenderPass final : public HdRenderPass
   bool IsConverged() const override;
 
  protected:
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
+
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
+                TfTokenVector const &renderTags) override;
 
  private:
+
   bool _converged;
   std::shared_ptr<HdPrman_Context> _context;
   // Down-casted version of the context.

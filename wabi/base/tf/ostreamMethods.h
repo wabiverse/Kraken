@@ -53,8 +53,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T>
-constexpr bool Tf_IsOstreamable()
+template<class T> constexpr bool Tf_IsOstreamable()
 {
   return boost::has_left_shift<std::ostream &, /* << */ T, /* -> */ std::ostream &>::value;
 }

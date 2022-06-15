@@ -44,11 +44,8 @@ class PcpPrimIndex_Graph;
 class PcpArc
 {
  public:
-  PcpArc()
-    : type(PcpArcTypeRoot),
-      siblingNumAtOrigin(0),
-      namespaceDepth(0)
-  {}
+
+  PcpArc() : type(PcpArcTypeRoot), siblingNumAtOrigin(0), namespaceDepth(0) {}
 
   /// The type of this arc.
   PcpArcType type;

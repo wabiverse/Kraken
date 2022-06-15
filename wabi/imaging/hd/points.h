@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_POINTS_H
 #define WABI_IMAGING_HD_POINTS_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/rprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/rprim.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,8 +37,7 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HdPointsReprDesc
 {
-  HdPointsReprDesc(HdPointsGeomStyle geomStyle = HdPointsGeomStyleInvalid)
-    : geomStyle(geomStyle)
+  HdPointsReprDesc(HdPointsGeomStyle geomStyle = HdPointsGeomStyleInvalid) : geomStyle(geomStyle)
   {}
 
   bool IsEmpty() const
@@ -54,8 +53,9 @@ struct HdPointsReprDesc
 class HdPoints : public HdRprim
 {
  public:
+
   HD_API
-  virtual ~HdPoints();
+  ~HdPoints() override;
 
   HD_API
   TfTokenVector const &GetBuiltinPrimvarNames() const override;
@@ -65,17 +65,19 @@ class HdPoints : public HdRprim
   static void ConfigureRepr(TfToken const &reprName, const HdPointsReprDesc &desc);
 
  protected:
+
   /// Constructor. instancerId, if specified, is the instancer which uses
   /// this point cloud as a prototype.
   HD_API
   HdPoints(SdfPath const &id);
 
-  typedef _ReprDescConfigs<HdPointsReprDesc> _PointsReprConfig;
+  using _PointsReprConfig = _ReprDescConfigs<HdPointsReprDesc>;
 
   HD_API
   static _PointsReprConfig::DescArray _GetReprDesc(TfToken const &reprName);
 
  private:
+
   // Class can not be default constructed or copied.
   HdPoints() = delete;
   HdPoints(const HdPoints &) = delete;
@@ -83,6 +85,7 @@ class HdPoints : public HdRprim
 
   static _PointsReprConfig _reprDescConfig;
 };
+
 
 WABI_NAMESPACE_END
 

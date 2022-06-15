@@ -43,6 +43,7 @@ class SdfReference;
 class SdfNameKeyPolicy
 {
  public:
+
   typedef std::string value_type;
 
   static const value_type &Canonicalize(const value_type &x)
@@ -63,6 +64,7 @@ class SdfNameKeyPolicy
 class SdfNameTokenKeyPolicy
 {
  public:
+
   typedef TfToken value_type;
 
   static const value_type &Canonicalize(const value_type &x)
@@ -83,13 +85,11 @@ class SdfNameTokenKeyPolicy
 class SdfPathKeyPolicy
 {
  public:
+
   typedef SdfPath value_type;
 
-  SdfPathKeyPolicy()
-  {}
-  explicit SdfPathKeyPolicy(const SdfSpecHandle &owner)
-    : _owner(owner)
-  {}
+  SdfPathKeyPolicy() {}
+  explicit SdfPathKeyPolicy(const SdfSpecHandle &owner) : _owner(owner) {}
 
   value_type Canonicalize(const value_type &x) const
   {
@@ -98,22 +98,21 @@ class SdfPathKeyPolicy
 
   std::vector<value_type> Canonicalize(const std::vector<value_type> &x) const
   {
-    if (x.empty())
-    {
+    if (x.empty()) {
       return x;
     }
 
     const SdfPath anchor = _GetAnchor();
 
     std::vector<value_type> result = x;
-    TF_FOR_ALL (it, result)
-    {
+    TF_FOR_ALL (it, result) {
       *it = _Canonicalize(*it, anchor);
     }
     return result;
   }
 
  private:
+
   // Get the most recent SdfPath of the owning object, for expanding
   // relative SdfPaths to absolute
   SdfPath _GetAnchor() const
@@ -127,12 +126,12 @@ class SdfPathKeyPolicy
   }
 
  private:
+
   SdfSpecHandle _owner;
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<>
-struct Vt_DefaultValueFactory<SdfPathKeyPolicy>
+template<> struct Vt_DefaultValueFactory<SdfPathKeyPolicy>
 {
   static Vt_DefaultValueHolder Invoke()
   {
@@ -148,6 +147,7 @@ struct Vt_DefaultValueFactory<SdfPathKeyPolicy>
 class SdfPayloadTypePolicy
 {
  public:
+
   typedef SdfPayload value_type;
 
   static const value_type &Canonicalize(const value_type &x)
@@ -162,8 +162,7 @@ class SdfPayloadTypePolicy
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<>
-struct Vt_DefaultValueFactory<SdfPayloadTypePolicy>
+template<> struct Vt_DefaultValueFactory<SdfPayloadTypePolicy>
 {
   static Vt_DefaultValueHolder Invoke()
   {
@@ -179,6 +178,7 @@ struct Vt_DefaultValueFactory<SdfPayloadTypePolicy>
 class SdfReferenceTypePolicy
 {
  public:
+
   typedef SdfReference value_type;
 
   static const value_type &Canonicalize(const value_type &x)
@@ -193,8 +193,7 @@ class SdfReferenceTypePolicy
 };
 
 // Cannot get from a VtValue except as the correct type.
-template<>
-struct Vt_DefaultValueFactory<SdfReferenceTypePolicy>
+template<> struct Vt_DefaultValueFactory<SdfReferenceTypePolicy>
 {
   static Vt_DefaultValueHolder Invoke()
   {
@@ -210,6 +209,7 @@ struct Vt_DefaultValueFactory<SdfReferenceTypePolicy>
 class SdfSubLayerTypePolicy
 {
  public:
+
   typedef std::string value_type;
 
   static const value_type &Canonicalize(const value_type &x)
@@ -231,6 +231,7 @@ class SdfSubLayerTypePolicy
 class SdfRelocatesMapProxyValuePolicy
 {
  public:
+
   typedef std::map<SdfPath, SdfPath> Type;
   typedef Type::key_type key_type;
   typedef Type::mapped_type mapped_type;
@@ -253,22 +254,20 @@ class SdfRelocatesMapProxyValuePolicy
 class SdfGenericSpecViewPredicate
 {
  public:
-  SdfGenericSpecViewPredicate(SdfSpecType type)
-    : _type(type)
-  {}
 
-  template<class T>
-  bool operator()(const SdfHandle<T> &x) const
+  SdfGenericSpecViewPredicate(SdfSpecType type) : _type(type) {}
+
+  template<class T> bool operator()(const SdfHandle<T> &x) const
   {
     // XXX: x is sometimes null. why?
-    if (x)
-    {
+    if (x) {
       return x->GetSpecType() == _type;
     }
     return false;
   }
 
  private:
+
   SdfSpecType _type;
 };
 
@@ -279,6 +278,7 @@ class SdfGenericSpecViewPredicate
 class SdfAttributeViewPredicate : public SdfGenericSpecViewPredicate
 {
  public:
+
   SDF_API
   SdfAttributeViewPredicate();
 };
@@ -290,6 +290,7 @@ class SdfAttributeViewPredicate : public SdfGenericSpecViewPredicate
 class SdfRelationshipViewPredicate : public SdfGenericSpecViewPredicate
 {
  public:
+
   SDF_API
   SdfRelationshipViewPredicate();
 };

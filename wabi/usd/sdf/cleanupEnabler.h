@@ -69,6 +69,7 @@ WABI_NAMESPACE_BEGIN
 TF_DEFINE_STACKED(SdfCleanupEnabler, false, SDF_API)
 {
  public:
+
   SDF_API SdfCleanupEnabler();
 
   SDF_API ~SdfCleanupEnabler();

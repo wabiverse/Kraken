@@ -19,6 +19,7 @@
 #define STRINGIFY2(s) #s
 #define STRINGIFY(s) STRINGIFY2(s)
 
-#define RIF_API_VERSION_STRING \
-  STRINGIFY(RIF_VERSION_MAJOR) \
-  "." STRINGIFY(RIF_VERSION_MINOR) "." STRINGIFY(RIF_VERSION_REVISION) "." STRINGIFY(RIF_VERSION_BUILD)
+#define RIF_API_VERSION_STRING                                                        \
+  STRINGIFY(RIF_VERSION_MAJOR)                                                        \
+  "." STRINGIFY(RIF_VERSION_MINOR) "." STRINGIFY(RIF_VERSION_REVISION) "." STRINGIFY( \
+    RIF_VERSION_BUILD)

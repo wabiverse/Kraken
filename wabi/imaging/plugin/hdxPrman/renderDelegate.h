@@ -37,8 +37,10 @@ struct HdxPrman_InteractiveContext;
 class HdxPrmanRenderDelegate final : public HdPrmanRenderDelegate
 {
  public:
+
   HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context);
-  HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context, HdRenderSettingsMap const &settingsMap);
+  HdxPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context,
+                         HdRenderSettingsMap const &settingsMap);
   virtual ~HdxPrmanRenderDelegate();
 
   // HdRenderDelegate API implementation.
@@ -72,6 +74,7 @@ class HdxPrmanRenderDelegate final : public HdPrmanRenderDelegate
   virtual bool Restart() override;
 
  private:
+
   // This class does not support copying.
   HdxPrmanRenderDelegate(const HdxPrmanRenderDelegate &) = delete;
   HdxPrmanRenderDelegate &operator=(const HdxPrmanRenderDelegate &) = delete;
@@ -79,6 +82,7 @@ class HdxPrmanRenderDelegate final : public HdPrmanRenderDelegate
   void _Initialize(std::shared_ptr<HdPrman_Context> context);
 
  private:  // data
+
   HdRenderPassSharedPtr _renderPass;
   std::shared_ptr<HdxPrman_InteractiveContext> _interactiveContext;
 };

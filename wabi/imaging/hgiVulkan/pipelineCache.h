@@ -46,6 +46,7 @@ class HgiVulkanDevice;
 class HgiVulkanPipelineCache final
 {
  public:
+
   HGIVULKAN_API
   HgiVulkanPipelineCache(HgiVulkanDevice *device);
 
@@ -57,6 +58,7 @@ class HgiVulkanPipelineCache final
   VkPipelineCache GetVulkanPipelineCache() const;
 
  private:
+
   HgiVulkanPipelineCache() = delete;
   HgiVulkanPipelineCache &operator=(const HgiVulkanPipelineCache &) = delete;
   HgiVulkanPipelineCache(const HgiVulkanPipelineCache &) = delete;

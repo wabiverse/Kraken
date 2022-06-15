@@ -104,8 +104,7 @@ WABI_NAMESPACE_BEGIN
 /// }
 /// \endcode
 ///
-template<class T>
-struct Tf_StaticDataDefaultFactory
+template<class T> struct Tf_StaticDataDefaultFactory
 {
   static T *New()
   {
@@ -113,10 +112,10 @@ struct Tf_StaticDataDefaultFactory
   }
 };
 
-template<class T, class Factory = Tf_StaticDataDefaultFactory<T>>
-class TfStaticData
+template<class T, class Factory = Tf_StaticDataDefaultFactory<T>> class TfStaticData
 {
  public:
+
   /// Return a pointer to the underlying data object. It is created and
   /// initialized if necessary.
   inline T *operator->() const
@@ -147,6 +146,7 @@ class TfStaticData
   }
 
  private:
+
   T *_TryToCreateData() const
   {
     // Allocate an instance.

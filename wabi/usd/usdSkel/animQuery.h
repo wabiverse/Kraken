@@ -57,9 +57,9 @@ TF_DECLARE_REF_PTRS(UsdSkel_AnimQueryImpl);
 class UsdSkelAnimQuery
 {
  public:
+
   USDSKEL_API
-  UsdSkelAnimQuery()
-  {}
+  UsdSkelAnimQuery() {}
 
   /// Return true if this query is valid.
   bool IsValid() const
@@ -115,7 +115,8 @@ class UsdSkelAnimQuery
                                             UsdTimeCode time = UsdTimeCode::Default()) const;
 
   USDSKEL_API
-  bool ComputeBlendShapeWeights(VtFloatArray *weights, UsdTimeCode time = UsdTimeCode::Default()) const;
+  bool ComputeBlendShapeWeights(VtFloatArray *weights,
+                                UsdTimeCode time = UsdTimeCode::Default()) const;
 
   /// Get the time samples at which values contributing to joint transforms
   /// are set. This only computes the time samples for sampling transforms in
@@ -133,7 +134,8 @@ class UsdSkelAnimQuery
   ///
   /// \sa UsdAttribute::GetTimeSamplesInInterval
   USDSKEL_API
-  bool GetJointTransformTimeSamplesInInterval(const GfInterval &interval, std::vector<double> *times) const;
+  bool GetJointTransformTimeSamplesInInterval(const GfInterval &interval,
+                                              std::vector<double> *times) const;
 
   /// Get the attributes contributing to JointTransform computations
   USDSKEL_API
@@ -189,9 +191,8 @@ class UsdSkelAnimQuery
   std::string GetDescription() const;
 
  private:
-  UsdSkelAnimQuery(const UsdSkel_AnimQueryImplRefPtr &impl)
-    : _impl(impl)
-  {}
+
+  UsdSkelAnimQuery(const UsdSkel_AnimQueryImplRefPtr &impl) : _impl(impl) {}
 
   UsdSkel_AnimQueryImplRefPtr _impl;
 

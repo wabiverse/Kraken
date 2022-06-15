@@ -79,6 +79,7 @@ struct HdxPickFromRenderBufferTaskParams
 class HdxPickFromRenderBufferTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxPickFromRenderBufferTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -97,11 +98,13 @@ class HdxPickFromRenderBufferTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   GfMatrix4d _ComputeProjectionMatrix() const;
 
   HdxPickFromRenderBufferTaskParams _params;
@@ -128,9 +131,11 @@ class HdxPickFromRenderBufferTask : public HdxTask
 HDX_API
 std::ostream &operator<<(std::ostream &out, const HdxPickFromRenderBufferTaskParams &pv);
 HDX_API
-bool operator==(const HdxPickFromRenderBufferTaskParams &lhs, const HdxPickFromRenderBufferTaskParams &rhs);
+bool operator==(const HdxPickFromRenderBufferTaskParams &lhs,
+                const HdxPickFromRenderBufferTaskParams &rhs);
 HDX_API
-bool operator!=(const HdxPickFromRenderBufferTaskParams &lhs, const HdxPickFromRenderBufferTaskParams &rhs);
+bool operator!=(const HdxPickFromRenderBufferTaskParams &lhs,
+                const HdxPickFromRenderBufferTaskParams &rhs);
 
 WABI_NAMESPACE_END
 

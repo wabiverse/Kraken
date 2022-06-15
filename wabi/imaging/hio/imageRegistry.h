@@ -51,6 +51,7 @@ class HioRankedTypeMap;
 class HioImageRegistry : public TfSingleton<HioImageRegistry>
 {
  public:
+
   HIO_API
   static HioImageRegistry &GetInstance();
 
@@ -58,6 +59,7 @@ class HioImageRegistry : public TfSingleton<HioImageRegistry>
   bool IsSupportedImageFile(std::string const &filename);
 
  private:
+
   friend class TfSingleton<HioImageRegistry>;
   HioImageRegistry();
 
@@ -66,6 +68,7 @@ class HioImageRegistry : public TfSingleton<HioImageRegistry>
   HioImageSharedPtr _ConstructImage(std::string const &filename);
 
  private:
+
   std::unique_ptr<HioRankedTypeMap> const _typeMap;
 };
 

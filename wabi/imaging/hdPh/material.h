@@ -42,6 +42,7 @@ class HioGlslfx;
 class HdPhMaterial final : public HdMaterial
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdPhMaterial");
 
   HDPH_API
@@ -51,7 +52,9 @@ class HdPhMaterial final : public HdMaterial
 
   /// Synchronizes state from the delegate to this object.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   void Finalize(HdRenderParam *renderParam) override;
@@ -88,6 +91,7 @@ class HdPhMaterial final : public HdMaterial
   void SetSurfaceShader(HdPhSurfaceShaderSharedPtr &shaderCode);
 
  private:
+
   // Processes the texture descriptors from a material network to
   // create textures using the Phoenix texture system.
   //

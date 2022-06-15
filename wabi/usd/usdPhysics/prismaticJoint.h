@@ -63,6 +63,7 @@ class SdfAssetPath;
 class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -72,16 +73,12 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
   /// Equivalent to UsdPhysicsPrismaticJoint::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsPrismaticJoint(const UsdPrim &prim = UsdPrim())
-    : UsdPhysicsJoint(prim)
-  {}
+  explicit UsdPhysicsPrismaticJoint(const UsdPrim &prim = UsdPrim()) : UsdPhysicsJoint(prim) {}
 
   /// Construct a UsdPhysicsPrismaticJoint on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsPrismaticJoint(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsPrismaticJoint(const UsdSchemaBase &schemaObj)
-    : UsdPhysicsJoint(schemaObj)
-  {}
+  explicit UsdPhysicsPrismaticJoint(const UsdSchemaBase &schemaObj) : UsdPhysicsJoint(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -131,6 +128,7 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
   static UsdPhysicsPrismaticJoint Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -138,6 +136,7 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -147,9 +146,11 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // AXIS
   // --------------------------------------------------------------------- //
@@ -171,9 +172,11 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateAxisAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateAxisAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LOWERLIMIT
   // --------------------------------------------------------------------- //
@@ -198,6 +201,7 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // UPPERLIMIT
   // --------------------------------------------------------------------- //
@@ -222,6 +226,7 @@ class UsdPhysicsPrismaticJoint : public UsdPhysicsJoint
                                     bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

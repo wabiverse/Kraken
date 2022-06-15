@@ -22,12 +22,13 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/hd/bufferArray.h"
-#include "wabi/base/tf/iterator.h"
 #include "wabi/imaging/hd/bufferArrayRange.h"
 #include "wabi/imaging/hd/debugCodes.h"
 #include "wabi/imaging/hd/perfLog.h"
+#include "wabi/base/tf/iterator.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 static std::atomic_size_t _uniqueVersion(0);
 
@@ -147,5 +148,6 @@ size_t HdBufferArray::GetMaxNumElements() const
   // 1 element per range is allowed by default (for uniform buffers)
   return _maxNumRanges;
 }
+
 
 WABI_NAMESPACE_END

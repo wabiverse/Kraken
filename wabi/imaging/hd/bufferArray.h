@@ -24,19 +24,20 @@
 #ifndef WABI_IMAGING_HD_BUFFER_ARRAY_H
 #define WABI_IMAGING_HD_BUFFER_ARRAY_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/bufferSpec.h"
+#include "wabi/imaging/hd/bufferResource.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/bufferResource.h"
-#include "wabi/imaging/hd/bufferSpec.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include <atomic>
 #include <memory>
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
+
 
 class HdBufferArrayRange;
 
@@ -76,10 +77,9 @@ union HdBufferArrayUsageHint
   } bits;
   uint32_t value;
 
-  HdBufferArrayUsageHint()
-    : value(0)
-  {}
+  HdBufferArrayUsageHint() : value(0) {}
 };
+
 
 /// \class HdBufferArray
 ///
@@ -90,6 +90,7 @@ union HdBufferArrayUsageHint
 class HdBufferArray : public std::enable_shared_from_this<HdBufferArray>
 {
  public:
+
   HD_API
   HdBufferArray(TfToken const &role,
                 TfToken const garbageCollectionPerfToken,
@@ -173,6 +174,7 @@ class HdBufferArray : public std::enable_shared_from_this<HdBufferArray>
   }
 
  protected:
+
   /// Dirty bit to set when the ranges attached to the buffer
   /// changes.  If set Reallocate() should be called to clean it.
   bool _needsReallocation;
@@ -189,9 +191,11 @@ class HdBufferArray : public std::enable_shared_from_this<HdBufferArray>
   void _SetRangeList(std::vector<HdBufferArrayRangeSharedPtr> const &ranges);
 
  private:
+
   // Do not allow copies.
   HdBufferArray(const HdBufferArray &) = delete;
   HdBufferArray &operator=(const HdBufferArray &) = delete;
+
 
   typedef std::vector<HdBufferArrayRangePtr> _RangeList;
 
@@ -212,6 +216,7 @@ class HdBufferArray : public std::enable_shared_from_this<HdBufferArray>
   size_t _maxNumRanges;
   HdBufferArrayUsageHint _usageHint;
 };
+
 
 WABI_NAMESPACE_END
 

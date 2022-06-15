@@ -203,7 +203,9 @@ size_t HioGetDataSizeOfType(HioType type);
 
 /// Returns the size of bytes per pixel for the given HioFormat
 HIO_API
-size_t HioGetDataSizeOfFormat(HioFormat format, size_t *blockWidth = nullptr, size_t *blockHeight = nullptr);
+size_t HioGetDataSizeOfFormat(HioFormat format,
+                              size_t *blockWidth = nullptr,
+                              size_t *blockHeight = nullptr);
 
 /// Return if the given format is compressed.
 HIO_API

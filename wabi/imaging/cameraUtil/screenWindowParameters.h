@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class CameraUtilScreenWindowParameters
 {
  public:
+
   /// Constructs screenwindow parameter. The optional \p fitDirection
   /// indicates in which direction the screenwindow will have length 2.
   CAMERAUTIL_API
@@ -79,6 +80,7 @@ class CameraUtilScreenWindowParameters
   }
 
  private:
+
   GfVec4d _screenWindow;
   double _fieldOfView;
   GfMatrix4d _zFacingViewMatrix;

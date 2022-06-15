@@ -14,6 +14,7 @@ namespace Zep
   class ZepMode_Search : public ZepMode
   {
    public:
+
     ZepMode_Search(ZepEditor &editor,
                    ZepWindow &previousWindow,
                    ZepWindow &window,
@@ -40,6 +41,7 @@ namespace Zep
     virtual CursorType GetCursorType() const override;
 
    private:
+
     void GetSearchPaths(const ZepPath &path,
                         std::vector<std::string> &ignore,
                         std::vector<std::string> &include) const;
@@ -57,6 +59,7 @@ namespace Zep
     void OpenSelection(OpenType type);
 
    private:
+
     // List of lines in the file result, with last found char
     struct SearchResult
     {

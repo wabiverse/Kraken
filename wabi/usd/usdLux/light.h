@@ -86,6 +86,7 @@ class SdfAssetPath;
 class UsdLuxLight : public UsdGeomXformable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -96,16 +97,12 @@ class UsdLuxLight : public UsdGeomXformable
   /// Equivalent to UsdLuxLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxLight(const UsdPrim &prim = UsdPrim())
-    : UsdGeomXformable(prim)
-  {}
+  explicit UsdLuxLight(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim) {}
 
   /// Construct a UsdLuxLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxLight(const UsdSchemaBase &schemaObj)
-    : UsdGeomXformable(schemaObj)
-  {}
+  explicit UsdLuxLight(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -130,6 +127,7 @@ class UsdLuxLight : public UsdGeomXformable
   static UsdLuxLight Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -137,6 +135,7 @@ class UsdLuxLight : public UsdGeomXformable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -146,9 +145,11 @@ class UsdLuxLight : public UsdGeomXformable
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // INTENSITY
   // --------------------------------------------------------------------- //
@@ -172,6 +173,7 @@ class UsdLuxLight : public UsdGeomXformable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EXPOSURE
   // --------------------------------------------------------------------- //
@@ -193,9 +195,11 @@ class UsdLuxLight : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DIFFUSE
   // --------------------------------------------------------------------- //
@@ -216,9 +220,11 @@ class UsdLuxLight : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateDiffuseAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateDiffuseAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SPECULAR
   // --------------------------------------------------------------------- //
@@ -239,9 +245,11 @@ class UsdLuxLight : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateSpecularAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateSpecularAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // NORMALIZE
   // --------------------------------------------------------------------- //
@@ -268,6 +276,7 @@ class UsdLuxLight : public UsdGeomXformable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLOR
   // --------------------------------------------------------------------- //
@@ -287,9 +296,11 @@ class UsdLuxLight : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateColorAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateColorAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ENABLECOLORTEMPERATURE
   // --------------------------------------------------------------------- //
@@ -313,6 +324,7 @@ class UsdLuxLight : public UsdGeomXformable
                                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORTEMPERATURE
   // --------------------------------------------------------------------- //
@@ -342,6 +354,7 @@ class UsdLuxLight : public UsdGeomXformable
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FILTERS
   // --------------------------------------------------------------------- //
@@ -356,6 +369,7 @@ class UsdLuxLight : public UsdGeomXformable
   UsdRelationship CreateFiltersRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

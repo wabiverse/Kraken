@@ -89,6 +89,7 @@ class SdfAssetPath;
 class UsdGeomXformCommonAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -98,16 +99,12 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase
   /// Equivalent to UsdGeomXformCommonAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomXformCommonAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdGeomXformCommonAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdGeomXformCommonAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomXformCommonAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomXformCommonAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdGeomXformCommonAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -132,6 +129,7 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase
   static UsdGeomXformCommonAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -140,6 +138,7 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -149,9 +148,11 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -272,7 +273,8 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase
 
   /// Set translation at \p time to \p translation.
   USDGEOM_API
-  bool SetTranslate(const GfVec3d &translation, const UsdTimeCode time = UsdTimeCode::Default()) const;
+  bool SetTranslate(const GfVec3d &translation,
+                    const UsdTimeCode time = UsdTimeCode::Default()) const;
 
   /// Set pivot position at \p time to \p pivot.
   USDGEOM_API
@@ -359,6 +361,7 @@ class UsdGeomXformCommonAPI : public UsdAPISchemaBase
   static bool CanConvertOpTypeToRotationOrder(UsdGeomXformOp::Type opType);
 
  protected:
+
   /// Returns whether the underlying xformable is compatible with the API.
   USDGEOM_API
   bool _IsCompatible() const override;

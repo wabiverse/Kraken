@@ -53,6 +53,7 @@ class HdPhDynamicUvTextureImplementation;
 class HdPhDynamicUvTextureObject final : public HdPhUvTextureObject
 {
  public:
+
   HDPH_API
   HdPhDynamicUvTextureObject(const HdPhTextureIdentifier &textureId,
                              HdPh_TextureObjectRegistry *textureObjectRegistry);
@@ -119,6 +120,7 @@ class HdPhDynamicUvTextureObject final : public HdPhUvTextureObject
   bool IsValid() const override;
 
  protected:
+
   HDPH_API
   void _Load() override;
 
@@ -126,6 +128,7 @@ class HdPhDynamicUvTextureObject final : public HdPhUvTextureObject
   void _Commit() override;
 
  private:
+
   HdPhDynamicUvTextureImplementation *_GetImpl() const;
 };
 

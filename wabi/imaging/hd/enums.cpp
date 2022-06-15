@@ -22,10 +22,10 @@
 // language governing permissions and limitations under the Apache License.
 //
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/enums.h"
 #include "wabi/base/tf/enum.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

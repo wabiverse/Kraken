@@ -55,6 +55,7 @@ class SdfPath;
 class UsdVariantSet
 {
  public:
+
   /// Author a variant spec for \a variantName in this VariantSet at the
   /// stage's current EditTarget, in the position specified by
   /// \p position.  Return true if the spec was successfully authored,
@@ -190,6 +191,7 @@ class UsdVariantSet
   }
 
  private:
+
   UsdVariantSet(const UsdPrim &prim, const std::string &variantSetName)
     : _prim(prim),
       _variantSetName(variantSetName)
@@ -223,6 +225,7 @@ class UsdVariantSet
 class UsdVariantSets
 {
  public:
+
   /// Find an existing, or create a new VariantSet on the originating UsdPrim,
   /// named \p variantSetName.
   ///
@@ -282,8 +285,8 @@ class UsdVariantSets
   SdfVariantSelectionMap GetAllVariantSelections() const;
 
  private:
-  explicit UsdVariantSets(const UsdPrim &prim)
-    : _prim(prim)
+
+  explicit UsdVariantSets(const UsdPrim &prim) : _prim(prim)
   {
     /* NOTHING */
   }

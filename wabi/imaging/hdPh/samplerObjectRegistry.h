@@ -53,6 +53,7 @@ class HdPhResourceRegistry;
 class HdPh_SamplerObjectRegistry final
 {
  public:
+
   HDPH_API
   explicit HdPh_SamplerObjectRegistry(HdPhResourceRegistry *registry);
 
@@ -82,6 +83,7 @@ class HdPh_SamplerObjectRegistry final
   HdPhResourceRegistry *GetResourceRegistry() const;
 
  private:
+
   std::vector<HdPhSamplerObjectSharedPtr> _samplerObjects;
 
   bool _garbageCollectionNeeded;

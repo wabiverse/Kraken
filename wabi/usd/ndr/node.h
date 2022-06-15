@@ -55,6 +55,7 @@ WABI_NAMESPACE_BEGIN
 class NdrNode
 {
  public:
+
   /// Constructor.
   NDR_API
   NdrNode(const NdrIdentifier &identifier,
@@ -232,6 +233,7 @@ class NdrNode
   /// @}
 
  protected:
+
   NdrNode &operator=(const NdrNode &) = delete;
 
   bool _isValid;

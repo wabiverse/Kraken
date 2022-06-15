@@ -55,10 +55,12 @@
 #define KRAKEN_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
 #define IDNAME(z) KRAKEN_OPERATOR_TOKENS->z
 
-#define KRAKEN_LUXOVERSE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
+#define KRAKEN_LUXOVERSE_CREATE_CHILD(i) \
+  Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
 #define KRAKEN_LUXOVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
 #define KRAKEN_PRIM_OPERATOR_CREATE(x, y) \
-  CTX_data_stage(x)->DefinePrim(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))
+  CTX_data_stage(x)->DefinePrim(          \
+    SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))
 
 #define GET_X(x) x[0]
 #define GET_Y(y) y[1]
@@ -88,8 +90,9 @@
 #define DEFAULT_ASSET(a) VtValue(SdfAssetPath(a))
 #define DEFAULT_VEC2F(v1f, v2f) VtValue(GfVec2f(v1f, v2f))
 
-#define KRAKEN_FILE_VERSION_HEADER \
-  (std::string("Kraken v" + TfStringify(KRAKEN_VERSION_MAJOR) + "." + TfStringify(KRAKEN_VERSION_MINOR)))
+#define KRAKEN_FILE_VERSION_HEADER                                    \
+  (std::string("Kraken v" + TfStringify(KRAKEN_VERSION_MAJOR) + "." + \
+               TfStringify(KRAKEN_VERSION_MINOR)))
 
 enum eIconSizes
 {

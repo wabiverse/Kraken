@@ -63,6 +63,7 @@ WABI_NAMESPACE_BEGIN
 class TfTemplateString
 {
  public:
+
   typedef std::map<std::string, std::string> Mapping;
 
   /// Constructs a new template string.
@@ -107,13 +108,10 @@ class TfTemplateString
   std::vector<std::string> GetParseErrors() const;
 
  private:
+
   struct _PlaceHolder
   {
-    _PlaceHolder(const std::string &n, size_t p, size_t l)
-      : name(n),
-        pos(p),
-        len(l)
-    {}
+    _PlaceHolder(const std::string &n, size_t p, size_t l) : name(n), pos(p), len(l) {}
     std::string name;
     size_t pos;
     size_t len;
@@ -141,9 +139,7 @@ class TfTemplateString
     _Data(_Data const &) = delete;
     _Data &operator=(_Data const &) = delete;
 
-    _Data()
-      : parsed(false)
-    {}
+    _Data() : parsed(false) {}
 
     std::string template_;
     mutable std::vector<_PlaceHolder> placeholders;

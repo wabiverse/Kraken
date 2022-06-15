@@ -234,13 +234,14 @@
 #  elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)
 #    define RAPIDJSON_ENDIAN RAPIDJSON_BIGENDIAN
 // Detect with architecture macros
-#  elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) ||         \
-    defined(__ppc__) || defined(__hpux) || defined(__hppa) || defined(_MIPSEB) || defined(_POWER) || \
-    defined(__s390__)
+#  elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || \
+    defined(__ppc__) || defined(__hpux) || defined(__hppa) || defined(_MIPSEB) ||            \
+    defined(_POWER) || defined(__s390__)
 #    define RAPIDJSON_ENDIAN RAPIDJSON_BIGENDIAN
-#  elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) ||                 \
-    defined(_M_IX86) || defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || \
-    defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) || defined(__bfin__)
+#  elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || \
+    defined(_M_IX86) || defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) ||       \
+    defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || \
+    defined(_M_X64) || defined(__bfin__)
 #    define RAPIDJSON_ENDIAN RAPIDJSON_LITTLEENDIAN
 #  elif defined(_MSC_VER) && defined(_M_ARM)
 #    define RAPIDJSON_ENDIAN RAPIDJSON_LITTLEENDIAN
@@ -320,13 +321,15 @@
 #  if RAPIDJSON_64BIT != 1
 #    error RAPIDJSON_48BITPOINTER_OPTIMIZATION can only be set to 1 when RAPIDJSON_64BIT=1
 #  endif
-#  define RAPIDJSON_SETPOINTER(type, p, x)                                                                \
-    (p = reinterpret_cast<type *>((reinterpret_cast<uintptr_t>(p) &                                       \
-                                   static_cast<uintptr_t>(RAPIDJSON_UINT64_C2(0xFFFF0000, 0x00000000))) | \
-                                  reinterpret_cast<uintptr_t>(reinterpret_cast<const void *>(x))))
-#  define RAPIDJSON_GETPOINTER(type, p)                        \
-    (reinterpret_cast<type *>(reinterpret_cast<uintptr_t>(p) & \
-                              static_cast<uintptr_t>(RAPIDJSON_UINT64_C2(0x0000FFFF, 0xFFFFFFFF))))
+#  define RAPIDJSON_SETPOINTER(type, p, x)                                     \
+    (p = reinterpret_cast<type *>(                                             \
+       (reinterpret_cast<uintptr_t>(p) &                                       \
+        static_cast<uintptr_t>(RAPIDJSON_UINT64_C2(0xFFFF0000, 0x00000000))) | \
+       reinterpret_cast<uintptr_t>(reinterpret_cast<const void *>(x))))
+#  define RAPIDJSON_GETPOINTER(type, p) \
+    (reinterpret_cast<type *>(          \
+      reinterpret_cast<uintptr_t>(p) &  \
+      static_cast<uintptr_t>(RAPIDJSON_UINT64_C2(0x0000FFFF, 0xFFFFFFFF))))
 #else
 #  define RAPIDJSON_SETPOINTER(type, p, x) (p = (x))
 #  define RAPIDJSON_GETPOINTER(type, p) (p)
@@ -423,20 +426,16 @@ RAPIDJSON_NAMESPACE_END
 //!@cond RAPIDJSON_HIDDEN_FROM_DOXYGEN
 #  endif
 RAPIDJSON_NAMESPACE_BEGIN
-template<bool x>
-struct STATIC_ASSERTION_FAILURE;
-template<>
-struct STATIC_ASSERTION_FAILURE<true>
+template<bool x> struct STATIC_ASSERTION_FAILURE;
+template<> struct STATIC_ASSERTION_FAILURE<true>
 {
   enum
   {
     value = 1
   };
 };
-template<int x>
-struct StaticAssertTest
-{
-};
+template<int x> struct StaticAssertTest
+{};
 RAPIDJSON_NAMESPACE_END
 
 #  define RAPIDJSON_JOIN(X, Y) RAPIDJSON_DO_JOIN(X, Y)
@@ -460,8 +459,7 @@ RAPIDJSON_NAMESPACE_END
 #  define RAPIDJSON_STATIC_ASSERT(x)                             \
     typedef ::RAPIDJSON_NAMESPACE::StaticAssertTest<sizeof(      \
       ::RAPIDJSON_NAMESPACE::STATIC_ASSERTION_FAILURE<bool(x)>)> \
-    RAPIDJSON_JOIN(StaticAssertTypedef, __LINE__)                \
-    RAPIDJSON_STATIC_ASSERT_UNUSED_ATTRIBUTE
+    RAPIDJSON_JOIN(StaticAssertTypedef, __LINE__) RAPIDJSON_STATIC_ASSERT_UNUSED_ATTRIBUTE
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -498,9 +496,7 @@ RAPIDJSON_NAMESPACE_END
 
 //!@cond RAPIDJSON_HIDDEN_FROM_DOXYGEN
 
-#define RAPIDJSON_MULTILINEMACRO_BEGIN \
-  do                                   \
-  {
+#define RAPIDJSON_MULTILINEMACRO_BEGIN do {
 #define RAPIDJSON_MULTILINEMACRO_END \
   }                                  \
   while ((void)0, 0)
@@ -515,14 +511,17 @@ RAPIDJSON_NAMESPACE_END
 #  define RAPIDJSON_GNUC RAPIDJSON_VERSION_CODE(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
 #endif
 
-#if defined(__clang__) || (defined(RAPIDJSON_GNUC) && RAPIDJSON_GNUC >= RAPIDJSON_VERSION_CODE(4, 2, 0))
+#if defined(__clang__) || \
+  (defined(RAPIDJSON_GNUC) && RAPIDJSON_GNUC >= RAPIDJSON_VERSION_CODE(4, 2, 0))
 
 #  define RAPIDJSON_PRAGMA(x) _Pragma(RAPIDJSON_STRINGIFY(x))
 #  define RAPIDJSON_DIAG_PRAGMA(x) RAPIDJSON_PRAGMA(GCC diagnostic x)
-#  define RAPIDJSON_DIAG_OFF(x) RAPIDJSON_DIAG_PRAGMA(ignored RAPIDJSON_STRINGIFY(RAPIDJSON_JOIN(-W, x)))
+#  define RAPIDJSON_DIAG_OFF(x) \
+    RAPIDJSON_DIAG_PRAGMA(ignored RAPIDJSON_STRINGIFY(RAPIDJSON_JOIN(-W, x)))
 
 // push/pop support in Clang and GCC>=4.6
-#  if defined(__clang__) || (defined(RAPIDJSON_GNUC) && RAPIDJSON_GNUC >= RAPIDJSON_VERSION_CODE(4, 6, 0))
+#  if defined(__clang__) || \
+    (defined(RAPIDJSON_GNUC) && RAPIDJSON_GNUC >= RAPIDJSON_VERSION_CODE(4, 6, 0))
 #    define RAPIDJSON_DIAG_PUSH RAPIDJSON_DIAG_PRAGMA(push)
 #    define RAPIDJSON_DIAG_POP RAPIDJSON_DIAG_PRAGMA(pop)
 #  else                         // GCC >= 4.2, < 4.6
@@ -536,8 +535,7 @@ RAPIDJSON_NAMESPACE_END
 #  define RAPIDJSON_PRAGMA(x) __pragma(x)
 #  define RAPIDJSON_DIAG_PRAGMA(x) RAPIDJSON_PRAGMA(warning(x))
 
-#  define RAPIDJSON_DIAG_OFF(x) RAPIDJSON_DIAG_PRAGMA(disable \
-                                                      : x)
+#  define RAPIDJSON_DIAG_OFF(x) RAPIDJSON_DIAG_PRAGMA(disable : x)
 #  define RAPIDJSON_DIAG_PUSH RAPIDJSON_DIAG_PRAGMA(push)
 #  define RAPIDJSON_DIAG_POP RAPIDJSON_DIAG_PRAGMA(pop)
 

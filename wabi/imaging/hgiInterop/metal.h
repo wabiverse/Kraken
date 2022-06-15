@@ -47,6 +47,7 @@ class VtValue;
 class HgiInteropMetal final
 {
  public:
+
   HGIINTEROP_API
   HgiInteropMetal(Hgi *hgi);
 
@@ -61,6 +62,7 @@ class HgiInteropMetal final
                           GfVec4i const &compRegion);
 
  private:
+
   HgiInteropMetal() = delete;
 
   enum
@@ -94,7 +96,10 @@ class HgiInteropMetal final
     void *pointer;
   };
 
-  void _BlitToOpenGL(VtValue const &framebuffer, GfVec4i const &compRegion, bool flipY, int shaderIndex);
+  void _BlitToOpenGL(VtValue const &framebuffer,
+                     GfVec4i const &compRegion,
+                     bool flipY,
+                     int shaderIndex);
   void _FreeTransientTextureCacheRefs();
   void _CaptureOpenGlState();
   void _RestoreOpenGlState();

@@ -50,6 +50,7 @@ using HdPh_GeometricShaderPtr = std::shared_ptr<class HdPh_GeometricShader>;
 class HdPh_CodeGen
 {
  public:
+
   typedef size_t ID;
 
   /// Constructor.
@@ -133,6 +134,7 @@ class HdPh_CodeGen
   }
 
  private:
+
   void _GenerateDrawingCoord();
   void _GenerateConstantPrimvar();
   void _GenerateInstancePrimvar();

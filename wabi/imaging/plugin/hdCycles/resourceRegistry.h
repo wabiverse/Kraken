@@ -40,11 +40,13 @@ class HdCyclesRenderDelegate;
 class HdCyclesResourceRegistry final : public HdResourceRegistry
 {
  public:
+
   explicit HdCyclesResourceRegistry(HdCyclesRenderDelegate *renderDelegate);
 
   HdInstance<HdCyclesObjectSourceSharedPtr> GetObjectInstance(const SdfPath &id);
 
  private:
+
   void _Commit() override;
   void _GarbageCollect() override;
 

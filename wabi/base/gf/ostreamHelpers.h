@@ -46,8 +46,7 @@ WABI_NAMESPACE_BEGIN
 
 // Make the template class general so that we can use the same class
 // (Gf_OstreamHelperP) on all variables and not worry about making a mistake
-template<class T>
-T Gf_OstreamHelperP(T v)
+template<class T> T Gf_OstreamHelperP(T v)
 {
   return v;
 }

@@ -86,6 +86,7 @@ class SdfAssetPath;
 class UsdGeomHermiteCurves : public UsdGeomCurves
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -95,16 +96,12 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
   /// Equivalent to UsdGeomHermiteCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomHermiteCurves(const UsdPrim &prim = UsdPrim())
-    : UsdGeomCurves(prim)
-  {}
+  explicit UsdGeomHermiteCurves(const UsdPrim &prim = UsdPrim()) : UsdGeomCurves(prim) {}
 
   /// Construct a UsdGeomHermiteCurves on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomHermiteCurves(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomHermiteCurves(const UsdSchemaBase &schemaObj)
-    : UsdGeomCurves(schemaObj)
-  {}
+  explicit UsdGeomHermiteCurves(const UsdSchemaBase &schemaObj) : UsdGeomCurves(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -154,6 +151,7 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
   static UsdGeomHermiteCurves Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -162,6 +160,7 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -171,9 +170,11 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TANGENTS
   // --------------------------------------------------------------------- //
@@ -194,9 +195,11 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateTangentsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateTangentsAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -219,6 +222,7 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
     explicit PointAndTangentArrays(const VtVec3fArray &interleaved);
 
    public:
+
     /// Construct empty points and tangents arrays
     PointAndTangentArrays() = default;
     PointAndTangentArrays(const PointAndTangentArrays &) = default;
@@ -234,8 +238,7 @@ class UsdGeomHermiteCurves : public UsdGeomCurves
       : _points(points),
         _tangents(tangents)
     {
-      if (_points.size() != _tangents.size())
-      {
+      if (_points.size() != _tangents.size()) {
         TF_RUNTIME_ERROR("Points and tangents must be the same size.");
         _points.clear();
         _tangents.clear();

@@ -41,11 +41,10 @@ WABI_NAMESPACE_BEGIN
 class UsdImagingVolumeAdapter : public UsdImagingGprimAdapter
 {
  public:
+
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingVolumeAdapter()
-    : UsdImagingGprimAdapter()
-  {}
+  UsdImagingVolumeAdapter() : UsdImagingGprimAdapter() {}
   virtual ~UsdImagingVolumeAdapter();
 
   virtual SdfPath Populate(UsdPrim const &prim,
@@ -58,23 +57,26 @@ class UsdImagingVolumeAdapter : public UsdImagingGprimAdapter
   /// \name Parallel Setup and Resolve
   // ---------------------------------------------------------------------- //
   /// Thread Safe.
-  virtual void TrackVariability(UsdPrim const &prim,
-                                SdfPath const &cachePath,
-                                HdDirtyBits *timeVaryingBits,
-                                UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
   /// Thread Safe.
-  virtual void UpdateForTime(UsdPrim const &prim,
-                             SdfPath const &cachePath,
-                             UsdTimeCode time,
-                             HdDirtyBits requestedBits,
-                             UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void UpdateForTime(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    UsdTimeCode time,
+    HdDirtyBits requestedBits,
+    UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
   virtual HdVolumeFieldDescriptorVector GetVolumeFieldDescriptors(UsdPrim const &usdPrim,
                                                                   SdfPath const &id,
                                                                   UsdTimeCode time) const override;
 
  private:
+
   bool _GatherVolumeData(UsdPrim const &prim, UsdVolVolume::FieldMap *fieldMap) const;
 };
 

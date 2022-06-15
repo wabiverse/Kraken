@@ -69,6 +69,7 @@ class SdfAssetPath;
 class UsdLuxLightPortal : public UsdLuxPortalLight
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -79,16 +80,12 @@ class UsdLuxLightPortal : public UsdLuxPortalLight
   /// Equivalent to UsdLuxLightPortal::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxLightPortal(const UsdPrim &prim = UsdPrim())
-    : UsdLuxPortalLight(prim)
-  {}
+  explicit UsdLuxLightPortal(const UsdPrim &prim = UsdPrim()) : UsdLuxPortalLight(prim) {}
 
   /// Construct a UsdLuxLightPortal on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxLightPortal(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxLightPortal(const UsdSchemaBase &schemaObj)
-    : UsdLuxPortalLight(schemaObj)
-  {}
+  explicit UsdLuxLightPortal(const UsdSchemaBase &schemaObj) : UsdLuxPortalLight(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -138,6 +135,7 @@ class UsdLuxLightPortal : public UsdLuxPortalLight
   static UsdLuxLightPortal Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -145,6 +143,7 @@ class UsdLuxLightPortal : public UsdLuxPortalLight
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -154,9 +153,11 @@ class UsdLuxLightPortal : public UsdLuxPortalLight
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

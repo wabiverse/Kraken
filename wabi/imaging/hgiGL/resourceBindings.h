@@ -48,6 +48,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLResourceBindings final : public HgiResourceBindings
 {
  public:
+
   HGIGL_API
   ~HgiGLResourceBindings() override;
 
@@ -56,12 +57,14 @@ class HgiGLResourceBindings final : public HgiResourceBindings
   void BindResources();
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
   HgiGLResourceBindings(HgiResourceBindingsDesc const &desc);
 
  private:
+
   HgiGLResourceBindings() = delete;
   HgiGLResourceBindings &operator=(const HgiGLResourceBindings &) = delete;
   HgiGLResourceBindings(const HgiGLResourceBindings &) = delete;

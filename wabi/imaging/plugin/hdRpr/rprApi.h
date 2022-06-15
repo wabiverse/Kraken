@@ -47,8 +47,7 @@ class RprUsdMaterial;
 struct HdRprApiVolume;
 struct HdRprApiEnvironmentLight;
 
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&...args)
+template<typename T, typename... Args> std::unique_ptr<T> make_unique(Args &&...args)
 {
   return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
@@ -71,6 +70,7 @@ const uint32_t kInvisible = 0u;
 class HdRprApi final
 {
  public:
+
   HdRprApi(HdRprDelegate *delegate);
   ~HdRprApi();
 
@@ -173,7 +173,10 @@ class HdRprApi final
   void Release(rpr::Curve *curve);
 
   void SetTransform(rpr::SceneObject *object, GfMatrix4f const &transform);
-  void SetTransform(rpr::Shape *shape, size_t numSamples, float *timeSamples, GfMatrix4d *transformSamples);
+  void SetTransform(rpr::Shape *shape,
+                    size_t numSamples,
+                    float *timeSamples,
+                    GfMatrix4d *transformSamples);
 
   void SetName(rpr::ContextObject *object, const char *name);
   void SetName(RprUsdMaterial *object, const char *name);
@@ -217,6 +220,7 @@ class HdRprApi final
   rpr::FrameBuffer *GetRawColorFramebuffer();
 
  private:
+
   HdRprApiImpl *m_impl = nullptr;
 };
 

@@ -29,11 +29,13 @@ class HdCyclesRenderDelegate;
 class HdCyclesRenderPassState : public HdRenderPassState
 {
  public:
+
   explicit HdCyclesRenderPassState(const HdCyclesRenderDelegate *renderDelegate);
 
   void Prepare(const HdResourceRegistrySharedPtr &resourceRegistry) override;
 
  private:
+
   const HdCyclesRenderDelegate *m_renderDelegate;
 };
 

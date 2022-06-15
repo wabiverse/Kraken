@@ -60,6 +60,7 @@ TF_DECLARE_REF_PTRS(TraceEventNode);
 class TraceEventNode : public TfRefBase
 {
  public:
+
   using TimeStamp = TraceEvent::TimeStamp;
   using AttributeData = TraceEventData;
   using AttributeMap = std::multimap<TfToken, AttributeData>;
@@ -156,6 +157,7 @@ class TraceEventNode : public TfRefBase
   }
 
  private:
+
   TraceEventNode(const TfToken &key,
                  TraceCategoryId category,
                  TimeStamp beginTime,

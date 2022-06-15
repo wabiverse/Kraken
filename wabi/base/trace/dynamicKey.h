@@ -49,23 +49,21 @@ WABI_NAMESPACE_BEGIN
 class TraceDynamicKey
 {
  public:
+
   /// Constructor for TfToken.
-  TraceDynamicKey(TfToken name)
-    : _key(std::move(name))
+  TraceDynamicKey(TfToken name) : _key(std::move(name))
   {
     _data._name = _key.GetText();
   }
 
   /// Constructor for string.
-  TraceDynamicKey(const std::string &name)
-    : _key(name)
+  TraceDynamicKey(const std::string &name) : _key(name)
   {
     _data._name = _key.GetText();
   }
 
   /// Constructor for C string.
-  TraceDynamicKey(const char *name)
-    : _key(name)
+  TraceDynamicKey(const char *name) : _key(name)
   {
     _data._name = _key.GetText();
   }
@@ -99,6 +97,7 @@ class TraceDynamicKey
   }
 
  private:
+
   TraceStaticKeyData _data;
   TfToken _key;
 };

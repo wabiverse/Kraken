@@ -53,9 +53,7 @@
   % if SCL == 'GfHalf' - %
 }
 #include "wabi/base/gf/half.h"
-{
-  % endif %
-}
+{ % endif % }
 
 #include <boost/functional/hash.hpp>
 
@@ -63,8 +61,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<>
-struct GfIsGfQuat<class {{QUAT}}>
+  template<>
+  struct GfIsGfQuat<class {{QUAT}}>
 {
   static const bool value = true;
 };
@@ -91,6 +89,7 @@ class
 }
 {
  public:
+
   typedef
   {
     {
@@ -107,8 +106,7 @@ class
   ImaginaryType;
 
   /// Default constructor leaves the quaternion undefined.
-  {{QUAT}}()
-  {}
+  {{QUAT}}() {}
 
   /// Initialize the real coefficient to \p realVal and the imaginary
   /// coefficients to zero.
@@ -493,6 +491,7 @@ class
   }
 
  private:
+
   /// Imaginary part
   GfVec3
   {

@@ -24,23 +24,24 @@
 #ifndef WABI_IMAGING_HD_TASK_H
 #define WABI_IMAGING_HD_TASK_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/driver.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/sceneDelegate.h"
 
-#include "wabi/base/tf/hashmap.h"
-#include "wabi/base/vt/dictionary.h"
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/tf/hashmap.h"
+#include "wabi/base/vt/value.h"
+#include "wabi/base/vt/dictionary.h"
 
 #include <memory>
-#include <unordered_map>
 #include <vector>
+#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdTaskSharedPtr = std::shared_ptr<class HdTask>;
 using HdTaskSharedPtrVector = std::vector<HdTaskSharedPtr>;
@@ -52,6 +53,7 @@ using HdTaskContext = std::unordered_map<TfToken, VtValue, TfToken::HashFunctor>
 class HdTask
 {
  public:
+
   /// Construct a new task.
   /// If the task is going to be added to the render index, id
   /// should be an absolute scene path.
@@ -101,7 +103,7 @@ class HdTask
   /// At this time all Tasks and other prims have completed the phase synced.
   ///
   /// This is an opportunity for the task to pull data from other prims
-  /// (such as a camera prim), but accessing the render index.
+  /// (such as a camera prim) by querying the render index.
   ///
   /// The task can also use the phase to create, register and update temporary
   /// resources with the resource registry or other render delegate
@@ -136,11 +138,11 @@ class HdTask
   /// Hydra prims are marked up with a render tag and only prims
   /// marked with the render tags in the current active set are Sync'ed.
   ///
-  /// Hydra's core will combine the sets from each task and deduplicated the
+  /// Hydra's core will combine the sets from each task and deduplicate the
   /// result.  So tasks don't need to co-ordinate with each other to
-  /// Optimize the set.
+  /// optimize the set.
   ///
-  /// For those tasks that use HdRenderPass, is the typically the set passed
+  /// For those tasks that use HdRenderPass, this set is passed
   /// to HdRenderPass's Execute method.
   ///
   /// The default implementation returns an empty set
@@ -158,7 +160,9 @@ class HdTask
   HD_API
   virtual HdDirtyBits GetInitialDirtyBitsMask() const;
 
+
  protected:
+
   /// Check if the shared context contains a value for the given id.
   HD_API
   static bool _HasTaskContextData(HdTaskContext const *ctx, TfToken const &id);
@@ -180,18 +184,17 @@ class HdTask
   /// copied into outValue.
   ///
   /// outValue must not be null.
-  template<class T>
-  bool _GetTaskParams(HdSceneDelegate *delegate, T *outValue);
+  template<class T> bool _GetTaskParams(HdSceneDelegate *delegate, T *outValue);
 
   HD_API
   TfTokenVector _GetTaskRenderTags(HdSceneDelegate *delegate);
 
   /// Extract an object from a HdDriver inside the task context.
   /// Returns nullptr if driver was not found.
-  template<class T>
-  static T _GetDriver(HdTaskContext const *ctx, TfToken const &driverName);
+  template<class T> static T _GetDriver(HdTaskContext const *ctx, TfToken const &driverName);
 
  private:
+
   SdfPath _id;
 
   HdTask() = delete;
@@ -205,21 +208,18 @@ bool HdTask::_GetTaskContextData(HdTaskContext const *ctx, TfToken const &id, T 
 {
   TF_DEV_AXIOM(outValue != nullptr);
 
-  if (!ctx)
-  {
+  if (!ctx) {
     return false;
   }
 
   HdTaskContext::const_iterator valueIt = ctx->find(id);
-  if (valueIt == ctx->cend())
-  {
+  if (valueIt == ctx->cend()) {
     TF_CODING_ERROR("Token %s missing from task context", id.GetText());
     return false;
   }
 
   const VtValue &valueVt = (valueIt->second);
-  if (!valueVt.IsHolding<T>())
-  {
+  if (!valueVt.IsHolding<T>()) {
     TF_CODING_ERROR("Token %s in task context is of mismatched type", id.GetText());
     return false;
   }
@@ -229,16 +229,14 @@ bool HdTask::_GetTaskContextData(HdTaskContext const *ctx, TfToken const &id, T 
   return true;
 }
 
-template<class T>
-bool HdTask::_GetTaskParams(HdSceneDelegate *delegate, T *outValue)
+template<class T> bool HdTask::_GetTaskParams(HdSceneDelegate *delegate, T *outValue)
 {
   TF_DEV_AXIOM(outValue != nullptr);
 
   SdfPath const &taskId = GetId();
 
   VtValue valueVt = delegate->Get(taskId, HdTokens->params);
-  if (!valueVt.IsHolding<T>())
-  {
+  if (!valueVt.IsHolding<T>()) {
     TF_CODING_ERROR("Task params for %s is of unexpected type", taskId.GetText());
     return false;
   }
@@ -248,22 +246,16 @@ bool HdTask::_GetTaskParams(HdSceneDelegate *delegate, T *outValue)
   return true;
 }
 
-template<class T>
-T HdTask::_GetDriver(HdTaskContext const *ctx, TfToken const &driverName)
+template<class T> T HdTask::_GetDriver(HdTaskContext const *ctx, TfToken const &driverName)
 {
   auto it = ctx->find(HdTokens->drivers);
-  if (it != ctx->end())
-  {
+  if (it != ctx->end()) {
     VtValue const &value = it->second;
-    if (value.IsHolding<HdDriverVector>())
-    {
+    if (value.IsHolding<HdDriverVector>()) {
       HdDriverVector const &drivers = value.UncheckedGet<HdDriverVector>();
-      for (HdDriver *hdDriver : drivers)
-      {
-        if (hdDriver->name == driverName)
-        {
-          if (hdDriver->driver.IsHolding<T>())
-          {
+      for (HdDriver *hdDriver : drivers) {
+        if (hdDriver->name == driverName) {
+          if (hdDriver->driver.IsHolding<T>()) {
             return hdDriver->driver.UncheckedGet<T>();
           }
         }

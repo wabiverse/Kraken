@@ -51,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class HdCyclesRenderParam : public HdRenderParam
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Render Param object
    *
@@ -131,6 +132,7 @@ class HdCyclesRenderParam : public HdRenderParam
   void BlitFromCyclesPass(const HdRenderPassAovBinding &aov, int w, int h, int samples);
 
  protected:
+
   /**
    * @brief Start a cycles render
    *
@@ -153,6 +155,7 @@ class HdCyclesRenderParam : public HdRenderParam
   void _UpdateRenderTile(ccl::RenderTile &rtile, bool highlight);
 
  public:
+
   // Up Axis. Z and Y currently supported.
   enum UpAxis : uint8_t
   {
@@ -243,6 +246,7 @@ class HdCyclesRenderParam : public HdRenderParam
   void RemoveGeometrySafe(ccl::Geometry *geometry);
 
  private:
+
   bool _CreateSession();
 
   /**
@@ -326,6 +330,7 @@ class HdCyclesRenderParam : public HdRenderParam
   UpAxis m_upAxis;
 
  public:
+
   const bool &IsTiledRender() const
   {
     return m_useTiledRendering;
@@ -386,6 +391,7 @@ class HdCyclesRenderParam : public HdRenderParam
   }
 
  private:
+
   ccl::Session *m_cyclesSession;
   ccl::Scene *m_cyclesScene;
 
@@ -394,6 +400,7 @@ class HdCyclesRenderParam : public HdRenderParam
   bool m_settingsHaveChanged = false;
 
  public:
+
   /**
    * @brief Set the AOV bindings
    *

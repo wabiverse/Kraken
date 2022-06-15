@@ -45,6 +45,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdUsdcFileFormat);
 class UsdUsdcFileFormat : public SdfFileFormat
 {
  public:
+
   using SdfFileFormat::FileFormatArguments;
   using string = std::string;
 
@@ -65,9 +66,12 @@ class UsdUsdcFileFormat : public SdfFileFormat
                              string *str,
                              const string &comment = string()) const override;
 
-  virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
+  virtual bool WriteToStream(const SdfSpecHandle &spec,
+                             std::ostream &out,
+                             size_t indent) const override;
 
  protected:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
   UsdUsdcFileFormat();

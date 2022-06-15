@@ -57,9 +57,7 @@
   % if SCL == 'GfHalf' - %
 }
 #include "wabi/base/gf/half.h"
-{ % endif % } {
-  % endif %
-}
+{ % endif % } { % endif % }
 
 #include <boost/functional/hash.hpp>
 
@@ -68,23 +66,20 @@
   % if IS_FLOATING_POINT (SCL) - %
 }
 #include <cmath>
-{
-  % endif %
-}
+{ % endif % }
 
 #include <iosfwd>
 
 WABI_NAMESPACE_BEGIN
 
-class
+  class
 {
   {
     VEC
   }
 };
 
-template<>
-struct GfIsGfVec<class {{VEC}}>
+template<> struct GfIsGfVec<class {{VEC}}>
 {
   static const bool value = true;
 };
@@ -105,6 +100,7 @@ class
 }
 {
  public:
+
   /// Scalar element type and dimension.
   typedef
   {
@@ -128,14 +124,10 @@ class
   {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr {{VEC}}({{LIST(SCL + " s%(i)s")}})
-    : _data{{{LIST("s%(i)s")}}}
-  {}
+  constexpr {{VEC}}({{LIST(SCL + " s%(i)s")}}) : _data{{{LIST("s%(i)s")}}} {}
 
   /// Construct with pointer to values.
-  template<class Scl>
-  constexpr explicit {{VEC}}(Scl const *p)
-    : _data{{{LIST("p[%(i)s]")}}} {}
+  template<class Scl> constexpr explicit {{VEC}}(Scl const *p) : _data{{{LIST("p[%(i)s]")}}} {}
   {
     % if IS_FLOATING_POINT (SCL) %
   }
@@ -633,6 +625,7 @@ class
   }
 
  private:
+
   {
     {
       SCL
@@ -924,8 +917,9 @@ GfCross(
     }
   } const &v2)
 {
-  return {
-    {VEC}}(v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]);
+  return {{VEC}}(v1[1] * v2[2] - v1[2] * v2[1],
+                 v1[2] * v2[0] - v1[0] * v2[2],
+                 v1[0] * v2[1] - v1[1] * v2[0]);
 }
 
 /// Returns the cross product of \p v1 and \p v2.

@@ -41,6 +41,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhExtCompGpuPrimvarBufferSource final : public HdNullBufferSource
 {
  public:
+
   HdPhExtCompGpuPrimvarBufferSource(TfToken const &name,
                                     HdTupleType const &valueType,
                                     int numElements,
@@ -68,9 +69,11 @@ class HdPhExtCompGpuPrimvarBufferSource final : public HdNullBufferSource
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   TfToken _name;
   HdTupleType _tupleType;
   size_t _numElements;

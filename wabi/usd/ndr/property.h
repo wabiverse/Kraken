@@ -57,6 +57,7 @@ WABI_NAMESPACE_BEGIN
 class NdrProperty
 {
  public:
+
   /// Constructor.
   NDR_API
   NdrProperty(const TfToken &name,
@@ -187,6 +188,7 @@ class NdrProperty
   /// @}
 
  protected:
+
   NdrProperty &operator=(const NdrProperty &) = delete;
 
   TfToken _name;

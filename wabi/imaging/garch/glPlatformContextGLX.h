@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class GarchGLXContextState
 {
  public:
+
   /// Construct with the current state.
   GarchGLXContextState();
 
@@ -61,11 +62,13 @@ class GarchGLXContextState
   static void DoneCurrent();
 
  public:
+
   Display *display;
   GLXDrawable drawable;
   GLXContext context;
 
  private:
+
   bool _defaultCtor;
 };
 

@@ -17,8 +17,7 @@ namespace DPI
 
   inline int GetPixelSize(PixelSize sz)
   {
-    switch (sz)
-    {
+    switch (sz) {
       case PixelSize::ToolBarIcon:
         return qApp->style()->pixelMetric(QStyle::PM_ButtonIconSize);
       default:

@@ -57,7 +57,8 @@ WABI_NAMESPACE_BEGIN
 // Processor
 //
 
-#if defined(i386) || defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)
+#if defined(i386) || defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || \
+  defined(_M_X64)
 #  define ARCH_CPU_INTEL
 #elif defined(__arm__) || defined(__aarch64__) || defined(_M_ARM)
 #  define ARCH_CPU_ARM

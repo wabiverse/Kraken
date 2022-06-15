@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class UsdLux_LightDefParserPlugin : public NdrParserPlugin
 {
  public:
+
   USDLUX_API
   UsdLux_LightDefParserPlugin() = default;
 
@@ -63,6 +64,7 @@ class UsdLux_LightDefParserPlugin : public NdrParserPlugin
   const TfToken &GetSourceType() const override;
 
  private:
+
   // The discovery plugin needs to match the source type and discovery types
   // that instances of this parser returns when discovering nodes.
   friend class UsdLux_DiscoveryPlugin;

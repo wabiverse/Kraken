@@ -31,10 +31,10 @@
 class AnchorIEvent
 {
  public:
+
   /**
    * Destructor. */
-  virtual ~AnchorIEvent()
-  {}
+  virtual ~AnchorIEvent() {}
 
   /**
    * Returns the event type.
@@ -63,6 +63,7 @@ class AnchorIEvent
 class AnchorEvent : public AnchorIEvent
 {
  public:
+
   /**
    * Constructor.
    * @param msec: The time this event was generated.
@@ -109,6 +110,7 @@ class AnchorEvent : public AnchorIEvent
   }
 
  protected:
+
   /**
    * Type of this event. */
   eAnchorEventType m_type;
@@ -128,6 +130,7 @@ class AnchorEvent : public AnchorIEvent
 class AnchorEventCursor : public AnchorEvent
 {
  public:
+
   /**
    * Constructor.
    * @param msec: The time this event was generated.
@@ -148,6 +151,7 @@ class AnchorEventCursor : public AnchorEvent
   }
 
  protected:
+
   /** The x,y-coordinates of the cursor position. */
   AnchorEventCursorData m_cursorEventData;
 };
@@ -157,6 +161,7 @@ class AnchorEventCursor : public AnchorEvent
 class AnchorEventButton : public AnchorEvent
 {
  public:
+
   /**
    * Constructor.
    * @param time: The time this event was generated.
@@ -176,6 +181,7 @@ class AnchorEventButton : public AnchorEvent
   }
 
  protected:
+
   /** The button event data. */
   AnchorEventButtonData m_buttonEventData;
 };
@@ -187,6 +193,7 @@ class AnchorEventButton : public AnchorEvent
 class AnchorEventWheel : public AnchorEvent
 {
  public:
+
   /**
    * Constructor.
    * @param msec: The time this event was generated.
@@ -200,6 +207,7 @@ class AnchorEventWheel : public AnchorEvent
   }
 
  protected:
+
   /** The z-displacement of the mouse wheel. */
   AnchorEventWheelData m_wheelEventData;
 };
@@ -209,6 +217,7 @@ class AnchorEventWheel : public AnchorEvent
 class AnchorEventKey : public AnchorEvent
 {
  public:
+
   /**
    * Constructor.
    * @param msec: The time this event was generated.
@@ -254,6 +263,7 @@ class AnchorEventKey : public AnchorEvent
   }
 
  protected:
+
   /** The key event data. */
   AnchorEventKeyData m_keyEventData;
 };

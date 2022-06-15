@@ -41,6 +41,7 @@ class Hd_VertexAdjacency;
 class HdPh_SmoothNormalsComputationGPU : public HdComputation
 {
  public:
+
   /// Constructor
   HDPH_API
   HdPh_SmoothNormalsComputationGPU(Hd_VertexAdjacency const *adjacency,
@@ -64,6 +65,7 @@ class HdPh_SmoothNormalsComputationGPU : public HdComputation
   }
 
  private:
+
   Hd_VertexAdjacency const *_adjacency;
   TfToken _srcName;
   TfToken _dstName;

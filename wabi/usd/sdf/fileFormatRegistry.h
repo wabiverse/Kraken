@@ -53,6 +53,7 @@ TF_DECLARE_WEAK_PTRS(PlugPlugin);
 class Sdf_FileFormatRegistry : boost::noncopyable
 {
  public:
+
   /// Constructor.
   Sdf_FileFormatRegistry();
 
@@ -63,7 +64,8 @@ class Sdf_FileFormatRegistry : boost::noncopyable
   /// \p s and target \p target. Extension \p s may be a full file path name,
   /// or an extension with or without a leading dot (e.g. 'foo/bar.usd', 'usd'
   /// or '.usd' are acceptable).
-  SdfFileFormatConstPtr FindByExtension(const std::string &s, const std::string &target = std::string());
+  SdfFileFormatConstPtr FindByExtension(const std::string &s,
+                                        const std::string &target = std::string());
 
   /// Returns a set containing the extension(s) corresponding to
   /// all registered file formats.
@@ -74,6 +76,7 @@ class Sdf_FileFormatRegistry : boost::noncopyable
   TfToken GetPrimaryFormatForExtension(const std::string &ext);
 
  private:
+
   /// \struct _Info
   ///
   /// Information about a file format plugin. This structure initially holds
@@ -84,7 +87,11 @@ class Sdf_FileFormatRegistry : boost::noncopyable
   class _Info
   {
    public:
-    _Info(const TfToken &formatId, const TfType &type, const TfToken &target, const PlugPluginPtr &plugin)
+
+    _Info(const TfToken &formatId,
+          const TfType &type,
+          const TfToken &target,
+          const PlugPluginPtr &plugin)
       : formatId(formatId),
         type(type),
         target(target),
@@ -100,6 +107,7 @@ class Sdf_FileFormatRegistry : boost::noncopyable
     const TfToken target;
 
    private:
+
     const PlugPluginPtr _plugin;
     mutable std::mutex _formatMutex;
     mutable std::atomic<bool> _hasFormat;

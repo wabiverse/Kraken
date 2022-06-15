@@ -68,6 +68,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(_NdrFilesystemDiscoveryPlugin);
 class _NdrFilesystemDiscoveryPlugin final : public NdrDiscoveryPlugin
 {
  public:
+
   /// A filter for discovered nodes.  If the function returns false
   /// then the discovered node is discarded.  Otherwise the function
   /// can modify the discovery result.
@@ -85,8 +86,7 @@ class _NdrFilesystemDiscoveryPlugin final : public NdrDiscoveryPlugin
 
   /// Destructor
   NDR_API
-  ~_NdrFilesystemDiscoveryPlugin()
-  {}
+  ~_NdrFilesystemDiscoveryPlugin() {}
 
   /// Discover all of the nodes that appear within the the search paths
   /// provided and match the extensions provided.
@@ -101,6 +101,7 @@ class _NdrFilesystemDiscoveryPlugin final : public NdrDiscoveryPlugin
   }
 
  private:
+
   /// The paths (abs) indicating where the plugin should search for nodes.
   NdrStringVec _searchPaths;
 

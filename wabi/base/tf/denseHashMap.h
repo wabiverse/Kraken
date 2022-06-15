@@ -49,10 +49,15 @@ WABI_NAMESPACE_BEGIN
 /// \warning This differs from a TfHashMap in so far that inserting and
 /// removing elements invalidate all iterators of the container.
 ///
-template<class Key, class Data, class HashFn, class EqualKey = std::equal_to<Key>, unsigned Threshold = 128>
+template<class Key,
+         class Data,
+         class HashFn,
+         class EqualKey = std::equal_to<Key>,
+         unsigned Threshold = 128>
 class TfDenseHashMap
 {
  public:
+
   typedef std::pair<const Key, Data> value_type;
   typedef Key key_type;
   typedef Data mapped_type;
@@ -60,24 +65,21 @@ class TfDenseHashMap
   ////////////////////////////////////////////////////////////////////////////////
 
  private:
+
   // This helper implements a std::pair with an assignment operator that
   // uses placement new instead of assignment.  The benefit here is that
   // the two elements of the pair may be const.
   //
   struct _InternalValueType
   {
-    _InternalValueType()
-    {}
+    _InternalValueType() {}
 
-    _InternalValueType(const Key &k, const Data &d)
-      : _value(k, d)
-    {}
+    _InternalValueType(const Key &k, const Data &d) : _value(k, d) {}
 
     _InternalValueType &operator=(const _InternalValueType &rhs)
     {
 
-      if (this != &rhs)
-      {
+      if (this != &rhs) {
         // Since value_type's first member is const we need to
         // use placement new to put the new element in place.  Just
         // make sure we destruct the element we are about to overwrite.
@@ -116,6 +118,7 @@ class TfDenseHashMap
     }
 
    private:
+
     // Data hold by _InternalValueType.  Note that the key portion of
     // value_type maybe const.
     value_type _value;
@@ -138,32 +141,30 @@ class TfDenseHashMap
   // the map's value_type as externally visible type.
   //
   template<class ElementType, class UnderlyingIterator>
-  class _IteratorBase : public boost::iterator_facade<_IteratorBase<ElementType, UnderlyingIterator>,
-                                                      ElementType,
-                                                      boost::bidirectional_traversal_tag>
+  class _IteratorBase
+    : public boost::iterator_facade<_IteratorBase<ElementType, UnderlyingIterator>,
+                                    ElementType,
+                                    boost::bidirectional_traversal_tag>
   {
    public:
+
     // Empty ctor.
-    _IteratorBase()
-    {}
+    _IteratorBase() {}
 
     // Allow conversion of an iterator to a const_iterator.
     template<class OtherIteratorType>
-    _IteratorBase(const OtherIteratorType &rhs)
-      : _iter(rhs._GetUnderlyingIterator())
+    _IteratorBase(const OtherIteratorType &rhs) : _iter(rhs._GetUnderlyingIterator())
     {}
 
    private:
+
     friend class TfDenseHashMap;
     friend class boost::iterator_core_access;
 
     // Ctor from an underlying iterator.
-    _IteratorBase(const UnderlyingIterator &iter)
-      : _iter(iter)
-    {}
+    _IteratorBase(const UnderlyingIterator &iter) : _iter(iter) {}
 
-    template<class OtherIteratorType>
-    bool equal(const OtherIteratorType &rhs) const
+    template<class OtherIteratorType> bool equal(const OtherIteratorType &rhs) const
     {
       return _iter == rhs._iter;
     }
@@ -192,12 +193,14 @@ class TfDenseHashMap
     }
 
    private:
+
     UnderlyingIterator _iter;
   };
 
   ////////////////////////////////////////////////////////////////////////////////
 
  public:
+
   /// An iterator type for this map.  Note that it provides access to the
   /// This::value_type only.
   typedef _IteratorBase<value_type, typename _Vector::iterator> iterator;
@@ -210,6 +213,7 @@ class TfDenseHashMap
   typedef std::pair<iterator, bool> insert_result;
 
  public:
+
   /// Ctor.
   ///
   explicit TfDenseHashMap(const HashFn &hashFn = HashFn(), const EqualKey &equalKey = EqualKey())
@@ -220,8 +224,7 @@ class TfDenseHashMap
 
   /// Construct with range.
   ///
-  template<class Iterator>
-  TfDenseHashMap(Iterator begin, Iterator end)
+  template<class Iterator> TfDenseHashMap(Iterator begin, Iterator end)
   {
     insert(begin, end);
   }
@@ -235,11 +238,9 @@ class TfDenseHashMap
 
   /// Copy Ctor.
   ///
-  TfDenseHashMap(const TfDenseHashMap &rhs)
-    : _vectorHashFnEqualFn(rhs._vectorHashFnEqualFn)
+  TfDenseHashMap(const TfDenseHashMap &rhs) : _vectorHashFnEqualFn(rhs._vectorHashFnEqualFn)
   {
-    if (rhs._h)
-    {
+    if (rhs._h) {
       _h.reset(new _HashMap(*rhs._h));
     }
   }
@@ -252,8 +253,7 @@ class TfDenseHashMap
   ///
   TfDenseHashMap &operator=(const TfDenseHashMap &rhs)
   {
-    if (this != &rhs)
-    {
+    if (this != &rhs) {
       TfDenseHashMap temp(rhs);
       temp.swap(*this);
     }
@@ -284,8 +284,7 @@ class TfDenseHashMap
     // XXX: Should we compare the HashFn and EqualKey too?
     const_iterator tend = end(), rend = rhs.end();
 
-    for (const_iterator iter = begin(); iter != tend; ++iter)
-    {
+    for (const_iterator iter = begin(); iter != tend; ++iter) {
       const_iterator riter = rhs.find(iter->first);
       if (riter == rend)
         return false;
@@ -363,15 +362,13 @@ class TfDenseHashMap
   ///
   iterator find(const key_type &k)
   {
-    if (_h)
-    {
+    if (_h) {
       typename _HashMap::const_iterator iter = _h->find(k);
       if (iter == _h->end())
         return end();
 
       return _vec().begin() + iter->second;
-    } else
-    {
+    } else {
       return _FindInVec(k);
     }
   }
@@ -380,15 +377,13 @@ class TfDenseHashMap
   ///
   const_iterator find(const key_type &k) const
   {
-    if (_h)
-    {
+    if (_h) {
       typename _HashMap::const_iterator iter = _h->find(k);
       if (iter == _h->end())
         return end();
 
       return _vec().begin() + iter->second;
-    } else
-    {
+    } else {
       return _FindInVec(k);
     }
   }
@@ -405,16 +400,15 @@ class TfDenseHashMap
   ///
   insert_result insert(const value_type &v)
   {
-    if (_h)
-    {
+    if (_h) {
       // Attempt to insert the new index.  If this fails, we can't insert
       // v.
-      std::pair<typename _HashMap::iterator, bool> res = _h->insert(std::make_pair(v.first, size()));
+      std::pair<typename _HashMap::iterator, bool> res = _h->insert(
+        std::make_pair(v.first, size()));
 
       if (!res.second)
         return insert_result(_vec().begin() + res.first->second, false);
-    } else
-    {
+    } else {
       // Bail if already inserted.
       iterator iter = _FindInVec(v.first);
       if (iter != end())
@@ -431,8 +425,7 @@ class TfDenseHashMap
   /// Insert a range into the hash map.  Note that \p i0 and \p i1 can't
   /// point into the hash map.
   ///
-  template<class IteratorType>
-  void insert(IteratorType i0, IteratorType i1)
+  template<class IteratorType> void insert(IteratorType i0, IteratorType i1)
   {
     // Assume elements are more often than not unique, so if the sum of the
     // current size and the size of the range is greater than or equal to
@@ -449,16 +442,13 @@ class TfDenseHashMap
   /// Insert a range of unique elements into the container.  [begin, end)
   /// *must not* contain any duplicate elements.
   ///
-  template<class Iterator>
-  void insert_unique(Iterator begin, Iterator end)
+  template<class Iterator> void insert_unique(Iterator begin, Iterator end)
   {
     // Special-case empty container.
-    if (empty())
-    {
+    if (empty()) {
       _vec().assign(begin, end);
       _CreateTableIfNeeded();
-    } else
-    {
+    } else {
       // Just insert, since duplicate checking will use the hash.
       insert(begin, end);
     }
@@ -480,8 +470,7 @@ class TfDenseHashMap
   {
 
     iterator iter = find(k);
-    if (iter != end())
-    {
+    if (iter != end()) {
       erase(iter);
       return 1;
     }
@@ -498,8 +487,7 @@ class TfDenseHashMap
       _h->erase(iter->first);
 
     // If we are not removing that last element...
-    if (iter != std::prev(end()))
-    {
+    if (iter != std::prev(end())) {
 
       // Need to get the underlying vector iterator directly, because
       // we want to operate on the vector.
@@ -521,8 +509,7 @@ class TfDenseHashMap
   void erase(iterator i0, iterator i1)
   {
 
-    if (_h)
-    {
+    if (_h) {
       for (iterator iter = i0; iter != i1; ++iter)
         _h->erase(iter->first);
     }
@@ -530,8 +517,7 @@ class TfDenseHashMap
     typename _Vector::const_iterator vremain = _vec().erase(i0._GetUnderlyingIterator(),
                                                             i1._GetUnderlyingIterator());
 
-    if (_h)
-    {
+    if (_h) {
       for (; vremain != _vec().end(); ++vremain)
         (*_h)[vremain->GetValue().first] = vremain - _vec().begin();
     }
@@ -551,12 +537,10 @@ class TfDenseHashMap
     size_t sz = size();
 
     // If we have a hash map and are underneath the threshold, discard it.
-    if (sz < Threshold)
-    {
+    if (sz < Threshold) {
 
       _h.reset();
-    } else
-    {
+    } else {
 
       // Otherwise, allocate a new hash map with the optimal size.
       _h.reset(new _HashMap(sz, _hash(), _equ()));
@@ -575,6 +559,7 @@ class TfDenseHashMap
   ////////////////////////////////////////////////////////////////////////////////
 
  private:
+
   // Helper to access the storage vector.
   _Vector &_vec()
   {
@@ -617,8 +602,7 @@ class TfDenseHashMap
     _Vector &vec = _vec();
     EqualKey &equ = _equ();
     typename _Vector::iterator iter = vec.begin(), end = vec.end();
-    for (; iter != end; ++iter)
-    {
+    for (; iter != end; ++iter) {
       if (equ(iter->GetValue().first, k))
         break;
     }
@@ -631,8 +615,7 @@ class TfDenseHashMap
     _Vector const &vec = _vec();
     EqualKey const &equ = _equ();
     typename _Vector::const_iterator iter = vec.begin(), end = vec.end();
-    for (; iter != end; ++iter)
-    {
+    for (; iter != end; ++iter) {
       if (equ(iter->GetValue().first, k))
         break;
     }
@@ -642,8 +625,7 @@ class TfDenseHashMap
   // Helper to create the acceleration table if size dictates.
   inline void _CreateTableIfNeeded()
   {
-    if (size() >= Threshold)
-    {
+    if (size() >= Threshold) {
       _CreateTable();
     }
   }
@@ -652,8 +634,7 @@ class TfDenseHashMap
   // exist.
   inline void _CreateTable()
   {
-    if (!_h)
-    {
+    if (!_h) {
       _h.reset(new _HashMap(Threshold, _hash(), _equ()));
       for (size_t i = 0; i < size(); ++i)
         _h->insert(std::make_pair(_vec()[i].GetValue().first, i));
@@ -664,7 +645,8 @@ class TfDenseHashMap
   // sizeof(EqualKey) == 0 in many cases we use a compressed_pair to not
   // pay a size penalty.
 
-  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualKey> _VectorHashFnEqualFn;
+  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualKey>
+    _VectorHashFnEqualFn;
 
   _VectorHashFnEqualFn _vectorHashFnEqualFn;
 

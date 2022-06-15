@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 struct UsdUtilsRegisteredVariantSet
 {
  public:
+
   /// The name of the variantSet.
   const std::string name;
 
@@ -77,7 +78,8 @@ struct UsdUtilsRegisteredVariantSet
   /// Specifies how to export a variant selection.
   const SelectionExportPolicy selectionExportPolicy;
 
-  UsdUtilsRegisteredVariantSet(const std::string &name, const SelectionExportPolicy &selectionExportPolicy)
+  UsdUtilsRegisteredVariantSet(const std::string &name,
+                               const SelectionExportPolicy &selectionExportPolicy)
     : name(name),
       selectionExportPolicy(selectionExportPolicy)
   {}

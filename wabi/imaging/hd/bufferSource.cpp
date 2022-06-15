@@ -142,7 +142,6 @@ HdTupleType HdNullBufferSource::GetTupleType() const
 
 size_t HdNullBufferSource::GetNumElements() const
 {
-  TF_CODING_ERROR("HdNullBufferSource can't be scheduled with a buffer range");
   return 0;
 }
 

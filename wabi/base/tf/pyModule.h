@@ -132,7 +132,8 @@ extern "C" ARCH_EXPORT PyObject *BOOST_PP_CAT(PyInit__, MFB_PACKAGE_NAME)()
   };
 
   WABI_NAMESPACE_USING
-  return boost::python::detail::init_module(moduledef, BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
+  return boost::python::detail::init_module(moduledef,
+                                            BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
 }
 
 extern "C" ARCH_EXPORT PyObject *BOOST_PP_CAT(PyInit_lib, MFB_PACKAGE_NAME)()
@@ -151,7 +152,8 @@ extern "C" ARCH_EXPORT PyObject *BOOST_PP_CAT(PyInit_lib, MFB_PACKAGE_NAME)()
   };
 
   WABI_NAMESPACE_USING
-  return boost::python::detail::init_module(moduledef, BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
+  return boost::python::detail::init_module(moduledef,
+                                            BOOST_PP_CAT(init_module_, MFB_PACKAGE_NAME));
 }
 
 #endif

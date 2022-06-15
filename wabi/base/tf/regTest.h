@@ -89,6 +89,7 @@ WABI_NAMESPACE_BEGIN
 class TfRegTest
 {
  public:
+
   /// Run a single regression test function, returning 0 if the function
   /// succeeded and 1 otherwise.
   ///
@@ -128,6 +129,7 @@ class TfRegTest
   bool Register(const char *name, RegFuncWithArgs);
 
  private:
+
   friend class TfSingleton<TfRegTest>;
   TF_API
   int _Main(int argc, char *argv[]);
@@ -148,7 +150,8 @@ TF_API_TEMPLATE_CLASS(TfSingleton<TfRegTest>);
 ///
 /// \ingroup group_tf_Internal
 /// \hideinitializer
-#define TF_ADD_REGTEST(name) bool Tf_RegTst##name = TfRegTest::GetInstance().Register(#name, Test_##name)
+#define TF_ADD_REGTEST(name) \
+  bool Tf_RegTst##name = TfRegTest::GetInstance().Register(#name, Test_##name)
 
 WABI_NAMESPACE_END
 

@@ -48,7 +48,8 @@ using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
 using HdPh_AdjacencyBuilderComputationPtr = std::weak_ptr<class HdPh_AdjacencyBuilderComputation>;
 
 using HdPh_QuadInfoBuilderComputationPtr = std::weak_ptr<class HdPh_QuadInfoBuilderComputation>;
-using HdPh_QuadInfoBuilderComputationSharedPtr = std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
+using HdPh_QuadInfoBuilderComputationSharedPtr =
+  std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
 
 using HdPh_MeshTopologySharedPtr = std::shared_ptr<class HdPh_MeshTopology>;
 
@@ -59,6 +60,7 @@ using HdPh_MeshTopologySharedPtr = std::shared_ptr<class HdPh_MeshTopology>;
 class HdPh_MeshTopology final : public HdMeshTopology
 {
  public:
+
   /// Specifies how subdivision mesh topology is refined.
   enum RefineMode
   {
@@ -90,8 +92,9 @@ class HdPh_MeshTopology final : public HdMeshTopology
   HdBufferSourceSharedPtr GetTriangleIndexBuilderComputation(SdfPath const &id);
 
   /// Returns the CPU face-varying triangulate computation
-  HdBufferSourceSharedPtr GetTriangulateFaceVaryingComputation(HdBufferSourceSharedPtr const &source,
-                                                               SdfPath const &id);
+  HdBufferSourceSharedPtr GetTriangulateFaceVaryingComputation(
+    HdBufferSourceSharedPtr const &source,
+    SdfPath const &id);
 
   /// @}
 
@@ -121,8 +124,9 @@ class HdPh_MeshTopology final : public HdMeshTopology
                                                         SdfPath const &id);
 
   /// Returns the CPU face-varying quadrangulate computation
-  HdBufferSourceSharedPtr GetQuadrangulateFaceVaryingComputation(HdBufferSourceSharedPtr const &source,
-                                                                 SdfPath const &id);
+  HdBufferSourceSharedPtr GetQuadrangulateFaceVaryingComputation(
+    HdBufferSourceSharedPtr const &source,
+    SdfPath const &id);
 
   /// Returns the quadrangulation table range on GPU
   HdBufferArrayRangeSharedPtr const &GetQuadrangulateTableRange() const
@@ -224,6 +228,7 @@ class HdPh_MeshTopology final : public HdMeshTopology
   /// @}
 
  private:
+
   // quadrangulation info on CPU
   HdQuadInfo const *_quadInfo;
 

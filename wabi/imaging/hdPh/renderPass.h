@@ -42,6 +42,7 @@ class Hgi;
 class HdPh_RenderPass : public HdRenderPass
 {
  public:
+
   HDPH_API
   HdPh_RenderPass(HdRenderIndex *index, HdRprimCollection const &collection);
   HDPH_API
@@ -55,6 +56,7 @@ class HdPh_RenderPass : public HdRenderPass
   size_t GetDrawItemCount() const;
 
  protected:
+
   virtual void _Prepare(TfTokenVector const &renderTags) override;
 
   /// Execute the buckets corresponding to renderTags
@@ -64,6 +66,7 @@ class HdPh_RenderPass : public HdRenderPass
   virtual void _MarkCollectionDirty() override;
 
  private:
+
   void _PrepareDrawItems(TfTokenVector const &renderTags);
   void _PrepareCommandBuffer(TfTokenVector const &renderTags);
 

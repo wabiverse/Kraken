@@ -67,6 +67,7 @@ class SdfAssetPath;
 class UsdRiRslShader : public UsdShadeShader
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -77,16 +78,12 @@ class UsdRiRslShader : public UsdShadeShader
   /// Equivalent to UsdRiRslShader::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRslShader(const UsdPrim &prim = UsdPrim())
-    : UsdShadeShader(prim)
-  {}
+  explicit UsdRiRslShader(const UsdPrim &prim = UsdPrim()) : UsdShadeShader(prim) {}
 
   /// Construct a UsdRiRslShader on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRslShader(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRslShader(const UsdSchemaBase &schemaObj)
-    : UsdShadeShader(schemaObj)
-  {}
+  explicit UsdRiRslShader(const UsdSchemaBase &schemaObj) : UsdShadeShader(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -136,6 +133,7 @@ class UsdRiRslShader : public UsdShadeShader
   static UsdRiRslShader Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -143,6 +141,7 @@ class UsdRiRslShader : public UsdShadeShader
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -152,9 +151,11 @@ class UsdRiRslShader : public UsdShadeShader
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SLOPATH
   // --------------------------------------------------------------------- //
@@ -174,9 +175,11 @@ class UsdRiRslShader : public UsdShadeShader
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateSloPathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateSloPathAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

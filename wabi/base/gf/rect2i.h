@@ -68,17 +68,12 @@ WABI_NAMESPACE_BEGIN
 class GfRect2i
 {
  public:
+
   /// Constructs an empty rectangle.
-  GfRect2i()
-    : _min(0, 0),
-      _max(-1, -1)
-  {}
+  GfRect2i() : _min(0, 0), _max(-1, -1) {}
 
   /// Constructs a rectangle with \p min and \p max corners.
-  GfRect2i(const GfVec2i &min, const GfVec2i &max)
-    : _min(min),
-      _max(max)
-  {}
+  GfRect2i(const GfVec2i &min, const GfVec2i &max) : _min(min), _max(max) {}
 
   /// Constructs a rectangle with \p min corner and the indicated \p width
   /// and \p height.
@@ -332,6 +327,7 @@ class GfRect2i
   }
 
  private:
+
   GfVec2i _min, _max;
 };
 

@@ -42,11 +42,10 @@ class UsdGeomCube;
 class UsdImagingCubeAdapter : public UsdImagingGprimAdapter
 {
  public:
+
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingCubeAdapter()
-    : UsdImagingGprimAdapter()
-  {}
+  UsdImagingCubeAdapter() : UsdImagingGprimAdapter() {}
   USDIMAGING_API
   virtual ~UsdImagingCubeAdapter();
 
@@ -69,17 +68,20 @@ class UsdImagingCubeAdapter : public UsdImagingGprimAdapter
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   // ---------------------------------------------------------------------- //
   /// \name Data access
   // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
-  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   // Override the implemetation in GprimAdapter since we don't fetch the
   // points attribute for implicit primitives.

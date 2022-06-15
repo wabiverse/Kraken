@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class HdPrmanLoaderRendererPlugin final : public HdRendererPlugin
 {
  public:
+
   HdPrmanLoaderRendererPlugin();
   virtual ~HdPrmanLoaderRendererPlugin();
 
@@ -48,6 +49,7 @@ class HdPrmanLoaderRendererPlugin final : public HdRendererPlugin
   virtual bool IsSupported() const override;
 
  private:
+
   // This class does not support copying.
   HdPrmanLoaderRendererPlugin(const HdPrmanLoaderRendererPlugin &) = delete;
   HdPrmanLoaderRendererPlugin &operator=(const HdPrmanLoaderRendererPlugin &) = delete;

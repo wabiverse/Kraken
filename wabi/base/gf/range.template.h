@@ -52,9 +52,7 @@
 }
 #include "wabi/base/gf/vec{{ DIM }}d.h"
 #include "wabi/base/gf/vec{{ DIM }}f.h"
-{
-  % endif %
-}
+{ % endif % }
 #include "wabi/base/gf/traits.h"
 
 #include <boost/functional/hash.hpp>
@@ -65,7 +63,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-class GfRange
+  class GfRange
 {
   {
     DIM
@@ -78,8 +76,7 @@ class GfRange
   }
 } f;
 
-template<>
-struct GfIsGfRange<class {{RNG}}>
+template<> struct GfIsGfRange<class {{RNG}}>
 {
   static const bool value = true;
 };
@@ -101,6 +98,7 @@ class
 }
 {
  public:
+
   /// Helper typedef.
   typedef
   {
@@ -282,8 +280,8 @@ class
     {
       % else %
     }
-    return (
-      {{LIST("point[%(i)s] >= _min[%(i)s] && point[%(i)s] <= _max[%(i)s]", sep = "\n             && ")}});
+    return ({{LIST("point[%(i)s] >= _min[%(i)s] && point[%(i)s] <= _max[%(i)s]",
+                   sep = "\n             && ")}});
     {
       % endif %
     }
@@ -492,12 +490,10 @@ class
   }
   operator*=(double m)
   {
-    if (m > 0)
-    {
+    if (m > 0) {
       _min *= m;
       _max *= m;
-    } else
-    {
+    } else {
       {
         {
           MINMAX
@@ -684,6 +680,7 @@ class
   }
 
  private:
+
   /// Minimum and maximum points.
   {
     {
@@ -704,8 +701,8 @@ class
     }
     if (point < dest)
       dest = point;
-    { %
-      else % } {{LIST("if (point[%(i)s] < dest[%(i)s]) dest[%(i)s] = point[%(i)s];", sep = "\n        ")}} {
+    { % else % } {
+      {LIST("if (point[%(i)s] < dest[%(i)s]) dest[%(i)s] = point[%(i)s];", sep = "\n        ")}} {
       % endif %
     }
   }
@@ -722,8 +719,8 @@ class
     }
     if (point > dest)
       dest = point;
-    { %
-      else % } {{LIST("if (point[%(i)s] > dest[%(i)s]) dest[%(i)s] = point[%(i)s];", sep = "\n        ")}} {
+    { % else % } {
+      {LIST("if (point[%(i)s] > dest[%(i)s]) dest[%(i)s] = point[%(i)s];", sep = "\n        ")}} {
       % endif %
     }
   }

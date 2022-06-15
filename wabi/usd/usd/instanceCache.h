@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class Usd_InstanceChanges
 {
  public:
+
   void AppendChanges(const Usd_InstanceChanges &c)
   {
     newPrototypePrims.insert(newPrototypePrims.end(),
@@ -121,6 +122,7 @@ class Usd_InstanceCache
   Usd_InstanceCache &operator=(Usd_InstanceCache const &) = delete;
 
  public:
+
   Usd_InstanceCache();
 
   /// Registers the given instance prim index \p index with the cache.
@@ -220,6 +222,7 @@ class Usd_InstanceCache
   SdfPath GetPathInPrototypeForInstancePath(const SdfPath &primPath) const;
 
  private:
+
   typedef std::vector<SdfPath> _PrimIndexPaths;
 
   void _CreateOrUpdatePrototypeForInstances(
@@ -228,12 +231,14 @@ class Usd_InstanceCache
     Usd_InstanceChanges *changes,
     std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> const &prototypeToOldSourceIndexPath);
 
-  void _RemoveInstances(const Usd_InstanceKey &instanceKey,
-                        const _PrimIndexPaths &primIndexPaths,
-                        Usd_InstanceChanges *changes,
-                        std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> *prototypeToOldSourceIndexPath);
+  void _RemoveInstances(
+    const Usd_InstanceKey &instanceKey,
+    const _PrimIndexPaths &primIndexPaths,
+    Usd_InstanceChanges *changes,
+    std::unordered_map<SdfPath, SdfPath, SdfPath::Hash> *prototypeToOldSourceIndexPath);
 
-  void _RemovePrototypeIfNoInstances(const Usd_InstanceKey &instanceKey, Usd_InstanceChanges *changes);
+  void _RemovePrototypeIfNoInstances(const Usd_InstanceKey &instanceKey,
+                                     Usd_InstanceChanges *changes);
 
   bool _PrototypeUsesPrimIndexPath(const SdfPath &primIndexPath,
                                    std::vector<SdfPath> *prototypePaths = nullptr) const;
@@ -241,12 +246,14 @@ class Usd_InstanceCache
   SdfPath _GetNextPrototypePath(const Usd_InstanceKey &key);
 
  private:
+
   tbb::spin_mutex _mutex;
 
   // Mapping from instance key <-> prototype prim path.
   // This stores the path of the prototype prim that should be used
   // for all instanceable prim indexes with the given instance key.
-  typedef TfHashMap<Usd_InstanceKey, SdfPath, boost::hash<Usd_InstanceKey>> _InstanceKeyToPrototypeMap;
+  typedef TfHashMap<Usd_InstanceKey, SdfPath, boost::hash<Usd_InstanceKey>>
+    _InstanceKeyToPrototypeMap;
   typedef TfHashMap<SdfPath, Usd_InstanceKey, SdfPath::Hash> _PrototypeToInstanceKeyMap;
   _InstanceKeyToPrototypeMap _instanceKeyToPrototypeMap;
   _PrototypeToInstanceKeyMap _prototypeToInstanceKeyMap;

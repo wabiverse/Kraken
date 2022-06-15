@@ -63,6 +63,7 @@ class SdfAssetPath;
 class UsdSkelPackedJointAnimation : public UsdSkelAnimation
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -73,9 +74,7 @@ class UsdSkelPackedJointAnimation : public UsdSkelAnimation
   /// Equivalent to UsdSkelPackedJointAnimation::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelPackedJointAnimation(const UsdPrim &prim = UsdPrim())
-    : UsdSkelAnimation(prim)
-  {}
+  explicit UsdSkelPackedJointAnimation(const UsdPrim &prim = UsdPrim()) : UsdSkelAnimation(prim) {}
 
   /// Construct a UsdSkelPackedJointAnimation on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelPackedJointAnimation(schemaObj.GetPrim()),
@@ -132,6 +131,7 @@ class UsdSkelPackedJointAnimation : public UsdSkelAnimation
   static UsdSkelPackedJointAnimation Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -139,6 +139,7 @@ class UsdSkelPackedJointAnimation : public UsdSkelAnimation
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSKEL_API
@@ -148,9 +149,11 @@ class UsdSkelPackedJointAnimation : public UsdSkelAnimation
 
   // override SchemaBase virtuals.
   USDSKEL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

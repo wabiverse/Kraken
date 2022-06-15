@@ -54,6 +54,7 @@ WABI_NAMESPACE_BEGIN
 class ArFilesystemWritableAsset : public ArWritableAsset
 {
  public:
+
   /// Constructs a new ArFilesystemWritableAsset for the file at
   /// \p resolvedPath with the given \p writeMode. Returns a null pointer
   /// if the file could not be opened.
@@ -82,6 +83,7 @@ class ArFilesystemWritableAsset : public ArWritableAsset
   virtual size_t Write(const void *buffer, size_t count, size_t offset) override;
 
  private:
+
   TfSafeOutputFile _file;
 };
 

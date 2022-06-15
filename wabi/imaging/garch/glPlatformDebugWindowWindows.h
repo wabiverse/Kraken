@@ -45,6 +45,7 @@ class GarchGLDebugWindow;
 class Garch_GLPlatformDebugWindow
 {
  public:
+
   Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w);
 
   void Init(const char *title, int width, int height, int nSamples = 1);
@@ -52,6 +53,7 @@ class Garch_GLPlatformDebugWindow
   void ExitApp();
 
  private:
+
   static Garch_GLPlatformDebugWindow *_GetWindowByHandle(HWND);
   static LRESULT WINAPI _MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -68,23 +70,17 @@ class Garch_GLPlatformDebugWindow
 class Garch_GLPlatformDebugWindow
 {
  public:
-  Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w)
-  {
-  }
 
-  void Init(const char *title, int width, int height, int nSamples = 1)
-  {
-  }
+  Garch_GLPlatformDebugWindow(GarchGLDebugWindow *w) {}
 
-  void Run()
-  {
-  }
+  void Init(const char *title, int width, int height, int nSamples = 1) {}
 
-  void ExitApp()
-  {
-  }
+  void Run() {}
+
+  void ExitApp() {}
 
  private:
+
   static Garch_GLPlatformDebugWindow *_GetWindowByHandle(HWND)
   {
     return nullptr;

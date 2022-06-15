@@ -8,6 +8,7 @@ namespace Zep
   class ZepCommand
   {
    public:
+
     ZepCommand(ZepBuffer &currentMode,
                const GlyphIterator &cursorBefore = GlyphIterator(),
                const GlyphIterator &cursorAfter = GlyphIterator())
@@ -16,8 +17,7 @@ namespace Zep
         m_cursorAfter(cursorAfter)
     {}
 
-    virtual ~ZepCommand()
-    {}
+    virtual ~ZepCommand() {}
 
     virtual void Redo() = 0;
     virtual void Undo() = 0;
@@ -32,6 +32,7 @@ namespace Zep
     }
 
    protected:
+
     ZepBuffer &m_buffer;
     GlyphIterator m_cursorBefore;
     GlyphIterator m_cursorAfter;
@@ -41,9 +42,8 @@ namespace Zep
   class ZepCommand_GroupMarker : public ZepCommand
   {
    public:
-    ZepCommand_GroupMarker(ZepBuffer &currentMode)
-      : ZepCommand(currentMode)
-    {}
+
+    ZepCommand_GroupMarker(ZepBuffer &currentMode) : ZepCommand(currentMode) {}
     virtual void Redo() override{};
     virtual void Undo() override{};
   };
@@ -51,9 +51,8 @@ namespace Zep
   class ZepCommand_EndGroup : public ZepCommand
   {
    public:
-    ZepCommand_EndGroup(ZepBuffer &currentMode)
-      : ZepCommand(currentMode)
-    {}
+
+    ZepCommand_EndGroup(ZepBuffer &currentMode) : ZepCommand(currentMode) {}
     virtual void Redo() override{};
     virtual void Undo() override{};
   };
@@ -61,6 +60,7 @@ namespace Zep
   class ZepCommand_DeleteRange : public ZepCommand
   {
    public:
+
     ZepCommand_DeleteRange(ZepBuffer &buffer,
                            const GlyphIterator &startIndex,
                            const GlyphIterator &endIndex,
@@ -78,6 +78,7 @@ namespace Zep
   class ZepCommand_ReplaceRange : public ZepCommand
   {
    public:
+
     ZepCommand_ReplaceRange(ZepBuffer &buffer,
                             ReplaceRangeMode replaceMode,
                             const GlyphIterator &startIndex,
@@ -101,6 +102,7 @@ namespace Zep
   class ZepCommand_Insert : public ZepCommand
   {
    public:
+
     ZepCommand_Insert(ZepBuffer &buffer,
                       const GlyphIterator &startIndex,
                       const std::string &str,

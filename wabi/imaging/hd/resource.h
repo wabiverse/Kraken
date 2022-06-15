@@ -24,15 +24,16 @@
 #ifndef WABI_IMAGING_HD_RESOURCE_H
 #define WABI_IMAGING_HD_RESOURCE_H
 
-#include "wabi/base/tf/token.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/token.h"
 
 #include <cstddef>
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdResourceSharedPtr = std::shared_ptr<class HdResource>;
 
@@ -43,6 +44,7 @@ using HdResourceSharedPtr = std::shared_ptr<class HdResource>;
 class HdResource
 {
  public:
+
   HD_API
   HdResource(TfToken const &role);
   HD_API
@@ -62,18 +64,22 @@ class HdResource
   }
 
  protected:
+
   /// Stores the size of the resource allocated in the GPU
   HD_API
   void SetSize(size_t size);
 
  private:
+
   // Don't allow copies.
   HdResource(const HdResource &) = delete;
   HdResource &operator=(const HdResource &) = delete;
 
+
   const TfToken _role;
   size_t _size;
 };
+
 
 WABI_NAMESPACE_END
 

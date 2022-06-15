@@ -33,6 +33,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldPoints : public HdArnoldRprim<HdPoints>
 {
  public:
+
   /// Constructor for HdArnoldPoints.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.

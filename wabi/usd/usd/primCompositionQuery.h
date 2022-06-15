@@ -51,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class UsdPrimCompositionQueryArc
 {
  public:
+
   ~UsdPrimCompositionQueryArc() = default;
 
   /// \name Target and Introducing Nodes
@@ -196,6 +197,7 @@ class UsdPrimCompositionQueryArc
   /// @}
 
  private:
+
   // These will only be created by a UsdPrimCompositionQuery itself.
   friend class UsdPrimCompositionQuery;
   UsdPrimCompositionQueryArc(const PcpNodeRef &node);
@@ -220,6 +222,7 @@ class UsdPrimCompositionQueryArc
 class UsdPrimCompositionQuery
 {
  public:
+
   /// Choices for filtering composition arcs based on arc type
   enum class ArcTypeFilter
   {
@@ -298,8 +301,10 @@ class UsdPrimCompositionQuery
 
     bool operator==(const Filter &rhs)
     {
-      return arcIntroducedFilter == rhs.arcIntroducedFilter && arcTypeFilter == rhs.arcTypeFilter &&
-             dependencyTypeFilter == rhs.dependencyTypeFilter && hasSpecsFilter == rhs.hasSpecsFilter;
+      return arcIntroducedFilter == rhs.arcIntroducedFilter &&
+             arcTypeFilter == rhs.arcTypeFilter &&
+             dependencyTypeFilter == rhs.dependencyTypeFilter &&
+             hasSpecsFilter == rhs.hasSpecsFilter;
     };
 
     bool operator!=(const Filter &rhs)
@@ -346,6 +351,7 @@ class UsdPrimCompositionQuery
   std::vector<UsdPrimCompositionQueryArc> GetCompositionArcs();
 
  private:
+
   UsdPrim _prim;
   Filter _filter;
   PcpPrimIndex _expandedPrimIndex;

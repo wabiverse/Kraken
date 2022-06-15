@@ -54,6 +54,7 @@ class PcpPrimIndex;
 class PcpInstanceKey
 {
  public:
+
   PCP_API
   PcpInstanceKey();
 
@@ -91,6 +92,7 @@ class PcpInstanceKey
   std::string GetString() const;
 
  private:
+
   struct _Collector;
 
   struct _Arc
@@ -103,7 +105,8 @@ class PcpInstanceKey
 
     bool operator==(const _Arc &rhs) const
     {
-      return _arcType == rhs._arcType && _sourceSite == rhs._sourceSite && _timeOffset == rhs._timeOffset;
+      return _arcType == rhs._arcType && _sourceSite == rhs._sourceSite &&
+             _timeOffset == rhs._timeOffset;
     }
 
     size_t GetHash() const

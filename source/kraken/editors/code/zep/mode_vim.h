@@ -21,6 +21,7 @@ namespace Zep
   class ZepMode_Vim : public ZepMode
   {
    public:
+
     ZepMode_Vim(ZepEditor &editor);
     virtual ~ZepMode_Vim();
 

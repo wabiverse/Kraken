@@ -42,6 +42,7 @@ class UsdStageCache;
 class UsdShadeShaderDefParserPlugin : public NdrParserPlugin
 {
  public:
+
   USDSHADE_API
   UsdShadeShaderDefParserPlugin() = default;
 
@@ -58,6 +59,7 @@ class UsdShadeShaderDefParserPlugin : public NdrParserPlugin
   const TfToken &GetSourceType() const override;
 
  private:
+
   static UsdStageCache _cache;
 };
 

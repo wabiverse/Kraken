@@ -36,10 +36,12 @@ WABI_NAMESPACE_BEGIN
 class HdPrman_RenderPass final : public HdRenderPass
 {
  public:
+
   HdPrman_RenderPass(HdRenderIndex *index, HdRprimCollection const &collection);
   virtual ~HdPrman_RenderPass();
 
  protected:
+
   virtual void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
                         TfTokenVector const &renderTags) override;
 };

@@ -68,5 +68,4 @@ const HdDataSourceLocator &HdVolumeFieldBindingSchema::GetDefaultLocator()
   static const HdDataSourceLocator locator(HdVolumeFieldBindingSchemaTokens->volumeFieldBinding);
   return locator;
 }
-
 WABI_NAMESPACE_END

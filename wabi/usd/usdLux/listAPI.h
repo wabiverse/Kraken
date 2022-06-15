@@ -187,6 +187,7 @@ class SdfAssetPath;
 class UsdLuxListAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -197,16 +198,12 @@ class UsdLuxListAPI : public UsdAPISchemaBase
   /// Equivalent to UsdLuxListAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxListAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdLuxListAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdLuxListAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxListAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxListAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdLuxListAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -248,6 +245,7 @@ class UsdLuxListAPI : public UsdAPISchemaBase
   static UsdLuxListAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -255,6 +253,7 @@ class UsdLuxListAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -264,9 +263,11 @@ class UsdLuxListAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LIGHTLISTCACHEBEHAVIOR
   // --------------------------------------------------------------------- //
@@ -303,6 +304,7 @@ class UsdLuxListAPI : public UsdAPISchemaBase
                                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LIGHTLIST
   // --------------------------------------------------------------------- //
@@ -317,6 +319,7 @@ class UsdLuxListAPI : public UsdAPISchemaBase
   UsdRelationship CreateLightListRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

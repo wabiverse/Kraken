@@ -49,23 +49,23 @@ Original here: https://github.com/progschj/ThreadPool
 class ThreadPool
 {
  public:
+
   // the constructor just launches some amount of workers
-  ThreadPool(size_t threads_n = std::thread::hardware_concurrency())
-    : stop(false)
+  ThreadPool(size_t threads_n = std::thread::hardware_concurrency()) : stop(false)
   {
     // If not enough threads, the pool will just execute all tasks immediately
-    if (threads_n > 1)
-    {
+    if (threads_n > 1) {
       this->workers.reserve(threads_n);
       for (; threads_n; --threads_n)
         this->workers.emplace_back([this] {
-          while (true)
-          {
+          while (true) {
             std::function<void()> task;
 
             {
               std::unique_lock<std::mutex> lock(this->queue_mutex);
-              this->condition.wait(lock, [this] { return this->stop || !this->tasks.empty(); });
+              this->condition.wait(lock, [this] {
+                return this->stop || !this->tasks.empty();
+              });
               if (this->stop && this->tasks.empty())
                 return;
               task = std::move(this->tasks.front());
@@ -92,15 +92,16 @@ class ThreadPool
       new packaged_task_t(std::bind(std::forward<F>(f), std::forward<Args>(args)...)));
 
     // If there are no works, just run the task in the main thread and return
-    if (workers.empty())
-    {
+    if (workers.empty()) {
       (*task)();
       return task->get_future();
     }
     auto res = task->get_future();
     {
       std::unique_lock<std::mutex> lock(this->queue_mutex);
-      this->tasks.emplace([task]() { (*task)(); });
+      this->tasks.emplace([task]() {
+        (*task)();
+      });
     }
     this->condition.notify_one();
     return res;
@@ -115,6 +116,7 @@ class ThreadPool
   }
 
  private:
+
   // need to keep track of threads so we can join them
   std::vector<std::thread> workers;
   // the task queue

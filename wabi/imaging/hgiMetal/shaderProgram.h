@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class HgiMetalShaderProgram final : public HgiShaderProgram
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalShaderProgram() override;
 
@@ -87,17 +88,20 @@ class HgiMetalShaderProgram final : public HgiShaderProgram
   }
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API
   HgiMetalShaderProgram(HgiShaderProgramDesc const &desc);
 
  private:
+
   HgiMetalShaderProgram() = delete;
   HgiMetalShaderProgram &operator=(const HgiMetalShaderProgram &) = delete;
   HgiMetalShaderProgram(const HgiMetalShaderProgram &) = delete;
 
  private:
+
   std::string _errors;
 
   id<MTLFunction> _vertexFunction;

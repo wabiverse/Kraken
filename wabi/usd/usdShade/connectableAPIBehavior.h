@@ -48,6 +48,7 @@ class UsdShadeOutput;
 class UsdShadeConnectableAPIBehavior
 {
  public:
+
   /// An enum describing the types of connectable nodes which will govern what
   /// connectibility rule is invoked for these.
   enum ConnectableNodeTypes
@@ -73,7 +74,9 @@ class UsdShadeConnectableAPIBehavior
   /// UsdShadeInput::GetConnectability().
   ///
   USDSHADE_API
-  virtual bool CanConnectInputToSource(const UsdShadeInput &, const UsdAttribute &, std::string *reason);
+  virtual bool CanConnectInputToSource(const UsdShadeInput &,
+                                       const UsdAttribute &,
+                                       std::string *reason);
 
   /// The prim owning the output is guaranteed to be of the type this
   /// behavior was registered with. The function must be thread-safe.
@@ -88,7 +91,9 @@ class UsdShadeConnectableAPIBehavior
   /// UsdShadeNodeDefAPI), not a connection.
   ///
   USDSHADE_API
-  virtual bool CanConnectOutputToSource(const UsdShadeOutput &, const UsdAttribute &, std::string *reason);
+  virtual bool CanConnectOutputToSource(const UsdShadeOutput &,
+                                        const UsdAttribute &,
+                                        std::string *reason);
 
   /// The prim owning the output is guaranteed to be of the type this
   /// behavior was registered with. The function must be thread-safe.
@@ -99,6 +104,7 @@ class UsdShadeConnectableAPIBehavior
   virtual bool IsContainer() const;
 
  protected:
+
   /// Helper function to separate and share special connectivity logic for
   /// specialized, NodeGraph-derived nodes, like Material (and other in other
   /// domains) that allow their inputs to be connected to an output of a
@@ -153,15 +159,17 @@ class UsdShadeConnectableAPIBehavior
 template<class PrimType, class BehaviorType = UsdShadeConnectableAPIBehavior>
 inline void UsdShadeRegisterConnectableAPIBehavior()
 {
-  UsdShadeRegisterConnectableAPIBehavior(TfType::Find<PrimType>(),
-                                         std::shared_ptr<UsdShadeConnectableAPIBehavior>(new BehaviorType));
+  UsdShadeRegisterConnectableAPIBehavior(
+    TfType::Find<PrimType>(),
+    std::shared_ptr<UsdShadeConnectableAPIBehavior>(new BehaviorType));
 }
 
 /// Registers \p behavior to define connectability of attributes for
 /// \p PrimType.
 USDSHADE_API
-void UsdShadeRegisterConnectableAPIBehavior(const TfType &connectablePrimType,
-                                            const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior);
+void UsdShadeRegisterConnectableAPIBehavior(
+  const TfType &connectablePrimType,
+  const std::shared_ptr<UsdShadeConnectableAPIBehavior> &behavior);
 
 WABI_NAMESPACE_END
 

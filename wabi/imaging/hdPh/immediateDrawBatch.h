@@ -40,6 +40,7 @@ WABI_NAMESPACE_BEGIN
 class HdPh_ImmediateDrawBatch : public HdPh_DrawBatch
 {
  public:
+
   HDPH_API
   HdPh_ImmediateDrawBatch(HdPhDrawItemInstance *drawItemInstance);
   HDPH_API
@@ -60,10 +61,12 @@ class HdPh_ImmediateDrawBatch : public HdPh_DrawBatch
                    HdPhResourceRegistrySharedPtr const &resourceRegistry) override;
 
  protected:
+
   HDPH_API
   void _Init(HdPhDrawItemInstance *drawItemInstance) override;
 
  private:
+
   size_t _bufferArraysHash;
 };
 

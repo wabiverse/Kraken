@@ -48,6 +48,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdAbc_AlembicData);
 class UsdAbc_AlembicData : public SdfAbstractData
 {
  public:
+
   /// Returns a new \c UsdAbc_AlembicData object.  Outside a successful
   /// \c Open() and \c Close() pairing, the data acts as if it contains
   /// a pseudo-root prim spec at the absolute root path.
@@ -80,7 +81,9 @@ class UsdAbc_AlembicData : public SdfAbstractData
   virtual bool Has(const SdfPath &, const TfToken &fieldName, VtValue *value = NULL) const;
   virtual VtValue Get(const SdfPath &, const TfToken &fieldName) const;
   virtual void Set(const SdfPath &, const TfToken &fieldName, const VtValue &value);
-  virtual void Set(const SdfPath &, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
+  virtual void Set(const SdfPath &,
+                   const TfToken &fieldName,
+                   const SdfAbstractDataConstValue &value);
   virtual void Erase(const SdfPath &, const TfToken &fieldName);
   virtual std::vector<TfToken> List(const SdfPath &) const;
   virtual std::set<double> ListAllTimeSamples() const;
@@ -97,6 +100,7 @@ class UsdAbc_AlembicData : public SdfAbstractData
   virtual void EraseTimeSample(const SdfPath &, double);
 
  protected:
+
   UsdAbc_AlembicData(SdfFileFormat::FileFormatArguments);
   virtual ~UsdAbc_AlembicData();
 
@@ -104,6 +108,7 @@ class UsdAbc_AlembicData : public SdfAbstractData
   virtual void _VisitSpecs(SdfAbstractDataSpecVisitor *visitor) const;
 
  private:
+
   boost::shared_ptr<class UsdAbc_AlembicDataReader> _reader;
   const SdfFileFormat::FileFormatArguments _arguments;
 };

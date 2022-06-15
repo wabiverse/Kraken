@@ -43,10 +43,12 @@ WABI_NAMESPACE_BEGIN
 class UsdDracoImportTranslator
 {
  public:
+
   /// Translates Draco mesh to USD mesh and returns USD layer with mesh.
   static SdfLayerRefPtr Translate(const draco::Mesh &dracoMesh);
 
  private:
+
   typedef draco::AttributeValueIndex PositionIndex;
   typedef std::map<PositionIndex, draco::PointIndex> PolygonEdges;
 
@@ -71,6 +73,7 @@ class UsdDracoImportTranslator
     const draco::AttributeMetadata &metadata);
 
  private:
+
   const draco::Mesh &_dracoMesh;
 
   // Named attributes.

@@ -76,6 +76,7 @@ class SdfPrimSpec : public SdfSpec
   SDF_DECLARE_SPEC(SdfPrimSpec, SdfSpec);
 
  public:
+
   typedef SdfPrimSpecView NameChildrenView;
   typedef SdfPropertySpecView PropertySpecView;
   typedef SdfAttributeSpecView AttributeSpecView;
@@ -737,6 +738,7 @@ class SdfPrimSpec : public SdfSpec
   /// @}
 
  private:
+
   // Returns true if this object is the pseudo-root.
   bool _IsPseudoRoot() const;
 
@@ -750,6 +752,7 @@ class SdfPrimSpec : public SdfSpec
   bool _ValidateEdit(const TfToken &key) const;
 
  private:
+
   static SdfPrimSpecHandle _New(const SdfPrimSpecHandle &parentPrim,
                                 const TfToken &name,
                                 SdfSpecifier spec,

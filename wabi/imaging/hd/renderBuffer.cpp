@@ -28,7 +28,7 @@ WABI_NAMESPACE_BEGIN
 
 HdRenderBuffer::HdRenderBuffer(SdfPath const &id) : HdBprim(id) {}
 
-HdRenderBuffer::~HdRenderBuffer() {}
+HdRenderBuffer::~HdRenderBuffer() = default;
 
 /*virtual*/
 HdDirtyBits HdRenderBuffer::GetInitialDirtyBitsMask() const

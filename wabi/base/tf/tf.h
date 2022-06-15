@@ -69,15 +69,13 @@ inline double TfAbs(double v)
 }
 
 /// Returns the smaller of the two given \c  values.
-template<class T>
-inline T TfMin(const T &v1, const T &v2)
+template<class T> inline T TfMin(const T &v1, const T &v2)
 {
   return (v1 < v2 ? v1 : v2);
 }
 
 /// Returns the larger of the two given \c  values.
-template<class T>
-inline T TfMax(const T &v1, const T &v2)
+template<class T> inline T TfMax(const T &v1, const T &v2)
 {
   return (v1 > v2 ? v1 : v2);
 }
@@ -117,14 +115,12 @@ inline T TfMax(const T &v1, const T &v2)
 /// \ingroup group_tf_Stl
 struct TfDeleter
 {
-  template<class T>
-  void operator()(T *t) const
+  template<class T> void operator()(T *t) const
   {
     delete t;
   }
 
-  template<class T1, class T2>
-  void operator()(std::pair<T1, T2 *> p) const
+  template<class T1, class T2> void operator()(std::pair<T1, T2 *> p) const
   {
     delete p.second;
   }

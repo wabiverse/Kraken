@@ -56,8 +56,7 @@ namespace Sdf_ParserHelpers
   // various types.
 
   // General Get case, requires exact match.
-  template<class T, class Enable = void>
-  struct _GetImpl
+  template<class T, class Enable = void> struct _GetImpl
   {
     typedef const T &ResultType;
     static const T &Visit(_Variant const &variant)
@@ -71,7 +70,8 @@ namespace Sdf_ParserHelpers
   // throw bad_get for non-finite doubles.  Throw bad_get for out-of-range
   // integral values.
   template<class T>
-  struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>> : public boost::static_visitor<T>
+  struct _GetImpl<T, std::enable_if_t<std::is_integral<T>::value>>
+    : public boost::static_visitor<T>
   {
     typedef T ResultType;
 
@@ -81,8 +81,7 @@ namespace Sdf_ParserHelpers
     }
 
     // Fallback case: throw bad_get.
-    template<class Held>
-    T operator()(Held held)
+    template<class Held> T operator()(Held held)
     {
       throw boost::bad_get();
     }
@@ -106,15 +105,13 @@ namespace Sdf_ParserHelpers
     }
 
    private:
-    template<class In>
-    T _Cast(In in)
+
+    template<class In> T _Cast(In in)
     {
-      try
-      {
+      try {
         return boost::numeric_cast<T>(in);
       }
-      catch (const boost::bad_numeric_cast &)
-      {
+      catch (const boost::bad_numeric_cast &) {
         throw boost::bad_get();
       }
     }
@@ -126,7 +123,8 @@ namespace Sdf_ParserHelpers
   // Also handles strings like "inf", "-inf", and "nan" to produce +/- infinity
   // and a quiet NaN.
   template<class T>
-  struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>> : public boost::static_visitor<T>
+  struct _GetImpl<T, std::enable_if_t<std::is_floating_point<T>::value>>
+    : public boost::static_visitor<T>
   {
     typedef T ResultType;
 
@@ -136,8 +134,7 @@ namespace Sdf_ParserHelpers
     }
 
     // Fallback case: throw bad_get.
-    template<class Held>
-    T operator()(Held held)
+    template<class Held> T operator()(Held held)
     {
       throw boost::bad_get();
     }
@@ -167,6 +164,7 @@ namespace Sdf_ParserHelpers
     }
 
    private:
+
     T _FromString(const std::string &str) const
     {
       // Special case the strings 'inf', '-inf' and 'nan'.
@@ -179,15 +177,12 @@ namespace Sdf_ParserHelpers
       throw boost::bad_get();
     }
 
-    template<class In>
-    T _Cast(In in)
+    template<class In> T _Cast(In in)
     {
-      try
-      {
+      try {
         return boost::numeric_cast<T>(in);
       }
-      catch (const boost::bad_numeric_cast &)
-      {
+      catch (const boost::bad_numeric_cast &) {
         throw boost::bad_get();
       }
     }
@@ -196,8 +191,7 @@ namespace Sdf_ParserHelpers
   ////////////////////////////////////////////////////////////////////////
 
   // Get an asset path: converts string to asset path, otherwise throw bad_get.
-  template<>
-  struct _GetImpl<SdfAssetPath>
+  template<> struct _GetImpl<SdfAssetPath>
   {
     typedef SdfAssetPath ResultType;
 
@@ -212,8 +206,7 @@ namespace Sdf_ParserHelpers
   // Get a bool.  Numbers are considered true if nonzero, false otherwise.
   // Strings and tokens get parsed via Sdf_BoolFromString.  Otherwise throw
   // bad_get.
-  template<>
-  struct _GetImpl<bool> : public boost::static_visitor<bool>
+  template<> struct _GetImpl<bool> : public boost::static_visitor<bool>
   {
     typedef bool ResultType;
 
@@ -246,8 +239,7 @@ namespace Sdf_ParserHelpers
     }
 
     // For anything else, throw bad_get().
-    template<class T>
-    std::enable_if_t<!std::is_arithmetic<T>::value, bool> operator()(T)
+    template<class T> std::enable_if_t<!std::is_arithmetic<T>::value, bool> operator()(T)
     {
       throw boost::bad_get();
     }
@@ -279,20 +271,16 @@ namespace Sdf_ParserHelpers
   struct Value
   {
     // Default constructor leaves the value in an undefined state.
-    Value()
-    {}
+    Value() {}
 
     // Construct and implicitly convert from an integral type \p Int.  If \p Int
     // is signed, the resulting value holds an 'int64_t' internally.  If \p Int
     // is unsigned, the result value holds an 'uint64_t'.
-    template<class Int>
-    Value(Int in, std::enable_if_t<std::is_integral<Int>::value> * = 0)
+    template<class Int> Value(Int in, std::enable_if_t<std::is_integral<Int>::value> * = 0)
     {
-      if (std::is_signed<Int>::value)
-      {
+      if (std::is_signed<Int>::value) {
         _variant = static_cast<int64_t>(in);
-      } else
-      {
+      } else {
         _variant = static_cast<uint64_t>(in);
       }
     }
@@ -305,39 +293,30 @@ namespace Sdf_ParserHelpers
     {}
 
     // Construct and implicitly convert from std::string.
-    Value(const std::string &in)
-      : _variant(in)
-    {}
+    Value(const std::string &in) : _variant(in) {}
 
     // Construct and implicitly convert from TfToken.
-    Value(const TfToken &in)
-      : _variant(in)
-    {}
+    Value(const TfToken &in) : _variant(in) {}
 
     // Construct and implicitly convert from SdfAssetPath.
-    Value(const SdfAssetPath &in)
-      : _variant(in)
-    {}
+    Value(const SdfAssetPath &in) : _variant(in) {}
 
     // Attempt to get a value of type T from this Value, applying appropriate
     // conversions.  If this value cannot be converted to T, throw
     // boost::bad_get.
-    template<class T>
-    typename _GetImpl<T>::ResultType Get() const
+    template<class T> typename _GetImpl<T>::ResultType Get() const
     {
       return _GetImpl<T>().Visit(_variant);
     }
 
     // Hopefully short-lived API that applies an external visitor to the held
     // variant type.
-    template<class Visitor>
-    typename Visitor::result_type ApplyVisitor(const Visitor &visitor)
+    template<class Visitor> typename Visitor::result_type ApplyVisitor(const Visitor &visitor)
     {
       return boost::apply_visitor(visitor, _variant);
     }
 
-    template<class Visitor>
-    typename Visitor::result_type ApplyVisitor(Visitor &visitor)
+    template<class Visitor> typename Visitor::result_type ApplyVisitor(Visitor &visitor)
     {
       return boost::apply_visitor(visitor, _variant);
     }
@@ -348,24 +327,25 @@ namespace Sdf_ParserHelpers
       return _variant.apply_visitor(visitor);
     }
 
-    template<class Visitor>
-    typename Visitor::result_type ApplyVisitor(Visitor &visitor) const
+    template<class Visitor> typename Visitor::result_type ApplyVisitor(Visitor &visitor) const
     {
       return _variant.apply_visitor(visitor);
     }
 
    private:
+
     _Variant _variant;
   };
 
-  typedef std::function<
-    VtValue(std::vector<unsigned int> const &, std::vector<Value> const &, size_t &, std::string *)>
+  typedef std::function<VtValue(std::vector<unsigned int> const &,
+                                std::vector<Value> const &,
+                                size_t &,
+                                std::string *)>
     ValueFactoryFunc;
 
   struct ValueFactory
   {
-    ValueFactory()
-    {}
+    ValueFactory() {}
 
     ValueFactory(std::string typeName_,
                  SdfTupleDimensions dimensions_,

@@ -68,6 +68,7 @@ class UsdGeomXformCache;
 class UsdGeomConstraintTarget
 {
  public:
+
   // Default constructor returns an invalid ConstraintTarget.  Exists for
   // container classes
   UsdGeomConstraintTarget()
@@ -171,6 +172,7 @@ class UsdGeomConstraintTarget
                                  UsdGeomXformCache *xfCache = NULL) const;
 
  private:
+
   UsdAttribute _attr;
 };
 

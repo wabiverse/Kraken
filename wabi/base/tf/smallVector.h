@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class TfSmallVectorBase
 {
  public:
+
   using size_type = std::uint32_t;
   using difference_type = std::int32_t;
 
@@ -54,13 +55,13 @@ class TfSmallVectorBase
   // of the TfSmallVector.  TfSmallVector<T, N> will never use more local
   // capacity than is specified by N but clients that wish to maximize local
   // occupancy in a generic way can compute N using this function.
-  template<typename U>
-  static constexpr size_type ComputeSerendipitousLocalCapacity()
+  template<typename U> static constexpr size_type ComputeSerendipitousLocalCapacity()
   {
     return (alignof(U) <= alignof(_Data<U, 0>)) ? sizeof(_Data<U, 0>) / sizeof(U) : 0;
   }
 
  protected:
+
   // Invoke std::uninitialized_copy that either moves or copies entries,
   // depending on whether the type is move constructible or not.
   template<typename Iterator>
@@ -71,8 +72,7 @@ class TfSmallVectorBase
 
   // Invokes either the move or copy constructor (via placement new),
   // depending on whether U is move constructible or not.
-  template<typename U>
-  static void _MoveConstruct(U *p, U *src)
+  template<typename U> static void _MoveConstruct(U *p, U *src)
   {
     new (p) U(std::move(*src));
   }
@@ -80,10 +80,10 @@ class TfSmallVectorBase
   // The data storage, which is a union of both the local storage, as well
   // as a pointer, holding the address to the remote storage on the heap, if
   // used.
-  template<typename U, size_type M>
-  union _Data
+  template<typename U, size_type M> union _Data
   {
    public:
+
     U *GetLocalStorage()
     {
       return reinterpret_cast<U *>(_local);
@@ -110,6 +110,7 @@ class TfSmallVectorBase
     }
 
    private:
+
     alignas(U) char _local[sizeof(U) * M];
     U *_remote;
   };
@@ -117,10 +118,10 @@ class TfSmallVectorBase
   // For N == 0 the _Data class has been specialized to elide the local
   // storage completely. This way we don't have to rely on compiler-specific
   // support for 0-sized arrays.
-  template<typename U>
-  union _Data<U, 0>
+  template<typename U> union _Data<U, 0>
   {
    public:
+
     U *GetLocalStorage()
     {
       // XXX: Could assert here. Introduce dependency on tf/diagnostic.h?
@@ -149,6 +150,7 @@ class TfSmallVectorBase
     }
 
    private:
+
     U *_remote;
   };
 };
@@ -175,10 +177,10 @@ class TfSmallVectorBase
 /// Note that a TfSmallVector that has grown beyond its local storage, will
 /// NOT move its entries back into the local storage once it shrinks back to N.
 ///
-template<typename T, uint32_t N>
-class TfSmallVector : public TfSmallVectorBase
+template<typename T, uint32_t N> class TfSmallVector : public TfSmallVectorBase
 {
  public:
+
   /// XXX: Functionality currently missing, and which we would like to add as
   ///  needed:
   ///     - emplace
@@ -207,28 +209,22 @@ class TfSmallVector : public TfSmallVectorBase
 
   /// Default constructor.
   ///
-  TfSmallVector()
-    : _size(0),
-      _capacity(N)
-  {}
+  TfSmallVector() : _size(0), _capacity(N) {}
 
   /// Construct a vector holding \p n value-initialized elements.
   ///
-  explicit TfSmallVector(size_type n)
-    : _capacity(N)
+  explicit TfSmallVector(size_type n) : _capacity(N)
   {
     _InitStorage(n);
     value_type *d = data();
-    for (size_type i = 0; i < n; ++i)
-    {
+    for (size_type i = 0; i < n; ++i) {
       new (d + i) value_type();
     }
   }
 
   /// Construct a vector holding \p n copies of \p v.
   ///
-  TfSmallVector(size_type n, const value_type &v)
-    : _capacity(N)
+  TfSmallVector(size_type n, const value_type &v) : _capacity(N)
   {
     _InitStorage(n);
     std::uninitialized_fill_n(data(), n, v);
@@ -240,21 +236,18 @@ class TfSmallVector : public TfSmallVectorBase
   {
     DefaultInit
   };
-  TfSmallVector(size_type n, DefaultInitTag)
-    : _capacity(N)
+  TfSmallVector(size_type n, DefaultInitTag) : _capacity(N)
   {
     _InitStorage(n);
     value_type *d = data();
-    for (size_type i = 0; i < n; ++i)
-    {
+    for (size_type i = 0; i < n; ++i) {
       new (d + i) value_type;
     }
   }
 
   /// Copy constructor.
   ///
-  TfSmallVector(const TfSmallVector &rhs)
-    : _capacity(N)
+  TfSmallVector(const TfSmallVector &rhs) : _capacity(N)
   {
     _InitStorage(rhs.size());
     std::uninitialized_copy(rhs.begin(), rhs.end(), begin());
@@ -262,14 +255,11 @@ class TfSmallVector : public TfSmallVectorBase
 
   /// Move constructor.
   ///
-  TfSmallVector(TfSmallVector &&rhs)
-    : _size(0),
-      _capacity(N)
+  TfSmallVector(TfSmallVector &&rhs) : _size(0), _capacity(N)
   {
     // If rhs can not be stored locally, take rhs's remote storage and
     // reset rhs to empty.
-    if (rhs.size() > N)
-    {
+    if (rhs.size() > N) {
       _data.SetRemoteStorage(rhs._data.GetRemoteStorage());
       std::swap(_capacity, rhs._capacity);
     }
@@ -278,8 +268,7 @@ class TfSmallVector : public TfSmallVectorBase
     // into this vector's storage, destruct the entries at rhs, and swap
     // sizes. Note that capacities will be the same in this case, so no
     // need to swap those.
-    else
-    {
+    else {
       _UninitializedMove(rhs.begin(), rhs.end(), begin());
       rhs._Destruct();
     }
@@ -287,9 +276,7 @@ class TfSmallVector : public TfSmallVectorBase
   }
 
   /// Construct a new vector from initializer list
-  TfSmallVector(std::initializer_list<T> values)
-    : TfSmallVector(values.begin(), values.end())
-  {}
+  TfSmallVector(std::initializer_list<T> values) : TfSmallVector(values.begin(), values.end()) {}
 
   template<typename _ForwardIterator>
   using _EnableIfForwardIterator = typename std::enable_if<
@@ -299,8 +286,7 @@ class TfSmallVector : public TfSmallVectorBase
   /// Creates a new vector containing copies of the data between
   /// \p first and \p last.
   template<typename ForwardIterator, typename = _EnableIfForwardIterator<ForwardIterator>>
-  TfSmallVector(ForwardIterator first, ForwardIterator last)
-    : _capacity(N)
+  TfSmallVector(ForwardIterator first, ForwardIterator last) : _capacity(N)
   {
     _InitStorage(std::distance(first, last));
     std::uninitialized_copy(first, last, begin());
@@ -318,8 +304,7 @@ class TfSmallVector : public TfSmallVectorBase
   ///
   TfSmallVector &operator=(const TfSmallVector &rhs)
   {
-    if (this != &rhs)
-    {
+    if (this != &rhs) {
       assign(rhs.begin(), rhs.end());
     }
     return *this;
@@ -329,8 +314,7 @@ class TfSmallVector : public TfSmallVectorBase
   ///
   TfSmallVector &operator=(TfSmallVector &&rhs)
   {
-    if (this != &rhs)
-    {
+    if (this != &rhs) {
       swap(rhs);
     }
     return *this;
@@ -349,8 +333,7 @@ class TfSmallVector : public TfSmallVectorBase
   void swap(TfSmallVector &rhs)
   {
     // Both this vector and rhs are stored locally.
-    if (_IsLocal() && rhs._IsLocal())
-    {
+    if (_IsLocal() && rhs._IsLocal()) {
       TfSmallVector *smaller = size() < rhs.size() ? this : &rhs;
       TfSmallVector *larger = size() < rhs.size() ? &rhs : this;
 
@@ -359,8 +342,7 @@ class TfSmallVector : public TfSmallVectorBase
 
       // Move the tail end of the entries, and destruct them at the
       // source vector.
-      for (size_type i = smaller->size(); i < larger->size(); ++i)
-      {
+      for (size_type i = smaller->size(); i < larger->size(); ++i) {
         _MoveConstruct(smaller->data() + i, &(*larger)[i]);
         (*larger)[i].~value_type();
       }
@@ -371,8 +353,7 @@ class TfSmallVector : public TfSmallVectorBase
 
     // Both this vector and rhs are stored remotely. Simply swap the
     // pointers, as well as size and capacity.
-    else if (!_IsLocal() && !rhs._IsLocal())
-    {
+    else if (!_IsLocal() && !rhs._IsLocal()) {
       value_type *tmp = _data.GetRemoteStorage();
       _data.SetRemoteStorage(rhs._data.GetRemoteStorage());
       rhs._data.SetRemoteStorage(tmp);
@@ -383,8 +364,7 @@ class TfSmallVector : public TfSmallVectorBase
 
     // Either this vector or rhs is stored remotely, whereas the other
     // one is stored locally.
-    else
-    {
+    else {
       TfSmallVector *remote = _IsLocal() ? &rhs : this;
       TfSmallVector *local = _IsLocal() ? this : &rhs;
 
@@ -398,8 +378,7 @@ class TfSmallVector : public TfSmallVectorBase
       // also destruct the elements at the source's local storage. The
       // source will become the one with the remote storage, so those
       // entries will be essentially freed.
-      for (size_type i = 0; i < local->size(); ++i)
-      {
+      for (size_type i = 0; i < local->size(); ++i) {
         _MoveConstruct(remote->_data.GetLocalStorage() + i, &(*local)[i]);
         (*local)[i].~value_type();
       }
@@ -443,8 +422,7 @@ class TfSmallVector : public TfSmallVectorBase
     value_type *q = const_cast<value_type *>(&*last);
 
     // If we're not removing anything, bail out.
-    if (p == q)
-    {
+    if (p == q) {
       return iterator(p);
     }
 
@@ -455,8 +433,7 @@ class TfSmallVector : public TfSmallVectorBase
     std::move(q, e, p);
 
     // Destruct all the freed up slots at the end of the vector.
-    for (value_type *i = (e - num); i != e; ++i)
-    {
+    for (value_type *i = (e - num); i != e; ++i) {
       i->~value_type();
     }
 
@@ -474,8 +451,7 @@ class TfSmallVector : public TfSmallVectorBase
     // Only reserve storage if the new capacity would grow past the local
     // storage, or the currently allocated storage. We'll grow to
     // accommodate exactly newCapacity entries.
-    if (newCapacity > capacity())
-    {
+    if (newCapacity > capacity()) {
       _GrowStorage(newCapacity);
     }
   }
@@ -486,15 +462,13 @@ class TfSmallVector : public TfSmallVectorBase
   {
     // If the new size is smaller than the current size, let go of some
     // entries at the tail.
-    if (newSize < size())
-    {
+    if (newSize < size()) {
       erase(const_iterator(data() + newSize), const_iterator(data() + size()));
     }
 
     // Otherwise, lets grow and fill: Reserve some storage, fill the tail
     // end with copies of v, and update the new size.
-    else if (newSize > size())
-    {
+    else if (newSize > size()) {
       reserve(newSize);
       std::uninitialized_fill(data() + size(), data() + newSize, v);
       _size = newSize;
@@ -532,11 +506,9 @@ class TfSmallVector : public TfSmallVectorBase
 
   /// Emplace an entry at the back of the vector.
   ///
-  template<typename... Args>
-  void emplace_back(Args &&...args)
+  template<typename... Args> void emplace_back(Args &&...args)
   {
-    if (size() == capacity())
-    {
+    if (size() == capacity()) {
       _GrowStorage(_NextCapacity());
     }
     new (data() + size()) value_type(std::forward<Args>(args)...);
@@ -563,9 +535,10 @@ class TfSmallVector : public TfSmallVectorBase
   template<typename ForwardIterator>
   void insert(iterator pos, ForwardIterator first, ForwardIterator last)
   {
-    static_assert(std::is_convertible<typename std::iterator_traits<ForwardIterator>::iterator_category,
-                                      std::forward_iterator_tag>::value,
-                  "Input Iterators not supported.");
+    static_assert(
+      std::is_convertible<typename std::iterator_traits<ForwardIterator>::iterator_category,
+                          std::forward_iterator_tag>::value,
+      "Input Iterators not supported.");
 
     // Check for the insert-at-end special case as the very first thing so
     // that we give the compiler the best possible opportunity to
@@ -581,13 +554,11 @@ class TfSmallVector : public TfSmallVectorBase
     // extremely common operation so we provide this fast path both to
     // avoid unneeded work and to make it easier for the compiler to
     // eliminate dead code when pos == end().
-    if (insertAtEnd)
-    {
+    if (insertAtEnd) {
       // The reallocation here is not a simple reserve.  We want to grow
       // the storage only when there are too many new elements but the
       // desired size is based on the growth factor.
-      if (neededCapacity > capacity())
-      {
+      if (neededCapacity > capacity()) {
         _GrowStorage(nextCapacity);
       }
       std::uninitialized_copy(first, last, end());
@@ -595,8 +566,7 @@ class TfSmallVector : public TfSmallVectorBase
       return;
     }
 
-    if (neededCapacity > capacity())
-    {
+    if (neededCapacity > capacity()) {
       // Because we need to realloc, we can do the insertion by copying
       // each range, [begin(), pos), [first, last), [pos, end()), into
       // the new storage.
@@ -616,8 +586,7 @@ class TfSmallVector : public TfSmallVectorBase
       _FreeStorage();
       _data.SetRemoteStorage(newStorage);
       _capacity = nextCapacity;
-    } else
-    {
+    } else {
       // Insert in-place requires handling four ranges.
       //
       // For both the range-to-move [pos, end()) and the range-to-insert
@@ -641,8 +610,7 @@ class TfSmallVector : public TfSmallVectorBase
       std::copy_backward(pos, umSrc, umDst);
 
       // Copy new elements into place.
-      for (long i = 0; i < numInitNews; ++i, ++first, ++pos)
-      {
+      for (long i = 0; i < numInitNews; ++i, ++first, ++pos) {
         *pos = *first;
       }
       std::uninitialized_copy(first, last, end());
@@ -857,6 +825,7 @@ class TfSmallVector : public TfSmallVectorBase
   }
 
  private:
+
   // Returns true if the local storage is used.
   bool _IsLocal() const
   {
@@ -880,8 +849,7 @@ class TfSmallVector : public TfSmallVectorBase
   // Free the remotely allocated storage.
   void _FreeStorage()
   {
-    if (!_IsLocal())
-    {
+    if (!_IsLocal()) {
       free(_data.GetRemoteStorage());
     }
   }
@@ -891,8 +859,7 @@ class TfSmallVector : public TfSmallVectorBase
   {
     value_type *b = data();
     value_type *e = b + size();
-    for (value_type *p = b; p != e; ++p)
-    {
+    for (value_type *p = b; p != e; ++p) {
       p->~value_type();
     }
   }
@@ -906,8 +873,7 @@ class TfSmallVector : public TfSmallVectorBase
   // Initialize the vector with new storage, updating the capacity and size.
   void _InitStorage(size_type size)
   {
-    if (size > capacity())
-    {
+    if (size > capacity()) {
       _data.SetRemoteStorage(_Allocate(size));
       _capacity = size;
     }
@@ -941,12 +907,10 @@ class TfSmallVector : public TfSmallVectorBase
   // const reference. This way, we can take the most optimal code path (
   // move, or copy without making redundant copies) based on whether v is
   // a rvalue reference or const reference.
-  template<typename U>
-  iterator _Insert(const_iterator it, U &&v)
+  template<typename U> iterator _Insert(const_iterator it, U &&v)
   {
     // If the iterator points to the end, simply push back.
-    if (it == end())
-    {
+    if (it == end()) {
       push_back(std::forward<U>(v));
       return end() - 1;
     }
@@ -954,16 +918,14 @@ class TfSmallVector : public TfSmallVectorBase
     // Grow the remote storage, if we need to. This invalidates iterators,
     // so special care must be taken in order to return a new, valid
     // iterator.
-    else if (size() == capacity())
-    {
+    else if (size() == capacity()) {
       const size_type newCapacity = _NextCapacity();
       value_type *newStorage = _Allocate(newCapacity);
 
       value_type *i = const_cast<value_type *>(&*it);
       value_type *d = newStorage;
       value_type *b = data();
-      for (; b != i; ++d, ++b)
-      {
+      for (; b != i; ++d, ++b) {
         *d = std::forward<U>(*b);
       }
 
@@ -971,8 +933,7 @@ class TfSmallVector : public TfSmallVectorBase
       new (current) value_type(std::forward<U>(v));
 
       const value_type *e = data() + size();
-      for (++d; b != e; ++d, ++b)
-      {
+      for (++d; b != e; ++d, ++b) {
         *d = std::forward<U>(*b);
       }
 
@@ -986,14 +947,12 @@ class TfSmallVector : public TfSmallVectorBase
 
     // Our current capacity is big enough to allow us to simply shift
     // elements up one slot and insert v at it.
-    else
-    {
+    else {
       // Move all the elements after it up by one slot.
       value_type *i = const_cast<value_type *>(&*it);
       value_type *p = const_cast<value_type *>(&back());
       new (data() + size()) value_type(std::forward<U>(*(p--)));
-      for (; p >= i; --p)
-      {
+      for (; p >= i; --p) {
         *(p + 1) = std::forward<U>(*p);
       }
 
@@ -1023,8 +982,7 @@ class TfSmallVector : public TfSmallVectorBase
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T, uint32_t N>
-void swap(TfSmallVector<T, N> &a, TfSmallVector<T, N> &b)
+template<typename T, uint32_t N> void swap(TfSmallVector<T, N> &a, TfSmallVector<T, N> &b)
 {
   a.swap(b);
 }

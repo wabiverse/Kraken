@@ -70,6 +70,7 @@ WABI_NAMESPACE_BEGIN
 class NdrRegistry : public TfWeakBase
 {
  public:
+
   using DiscoveryPluginRefPtrVec = NdrDiscoveryPluginRefPtrVector;
 
   /// Allows the client to set any additional discovery plugins that would
@@ -213,7 +214,8 @@ class NdrRegistry : public TfWeakBase
   ///
   /// \sa NdrNodeDiscoveryResult::aliases
   NDR_API
-  NdrNodeConstPtr GetNodeByIdentifierAndType(const NdrIdentifier &identifier, const TfToken &sourceType);
+  NdrNodeConstPtr GetNodeByIdentifierAndType(const NdrIdentifier &identifier,
+                                             const TfToken &sourceType);
 
   /// Get the node with the specified name.  An optional priority list
   /// specifies the set of node SOURCE types (\sa NdrNode::GetSourceType())
@@ -284,6 +286,7 @@ class NdrRegistry : public TfWeakBase
   NdrTokenVec GetAllNodeSourceTypes() const;
 
  protected:
+
   NdrRegistry(const NdrRegistry &) = delete;
   NdrRegistry &operator=(const NdrRegistry &) = delete;
 
@@ -294,10 +297,12 @@ class NdrRegistry : public TfWeakBase
   ~NdrRegistry();
 
  private:
+
   class _DiscoveryContext;
   friend class _DiscoveryContext;
 
-  typedef std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor> TypeToParserPluginMap;
+  typedef std::unordered_map<TfToken, NdrParserPlugin *, TfToken::HashFunctor>
+    TypeToParserPluginMap;
   typedef std::pair<NdrIdentifier, TfToken> NodeMapKey;
   struct NodeMapKeyHashFunctor
   {
@@ -337,7 +342,8 @@ class NdrRegistry : public TfWeakBase
 
   // Returns the cached or newly parsed node for the discovery result if it
   // has an alias that matches the given identifier.
-  NdrNodeConstPtr _ParseNodeMatchingAlias(const NdrNodeDiscoveryResult &dr, const NdrIdentifier &identifier);
+  NdrNodeConstPtr _ParseNodeMatchingAlias(const NdrNodeDiscoveryResult &dr,
+                                          const NdrIdentifier &identifier);
 
   // Returns the cached or newly parsed node for the discovery result if its
   // name and version match the given name and version filter.

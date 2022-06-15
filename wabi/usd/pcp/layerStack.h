@@ -68,6 +68,7 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase
   PcpLayerStack &operator=(const PcpLayerStack &) = delete;
 
  public:
+
   // See Pcp_LayerStackRegistry for creating layer stacks.
   PCP_API
   virtual ~PcpLayerStack();
@@ -204,6 +205,7 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase
   PcpMapExpression GetExpressionForRelocatesAtPath(const SdfPath &path);
 
  private:
+
   // Only a registry can create a layer stack.
   friend class Pcp_LayerStackRegistry;
   // PcpCache needs access to check the _registry.
@@ -232,6 +234,7 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase
                                       PcpErrorVector *errors);
 
  private:
+
   /// The identifier that uniquely identifies this layer stack.
   const PcpLayerStackIdentifier _identifier;
   /// The registry (1:1 with a PcpCache) this layer stack belongs to.  This
@@ -301,7 +304,8 @@ class PcpLayerStack : public TfRefBase, public TfWeakBase
   /// the current value of relocations given out by
   /// GetExpressionForRelocatesAtPath().  This map is used to update
   /// those values when relocations change.
-  typedef std::map<SdfPath, PcpMapExpression::VariableUniquePtr, SdfPath::FastLessThan> _RelocatesVarMap;
+  typedef std::map<SdfPath, PcpMapExpression::VariableUniquePtr, SdfPath::FastLessThan>
+    _RelocatesVarMap;
   _RelocatesVarMap _relocatesVariables;
   tbb::spin_mutex _relocatesVariablesMutex;
 

@@ -52,6 +52,7 @@ class MatfiltVstructConditionalEvaluatorImpl;
 class MatfiltVstructConditionalEvaluator
 {
  public:
+
   typedef std::shared_ptr<MatfiltVstructConditionalEvaluator> Ptr;
 
   ~MatfiltVstructConditionalEvaluator();
@@ -73,6 +74,7 @@ class MatfiltVstructConditionalEvaluator
                 HdMaterialNetwork2 &network) const;
 
  private:
+
   MatfiltVstructConditionalEvaluator() = default;
 
   MatfiltVstructConditionalEvaluatorImpl *_impl = nullptr;

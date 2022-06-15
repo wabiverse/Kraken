@@ -24,24 +24,25 @@
 #ifndef WABI_IMAGING_HD_UNIT_TEST_DELEGATE_H
 #define WABI_IMAGING_HD_UNIT_TEST_DELEGATE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/material.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 #include "wabi/imaging/hd/tokens.h"
 #include "wabi/imaging/pxOsd/tokens.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/gf/matrix4d.h"
-#include "wabi/base/gf/matrix4f.h"
-#include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
-#include "wabi/base/gf/vec4d.h"
+#include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec4f.h"
-#include "wabi/base/tf/staticTokens.h"
+#include "wabi/base/gf/vec4d.h"
+#include "wabi/base/gf/matrix4f.h"
+#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/vt/array.h"
 #include "wabi/base/vt/dictionary.h"
+#include "wabi/base/tf/staticTokens.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdUnitTestDelegate
 ///
@@ -50,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class HdUnitTestDelegate : public HdSceneDelegate
 {
  public:
+
   HD_API
   HdUnitTestDelegate(HdRenderIndex *parentIndex, SdfPath const &delegateID);
 
@@ -195,7 +197,9 @@ class HdUnitTestDelegate : public HdSceneDelegate
 
   /// Add a subdiv with various tags
   HD_API
-  void AddSubdiv(SdfPath const &id, GfMatrix4f const &transform, SdfPath const &insatancerId = SdfPath());
+  void AddSubdiv(SdfPath const &id,
+                 GfMatrix4f const &transform,
+                 SdfPath const &insatancerId = SdfPath());
 
   // -----------------------------------------------------------------------
 
@@ -203,6 +207,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   void AddBasisCurves(SdfPath const &id,
                       VtVec3fArray const &points,
                       VtIntArray const &curveVertexCounts,
+                      VtIntArray const &curveIndices,
                       VtVec3fArray const &normals,
                       TfToken const &type,
                       TfToken const &basis,
@@ -299,7 +304,9 @@ class HdUnitTestDelegate : public HdSceneDelegate
 
   /// Render buffers
   HD_API
-  void AddRenderBuffer(SdfPath const &id, GfVec3i const &dims, HdFormat format, bool multiSampled);
+  void AddRenderBuffer(SdfPath const &id, HdRenderBufferDescriptor const &desc);
+  HD_API
+  void UpdateRenderBuffer(SdfPath const &id, HdRenderBufferDescriptor const &desc);
 
   /// Camera
   HD_API
@@ -308,8 +315,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   void UpdateCamera(SdfPath const &id, TfToken const &key, VtValue value);
 
   /// Tasks
-  template<typename T>
-  void AddTask(SdfPath const &id)
+  template<typename T> void AddTask(SdfPath const &id)
   {
     GetRenderIndex().InsertTask<T>(this, id);
     _tasks[id] = _Task();
@@ -378,6 +384,8 @@ class HdUnitTestDelegate : public HdSceneDelegate
   HD_API
   virtual TfToken GetRenderTag(SdfPath const &id) override;
   HD_API
+  virtual TfTokenVector GetTaskRenderTags(SdfPath const &taskId) override;
+  HD_API
   virtual PxOsdSubdivTags GetSubdivTags(SdfPath const &id) override;
   HD_API
   virtual GfRange3d GetExtent(SdfPath const &id) override;
@@ -392,7 +400,9 @@ class HdUnitTestDelegate : public HdSceneDelegate
   HD_API
   virtual VtValue Get(SdfPath const &id, TfToken const &key) override;
   HD_API
-  virtual VtValue GetIndexedPrimvar(SdfPath const &id, TfToken const &key, VtIntArray *outIndices) override;
+  virtual VtValue GetIndexedPrimvar(SdfPath const &id,
+                                    TfToken const &key,
+                                    VtIntArray *outIndices) override;
   HD_API
   virtual HdReprSelector GetReprSelector(SdfPath const &id) override;
   HD_API
@@ -400,7 +410,11 @@ class HdUnitTestDelegate : public HdSceneDelegate
                                                           HdInterpolation interpolation) override;
 
   HD_API
-  virtual VtIntArray GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId) override;
+  virtual VtIntArray GetInstanceIndices(SdfPath const &instancerId,
+                                        SdfPath const &prototypeId) override;
+
+  HD_API
+  virtual SdfPathVector GetInstancerPrototypes(SdfPath const &instancerId) override;
 
   HD_API
   virtual GfMatrix4d GetInstancerTransform(SdfPath const &instancerId) override;
@@ -421,6 +435,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   virtual HdRenderBufferDescriptor GetRenderBufferDescriptor(SdfPath const &id) override;
 
  private:
+
   // ---------------------------------------------------------------------- //
   // private utility methods
   // ---------------------------------------------------------------------- //
@@ -431,8 +446,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   // ---------------------------------------------------------------------- //
   struct _Mesh
   {
-    _Mesh()
-    {}
+    _Mesh() {}
     _Mesh(TfToken const &scheme,
           TfToken const &orientation,
           GfMatrix4f const &transform,
@@ -469,37 +483,35 @@ class HdUnitTestDelegate : public HdSceneDelegate
   };
   struct _Curves
   {
-    _Curves()
-    {}
+    _Curves() {}
     _Curves(VtVec3fArray const &points,
             VtIntArray const &curveVertexCounts,
+            VtIntArray const &curveIndices,
             TfToken const &type,
             TfToken const &basis)
       : points(points),
         curveVertexCounts(curveVertexCounts),
+        curveIndices(curveIndices),
         type(type),
         basis(basis)
     {}
 
     VtVec3fArray points;
     VtIntArray curveVertexCounts;
+    VtIntArray curveIndices;
     TfToken type;
     TfToken basis;
   };
   struct _Points
   {
-    _Points()
-    {}
-    _Points(VtVec3fArray const &points)
-      : points(points)
-    {}
+    _Points() {}
+    _Points(VtVec3fArray const &points) : points(points) {}
 
     VtVec3fArray points;
   };
   struct _Instancer
   {
-    _Instancer()
-    {}
+    _Instancer() {}
     _Instancer(VtVec3fArray const &scale,
                VtVec4fArray const &rotate,
                VtVec3fArray const &translate,
@@ -519,8 +531,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   };
   struct _Primvar
   {
-    _Primvar()
-    {}
+    _Primvar() {}
     _Primvar(TfToken const &_name,
              VtValue const &_value,
              HdInterpolation const &_interp,
@@ -547,6 +558,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   struct _Camera
   {
     VtDictionary params;
+    GfMatrix4f transform;
   };
   struct _Light
   {
@@ -558,13 +570,8 @@ class HdUnitTestDelegate : public HdSceneDelegate
   };
   struct _RenderBuffer
   {
-    _RenderBuffer()
-    {}
-    _RenderBuffer(GfVec3i const &d, HdFormat f, bool ms)
-      : dims(d),
-        format(f),
-        multiSampled(ms)
-    {}
+    _RenderBuffer() {}
+    _RenderBuffer(GfVec3i const &d, HdFormat f, bool ms) : dims(d), format(f), multiSampled(ms) {}
     GfVec3i dims;
     HdFormat format;
     bool multiSampled;
@@ -592,6 +599,7 @@ class HdUnitTestDelegate : public HdSceneDelegate
   std::map<SdfPath, int> _refineLevels;
   std::map<SdfPath, bool> _visibilities;
 };
+
 
 WABI_NAMESPACE_END
 

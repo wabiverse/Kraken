@@ -38,12 +38,14 @@ WABI_NAMESPACE_BEGIN
 class HdPrman_Mesh final : public HdPrman_Gprim<HdMesh>
 {
  public:
+
   typedef HdPrman_Gprim<HdMesh> BASE;
   HF_MALLOC_TAG_NEW("new HdPrman_Mesh");
   HdPrman_Mesh(SdfPath const &id);
   virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   virtual RtPrimVarList _ConvertGeometry(HdPrman_Context *context,
                                          HdSceneDelegate *sceneDelegate,
                                          const SdfPath &id,

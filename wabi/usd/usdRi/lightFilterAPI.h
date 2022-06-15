@@ -73,6 +73,7 @@ class SdfAssetPath;
 class UsdRiLightFilterAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -83,16 +84,12 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
   /// Equivalent to UsdRiLightFilterAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiLightFilterAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdRiLightFilterAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdRiLightFilterAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiLightFilterAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiLightFilterAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdRiLightFilterAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -134,6 +131,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
   static UsdRiLightFilterAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -141,6 +139,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -150,9 +149,11 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RICOMBINEMODE
   // --------------------------------------------------------------------- //
@@ -195,6 +196,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIDENSITY
   // --------------------------------------------------------------------- //
@@ -218,6 +220,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIINVERT
   // --------------------------------------------------------------------- //
@@ -237,9 +240,11 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateRiInvertAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRiInvertAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIINTENSITY
   // --------------------------------------------------------------------- //
@@ -263,6 +268,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIEXPOSURE
   // --------------------------------------------------------------------- //
@@ -286,6 +292,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIDIFFUSE
   // --------------------------------------------------------------------- //
@@ -310,6 +317,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RISPECULAR
   // --------------------------------------------------------------------- //
@@ -334,6 +342,7 @@ class UsdRiLightFilterAPI : public UsdAPISchemaBase
                                     bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

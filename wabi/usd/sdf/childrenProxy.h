@@ -42,10 +42,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class _View>
-class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
+template<class _View> class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
 {
  public:
+
   typedef _View View;
   typedef typename View::Adapter Adapter;
   typedef typename View::ChildPolicy ChildPolicy;
@@ -58,17 +58,15 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   typedef SdfChildrenProxy<View> This;
 
  private:
+
   typedef typename View::const_iterator _inner_iterator;
 
   class _ValueProxy
   {
    public:
-    _ValueProxy()
-      : _owner(NULL)
-    {}
-    _ValueProxy(This *owner, _inner_iterator i)
-      : _owner(owner),
-        _pos(i)
+
+    _ValueProxy() : _owner(NULL) {}
+    _ValueProxy(This *owner, _inner_iterator i) : _owner(owner), _pos(i)
     {
       // Do nothing
     }
@@ -78,8 +76,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
       return *_pos;
     }
 
-    template<class U>
-    _ValueProxy &operator=(const U &x)
+    template<class U> _ValueProxy &operator=(const U &x)
     {
       _owner->_Set(*_pos, x);
       return *this;
@@ -91,6 +88,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
     }
 
    private:
+
     This *_owner;
     _inner_iterator _pos;
   };
@@ -98,6 +96,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   class _PairProxy
   {
    public:
+
     explicit _PairProxy(This *owner, _inner_iterator i)
       : first(owner->_view.key(i)),
         second(owner, i)
@@ -116,6 +115,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   class _Traits
   {
    public:
+
     static value_type Dereference(const This *owner, _inner_iterator i)
     {
       return value_type(owner->_view.key(i), *i);
@@ -128,24 +128,22 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   };
 
   template<class _Owner, class _Iter, class _Value>
-  class _Iterator
-    : public boost::
-        iterator_facade<_Iterator<_Owner, _Iter, _Value>, _Value, std::bidirectional_iterator_tag, _Value>
+  class _Iterator : public boost::iterator_facade<_Iterator<_Owner, _Iter, _Value>,
+                                                  _Value,
+                                                  std::bidirectional_iterator_tag,
+                                                  _Value>
   {
    public:
-    _Iterator()
-    {}
-    _Iterator(_Owner owner, _inner_iterator i)
-      : _owner(owner),
-        _pos(i)
-    {}
+
+    _Iterator() {}
+    _Iterator(_Owner owner, _inner_iterator i) : _owner(owner), _pos(i) {}
     template<class O2, class I2, class V2>
-    _Iterator(const _Iterator<O2, I2, V2> &other)
-      : _owner(other._owner),
-        _pos(other._pos)
+    _Iterator(const _Iterator<O2, I2, V2> &other) : _owner(other._owner),
+                                                    _pos(other._pos)
     {}
 
    private:
+
     friend class boost::iterator_core_access;
 
     _Value dereference() const
@@ -153,8 +151,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
       return _Traits::Dereference(_owner, _pos);
     }
 
-    template<class O2, class I2, class V2>
-    bool equal(const _Iterator<O2, I2, V2> &other) const
+    template<class O2, class I2, class V2> bool equal(const _Iterator<O2, I2, V2> &other) const
     {
       return _pos == other._pos;
     }
@@ -170,14 +167,15 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
     }
 
    private:
+
     _Owner _owner;
     _inner_iterator _pos;
 
-    template<class O2, class I2, class V2>
-    friend class _Iterator;
+    template<class O2, class I2, class V2> friend class _Iterator;
   };
 
  public:
+
   typedef _ValueProxy reference;
   typedef _Iterator<This *, _inner_iterator, _PairProxy> iterator;
   typedef boost::reverse_iterator<iterator> reverse_iterator;
@@ -188,7 +186,9 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   static const int CanInsert = 2;
   static const int CanErase = 4;
 
-  SdfChildrenProxy(const View &view, const std::string &type, int permission = CanSet | CanInsert | CanErase)
+  SdfChildrenProxy(const View &view,
+                   const std::string &type,
+                   int permission = CanSet | CanInsert | CanErase)
     : _view(view),
       _type(type),
       _permission(permission)
@@ -207,18 +207,15 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
 
   This &operator=(const This &other)
   {
-    if (other._Validate())
-    {
+    if (other._Validate()) {
       _Copy(other._view.values());
     }
     return *this;
   }
 
-  template<class U>
-  This &operator=(const SdfChildrenProxy<U> &other)
+  template<class U> This &operator=(const SdfChildrenProxy<U> &other)
   {
-    if (other._Validate())
-    {
+    if (other._Validate()) {
       _Copy(other._view.values());
     }
     return *this;
@@ -291,24 +288,18 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
 
   std::pair<iterator, bool> insert(const mapped_type &value)
   {
-    if (_Validate(CanInsert))
-    {
+    if (_Validate(CanInsert)) {
       iterator i = find(_view.key(value));
-      if (i == end())
-      {
-        if (_PrimInsert(value, size()))
-        {
+      if (i == end()) {
+        if (_PrimInsert(value, size())) {
           return std::make_pair(find(_view.key(value)), true);
-        } else
-        {
+        } else {
           return std::make_pair(end(), false);
         }
-      } else
-      {
+      } else {
         return std::make_pair(i, false);
       }
-    } else
-    {
+    } else {
       return std::make_pair(iterator(), false);
     }
   }
@@ -318,14 +309,11 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
     return insert(value).first;
   }
 
-  template<class InputIterator>
-  void insert(InputIterator first, InputIterator last)
+  template<class InputIterator> void insert(InputIterator first, InputIterator last)
   {
-    if (_Validate(CanInsert))
-    {
+    if (_Validate(CanInsert)) {
       SdfChangeBlock block;
-      for (; first != last; ++first)
-      {
+      for (; first != last; ++first) {
         _PrimInsert(*first, size());
       }
     }
@@ -343,11 +331,9 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
 
   void erase(iterator first, iterator last)
   {
-    if (_Validate(CanErase))
-    {
+    if (_Validate(CanErase)) {
       SdfChangeBlock block;
-      while (first != last)
-      {
+      while (first != last) {
         const key_type &key = first->first;
         ++first;
         _PrimErase(key);
@@ -388,6 +374,7 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   }
 
  private:
+
   const std::string &_GetType() const
   {
     return _type;
@@ -410,11 +397,9 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
 
   bool _Validate() const
   {
-    if (_view.IsValid())
-    {
+    if (_view.IsValid()) {
       return true;
-    } else
-    {
+    } else {
       TF_CODING_ERROR("Accessing expired %s", _type.c_str());
       return false;
     }
@@ -422,23 +407,18 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
 
   bool _Validate(int permission)
   {
-    if (!_Validate())
-    {
+    if (!_Validate()) {
       return false;
     }
-    if ((_permission & permission) == permission)
-    {
+    if ((_permission & permission) == permission) {
       return true;
     }
     const char *op = "edit";
-    if (~_permission & permission & CanSet)
-    {
+    if (~_permission & permission & CanSet) {
       op = "replace";
-    } else if (~_permission & permission & CanInsert)
-    {
+    } else if (~_permission & permission & CanInsert) {
       op = "insert";
-    } else if (~_permission & permission & CanErase)
-    {
+    } else if (~_permission & permission & CanErase) {
       op = "remove";
     }
     TF_CODING_ERROR("Cannot %s %s", op, _type.c_str());
@@ -482,25 +462,22 @@ class SdfChildrenProxy : boost::equality_comparable<SdfChildrenProxy<_View>>
   }
 
  private:
+
   View _view;
   std::string _type;
   int _permission;
 
-  template<class V>
-  friend class SdfChildrenProxy;
-  template<class V>
-  friend class SdfPyChildrenProxy;
+  template<class V> friend class SdfChildrenProxy;
+  template<class V> friend class SdfPyChildrenProxy;
 };
 
 // Allow TfIteration over children proxies.
 template<typename _View>
 struct Tf_ShouldIterateOverCopy<SdfChildrenProxy<_View>> : boost::true_type
-{
-};
+{};
 
 // Cannot get from a VtValue except as the correct type.
-template<class _View>
-struct Vt_DefaultValueFactory<SdfChildrenProxy<_View>>
+template<class _View> struct Vt_DefaultValueFactory<SdfChildrenProxy<_View>>
 {
   static Vt_DefaultValueHolder Invoke() = delete;
 };

@@ -51,9 +51,8 @@ class SdfSpec;
 class Sdf_TextOutput
 {
  public:
-  explicit Sdf_TextOutput(std::ostream &out)
-    : _out(out)
-  {}
+
+  explicit Sdf_TextOutput(std::ostream &out) : _out(out) {}
 
   Sdf_TextOutput(const Sdf_TextOutput &) = delete;
   const Sdf_TextOutput &operator=(const Sdf_TextOutput &) = delete;
@@ -78,6 +77,7 @@ class Sdf_TextOutput
   }
 
  private:
+
   std::ostream &_out;
 };
 
@@ -87,9 +87,8 @@ class Sdf_TextOutput
 class Sdf_StreamWritableAsset : public ArWritableAsset
 {
  public:
-  explicit Sdf_StreamWritableAsset(std::ostream &out)
-    : _out(out)
-  {}
+
+  explicit Sdf_StreamWritableAsset(std::ostream &out) : _out(out) {}
 
   virtual ~Sdf_StreamWritableAsset();
 
@@ -113,6 +112,7 @@ class Sdf_StreamWritableAsset : public ArWritableAsset
   }
 
  private:
+
   std::ostream &_out;
 };
 
@@ -120,6 +120,7 @@ class Sdf_StreamWritableAsset : public ArWritableAsset
 class Sdf_TextOutput
 {
  public:
+
   explicit Sdf_TextOutput(std::ostream &out)
     : Sdf_TextOutput(std::make_shared<Sdf_StreamWritableAsset>(out))
   {}
@@ -133,8 +134,7 @@ class Sdf_TextOutput
 
   ~Sdf_TextOutput()
   {
-    if (_asset)
-    {
+    if (_asset) {
       Close();
     }
   }
@@ -145,8 +145,7 @@ class Sdf_TextOutput
   // Close the output, flushing contents to destination.
   bool Close()
   {
-    if (!_asset)
-    {
+    if (!_asset) {
       return true;
     }
 
@@ -168,13 +167,13 @@ class Sdf_TextOutput
   }
 
  private:
+
   bool _Write(const char *str, size_t strLength)
   {
     // Much of the text format writing code writes small number of
     // characters at a time. Buffer writes to batch writes into larger
     // chunks.
-    while (strLength != 0)
-    {
+    while (strLength != 0) {
       const size_t numAvail = BUFFER_SIZE - _bufferPos;
       const size_t numToCopy = std::min(numAvail, strLength);
       memcpy(_buffer.get() + _bufferPos, str, numToCopy);
@@ -183,10 +182,8 @@ class Sdf_TextOutput
       str += numToCopy;
       strLength -= numToCopy;
 
-      if (_bufferPos == BUFFER_SIZE)
-      {
-        if (!_FlushBuffer())
-        {
+      if (_bufferPos == BUFFER_SIZE) {
+        if (!_FlushBuffer()) {
           return false;
         }
       }
@@ -197,15 +194,13 @@ class Sdf_TextOutput
 
   bool _FlushBuffer()
   {
-    if (_bufferPos == 0)
-    {
+    if (_bufferPos == 0) {
       return true;
     }
 
     const size_t nWritten = _asset->Write(_buffer.get(), _bufferPos, _offset);
 
-    if (nWritten != _bufferPos)
-    {
+    if (nWritten != _bufferPos) {
       TF_RUNTIME_ERROR("Failed to write bytes");
       return false;
     }
@@ -229,9 +224,8 @@ class Sdf_TextOutput
 class Sdf_StringOutput : public Sdf_TextOutput
 {
  public:
-  explicit Sdf_StringOutput()
-    : Sdf_TextOutput(_str)
-  {}
+
+  explicit Sdf_StringOutput() : Sdf_TextOutput(_str) {}
 
   // Closes the output and returns the text output as a string.
   std::string GetString()
@@ -241,6 +235,7 @@ class Sdf_StringOutput : public Sdf_TextOutput
   }
 
  private:
+
   std::stringstream _str;
 };
 

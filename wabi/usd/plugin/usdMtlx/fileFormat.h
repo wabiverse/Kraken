@@ -48,6 +48,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdMtlxFileFormat);
 class UsdMtlxFileFormat : public SdfFileFormat
 {
  public:
+
   // SdfFileFormat overrides
   SdfAbstractDataRefPtr InitData(const FileFormatArguments &) const override;
   bool CanRead(const std::string &file) const override;
@@ -63,6 +64,7 @@ class UsdMtlxFileFormat : public SdfFileFormat
   bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
 
  protected:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
   UsdMtlxFileFormat();

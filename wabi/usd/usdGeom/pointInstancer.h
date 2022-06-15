@@ -269,6 +269,7 @@ class SdfAssetPath;
 class UsdGeomPointInstancer : public UsdGeomBoundable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -279,16 +280,12 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   /// Equivalent to UsdGeomPointInstancer::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPointInstancer(const UsdPrim &prim = UsdPrim())
-    : UsdGeomBoundable(prim)
-  {}
+  explicit UsdGeomPointInstancer(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim) {}
 
   /// Construct a UsdGeomPointInstancer on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPointInstancer(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPointInstancer(const UsdSchemaBase &schemaObj)
-    : UsdGeomBoundable(schemaObj)
-  {}
+  explicit UsdGeomPointInstancer(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -338,6 +335,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   static UsdGeomPointInstancer Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -346,6 +344,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -355,9 +354,11 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PROTOINDICES
   // --------------------------------------------------------------------- //
@@ -384,6 +385,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // IDS
   // --------------------------------------------------------------------- //
@@ -408,9 +410,11 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(),
+                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // POSITIONS
   // --------------------------------------------------------------------- //
@@ -435,6 +439,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ORIENTATIONS
   // --------------------------------------------------------------------- //
@@ -469,6 +474,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SCALES
   // --------------------------------------------------------------------- //
@@ -491,9 +497,11 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateScalesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateScalesAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VELOCITIES
   // --------------------------------------------------------------------- //
@@ -527,6 +535,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ACCELERATIONS
   // --------------------------------------------------------------------- //
@@ -555,6 +564,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANGULARVELOCITIES
   // --------------------------------------------------------------------- //
@@ -585,6 +595,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // INVISIBLEIDS
   // --------------------------------------------------------------------- //
@@ -609,6 +620,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PROTOTYPES
   // --------------------------------------------------------------------- //
@@ -629,6 +641,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   UsdRelationship CreatePrototypesRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -878,11 +891,12 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   /// \param times - A vector containing the UsdTimeCodes at which we want to
   ///                sample.
   USDGEOM_API
-  bool ComputeInstanceTransformsAtTimes(std::vector<VtArray<GfMatrix4d>> *xformsArray,
-                                        const std::vector<UsdTimeCode> &times,
-                                        const UsdTimeCode baseTime,
-                                        const ProtoXformInclusion doProtoXforms = IncludeProtoXform,
-                                        const MaskApplication applyMask = ApplyMask) const;
+  bool ComputeInstanceTransformsAtTimes(
+    std::vector<VtArray<GfMatrix4d>> *xformsArray,
+    const std::vector<UsdTimeCode> &times,
+    const UsdTimeCode baseTime,
+    const ProtoXformInclusion doProtoXforms = IncludeProtoXform,
+    const MaskApplication applyMask = ApplyMask) const;
 
   /// \overload
   /// Perform the per-instance transform computation as described in
@@ -953,6 +967,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                               float velocityScale = 1.0);
 
  private:
+
   // Get the authored prototype paths. Fail if there are no authored prototype
   // paths or the prototype indices are out of bounds.
   bool _GetPrototypePathsForInstanceTransforms(const VtIntArray &protoIndices,
@@ -973,6 +988,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
                                                 std::vector<bool> *mask) const;
 
  public:
+
   /// Compute the extent of the point instancer based on the per-instance,
   /// "PointInstancer relative" transforms at \p time, as described in
   /// \ref UsdGeomPointInstancer_transform .
@@ -1009,7 +1025,9 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   ///                   When \p baseTime is less than or equal to \p time,
   ///                   we will choose the lower bracketing timeSample.
   USDGEOM_API
-  bool ComputeExtentAtTime(VtVec3fArray *extent, const UsdTimeCode time, const UsdTimeCode baseTime) const;
+  bool ComputeExtentAtTime(VtVec3fArray *extent,
+                           const UsdTimeCode time,
+                           const UsdTimeCode baseTime) const;
 
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.
@@ -1055,6 +1073,7 @@ class UsdGeomPointInstancer : public UsdGeomBoundable
   size_t GetInstanceCount(UsdTimeCode timeCode = UsdTimeCode::Default()) const;
 
  private:
+
   bool _ComputeExtentAtTimePreamble(UsdTimeCode baseTime,
                                     VtIntArray *protoIndices,
                                     std::vector<bool> *mask,
@@ -1086,17 +1105,14 @@ bool UsdGeomPointInstancer::ApplyMaskToArray(std::vector<bool> const &mask,
                                              VtArray<T> *dataArray,
                                              const int elementSize)
 {
-  if (!dataArray)
-  {
+  if (!dataArray) {
     TF_CODING_ERROR("NULL dataArray.");
     return false;
   }
   size_t maskSize = mask.size();
-  if (maskSize == 0 || dataArray->size() == (size_t)elementSize)
-  {
+  if (maskSize == 0 || dataArray->size() == (size_t)elementSize) {
     return true;
-  } else if ((maskSize * elementSize) != dataArray->size())
-  {
+  } else if ((maskSize * elementSize) != dataArray->size()) {
     TF_WARN(
       "Input mask's size (%zu) is not compatible with the "
       "input dataArray (%zu) and elementSize (%d).",
@@ -1109,21 +1125,17 @@ bool UsdGeomPointInstancer::ApplyMaskToArray(std::vector<bool> const &mask,
   T *beginData = dataArray->data();
   T *currData = beginData;
   size_t numPreserved = 0;
-  for (size_t i = 0; i < maskSize; ++i)
-  {
+  for (size_t i = 0; i < maskSize; ++i) {
     // XXX Could add a fast-path for elementSize == 1 ?
-    if (mask[i])
-    {
-      for (int j = 0; j < elementSize; ++j)
-      {
+    if (mask[i]) {
+      for (int j = 0; j < elementSize; ++j) {
         *currData = beginData[i + j];
         ++currData;
       }
       numPreserved += elementSize;
     }
   }
-  if (numPreserved < dataArray->size())
-  {
+  if (numPreserved < dataArray->size()) {
     dataArray->resize(numPreserved);
   }
   return true;

@@ -53,6 +53,7 @@ typedef std::shared_ptr<class GlfGLContext> GlfGLContextSharedPtr;
 class GlfGLContextRegistry
 {
  public:
+
   static GlfGLContextRegistry &GetInstance()
   {
     return TfSingleton<GlfGLContextRegistry>::GetInstance();
@@ -78,6 +79,7 @@ class GlfGLContextRegistry
   void Remove(const GlfGLContext *context);
 
  private:
+
   GlfGLContextRegistry();
   ~GlfGLContextRegistry();
 
@@ -88,6 +90,7 @@ class GlfGLContextRegistry
   friend class TfSingleton<GlfGLContextRegistry>;
 
  private:
+
   std::vector<std::unique_ptr<GlfGLContextRegistrationInterface>> _interfaces;
   bool _sharedContextInitialized;
   GlfGLContextSharedPtr _shared;

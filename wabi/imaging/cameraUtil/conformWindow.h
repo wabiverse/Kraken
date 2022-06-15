@@ -102,12 +102,16 @@ GfMatrix4d CameraUtilConformedWindow(const GfMatrix4d &projectionMatrix,
 /// Conforms the given \p camera to have aspect ratio \p targetAspect
 /// by applying \p policy.
 CAMERAUTIL_API
-void CameraUtilConformWindow(GfCamera *camera, CameraUtilConformWindowPolicy policy, double targetAspect);
+void CameraUtilConformWindow(GfCamera *camera,
+                             CameraUtilConformWindowPolicy policy,
+                             double targetAspect);
 
 /// Conforms the given \p frustum to have aspect ratio \p targetAspect
 /// by applying \p policy.
 CAMERAUTIL_API
-void CameraUtilConformWindow(GfFrustum *frustum, CameraUtilConformWindowPolicy policy, double targetAspect);
+void CameraUtilConformWindow(GfFrustum *frustum,
+                             CameraUtilConformWindowPolicy policy,
+                             double targetAspect);
 
 WABI_NAMESPACE_END
 

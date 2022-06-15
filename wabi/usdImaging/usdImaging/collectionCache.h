@@ -58,6 +58,7 @@ WABI_NAMESPACE_BEGIN
 class UsdImaging_CollectionCache : boost::noncopyable
 {
  public:
+
   /// Query is the MembershipQuery computed from a collection's state.
   typedef UsdCollectionAPI::MembershipQuery Query;
 
@@ -79,6 +80,7 @@ class UsdImaging_CollectionCache : boost::noncopyable
   VtArray<TfToken> ComputeCollectionsContainingPath(SdfPath const &path) const;
 
  private:
+
   // The cache boils down to tracking the correspondence of
   // collection paths, their computed queries, and the id
   // assigned to each unique query:

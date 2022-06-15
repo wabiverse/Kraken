@@ -43,7 +43,9 @@ WABI_NAMESPACE_BEGIN
 #define USDUTILS_TIME_CODE_RANGE_TOKENS \
   ((EmptyTimeCodeRange, "NONE"))((RangeSeparator, ":"))((StrideSeparator, "x"))
 
-TF_DECLARE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens, USDUTILS_API, USDUTILS_TIME_CODE_RANGE_TOKENS);
+TF_DECLARE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens,
+                         USDUTILS_API,
+                         USDUTILS_TIME_CODE_RANGE_TOKENS);
 
 /// \class UsdUtilsTimeCodeRange
 ///
@@ -65,12 +67,14 @@ TF_DECLARE_PUBLIC_TOKENS(UsdUtilsTimeCodeRangeTokens, USDUTILS_API, USDUTILS_TIM
 class UsdUtilsTimeCodeRange
 {
  public:
+
   /// \class const_iterator
   ///
   /// A forward iterator into a UsdUtilsTimeCodeRange.
   class const_iterator
   {
    public:
+
     using iterator_category = std::forward_iterator_tag;
     using value_type = UsdTimeCode;
     using reference = const UsdTimeCode &;
@@ -95,8 +99,7 @@ class UsdUtilsTimeCodeRange
     /// This iterator is returned.
     const_iterator &operator++()
     {
-      if (_timeCodeRange)
-      {
+      if (_timeCodeRange) {
         ++_currStep;
         _currTimeCode = UsdTimeCode(_timeCodeRange->_startTimeCode.GetValue() +
                                     _timeCodeRange->_stride * _currStep);
@@ -129,6 +132,7 @@ class UsdUtilsTimeCodeRange
     }
 
    private:
+
     friend class UsdUtilsTimeCodeRange;
 
     const_iterator(const UsdUtilsTimeCodeRange *timeCodeRange)
@@ -137,8 +141,7 @@ class UsdUtilsTimeCodeRange
         _maxSteps(0u),
         _currTimeCode()
     {
-      if (_timeCodeRange)
-      {
+      if (_timeCodeRange) {
         const double startVal = _timeCodeRange->_startTimeCode.GetValue();
         const double endVal = _timeCodeRange->_endTimeCode.GetValue();
         const double stride = _timeCodeRange->_stride;
@@ -153,16 +156,13 @@ class UsdUtilsTimeCodeRange
     void _InvalidateIfExhausted()
     {
       bool finished = false;
-      if (!_timeCodeRange)
-      {
+      if (!_timeCodeRange) {
         finished = true;
-      } else if (_currStep >= _maxSteps)
-      {
+      } else if (_currStep >= _maxSteps) {
         finished = true;
       }
 
-      if (finished)
-      {
+      if (finished) {
         _timeCodeRange = nullptr;
         _currStep = 0u;
         _maxSteps = 0u;
@@ -222,9 +222,7 @@ class UsdUtilsTimeCodeRange
   /// Construct a range containing only the given \p timeCode.
   ///
   /// An iteration of the range will yield only that time code.
-  UsdUtilsTimeCodeRange(const UsdTimeCode timeCode)
-    : UsdUtilsTimeCodeRange(timeCode, timeCode)
-  {}
+  UsdUtilsTimeCodeRange(const UsdTimeCode timeCode) : UsdUtilsTimeCodeRange(timeCode, timeCode) {}
 
   /// Construct a range containing the time codes from \p startTimeCode to
   /// \p endTimeCode.
@@ -232,7 +230,9 @@ class UsdUtilsTimeCodeRange
   /// If \p endTimeCode is greater than or equal to \p startTimeCode, then
   /// the stride will be 1.0. Otherwise, the stride will be -1.0.
   UsdUtilsTimeCodeRange(const UsdTimeCode startTimeCode, const UsdTimeCode endTimeCode)
-    : UsdUtilsTimeCodeRange(startTimeCode, endTimeCode, (endTimeCode >= startTimeCode) ? 1.0 : -1.0)
+    : UsdUtilsTimeCodeRange(startTimeCode,
+                            endTimeCode,
+                            (endTimeCode >= startTimeCode) ? 1.0 : -1.0)
   {}
 
   /// Construct a range containing the time codes from \p startTimeCode to
@@ -245,58 +245,51 @@ class UsdUtilsTimeCodeRange
   /// than \p startTimeCode. Finally, the stride value cannot be zero. If any
   /// of these conditions are not satisfied, then a coding error will be
   /// issued and an invalid empty range will be returned.
-  UsdUtilsTimeCodeRange(const UsdTimeCode startTimeCode, const UsdTimeCode endTimeCode, const double stride)
+  UsdUtilsTimeCodeRange(const UsdTimeCode startTimeCode,
+                        const UsdTimeCode endTimeCode,
+                        const double stride)
     : _startTimeCode(startTimeCode),
       _endTimeCode(endTimeCode),
       _stride(stride)
   {
-    if (_startTimeCode.IsEarliestTime())
-    {
+    if (_startTimeCode.IsEarliestTime()) {
       TF_CODING_ERROR("startTimeCode cannot be UsdTimeCode::EarliestTime()");
       _Invalidate();
       return;
     }
-    if (_startTimeCode.IsDefault())
-    {
+    if (_startTimeCode.IsDefault()) {
       TF_CODING_ERROR("startTimeCode cannot be UsdTimeCode::Default()");
       _Invalidate();
       return;
     }
-    if (_endTimeCode.IsEarliestTime())
-    {
+    if (_endTimeCode.IsEarliestTime()) {
       TF_CODING_ERROR("endTimeCode cannot be UsdTimeCode::EarliestTime()");
       _Invalidate();
       return;
     }
-    if (_endTimeCode.IsDefault())
-    {
+    if (_endTimeCode.IsDefault()) {
       TF_CODING_ERROR("endTimeCode cannot be UsdTimeCode::Default()");
       _Invalidate();
       return;
     }
 
-    if (_stride > 0.0)
-    {
-      if (_endTimeCode < _startTimeCode)
-      {
+    if (_stride > 0.0) {
+      if (_endTimeCode < _startTimeCode) {
         TF_CODING_ERROR(
           "endTimeCode cannot be less than startTimeCode with "
           "positive stride");
         _Invalidate();
         return;
       }
-    } else if (_stride < 0.0)
-    {
-      if (_endTimeCode > _startTimeCode)
-      {
+    } else if (_stride < 0.0) {
+      if (_endTimeCode > _startTimeCode) {
         TF_CODING_ERROR(
           "endTimeCode cannot be greater than startTimeCode with "
           "negative stride");
         _Invalidate();
         return;
       }
-    } else
-    {
+    } else {
       TF_CODING_ERROR("stride cannot be zero");
       _Invalidate();
       return;
@@ -379,6 +372,7 @@ class UsdUtilsTimeCodeRange
   }
 
  private:
+
   /// Sets the range such that it yields no time codes.
   void _Invalidate()
   {

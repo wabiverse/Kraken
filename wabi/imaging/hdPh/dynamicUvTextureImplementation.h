@@ -38,6 +38,7 @@ class HdPhDynamicUvTextureObject;
 class HdPhDynamicUvTextureImplementation
 {
  public:
+
   /// Called during the load phase of the Phoenix texture system
   /// when a texture file is supposed to be loaded to the CPU.
   ///

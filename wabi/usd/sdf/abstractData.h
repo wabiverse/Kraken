@@ -70,8 +70,8 @@ TF_DECLARE_PUBLIC_TOKENS(SdfDataTokens, SDF_API, SDF_DATA_TOKENS);
 class SdfAbstractData : public TfRefBase, public TfWeakBase
 {
  public:
-  SdfAbstractData()
-  {}
+
+  SdfAbstractData() {}
   SDF_API
   virtual ~SdfAbstractData();
 
@@ -157,7 +157,9 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
   /// Returns whether a value exists for the given \a path and \a fieldName.
   /// Optionally returns the value if it exists.
   SDF_API
-  virtual bool Has(const SdfPath &path, const TfToken &fieldName, SdfAbstractDataValue *value) const = 0;
+  virtual bool Has(const SdfPath &path,
+                   const TfToken &fieldName,
+                   SdfAbstractDataValue *value) const = 0;
 
   /// Return whether a value exists for the given \a path and \a fieldName.
   /// Optionally returns the value if it exists.
@@ -287,7 +289,9 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
   // element at \p keyPath, remove that element from the dictionary.  If this
   // leaves the dictionary empty, Erase() the entire field.
   SDF_API
-  virtual void EraseDictValueByKey(const SdfPath &path, const TfToken &fieldName, const TfToken &keyPath);
+  virtual void EraseDictValueByKey(const SdfPath &path,
+                                   const TfToken &fieldName,
+                                   const TfToken &keyPath);
 
   // If \p path, \p fieldName, and \p keyPath identify a (sub) dictionary,
   // return a vector of the keys in that dictionary, otherwise return an empty
@@ -328,7 +332,9 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
                                                double *tUpper) const = 0;
 
   SDF_API
-  virtual bool QueryTimeSample(const SdfPath &path, double time, VtValue *optionalValue = NULL) const = 0;
+  virtual bool QueryTimeSample(const SdfPath &path,
+                               double time,
+                               VtValue *optionalValue = NULL) const = 0;
   SDF_API
   virtual bool QueryTimeSample(const SdfPath &path,
                                double time,
@@ -343,6 +349,7 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
   /// @}
 
  protected:
+
   /// Visits every spec in this SdfAbstractData object with the given
   /// \p visitor. The order in which specs are visited is undefined.
   /// The visitor may not modify the SdfAbstractData object it is visiting.
@@ -353,11 +360,12 @@ class SdfAbstractData : public TfRefBase, public TfWeakBase
 };
 
 template<class T>
-inline T SdfAbstractData::GetAs(const SdfPath &path, const TfToken &field, const T &defaultVal) const
+inline T SdfAbstractData::GetAs(const SdfPath &path,
+                                const TfToken &field,
+                                const T &defaultVal) const
 {
   VtValue val = Get(path, field);
-  if (val.IsHolding<T>())
-  {
+  if (val.IsHolding<T>()) {
     return val.UncheckedGet<T>();
   }
   return defaultVal;
@@ -371,13 +379,12 @@ inline T SdfAbstractData::GetAs(const SdfPath &path, const TfToken &field, const
 class SdfAbstractDataValue
 {
  public:
+
   virtual bool StoreValue(const VtValue &value) = 0;
 
-  template<class T>
-  bool StoreValue(const T &v)
+  template<class T> bool StoreValue(const T &v)
   {
-    if (TfSafeTypeCompare(typeid(T), valueType))
-    {
+    if (TfSafeTypeCompare(typeid(T), valueType)) {
       *static_cast<T *>(value) = v;
       return true;
     }
@@ -397,6 +404,7 @@ class SdfAbstractDataValue
   bool typeMismatch;
 
  protected:
+
   SdfAbstractDataValue(void *value_, const std::type_info &valueType_)
     : value(value_),
       valueType(valueType_),
@@ -418,28 +426,23 @@ class SdfAbstractDataValue
 /// are solely used to get pointer information into and out of an
 /// SdfAbstractData container.
 ///
-template<class T>
-class SdfAbstractDataTypedValue : public SdfAbstractDataValue
+template<class T> class SdfAbstractDataTypedValue : public SdfAbstractDataValue
 {
  public:
-  SdfAbstractDataTypedValue(T *value)
-    : SdfAbstractDataValue(value, typeid(T))
-  {}
+
+  SdfAbstractDataTypedValue(T *value) : SdfAbstractDataValue(value, typeid(T)) {}
 
   virtual bool StoreValue(const VtValue &v)
   {
-    if (ARCH_LIKELY(v.IsHolding<T>()))
-    {
+    if (ARCH_LIKELY(v.IsHolding<T>())) {
       *static_cast<T *>(value) = v.UncheckedGet<T>();
-      if (std::is_same<T, SdfValueBlock>::value)
-      {
+      if (std::is_same<T, SdfValueBlock>::value) {
         isValueBlock = true;
       }
       return true;
     }
 
-    if (v.IsHolding<SdfValueBlock>())
-    {
+    if (v.IsHolding<SdfValueBlock>()) {
       isValueBlock = true;
       return true;
     }
@@ -458,13 +461,12 @@ class SdfAbstractDataTypedValue : public SdfAbstractDataValue
 class SdfAbstractDataConstValue
 {
  public:
+
   virtual bool GetValue(VtValue *value) const = 0;
 
-  template<class T>
-  bool GetValue(T *v) const
+  template<class T> bool GetValue(T *v) const
   {
-    if (TfSafeTypeCompare(typeid(T), valueType))
-    {
+    if (TfSafeTypeCompare(typeid(T), valueType)) {
       *v = *static_cast<const T *>(value);
       return true;
     }
@@ -477,6 +479,7 @@ class SdfAbstractDataConstValue
   const std::type_info &valueType;
 
  protected:
+
   SdfAbstractDataConstValue(const void *value_, const std::type_info &valueType_)
     : value(value_),
       valueType(valueType_)
@@ -496,13 +499,11 @@ class SdfAbstractDataConstValue
 /// are solely used to get pointer information into an SdfAbstractData
 /// container.
 ///
-template<class T>
-class SdfAbstractDataConstTypedValue : public SdfAbstractDataConstValue
+template<class T> class SdfAbstractDataConstTypedValue : public SdfAbstractDataConstValue
 {
  public:
-  SdfAbstractDataConstTypedValue(const T *value)
-    : SdfAbstractDataConstValue(value, typeid(T))
-  {}
+
+  SdfAbstractDataConstTypedValue(const T *value) : SdfAbstractDataConstValue(value, typeid(T)) {}
 
   virtual bool GetValue(VtValue *v) const
   {
@@ -516,6 +517,7 @@ class SdfAbstractDataConstTypedValue : public SdfAbstractDataConstValue
   }
 
  private:
+
   const T &_GetValue() const
   {
     return *static_cast<const T *>(value);
@@ -528,6 +530,7 @@ template<int N>
 class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTypedValue<std::string>
 {
  public:
+
   typedef char CharArray[N];
   SdfAbstractDataConstTypedValue(const CharArray *value)
     : SdfAbstractDataConstTypedValue<std::string>(&_str),
@@ -535,6 +538,7 @@ class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTyped
   {}
 
  private:
+
   std::string _str;
 };
 
@@ -546,6 +550,7 @@ class SdfAbstractDataConstTypedValue<char[N]> : public SdfAbstractDataConstTyped
 class SdfAbstractDataSpecVisitor
 {
  public:
+
   SDF_API
   virtual ~SdfAbstractDataSpecVisitor();
 

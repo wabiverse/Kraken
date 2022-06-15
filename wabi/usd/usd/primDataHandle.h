@@ -59,28 +59,20 @@ typedef boost::intrusive_ptr<const Usd_PrimData> Usd_PrimDataConstIPtr;
 class Usd_PrimDataHandle
 {
  public:
+
   // smart ptr element_type typedef.
   typedef Usd_PrimDataConstIPtr::element_type element_type;
 
   // Construct a null handle.
-  Usd_PrimDataHandle()
-  {}
+  Usd_PrimDataHandle() {}
   // Convert/construct a handle from a prim data intrusive ptr.
-  Usd_PrimDataHandle(const Usd_PrimDataIPtr &primData)
-    : _p(primData)
-  {}
+  Usd_PrimDataHandle(const Usd_PrimDataIPtr &primData) : _p(primData) {}
   // Convert/construct a handle from a prim data intrusive ptr.
-  Usd_PrimDataHandle(const Usd_PrimDataConstIPtr &primData)
-    : _p(primData)
-  {}
+  Usd_PrimDataHandle(const Usd_PrimDataConstIPtr &primData) : _p(primData) {}
   // Convert/construct a handle from a prim data raw ptr.
-  Usd_PrimDataHandle(Usd_PrimDataPtr primData)
-    : _p(Usd_PrimDataConstIPtr(primData))
-  {}
+  Usd_PrimDataHandle(Usd_PrimDataPtr primData) : _p(Usd_PrimDataConstIPtr(primData)) {}
   // Convert/construct a handle from a prim data raw ptr.
-  Usd_PrimDataHandle(Usd_PrimDataConstPtr primData)
-    : _p(Usd_PrimDataConstIPtr(primData))
-  {}
+  Usd_PrimDataHandle(Usd_PrimDataConstPtr primData) : _p(Usd_PrimDataConstIPtr(primData)) {}
 
   // Reset this handle to null.
   void reset()
@@ -119,6 +111,7 @@ class Usd_PrimDataHandle
   std::string GetDescription(SdfPath const &proxyPrimPath) const;
 
  private:
+
   // Equality comparison.
   friend bool operator==(const Usd_PrimDataHandle &lhs, const Usd_PrimDataHandle &rhs)
   {

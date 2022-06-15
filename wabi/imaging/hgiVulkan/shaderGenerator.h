@@ -47,6 +47,7 @@ using HgiVulkanShaderSectionUniquePtrVector = std::vector<std::unique_ptr<HgiVul
 class HgiVulkanShaderGenerator final : public HgiShaderGenerator
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanShaderGenerator(const HgiShaderFunctionDesc &descriptor);
 
@@ -55,10 +56,12 @@ class HgiVulkanShaderGenerator final : public HgiShaderGenerator
   HgiVulkanShaderSectionUniquePtrVector *GetShaderSections();
 
  protected:
+
   HGIVULKAN_API
   void _Execute(std::ostream &ss, const std::string &originalShaderShader) override;
 
  private:
+
   HgiVulkanShaderGenerator() = delete;
   HgiVulkanShaderGenerator &operator=(const HgiVulkanShaderGenerator &) = delete;
   HgiVulkanShaderGenerator(const HgiVulkanShaderGenerator &) = delete;
@@ -70,7 +73,8 @@ class HgiVulkanShaderGenerator final : public HgiShaderGenerator
   void _WriteBuffers(const HgiShaderFunctionBufferDescVector &buffers);
 
   // For writing shader inputs and outputs who are very similarly written
-  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters, const std::string &qualifier);
+  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters,
+                    const std::string &qualifier);
 
   HgiVulkanShaderSectionUniquePtrVector _shaderSections;
   uint32_t _bindIndex;

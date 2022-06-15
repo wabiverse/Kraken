@@ -49,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldOpenvdbAsset : public HdField
 {
  public:
+
   /// Constructor for HdArnoldOpenvdbAsset
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
@@ -67,7 +68,9 @@ class HdArnoldOpenvdbAsset : public HdField
   /// @param renderParam Pointer to a HdArnoldRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the initial Dirty Bits for the Primitive.
   ///
@@ -86,6 +89,7 @@ class HdArnoldOpenvdbAsset : public HdField
   void TrackVolumePrimitive(const SdfPath &id);
 
  private:
+
   std::mutex _volumeListMutex;  ///< Lock for the _volumeList.
   /// Storing all the Hydra Volumes using this asset.
   std::unordered_set<SdfPath, SdfPath::Hash> _volumeList;

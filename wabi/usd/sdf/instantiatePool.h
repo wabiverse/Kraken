@@ -56,7 +56,8 @@ std::atomic<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionS
   Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_regionState;
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
-TfStaticData<tbb::concurrent_queue<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_FreeList>>
+TfStaticData<
+  tbb::concurrent_queue<typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_FreeList>>
   Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_sharedFreeLists;
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
@@ -72,40 +73,35 @@ typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_RegionState Sdf_Poo
   unsigned region = GetRegion();
   uint32_t avail = MaxIndex - index + 1;
   _RegionState ret;
-  if (ARCH_UNLIKELY(avail <= num))
-  {
+  if (ARCH_UNLIKELY(avail <= num)) {
     ret._state = LockedState;
-  } else
-  {
+  } else {
     ret = _RegionState(region, index + num);
   }
   return ret;
 }
 
 template<class Tag, unsigned ElemSize, unsigned RegionBits, unsigned ElemsPerSpan>
-typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::Handle Sdf_Pool<Tag,
-                                                                            ElemSize,
-                                                                            RegionBits,
-                                                                            ElemsPerSpan>::Allocate()
+typename Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::Handle Sdf_Pool<
+  Tag,
+  ElemSize,
+  RegionBits,
+  ElemsPerSpan>::Allocate()
 {
   _PerThreadData &threadData = _threadData.Get();
 
   // Check local free-list, or try to take a shared one.
   Handle alloc = threadData.freeList.head;
-  if (alloc)
-  {
+  if (alloc) {
     threadData.freeList.Pop();
-  } else if (!threadData.span.empty())
-  {
+  } else if (!threadData.span.empty()) {
     // Allocate new from local span.
     alloc = threadData.span.Alloc();
-  } else if (_TakeSharedFreeList(threadData.freeList))
-  {
+  } else if (_TakeSharedFreeList(threadData.freeList)) {
     // Nothing local.  Try to take a shared free list.
     alloc = threadData.freeList.head;
     threadData.freeList.Pop();
-  } else
-  {
+  } else {
     // No shared free list -- reserve a new span and allocate from it.
     _ReserveSpan(threadData.span);
     alloc = threadData.span.Alloc();
@@ -122,8 +118,7 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::Free(Handle h)
   threadData.freeList.Push(h);
 
   // If our free list is big share the free list for use by other threads.
-  if (threadData.freeList.size >= ElemsPerSpan)
-  {
+  if (threadData.freeList.size >= ElemsPerSpan) {
     _ShareFreeList(threadData.freeList);
   }
 }
@@ -140,12 +135,10 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ReserveSpan(_PoolSpan &
   // move to the locked state.  If we take it, then do the initialization
   // and unlock.  If we don't take it, then someone else has done it or is
   // doing it, so we just continue.
-  if (state == _RegionState::GetInitState())
-  {
+  if (state == _RegionState::GetInitState()) {
     // Try to lock.
     newState = _RegionState::GetLockedState();
-    if (_regionState.compare_exchange_strong(state, newState))
-    {
+    if (_regionState.compare_exchange_strong(state, newState)) {
       // We took the lock to initialize.  Create the first region and
       // unlock.  Indexes start at 1 to avoid hash collisions when
       // multiple pool indexes are combined in a single hash.
@@ -154,11 +147,9 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ReserveSpan(_PoolSpan &
     }
   }
 
-  while (true)
-  {
+  while (true) {
     // If we're locked, just wait and retry.
-    if (ARCH_UNLIKELY(state.IsLocked()))
-    {
+    if (ARCH_UNLIKELY(state.IsLocked())) {
       std::this_thread::yield();
       state = _regionState.load(std::memory_order_relaxed);
       continue;
@@ -168,8 +159,7 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ReserveSpan(_PoolSpan &
     // remaining space, try to lock and allocate the next span.
     newState = state.Reserve(ElemsPerSpan);
 
-    if (_regionState.compare_exchange_weak(state, newState))
-    {
+    if (_regionState.compare_exchange_weak(state, newState)) {
       // We allocated our span.
       break;
     }
@@ -178,12 +168,10 @@ void Sdf_Pool<Tag, ElemSize, RegionBits, ElemsPerSpan>::_ReserveSpan(_PoolSpan &
   // Now newState is either a normal region & index, or is locked for
   // allocation.  If locked, then allocate a new region and update
   // _regionState.
-  if (newState.IsLocked())
-  {
+  if (newState.IsLocked()) {
     // Allocate the next region, or die if out of regions...
     unsigned newRegion = state.GetRegion() + 1;
-    if (ARCH_UNLIKELY(newRegion > NumRegions))
-    {
+    if (ARCH_UNLIKELY(newRegion > NumRegions)) {
       TF_FATAL_ERROR("Out of memory in '%s'.", ArchGetDemangled<Sdf_Pool>().c_str());
     }
     _regionStarts[newRegion] = Sdf_PoolReserveRegion(ElemsPerRegion * ElemSize);

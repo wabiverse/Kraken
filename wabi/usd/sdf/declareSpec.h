@@ -54,20 +54,18 @@ class SdfSpec;
 /// and one for 'abstract' spec types that only serve as a base class
 /// for concrete specs.
 ///
-#define SDF_DECLARE_ABSTRACT_SPEC(SpecType, BaseSpecType)                        \
-                                                                                 \
- public:                                                                         \
-  SpecType()                                                                     \
-  {}                                                                             \
-  SpecType(const SpecType &spec) : BaseSpecType(spec)                            \
-  {}                                                                             \
-  explicit SpecType(const Sdf_IdentityRefPtr &identity) : BaseSpecType(identity) \
-  {}                                                                             \
-                                                                                 \
- protected:                                                                      \
-  friend struct Sdf_CastAccess;                                                  \
-  explicit SpecType(const SdfSpec &spec) : BaseSpecType(spec)                    \
-  {}
+#define SDF_DECLARE_ABSTRACT_SPEC(SpecType, BaseSpecType)                           \
+                                                                                    \
+ public:                                                                            \
+                                                                                    \
+  SpecType() {}                                                                     \
+  SpecType(const SpecType &spec) : BaseSpecType(spec) {}                            \
+  explicit SpecType(const Sdf_IdentityRefPtr &identity) : BaseSpecType(identity) {} \
+                                                                                    \
+ protected:                                                                         \
+                                                                                    \
+  friend struct Sdf_CastAccess;                                                     \
+  explicit SpecType(const SdfSpec &spec) : BaseSpecType(spec) {}
 
 #define SDF_DEFINE_ABSTRACT_SPEC(SchemaType, SpecType, BaseSpecType)           \
   TF_REGISTRY_FUNCTION_WITH_TAG(TfType, Type)                                  \
@@ -96,15 +94,13 @@ class SdfSpec;
 // ------------------------------------------------------------
 // Special set of macros for SdfSpec only.
 
-#define SDF_DECLARE_BASE_SPEC(SpecType)                     \
-                                                            \
- public:                                                    \
-  SpecType()                                                \
-  {}                                                        \
-  SpecType(const SpecType &spec) : _id(spec._id)            \
-  {}                                                        \
-  explicit SpecType(const Sdf_IdentityRefPtr &id) : _id(id) \
-  {}
+#define SDF_DECLARE_BASE_SPEC(SpecType)             \
+                                                    \
+ public:                                            \
+                                                    \
+  SpecType() {}                                     \
+  SpecType(const SpecType &spec) : _id(spec._id) {} \
+  explicit SpecType(const Sdf_IdentityRefPtr &id) : _id(id) {}
 
 #define SDF_DEFINE_BASE_SPEC(SchemaType, SpecType)                             \
   TF_REGISTRY_FUNCTION_WITH_TAG(TfType, Type)                                  \

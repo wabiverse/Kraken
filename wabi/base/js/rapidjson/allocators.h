@@ -63,6 +63,7 @@ book-keep this, explicitly pass to it can save memory.)
 class CrtAllocator
 {
  public:
+
   static const bool kNeedFree = true;
   void *Malloc(size_t size)
   {
@@ -74,8 +75,7 @@ class CrtAllocator
   void *Realloc(void *originalPtr, size_t originalSize, size_t newSize)
   {
     (void)originalSize;
-    if (newSize == 0)
-    {
+    if (newSize == 0) {
       std::free(originalPtr);
       return NULL;
     }
@@ -106,10 +106,10 @@ class CrtAllocator
     \tparam BaseAllocator the allocator type for allocating memory chunks. Default is CrtAllocator.
     \note implements Allocator concept
 */
-template<typename BaseAllocator = CrtAllocator>
-class MemoryPoolAllocator
+template<typename BaseAllocator = CrtAllocator> class MemoryPoolAllocator
 {
  public:
+
   static const bool kNeedFree =
     false;  //!< Tell users that no need to call Free() with this allocator. (concept Allocator)
 
@@ -166,8 +166,7 @@ class MemoryPoolAllocator
   //! Deallocates all memory chunks, excluding the user-supplied buffer.
   void Clear()
   {
-    while (chunkHead_ && chunkHead_ != userBuffer_)
-    {
+    while (chunkHead_ && chunkHead_ != userBuffer_) {
       ChunkHeader *next = chunkHead_->next;
       baseAllocator_->Free(chunkHead_);
       chunkHead_ = next;
@@ -231,12 +230,10 @@ class MemoryPoolAllocator
       return originalPtr;
 
     // Simply expand it if it is the last allocation and there is sufficient space
-    if (originalPtr == reinterpret_cast<char *>(chunkHead_) + RAPIDJSON_ALIGN(sizeof(ChunkHeader)) +
-                         chunkHead_->size - originalSize)
-    {
+    if (originalPtr == reinterpret_cast<char *>(chunkHead_) +
+                         RAPIDJSON_ALIGN(sizeof(ChunkHeader)) + chunkHead_->size - originalSize) {
       size_t increment = static_cast<size_t>(newSize - originalSize);
-      if (chunkHead_->size + increment <= chunkHead_->capacity)
-      {
+      if (chunkHead_->size + increment <= chunkHead_->capacity) {
         chunkHead_->size += increment;
         return originalPtr;
       }
@@ -257,6 +254,7 @@ class MemoryPoolAllocator
   }  // Do nothing
 
  private:
+
   //! Copy constructor is not permitted.
   MemoryPoolAllocator(const MemoryPoolAllocator &rhs) /* = delete */;
   //! Copy assignment operator is not permitted.
@@ -289,7 +287,8 @@ class MemoryPoolAllocator
     ChunkHeader *next;  //!< Next chunk in the linked list.
   };
 
-  ChunkHeader *chunkHead_;           //!< Head of the chunk linked-list. Only the head chunk serves allocation.
+  ChunkHeader
+    *chunkHead_;  //!< Head of the chunk linked-list. Only the head chunk serves allocation.
   size_t chunk_capacity_;            //!< The minimum capacity of chunk when they are allocated.
   void *userBuffer_;                 //!< User supplied buffer.
   BaseAllocator *baseAllocator_;     //!< base allocator for allocating memory chunks.

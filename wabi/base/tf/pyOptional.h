@@ -44,8 +44,7 @@ WABI_NAMESPACE_BEGIN
 namespace TfPyOptional
 {
 
-  template<typename T, typename TfromPy>
-  struct object_from_python
+  template<typename T, typename TfromPy> struct object_from_python
   {
     object_from_python()
     {
@@ -55,8 +54,7 @@ namespace TfPyOptional
     }
   };
 
-  template<typename T, typename TtoPy, typename TfromPy>
-  struct register_python_conversion
+  template<typename T, typename TtoPy, typename TfromPy> struct register_python_conversion
   {
     register_python_conversion()
     {
@@ -65,15 +63,13 @@ namespace TfPyOptional
     }
   };
 
-  template<typename T>
-  struct python_optional : public boost::noncopyable
+  template<typename T> struct python_optional : public boost::noncopyable
   {
     struct optional_to_python
     {
       static PyObject *convert(const boost::optional<T> &value)
       {
-        if (value)
-        {
+        if (value) {
           boost::python::object obj = TfPyObject(*value);
           Py_INCREF(obj.ptr());
           return obj.ptr();
@@ -94,17 +90,16 @@ namespace TfPyOptional
         return NULL;
       }
 
-      static void construct(PyObject *source, boost::python::converter::rvalue_from_python_stage1_data *data)
+      static void construct(PyObject *source,
+                            boost::python::converter::rvalue_from_python_stage1_data *data)
       {
         using namespace boost::python::converter;
 
         void *const storage = ((rvalue_from_python_storage<T> *)data)->storage.bytes;
 
-        if (data->convertible == Py_None)
-        {
+        if (data->convertible == Py_None) {
           new (storage) boost::optional<T>();  // An uninitialized optional
-        } else
-        {
+        } else {
           new (storage) boost::optional<T>(boost::python::extract<T>(source));
         }
 

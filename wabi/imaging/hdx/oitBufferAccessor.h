@@ -42,6 +42,7 @@ using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader
 class HdxOitBufferAccessor
 {
  public:
+
   static bool IsOitEnabled();
 
   HDX_API
@@ -62,6 +63,7 @@ class HdxOitBufferAccessor
   bool AddOitBufferBindings(const HdPhRenderPassShaderSharedPtr &);
 
  private:
+
   HdBufferArrayRangeSharedPtr const &_GetBar(const TfToken &);
 
   HdTaskContext *const _ctx;

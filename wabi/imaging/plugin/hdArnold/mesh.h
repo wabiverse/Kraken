@@ -49,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldMesh : public HdArnoldRprim<HdMesh>
 {
  public:
+
   /// Constructor for HdArnoldMesh.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
@@ -80,15 +81,17 @@ class HdArnoldMesh : public HdArnoldRprim<HdMesh>
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   /// Returns true if step size is bigger than zero, false otherwise.
   ///
   /// @return True if polymesh is a volume boundary.
   HDARNOLD_API
   bool _IsVolume() const;
 
-  HdArnoldPrimvarMap _primvars;      ///< Precomputed list of primvars.
-  HdArnoldSubsets _subsets;          ///< Material ids from subsets.
-  VtIntArray _vertexCounts;          ///< Vertex Counts array for reversing vertex and primvar polygon order.
+  HdArnoldPrimvarMap _primvars;  ///< Precomputed list of primvars.
+  HdArnoldSubsets _subsets;      ///< Material ids from subsets.
+  VtIntArray
+    _vertexCounts;  ///< Vertex Counts array for reversing vertex and primvar polygon order.
   size_t _vertexCountSum = 0;        ///< Sum of the vertex counts array.
   size_t _numberOfPositionKeys = 1;  ///< Number of vertex position keys for the mesh.
 };

@@ -47,10 +47,10 @@ class SdfSpec;
 /// It primarily specifies how to map between keys (such as the name of
 /// an object) and values (such as SpecHandles for those objects).
 ///
-template<class ChildPolicy>
-class Sdf_Children
+template<class ChildPolicy> class Sdf_Children
 {
  public:
+
   typedef typename ChildPolicy::KeyPolicy KeyPolicy;
   typedef typename ChildPolicy::KeyType KeyType;
   typedef typename ChildPolicy::ValueType ValueType;
@@ -107,9 +107,11 @@ class Sdf_Children
   bool Erase(const KeyType &key, const std::string &type);
 
  private:
+
   void _UpdateChildNames() const;
 
  private:
+
   SdfLayerHandle _layer;
   SdfPath _parentPath;
   TfToken _childrenKey;

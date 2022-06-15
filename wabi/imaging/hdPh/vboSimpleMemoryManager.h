@@ -47,6 +47,7 @@ class HdPhResourceRegistry;
 class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
 {
  public:
+
   HdPhVBOSimpleMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : _resourceRegistry(resourceRegistry)
   {}
@@ -64,8 +65,9 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
 
   /// Returns id for given bufferSpecs to be used for aggregation
   HDPH_API
-  virtual HdAggregationStrategy::AggregationId ComputeAggregationId(HdBufferSpecVector const &bufferSpecs,
-                                                                    HdBufferArrayUsageHint usageHint) const;
+  virtual HdAggregationStrategy::AggregationId ComputeAggregationId(
+    HdBufferSpecVector const &bufferSpecs,
+    HdBufferArrayUsageHint usageHint) const;
 
   /// Returns the buffer specs from a given buffer array
   virtual HdBufferSpecVector GetBufferSpecs(HdBufferArraySharedPtr const &bufferArray) const;
@@ -75,6 +77,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
                                        VtDictionary &result) const;
 
  protected:
+
   class _SimpleBufferArray;
 
   /// \class _SimpleBufferArrayRange
@@ -84,6 +87,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
   class _SimpleBufferArrayRange final : public HdPhBufferArrayRange
   {
    public:
+
     /// Constructor.
     _SimpleBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
       : HdPhBufferArrayRange(resourceRegistry),
@@ -195,6 +199,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
     }
 
    protected:
+
     /// Returns the aggregation container
     HDPH_API
     const void *_GetAggregation() const override;
@@ -207,6 +212,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
                                              int stride);
 
    private:
+
     _SimpleBufferArray *_bufferArray;
     size_t _numElements;
   };
@@ -222,6 +228,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
   class _SimpleBufferArray final : public HdBufferArray
   {
    public:
+
     /// Constructor.
     HDPH_API
     _SimpleBufferArray(HdPhResourceRegistry *resourceRegistry,
@@ -289,6 +296,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
     HdBufferSpecVector GetBufferSpecs() const;
 
    protected:
+
     HDPH_API
     void _DeallocateResources();
 
@@ -300,6 +308,7 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
                                              int stride);
 
    private:
+
     HdPhResourceRegistry *const _resourceRegistry;
     int _capacity;
     size_t _maxBytesPerElement;
@@ -308,8 +317,9 @@ class HdPhVBOSimpleMemoryManager : public HdAggregationStrategy
 
     _SimpleBufferArrayRangeSharedPtr _GetRangeSharedPtr() const
     {
-      return GetRangeCount() > 0 ? std::static_pointer_cast<_SimpleBufferArrayRange>(GetRange(0).lock()) :
-                                   _SimpleBufferArrayRangeSharedPtr();
+      return GetRangeCount() > 0 ?
+               std::static_pointer_cast<_SimpleBufferArrayRange>(GetRange(0).lock()) :
+               _SimpleBufferArrayRangeSharedPtr();
     }
   };
 

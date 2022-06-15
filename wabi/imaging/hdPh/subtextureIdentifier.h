@@ -45,6 +45,7 @@ class HdPhDynamicUvTextureImplementation;
 class HdPhSubtextureIdentifier
 {
  public:
+
   using ID = size_t;
 
   HDPH_API
@@ -54,6 +55,7 @@ class HdPhSubtextureIdentifier
   virtual ~HdPhSubtextureIdentifier();
 
  protected:
+
   HDPH_API
   friend size_t hash_value(const HdPhSubtextureIdentifier &subId);
 
@@ -72,6 +74,7 @@ size_t hash_value(const HdPhSubtextureIdentifier &subId);
 class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier
 {
  public:
+
   /// Get field name.
   ///
   HDPH_API
@@ -92,6 +95,7 @@ class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier
   ~HdPhFieldBaseSubtextureIdentifier() override = 0;
 
  protected:
+
   HDPH_API
   HdPhFieldBaseSubtextureIdentifier(TfToken const &fieldName, int fieldIndex);
 
@@ -99,6 +103,7 @@ class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier
   ID _Hash() const override;
 
  private:
+
   TfToken _fieldName;
   int _fieldIndex;
 };
@@ -118,6 +123,7 @@ class HdPhFieldBaseSubtextureIdentifier : public HdPhSubtextureIdentifier
 class HdPhAssetUvSubtextureIdentifier final : public HdPhSubtextureIdentifier
 {
  public:
+
   /// C'tor takes bool whether flipping vertically, whether to pre-multiply
   /// by alpha, and the texture's source color space
   HDPH_API
@@ -150,10 +156,12 @@ class HdPhAssetUvSubtextureIdentifier final : public HdPhSubtextureIdentifier
   ~HdPhAssetUvSubtextureIdentifier() override;
 
  protected:
+
   HDPH_API
   ID _Hash() const override;
 
  private:
+
   bool _flipVertically;
   bool _premultiplyAlpha;
   TfToken _sourceColorSpace;
@@ -185,6 +193,7 @@ class HdPhAssetUvSubtextureIdentifier final : public HdPhSubtextureIdentifier
 class HdPhDynamicUvSubtextureIdentifier : public HdPhSubtextureIdentifier
 {
  public:
+
   HDPH_API
   HdPhDynamicUvSubtextureIdentifier();
 
@@ -200,6 +209,7 @@ class HdPhDynamicUvSubtextureIdentifier : public HdPhSubtextureIdentifier
   virtual HdPhDynamicUvTextureImplementation *GetTextureImplementation() const;
 
  protected:
+
   HDPH_API
   ID _Hash() const override;
 };
@@ -213,6 +223,7 @@ class HdPhDynamicUvSubtextureIdentifier : public HdPhSubtextureIdentifier
 class HdPhPtexSubtextureIdentifier final : public HdPhSubtextureIdentifier
 {
  public:
+
   /// C'tor takes bool whether to pre-multiply by alpha
   HDPH_API
   explicit HdPhPtexSubtextureIdentifier(bool premultiplyAlpha);
@@ -230,10 +241,12 @@ class HdPhPtexSubtextureIdentifier final : public HdPhSubtextureIdentifier
   ~HdPhPtexSubtextureIdentifier() override;
 
  protected:
+
   HDPH_API
   ID _Hash() const override;
 
  private:
+
   bool _premultiplyAlpha;
 };
 
@@ -246,6 +259,7 @@ class HdPhPtexSubtextureIdentifier final : public HdPhSubtextureIdentifier
 class HdPhUdimSubtextureIdentifier final : public HdPhSubtextureIdentifier
 {
  public:
+
   /// C'tor takes bool whether to pre-multiply by alpha and the texture's
   /// source color space
   HDPH_API
@@ -270,10 +284,12 @@ class HdPhUdimSubtextureIdentifier final : public HdPhSubtextureIdentifier
   ~HdPhUdimSubtextureIdentifier() override;
 
  protected:
+
   HDPH_API
   ID _Hash() const override;
 
  private:
+
   bool _premultiplyAlpha;
   TfToken _sourceColorSpace;
 };

@@ -68,8 +68,7 @@ WABI_NAMESPACE_END
 
 namespace std
 {
-  template<>
-  struct hash<WABI_NS::GarchGLPlatformContextState>
+  template<> struct hash<WABI_NS::GarchGLPlatformContextState>
   {
     inline size_t operator()(const WABI_NS::GarchGLPlatformContextState &x) const
     {

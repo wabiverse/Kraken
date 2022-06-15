@@ -38,7 +38,7 @@
 #define WABI_USD_IMAGING_USD_APOLLO_ENGINE_H
 
 #ifdef WITH_VULKAN
-# include <vulkan/vulkan.h>
+#  include <vulkan/vulkan.h>
 #endif /* WITH_VULKAN */
 
 #include "wabi/usdImaging/usdApollo/api.h"
@@ -90,6 +90,7 @@ class UsdImagingDelegate;
 class UsdApolloEngine
 {
  public:
+
   /**
    * ---------------------------------------------------------------------
    *  @name Global State
@@ -459,7 +460,8 @@ class UsdApolloEngine
    * succeeed if it is not among those returned by
    * GetRendererCommandDescriptors() for the same active render delegate. */
   USDAPOLLO_API
-  bool InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs()) const;
+  bool InvokeRendererCommand(const TfToken &command,
+                             const HdCommandArgs &args = HdCommandArgs()) const;
 
   /**
    * ---------------------------------------------------------------------
@@ -559,6 +561,7 @@ class UsdApolloEngine
    * @} */
 
  protected:
+
   /**
    * Returns the render index of the engine, if any.  This is only used for
    * whitebox testing. */
@@ -586,10 +589,12 @@ class UsdApolloEngine
                                            SdfPathVector const &roots,
                                            UsdApolloRenderParams const &params);
   USDAPOLLO_API
-  static HdxRenderTaskParams APOLLO_MakeHydraUsdApolloRenderParams(UsdApolloRenderParams const &params);
+  static HdxRenderTaskParams APOLLO_MakeHydraUsdApolloRenderParams(
+    UsdApolloRenderParams const &params);
 
   USDAPOLLO_API
-  static void APOLLO_ComputeRenderTags(UsdApolloRenderParams const &params, TfTokenVector *renderTags);
+  static void APOLLO_ComputeRenderTags(UsdApolloRenderParams const &params,
+                                       TfTokenVector *renderTags);
 
   USDAPOLLO_API
   void APOLLO_InitializeHgiIfNecessary();
@@ -622,6 +627,7 @@ class UsdApolloEngine
   HdSelectionSharedPtr APOLLO_GetSelection() const;
 
  protected:
+
   HgiUniquePtr m_hgi;
   HdDriver m_hgiDriver;
   VtValue m_userFramebuffer;
@@ -646,6 +652,7 @@ class UsdApolloEngine
   bool m_isPopulated;
 
  private:
+
   void APOLLO_DestroyHydraObjects();
 
   std::unique_ptr<UsdImagingDelegate> m_sceneDelegate;

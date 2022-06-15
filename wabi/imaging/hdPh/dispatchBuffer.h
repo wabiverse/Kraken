@@ -91,6 +91,7 @@ using HdPhDispatchBufferSharedPtr = std::shared_ptr<class HdPhDispatchBuffer>;
 class HdPhDispatchBuffer : public HdBufferArray
 {
  public:
+
   /// Constructor. commandNumUints is given in how many integers.
   HDPH_API
   HdPhDispatchBuffer(HdPhResourceRegistry *resourceRegistry,
@@ -139,7 +140,8 @@ class HdPhDispatchBuffer : public HdBufferArray
   HDPH_API
   bool GarbageCollect() override;
   HDPH_API
-  void Reallocate(std::vector<HdBufferArrayRangeSharedPtr> const &, HdBufferArraySharedPtr const &) override;
+  void Reallocate(std::vector<HdBufferArrayRangeSharedPtr> const &,
+                  HdBufferArraySharedPtr const &) override;
 
   HDPH_API
   void DebugDump(std::ostream &out) const override;
@@ -163,6 +165,7 @@ class HdPhDispatchBuffer : public HdBufferArray
   }
 
  protected:
+
   /// Adds a new, named GPU resource and returns it.
   HDPH_API
   HdPhBufferResourceSharedPtr _AddResource(TfToken const &name,
@@ -171,6 +174,7 @@ class HdPhDispatchBuffer : public HdBufferArray
                                            int stride);
 
  private:
+
   HdPhResourceRegistry *_resourceRegistry;
   int _count;
   unsigned int _commandNumUints;

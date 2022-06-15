@@ -122,8 +122,8 @@ typedef struct
 struct SMikkTSpaceContext
 {
   SMikkTSpaceInterface *m_pInterface;  // initialized with callback functions
-  void *m_pUserData;                   // pointer to client side mesh data etc. (passed as the first parameter with
-                                       // every interface call)
+  void *m_pUserData;  // pointer to client side mesh data etc. (passed as the first parameter with
+                      // every interface call)
 };
 
 // these are both thread safe!

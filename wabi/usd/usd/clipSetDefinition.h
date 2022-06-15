@@ -49,6 +49,7 @@ TF_DECLARE_WEAK_PTRS(PcpLayerStack);
 class Usd_ClipSetDefinition
 {
  public:
+
   Usd_ClipSetDefinition()
     : interpolateMissingClipValues(false),
       indexOfLayerWhereAssetPathsFound(0)
@@ -56,8 +57,10 @@ class Usd_ClipSetDefinition
 
   bool operator==(const Usd_ClipSetDefinition &rhs) const
   {
-    return (clipAssetPaths == rhs.clipAssetPaths && clipManifestAssetPath == rhs.clipManifestAssetPath &&
-            clipPrimPath == rhs.clipPrimPath && clipActive == rhs.clipActive && clipTimes == rhs.clipTimes &&
+    return (clipAssetPaths == rhs.clipAssetPaths &&
+            clipManifestAssetPath == rhs.clipManifestAssetPath &&
+            clipPrimPath == rhs.clipPrimPath && clipActive == rhs.clipActive &&
+            clipTimes == rhs.clipTimes &&
             interpolateMissingClipValues == rhs.interpolateMissingClipValues &&
             sourceLayerStack == rhs.sourceLayerStack && sourcePrimPath == rhs.sourcePrimPath &&
             indexOfLayerWhereAssetPathsFound == rhs.indexOfLayerWhereAssetPathsFound);
@@ -74,39 +77,30 @@ class Usd_ClipSetDefinition
     boost::hash_combine(hash, sourceLayerStack);
     boost::hash_combine(hash, sourcePrimPath);
 
-    if (clipAssetPaths)
-    {
-      for (const auto &assetPath : *clipAssetPaths)
-      {
+    if (clipAssetPaths) {
+      for (const auto &assetPath : *clipAssetPaths) {
         boost::hash_combine(hash, assetPath.GetHash());
       }
     }
-    if (clipManifestAssetPath)
-    {
+    if (clipManifestAssetPath) {
       boost::hash_combine(hash, clipManifestAssetPath->GetHash());
     }
-    if (clipPrimPath)
-    {
+    if (clipPrimPath) {
       boost::hash_combine(hash, *clipPrimPath);
     }
-    if (clipActive)
-    {
-      for (const auto &active : *clipActive)
-      {
+    if (clipActive) {
+      for (const auto &active : *clipActive) {
         boost::hash_combine(hash, active[0]);
         boost::hash_combine(hash, active[1]);
       }
     }
-    if (clipTimes)
-    {
-      for (const auto &time : *clipTimes)
-      {
+    if (clipTimes) {
+      for (const auto &time : *clipTimes) {
         boost::hash_combine(hash, time[0]);
         boost::hash_combine(hash, time[1]);
       }
     }
-    if (interpolateMissingClipValues)
-    {
+    if (interpolateMissingClipValues) {
       boost::hash_combine(hash, *interpolateMissingClipValues);
     }
 
@@ -129,9 +123,10 @@ class Usd_ClipSetDefinition
 /// them in \p clipSetDefinitions. The clip sets in this vector are sorted in
 /// strength order. If \p clipSetNames is provided it will contain the name
 /// for each clip set in the corresponding position in \p clipSetDefinitions.
-void Usd_ComputeClipSetDefinitionsForPrimIndex(const PcpPrimIndex &primIndex,
-                                               std::vector<Usd_ClipSetDefinition> *clipSetDefinitions,
-                                               std::vector<std::string> *clipSetNames = nullptr);
+void Usd_ComputeClipSetDefinitionsForPrimIndex(
+  const PcpPrimIndex &primIndex,
+  std::vector<Usd_ClipSetDefinition> *clipSetDefinitions,
+  std::vector<std::string> *clipSetNames = nullptr);
 
 WABI_NAMESPACE_END
 

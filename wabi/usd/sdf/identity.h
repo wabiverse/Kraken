@@ -48,6 +48,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 class Sdf_Identity : public boost::noncopyable
 {
  public:
+
   /// Returns the layer that this identity refers to.
   SDF_API
   const SdfLayerHandle &GetLayer() const;
@@ -59,6 +60,7 @@ class Sdf_Identity : public boost::noncopyable
   }
 
  private:
+
   // Ref-counting ops manage _refCount.
   friend void intrusive_ptr_add_ref(Sdf_Identity *);
   friend void intrusive_ptr_release(Sdf_Identity *);
@@ -84,8 +86,7 @@ inline void intrusive_ptr_add_ref(WABI_NS::Sdf_Identity *p)
 }
 inline void intrusive_ptr_release(WABI_NS::Sdf_Identity *p)
 {
-  if (--p->_refCount == 0)
-  {
+  if (--p->_refCount == 0) {
     delete p;
   }
 }
@@ -93,6 +94,7 @@ inline void intrusive_ptr_release(WABI_NS::Sdf_Identity *p)
 class Sdf_IdentityRegistry : public boost::noncopyable
 {
  public:
+
   Sdf_IdentityRegistry(const SdfLayerHandle &layer);
   ~Sdf_IdentityRegistry();
 
@@ -112,6 +114,7 @@ class Sdf_IdentityRegistry : public boost::noncopyable
   void MoveIdentity(const SdfPath &oldPath, const SdfPath &newPath);
 
  private:
+
   // When an identity expires, it will remove itself from the registry.
   friend class Sdf_Identity;
 

@@ -15,8 +15,8 @@ namespace Zep
 
   // NOTE: These are input keys mapped to Zep's internal keymapping; they live below 'space'/32
   // Key mapping needs a rethink for international keyboards.  But for modes, this is the remapped
-  // key definitions for anything that isn't basic ascii symbol.  ASCII 0-31 are mostly ununsed these
-  // days anyway.
+  // key definitions for anything that isn't basic ascii symbol.  ASCII 0-31 are mostly ununsed
+  // these days anyway.
   struct ExtKeys
   {
     enum Key
@@ -115,6 +115,7 @@ namespace Zep
   class CommandContext
   {
    public:
+
     CommandContext(const std::string &commandIn, ZepMode &md, EditorMode editorMode);
 
     void GetCommandRegisters();
@@ -152,6 +153,7 @@ namespace Zep
   class ZepMode : public ZepComponent
   {
    public:
+
     ZepMode(ZepEditor &editor);
     virtual ~ZepMode();
 
@@ -159,8 +161,7 @@ namespace Zep
     virtual void AddKeyPress(uint32_t key, uint32_t modifierKeys = ModifierKey::None);
     virtual const char *Name() const = 0;
     virtual void Begin(ZepWindow *pWindow);
-    virtual void Notify(std::shared_ptr<ZepMessage> message) override
-    {}
+    virtual void Notify(std::shared_ptr<ZepMessage> message) override {}
     virtual uint32_t ModifyWindowFlags(uint32_t windowFlags)
     {
       return windowFlags;
@@ -194,6 +195,7 @@ namespace Zep
     }
 
    protected:
+
     // Do the actual input handling
     virtual void HandleMappedInput(const std::string &input);
 
@@ -232,6 +234,7 @@ namespace Zep
     };
 
    protected:
+
     std::stack<std::shared_ptr<ZepCommand>> m_undoStack;
     std::stack<std::shared_ptr<ZepCommand>> m_redoStack;
     EditorMode m_currentMode = EditorMode::Normal;

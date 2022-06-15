@@ -50,6 +50,7 @@ class TfError : public TfDiagnosticBase
 {
 
  public:
+
   /// Return the error code posted.
   TfEnum GetErrorCode() const
   {
@@ -63,6 +64,7 @@ class TfError : public TfDiagnosticBase
   }
 
  private:
+
   TfError(TfEnum errorCode,
           char const *errCodeString,
           TfCallContext const &context,

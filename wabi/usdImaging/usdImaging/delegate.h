@@ -88,6 +88,7 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   typedef UsdImagingDelegate This;
 
  public:
+
   typedef TfHashMap<SdfPath, GfMatrix4d, SdfPath::Hash> RigidXformOverridesMap;
 
   USDIMAGING_API
@@ -356,7 +357,9 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   USDIMAGING_API
   virtual VtValue Get(SdfPath const &id, TfToken const &key) override;
   USDIMAGING_API
-  virtual VtValue GetIndexedPrimvar(SdfPath const &id, TfToken const &key, VtIntArray *outIndices) override;
+  virtual VtValue GetIndexedPrimvar(SdfPath const &id,
+                                    TfToken const &key,
+                                    VtIntArray *outIndices) override;
   USDIMAGING_API
   HdIdVectorSharedPtr virtual GetCoordSysBindings(SdfPath const &id) override;
   USDIMAGING_API
@@ -369,7 +372,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   virtual HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id,
                                                           HdInterpolation interpolation) override;
   USDIMAGING_API
-  virtual VtIntArray GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId) override;
+  virtual VtIntArray GetInstanceIndices(SdfPath const &instancerId,
+                                        SdfPath const &prototypeId) override;
   USDIMAGING_API
   virtual GfMatrix4d GetInstancerTransform(SdfPath const &instancerId) override;
 
@@ -421,7 +425,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
 
   // Volume Support
   USDIMAGING_API
-  virtual HdVolumeFieldDescriptorVector GetVolumeFieldDescriptors(SdfPath const &volumeId) override;
+  virtual HdVolumeFieldDescriptorVector GetVolumeFieldDescriptors(
+    SdfPath const &volumeId) override;
 
   // Picking path resolution
   // Resolves a \p rprimId and \p instanceIndex back to the original USD
@@ -469,27 +474,26 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   std::string GetExtComputationKernel(SdfPath const &computationId) override;
 
   USDIMAGING_API
-  void InvokeExtComputation(SdfPath const &computationId, HdExtComputationContext *context) override;
+  void InvokeExtComputation(SdfPath const &computationId,
+                            HdExtComputationContext *context) override;
 
  public:
+
   // Converts a cache path to a path in the render index.
   USDIMAGING_API
   SdfPath ConvertCachePathToIndexPath(SdfPath const &cachePath)
   {
     SdfPathMap::const_iterator it = _cache2indexPath.find(cachePath);
-    if (it != _cache2indexPath.end())
-    {
+    if (it != _cache2indexPath.end()) {
       return it->second;
     }
 
     // For pure/plain usdImaging, there is no prefix to replace
     SdfPath const &delegateID = GetDelegateID();
-    if (delegateID == SdfPath::AbsoluteRootPath())
-    {
+    if (delegateID == SdfPath::AbsoluteRootPath()) {
       return cachePath;
     }
-    if (cachePath.IsEmpty())
-    {
+    if (cachePath.IsEmpty()) {
       return cachePath;
     }
 
@@ -505,15 +509,13 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   SdfPath ConvertIndexPathToCachePath(SdfPath const &indexPath)
   {
     SdfPathMap::const_iterator it = _index2cachePath.find(indexPath);
-    if (it != _index2cachePath.end())
-    {
+    if (it != _index2cachePath.end()) {
       return it->second;
     }
 
     // For pure/plain usdImaging, there is no prefix to replace
     SdfPath const &delegateID = GetDelegateID();
-    if (delegateID == SdfPath::AbsoluteRootPath())
-    {
+    if (delegateID == SdfPath::AbsoluteRootPath()) {
       return indexPath;
     }
 
@@ -546,6 +548,7 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
   bool IsInInvisedPaths(const SdfPath &usdPath) const;
 
  private:
+
   // Internal Get and SamplePrimvar
   VtValue _Get(SdfPath const &id, TfToken const &key, VtIntArray *outIndices);
 
@@ -563,8 +566,7 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
 
   bool _ValidateRefineLevel(int level)
   {
-    if (!(0 <= level && level <= 8))
-    {
+    if (!(0 <= level && level <= 8)) {
       TF_CODING_ERROR(
         "Invalid refinement level(%d), "
         "expected range is [0,8]",
@@ -701,7 +703,8 @@ class UsdImagingDelegate : public HdSceneDelegate, public TfWeakBase
 
   // Only use this method when we think no existing adapter has been
   // established. For example, during initial Population.
-  UsdImagingPrimAdapterSharedPtr const &_AdapterLookup(UsdPrim const &prim, bool ignoreInstancing = false);
+  UsdImagingPrimAdapterSharedPtr const &_AdapterLookup(UsdPrim const &prim,
+                                                       bool ignoreInstancing = false);
   UsdImagingPrimAdapterSharedPtr const &_AdapterLookup(TfToken const &adapterKey);
 
   // Obtain the prim tracking data for the given cache path.

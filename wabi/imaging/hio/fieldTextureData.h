@@ -57,6 +57,7 @@ using HioFieldTextureDataSharedPtr = std::shared_ptr<class HioFieldTextureData>;
 class HioFieldTextureData
 {
  public:
+
   HIO_API
   HioFieldTextureData();
 
@@ -100,6 +101,7 @@ class HioFieldTextureData
   virtual unsigned char const *GetRawBuffer() const = 0;
 
  private:
+
   // Disallow copies
   HioFieldTextureData(const HioFieldTextureData &) = delete;
   HioFieldTextureData &operator=(const HioFieldTextureData &) = delete;
@@ -112,6 +114,7 @@ class HioFieldTextureData
 class HIO_API HioFieldTextureDataFactoryBase : public TfType::FactoryBase
 {
  protected:
+
   friend class HioFieldTextureData;
 
   virtual HioFieldTextureDataSharedPtr _New(std::string const &filePath,

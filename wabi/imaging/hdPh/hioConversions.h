@@ -34,6 +34,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhHioConversions
 {
  public:
+
   HDPH_API
   static HioFormat GetHioFormat(HdFormat inFormat);
 };

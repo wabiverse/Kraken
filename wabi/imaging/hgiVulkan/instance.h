@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class HgiVulkanInstance final
 {
  public:
+
   HGIVULKAN_API
   HgiVulkanInstance();
 
@@ -72,6 +73,7 @@ class HgiVulkanInstance final
   PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT = 0;
 
  private:
+
   VkInstance _vkInstance;
 };
 

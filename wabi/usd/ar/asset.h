@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class ArAsset
 {
  public:
+
   AR_API
   virtual ~ArAsset();
 
@@ -101,6 +102,7 @@ class ArAsset
   virtual std::pair<FILE *, size_t> GetFileUnsafe() = 0;
 
  protected:
+
   AR_API
   ArAsset();
 };

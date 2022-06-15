@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLBlitCmds final : public HgiBlitCmds
 {
  public:
+
   HGIGL_API
   ~HgiGLBlitCmds() override;
 
@@ -82,6 +83,7 @@ class HgiGLBlitCmds final : public HgiBlitCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
@@ -91,6 +93,7 @@ class HgiGLBlitCmds final : public HgiBlitCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiGLBlitCmds &operator=(const HgiGLBlitCmds &) = delete;
   HgiGLBlitCmds(const HgiGLBlitCmds &) = delete;
 

@@ -47,6 +47,7 @@ class UsdShadeInput;
 class UsdShadeOutput
 {
  public:
+
   /// Default constructor returns an invalid Output.  Exists for
   /// container classes
   UsdShadeOutput()
@@ -93,11 +94,9 @@ class UsdShadeOutput
   /// \overload
   /// Set the attribute value of the Output at \p time
   ///
-  template<typename T>
-  bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
-    if (UsdAttribute attr = GetAttr())
-    {
+    if (UsdAttribute attr = GetAttr()) {
       return attr.Set(value, time);
     }
     return false;
@@ -435,6 +434,7 @@ class UsdShadeOutput
   }
 
  private:
+
   friend class UsdShadeConnectableAPI;
 
   // Constructor that creates a UsdShadeOutput with the given name on the

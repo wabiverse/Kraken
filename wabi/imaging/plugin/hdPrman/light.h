@@ -40,11 +40,14 @@ struct HdPrman_Context;
 class HdPrmanLight final : public HdLight
 {
  public:
+
   HdPrmanLight(SdfPath const &id, TfToken const &lightType);
   virtual ~HdPrmanLight();
 
   /// Synchronizes state from the delegate to this object.
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.
@@ -57,6 +60,7 @@ class HdPrmanLight final : public HdLight
   void Finalize(HdRenderParam *renderParam) override;
 
  private:
+
   void _ResetLight(HdPrman_Context *context);
 
   const TfToken _hdLightType;

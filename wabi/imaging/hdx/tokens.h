@@ -31,9 +31,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define HDX_TOKENS       \
-  (hdxOitCounterBuffer)( \
-    hdxOitDataBuffer)(hdxOitDepthBuffer)(hdxOitIndexBuffer)(hdxSelectionBuffer)(imagerVersion)(lightingContext)(lightingShader)(occludedSelectionOpacity)(oitCounter)(oitData)(oitDepth)(oitIndices)(oitUniforms)(oitCounterBufferBar)(oitDataBufferBar)(oitDepthBufferBar)(oitIndexBufferBar)(oitUniformBar)(oitRenderPassState)(oitScreenSize)(oitRequestFlag)(oitClearedFlag)(renderPassState)(renderIndexVersion)(selection)(selectionState)(selectionOffsets)(selectionUniforms)(selColor)(selLocateColor)(selectionPointColors)(drawTargetRenderPasses)
+#define HDX_TOKENS                         \
+  (hdxOitCounterBuffer)(hdxOitDataBuffer)( \
+    hdxOitDepthBuffer)(hdxOitIndexBuffer)(hdxSelectionBuffer)(imagerVersion)(lightingContext)(lightingShader)(occludedSelectionOpacity)(oitCounter)(oitData)(oitDepth)(oitIndices)(oitUniforms)(oitCounterBufferBar)(oitDataBufferBar)(oitDepthBufferBar)(oitIndexBufferBar)(oitUniformBar)(oitRenderPassState)(oitScreenSize)(oitRequestFlag)(oitClearedFlag)(renderPassState)(renderIndexVersion)(selection)(selectionState)(selectionOffsets)(selectionUniforms)(selColor)(selLocateColor)(selectionPointColors)(drawTargetRenderPasses)
 
 TF_DECLARE_PUBLIC_TOKENS(HdxTokens, HDX_API, HDX_TOKENS);
 

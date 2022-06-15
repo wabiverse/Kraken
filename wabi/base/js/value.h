@@ -68,6 +68,7 @@ WABI_NAMESPACE_BEGIN
 class JsValue
 {
  public:
+
   /// Type held by this JSON value.
   enum Type
   {
@@ -167,11 +168,11 @@ class JsValue
   /// method raises a coding error. See Get functions above for default
   /// value returned in this case.
   template<typename T,
-           typename ReturnType =
-             typename std::conditional<std::is_same<T, JsObject>::value || std::is_same<T, JsArray>::value ||
-                                         std::is_same<T, std::string>::value,
-                                       const T &,
-                                       T>::type>
+           typename ReturnType = typename std::conditional<std::is_same<T, JsObject>::value ||
+                                                             std::is_same<T, JsArray>::value ||
+                                                             std::is_same<T, std::string>::value,
+                                                           const T &,
+                                                           T>::type>
   ReturnType Get() const
   {
     return _Get(static_cast<T *>(nullptr));
@@ -183,8 +184,7 @@ class JsValue
   /// If any of the array's elements does not correspond to the C++ type,
   /// it is replaced with the default value used by the Get functions above.
   /// In both cases, a coding error will be raised.
-  template<typename T>
-  std::vector<T> GetArrayOf() const;
+  template<typename T> std::vector<T> GetArrayOf() const;
 
   /// Returns the type of this value.
   JS_API Type GetType() const;
@@ -215,16 +215,14 @@ class JsValue
 
   /// Returns true if this value is holding a type that corresponds
   /// to the C++ type specified as the template parameter.
-  template<typename T>
-  bool Is() const
+  template<typename T> bool Is() const
   {
     return _Is(static_cast<T *>(nullptr));
   }
 
   /// Returns true if this value is holding an array whose elements all
   /// correspond to the C++ type specified as the template parameter.
-  template<typename T>
-  bool IsArrayOf() const;
+  template<typename T> bool IsArrayOf() const;
 
   /// Returns true if this value is null, false otherwise.
   JS_API bool IsNull() const;
@@ -241,13 +239,11 @@ class JsValue
   JS_API bool operator!=(const JsValue &other) const;
 
  private:
-  template<typename T>
-  struct _InvalidTypeHelper : public std::false_type
-  {
-  };
 
-  template<class T>
-  T _Get(T *) const
+  template<typename T> struct _InvalidTypeHelper : public std::false_type
+  {};
+
+  template<class T> T _Get(T *) const
   {
     static_assert(_InvalidTypeHelper<T>::value, "Invalid type for JsValue");
     return T();
@@ -286,8 +282,7 @@ class JsValue
     return GetReal();
   }
 
-  template<class T>
-  bool _Is(T *) const
+  template<class T> bool _Is(T *) const
   {
     static_assert(_InvalidTypeHelper<T>::value, "Invalid type for JsValue");
     return false;
@@ -330,24 +325,25 @@ class JsValue
   std::shared_ptr<_Holder> _holder;
 };
 
-template<typename T>
-inline std::vector<T> JsValue::GetArrayOf() const
+template<typename T> inline std::vector<T> JsValue::GetArrayOf() const
 {
   const JsArray &array = GetJsArray();
   std::vector<T> result(array.size());
-  std::transform(array.begin(), array.end(), result.begin(), [](const JsValue &v) { return v.Get<T>(); });
+  std::transform(array.begin(), array.end(), result.begin(), [](const JsValue &v) {
+    return v.Get<T>();
+  });
   return result;
 }
 
-template<typename T>
-inline bool JsValue::IsArrayOf() const
+template<typename T> inline bool JsValue::IsArrayOf() const
 {
-  if (!IsArray())
-  {
+  if (!IsArray()) {
     return false;
   }
   const JsArray &array = GetJsArray();
-  return std::all_of(array.begin(), array.end(), [](const JsValue &v) { return v.Is<T>(); });
+  return std::all_of(array.begin(), array.end(), [](const JsValue &v) {
+    return v.Is<T>();
+  });
 }
 
 WABI_NAMESPACE_END

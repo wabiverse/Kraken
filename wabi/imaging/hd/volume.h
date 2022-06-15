@@ -24,17 +24,16 @@
 #ifndef WABI_IMAGING_HD_VOLUME_H
 #define WABI_IMAGING_HD_VOLUME_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/rprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/rprim.h"
 
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
 
-class HdSceneDelegate;
-typedef std::vector<class HdVolume const *> HdVolumePtrConstVector;
+using HdVolumePtrConstVector = std::vector<class HdVolume const *>;
 
 /// \class HdVolume
 ///
@@ -43,11 +42,12 @@ typedef std::vector<class HdVolume const *> HdVolumePtrConstVector;
 class HdVolume : public HdRprim
 {
  public:
+
   HD_API
   HdVolume(SdfPath const &id);
 
   HD_API
-  virtual ~HdVolume();
+  ~HdVolume() override;
 
   HD_API
   TfTokenVector const &GetBuiltinPrimvarNames() const override;

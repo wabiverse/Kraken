@@ -21,10 +21,13 @@ WABI_NAMESPACE_BEGIN
 class HdRprField : public HdField
 {
  public:
+
   HdRprField(SdfPath const &id);
   ~HdRprField() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 };

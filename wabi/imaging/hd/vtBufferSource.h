@@ -24,14 +24,14 @@
 #ifndef WABI_IMAGING_HD_VT_BUFFER_SOURCE_H
 #define WABI_IMAGING_HD_VT_BUFFER_SOURCE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/bufferSource.h"
 #include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/tf/token.h"
+#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/vt/value.h"
 
 #include <vector>
@@ -39,6 +39,7 @@
 #include <iosfwd>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdVtBufferSource
 ///
@@ -48,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 class HdVtBufferSource final : public HdBufferSource
 {
  public:
+
   /// Constructs a new buffer from a VtValue.
   ///
   /// \param arraySize indicates how many values are provided per element.
@@ -80,7 +82,7 @@ class HdVtBufferSource final : public HdBufferSource
 
   /// Destructor deletes the internal storage.
   HD_API
-  ~HdVtBufferSource();
+  ~HdVtBufferSource() override;
 
   /// Truncate the buffer to the given number of elements.
   /// If the VtValue contains too much data, this is a way to only forward
@@ -90,19 +92,19 @@ class HdVtBufferSource final : public HdBufferSource
   void Truncate(size_t numElements);
 
   /// Return the name of this buffer source.
-  virtual TfToken const &GetName() const override
+  TfToken const &GetName() const override
   {
     return _name;
   }
 
   /// Returns the raw pointer to the underlying data.
-  virtual void const *GetData() const override
+  void const *GetData() const override
   {
     return HdGetValueData(_value);
   }
 
   /// Returns the data type and count of this buffer source.
-  virtual HdTupleType GetTupleType() const override
+  HdTupleType GetTupleType() const override
   {
     return _tupleType;
   }
@@ -110,16 +112,16 @@ class HdVtBufferSource final : public HdBufferSource
   /// Returns the number of elements (e.g. VtVec3dArray().GetLength()) from
   /// the source array.
   HD_API
-  virtual size_t GetNumElements() const override;
+  size_t GetNumElements() const override;
 
   /// Add the buffer spec for this buffer source into given bufferspec vector.
-  virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override
+  void GetBufferSpecs(HdBufferSpecVector *specs) const override
   {
     specs->push_back(HdBufferSpec(_name, _tupleType));
   }
 
   /// Prepare the access of GetData().
-  virtual bool Resolve() override
+  bool Resolve() override
   {
     if (!_TryLock())
       return false;
@@ -130,10 +132,12 @@ class HdVtBufferSource final : public HdBufferSource
   }
 
  protected:
+
   HD_API
-  virtual bool _CheckValid() const override;
+  bool _CheckValid() const override;
 
  private:
+
   // Constructor helper.
   void _SetValue(const VtValue &v, int arraySize);
 

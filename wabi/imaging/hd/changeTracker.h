@@ -24,18 +24,20 @@
 #ifndef WABI_IMAGING_HD_CHANGE_TRACKER_H
 #define WABI_IMAGING_HD_CHANGE_TRACKER_H
 
-#include "wabi/base/tf/hashmap.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/rprimCollection.h"
 #include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/hashmap.h"
 
-#include <atomic>
 #include <tbb/concurrent_hash_map.h>
+#include <atomic>
 
 WABI_NAMESPACE_BEGIN
+
+class HdRetainedSceneIndex;
 
 /// \class HdChangeTracker
 ///
@@ -49,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class HdChangeTracker
 {
  public:
+
   // Common dirty bits for Rprims
   // XXX: Move this to HdRprim
   enum RprimDirtyBits : HdDirtyBits
@@ -84,6 +87,7 @@ class HdChangeTracker
 
     CustomBitsBegin = 1 << 24,
     CustomBitsEnd = 1 << 30,
+    CustomBitsMask = 0x7f << 24,
   };
 
   // InstancerDirtybits are a subset of rprim dirty bits right now:
@@ -154,7 +158,7 @@ class HdChangeTracker
   /// The idea is that from frame to frame (update iteration), the set of
   /// dirty rprims and their dirty bits do not change; that is, the same
   /// rprims get dirtied with the same dirty bits.. The change tracker can
-  /// leverage this and build stable sets of dirty lists and reduce the
+  /// leverage this help build a stable dirty list and reduce the
   /// overall cost of an update iteration.
   HD_API
   void ResetVaryingState();
@@ -164,6 +168,7 @@ class HdChangeTracker
   /// (due to state like invisibility).
   HD_API
   void ResetRprimVaryingState(SdfPath const &id);
+
 
   // ---------------------------------------------------------------------- //
 
@@ -216,7 +221,8 @@ class HdChangeTracker
   HD_API
   bool IsPrimIdDirty(SdfPath const &id);
 
-  /// Returns true if the dirtyBits has any flags set other than the varying flag.
+  /// Returns true if the dirtyBits has any flags set other than the varying
+  /// flag.
   static bool IsDirty(HdDirtyBits dirtyBits)
   {
     return (dirtyBits & AllDirty) != 0;
@@ -228,7 +234,7 @@ class HdChangeTracker
     return (dirtyBits & AllDirty) == 0;
   }
 
-  /// Returns true if the dirtyBits has no flags set except the varying flag.
+  /// Returns true if the varying flag is set.
   static bool IsVarying(HdDirtyBits dirtyBits)
   {
     return (dirtyBits & Varying) != 0;
@@ -323,18 +329,14 @@ class HdChangeTracker
   HD_API
   void MarkTaskClean(SdfPath const &id, HdDirtyBits newBits = Clean);
 
-  /// Called to flag when the set of active render tags have changed.
-  /// This can either be because either the Task's opinion (which
-  /// resolves both view and render pass opinions) and a Prims opinion.
-  ///
-  /// Calling this means that any cached prim gathers that filter by render
-  /// tag need to invalidated.
-  HD_API
-  void MarkRenderTagsDirty();
-
-  /// Retrieve the current version number of the render tag set
+  /// Retrieve the current version number of the rprim render tag set
+  /// XXX Rename to GetRprimRenderTagVersion
   HD_API
   unsigned GetRenderTagVersion() const;
+
+  /// Retrieve the current version number of the task's render tags opinion.
+  HD_API
+  unsigned GetTaskRenderTagsVersion() const;
 
   // ---------------------------------------------------------------------- //
   /// @}
@@ -378,12 +380,14 @@ class HdChangeTracker
   /// \p parentInstancerId.  Changes to the latter mark the former with
   /// DirtyInstancer.
   HD_API
-  void AddInstancerInstancerDependency(SdfPath const &parentInstancerId, SdfPath const &instancerId);
+  void AddInstancerInstancerDependency(SdfPath const &parentInstancerId,
+                                       SdfPath const &instancerId);
 
   /// Remove a dependency between \p instancerId and parent instancer
   /// \p parentInstancerId.
   HD_API
-  void RemoveInstancerInstancerDependency(SdfPath const &parentInstancerId, SdfPath const &instancerId);
+  void RemoveInstancerInstancerDependency(SdfPath const &parentInstancerId,
+                                          SdfPath const &instancerId);
 
   // ---------------------------------------------------------------------- //
   /// @}
@@ -410,6 +414,20 @@ class HdChangeTracker
   /// Set the dirty flags to \p newBits.
   HD_API
   void MarkSprimClean(SdfPath const &id, HdDirtyBits newBits = Clean);
+
+  /// Insert a dependency between \p sprimId and parent sprim
+  /// \p parentSprimId.
+  HD_API
+  void AddSprimSprimDependency(SdfPath const &parentSprimId, SdfPath const &sprimId);
+
+  /// Remove a dependency between \p sprimId and parent sprim
+  /// \p parentSprimId.
+  HD_API
+  void RemoveSprimSprimDependency(SdfPath const &parentSprimId, SdfPath const &sprimId);
+
+  /// Remove all dependencies involving \p sprimId as a parent or child.
+  HD_API
+  void RemoveSprimFromSprimSprimDependencies(SdfPath const &sprimId);
 
   // ---------------------------------------------------------------------- //
   /// @}
@@ -506,6 +524,7 @@ class HdChangeTracker
     return _instancerIndexVersion;
   }
 
+
   /// Returns the current version of the scene state.
   /// This version number changes whenever any prims are inserted, removed
   /// or marked dirty.
@@ -549,9 +568,11 @@ class HdChangeTracker
   /// @}
 
  private:
+
   // Don't allow copies
   HdChangeTracker(const HdChangeTracker &) = delete;
   HdChangeTracker &operator=(const HdChangeTracker &) = delete;
+
 
   static void _LogCacheAccess(TfToken const &cacheName, SdfPath const &id, bool hit);
 
@@ -589,6 +610,14 @@ class HdChangeTracker
   _DependencyMap _instancerRprimDependencies;
   _DependencyMap _instancerInstancerDependencies;
 
+  // Provides forward and reverse-association between sprims and the child
+  // sprims that reference them. For example, a light prim (child) who needs
+  // to know when its light filter (parent) is modified.
+  // Maps parent sprim to child sprim.
+  _DependencyMap _sprimSprimTargetDependencies;
+  // Maps child sprim to parent sprim.
+  _DependencyMap _sprimSprimSourceDependencies;
+
   // Dependency map helpers
   void _AddDependency(_DependencyMap &depMap, SdfPath const &parent, SdfPath const &child);
   void _RemoveDependency(_DependencyMap &depMap, SdfPath const &parent, SdfPath const &child);
@@ -615,9 +644,37 @@ class HdChangeTracker
   // Used to detect that visibility changed somewhere in the render index.
   unsigned _visChangeCount;
 
-  // Used to detect changes to the set of active render tags
-  unsigned _renderTagVersion;
+  // Used to detect changes to the render tag opinion of rprims.
+  unsigned _rprimRenderTagVersion;
+
+  // Used to detect changes to the render tags opinion of tasks.
+  unsigned _taskRenderTagsVersion;
+
+  // Allow HdRenderIndex to provide a scene index to forward dirty
+  // information. This is necessary to accommodate legacy HdSceneDelegate
+  // based applications that rely on the HdChangeTracker for invalidating
+  // state on Hydra prims.
+  friend class HdRenderIndex;
+  // Does not take ownership. The HdRenderIndex manages the lifetime of this
+  // scene index.
+  HdRetainedSceneIndex *_emulationSceneIndex;
+  void _SetTargetSceneIndex(HdRetainedSceneIndex *emulationSceneIndex);
+
+  // Private methods which implement the behaviors of their public
+  // equivalents. The public versions check to see if legacy emulation is
+  // active. If so, they dirty the HdRetainedSceneIndex member instead
+  // of directly acting. If legacy render delegate emulation is active, these
+  // will eventually make their way back to the private methods via
+  // HdSceneIndexAdapterSceneDelegate. This prevents dirtying cycles while
+  // allowing single HdRenderIndex/HdChangeTracker instances to be used for
+  // both ends of emulation.
+  friend class HdSceneIndexAdapterSceneDelegate;
+  void _MarkRprimDirty(SdfPath const &id, HdDirtyBits bits = AllDirty);
+  void _MarkSprimDirty(SdfPath const &id, HdDirtyBits bits = AllDirty);
+  void _MarkBprimDirty(SdfPath const &id, HdDirtyBits bits = AllDirty);
+  void _MarkInstancerDirty(SdfPath const &id, HdDirtyBits bits = AllDirty);
 };
+
 
 WABI_NAMESPACE_END
 

@@ -51,6 +51,7 @@ using HdPhSimpleLightingShaderPtr = std::weak_ptr<class HdPhSimpleLightingShader
 class HdPh_DomeLightComputationGPU : public HdComputation
 {
  public:
+
   /// Constructor
   HDPH_API
   HdPh_DomeLightComputationGPU(
@@ -66,11 +67,11 @@ class HdPh_DomeLightComputationGPU : public HdComputation
     float roughness = -1.0);
 
   HDPH_API
-  void GetBufferSpecs(HdBufferSpecVector *specs) const override
-  {}
+  void GetBufferSpecs(HdBufferSpecVector *specs) const override {}
 
   HDPH_API
-  void Execute(HdBufferArrayRangeSharedPtr const &range, HdResourceRegistry *resourceRegistry) override;
+  void Execute(HdBufferArrayRangeSharedPtr const &range,
+               HdResourceRegistry *resourceRegistry) override;
 
   /// This computation doesn't generate buffer source (i.e. 2nd phase)
   /// This is a gpu computation, but no need to resize the destination
@@ -81,6 +82,7 @@ class HdPh_DomeLightComputationGPU : public HdComputation
   }
 
  private:
+
   const TfToken _shaderToken;
   HdPhSimpleLightingShaderPtr const _lightingShader;
   const unsigned int _numLevels;

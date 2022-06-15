@@ -40,7 +40,8 @@ bool ProcessVDBGrid(VDBGrid<GridValueT> &outGrid,
 // string - name of the file IN - GridParams - data contaijner that holds grid name and grid
 // dimensions
 using GridParams = std::map<std::string, std::array<int, 3>>;
-std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename, GridParams &gridParams);
+std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename,
+                                                     GridParams &gridParams);
 
 // Reads vdb grid into provided data container and also adjust voxel indices values if necessary
 // RET - bool - true if data was read succesfully
@@ -74,8 +75,7 @@ bool ProcessVDBGrid(VDBGrid<GridValueT> &outGrid,
   float gridBackgroundVal = grid->background();
 
   using TGridValueCIter = typename TGrid::ValueOnCIter;
-  for (TGridValueCIter iter = grid->cbeginValueOn(); iter; ++iter)
-  {
+  for (TGridValueCIter iter = grid->cbeginValueOn(); iter; ++iter) {
     // for RPR negative voxel indices are invalid
     openvdb::Coord curCoord = iter.getCoord();
     openvdb::Int32 x = curCoord.x() - lowerBound.x();
@@ -99,11 +99,9 @@ bool ProcessVDBGrid(VDBGrid<GridValueT> &outGrid,
 // will be expanded as we support more grid types
 // RET - bool - true if types match
 // IN  - GridBase::Ptr - vdb pointer to vdb grid
-template<typename T>
-bool DoGridTypeMatch(const openvdb::GridBase *baseGrid);
+template<typename T> bool DoGridTypeMatch(const openvdb::GridBase *baseGrid);
 
-template<>
-bool DoGridTypeMatch<float>(const openvdb::GridBase *baseGrid)
+template<> bool DoGridTypeMatch<float>(const openvdb::GridBase *baseGrid)
 {
   std::string gridValueType = baseGrid->valueType();
 
@@ -116,8 +114,7 @@ bool DoGridTypeMatch<float>(const openvdb::GridBase *baseGrid)
 // Read grid dimensions into provided data container
 // OUT - VDBGrid - vdb grid data ready to be passed to RPR
 // IN  - GridBase::Ptr - vdb pointer to vdb grid
-template<typename T>
-void GetVDBGridDimensions(VDBGrid<T> &data, const openvdb::GridBase *baseGrid)
+template<typename T> void GetVDBGridDimensions(VDBGrid<T> &data, const openvdb::GridBase *baseGrid)
 {
   // read dimesions from grid
   openvdb::Coord gridDimensions = baseGrid->evalActiveVoxelDim();
@@ -136,23 +133,20 @@ std::tuple<bool, std::string> ReadFileGridToVDBGrid(VDBGrid<GridValueT> &outGrid
                                                     openvdb::io::File &file,
                                                     const std::string &gridName)
 {
-  try
-  {
+  try {
     // ensure grids have the same size
     // - grids of different size are valid case for openvdb, but not a valid case for RPR
     openvdb::CoordBBox maxBBox;
 
     // read grids from file
     openvdb::GridPtrVecPtr grids = file.getGrids();
-    for (auto it = grids->begin(); it != grids->end(); ++it)
-    {
+    for (auto it = grids->begin(); it != grids->end(); ++it) {
       // get max bbox size
       maxBBox.expand(it->get()->evalActiveVoxelBoundingBox());
     }
 
     // loop over all grids in the file
-    for (auto it = grids->begin(); it != grids->end(); ++it)
-    {
+    for (auto it = grids->begin(); it != grids->end(); ++it) {
       openvdb::GridBase *pBaseGrid = it->get();
 
       // find grid
@@ -179,8 +173,7 @@ std::tuple<bool, std::string> ReadFileGridToVDBGrid(VDBGrid<GridValueT> &outGrid
     }
   }
 
-  catch (openvdb::Exception &ex)
-  {
+  catch (openvdb::Exception &ex) {
     // display error message
     std::string err = ex.what();
 
@@ -197,7 +190,8 @@ std::tuple<bool, std::string> ReadFileGridToVDBGrid(VDBGrid<GridValueT> &outGrid
 // string - name of the file IN - GridParams - data contaijner that holds grid name and grid
 // dimensions
 using GridParams = std::map<std::string, std::array<int, 3>>;
-std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename, GridParams &gridParams)
+std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename,
+                                                     GridParams &gridParams)
 {
   // back-off
   if (filename.empty())
@@ -210,26 +204,23 @@ std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename
   // create a VDB file object.
   openvdb::io::File file(filename);
 
-  try
-  {
+  try {
     // open the file; this reads the file header, but not any grids.
     file.open();
   }
-  catch (openvdb::IoError ex)
-  {
+  catch (openvdb::IoError ex) {
     // display error message
     std::string err = ex.what();
 
     return std::make_tuple(false, err);
   }
 
-  try
-  {
+  try {
     gridParams.clear();
 
     // loop over all grids in the file
-    for (openvdb::io::File::NameIterator nameIter = file.beginName(); nameIter != file.endName(); ++nameIter)
-    {
+    for (openvdb::io::File::NameIterator nameIter = file.beginName(); nameIter != file.endName();
+         ++nameIter) {
       // read grid name from file
       std::string gridName = nameIter.gridName();
 
@@ -246,8 +237,7 @@ std::tuple<bool, std::string> ReadVolumeDataFromFile(const std::string &filename
     file.close();
   }
 
-  catch (openvdb::Exception &ex)
-  {
+  catch (openvdb::Exception &ex) {
     // display error message
     std::string err = ex.what();
 

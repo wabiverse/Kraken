@@ -47,16 +47,20 @@ struct KRAKEN_PATH_DEFAULTS
   const inline static TfToken KRAKEN_ROOT = TfToken("/WabiAnimationStudios/Internal/Kraken");
 
   /** Kraken :: Ops Root. */
-  const inline static TfToken KRAKEN_OPERATORS = TfToken("/WabiAnimationStudios/Internal/Kraken/Ops");
+  const inline static TfToken KRAKEN_OPERATORS = TfToken(
+    "/WabiAnimationStudios/Internal/Kraken/Ops");
 
   /** Kraken :: UserDef Root. */
-  const inline static TfToken KRAKEN_USERPREFS = TfToken("/WabiAnimationStudios/Internal/Kraken/UserDef");
+  const inline static TfToken KRAKEN_USERPREFS = TfToken(
+    "/WabiAnimationStudios/Internal/Kraken/UserDef");
 
   /** Kraken :: WindowManager Root. */
-  const inline static TfToken KRAKEN_WM = TfToken("/WabiAnimationStudios/Internal/Kraken/WindowManager");
+  const inline static TfToken KRAKEN_WM = TfToken(
+    "/WabiAnimationStudios/Internal/Kraken/WindowManager");
 
   /** Kraken :: MainWindow Root. */
-  const inline static TfToken KRAKEN_WINDOW = TfToken("/WabiAnimationStudios/Internal/Kraken/MainWindow");
+  const inline static TfToken KRAKEN_WINDOW = TfToken(
+    "/WabiAnimationStudios/Internal/Kraken/MainWindow");
 
   /** Kraken :: MainWindow :: Workspaces Root. */
   const inline static TfToken KRAKEN_WORKSPACES = TfToken(

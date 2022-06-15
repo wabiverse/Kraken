@@ -77,6 +77,7 @@ class SdfAssetPath;
 class UsdRiStatementsAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -87,16 +88,12 @@ class UsdRiStatementsAPI : public UsdAPISchemaBase
   /// Equivalent to UsdRiStatementsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiStatementsAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdRiStatementsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdRiStatementsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiStatementsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiStatementsAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdRiStatementsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -138,6 +135,7 @@ class UsdRiStatementsAPI : public UsdAPISchemaBase
   static UsdRiStatementsAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -145,6 +143,7 @@ class UsdRiStatementsAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -154,9 +153,11 @@ class UsdRiStatementsAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_RESOURCE_REGISTRY_H
 #define WABI_IMAGING_HD_RESOURCE_REGISTRY_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/perfLog.h"
 
@@ -40,6 +40,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
 
 /// \class HdResourceRegistry
@@ -49,6 +50,7 @@ using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
 class HdResourceRegistry
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdResourceRegistry");
 
   HD_API
@@ -88,6 +90,7 @@ class HdResourceRegistry
   virtual VtDictionary GetResourceAllocation() const;
 
  protected:
+
   /// A hook for derived registries to perform additional resource commits.
   HD_API
   virtual void _Commit();
@@ -98,6 +101,7 @@ class HdResourceRegistry
   virtual void _GarbageCollect();
 
  private:
+
   // Not copyable
   HdResourceRegistry(const HdResourceRegistry &) = delete;
   HdResourceRegistry &operator=(const HdResourceRegistry &) = delete;

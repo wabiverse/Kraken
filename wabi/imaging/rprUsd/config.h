@@ -25,6 +25,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsdConfig
 {
  public:
+
   RPRUSD_API
   static std::unique_lock<std::mutex> GetInstance(RprUsdConfig **instance);
 
@@ -53,12 +54,14 @@ class RprUsdConfig
   void SetKernelCacheDir(std::string const &);
 
  private:
+
   RprUsdConfig();
   friend class TfSingleton<RprUsdConfig>;
 
   void Save();
 
  private:
+
   std::string m_filepath;
 
   struct Impl;

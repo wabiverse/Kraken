@@ -63,6 +63,7 @@ struct TfPyExceptionState
   std::string GetExceptionString() const;
 
  private:
+
   boost::python::handle<> _type, _value, _trace;
 };
 

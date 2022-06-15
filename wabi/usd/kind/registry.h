@@ -74,6 +74,7 @@ TF_DECLARE_PUBLIC_TOKENS(KindTokens, KIND_API, KIND_TOKENS);
 class KindRegistry : public TfWeakBase, boost::noncopyable
 {
  public:
+
   /// Return the single \c KindRegistry instance.
   KIND_API static KindRegistry &GetInstance();
 
@@ -100,6 +101,7 @@ class KindRegistry : public TfWeakBase, boost::noncopyable
   KIND_API static std::vector<TfToken> GetAllKinds();
 
  private:
+
   friend class TfSingleton<KindRegistry>;
 
   KindRegistry();
@@ -128,6 +130,7 @@ class KindRegistry : public TfWeakBase, boost::noncopyable
   typedef std::unordered_map<TfToken, _KindData, TfToken::HashFunctor> _KindMap;
 
  private:
+
   _KindMap _kindMap;
 };
 

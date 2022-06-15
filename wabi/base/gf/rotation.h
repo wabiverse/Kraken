@@ -63,9 +63,9 @@ class GfRotation
 {
 
  public:
+
   /// The default constructor leaves the rotation undefined.
-  GfRotation()
-  {}
+  GfRotation() {}
 
   /// This constructor initializes the rotation to be \p angle
   /// degrees about \p axis.
@@ -296,6 +296,7 @@ class GfRotation
   }
 
  private:
+
   /// Axis storage.
   /// This axis is normalized to unit length whenever it is set.
   GfVec3d _axis;

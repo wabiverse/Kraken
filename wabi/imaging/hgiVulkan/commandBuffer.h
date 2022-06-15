@@ -53,6 +53,7 @@ using HgiVulkanCompletedHandlerVector = std::vector<HgiVulkanCompletedHandler>;
 class HgiVulkanCommandBuffer final
 {
  public:
+
   HGIVULKAN_API
   HgiVulkanCommandBuffer(HgiVulkanDevice *device, VkCommandPool pool);
 
@@ -126,6 +127,7 @@ class HgiVulkanCommandBuffer final
   void RunAndClearCompletedHandlers();
 
  private:
+
   HgiVulkanCommandBuffer() = delete;
   HgiVulkanCommandBuffer &operator=(const HgiVulkanCommandBuffer &) = delete;
   HgiVulkanCommandBuffer(const HgiVulkanCommandBuffer &) = delete;

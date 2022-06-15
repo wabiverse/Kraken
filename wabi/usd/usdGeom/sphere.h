@@ -60,6 +60,7 @@ class SdfAssetPath;
 class UsdGeomSphere : public UsdGeomGprim
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -70,16 +71,12 @@ class UsdGeomSphere : public UsdGeomGprim
   /// Equivalent to UsdGeomSphere::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomSphere(const UsdPrim &prim = UsdPrim())
-    : UsdGeomGprim(prim)
-  {}
+  explicit UsdGeomSphere(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim) {}
 
   /// Construct a UsdGeomSphere on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomSphere(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomSphere(const UsdSchemaBase &schemaObj)
-    : UsdGeomGprim(schemaObj)
-  {}
+  explicit UsdGeomSphere(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -129,6 +126,7 @@ class UsdGeomSphere : public UsdGeomGprim
   static UsdGeomSphere Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -137,6 +135,7 @@ class UsdGeomSphere : public UsdGeomGprim
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -146,9 +145,11 @@ class UsdGeomSphere : public UsdGeomGprim
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RADIUS
   // --------------------------------------------------------------------- //
@@ -171,9 +172,11 @@ class UsdGeomSphere : public UsdGeomGprim
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EXTENT
   // --------------------------------------------------------------------- //
@@ -194,9 +197,11 @@ class UsdGeomSphere : public UsdGeomGprim
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

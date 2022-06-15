@@ -92,6 +92,7 @@ typedef std::pair<SdfValueTypeName, TfToken> SdfTypeIndicator;
 class NdrVersion
 {
  public:
+
   /// Create an invalid version.
   NDR_API
   NdrVersion() = default;
@@ -204,13 +205,11 @@ class NdrVersion
   }
 
  private:
-  NdrVersion(const NdrVersion &x, bool)
-    : _major(x._major),
-      _minor(x._minor),
-      _isDefault(true)
-  {}
+
+  NdrVersion(const NdrVersion &x, bool) : _major(x._major), _minor(x._minor), _isDefault(true) {}
 
  private:
+
   int _major = 0, _minor = 0;
   bool _isDefault = false;
 };

@@ -55,6 +55,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceEventTree);
 class TraceAggregateTree : public TfRefBase, public TfWeakBase
 {
  public:
+
   using This = TraceAggregateTree;
   using ThisPtr = TraceAggregateTreePtr;
   using ThisRefPtr = TraceAggregateTreeRefPtr;
@@ -107,6 +108,7 @@ class TraceAggregateTree : public TfRefBase, public TfWeakBase
   TRACE_API void Append(const TraceEventTreeRefPtr &eventTree, const TraceCollection &collection);
 
  private:
+
   TRACE_API TraceAggregateTree();
 
   using _CounterIndexMap = TfHashMap<TfToken, int, TfToken::HashFunctor>;

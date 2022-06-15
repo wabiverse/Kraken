@@ -34,6 +34,7 @@ WABI_NAMESPACE_BEGIN
 class NdrCyclesDiscoveryPlugin : public NdrDiscoveryPlugin
 {
  public:
+
   using Context = NdrDiscoveryPluginContext;
 
   /**

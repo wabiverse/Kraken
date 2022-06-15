@@ -23,6 +23,7 @@ namespace Zep
   class ZepTabWindow : public ZepComponent
   {
    public:
+
     ZepTabWindow(ZepEditor &editor);
     virtual ~ZepTabWindow();
 
@@ -53,6 +54,7 @@ namespace Zep
     void Display();
 
    private:
+
     ZepEditor &m_editor;  // Editor that owns this window
     NRectf m_lastRegionRect;
 

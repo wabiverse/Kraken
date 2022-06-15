@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLComputeCmds final : public HgiComputeCmds
 {
  public:
+
   HGIGL_API
   ~HgiGLComputeCmds() override;
 
@@ -75,6 +76,7 @@ class HgiGLComputeCmds final : public HgiComputeCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
@@ -84,6 +86,7 @@ class HgiGLComputeCmds final : public HgiComputeCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiGLComputeCmds() = delete;
   HgiGLComputeCmds &operator=(const HgiGLComputeCmds &) = delete;
   HgiGLComputeCmds(const HgiGLComputeCmds &) = delete;

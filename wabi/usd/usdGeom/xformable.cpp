@@ -25,8 +25,8 @@
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
 
-#include "wabi/usd/sdf/assetPath.h"
 #include "wabi/usd/sdf/types.h"
+#include "wabi/usd/sdf/assetPath.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -48,6 +48,7 @@ UsdGeomXformable UsdGeomXformable::Get(const UsdStagePtr &stage, const SdfPath &
   }
   return UsdGeomXformable(stage->GetPrimAtPath(path));
 }
+
 
 /* virtual */
 UsdSchemaKind UsdGeomXformable::_GetSchemaKind() const
@@ -137,7 +138,11 @@ WABI_NAMESPACE_END
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (transform)((invertPrefix, "!invert!")));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (transform)
+    ((invertPrefix, "!invert!"))
+);
 
 using std::vector;
 
@@ -397,6 +402,11 @@ bool UsdGeomXformable::ClearXformOpOrder() const
 UsdGeomXformOp UsdGeomXformable::MakeMatrixXform() const
 {
   ClearXformOpOrder();
+  bool unused = false;
+  if (!GetOrderedXformOps(&unused).empty()) {
+    TF_WARN("Could not clear xformOpOrder for <%s>", GetPrim().GetPath().GetText());
+    return UsdGeomXformOp();
+  }
   return AddTransformOp();
 }
 
@@ -494,6 +504,11 @@ bool UsdGeomXformable::XformQuery::GetLocalTransformation(GfMatrix4d *transform,
                                                           const UsdTimeCode time) const
 {
   return UsdGeomXformable::GetLocalTransformation(transform, _xformOps, time);
+}
+
+bool UsdGeomXformable::XformQuery::HasNonEmptyXformOpOrder() const
+{
+  return !_xformOps.empty();
 }
 
 static bool _TransformMightBeTimeVarying(vector<UsdGeomXformOp> const &xformOps)

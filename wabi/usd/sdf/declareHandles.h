@@ -45,8 +45,7 @@ WABI_NAMESPACE_BEGIN
 
 class SdfLayer;
 class SdfSpec;
-template<class T>
-class TfRefPtr;
+template<class T> class TfRefPtr;
 class Sdf_Identity;
 
 // Sdf_Identities are held via intrusive_ptr so that we can carefully
@@ -60,31 +59,22 @@ typedef boost::intrusive_ptr<Sdf_Identity> Sdf_IdentityRefPtr;
 /// object as an extra expiration check so that dormant objects appear to
 /// be expired.
 ///
-template<class T>
-class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
+template<class T> class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
 {
  public:
+
   typedef SdfHandle<T> This;
   typedef T SpecType;
 
   typedef typename std::remove_const<SpecType>::type NonConstSpecType;
   typedef SdfHandle<NonConstSpecType> NonConstThis;
 
-  SdfHandle()
-  {}
-  SdfHandle(TfNullPtrType)
-  {}
-  explicit SdfHandle(const Sdf_IdentityRefPtr &id)
-    : _spec(id)
-  {}
-  SdfHandle(const SpecType &spec)
-    : _spec(spec)
-  {}
+  SdfHandle() {}
+  SdfHandle(TfNullPtrType) {}
+  explicit SdfHandle(const Sdf_IdentityRefPtr &id) : _spec(id) {}
+  SdfHandle(const SpecType &spec) : _spec(spec) {}
 
-  template<class U>
-  SdfHandle(const SdfHandle<U> &x)
-    : _spec(x._spec)
-  {}
+  template<class U> SdfHandle(const SdfHandle<U> &x) : _spec(x._spec) {}
 
   This &operator=(const This &x)
   {
@@ -92,8 +82,7 @@ class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
     return *this;
   }
 
-  template<class U>
-  This &operator=(const SdfHandle<U> &x)
+  template<class U> This &operator=(const SdfHandle<U> &x)
   {
     const_cast<NonConstSpecType &>(_spec) = x._spec;
     return *this;
@@ -103,8 +92,7 @@ class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
   /// dormant.
   SpecType *operator->() const
   {
-    if (ARCH_UNLIKELY(_spec.IsDormant()))
-    {
+    if (ARCH_UNLIKELY(_spec.IsDormant())) {
       TF_FATAL_ERROR("Dereferenced an invalid %s", ArchGetDemangled(typeid(SpecType)).c_str());
       return 0;
     }
@@ -139,16 +127,14 @@ class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
   }
 
   /// Compares handles for equality.
-  template<class U>
-  bool operator==(const SdfHandle<U> &other) const
+  template<class U> bool operator==(const SdfHandle<U> &other) const
   {
     return _spec == other._spec;
   }
 
   /// Arranges handles in an arbitrary strict weak ordering.  Note that
   /// this ordering is stable across path changes.
-  template<class U>
-  bool operator<(const SdfHandle<U> &other) const
+  template<class U> bool operator<(const SdfHandle<U> &other) const
   {
     return _spec < other._spec;
   }
@@ -160,6 +146,7 @@ class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
   }
 
  private:
+
   friend inline SpecType *get_pointer(const SdfHandle &x)
   {
     return ARCH_UNLIKELY(x._spec.IsDormant()) ? nullptr : const_cast<SpecType *>(&x._spec);
@@ -167,8 +154,7 @@ class SdfHandle : private boost::totally_ordered<SdfHandle<T>>
 
   SpecType _spec;
 
-  template<class U>
-  friend class SdfHandle;
+  template<class U> friend class SdfHandle;
 };
 
 WABI_NAMESPACE_END
@@ -182,8 +168,7 @@ namespace boost
 
 WABI_NAMESPACE_BEGIN
 
-template<class T>
-struct SdfHandleTo
+template<class T> struct SdfHandleTo
 {
   typedef SdfHandle<T> Handle;
   typedef SdfHandle<const T> ConstHandle;
@@ -191,8 +176,7 @@ struct SdfHandleTo
   typedef std::vector<ConstHandle> ConstVector;
 };
 
-template<>
-struct SdfHandleTo<SdfLayer>
+template<> struct SdfHandleTo<SdfLayer>
 {
   typedef TfWeakPtr<SdfLayer> Handle;
   typedef TfWeakPtr<const SdfLayer> ConstHandle;
@@ -200,25 +184,21 @@ struct SdfHandleTo<SdfLayer>
   typedef std::vector<ConstHandle> ConstVector;
 };
 
-template<typename T>
-typename SdfHandleTo<T>::Handle SdfCreateHandle(T *p)
+template<typename T> typename SdfHandleTo<T>::Handle SdfCreateHandle(T *p)
 {
   return typename SdfHandleTo<T>::Handle(p ? *p : T());
 }
 
-template<>
-SDF_API SdfHandleTo<SdfLayer>::Handle SdfCreateHandle(SdfLayer *p);
+template<> SDF_API SdfHandleTo<SdfLayer>::Handle SdfCreateHandle(SdfLayer *p);
 
-template<typename T>
-typename SdfHandleTo<T>::Handle SdfCreateNonConstHandle(T const *p)
+template<typename T> typename SdfHandleTo<T>::Handle SdfCreateNonConstHandle(T const *p)
 {
   return SdfCreateHandle(const_cast<T *>(p));
 }
 
 struct Sdf_CastAccess
 {
-  template<class DST, class SRC>
-  static DST CastSpec(const SRC &spec)
+  template<class DST, class SRC> static DST CastSpec(const SRC &spec)
   {
     return DST(spec);
   }
@@ -230,9 +210,9 @@ SDF_API bool Sdf_CanCastToTypeCheckSchema(const SdfSpec &srcSpec, const std::typ
 
 template<class DST, class SRC>
 struct Sdf_SpecTypesAreDirectlyRelated
-  : std::integral_constant<bool, std::is_base_of<DST, SRC>::value || std::is_base_of<SRC, DST>::value>
-{
-};
+  : std::integral_constant<bool,
+                           std::is_base_of<DST, SRC>::value || std::is_base_of<SRC, DST>::value>
+{};
 
 /// Convert SdfHandle<SRC> \p x to an SdfHandle<DST>. This function
 /// behaves similar to a dynamic_cast. If class DST cannot represent
@@ -250,8 +230,7 @@ inline SdfHandle<typename DST::SpecType> TfDynamic_cast(const SdfHandle<SRC> &x)
   typedef typename DST::SpecType Spec;
   typedef SdfHandle<Spec> Handle;
 
-  if (Sdf_CanCastToType(x.GetSpec(), typeid(Spec)))
-  {
+  if (Sdf_CanCastToType(x.GetSpec(), typeid(Spec))) {
     return Handle(Sdf_CastAccess::CastSpec<Spec, SRC>(x.GetSpec()));
   }
 
@@ -273,7 +252,8 @@ inline SdfHandle<typename DST::SpecType> TfStatic_cast(const SdfHandle<SRC> &x)
 {
   typedef typename DST::SpecType Spec;
   typedef SdfHandle<Spec> Handle;
-  static_assert(Sdf_SpecTypesAreDirectlyRelated<Spec, SRC>::value, "Spec and SRC must be directly related.");
+  static_assert(Sdf_SpecTypesAreDirectlyRelated<Spec, SRC>::value,
+                "Spec and SRC must be directly related.");
 
   return Handle(Sdf_CastAccess::CastSpec<Spec, SRC>(x.GetSpec()));
 }
@@ -294,8 +274,7 @@ inline SdfHandle<typename DST::SpecType> SdfSpecDynamic_cast(const SdfHandle<SRC
   typedef typename DST::SpecType Spec;
   typedef SdfHandle<Spec> Handle;
 
-  if (Sdf_CanCastToTypeCheckSchema(x.GetSpec(), typeid(Spec)))
-  {
+  if (Sdf_CanCastToTypeCheckSchema(x.GetSpec(), typeid(Spec))) {
     return Handle(Sdf_CastAccess::CastSpec<Spec, SRC>(x.GetSpec()));
   }
 

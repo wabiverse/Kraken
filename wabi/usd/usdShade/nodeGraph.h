@@ -80,6 +80,7 @@ class SdfAssetPath;
 class UsdShadeNodeGraph : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -90,16 +91,12 @@ class UsdShadeNodeGraph : public UsdTyped
   /// Equivalent to UsdShadeNodeGraph::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeNodeGraph(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdShadeNodeGraph(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdShadeNodeGraph on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeNodeGraph(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeNodeGraph(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdShadeNodeGraph(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDSHADE_API
@@ -149,6 +146,7 @@ class UsdShadeNodeGraph : public UsdTyped
   static UsdShadeNodeGraph Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -156,6 +154,7 @@ class UsdShadeNodeGraph : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
@@ -165,9 +164,11 @@ class UsdShadeNodeGraph : public UsdTyped
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

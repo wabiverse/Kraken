@@ -36,8 +36,7 @@ void CombinationKeygenRecurse(uint32_t *key,
   if (len == maxlen)
     return;
 
-  for (int i = 0; i < blockcount; i++)
-  {
+  for (int i = 0; i < blockcount; i++) {
     key[len] = blocks[i];
 
     // if(len == maxlen-1)
@@ -99,8 +98,7 @@ void PermutationKeygenRecurse(pfHash hash,
                               int k,
                               std::vector<hashtype> &hashes)
 {
-  if (k == blockcount - 1)
-  {
+  if (k == blockcount - 1) {
     hashtype h;
 
     hash(blocks, blockcount * sizeof(uint32_t), 0, &h);
@@ -110,8 +108,7 @@ void PermutationKeygenRecurse(pfHash hash,
     return;
   }
 
-  for (int i = k; i < blockcount; i++)
-  {
+  for (int i = k; i < blockcount; i++) {
     std::swap(blocks[k], blocks[i]);
 
     PermutationKeygenRecurse(hash, blocks, blockcount, k + 1, hashes);
@@ -165,18 +162,15 @@ void SparseKeygenRecurse(pfHash hash,
 
   hashtype h;
 
-  for (int i = start; i < nbits; i++)
-  {
+  for (int i = start; i < nbits; i++) {
     flipbit(&k, nbytes, i);
 
-    if (inclusive || (bitsleft == 1))
-    {
+    if (inclusive || (bitsleft == 1)) {
       hash(&k, sizeof(keytype), 0, &h);
       hashes.push_back(h);
     }
 
-    if (bitsleft > 1)
-    {
+    if (bitsleft > 1) {
       SparseKeygenRecurse(hash, i + 1, bitsleft - 1, inclusive, k, hashes);
     }
 
@@ -206,8 +200,7 @@ bool SparseKeyTest(hashfunc<hashtype> hash,
   keytype k;
   memset(&k, 0, sizeof(k));
 
-  if (inclusive)
-  {
+  if (inclusive) {
     hashtype h;
 
     hash(&k, sizeof(keytype), 0, &h);
@@ -255,14 +248,12 @@ bool WindowedKeyTest(hashfunc<hashtype> hash,
          testcount,
          keycount);
 
-  for (int j = 0; j <= testcount; j++)
-  {
+  for (int j = 0; j <= testcount; j++) {
     int minbit = j;
 
     keytype key;
 
-    for (int i = 0; i < keycount; i++)
-    {
+    for (int i = 0; i < keycount; i++) {
       key = i;
       // key = key << minbit;
 
@@ -304,14 +295,12 @@ bool CyclicKeyTest(pfHash hash, int cycleLen, int cycleReps, const int keycount,
 
   //----------
 
-  for (int i = 0; i < keycount; i++)
-  {
+  for (int i = 0; i < keycount; i++) {
     r.rand_p(cycle, cycleLen);
 
     *(uint32_t *)cycle = f3mix(i ^ 0x746a94f1);
 
-    for (int j = 0; j < keyLen; j++)
-    {
+    for (int j = 0; j < keyLen; j++) {
       key[j] = cycle[j % cycleLen];
     }
 
@@ -336,8 +325,7 @@ bool CyclicKeyTest(pfHash hash, int cycleLen, int cycleReps, const int keycount,
 
 void TwoBytesKeygen(int maxlen, KeyCallback &c);
 
-template<typename hashtype>
-bool TwoBytesTest2(pfHash hash, int maxlen, bool drawDiagram)
+template<typename hashtype> bool TwoBytesTest2(pfHash hash, int maxlen, bool drawDiagram)
 {
   std::vector<hashtype> hashes;
 
@@ -390,12 +378,10 @@ bool TextKeyTest(hashfunc<hashtype> hash,
   std::vector<hashtype> hashes;
   hashes.resize(keycount);
 
-  for (int i = 0; i < keycount; i++)
-  {
+  for (int i = 0; i < keycount; i++) {
     int t = i;
 
-    for (int j = 0; j < corelen; j++)
-    {
+    for (int j = 0; j < corelen; j++) {
       key[prefixlen + j] = coreset[t % corecount];
       t /= corecount;
     }
@@ -421,8 +407,7 @@ bool TextKeyTest(hashfunc<hashtype> hash,
 
 // We reuse one block of empty bytes, otherwise the RAM cost is enormous.
 
-template<typename hashtype>
-bool ZeroKeyTest(pfHash hash, bool drawDiagram)
+template<typename hashtype> bool ZeroKeyTest(pfHash hash, bool drawDiagram)
 {
   int keycount = 64 * 1024;
 
@@ -437,8 +422,7 @@ bool ZeroKeyTest(pfHash hash, bool drawDiagram)
 
   hashes.resize(keycount);
 
-  for (int i = 0; i < keycount; i++)
-  {
+  for (int i = 0; i < keycount; i++) {
     hash(nullblock, i, 0, &hashes[i]);
   }
 
@@ -456,8 +440,7 @@ bool ZeroKeyTest(pfHash hash, bool drawDiagram)
 //-----------------------------------------------------------------------------
 // Keyset 'Seed' - hash "the quick brown fox..." using different seeds
 
-template<typename hashtype>
-bool SeedTest(pfHash hash, int keycount, bool drawDiagram)
+template<typename hashtype> bool SeedTest(pfHash hash, int keycount, bool drawDiagram)
 {
   printf("Keyset 'Seed' - %d keys\n", keycount);
 
@@ -470,8 +453,7 @@ bool SeedTest(pfHash hash, int keycount, bool drawDiagram)
 
   hashes.resize(keycount);
 
-  for (int i = 0; i < keycount; i++)
-  {
+  for (int i = 0; i < keycount; i++) {
     hash(text, len, i, &hashes[i]);
   }
 

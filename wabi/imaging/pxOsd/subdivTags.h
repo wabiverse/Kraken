@@ -48,6 +48,7 @@ class PxOsdSubdivTags
 {
 
  public:
+
   PxOsdSubdivTags() = default;
   PxOsdSubdivTags(PxOsdSubdivTags const &) = default;
   PxOsdSubdivTags(PxOsdSubdivTags &&) = default;
@@ -199,6 +200,7 @@ class PxOsdSubdivTags
   ID ComputeHash() const;
 
  private:
+
   // note: if you're going to add more members, make sure
   // ComputeHash will be updated too.
 

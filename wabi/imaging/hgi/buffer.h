@@ -98,6 +98,7 @@ inline bool operator!=(const HgiBufferDesc &lhs, const HgiBufferDesc &rhs);
 class HgiBuffer
 {
  public:
+
   HGI_API
   virtual ~HgiBuffer();
 
@@ -137,12 +138,14 @@ class HgiBuffer
   virtual void *GetCPUStagingAddress() = 0;
 
  protected:
+
   HGI_API
   HgiBuffer(HgiBufferDesc const &desc);
 
   HgiBufferDesc _descriptor;
 
  private:
+
   HgiBuffer() = delete;
   HgiBuffer &operator=(const HgiBuffer &) = delete;
   HgiBuffer(const HgiBuffer &) = delete;

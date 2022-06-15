@@ -40,6 +40,7 @@ WABI_NAMESPACE_BEGIN
 class RmanDiscoveryPlugin final : public NdrDiscoveryPlugin
 {
  public:
+
   /// A filter for discovered nodes.  If the function returns false
   /// then the discovered node is discarded.  Otherwise the function
   /// can modify the discovery result.
@@ -64,6 +65,7 @@ class RmanDiscoveryPlugin final : public NdrDiscoveryPlugin
   const NdrStringVec &GetSearchURIs() const override;
 
  private:
+
   /// The paths (abs) indicating where the plugin should search for nodes.
   NdrStringVec _searchPaths;
 

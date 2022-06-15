@@ -66,6 +66,7 @@ WABI_NAMESPACE_BEGIN
 class TfErrorMark : boost::noncopyable
 {
  public:
+
   typedef TfDiagnosticMgr::ErrorIterator Iterator;
 
   /// Default constructor.
@@ -111,8 +112,7 @@ class TfErrorMark : boost::noncopyable
   {
     TfDiagnosticMgr &mgr = TfDiagnosticMgr::GetInstance();
     auto b = GetBegin(), e = mgr.GetErrorEnd();
-    if (b != e)
-    {
+    if (b != e) {
       mgr.EraseRange(b, e);
       return true;
     }
@@ -184,6 +184,7 @@ class TfErrorMark : boost::noncopyable
   }
 
  private:
+
   friend class TfDiagnosticMgr;
 
   // Helper to check if the _mark identifies any errors present on the

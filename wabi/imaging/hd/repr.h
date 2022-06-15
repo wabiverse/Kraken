@@ -24,13 +24,14 @@
 #ifndef WABI_IMAGING_HD_REPR_H
 #define WABI_IMAGING_HD_REPR_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/drawItem.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/wabi.h"
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdReprSelector
 ///
@@ -47,11 +48,8 @@ WABI_NAMESPACE_BEGIN
 class HdReprSelector
 {
  public:
-  explicit HdReprSelector()
-    : refinedToken(),
-      unrefinedToken(),
-      pointsToken()
-  {}
+
+  explicit HdReprSelector() : refinedToken(), unrefinedToken(), pointsToken() {}
 
   explicit HdReprSelector(TfToken const &token)
     : refinedToken(token),
@@ -116,13 +114,14 @@ class HdReprSelector
   HD_API
   friend std::ostream &operator<<(std::ostream &stream, HdReprSelector const &t);
 
+
   HD_API
   TfToken const &operator[](size_t topologyIndex) const;
 
  private:
+
   // TfHash support.
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, HdReprSelector const &rs)
+  template<class HashState> friend void TfHashAppend(HashState &h, HdReprSelector const &rs)
   {
     h.Append(rs.refinedToken, rs.unrefinedToken, rs.pointsToken);
   }
@@ -131,6 +130,7 @@ class HdReprSelector
   TfToken unrefinedToken;
   TfToken pointsToken;
 };
+
 
 /// \class HdRepr
 ///
@@ -151,6 +151,7 @@ class HdReprSelector
 class HdRepr final
 {
  public:
+
   using DrawItemUniquePtr = std::unique_ptr<HdDrawItem>;
   using DrawItemUniquePtrVector = std::vector<DrawItemUniquePtr>;
 
@@ -166,9 +167,11 @@ class HdRepr final
   }
 
   /// Transfers ownership of a draw item to this repr.
+  /// Do not use for adding geom subset draw items.
   void AddDrawItem(std::unique_ptr<HdDrawItem> &&item)
   {
-    _drawItems.push_back(std::move(item));
+    _drawItems.insert(_drawItems.begin() + _geomSubsetsStart, std::move(item));
+    _geomSubsetsStart++;
   }
 
   /// Returns the draw item at the requested index.
@@ -180,14 +183,61 @@ class HdRepr final
     return _drawItems[index].get();
   }
 
+  /// HdRepr can hold geom subset draw items, which are unique in that they
+  /// not created at the time the repr is created, but instead when populating
+  /// the mesh topology of a mesh rprim. The number of geom subset draw items
+  /// in a repr can change over time.
+  /// We make some assumptions when using these geom subset related functions.
+  /// We assume the geom subset draw items will only be added (or cleared)
+  /// after all of the main draw items for a repr have been added.
+  /// We also assume that the geom subset draw items for a repr desc are all
+  /// added one after the other before moving onto the next repr desc.
+  /// Thus the order of draw items in the _drawItems member might go something
+  /// like (assuming two repr descs and three geom subsets in this example):
+  /// [ main DI for desc 1, main DI for desc 2, GS1 DI for desc 1,
+  ///   GS2 DI for desc 1, GS3 DI for desc 1, GS1 DI for desc 2,
+  ///   GS2 DI for desc 2, GS3 DI for desc 2 ]
+  /// It is also possible for there to exist a main draw item for a particular
+  /// repr desc but no geom subsets for that repr desc, while having geom
+  /// subsets exist for a different repr desc.
+
+  /// Transfers ownership of a draw item to this repr.
+  /// To be used only for geom subset draw items.
+  void AddGeomSubsetDrawItem(std::unique_ptr<HdDrawItem> &&item)
+  {
+    _drawItems.push_back(std::move(item));
+  }
+
+  /// Utility similar to GetDrawItem for getting geom subset draw items.
+  HdDrawItem *GetDrawItemForGeomSubset(size_t reprDescIndex,
+                                       size_t numGeomSubsets,
+                                       size_t geomSubsetIndex) const
+  {
+    return _drawItems[_geomSubsetsStart + reprDescIndex * numGeomSubsets + geomSubsetIndex].get();
+  }
+
+  /// Removes all of the geom subset draw items from the repr.
+  void ClearGeomSubsetDrawItems()
+  {
+    _drawItems.erase(_drawItems.begin() + _geomSubsetsStart, _drawItems.end());
+  }
+
  private:
+
   // Noncopyable
   HdRepr(const HdRepr &) = delete;
   HdRepr &operator=(const HdRepr &) = delete;
 
  private:
+
+  // Contains normal draw items first, potentially followed by geom subset
+  // draw items
   DrawItemUniquePtrVector _drawItems;
+
+  // Index into _drawItems indicating where the geom subset draw items begin.
+  size_t _geomSubsetsStart;
 };
+
 
 WABI_NAMESPACE_END
 

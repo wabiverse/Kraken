@@ -33,9 +33,11 @@ WABI_NAMESPACE_BEGIN
 class Tf_ScopeDescriptionStackReportLock
 {
   Tf_ScopeDescriptionStackReportLock(Tf_ScopeDescriptionStackReportLock const &) = delete;
-  Tf_ScopeDescriptionStackReportLock &operator=(Tf_ScopeDescriptionStackReportLock const &) = delete;
+  Tf_ScopeDescriptionStackReportLock &operator=(Tf_ScopeDescriptionStackReportLock const &) =
+    delete;
 
  public:
+
   // Lock and compute the report message.
   Tf_ScopeDescriptionStackReportLock();
 
@@ -50,6 +52,7 @@ class Tf_ScopeDescriptionStackReportLock
   }
 
  private:
+
   char const *_msg;
 };
 

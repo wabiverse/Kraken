@@ -111,23 +111,18 @@ namespace Tf_MakePyConstructor
 
   namespace bp = boost::python;
 
-  template<typename CTOR>
-  struct InitVisitor : bp::def_visitor<InitVisitor<CTOR>>
+  template<typename CTOR> struct InitVisitor : bp::def_visitor<InitVisitor<CTOR>>
   {
     friend class bp::def_visitor_access;
     const std::string _doc;
-    InitVisitor(const std::string &doc = std::string())
-      : _doc(doc)
-    {}
+    InitVisitor(const std::string &doc = std::string()) : _doc(doc) {}
 
-    template<typename CLS>
-    void visit(CLS &c) const
+    template<typename CLS> void visit(CLS &c) const
     {
       c.def("__init__", CTOR::template init_callable<CLS>(), _doc.c_str());
     }
 
-    template<class CLS, class Options>
-    void visit(CLS &c, char const *name, Options &options) const
+    template<class CLS, class Options> void visit(CLS &c, char const *name, Options &options) const
     {
       // Note: we ignore options.doc() in favor of _doc
       c.def(name, CTOR::template init_callable<CLS>(options), _doc.c_str());
@@ -136,17 +131,13 @@ namespace Tf_MakePyConstructor
 
   bp::object _DummyInit(bp::tuple const & /* args */, bp::dict const & /* kw */);
 
-  template<typename CTOR>
-  struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>>
+  template<typename CTOR> struct NewVisitor : bp::def_visitor<NewVisitor<CTOR>>
   {
     friend class bp::def_visitor_access;
     const std::string _doc;
-    NewVisitor(const std::string &doc = std::string())
-      : _doc(doc)
-    {}
+    NewVisitor(const std::string &doc = std::string()) : _doc(doc) {}
 
-    template<typename CLS>
-    void visit(CLS &c) const
+    template<typename CLS> void visit(CLS &c) const
     {
       // If there's already a __new__ method, look through the staticmethod to
       // get the underlying function, replace __new__ with that, then add the
@@ -169,8 +160,7 @@ namespace Tf_MakePyConstructor
       c.def("__init__", bp::raw_function(_DummyInit));
     }
 
-    template<class CLS, class Options>
-    void visit(CLS &c, char const *name, Options &options) const
+    template<class CLS, class Options> void visit(CLS &c, char const *name, Options &options) const
     {
       // If there's already a __new__ method, look through the staticmethod to
       // get the underlying function, replace __new__ with that, then add the
@@ -201,16 +191,13 @@ namespace Tf_MakePyConstructor
 
   typedef bp::object object;
 
-  template<typename T>
-  struct InstallPolicy
+  template<typename T> struct InstallPolicy
   {
-    static void PostInstall(object const &self, T const &t, const void *)
-    {}
+    static void PostInstall(object const &self, T const &t, const void *) {}
   };
 
   // Specialize install policy for refptrs.
-  template<typename T>
-  struct InstallPolicy<TfRefPtr<T>>
+  template<typename T> struct InstallPolicy<TfRefPtr<T>>
   {
     static_assert(Tf_SupportsUniqueChanged<T>::Value,
                   "Type T must support refcount unique changed notification.");
@@ -237,8 +224,7 @@ namespace Tf_MakePyConstructor
     void *memory = Holder::
       // CODE_COVERAGE_ON
       allocate(self.ptr(), offsetof(instance_t, storage), sizeof(Holder));
-    try
-    {
+    try {
       HeldType held(t);
       Holder *holder = (new (memory) Holder(held));
       // If there was a TfError, raise that back to python.
@@ -256,15 +242,13 @@ namespace Tf_MakePyConstructor
 
       Policy::PostInstall(self, t, held.GetUniqueIdentifier());
     }
-    catch (...)
-    {
+    catch (...) {
       Holder::deallocate(self.ptr(), memory);
       throw;
     }
   }
 
-  template<typename WeakPtr, typename P>
-  struct _RefPtrFactoryConverter
+  template<typename WeakPtr, typename P> struct _RefPtrFactoryConverter
   {
     typedef typename boost::remove_reference<P>::type Ptr;
     bool convertible() const
@@ -300,11 +284,9 @@ namespace Tf_MakePyConstructor
     }
   };
 
-  template<typename WeakPtr = void>
-  struct RefPtrFactory
+  template<typename WeakPtr = void> struct RefPtrFactory
   {
-    template<typename FactoryResultPtr>
-    struct apply
+    template<typename FactoryResultPtr> struct apply
     {
       typedef typename boost::mpl::if_<boost::is_same<WeakPtr, void>,
                                        TfWeakPtr<typename FactoryResultPtr::DataType>,
@@ -313,8 +295,7 @@ namespace Tf_MakePyConstructor
     };
   };
 
-  template<typename SIG>
-  struct CtorBase
+  template<typename SIG> struct CtorBase
   {
     typedef SIG Sig;
     static Sig *_func;
@@ -322,8 +303,7 @@ namespace Tf_MakePyConstructor
     {
       if (!_func)
         _func = func;
-      else
-      {
+      else {
         // CODE_COVERAGE_OFF
         TF_CODING_ERROR(
           "Ctor with signature '%s' is already registered.  "
@@ -334,21 +314,15 @@ namespace Tf_MakePyConstructor
     }
   };
 
-  template<typename SIG>
-  SIG *CtorBase<SIG>::_func = 0;
+  template<typename SIG> SIG *CtorBase<SIG>::_func = 0;
 
   // The following preprocessor code repeatedly includes this file to generate
   // specializations of Ctor taking 0 through TF_MAX_ARITY parameters.
-  template<typename SIG>
-  struct InitCtor;
-  template<typename SIG>
-  struct InitCtorWithBackReference;
-  template<typename SIG>
-  struct InitCtorWithVarArgs;
-  template<typename SIG>
-  struct NewCtor;
-  template<typename SIG>
-  struct NewCtorWithClassReference;
+  template<typename SIG> struct InitCtor;
+  template<typename SIG> struct InitCtorWithBackReference;
+  template<typename SIG> struct InitCtorWithVarArgs;
+  template<typename SIG> struct NewCtor;
+  template<typename SIG> struct NewCtorWithClassReference;
 #    define BOOST_PP_ITERATION_LIMITS (0, TF_MAX_ARITY)
 #    define BOOST_PP_FILENAME_1 "wabi/base/tf/makePyConstructor.h"
 #    include BOOST_PP_ITERATE()
@@ -374,7 +348,8 @@ TfMakePyConstructorWithBackReference(T *func, const std::string &doc = std::stri
 {
   // Instantiate to set static constructor pointer, then return the visitor.
   Tf_MakePyConstructor::InitCtorWithBackReference<T> Ctor(func);
-  return Tf_MakePyConstructor::InitVisitor<Tf_MakePyConstructor::InitCtorWithBackReference<T>>(doc);
+  return Tf_MakePyConstructor::InitVisitor<Tf_MakePyConstructor::InitCtorWithBackReference<T>>(
+    doc);
 }
 
 template<typename T>
@@ -407,26 +382,22 @@ TfMakePyNewWithClassReference(T *func, const std::string &doc = std::string())
 
 template<typename T = void>
 struct TfPyRefPtrFactory : public Tf_MakePyConstructor::RefPtrFactory<T>
-{
-};
+{};
 
-template<typename T>
-struct Tf_PySequenceToListConverterRefPtrFactory;
+template<typename T> struct Tf_PySequenceToListConverterRefPtrFactory;
 
 /// A \c boost::python result converter generator which converts standard
 /// library sequences to lists of python owned objects.
 struct TfPySequenceToListRefPtrFactory
 {
-  template<typename T>
-  struct apply
+  template<typename T> struct apply
   {
     typedef Tf_PySequenceToListConverterRefPtrFactory<T> type;
   };
 };
 
 // XXX: would be nicer to be able to compose converters with factory
-template<typename T>
-struct Tf_PySequenceToListConverterRefPtrFactory
+template<typename T> struct Tf_PySequenceToListConverterRefPtrFactory
 {
   typedef typename boost::remove_reference<T>::type SeqType;
   bool convertible() const
@@ -437,12 +408,12 @@ struct Tf_PySequenceToListConverterRefPtrFactory
   {
     using namespace boost::python;
 
-    typedef typename Tf_MakePyConstructor::RefPtrFactory<>::apply<typename SeqType::value_type>::type
-      RefPtrFactory;
+    typedef
+      typename Tf_MakePyConstructor::RefPtrFactory<>::apply<typename SeqType::value_type>::type
+        RefPtrFactory;
 
     boost::python::list l;
-    for (typename SeqType::const_iterator i = seq.begin(); i != seq.end(); ++i)
-    {
+    for (typename SeqType::const_iterator i = seq.begin(); i != seq.end(); ++i) {
       l.append(object(handle<>(RefPtrFactory()(*i))));
     }
     return boost::python::incref(l.ptr());
@@ -481,20 +452,17 @@ struct InitCtor<SIGNATURE> : CtorBase<SIGNATURE>
     Base::SetFunc(func);
   }
 
-  template<typename CLS>
-  static bp::object init_callable()
+  template<typename CLS> static bp::object init_callable()
   {
     return bp::make_function(__init__<CLS>);
   }
 
-  template<typename CLS, typename Options>
-  static bp::object init_callable(Options &o)
+  template<typename CLS, typename Options> static bp::object init_callable(Options &o)
   {
     return bp::make_function(__init__<CLS>, o.policies(), o.keywords());
   }
 
-  template<typename CLS>
-  static void __init__(object &self PARAMLIST)
+  template<typename CLS> static void __init__(object &self PARAMLIST)
   {
     TfErrorMark m;
     Install<CLS>(self, Base::_func(ARGLIST), m);
@@ -511,8 +479,7 @@ struct NewCtor<SIGNATURE> : CtorBase<SIGNATURE>
     Base::SetFunc(func);
   }
 
-  template<class CLS>
-  static bp::object __new__(object &cls PARAMLIST)
+  template<class CLS> static bp::object __new__(object &cls PARAMLIST)
   {
     typedef typename CLS::metadata::held_type HeldType;
     TfErrorMark m;
@@ -554,8 +521,7 @@ struct InitCtorWithVarArgs<VAR_SIGNATURE> : CtorBase<VAR_SIGNATURE>
     Base::SetFunc(func);
   }
 
-  template<typename CLS>
-  static bp::object init_callable()
+  template<typename CLS> static bp::object init_callable()
   {
     // Specify min_args as 1 to account for just the 'self' argument.
     // min_args really should be N + 1. However, we want to do this check
@@ -563,8 +529,7 @@ struct InitCtorWithVarArgs<VAR_SIGNATURE> : CtorBase<VAR_SIGNATURE>
     return bp::raw_function(__init__<CLS>, /* min_args = */ 1);
   }
 
-  template<typename CLS, typename Options>
-  static bp::object init_callable(Options &options)
+  template<typename CLS, typename Options> static bp::object init_callable(Options &options)
   {
     // XXX: Note ignoring options.keywords(), current implementation can't
     //      handle that correctly.
@@ -572,14 +537,12 @@ struct InitCtorWithVarArgs<VAR_SIGNATURE> : CtorBase<VAR_SIGNATURE>
                             /* min_args = */ 1);
   }
 
-  template<typename CLS>
-  static bp::object __init__(const bp::tuple &args, const bp::dict &kwargs)
+  template<typename CLS> static bp::object __init__(const bp::tuple &args, const bp::dict &kwargs)
   {
     TfErrorMark m;
 
     const unsigned int numArgs = bp::len(args);
-    if (numArgs - 1 < N)
-    {
+    if (numArgs - 1 < N) {
       // User didn't provide enough positional arguments for the factory
       // function. Complain.
       TfPyThrowTypeError(
@@ -624,20 +587,17 @@ struct InitCtorWithBackReference<SIGNATURE> : CtorBase<SIGNATURE>
     Base::SetFunc(func);
   }
 
-  template<typename CLS>
-  static bp::object init_callable()
+  template<typename CLS> static bp::object init_callable()
   {
     return bp::make_function(__init__<CLS>);
   }
 
-  template<typename CLS, typename Options>
-  static bp::object init_callable(Options &o)
+  template<typename CLS, typename Options> static bp::object init_callable(Options &o)
   {
     return bp::make_function(__init__<CLS>, o.policies(), o.keywords());
   }
 
-  template<typename CLS>
-  static void __init__(PARAMLIST)
+  template<typename CLS> static void __init__(PARAMLIST)
   {
     TfErrorMark m;
     Install<CLS>(a0, Base::_func(ARGLIST), m);
@@ -654,8 +614,7 @@ struct NewCtorWithClassReference<SIGNATURE> : CtorBase<SIGNATURE>
     Base::SetFunc(func);
   }
 
-  template<class CLS>
-  static bp::object __new__(PARAMLIST)
+  template<class CLS> static bp::object __new__(PARAMLIST)
   {
     typedef typename CLS::metadata::held_type HeldType;
     TfErrorMark m;

@@ -24,12 +24,11 @@
 #ifndef WABI_IMAGING_HD_SPRIM_H
 #define WABI_IMAGING_HD_SPRIM_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/types.h"
 
-#include "wabi/base/vt/value.h"
 #include "wabi/usd/sdf/path.h"
 
 WABI_NAMESPACE_BEGIN
@@ -52,6 +51,7 @@ class HdRenderParam;
 class HdSprim
 {
  public:
+
   HD_API
   HdSprim(SdfPath const &id);
   HD_API
@@ -72,7 +72,9 @@ class HdSprim
   ///                             On output specifies which bits are still
   ///                             dirty and were not cleaned by the sync.
   ///
-  virtual void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) = 0;
+  virtual void Sync(HdSceneDelegate *sceneDelegate,
+                    HdRenderParam *renderParam,
+                    HdDirtyBits *dirtyBits) = 0;
 
   /// Finalizes object resources. This function might not delete resources,
   /// but it should deal with resource ownership so that the sprim is
@@ -86,8 +88,10 @@ class HdSprim
   virtual HdDirtyBits GetInitialDirtyBitsMask() const = 0;
 
  private:
+
   SdfPath _id;
 };
+
 
 WABI_NAMESPACE_END
 

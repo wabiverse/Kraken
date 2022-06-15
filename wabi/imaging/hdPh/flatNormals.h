@@ -41,6 +41,7 @@ class Hd_FaceCoords;
 class HdPh_FlatNormalsComputationGPU : public HdComputation
 {
  public:
+
   /// Constructor
   HDPH_API
   HdPh_FlatNormalsComputationGPU(HdBufferArrayRangeSharedPtr const &topologyRange,
@@ -60,6 +61,7 @@ class HdPh_FlatNormalsComputationGPU : public HdComputation
   virtual int GetNumOutputElements() const override;
 
  private:
+
   HdBufferArrayRangeSharedPtr const _topologyRange;
   HdBufferArrayRangeSharedPtr const _vertexRange;
   int _numFaces;

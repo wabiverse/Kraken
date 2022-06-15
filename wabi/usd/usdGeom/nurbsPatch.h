@@ -110,6 +110,7 @@ class SdfAssetPath;
 class UsdGeomNurbsPatch : public UsdGeomPointBased
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -120,16 +121,12 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// Equivalent to UsdGeomNurbsPatch::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomNurbsPatch(const UsdPrim &prim = UsdPrim())
-    : UsdGeomPointBased(prim)
-  {}
+  explicit UsdGeomNurbsPatch(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim) {}
 
   /// Construct a UsdGeomNurbsPatch on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomNurbsPatch(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomNurbsPatch(const UsdSchemaBase &schemaObj)
-    : UsdGeomPointBased(schemaObj)
-  {}
+  explicit UsdGeomNurbsPatch(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -179,6 +176,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   static UsdGeomNurbsPatch Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -187,6 +185,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -196,9 +195,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // UVERTEXCOUNT
   // --------------------------------------------------------------------- //
@@ -223,6 +224,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VVERTEXCOUNT
   // --------------------------------------------------------------------- //
@@ -247,6 +249,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // UORDER
   // --------------------------------------------------------------------- //
@@ -267,9 +270,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateUOrderAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateUOrderAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VORDER
   // --------------------------------------------------------------------- //
@@ -290,9 +295,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVOrderAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVOrderAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // UKNOTS
   // --------------------------------------------------------------------- //
@@ -314,9 +321,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateUKnotsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateUKnotsAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VKNOTS
   // --------------------------------------------------------------------- //
@@ -338,9 +347,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVKnotsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVKnotsAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // UFORM
   // --------------------------------------------------------------------- //
@@ -365,9 +376,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateUFormAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateUFormAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VFORM
   // --------------------------------------------------------------------- //
@@ -392,9 +405,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVFormAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVFormAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // URANGE
   // --------------------------------------------------------------------- //
@@ -418,9 +433,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateURangeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateURangeAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VRANGE
   // --------------------------------------------------------------------- //
@@ -444,9 +461,11 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateVRangeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVRangeAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // POINTWEIGHTS
   // --------------------------------------------------------------------- //
@@ -475,6 +494,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIMCURVECOUNTS
   // --------------------------------------------------------------------- //
@@ -502,6 +522,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIMCURVEORDERS
   // --------------------------------------------------------------------- //
@@ -525,6 +546,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIMCURVEVERTEXCOUNTS
   // --------------------------------------------------------------------- //
@@ -549,6 +571,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIMCURVEKNOTS
   // --------------------------------------------------------------------- //
@@ -575,6 +598,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIMCURVERANGES
   // --------------------------------------------------------------------- //
@@ -599,6 +623,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIMCURVEPOINTS
   // --------------------------------------------------------------------- //
@@ -624,6 +649,7 @@ class UsdGeomNurbsPatch : public UsdGeomPointBased
                                          bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

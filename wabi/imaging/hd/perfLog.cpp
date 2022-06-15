@@ -31,6 +31,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_INSTANTIATE_SINGLETON(HdPerfLog);
 
 static bool _IsEnabledPerfLog()
@@ -230,5 +231,6 @@ std::vector<HdResourceRegistry *> const &HdPerfLog::GetResourceRegistryVector()
 {
   return _resourceRegistryVector;
 }
+
 
 WABI_NAMESPACE_END

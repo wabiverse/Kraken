@@ -39,8 +39,7 @@ WABI_NAMESPACE_BEGIN
 
 /// \struct TfDeclarePtrs
 /// Templated struct used for type definition macros.
-template<typename T>
-struct TfDeclarePtrs
+template<typename T> struct TfDeclarePtrs
 {
   typedef TfWeakPtr<T> Ptr;
   typedef TfWeakPtr<const T> ConstPtr;

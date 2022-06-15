@@ -24,8 +24,8 @@
 #ifndef WABI_IMAGING_HD_DRIVER_H
 #define WABI_IMAGING_HD_DRIVER_H
 
-#include "wabi/imaging/hd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/value.h"
@@ -40,6 +40,7 @@ WABI_NAMESPACE_BEGIN
 class HdDriver
 {
  public:
+
   TfToken name;
   VtValue driver;
 };

@@ -48,12 +48,10 @@ WABI_NAMESPACE_BEGIN
 class GlfBindingMap : public TfRefBase, public TfWeakBase
 {
  public:
+
   typedef TfHashMap<TfToken, int, TfToken::HashFunctor> BindingMap;
 
-  GlfBindingMap()
-    : _samplerBindingBaseIndex(0),
-      _uniformBindingBaseIndex(0)
-  {}
+  GlfBindingMap() : _samplerBindingBaseIndex(0), _uniformBindingBaseIndex(0) {}
 
   GLF_API
   int GetSamplerUnit(std::string const &name);
@@ -134,6 +132,7 @@ class GlfBindingMap : public TfRefBase, public TfWeakBase
   void Debug() const;
 
  private:
+
   void _AddActiveAttributeBindings(GLuint program);
   void _AddActiveUniformBindings(GLuint program);
   void _AddActiveUniformBlockBindings(GLuint program);

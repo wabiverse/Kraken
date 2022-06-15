@@ -42,16 +42,18 @@ WABI_NAMESPACE_BEGIN
 class Plug_InterfaceFactory
 {
  public:
+
   struct Base : public TfType::FactoryBase
   {
    public:
+
     virtual void *New() = 0;
   };
 
-  template<class Interface, class Implementation>
-  struct SingletonFactory : public Base
+  template<class Interface, class Implementation> struct SingletonFactory : public Base
   {
    public:
+
     virtual void *New()
     {
       static_assert(std::is_abstract<Interface>::value, "Interface type must be abstract.");

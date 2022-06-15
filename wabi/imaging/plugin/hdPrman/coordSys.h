@@ -40,6 +40,7 @@ struct HdPrman_Context;
 class HdPrmanCoordSys final : public HdCoordSys
 {
  public:
+
   HdPrmanCoordSys(SdfPath const &id);
   virtual ~HdPrmanCoordSys();
 
@@ -64,6 +65,7 @@ class HdPrmanCoordSys final : public HdCoordSys
   virtual void Finalize(HdRenderParam *renderParam) override;
 
  private:
+
   void _ResetCoordSys(HdPrman_Context *context);
 
   riley::CoordinateSystemId _coordSysId;

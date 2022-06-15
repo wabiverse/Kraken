@@ -71,6 +71,7 @@ class SdfAssetPath;
 class UsdLuxPluginLightFilter : public UsdLuxLightFilter
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -81,15 +82,12 @@ class UsdLuxPluginLightFilter : public UsdLuxLightFilter
   /// Equivalent to UsdLuxPluginLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxPluginLightFilter(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLightFilter(prim)
-  {}
+  explicit UsdLuxPluginLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim) {}
 
   /// Construct a UsdLuxPluginLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxPluginLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxPluginLightFilter(const UsdSchemaBase &schemaObj)
-    : UsdLuxLightFilter(schemaObj)
+  explicit UsdLuxPluginLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj)
   {}
 
   /// Destructor.
@@ -140,6 +138,7 @@ class UsdLuxPluginLightFilter : public UsdLuxLightFilter
   static UsdLuxPluginLightFilter Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -147,6 +146,7 @@ class UsdLuxPluginLightFilter : public UsdLuxLightFilter
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -156,9 +156,11 @@ class UsdLuxPluginLightFilter : public UsdLuxLightFilter
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -65,6 +65,7 @@ TF_DECLARE_PUBLIC_TOKENS(HdPrmanIntegratorTokens, HDPRMAN_API, HDPRMAN_INTEGRATO
 class HdPrmanRenderDelegate : public HdRenderDelegate
 {
  public:
+
   HDPRMAN_API HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context);
   HDPRMAN_API HdPrmanRenderDelegate(std::shared_ptr<HdPrman_Context> context,
                                     HdRenderSettingsMap const &settingsMap);
@@ -82,9 +83,11 @@ class HdPrmanRenderDelegate : public HdRenderDelegate
 
   HDPRMAN_API virtual HdRenderSettingsMap GetRenderSettingsMap() const;
 
-  HDPRMAN_API virtual HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
-                                                             HdRprimCollection const &collection) override;
-  HDPRMAN_API virtual HdInstancer *CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id) override;
+  HDPRMAN_API virtual HdRenderPassSharedPtr CreateRenderPass(
+    HdRenderIndex *index,
+    HdRprimCollection const &collection) override;
+  HDPRMAN_API virtual HdInstancer *CreateInstancer(HdSceneDelegate *delegate,
+                                                   SdfPath const &id) override;
   HDPRMAN_API virtual void DestroyInstancer(HdInstancer *instancer) override;
   HDPRMAN_API virtual HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId) override;
   HDPRMAN_API virtual void DestroyRprim(HdRprim *rPrim) override;
@@ -106,6 +109,7 @@ class HdPrmanRenderDelegate : public HdRenderDelegate
   HDPRMAN_API virtual void SetRenderSetting(TfToken const &key, VtValue const &value) override;
 
  private:
+
   // This class does not support copying.
   HdPrmanRenderDelegate(const HdPrmanRenderDelegate &) = delete;
   HdPrmanRenderDelegate &operator=(const HdPrmanRenderDelegate &) = delete;
@@ -113,6 +117,7 @@ class HdPrmanRenderDelegate : public HdRenderDelegate
   void _Initialize();
 
  protected:  // data
+
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;
   static const TfTokenVector SUPPORTED_SPRIM_TYPES;
   static const TfTokenVector SUPPORTED_BPRIM_TYPES;

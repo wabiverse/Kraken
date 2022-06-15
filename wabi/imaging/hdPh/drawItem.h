@@ -36,6 +36,7 @@ using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 class HdPhDrawItem : public HdDrawItem
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdPhDrawItem");
 
   HDPH_API
@@ -65,10 +66,12 @@ class HdPhDrawItem : public HdDrawItem
   }
 
  protected:
+
   size_t _GetBufferArraysHash() const override;
   size_t _GetElementOffsetsHash() const override;
 
  private:
+
   HdPh_GeometricShaderSharedPtr _geometricShader;
   HdPhShaderCodeSharedPtr _materialShader;
 };

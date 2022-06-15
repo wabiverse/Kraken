@@ -58,6 +58,7 @@ class SdfAttributeSpec : public SdfPropertySpec
   SDF_DECLARE_SPEC(SdfAttributeSpec, SdfPropertySpec);
 
  public:
+
   typedef SdfAttributeSpec This;
   typedef SdfPropertySpec Parent;
 

@@ -217,11 +217,10 @@ class UsdReferences
 {
   friend class UsdPrim;
 
-  explicit UsdReferences(const UsdPrim &prim)
-    : _prim(prim)
-  {}
+  explicit UsdReferences(const UsdPrim &prim) : _prim(prim) {}
 
  public:
+
   /// Adds a reference to the reference listOp at the current EditTarget,
   /// in the position specified by \p position.
   /// \sa \ref Usd_Failing_References "Why adding references may fail" for
@@ -229,7 +228,8 @@ class UsdReferences
   /// to expect, and \ref Usd_OM_ListOps for details on list editing and
   /// composition of listOps.
   USD_API
-  bool AddReference(const SdfReference &ref, UsdListPosition position = UsdListPositionBackOfPrependList);
+  bool AddReference(const SdfReference &ref,
+                    UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// \overload
   USD_API
@@ -295,6 +295,7 @@ class UsdReferences
   }
 
  private:
+
   UsdPrim _prim;
 };
 

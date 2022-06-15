@@ -63,6 +63,7 @@ class SdfAssetPath;
 class UsdVolFieldBase : public UsdGeomBoundable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -72,16 +73,12 @@ class UsdVolFieldBase : public UsdGeomBoundable
   /// Equivalent to UsdVolFieldBase::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolFieldBase(const UsdPrim &prim = UsdPrim())
-    : UsdGeomBoundable(prim)
-  {}
+  explicit UsdVolFieldBase(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim) {}
 
   /// Construct a UsdVolFieldBase on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolFieldBase(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolFieldBase(const UsdSchemaBase &schemaObj)
-    : UsdGeomBoundable(schemaObj)
-  {}
+  explicit UsdVolFieldBase(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj) {}
 
   /// Destructor.
   USDVOL_API
@@ -106,6 +103,7 @@ class UsdVolFieldBase : public UsdGeomBoundable
   static UsdVolFieldBase Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -113,6 +111,7 @@ class UsdVolFieldBase : public UsdGeomBoundable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDVOL_API
@@ -122,9 +121,11 @@ class UsdVolFieldBase : public UsdGeomBoundable
 
   // override SchemaBase virtuals.
   USDVOL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

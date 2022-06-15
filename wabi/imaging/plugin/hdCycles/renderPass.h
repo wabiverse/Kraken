@@ -43,6 +43,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesRenderPass final : public HdRenderPass
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Render Pass object
    *
@@ -61,13 +62,15 @@ class HdCyclesRenderPass final : public HdRenderPass
   virtual ~HdCyclesRenderPass();
 
  protected:
+
   /**
    * @brief Draw the scene with the bound renderpass state
    *
    * @param renderPassState Input parameters
    * @param renderTags  Which render tags should be drawn this pass
    */
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
+                TfTokenVector const &renderTags) override;
 
   bool IsConverged() const override
   {
@@ -75,12 +78,14 @@ class HdCyclesRenderPass final : public HdRenderPass
   }
 
  protected:
+
   HdCyclesRenderDelegate *m_delegate;
 
   GfMatrix4d m_projMtx;
   GfMatrix4d m_viewMtx;
 
  public:
+
   int m_width = 0;
   int m_height = 0;
 

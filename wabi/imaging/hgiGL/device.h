@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLDevice final
 {
  public:
+
   HGIGL_API
   HgiGLDevice();
 
@@ -71,6 +72,7 @@ class HgiGLDevice final
   void SubmitOps(HgiGLOpsVector const &ops);
 
  private:
+
   HgiGLDevice &operator=(const HgiGLDevice &) = delete;
   HgiGLDevice(const HgiGLDevice &) = delete;
 

@@ -10,6 +10,7 @@ namespace Zep
   class ZepSyntaxAdorn_RainbowBrackets : public ZepSyntaxAdorn
   {
    public:
+
     using TParent = ZepSyntaxAdorn;
     ZepSyntaxAdorn_RainbowBrackets(ZepSyntax &syntax, ZepBuffer &buffer);
     virtual ~ZepSyntaxAdorn_RainbowBrackets();
@@ -22,6 +23,7 @@ namespace Zep
     virtual void Update(const GlyphIterator &start, const GlyphIterator &end);
 
    private:
+
     void RefreshBrackets();
     enum class BracketType
     {

@@ -27,6 +27,7 @@ WABI_NAMESPACE_BEGIN
 class HdRprRenderThread
 {
  public:
+
   HdRprRenderThread();
   ~HdRprRenderThread();
 
@@ -49,6 +50,7 @@ class HdRprRenderThread
   void WaitUntilPaused();
 
  private:
+
   void RenderLoop();
 
   std::function<void()> m_stopCallback;

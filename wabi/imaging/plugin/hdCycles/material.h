@@ -61,6 +61,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesMaterial final : public HdMaterial
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Material
    *
@@ -84,7 +85,9 @@ class HdCyclesMaterial final : public HdMaterial
    * @param renderParam State
    * @param dirtyBits Which bits of scene data has changed
    */
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /**
    * @brief Inform the scene graph which state needs to be downloaded in
@@ -119,6 +122,7 @@ class HdCyclesMaterial final : public HdMaterial
   ccl::Shader *GetCyclesShader() const;
 
  protected:
+
   ccl::Shader *m_shader;
   ccl::ShaderGraph *m_shaderGraph;
 

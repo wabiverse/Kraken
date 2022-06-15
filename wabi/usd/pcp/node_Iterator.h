@@ -43,15 +43,16 @@ WABI_NAMESPACE_BEGIN
 /// Object used to iterate over child nodes (not all descendant nodes) of a
 /// node in the prim index graph in strong-to-weak order.
 ///
-class PcpNodeRef_PrivateChildrenConstIterator : public boost::iterator_facade<
-                                                  /* Derived =   */ PcpNodeRef_PrivateChildrenConstIterator,
-                                                  /* ValueType = */ const PcpNodeRef,
-                                                  /* Category =  */ boost::forward_traversal_tag>
+class PcpNodeRef_PrivateChildrenConstIterator
+  : public boost::iterator_facade<
+      /* Derived =   */ PcpNodeRef_PrivateChildrenConstIterator,
+      /* ValueType = */ const PcpNodeRef,
+      /* Category =  */ boost::forward_traversal_tag>
 {
  public:
+
   // Required by TF_FOR_ALL but always assigned to afterwards.
-  PcpNodeRef_PrivateChildrenConstIterator()
-  {}
+  PcpNodeRef_PrivateChildrenConstIterator() {}
 
   /// Constructs an iterator pointing to \p node's first or past its
   /// last child.
@@ -64,6 +65,7 @@ class PcpNodeRef_PrivateChildrenConstIterator : public boost::iterator_facade<
   }
 
  private:
+
   friend class boost::iterator_core_access;
   void increment()
   {
@@ -81,6 +83,7 @@ class PcpNodeRef_PrivateChildrenConstIterator : public boost::iterator_facade<
   }
 
  private:
+
   // Current graph node this iterator is pointing at.
   PcpNodeRef _node;
   const PcpPrimIndex_Graph::_Node *_nodes;
@@ -98,9 +101,9 @@ class PcpNodeRef_PrivateChildrenConstReverseIterator
       /* Category =  */ boost::forward_traversal_tag>
 {
  public:
+
   // Required by TF_FOR_ALL but always assigned to afterwards.
-  PcpNodeRef_PrivateChildrenConstReverseIterator()
-  {}
+  PcpNodeRef_PrivateChildrenConstReverseIterator() {}
 
   /// Constructs an iterator pointing to \p node's first or past its
   /// last child.
@@ -113,6 +116,7 @@ class PcpNodeRef_PrivateChildrenConstReverseIterator
   }
 
  private:
+
   friend class boost::iterator_core_access;
   void increment()
   {
@@ -130,6 +134,7 @@ class PcpNodeRef_PrivateChildrenConstReverseIterator
   }
 
  private:
+
   // Current graph node this iterator is pointing at.
   PcpNodeRef _node;
   const PcpPrimIndex_Graph::_Node *_nodes;
@@ -139,15 +144,13 @@ class PcpNodeRef_PrivateChildrenConstReverseIterator
 class PcpNodeRef_PrivateChildrenConstRange
 {
  public:
-  PcpNodeRef_PrivateChildrenConstRange(const PcpNodeRef &node_)
-    : node(node_)
-  {}
+
+  PcpNodeRef_PrivateChildrenConstRange(const PcpNodeRef &node_) : node(node_) {}
   PcpNodeRef node;
 };
 
 // TF_FOR_ALL() traits.  We build the iterators on demand.
-template<>
-struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, false>
+template<> struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, false>
 {
   typedef PcpNodeRef_PrivateChildrenConstRange RangeType;
   typedef PcpNodeRef_PrivateChildrenConstIterator IteratorType;
@@ -160,8 +163,7 @@ struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, false>
     return IteratorType(c.node, /* end = */ true);
   }
 };
-template<>
-struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, true>
+template<> struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, true>
 {
   typedef PcpNodeRef_PrivateChildrenConstRange RangeType;
   typedef PcpNodeRef_PrivateChildrenConstReverseIterator IteratorType;
@@ -174,10 +176,8 @@ struct Tf_IteratorInterface<PcpNodeRef_PrivateChildrenConstRange, true>
     return IteratorType(c.node, /* end = */ true);
   }
 };
-template<>
-struct Tf_ShouldIterateOverCopy<PcpNodeRef_PrivateChildrenConstRange> : boost::true_type
-{
-};
+template<> struct Tf_ShouldIterateOverCopy<PcpNodeRef_PrivateChildrenConstRange> : boost::true_type
+{};
 
 // Wrap a node for use by TF_FOR_ALL().
 inline PcpNodeRef_PrivateChildrenConstRange Pcp_GetChildrenRange(const PcpNodeRef &node)
@@ -189,7 +189,8 @@ inline PcpNodeRef_PrivateChildrenConstRange Pcp_GetChildrenRange(const PcpNodeRe
 inline PcpNodeRefVector Pcp_GetChildren(const PcpNodeRef &node)
 {
   typedef PcpNodeRef_PrivateChildrenConstIterator IteratorType;
-  return PcpNodeRefVector(IteratorType(node, /* end = */ false), IteratorType(node, /* end = */ true));
+  return PcpNodeRefVector(IteratorType(node, /* end = */ false),
+                          IteratorType(node, /* end = */ true));
 }
 
 WABI_NAMESPACE_END

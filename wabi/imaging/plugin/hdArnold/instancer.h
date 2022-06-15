@@ -40,6 +40,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldInstancer : public HdInstancer
 {
  public:
+
   /// Creates an instance of HdArnoldInstancer.
   ///
   /// @param renderDelegate Pointer to the render delegate creating the
@@ -55,7 +56,9 @@ class HdArnoldInstancer : public HdInstancer
   ~HdArnoldInstancer() override = default;
 
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Calculates the matrices for all instances for a given shape, including sampling multiple
   /// times.
@@ -63,7 +66,8 @@ class HdArnoldInstancer : public HdInstancer
   /// @param prototypeId ID of the instanced shape.
   /// @param sampleArray Output struct to hold time sampled matrices.
   HDARNOLD_API
-  void CalculateInstanceMatrices(const SdfPath &prototypeId, HdArnoldSampledMatrixArrayType &sampleArray);
+  void CalculateInstanceMatrices(const SdfPath &prototypeId,
+                                 HdArnoldSampledMatrixArrayType &sampleArray);
 
   /// Sets the primvars on the instancer node.
   ///
@@ -77,14 +81,15 @@ class HdArnoldInstancer : public HdInstancer
   void SetPrimvars(AtNode *node, const SdfPath &prototypeId, size_t instanceCount);
 
  protected:
+
   /// Syncs the primvars for the instancer.
   ///
   /// Safe to call on multiple threads.
   HDARNOLD_API
   void _SyncPrimvars(HdDirtyBits dirtyBits);
 
-  std::mutex _mutex;                                 ///< Mutex to safe-guard calls to _SyncPrimvars.
-  HdArnoldPrimvarMap _primvars;                      ///< Unordered map to store all the primvars.
+  std::mutex _mutex;             ///< Mutex to safe-guard calls to _SyncPrimvars.
+  HdArnoldPrimvarMap _primvars;  ///< Unordered map to store all the primvars.
   HdArnoldSampledType<VtMatrix4dArray> _transforms;  ///< Sampled instance transform values.
   HdArnoldSampledType<VtVec3fArray> _translates;     ///< Sampled instance translate values.
   // Newer versions use GfQuatH arrays instead of GfVec4f arrays.

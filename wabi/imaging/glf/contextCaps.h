@@ -63,6 +63,7 @@ WABI_NAMESPACE_BEGIN
 class GlfContextCaps
 {
  public:
+
   /// InitInstance queries the GL context for its capabilities.
   /// It should be called by the application before using systems
   /// that depend on the caps, such as Hydra.  A good example would be
@@ -111,6 +112,7 @@ class GlfContextCaps
   bool floatingPointBuffersEnabled;
 
  private:
+
   void _LoadCaps();
   GlfContextCaps();
   ~GlfContextCaps() = default;

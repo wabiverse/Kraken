@@ -24,36 +24,36 @@
 #ifndef WABI_IMAGING_HD_LIGHT_H
 #define WABI_IMAGING_HD_LIGHT_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/sprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/sprim.h"
 
 #include "wabi/base/tf/staticTokens.h"
-#include "wabi/base/vt/dictionary.h"
-#include "wabi/base/vt/value.h"
 
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
 
-#define HD_LIGHT_TOKENS                                                                                   \
-  (angle)(color)(colorTemperature)(enableColorTemperature)(exposure)(height)(intensity)(radius)(length)(( \
-    textureFile,                                                                                          \
-    "texture:file"))((textureFormat, "texture:format"))(                                                  \
-    width)(diffuse)(specular)(normalize)((shapingFocus, "shaping:focus"))(                                \
-    (shapingFocusTint, "shaping:focusTint"))((shapingConeAngle, "shaping:cone:angle"))(                   \
-    (shapingConeSoftness, "shaping:cone:softness"))((shapingIesFile, "shaping:ies:file"))(                \
-    (shapingIesAngleScale, "shaping:ies:angleScale"))((shapingIesNormalize, "shaping:ies:normalize"))(    \
-    (shadowEnable, "shadow:enable"))((shadowColor, "shadow:color"))((shadowDistance, "shadow:distance"))( \
-    (shadowFalloff, "shadow:falloff"))((shadowFalloffGamma, "shadow:falloffGamma"))                       \
-                                                                                                          \
+#define HD_LIGHT_TOKENS                                                                        \
+  (angle)(color)(                                                                              \
+    colorTemperature)(enableColorTemperature)(exposure)(height)(intensity)(radius)(length)((   \
+    textureFile,                                                                               \
+    "texture:file"))((textureFormat, "texture:format"))(                                       \
+    width)(ambient)(diffuse)(specular)(normalize)(hasShadow)((shapingFocus, "shaping:focus"))( \
+    (shapingFocusTint, "shaping:focusTint"))((shapingConeAngle, "shaping:cone:angle"))(        \
+    (shapingConeSoftness, "shaping:cone:softness"))((shapingIesFile, "shaping:ies:file"))(     \
+    (shapingIesAngleScale, "shaping:ies:angleScale"))(                                         \
+    (shapingIesNormalize, "shaping:ies:normalize"))((shadowEnable, "shadow:enable"))(          \
+    (shadowColor, "shadow:color"))((shadowDistance, "shadow:distance"))(                       \
+    (shadowFalloff, "shadow:falloff"))((shadowFalloffGamma, "shadow:falloffGamma"))            \
+                                                                                               \
     (params)(shadowCollection)(shadowParams)
 
 TF_DECLARE_PUBLIC_TOKENS(HdLightTokens, HD_API, HD_LIGHT_TOKENS);
 
 class HdSceneDelegate;
-typedef std::vector<class HdLight const *> HdLightPtrConstVector;
+using HdLightPtrConstVector = std::vector<class HdLight const *>;
 
 /// \class HdLight
 ///
@@ -62,10 +62,11 @@ typedef std::vector<class HdLight const *> HdLightPtrConstVector;
 class HdLight : public HdSprim
 {
  public:
+
   HD_API
   HdLight(SdfPath const &id);
   HD_API
-  virtual ~HdLight();
+  ~HdLight() override;
 
   // Change tracking for HdLight
   enum DirtyBits : HdDirtyBits

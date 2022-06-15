@@ -20,6 +20,7 @@ namespace Zep
   class ZepTreeNode
   {
    public:
+
     using TNode = std::shared_ptr<ZepTreeNode>;
     using TChildren = std::vector<TNode>;
 
@@ -56,15 +57,13 @@ namespace Zep
     virtual bool RemoveChild(ZepTreeNode *pNode)
     {
       auto itr = std::find_if(m_children.begin(), m_children.end(), [=](TNode &node) {
-        if (node.get() == pNode)
-        {
+        if (node.get() == pNode) {
           return true;
         }
         return false;
       });
 
-      if (itr != m_children.end())
-      {
+      if (itr != m_children.end()) {
         m_children.erase(itr);
         pNode->SetParent(nullptr);
         return true;
@@ -92,10 +91,8 @@ namespace Zep
       using fnVisit = std::function<void(ZepTreeNode * pNode, bool ex)>;
       fnVisit visitor = [&](ZepTreeNode *pNode, bool ex) {
         pNode->Expand(ex);
-        if (pNode->HasChildren())
-        {
-          for (auto &pChild : pNode->GetChildren())
-          {
+        if (pNode->HasChildren()) {
+          for (auto &pChild : pNode->GetChildren()) {
             visitor(pChild.get(), ex);
           }
         }
@@ -109,6 +106,7 @@ namespace Zep
     }
 
    protected:
+
     bool m_expanded = false;
     ZepTreeNode *m_pParent = nullptr;
     TChildren m_children;
@@ -119,18 +117,21 @@ namespace Zep
   class ZepTree
   {
    public:
+
     virtual ZepTreeNode *GetRoot() const
     {
       return m_spRoot.get();
     }
 
    protected:
+
     ZepTreeNode::TNode m_spRoot;
   };
 
   class ZepFileNode : public ZepTreeNode
   {
    public:
+
     ZepFileNode(const std::string &name, uint32_t flags = ZepTreeNodeFlags::None)
       : ZepTreeNode(name, flags)
     {}
@@ -139,12 +140,14 @@ namespace Zep
   class ZepFileTree : public ZepTree
   {
    public:
+
     ZepFileTree();
   };
 
   class ZepMode_Tree : public ZepMode_Vim
   {
    public:
+
     ZepMode_Tree(ZepEditor &editor,
                  std::shared_ptr<ZepTree> spTree,
                  ZepWindow &launchWindow,
@@ -163,9 +166,11 @@ namespace Zep
     }
 
    private:
+
     void BuildTree();
 
    private:
+
     std::shared_ptr<ZepTree> m_spTree;
     GlyphIterator m_startLocation = GlyphIterator{0};
     ZepWindow &m_launchWindow;

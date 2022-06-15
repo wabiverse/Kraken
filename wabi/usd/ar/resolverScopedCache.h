@@ -53,6 +53,7 @@ WABI_NAMESPACE_BEGIN
 class ArResolverScopedCache
 {
  public:
+
   // Disallow copies
   ArResolverScopedCache(const ArResolverScopedCache &) = delete;
   ArResolverScopedCache &operator=(const ArResolverScopedCache &) = delete;
@@ -81,6 +82,7 @@ class ArResolverScopedCache
   ~ArResolverScopedCache();
 
  private:
+
   VtValue _cacheScopeData;
 };
 

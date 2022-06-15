@@ -39,11 +39,7 @@ WABI_NAMESPACE_BEGIN
 ///
 struct HdxPresentTaskParams
 {
-  HdxPresentTaskParams()
-    : dstApi(HgiTokens->OpenGL),
-      dstRegion(0),
-      enabled(true)
-  {}
+  HdxPresentTaskParams() : dstApi(HgiTokens->OpenGL), dstRegion(0), enabled(true) {}
 
   // The graphics lib that is used by the application / viewer.
   // (The 'interopSrc' is determined by checking Hgi->GetAPIName)
@@ -78,6 +74,7 @@ struct HdxPresentTaskParams
 class HdxPresentTask : public HdxTask
 {
  public:
+
   // Returns true if the format is supported for presentation. This is useful
   // for upstream tasks to prepare the AOV data accordingly, and keeps the
   // interop step simple.
@@ -97,10 +94,12 @@ class HdxPresentTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   HdxPresentTaskParams _params;
   HgiInterop _interop;
 

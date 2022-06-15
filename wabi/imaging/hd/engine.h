@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_ENGINE_H
 #define WABI_IMAGING_HD_ENGINE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/task.h"
 
@@ -48,6 +48,7 @@ using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 class HdEngine
 {
  public:
+
   HD_API
   HdEngine();
   HD_API
@@ -84,13 +85,16 @@ class HdEngine
   HD_API
   void Execute(HdRenderIndex *index, HdTaskSharedPtrVector *tasks);
 
+
  private:
+
   /// Context containing token-value pairs, that is passed to each
   /// task in the render graph.  The task-context can be pre-populated
   /// and managed externally, so the state is persistent between runs of the
   /// render graph.
   HdTaskContext _taskContext;
 };
+
 
 WABI_NAMESPACE_END
 

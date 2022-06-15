@@ -53,6 +53,7 @@ class UsdImagingGL_UnitTestWindow;
 class UsdImagingGL_UnitTestGLDrawing
 {
  public:
+
   UsdImagingGL_UnitTestGLDrawing();
   virtual ~UsdImagingGL_UnitTestGLDrawing();
 
@@ -164,8 +165,7 @@ class UsdImagingGL_UnitTestGLDrawing
 
   virtual void InitTest() = 0;
   virtual void DrawTest(bool offscreen) = 0;
-  virtual void ShutdownTest()
-  {}
+  virtual void ShutdownTest() {}
 
   virtual void MousePress(int button, int x, int y, int modKeys);
   virtual void MouseRelease(int button, int x, int y, int modKeys);
@@ -175,6 +175,7 @@ class UsdImagingGL_UnitTestGLDrawing
   bool WriteToFile(std::string const &attachment, std::string const &filename) const;
 
  protected:
+
   float _GetComplexity() const
   {
     return _complexity;
@@ -200,10 +201,12 @@ class UsdImagingGL_UnitTestGLDrawing
   }
 
  private:
+
   struct _Args;
   void _Parse(int argc, char *argv[], _Args *args);
 
  private:
+
   UsdImagingGL_UnitTestWindow *_widget;
   bool _testLighting;
   bool _sceneLights;

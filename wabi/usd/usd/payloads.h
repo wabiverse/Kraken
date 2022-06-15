@@ -44,11 +44,10 @@ class UsdPayloads
 {
   friend class UsdPrim;
 
-  explicit UsdPayloads(const UsdPrim &prim)
-    : _prim(prim)
-  {}
+  explicit UsdPayloads(const UsdPrim &prim) : _prim(prim) {}
 
  public:
+
   /// Adds a payload to the payload listOp at the current EditTarget, in the
   /// position specified by \p position.
   /// \sa \ref Usd_Failing_References "Why adding references may fail" for
@@ -56,7 +55,8 @@ class UsdPayloads
   /// errors to expect, and \ref Usd_OM_ListOps for details on list editing
   /// and composition of listOps.
   USD_API
-  bool AddPayload(const SdfPayload &payload, UsdListPosition position = UsdListPositionBackOfPrependList);
+  bool AddPayload(const SdfPayload &payload,
+                  UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// \overload
   USD_API
@@ -122,6 +122,7 @@ class UsdPayloads
   }
 
  private:
+
   UsdPrim _prim;
 };
 

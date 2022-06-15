@@ -52,6 +52,7 @@ typedef std::shared_ptr<class GlfTestGLContext> GlfTestGLContextSharedPtr;
 class GlfTestGLContext : public GlfGLContext
 {
  public:
+
   GLF_API
   static void RegisterGLContextCallbacks();
 
@@ -63,6 +64,7 @@ class GlfTestGLContext : public GlfGLContext
   static GlfTestGLContextSharedPtr Create(GlfTestGLContextSharedPtr const &share);
 
  protected:
+
   // GlfGLContext overrides
   GLF_API
   virtual void _MakeCurrent();
@@ -72,11 +74,13 @@ class GlfTestGLContext : public GlfGLContext
   virtual bool _IsEqual(const GlfGLContextSharedPtr &rhs) const;
 
  private:
+
   GlfTestGLContext(Glf_TestGLContextPrivate const *context);
 
   friend class GlfTestGLContextRegistrationInterface;
 
  private:
+
   Glf_TestGLContextPrivate *_context;
 };
 

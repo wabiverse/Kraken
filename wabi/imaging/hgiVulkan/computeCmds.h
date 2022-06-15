@@ -49,6 +49,7 @@ class HgiVulkanCommandBuffer;
 class HgiVulkanComputeCmds final : public HgiComputeCmds
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanComputeCmds() override;
 
@@ -77,6 +78,7 @@ class HgiVulkanComputeCmds final : public HgiComputeCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
@@ -86,6 +88,7 @@ class HgiVulkanComputeCmds final : public HgiComputeCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiVulkanComputeCmds() = delete;
   HgiVulkanComputeCmds &operator=(const HgiVulkanComputeCmds &) = delete;
   HgiVulkanComputeCmds(const HgiVulkanComputeCmds &) = delete;

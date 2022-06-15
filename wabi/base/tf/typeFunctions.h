@@ -50,8 +50,7 @@ WABI_NAMESPACE_BEGIN
 /// (see refPtr.h for an example). Essentially, this is the inverse of
 /// TfTypeFunctions<T>::GetRawPtr.
 ///
-template<class T, class ENABLE = void>
-struct TfTypeFunctions
+template<class T, class ENABLE = void> struct TfTypeFunctions
 {
 #if 0
     static T* GetRawPtr(T& t) {
@@ -74,14 +73,11 @@ struct TfTypeFunctions
     return false;
   }
 
-  static void Class_Object_MUST_Not_Be_Const()
-  {}
-  static void Object_CANNOT_Be_a_Pointer()
-  {}
+  static void Class_Object_MUST_Not_Be_Const() {}
+  static void Object_CANNOT_Be_a_Pointer() {}
 };
 
-template<class T>
-struct TfTypeFunctions<T *>
+template<class T> struct TfTypeFunctions<T *>
 {
   static T *GetRawPtr(T *t)
   {
@@ -98,14 +94,11 @@ struct TfTypeFunctions<T *>
     return !ptr;
   }
 
-  static void Class_Object_MUST_Be_Passed_By_Address()
-  {}
-  static void Class_Object_MUST_Not_Be_Const()
-  {}
+  static void Class_Object_MUST_Be_Passed_By_Address() {}
+  static void Class_Object_MUST_Not_Be_Const() {}
 };
 
-template<class T>
-struct TfTypeFunctions<const T *>
+template<class T> struct TfTypeFunctions<const T *>
 {
   static const T *GetRawPtr(const T *t)
   {
@@ -121,8 +114,7 @@ struct TfTypeFunctions<const T *>
   {
     return ptr;
   }
-  static void Class_Object_MUST_Be_Passed_By_Address()
-  {}
+  static void Class_Object_MUST_Be_Passed_By_Address() {}
 };
 
 /// \class TfCopyIfNotReference
@@ -133,8 +125,7 @@ struct TfTypeFunctions<const T *>
 /// points to newly constructed dynamic space, which the caller must free.
 /// Otherwise, the returned value is the address of \p v.
 ///
-template<class T>
-struct TfCopyIfNotReference
+template<class T> struct TfCopyIfNotReference
 {
   static T *Apply(T value)
   {
@@ -142,8 +133,7 @@ struct TfCopyIfNotReference
   }
 };
 
-template<class T>
-struct TfCopyIfNotReference<T &>
+template<class T> struct TfCopyIfNotReference<T &>
 {
   static T *Apply(T &value)
   {

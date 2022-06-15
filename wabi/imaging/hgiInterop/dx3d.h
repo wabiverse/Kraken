@@ -50,6 +50,7 @@ class VtValue;
 class HgiInteropDX3D final
 {
  public:
+
   HGIINTEROP_API
   HgiInteropDX3D(Hgi *hgiDX3D);
 
@@ -66,6 +67,7 @@ class HgiInteropDX3D final
                           GfVec4i const &viewport);
 
  private:
+
   HgiInteropDX3D() = delete;
 
   HgiDX3D *_hgiDX3D;

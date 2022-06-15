@@ -60,6 +60,7 @@ class SdfAssetPath;
 class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -69,16 +70,12 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   /// Equivalent to UsdPhysicsRigidBodyAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsRigidBodyAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdPhysicsRigidBodyAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdPhysicsRigidBodyAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsRigidBodyAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsRigidBodyAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdPhysicsRigidBodyAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -141,6 +138,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   static UsdPhysicsRigidBodyAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -148,6 +146,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -157,9 +156,11 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIGIDBODYENABLED
   // --------------------------------------------------------------------- //
@@ -183,6 +184,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // KINEMATICENABLED
   // --------------------------------------------------------------------- //
@@ -210,6 +212,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // STARTSASLEEP
   // --------------------------------------------------------------------- //
@@ -234,6 +237,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VELOCITY
   // --------------------------------------------------------------------- //
@@ -254,9 +258,11 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateVelocityAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVelocityAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANGULARVELOCITY
   // --------------------------------------------------------------------- //
@@ -281,6 +287,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SIMULATIONOWNER
   // --------------------------------------------------------------------- //
@@ -297,6 +304,7 @@ class UsdPhysicsRigidBodyAPI : public UsdAPISchemaBase
   UsdRelationship CreateSimulationOwnerRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_INSTANCER_H
 #define WABI_IMAGING_HD_INSTANCER_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/types.h"
 
 #include "wabi/usd/sdf/path.h"
 
@@ -116,7 +116,7 @@ class HdRenderParam;
 ///
 /// HdInstancer's primary role is to track the "indices" arrays for each
 /// proto used by an instancer, and any provided primvar arrays. The
-/// implementation is in the renderer-specific instancers, like HdPhInstancer.
+/// implementation is in the renderer-specific instancers, like HdStInstancer.
 ///
 /// All data access (aside from local caches) is routed to the HdSceneDelegate.
 ///
@@ -124,6 +124,7 @@ class HdRenderParam;
 class HdInstancer
 {
  public:
+
   /// Constructor.
   HD_API
   HdInstancer(HdSceneDelegate *delegate, SdfPath const &id);
@@ -155,7 +156,9 @@ class HdInstancer
   static TfTokenVector const &GetBuiltinPrimvarNames();
 
   HD_API
-  virtual void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits);
+  virtual void Sync(HdSceneDelegate *sceneDelegate,
+                    HdRenderParam *renderParam,
+                    HdDirtyBits *dirtyBits);
 
   HD_API
   virtual void Finalize(HdRenderParam *renderParam);
@@ -167,10 +170,12 @@ class HdInstancer
   static void _SyncInstancerAndParents(HdRenderIndex &renderIndex, SdfPath const &instancerId);
 
  protected:
+
   HD_API
   void _UpdateInstancer(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits);
 
  private:
+
   HdSceneDelegate *_delegate;
   SdfPath _id;
   SdfPath _parentId;
@@ -179,6 +184,7 @@ class HdInstancer
   // away when the render index calls sync on instancers.
   std::mutex _instanceLock;
 };
+
 
 WABI_NAMESPACE_END
 

@@ -55,11 +55,10 @@ WABI_NAMESPACE_BEGIN
 class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdSkelImagingSkeletonAdapter()
-    : BaseAdapter()
-  {}
+  UsdSkelImagingSkeletonAdapter() : BaseAdapter() {}
 
   USDSKELIMAGING_API
   virtual ~UsdSkelImagingSkeletonAdapter();
@@ -78,10 +77,11 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
 
   /// Thread Safe.
   USDSKELIMAGING_API
-  void TrackVariability(const UsdPrim &prim,
-                        const SdfPath &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        const UsdImagingInstancerContext *instancerContext = nullptr) const override;
+  void TrackVariability(
+    const UsdPrim &prim,
+    const SdfPath &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    const UsdImagingInstancerContext *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDSKELIMAGING_API
@@ -118,7 +118,9 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
                             UsdImagingIndexProxy *index) override;
 
   USDSKELIMAGING_API
-  void MarkReprDirty(UsdPrim const &prim, SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
+  void MarkReprDirty(UsdPrim const &prim,
+                     SdfPath const &cachePath,
+                     UsdImagingIndexProxy *index) override;
 
   USDSKELIMAGING_API
   void MarkCullStyleDirty(UsdPrim const &prim,
@@ -168,10 +170,14 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
                                 UsdTimeCode time) const override;
 
   USDSKELIMAGING_API
-  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDSKELIMAGING_API
-  GfRange3d GetExtent(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  GfRange3d GetExtent(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDSKELIMAGING_API
   TfToken GetPurpose(UsdPrim const &prim,
@@ -179,10 +185,14 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
                      TfToken const &instanceInheritablePurpose) const override;
 
   USDSKELIMAGING_API
-  bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  bool GetDoubleSided(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDSKELIMAGING_API
-  SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  SdfPath GetMaterialId(UsdPrim const &prim,
+                        SdfPath const &cachePath,
+                        UsdTimeCode time) const override;
 
   USDSKELIMAGING_API
   const TfTokenVector &GetExtComputationSceneInputNames(SdfPath const &cachePath) const override;
@@ -205,11 +215,12 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
     const UsdImagingInstancerContext *instancerContext) const override;
 
   USDIMAGING_API
-  VtValue GetExtComputationInput(UsdPrim const &prim,
-                                 SdfPath const &cachePath,
-                                 TfToken const &name,
-                                 UsdTimeCode time,
-                                 const UsdImagingInstancerContext *instancerContext) const override;
+  VtValue GetExtComputationInput(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    TfToken const &name,
+    UsdTimeCode time,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
   USDIMAGING_API
   size_t SampleExtComputationInput(UsdPrim const &prim,
@@ -222,9 +233,10 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
                                    VtValue *sampleValues) override;
 
   USDIMAGING_API
-  std::string GetExtComputationKernel(UsdPrim const &prim,
-                                      SdfPath const &cachePath,
-                                      const UsdImagingInstancerContext *instancerContext) const override;
+  std::string GetExtComputationKernel(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
   USDSKELIMAGING_API
   VtValue Get(UsdPrim const &prim,
@@ -234,12 +246,14 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
               VtIntArray *outIndices) const override;
 
  protected:
+
   // ---------------------------------------------------------------------- //
   /// \name Change Processing API (protected)
   // ---------------------------------------------------------------------- //
   void _RemovePrim(const SdfPath &cachePath, UsdImagingIndexProxy *index) override;
 
  private:
+
   // ---------------------------------------------------------------------- //
   /// Handlers for the Bone Mesh
   // ---------------------------------------------------------------------- //
@@ -253,10 +267,11 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
   /// taking into account explicitly authored opacity on the prim.
   float _GetSkeletonDisplayOpacity(const UsdPrim &prim, UsdTimeCode time) const;
 
-  void _TrackBoneMeshVariability(const UsdPrim &prim,
-                                 const SdfPath &cachePath,
-                                 HdDirtyBits *timeVaryingBits,
-                                 const UsdImagingInstancerContext *instancerContext = nullptr) const;
+  void _TrackBoneMeshVariability(
+    const UsdPrim &prim,
+    const SdfPath &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    const UsdImagingInstancerContext *instancerContext = nullptr) const;
 
   void _UpdateBoneMeshForTime(const UsdPrim &prim,
                               const SdfPath &cachePath,
@@ -302,16 +317,18 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
   // ---------------------------------------------------------------------- //
   bool _IsSkinnedPrimPath(const SdfPath &cachePath) const;
 
-  void _TrackSkinnedPrimVariability(const UsdPrim &prim,
-                                    const SdfPath &cachePath,
-                                    HdDirtyBits *timeVaryingBits,
-                                    const UsdImagingInstancerContext *instancerContext = nullptr) const;
+  void _TrackSkinnedPrimVariability(
+    const UsdPrim &prim,
+    const SdfPath &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    const UsdImagingInstancerContext *instancerContext = nullptr) const;
 
-  void _UpdateSkinnedPrimForTime(const UsdPrim &prim,
-                                 const SdfPath &cachePath,
-                                 UsdTimeCode time,
-                                 HdDirtyBits requestedBits,
-                                 const UsdImagingInstancerContext *instancerContext = nullptr) const;
+  void _UpdateSkinnedPrimForTime(
+    const UsdPrim &prim,
+    const SdfPath &cachePath,
+    UsdTimeCode time,
+    HdDirtyBits requestedBits,
+    const UsdImagingInstancerContext *instancerContext = nullptr) const;
 
   // ---------------------------------------------------------------------- //
   /// GetExtComputationInput() helpers
@@ -331,23 +348,25 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
     UsdTimeCode time,
     const UsdImagingInstancerContext *instancerContext) const;
 
-  size_t _SampleExtComputationInputForSkinningComputation(UsdPrim const &prim,
-                                                          SdfPath const &cachePath,
-                                                          TfToken const &name,
-                                                          UsdTimeCode time,
-                                                          const UsdImagingInstancerContext *instancerContext,
-                                                          size_t maxSampleCount,
-                                                          float *sampleTimes,
-                                                          VtValue *sampleValues);
+  size_t _SampleExtComputationInputForSkinningComputation(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    TfToken const &name,
+    UsdTimeCode time,
+    const UsdImagingInstancerContext *instancerContext,
+    size_t maxSampleCount,
+    float *sampleTimes,
+    VtValue *sampleValues);
 
-  size_t _SampleExtComputationInputForInputAggregator(UsdPrim const &prim,
-                                                      SdfPath const &cachePath,
-                                                      TfToken const &name,
-                                                      UsdTimeCode time,
-                                                      const UsdImagingInstancerContext *instancerContext,
-                                                      size_t maxSampleCount,
-                                                      float *sampleTimes,
-                                                      VtValue *sampleValues);
+  size_t _SampleExtComputationInputForInputAggregator(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    TfToken const &name,
+    UsdTimeCode time,
+    const UsdImagingInstancerContext *instancerContext,
+    size_t maxSampleCount,
+    float *sampleTimes,
+    VtValue *sampleValues);
 
   // ---------------------------------------------------------------------- //
   /// Populated skeleton state
@@ -369,6 +388,7 @@ class UsdSkelImagingSkeletonAdapter : public UsdImagingPrimAdapter
     TfToken ComputePurpose() const;
 
    private:
+
     // Cache of a mesh for a skeleton (at rest)
     // TODO: Dedupe this infromation across UsdSkelSkeleton instances.
     VtVec3fArray _boneMeshPoints;

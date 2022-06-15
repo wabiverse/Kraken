@@ -24,16 +24,17 @@
 #ifndef WABI_IMAGING_HD_RPRIM_COLLECTION_H
 #define WABI_IMAGING_HD_RPRIM_COLLECTION_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/repr.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/usd/sdf/path.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/repr.h"
+#include "wabi/usd/sdf/path.h"
+#include "wabi/base/tf/token.h"
 
 #include <string>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdRprimCollection
 ///
@@ -53,6 +54,7 @@ WABI_NAMESPACE_BEGIN
 class HdRprimCollection
 {
  public:
+
   HD_API
   HdRprimCollection();
 
@@ -172,7 +174,7 @@ class HdRprimCollection
   /// A MaterialTag can be used to ensure only prims whos material have
   /// a matching tag will end up in the collection. Different rendering
   /// backends can control what material properties are useful for splitting
-  /// up collections. For example, when Phoenix finds the 'translucent'
+  /// up collections. For example, when Storm finds the 'translucent'
   /// MaterialTag in a material it will transfer this tag onto the
   /// prim's DrawItem. This ensures that opaque and translucent prims end up
   /// in different collections so they can be rendered seperately.
@@ -198,10 +200,14 @@ class HdRprimCollection
   };
 
   // TfHash support.
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, HdRprimCollection const &rc)
+  template<class HashState> friend void TfHashAppend(HashState &h, HdRprimCollection const &rc)
   {
-    h.Append(rc._name, rc._reprSelector, rc._forcedRepr, rc._rootPaths, rc._excludePaths, rc._materialTag);
+    h.Append(rc._name,
+             rc._reprSelector,
+             rc._forcedRepr,
+             rc._rootPaths,
+             rc._excludePaths,
+             rc._materialTag);
   }
 
   HD_API
@@ -210,6 +216,7 @@ class HdRprimCollection
   bool operator!=(HdRprimCollection const &lhs) const;
 
  private:
+
   HD_API
   friend std::ostream &operator<<(std::ostream &out, HdRprimCollection const &v);
 
@@ -228,6 +235,7 @@ std::ostream &operator<<(std::ostream &out, HdRprimCollection const &v);
 // Overload hash_value for HdRprimCollection.  Used by things like boost::hash.
 HD_API
 size_t hash_value(HdRprimCollection const &col);
+
 
 WABI_NAMESPACE_END
 

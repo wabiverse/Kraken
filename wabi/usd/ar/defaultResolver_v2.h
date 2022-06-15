@@ -78,6 +78,7 @@ WABI_NAMESPACE_BEGIN
 class ArDefaultResolver : public ArResolver
 {
  public:
+
   AR_API
   ArDefaultResolver();
 
@@ -102,7 +103,8 @@ class ArDefaultResolver : public ArResolver
   virtual void ConfigureResolverForAsset(const std::string &path) override;
 
   AR_API
-  virtual std::string AnchorRelativePath(const std::string &anchorPath, const std::string &path) override;
+  virtual std::string AnchorRelativePath(const std::string &anchorPath,
+                                         const std::string &path) override;
 
   AR_API
   virtual bool IsRelativePath(const std::string &path) override;
@@ -111,6 +113,7 @@ class ArDefaultResolver : public ArResolver
   virtual bool IsSearchPath(const std::string &path) override;
 
  protected:
+
   AR_API
   virtual std::string _CreateIdentifier(const std::string &assetPath,
                                         const ArResolvedPath &anchorAssetPath) override;
@@ -179,6 +182,7 @@ class ArDefaultResolver : public ArResolver
   virtual void _EndCacheScope(VtValue *cacheScopeData) override;
 
  private:
+
   struct _Cache;
   using _PerThreadCache = ArThreadLocalScopedCache<_Cache>;
   using _CachePtr = _PerThreadCache::CachePtr;
@@ -189,6 +193,7 @@ class ArDefaultResolver : public ArResolver
   ArResolvedPath _ResolveNoCache(const std::string &path);
 
  private:
+
   ArDefaultResolverContext _fallbackContext;
   ArResolverContext _defaultContext;
 

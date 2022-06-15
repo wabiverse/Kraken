@@ -40,8 +40,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T>
-static VtArray<T> _BuildArray(T values[], int numValues)
+template<typename T> static VtArray<T> _BuildArray(T values[], int numValues)
 {
   VtArray<T> result(numValues);
   std::copy(values, values + numValues, result.begin());
@@ -51,6 +50,7 @@ static VtArray<T> _BuildArray(T values[], int numValues)
 class Hdx_UnitTestDelegate : public HdSceneDelegate
 {
  public:
+
   Hdx_UnitTestDelegate(HdRenderIndex *renderIndex);
 
   void SetRefineLevel(int level);
@@ -159,7 +159,8 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
   bool GetVisible(SdfPath const &id) override;
   HdMeshTopology GetMeshTopology(SdfPath const &id) override;
   VtValue Get(SdfPath const &id, TfToken const &key) override;
-  HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id, HdInterpolation interpolation) override;
+  HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id,
+                                                  HdInterpolation interpolation) override;
   VtIntArray GetInstanceIndices(SdfPath const &instancerId, SdfPath const &prototypeId) override;
 
   GfMatrix4d GetInstancerTransform(SdfPath const &instancerId) override;
@@ -178,10 +179,10 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
   bool WriteRenderBufferToFile(SdfPath const &id, std::string const &filePath);
 
  private:
+
   struct _Mesh
   {
-    _Mesh()
-    {}
+    _Mesh() {}
     _Mesh(TfToken const &scheme,
           TfToken const &orientation,
           GfMatrix4d const &transform,
@@ -228,8 +229,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
 
   struct _Instancer
   {
-    _Instancer()
-    {}
+    _Instancer() {}
     _Instancer(VtVec3fArray const &scale,
                VtVec4fArray const &rotate,
                VtVec3fArray const &translate,
@@ -248,8 +248,7 @@ class Hdx_UnitTestDelegate : public HdSceneDelegate
     std::vector<SdfPath> prototypes;
   };
   struct _DrawTarget
-  {
-  };
+  {};
   std::map<SdfPath, _Mesh> _meshes;
   std::map<SdfPath, _Instancer> _instancers;
   std::map<SdfPath, VtValue> _materials;

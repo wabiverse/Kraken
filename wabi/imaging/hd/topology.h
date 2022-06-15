@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_TOPOLOGY_H
 #define WABI_IMAGING_HD_TOPOLOGY_H
 
-#include "wabi/base/arch/inttypes.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/inttypes.h"
 
 #include <ostream>
 
@@ -36,6 +36,7 @@ WABI_NAMESPACE_BEGIN
 class HdTopology
 {
  public:
+
   typedef uint64_t ID;
 
   HdTopology(){};
@@ -47,6 +48,7 @@ class HdTopology
 
 HD_API
 std::ostream &operator<<(std::ostream &out, HdTopology const &);
+
 
 WABI_NAMESPACE_END
 

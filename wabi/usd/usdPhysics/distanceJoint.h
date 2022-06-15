@@ -58,6 +58,7 @@ class SdfAssetPath;
 class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -67,16 +68,12 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
   /// Equivalent to UsdPhysicsDistanceJoint::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsDistanceJoint(const UsdPrim &prim = UsdPrim())
-    : UsdPhysicsJoint(prim)
-  {}
+  explicit UsdPhysicsDistanceJoint(const UsdPrim &prim = UsdPrim()) : UsdPhysicsJoint(prim) {}
 
   /// Construct a UsdPhysicsDistanceJoint on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsDistanceJoint(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsDistanceJoint(const UsdSchemaBase &schemaObj)
-    : UsdPhysicsJoint(schemaObj)
-  {}
+  explicit UsdPhysicsDistanceJoint(const UsdSchemaBase &schemaObj) : UsdPhysicsJoint(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -126,6 +123,7 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
   static UsdPhysicsDistanceJoint Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -133,6 +131,7 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -142,9 +141,11 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MINDISTANCE
   // --------------------------------------------------------------------- //
@@ -169,6 +170,7 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MAXDISTANCE
   // --------------------------------------------------------------------- //
@@ -193,6 +195,7 @@ class UsdPhysicsDistanceJoint : public UsdPhysicsJoint
                                      bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

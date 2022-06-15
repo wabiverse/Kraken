@@ -24,16 +24,17 @@
 #ifndef WABI_IMAGING_HD_BUFFER_ARRAY_RANGE_H
 #define WABI_IMAGING_HD_BUFFER_ARRAY_RANGE_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/bufferArray.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
@@ -50,6 +51,7 @@ using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 class HdBufferArrayRange
 {
  public:
+
   HD_API
   HdBufferArrayRange();
 
@@ -69,6 +71,9 @@ class HdBufferArrayRange
 
   /// Returns true if this range is marked as immutable.
   virtual bool IsImmutable() const = 0;
+
+  /// Returns true if this needs a staging buffer for CPU to GPU copies.
+  virtual bool RequiresStaging() const = 0;
 
   /// Resize memory area for this range. Returns true if it causes container
   /// buffer reallocation.
@@ -120,6 +125,7 @@ class HdBufferArrayRange
   virtual void GetBufferSpecs(HdBufferSpecVector *bufferSpecs) const = 0;
 
  protected:
+
   /// Returns the aggregation container to be used in IsAggregatedWith()
   virtual const void *_GetAggregation() const = 0;
 
@@ -138,10 +144,9 @@ std::ostream &operator<<(std::ostream &out, const HdBufferArrayRange &self);
 class HdBufferArrayRangeContainer
 {
  public:
+
   /// Constructor
-  HdBufferArrayRangeContainer(int size)
-    : _ranges(size)
-  {}
+  HdBufferArrayRangeContainer(int size) : _ranges(size) {}
 
   /// Set \p range into the container at \p index.
   /// If the size of container is smaller than index, resize it.
@@ -159,8 +164,10 @@ class HdBufferArrayRangeContainer
   void Resize(int size);
 
  private:
+
   std::vector<HdBufferArrayRangeSharedPtr> _ranges;
 };
+
 
 WABI_NAMESPACE_END
 

@@ -45,6 +45,7 @@ using HgiShaderProgramHandle = HgiHandle<class HgiShaderProgram>;
 class HdPhGLSLProgram final
 {
  public:
+
   typedef size_t ID;
 
   HDPH_API
@@ -98,6 +99,7 @@ class HdPhGLSLProgram final
   }
 
  private:
+
   HdPhResourceRegistry *const _registry;
   TfToken _role;
 

@@ -64,6 +64,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceAggregateNode);
 class TraceAggregateNode : public TfRefBase, public TfWeakBase
 {
  public:
+
   using This = TraceAggregateNode;
   using ThisPtr = TraceAggregateNodePtr;
   using ThisRefPtr = TraceAggregateNodeRefPtr;
@@ -75,18 +76,16 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase
   class Id
   {
    public:
-    Id()
-      : _valid(false)
-    {}
-    Id(const TraceThreadId &)
-      : _valid(true)
-    {}
+
+    Id() : _valid(false) {}
+    Id(const TraceThreadId &) : _valid(true) {}
     bool IsValid() const
     {
       return _valid;
     }
 
    private:
+
     bool _valid;
   };
 
@@ -104,7 +103,8 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase
     return TfCreateRefPtr(new This(id, key, ts, count, exclusiveCount));
   }
 
-  TRACE_API TraceAggregateNodeRefPtr Append(Id id, const TfToken &key, TimeStamp ts, int c = 1, int xc = 1);
+  TRACE_API TraceAggregateNodeRefPtr
+  Append(Id id, const TfToken &key, TimeStamp ts, int c = 1, int xc = 1);
 
   TRACE_API void Append(TraceAggregateNodeRefPtr child);
 
@@ -230,6 +230,7 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase
   /// @}
 
  private:
+
   TraceAggregateNode(const Id &id, const TfToken &key, TimeStamp ts, int count, int exclusiveCount)
     : _id(id),
       _key(key),
@@ -273,10 +274,7 @@ class TraceAggregateNode : public TfRefBase, public TfWeakBase
   // to maintain them in a tightly packed structure.
   struct _CounterValue
   {
-    _CounterValue()
-      : inclusive(0.0),
-        exclusive(0.0)
-    {}
+    _CounterValue() : inclusive(0.0), exclusive(0.0) {}
     double inclusive;
     double exclusive;
   };

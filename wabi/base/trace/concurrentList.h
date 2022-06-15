@@ -48,8 +48,7 @@ WABI_NAMESPACE_BEGIN
 ///
 /// This class supports thread safe insertion and iteration over a list of items.
 ///
-template<typename T>
-class TraceConcurrentList
+template<typename T> class TraceConcurrentList
 {
 
   // Linked list node that is cache line aligned to prevent false sharing.
@@ -60,6 +59,7 @@ class TraceConcurrentList
   };
 
  public:
+
   ////////////////////////////////////////////////////////////////////////////
   /// \class iterator
   ///
@@ -69,6 +69,7 @@ class TraceConcurrentList
   class iterator
   {
    public:
+
     // iterator types
     using iterator_category = std::forward_iterator_tag;
     using value = T;
@@ -76,9 +77,7 @@ class TraceConcurrentList
     using reference = T &;
     using difference_type = ptrdiff_t;
 
-    iterator()
-      : _node(nullptr)
-    {}
+    iterator() : _node(nullptr) {}
 
     pointer operator->()
     {
@@ -114,25 +113,21 @@ class TraceConcurrentList
     }
 
    private:
-    explicit iterator(Node *node)
-      : _node(node)
-    {}
+
+    explicit iterator(Node *node) : _node(node) {}
     Node *_node;
     friend class TraceConcurrentList;
   };
 
   /// Constructor.
-  TraceConcurrentList()
-    : _head(nullptr)
-  {}
+  TraceConcurrentList() : _head(nullptr) {}
 
   /// Destructor.
   ~TraceConcurrentList()
   {
     // Delete all nodes in the list.
     Node *curNode = _head.load(std::memory_order_acquire);
-    while (curNode)
-    {
+    while (curNode) {
       Node *nodeToDelete = curNode;
       curNode = curNode->next;
       nodeToDelete->~Node();
@@ -164,14 +159,14 @@ class TraceConcurrentList
     new ((void *)newNode) Node();
 
     // Add the node to the linked list in an atomic manner.
-    do
-    {
+    do {
       newNode->next = _head.load(std::memory_order_relaxed);
     } while (!_head.compare_exchange_weak(newNode->next, newNode));
     return iterator(newNode);
   }
 
  private:
+
   std::atomic<Node *> _head;
   tbb::cache_aligned_allocator<Node> _alloc;
 };

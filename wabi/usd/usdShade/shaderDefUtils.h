@@ -44,6 +44,7 @@ class UsdShadeShader;
 class UsdShadeShaderDefUtils
 {
  public:
+
   /// Given a shader's \p identifier token, computes the corresponding
   /// SdrShaderNode's family name, implementation name and shader version
   /// (as NdrVersion).

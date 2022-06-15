@@ -59,6 +59,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleShadowArray);
 class GlfSimpleLightingContext : public TfRefBase, public TfWeakBase
 {
  public:
+
   typedef GlfSimpleLightingContext This;
 
   GLF_API
@@ -144,6 +145,7 @@ class GlfSimpleLightingContext : public TfRefBase, public TfWeakBase
   /// @}
 
  protected:
+
   GLF_API
   GlfSimpleLightingContext();
   GLF_API
@@ -153,6 +155,7 @@ class GlfSimpleLightingContext : public TfRefBase, public TfWeakBase
   void _BindPostSurfaceShaderParams(GlfBindingMapPtr const &bindingMap);
 
  private:
+
   GlfSimpleLightVector _lights;
   GlfSimpleShadowArrayRefPtr _shadows;
 

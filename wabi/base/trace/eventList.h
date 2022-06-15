@@ -53,6 +53,7 @@ WABI_NAMESPACE_BEGIN
 class TraceEventList
 {
  public:
+
   /// Constructor.
   TRACE_API TraceEventList();
 
@@ -97,8 +98,7 @@ class TraceEventList
 
   /// Construct a TraceEvent at the end on the list.
   /// Returns a reference to the newly constructed event.
-  template<class... Args>
-  const TraceEvent &EmplaceBack(Args &&...args)
+  template<class... Args> const TraceEvent &EmplaceBack(Args &&...args)
   {
     return _events.emplace_back(std::forward<Args>(args)...);
   }
@@ -126,6 +126,7 @@ class TraceEventList
   }
 
  private:
+
   TraceEventContainer _events;
 
   // For speed the TraceEvent class holds a pointer to a TraceStaticKeyData.

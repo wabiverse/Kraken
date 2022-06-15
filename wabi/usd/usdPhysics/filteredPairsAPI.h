@@ -62,6 +62,7 @@ class SdfAssetPath;
 class UsdPhysicsFilteredPairsAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -71,15 +72,12 @@ class UsdPhysicsFilteredPairsAPI : public UsdAPISchemaBase
   /// Equivalent to UsdPhysicsFilteredPairsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsFilteredPairsAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdPhysicsFilteredPairsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdPhysicsFilteredPairsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsFilteredPairsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsFilteredPairsAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
+  explicit UsdPhysicsFilteredPairsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -143,6 +141,7 @@ class UsdPhysicsFilteredPairsAPI : public UsdAPISchemaBase
   static UsdPhysicsFilteredPairsAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -150,6 +149,7 @@ class UsdPhysicsFilteredPairsAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -159,9 +159,11 @@ class UsdPhysicsFilteredPairsAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FILTEREDPAIRS
   // --------------------------------------------------------------------- //
@@ -176,6 +178,7 @@ class UsdPhysicsFilteredPairsAPI : public UsdAPISchemaBase
   UsdRelationship CreateFilteredPairsRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

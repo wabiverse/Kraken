@@ -51,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class TraceReporterDataSourceBase
 {
  public:
+
   using CollectionPtr = std::shared_ptr<TraceCollection>;
 
   /// Destructor

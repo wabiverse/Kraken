@@ -42,7 +42,8 @@ extern "C" {
 #  include <stddef.h> /* size_t */
 
 /* PXR - modification; hoist this include out of namespace scope. */
-#  if defined(__cplusplus) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
+#  if defined(__cplusplus) || \
+    (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
 #    include <stdint.h>
 #  endif
 
@@ -114,15 +115,18 @@ namespace wabi_lz4
 #  define LZ4_VERSION_MINOR 9   /* for new (non-breaking) interface capabilities */
 #  define LZ4_VERSION_RELEASE 2 /* for tweaks, bug-fixes, or development */
 
-#  define LZ4_VERSION_NUMBER (LZ4_VERSION_MAJOR * 100 * 100 + LZ4_VERSION_MINOR * 100 + LZ4_VERSION_RELEASE)
+#  define LZ4_VERSION_NUMBER \
+    (LZ4_VERSION_MAJOR * 100 * 100 + LZ4_VERSION_MINOR * 100 + LZ4_VERSION_RELEASE)
 
 #  define LZ4_LIB_VERSION LZ4_VERSION_MAJOR.LZ4_VERSION_MINOR.LZ4_VERSION_RELEASE
 #  define LZ4_QUOTE(str) #  str
 #  define LZ4_EXPAND_AND_QUOTE(str) LZ4_QUOTE(str)
 #  define LZ4_VERSION_STRING LZ4_EXPAND_AND_QUOTE(LZ4_LIB_VERSION)
 
-  LZ4LIB_API int LZ4_versionNumber(void);         /**< library version number; useful to check dll version */
-  LZ4LIB_API const char *LZ4_versionString(void); /**< library version string; useful to check dll version */
+  LZ4LIB_API int LZ4_versionNumber(
+    void); /**< library version number; useful to check dll version */
+  LZ4LIB_API const char *LZ4_versionString(
+    void); /**< library version string; useful to check dll version */
 
 /*-************************************
  *  Tuning parameter
@@ -153,28 +157,31 @@ namespace wabi_lz4
    *      dstCapacity : size of buffer 'dst' (which must be already allocated)
    *     @return  : the number of bytes written into buffer 'dst' (necessarily <= dstCapacity)
    *                or 0 if compression fails
-   * Note : This function is protected against buffer overflow scenarios (never writes outside 'dst'
-   * buffer, nor read outside 'source' buffer).
+   * Note : This function is protected against buffer overflow scenarios (never writes outside
+   * 'dst' buffer, nor read outside 'source' buffer).
    */
   LZ4LIB_API int LZ4_compress_default(const char *src, char *dst, int srcSize, int dstCapacity);
 
   /*! LZ4_decompress_safe() :
    *  compressedSize : is the exact complete size of the compressed block.
-   *  dstCapacity : is the size of destination buffer (which must be already allocated), presumed an
-   * upper bound of decompressed size.
-   * @return : the number of bytes decompressed into destination buffer (necessarily <= dstCapacity)
-   *           If destination buffer is not large enough, decoding will stop and output an error code
-   * (negative value). If the source stream is detected malformed, the function will stop decoding
-   * and return a negative result. Note 1 : This function is protected against malicious data packets
-   * : it will never writes outside 'dst' buffer, nor read outside 'source' buffer, even if the
-   * compressed block is maliciously modified to order the decoder to do these actions. In such case,
-   * the decoder stops immediately, and considers the compressed block malformed. Note 2 :
-   * compressedSize and dstCapacity must be provided to the function, the compressed block does not
-   * contain them. The implementation is free to send / store / derive this information in whichever
-   * way is most beneficial. If there is a need for a different format which bundles together both
-   * compressed data and its metadata, consider looking at lz4frame.h instead.
+   *  dstCapacity : is the size of destination buffer (which must be already allocated), presumed
+   * an upper bound of decompressed size.
+   * @return : the number of bytes decompressed into destination buffer (necessarily <=
+   * dstCapacity) If destination buffer is not large enough, decoding will stop and output an error
+   * code (negative value). If the source stream is detected malformed, the function will stop
+   * decoding and return a negative result. Note 1 : This function is protected against malicious
+   * data packets : it will never writes outside 'dst' buffer, nor read outside 'source' buffer,
+   * even if the compressed block is maliciously modified to order the decoder to do these actions.
+   * In such case, the decoder stops immediately, and considers the compressed block malformed.
+   * Note 2 : compressedSize and dstCapacity must be provided to the function, the compressed block
+   * does not contain them. The implementation is free to send / store / derive this information in
+   * whichever way is most beneficial. If there is a need for a different format which bundles
+   * together both compressed data and its metadata, consider looking at lz4frame.h instead.
    */
-  LZ4LIB_API int LZ4_decompress_safe(const char *src, char *dst, int compressedSize, int dstCapacity);
+  LZ4LIB_API int LZ4_decompress_safe(const char *src,
+                                     char *dst,
+                                     int compressedSize,
+                                     int dstCapacity);
 
 /*-************************************
  *  Advanced Functions
@@ -199,8 +206,8 @@ namespace wabi_lz4
       The larger the acceleration value, the faster the algorithm, but also the lesser the
      compression. It's a trade-off. It can be fine tuned, with each successive value providing
      roughly +~3% to speed. An acceleration value of "1" is the same as regular
-     LZ4_compress_default() Values <= 0 will be replaced by ACCELERATION_DEFAULT (currently == 1, see
-     lz4.c).
+     LZ4_compress_default() Values <= 0 will be replaced by ACCELERATION_DEFAULT (currently == 1,
+     see lz4.c).
   */
   LZ4LIB_API int LZ4_compress_fast(const char *src,
                                    char *dst,
@@ -234,7 +241,10 @@ namespace wabi_lz4
    * @return : Nb bytes written into 'dst' (necessarily <= targetDestSize)
    *           or 0 if compression fails.
    */
-  LZ4LIB_API int LZ4_compress_destSize(const char *src, char *dst, int *srcSizePtr, int targetDstSize);
+  LZ4LIB_API int LZ4_compress_destSize(const char *src,
+                                       char *dst,
+                                       int *srcSizePtr,
+                                       int targetDstSize);
 
   /*! LZ4_decompress_safe_partial() :
    *  Decompress an LZ4 compressed block, of size 'srcSize' at position 'src',
@@ -324,12 +334,12 @@ namespace wabi_lz4
    * metadata. It's not possible to append blocks together and expect a single invocation of
    * LZ4_decompress_*() to decompress them together.
    *
-   *  Note 2 : The previous 64KB of source data is __assumed__ to remain present, unmodified, at same
-   * address in memory !
+   *  Note 2 : The previous 64KB of source data is __assumed__ to remain present, unmodified, at
+   * same address in memory !
    *
-   *  Note 3 : When input is structured as a double-buffer, each buffer can have any size, including
-   * < 64 KB. Make sure that buffers are separated, by at least one byte. This construction ensures
-   * that each block only depends on previous block.
+   *  Note 3 : When input is structured as a double-buffer, each buffer can have any size,
+   * including < 64 KB. Make sure that buffers are separated, by at least one byte. This
+   * construction ensures that each block only depends on previous block.
    *
    *  Note 4 : If input buffer is a ring-buffer, it can have any size, including < 64 KB.
    *
@@ -381,8 +391,8 @@ namespace wabi_lz4
    *  Note : in a ring buffer scenario (optional),
    *  blocks are presumed decompressed next to each other
    *  up to the moment there is not enough remaining space for next block (remainingSize <
-   * maxBlockSize), at which stage it resumes from beginning of ring buffer. When setting such a ring
-   * buffer for streaming decompression, provides the minimum size of this ring buffer to be
+   * maxBlockSize), at which stage it resumes from beginning of ring buffer. When setting such a
+   * ring buffer for streaming decompression, provides the minimum size of this ring buffer to be
    * compatible with any source respecting maxBlockSize condition.
    * @return : minimum ring buffer size,
    *           or 0 if there is an error (invalid maxBlockSize).
@@ -396,8 +406,8 @@ namespace wabi_lz4
    *  A block is an unsplittable entity, it must be presented entirely to a decompression function.
    *  Decompression functions only accepts one block at a time.
    *  The last 64KB of previously decoded data *must* remain available and unmodified at the memory
-   * position where they were decoded. If less than 64KB of data has been decoded, all the data must
-   * be present.
+   * position where they were decoded. If less than 64KB of data has been decoded, all the data
+   * must be present.
    *
    *  Special : if decompression side sets a ring buffer, it must respect one of the following
    * conditions :
@@ -412,9 +422,9 @@ namespace wabi_lz4
    *    and decoding function is provided with exact decompressed size of each block (exception for
    * last block of the stream), _then_ decoding & encoding ring buffer can have any size, including
    * small ones ( < 64 KB).
-   *  - Decompression buffer is larger than encoding buffer, by a minimum of maxBlockSize more bytes.
-   *    In which case, encoding and decoding buffers do not need to be synchronized,
-   *    and encoding ring buffer can have any size, including small ones ( < 64 KB).
+   *  - Decompression buffer is larger than encoding buffer, by a minimum of maxBlockSize more
+   * bytes. In which case, encoding and decoding buffers do not need to be synchronized, and
+   * encoding ring buffer can have any size, including small ones ( < 64 KB).
    *
    *  Whenever these conditions are not possible,
    *  save the last 64KB of decoded data into a safe buffer where it can't be modified during
@@ -431,9 +441,9 @@ namespace wabi_lz4
    *  These decoding functions work the same as
    *  a combination of LZ4_setStreamDecode() followed by LZ4_decompress_*_continue()
    *  They are stand-alone, and don't need an LZ4_streamDecode_t structure.
-   *  Dictionary is presumed stable : it must remain accessible and unmodified during decompression.
-   *  Performance tip : Decompression speed can be substantially increased
-   *                    when dst == dictStart + dictSize.
+   *  Dictionary is presumed stable : it must remain accessible and unmodified during
+   * decompression. Performance tip : Decompression speed can be substantially increased when dst
+   * == dictStart + dictSize.
    */
   LZ4LIB_API int LZ4_decompress_safe_usingDict(const char *src,
                                                char *dst,
@@ -578,23 +588,26 @@ namespace wabi_lz4
    */
 
 #    define LZ4_DECOMPRESS_INPLACE_MARGIN(compressedSize) (((compressedSize) >> 8) + 32)
-#    define LZ4_DECOMPRESS_INPLACE_BUFFER_SIZE(decompressedSize)                                            \
-      ((decompressedSize) + LZ4_DECOMPRESS_INPLACE_MARGIN(                                                  \
-                              decompressedSize)) /**< note: presumes that compressedSize <                  \
-                                                    decompressedSize. note2: margin is overestimated a bit, \
-                                                    since it could use compressedSize instead */
+#    define LZ4_DECOMPRESS_INPLACE_BUFFER_SIZE(decompressedSize)                       \
+      ((decompressedSize) +                                                            \
+       LZ4_DECOMPRESS_INPLACE_MARGIN(                                                  \
+         decompressedSize)) /**< note: presumes that compressedSize <                  \
+                               decompressedSize. note2: margin is overestimated a bit, \
+                               since it could use compressedSize instead */
 
 #    ifndef LZ4_DISTANCE_MAX         /* history window size; can be user-defined at compile time */
 #      define LZ4_DISTANCE_MAX 65535 /* set to maximum value by default */
 #    endif
 
 #    define LZ4_COMPRESS_INPLACE_MARGIN \
-      (LZ4_DISTANCE_MAX + 32) /* LZ4_DISTANCE_MAX can be safely replaced by srcSize when it's smaller */
-#    define LZ4_COMPRESS_INPLACE_BUFFER_SIZE(maxCompressedSize)                                           \
-      ((maxCompressedSize) + LZ4_COMPRESS_INPLACE_MARGIN) /**< maxCompressedSize is generally             \
-                                                             LZ4_COMPRESSBOUND(inputSize), but can be set \
-                                                             to any lower value, with the risk that       \
-                                                             compression can fail (return code 0(zero)) */
+      (LZ4_DISTANCE_MAX +               \
+       32) /* LZ4_DISTANCE_MAX can be safely replaced by srcSize when it's smaller */
+#    define LZ4_COMPRESS_INPLACE_BUFFER_SIZE(maxCompressedSize)                     \
+      ((maxCompressedSize) +                                                        \
+       LZ4_COMPRESS_INPLACE_MARGIN) /**< maxCompressedSize is generally             \
+                                       LZ4_COMPRESSBOUND(inputSize), but can be set \
+                                       to any lower value, with the risk that       \
+                                       compression can fail (return code 0(zero)) */
 
 #  endif /* LZ4_STATIC_3504398509 */
 #endif   /* LZ4_STATIC_LINKING_ONLY */
@@ -613,7 +626,8 @@ namespace wabi_lz4
 #  define LZ4_HASHTABLESIZE (1 << LZ4_MEMORY_USAGE)
 #  define LZ4_HASH_SIZE_U32 (1 << LZ4_HASHLOG) /* required as macro for static allocation */
 
-#  if defined(__cplusplus) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
+#  if defined(__cplusplus) || \
+    (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
 #    include <stdint.h>
 
   typedef struct LZ4_stream_t_internal LZ4_stream_t_internal;
@@ -749,7 +763,10 @@ namespace wabi_lz4
   LZ4LIB_API
   int LZ4_compress_limitedOutput(const char *src, char *dest, int srcSize, int maxOutputSize);
   LZ4_DEPRECATED("use LZ4_compress_fast_extState() instead")
-  LZ4LIB_API int LZ4_compress_withState(void *state, const char *source, char *dest, int inputSize);
+  LZ4LIB_API int LZ4_compress_withState(void *state,
+                                        const char *source,
+                                        char *dest,
+                                        int inputSize);
   LZ4_DEPRECATED("use LZ4_compress_fast_extState() instead")
   LZ4LIB_API int LZ4_compress_limitedOutput_withState(void *state,
                                                       const char *source,
@@ -809,23 +826,24 @@ namespace wabi_lz4
    *  but it has changed, and they are now slower than LZ4_decompress_safe().
    *  This is because LZ4_decompress_fast() doesn't know the input size,
    *  and therefore must progress more cautiously in the input buffer to not read beyond the end of
-   * block. On top of that `LZ4_decompress_fast()` is not protected vs malformed or malicious inputs,
-   * making it a security liability. As a consequence, LZ4_decompress_fast() is strongly discouraged,
-   * and deprecated.
+   * block. On top of that `LZ4_decompress_fast()` is not protected vs malformed or malicious
+   * inputs, making it a security liability. As a consequence, LZ4_decompress_fast() is strongly
+   * discouraged, and deprecated.
    *
    *  The last remaining LZ4_decompress_fast() specificity is that
    *  it can decompress a block without knowing its compressed size.
    *  Such functionality could be achieved in a more secure manner,
    *  by also providing the maximum size of input buffer,
-   *  but it would require new prototypes, and adaptation of the implementation to this new use case.
+   *  but it would require new prototypes, and adaptation of the implementation to this new use
+   * case.
    *
    *  Parameters:
    *  originalSize : is the uncompressed size to regenerate.
    *                 `dst` must be already allocated, its size must be >= 'originalSize' bytes.
    * @return : number of bytes read from source buffer (== compressed size).
    *           The function expects to finish at block's end exactly.
-   *           If the source stream is detected malformed, the function stops decoding and returns a
-   * negative result. note : LZ4_decompress_fast*() requires originalSize. Thanks to this
+   *           If the source stream is detected malformed, the function stops decoding and returns
+   * a negative result. note : LZ4_decompress_fast*() requires originalSize. Thanks to this
    * information, it never writes past the output buffer. However, since it doesn't know its 'src'
    * size, it may read an unknown amount of input, past input buffer bounds. Also, since match
    * offsets are not validated, match reads from 'src' may underflow too. These issues never happen
@@ -834,7 +852,8 @@ namespace wabi_lz4
    * trusted data **only**.
    */
 
-  LZ4_DEPRECATED("This function is deprecated and unsafe. Consider using LZ4_decompress_safe() instead")
+  LZ4_DEPRECATED(
+    "This function is deprecated and unsafe. Consider using LZ4_decompress_safe() instead")
   LZ4LIB_API int LZ4_decompress_fast(const char *src, char *dst, int originalSize);
   LZ4_DEPRECATED(
     "This function is deprecated and unsafe. Consider using LZ4_decompress_safe_continue() "

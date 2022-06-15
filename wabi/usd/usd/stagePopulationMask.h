@@ -59,6 +59,7 @@ WABI_NAMESPACE_BEGIN
 class UsdStagePopulationMask
 {
  public:
+
   /// Return a mask that includes all paths.  This is the mask that contains
   /// the absolute root path.
   static UsdStagePopulationMask All()
@@ -77,9 +78,7 @@ class UsdStagePopulationMask
   /// Construct a mask from the range of paths [f, l).  All paths in the range
   /// must be absolute prim paths or the absolute root path. (See
   /// SdfPath::IsAbsolutePath, SdfPath::IsAbsoluteRootOrPrimPath).
-  template<class Iter>
-  explicit UsdStagePopulationMask(Iter f, Iter l)
-    : _paths(f, l)
+  template<class Iter> explicit UsdStagePopulationMask(Iter f, Iter l) : _paths(f, l)
   {
     _ValidateAndNormalize();
   }
@@ -98,7 +97,8 @@ class UsdStagePopulationMask
 
   /// Return a mask that is the union of \p l and \p r.
   USD_API
-  static UsdStagePopulationMask Union(UsdStagePopulationMask const &l, UsdStagePopulationMask const &r);
+  static UsdStagePopulationMask Union(UsdStagePopulationMask const &l,
+                                      UsdStagePopulationMask const &r);
 
   /// Return a mask that is the union of this and \p other.
   USD_API
@@ -196,6 +196,7 @@ class UsdStagePopulationMask
   }
 
  private:
+
   friend USD_API size_t hash_value(UsdStagePopulationMask const &);
 
   USD_API void _ValidateAndNormalize();

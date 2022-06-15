@@ -99,8 +99,8 @@ namespace winrt
 
 #  ifdef WITH_WINUI3
 #    include "ChaosEngine/Kraken.UIKit.UIScreen.h"
-#  else 
-#    include "ChaosEngine/Kraken.UIKit.UIView.h" 
+#  else
+#    include "ChaosEngine/Kraken.UIKit.UIView.h"
 #  endif /* WITH_WINUI3 */
 
 #endif /* ARCH_OS_WINDOWS */

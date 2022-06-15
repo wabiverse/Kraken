@@ -57,9 +57,9 @@ class GfLine
 {
 
  public:
+
   /// The default constructor leaves line parameters undefined.
-  GfLine()
-  {}
+  GfLine() {}
 
   /// Construct a line from a point and a direction.
   GfLine(const GfVec3d &p0, const GfVec3d &dir)
@@ -108,8 +108,14 @@ class GfLine
   }
 
  private:
+
   GF_API
-  friend bool GfFindClosestPoints(const GfLine &, const GfLine &, GfVec3d *, GfVec3d *, double *, double *);
+  friend bool GfFindClosestPoints(const GfLine &,
+                                  const GfLine &,
+                                  GfVec3d *,
+                                  GfVec3d *,
+                                  double *,
+                                  double *);
   // Parametric description:
   //  l(t) = _p0 + t * _length * _dir;
   GfVec3d _p0;

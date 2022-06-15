@@ -49,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 class UsdCollectionMembershipQuery
 {
  public:
+
   /// Holds an unordered map describing membership of paths in this collection
   /// and the associated expansionRule for how the paths are to be expanded.
   /// Valid expansionRules are UsdTokens->explicitOnly,
@@ -127,7 +128,8 @@ class UsdCollectionMembershipQuery
   /// Equality operator
   bool operator==(UsdCollectionMembershipQuery const &rhs) const
   {
-    return _hasExcludes == rhs._hasExcludes && _pathExpansionRuleMap == rhs._pathExpansionRuleMap &&
+    return _hasExcludes == rhs._hasExcludes &&
+           _pathExpansionRuleMap == rhs._pathExpansionRuleMap &&
            _includedCollections == rhs._includedCollections;
   }
 
@@ -170,6 +172,7 @@ class UsdCollectionMembershipQuery
   }
 
  private:
+
   PathExpansionRuleMap _pathExpansionRuleMap;
 
   SdfPathSet _includedCollections;

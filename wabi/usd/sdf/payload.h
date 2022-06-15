@@ -60,6 +60,7 @@ typedef std::vector<SdfPayload> SdfPayloadVector;
 class SdfPayload : boost::totally_ordered<SdfPayload>
 {
  public:
+
   /// Create a payload. See SdfAssetPath for what characters are valid in \p
   /// assetPath.  If \p assetPath contains invalid characters, issue an error
   /// and set this payload's asset path to the empty asset path.
@@ -118,6 +119,7 @@ class SdfPayload : boost::totally_ordered<SdfPayload>
   SDF_API bool operator<(const SdfPayload &rhs) const;
 
  private:
+
   friend inline size_t hash_value(const SdfPayload &p)
   {
     size_t h = 0;

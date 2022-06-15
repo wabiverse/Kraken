@@ -24,20 +24,12 @@
 #ifndef WABI_IMAGING_HD_COORD_SYS_H
 #define WABI_IMAGING_HD_COORD_SYS_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/sprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
-
-#include "wabi/base/vt/dictionary.h"
-#include "wabi/base/vt/value.h"
-
-#include <memory>
-#include <vector>
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/sprim.h"
 
 WABI_NAMESPACE_BEGIN
-
-class HdSceneDelegate;
 
 /// \class HdCoordSys
 ///
@@ -64,10 +56,11 @@ class HdSceneDelegate;
 class HdCoordSys : public HdSprim
 {
  public:
+
   HD_API
   HdCoordSys(SdfPath const &id);
   HD_API
-  virtual ~HdCoordSys();
+  ~HdCoordSys() override;
 
   // Change tracking for HdCoordSys
   enum DirtyBits : HdDirtyBits
@@ -87,6 +80,7 @@ class HdCoordSys : public HdSprim
   }
 
  private:
+
   TfToken _name;
 };
 

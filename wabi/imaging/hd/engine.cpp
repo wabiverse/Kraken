@@ -40,6 +40,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 HdEngine::HdEngine() : _taskContext() {}
 
 HdEngine::~HdEngine() {}

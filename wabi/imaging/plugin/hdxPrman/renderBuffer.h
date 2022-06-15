@@ -35,6 +35,7 @@ WABI_NAMESPACE_BEGIN
 class HdxPrmanRenderBuffer : public HdRenderBuffer
 {
  public:
+
   HdxPrmanRenderBuffer(SdfPath const &id);
   ~HdxPrmanRenderBuffer();
 
@@ -86,8 +87,7 @@ class HdxPrmanRenderBuffer : public HdRenderBuffer
     _converged.store(cv);
   }
 
-  virtual void Resolve() override
-  {}
+  virtual void Resolve() override {}
 
   // ---------------------------------------------------------------------- //
   /// \name I/O helpers
@@ -97,6 +97,7 @@ class HdxPrmanRenderBuffer : public HdRenderBuffer
   void Blit(HdFormat format, int width, int height, uint8_t const *data);
 
  private:
+
   static size_t _GetBufferSize(GfVec2i const &dims, HdFormat format);
 
   virtual void _Deallocate() override;

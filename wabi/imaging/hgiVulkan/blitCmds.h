@@ -47,6 +47,7 @@ class HgiVulkanCommandBuffer;
 class HgiVulkanBlitCmds final : public HgiBlitCmds
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanBlitCmds() override;
 
@@ -88,6 +89,7 @@ class HgiVulkanBlitCmds final : public HgiBlitCmds
   HgiVulkanCommandBuffer *GetCommandBuffer();
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
@@ -97,6 +99,7 @@ class HgiVulkanBlitCmds final : public HgiBlitCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiVulkanBlitCmds &operator=(const HgiVulkanBlitCmds &) = delete;
   HgiVulkanBlitCmds(const HgiVulkanBlitCmds &) = delete;
 

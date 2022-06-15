@@ -47,6 +47,7 @@ class HdPhSubtextureIdentifier;
 class HdPhTextureIdentifier final
 {
  public:
+
   using ID = size_t;
 
   HdPhTextureIdentifier();
@@ -91,6 +92,7 @@ class HdPhTextureIdentifier final
   bool operator!=(const HdPhTextureIdentifier &other) const;
 
  private:
+
   TfToken _filePath;
   std::unique_ptr<const HdPhSubtextureIdentifier> _subtextureId;
 };

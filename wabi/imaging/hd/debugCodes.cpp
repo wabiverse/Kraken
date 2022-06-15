@@ -28,6 +28,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_REGISTRY_FUNCTION(TfDebug)
 {
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_BPRIM_ADDED, "Report when bprims are added");
@@ -71,8 +72,6 @@ TF_REGISTRY_FUNCTION(TfDebug)
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_INSTANCER_REMOVED, "Report when instancers are removed");
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_INSTANCER_UPDATED, "Report when instancers are updated");
 
-  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_MDI, "Report info related to multi-draw-indirect batches");
-
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_RENDER_SETTINGS, "Report render settings changes");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_RPRIM_ADDED, "Report when rprims are added");
@@ -90,6 +89,8 @@ TF_REGISTRY_FUNCTION(TfDebug)
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SPRIM_ADDED, "Report when sprims are added");
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SPRIM_REMOVED, "Report when sprims are removed");
+
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HD_SYNC_ALL, "Report debugging info for the sync all algorithm.");
 
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_TASK_ADDED, "Report when tasks are added");
   TF_DEBUG_ENVIRONMENT_SYMBOL(HD_TASK_REMOVED, "Report when tasks are removed");

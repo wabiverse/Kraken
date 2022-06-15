@@ -56,11 +56,7 @@ struct ScrAreaMap
   /** ScrArea. */
   std::vector<struct ScrArea *> areas;
 
-  ScrAreaMap()
-    : verts(EMPTY),
-      edges(EMPTY),
-      areas(EMPTY)
-  {}
+  ScrAreaMap() : verts(EMPTY), edges(EMPTY), areas(EMPTY) {}
 };
 
 struct wmWindow : public UsdUIWindow, KrakenPrim

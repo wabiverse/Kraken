@@ -48,6 +48,7 @@ WABI_NAMESPACE_BEGIN
 class HdxColorCorrectionTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxColorCorrectionTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -63,11 +64,13 @@ class HdxColorCorrectionTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   HdxColorCorrectionTask() = delete;
   HdxColorCorrectionTask(const HdxColorCorrectionTask &) = delete;
   HdxColorCorrectionTask &operator=(const HdxColorCorrectionTask &) = delete;

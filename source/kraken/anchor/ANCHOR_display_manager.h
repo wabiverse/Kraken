@@ -29,6 +29,7 @@
 class AnchorDisplayManager
 {
  public:
+
   enum
   {
     kMainDisplay = 0
@@ -74,7 +75,8 @@ class AnchorDisplayManager
    * @param display: The index of the display to query with 0 <= display < getNumDisplays().
    * @param setting: The current setting of the display device with this index.
    * @return Indication of success. */
-  virtual eAnchorStatus getCurrentDisplaySetting(AnchorU8 display, ANCHOR_DisplaySetting &setting) const;
+  virtual eAnchorStatus getCurrentDisplaySetting(AnchorU8 display,
+                                                 ANCHOR_DisplaySetting &setting) const;
 
   /**
    * Changes the current setting for this display device.
@@ -83,9 +85,11 @@ class AnchorDisplayManager
    * @param display: The index of the display to query with 0 <= display < getNumDisplays().
    * @param setting: The setting of the display device to be matched and activated.
    * @return Indication of success. */
-  virtual eAnchorStatus setCurrentDisplaySetting(AnchorU8 display, const ANCHOR_DisplaySetting &setting);
+  virtual eAnchorStatus setCurrentDisplaySetting(AnchorU8 display,
+                                                 const ANCHOR_DisplaySetting &setting);
 
  protected:
+
   typedef std::vector<ANCHOR_DisplaySetting> ANCHOR_DisplaySettings;
 
   /**

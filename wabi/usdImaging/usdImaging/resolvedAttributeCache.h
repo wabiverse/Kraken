@@ -378,7 +378,7 @@ void UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_SetCacheEntryForPri
   // Note: _cacheVersion is not allowed to change during cache access.
 
   unsigned v = entry->version;
-  if (v < _cacheVersion && entry->version.compare_and_swap(_cacheVersion, v) == v) {
+  if (v < _cacheVersion && entry->version.compare_exchange_weak(v, _GetValidVersion())) {
     entry->value = value;
     entry->version = _GetValidVersion();
   } else {
@@ -397,16 +397,22 @@ typename UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_Entry *
 UsdImaging_ResolvedAttributeCache<Strategy, ImplData>::_GetCacheEntryForPrim(
   const UsdPrim &prim) const
 {
-  typename _CacheMap::const_iterator it = _cache.find(prim);
+  auto it = _cache.find(prim);
   if (it != _cache.end()) {
     return &it->second;
   }
 
-  _Entry e;
-  e.query = Strategy::MakeQuery(prim, _implData);
-  e.value = Strategy::MakeDefault();
-  e.version = _GetInvalidVersion();
-  return &(_cache.insert(typename _CacheMap::value_type(prim, e)).first->second);
+  // _Entry e;
+  // e.query = Strategy::MakeQuery(prim, _implData);
+  // e.value = Strategy::MakeDefault();
+  // e.version = _GetInvalidVersion();
+  return &(_cache
+             .emplace(std::piecewise_construct,
+                      std::forward_as_tuple(prim),
+                      std::forward_as_tuple(Strategy::MakeQuery(prim, _implData),
+                                            Strategy::MakeDefault(),
+                                            _GetInvalidVersion()))
+             .first->second);
 }
 
 template<typename Strategy, typename ImplData>

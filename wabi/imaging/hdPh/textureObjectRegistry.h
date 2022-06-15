@@ -48,6 +48,7 @@ class HdPhTextureIdentifier;
 class HdPh_TextureObjectRegistry final
 {
  public:
+
   explicit HdPh_TextureObjectRegistry(HdPhResourceRegistry *registry);
   ~HdPh_TextureObjectRegistry();
 
@@ -111,6 +112,7 @@ class HdPh_TextureObjectRegistry final
   }
 
  private:
+
   HdPhTextureObjectSharedPtr _MakeTextureObject(const HdPhTextureIdentifier &textureId,
                                                 HdTextureType textureType);
 
@@ -121,7 +123,8 @@ class HdPh_TextureObjectRegistry final
 
   // Map file paths to texture objects for quick invalidation
   // by file path.
-  std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor> _filePathToTextureObjects;
+  std::unordered_map<TfToken, HdPhTextureObjectPtrVector, TfToken::HashFunctor>
+    _filePathToTextureObjects;
 
   // File paths for which GPU resources need to be (re-)loaded
   tbb::concurrent_vector<TfToken> _dirtyFilePaths;

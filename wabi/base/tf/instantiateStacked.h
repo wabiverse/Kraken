@@ -33,8 +33,7 @@
 WABI_NAMESPACE_BEGIN
 
 #define TF_INSTANTIATE_STACKED(Derived) \
-  template<>                            \
-  std::atomic<typename Derived::Storage::Type *> Derived::Storage::value(nullptr)
+  template<> std::atomic<typename Derived::Storage::Type *> Derived::Storage::value(nullptr)
 
 #define TF_INSTANTIATE_DEFINED_STACKED(Derived) \
   std::atomic<typename Derived::Storage::Type *> Derived::Storage::value(nullptr)

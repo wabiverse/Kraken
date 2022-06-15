@@ -64,8 +64,7 @@ namespace Zep
   }
   inline uint32_t ZSetFlags(const uint32_t &flags, uint32_t value, bool set = true)
   {
-    if (set)
-    {
+    if (set) {
       return flags | value;
     } else
       return flags;
@@ -113,10 +112,8 @@ namespace Zep
   class ZepMessage
   {
    public:
-    ZepMessage(Msg id, const std::string &strIn = std::string())
-      : messageId(id),
-        str(strIn)
-    {}
+
+    ZepMessage(Msg id, const std::string &strIn = std::string()) : messageId(id), str(strIn) {}
 
     ZepMessage(Msg id, const NVec2f &p, ZepMouseButton b = ZepMouseButton::Unknown)
       : messageId(id),
@@ -124,10 +121,7 @@ namespace Zep
         button(b)
     {}
 
-    ZepMessage(Msg id, IZepComponent *pComp)
-      : messageId(id),
-        pComponent(pComp)
-    {}
+    ZepMessage(Msg id, IZepComponent *pComp) : messageId(id), pComponent(pComp) {}
 
     Msg messageId;         // Message ID
     std::string str;       // Generic string for simple messages
@@ -149,6 +143,7 @@ namespace Zep
   class ZepComponent : public IZepComponent
   {
    public:
+
     ZepComponent(ZepEditor &editor);
     virtual ~ZepComponent();
     ZepEditor &GetEditor() const override
@@ -157,28 +152,17 @@ namespace Zep
     }
 
    private:
+
     ZepEditor &m_editor;
   };
 
   // Registers are used by the editor to store/retrieve text fragments
   struct Register
   {
-    Register()
-      : text(""),
-        lineWise(false)
-    {}
-    Register(const char *ch, bool lw = false)
-      : text(ch),
-        lineWise(lw)
-    {}
-    Register(uint8_t *ch, bool lw = false)
-      : text((const char *)ch),
-        lineWise(lw)
-    {}
-    Register(const std::string &str, bool lw = false)
-      : text(str),
-        lineWise(lw)
-    {}
+    Register() : text(""), lineWise(false) {}
+    Register(const char *ch, bool lw = false) : text(ch), lineWise(lw) {}
+    Register(uint8_t *ch, bool lw = false) : text((const char *)ch), lineWise(lw) {}
+    Register(const std::string &str, bool lw = false) : text(str), lineWise(lw) {}
 
     std::string text;
     bool lineWise = false;
@@ -238,11 +222,9 @@ namespace Zep
   class ZepExCommand : public ZepComponent
   {
    public:
-    ZepExCommand(ZepEditor &editor)
-      : ZepComponent(editor)
-    {}
-    virtual ~ZepExCommand()
-    {}
+
+    ZepExCommand(ZepEditor &editor) : ZepComponent(editor) {}
+    virtual ~ZepExCommand() {}
     virtual void Run(const std::vector<std::string> &args = {}) = 0;
     virtual const char *ExCommandName() const = 0;
     virtual StringId ExCommandId() const
@@ -266,6 +248,7 @@ namespace Zep
   class ZepEditor
   {
    public:
+
     // Root path is the path to search for a config file
     ZepEditor(ZepDisplay *pDisplay,
               const ZepPath &root,
@@ -402,13 +385,14 @@ namespace Zep
 
     ThreadPool &GetThreadPool() const;
 
-    // Used to inform when a file changes - called from outside zep by the platform specific code, if
-    // possible
+    // Used to inform when a file changes - called from outside zep by the platform specific code,
+    // if possible
     virtual void OnFileChanged(const ZepPath &path);
 
     ZepBuffer *GetBufferFromHandle(uint64_t handle);
 
    private:
+
     // Call GetBuffer publicly, to stop creation of duplicate buffers refering to the same file
     ZepBuffer *CreateNewBuffer(const std::string &bufferName);
     ZepBuffer *CreateNewBuffer(const ZepPath &path);
@@ -420,6 +404,7 @@ namespace Zep
     ZepTabWindow *EnsureTab();
 
    private:
+
     ZepDisplay *m_pDisplay;
     IZepFileSystem *m_pFileSystem;
 

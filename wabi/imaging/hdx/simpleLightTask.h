@@ -55,6 +55,7 @@ TF_DECLARE_REF_PTRS(GlfSimpleShadowArray);
 class HdxSimpleLightTask : public HdTask
 {
  public:
+
   HDX_API
   HdxSimpleLightTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -74,6 +75,7 @@ class HdxSimpleLightTask : public HdTask
   void Execute(HdTaskContext *ctx) override;
 
  private:
+
   std::vector<GfMatrix4d> _ComputeShadowMatrices(
     const HdCamera *camera,
     HdxShadowMatrixComputationSharedPtr const &computation) const;
@@ -148,13 +150,7 @@ bool operator!=(const HdxSimpleLightTaskParams &lhs, const HdxSimpleLightTaskPar
 
 struct HdxShadowParams
 {
-  HdxShadowParams()
-    : shadowMatrix(),
-      bias(0.0),
-      blur(0.0),
-      resolution(0),
-      enabled(false)
-  {}
+  HdxShadowParams() : shadowMatrix(), bias(0.0), blur(0.0), resolution(0), enabled(false) {}
 
   HdxShadowMatrixComputationSharedPtr shadowMatrix;
   double bias;

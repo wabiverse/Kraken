@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLTexture final : public HgiTexture
 {
  public:
+
   HGIGL_API
   ~HgiGLTexture() override;
 
@@ -60,6 +61,7 @@ class HgiGLTexture final : public HgiTexture
   }
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
@@ -69,6 +71,7 @@ class HgiGLTexture final : public HgiTexture
   HgiGLTexture(HgiTextureViewDesc const &desc);
 
  private:
+
   HgiGLTexture() = delete;
   HgiGLTexture &operator=(const HgiGLTexture &) = delete;
   HgiGLTexture(const HgiGLTexture &) = delete;

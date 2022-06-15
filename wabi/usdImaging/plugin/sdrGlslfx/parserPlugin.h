@@ -49,6 +49,7 @@ struct NdrNodeDiscoveryResult;
 class SdrGlslfxParserPlugin : public NdrParserPlugin
 {
  public:
+
   SdrGlslfxParserPlugin() = default;
 
   ~SdrGlslfxParserPlugin() override = default;

@@ -50,6 +50,7 @@ using HgiCmdsUniquePtr = std::unique_ptr<class HgiCmds>;
 class HgiCmds
 {
  public:
+
   HGI_API
   virtual ~HgiCmds();
 
@@ -58,6 +59,7 @@ class HgiCmds
   bool IsSubmitted() const;
 
  protected:
+
   friend class Hgi;
 
   HGI_API
@@ -74,6 +76,7 @@ class HgiCmds
   void _SetSubmitted();
 
  private:
+
   HgiCmds &operator=(const HgiCmds &) = delete;
   HgiCmds(const HgiCmds &) = delete;
 

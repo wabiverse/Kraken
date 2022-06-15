@@ -51,6 +51,7 @@ WABI_NAMESPACE_BEGIN
 class Trace_EventTreeBuilder : protected TraceCollection::Visitor
 {
  public:
+
   /// Constructor.
   Trace_EventTreeBuilder();
 
@@ -70,18 +71,19 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor
   }
 
  protected:
+
   /// \name TraceCollection::Visitor Interface
   /// @{
   virtual void OnBeginCollection() override;
   virtual void OnEndCollection() override;
-  virtual bool AcceptsCategory(TraceCategoryId)
-  override;
+  virtual bool AcceptsCategory(TraceCategoryId) override;
   virtual void OnBeginThread(const TraceThreadId &) override;
   virtual void OnEndThread(const TraceThreadId &) override;
   virtual void OnEvent(const TraceThreadId &, const TfToken &, const TraceEvent &) override;
   /// @}
 
  private:
+
   // Helper class for event graph creation.
   struct _PendingEventNode
   {
@@ -137,8 +139,8 @@ class Trace_EventTreeBuilder : protected TraceCollection::Visitor
   class _CounterAccumulator : public TraceCounterAccumulator
   {
    protected:
-    bool _AcceptsCategory(TraceCategoryId)
-    override;
+
+    bool _AcceptsCategory(TraceCategoryId) override;
   };
   _CounterAccumulator _counterAccum;
 

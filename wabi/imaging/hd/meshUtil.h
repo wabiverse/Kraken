@@ -1,41 +1,34 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HD_MESH_UTIL_H
 #define WABI_IMAGING_HD_MESH_UTIL_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/meshTopology.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/types.h"
+#include "wabi/imaging/hd/meshTopology.h"
 
 #include "wabi/usd/sdf/path.h"
 
@@ -71,11 +64,7 @@ WABI_NAMESPACE_BEGIN
 
 struct HdQuadInfo
 {
-  HdQuadInfo()
-    : pointsOffset(0),
-      numAdditionalPoints(0),
-      maxNumVert(0)
-  {}
+  HdQuadInfo() : pointsOffset(0), numAdditionalPoints(0), maxNumVert(0) {}
 
   /// Returns true if the mesh is all-quads.
   bool IsAllQuads() const
@@ -97,19 +86,22 @@ struct HdQuadInfo
 class HdMeshUtil
 {
  public:
-  HdMeshUtil(HdMeshTopology const *topology, SdfPath const &id)
-    : _topology(topology),
-      _id(id)
-  {}
-  virtual ~HdMeshUtil()
-  {}
+
+  HdMeshUtil(HdMeshTopology const *topology, SdfPath const &id) : _topology(topology), _id(id) {}
+  virtual ~HdMeshUtil() {}
 
   // --------------------------------------------------------------------
-  // Triangulation
-
-  // In order to access per-face signals (face color, face selection etc)
-  // we need a mapping from primitiveID to authored face index domain.
-  // This is stored in primitiveParams, and computed along with indices.
+  /// \name Triangulation
+  ///
+  /// Produces a mesh where each non-triangle face in the base mesh topology
+  /// is fan-triangulated such that the resulting mesh consists entirely
+  /// of triangles.
+  ///
+  /// In order to access per-face signals (face color, face selection etc)
+  /// we need a mapping from primitiveID to authored face index domain.
+  /// This is encoded in primitiveParams, and computed along with indices.
+  /// See \ref PrimitiveParamEncoding.
+  /// @{
   /*
                +--------+-------+
               /| \      |\      |\
@@ -140,12 +132,24 @@ class HdMeshUtil
                                              HdType dataType,
                                              VtValue *triangulated) const;
 
-  // --------------------------------------------------------------------
-  // Quadrangulation
+  /// @}
 
-  // In order to access per-face signals (face color, face selection etc)
-  // we need a mapping from primitiveID to authored face index domain.
-  // This is stored in primitiveParams, and computed along with indices.
+  // --------------------------------------------------------------------
+  /// \name Quadrangulation
+  ///
+  /// Produces a mesh where each non-quad face in the base mesh topology
+  /// is quadrangulated such that the resulting mesh consists entirely
+  /// of quads. Additionally, supports splitting each resulting quad
+  /// face into a pair of triangles. This is different than simply
+  /// triangulating the base mesh topology and can be useful for
+  /// maintaining consistency with quad-based subdivision schemes.
+  ///
+  /// In order to access per-face signals (face color, face selection etc)
+  /// we need a mapping from primitiveID to authored face index domain.
+  /// This is encoded in primitiveParams, and computed along with indices.
+  /// See \ref PrimitiveParamEncoding.
+  /// @{
+
   /*
              +--------+-------+
             /|        |    |   \
@@ -165,9 +169,16 @@ class HdMeshUtil
   /// Return quadrangulated indices of the input topology. indices and
   /// primitiveParams are output parameters.
   HD_API
-  void ComputeQuadIndices(VtVec4iArray *indices,
+  void ComputeQuadIndices(VtIntArray *indices,
                           VtIntArray *primitiveParams,
                           VtVec2iArray *edgeIndices = nullptr) const;
+
+  /// Return triquad indices (triangulated after quadrangulation) of the
+  /// input topology. indices and primitiveParams are output parameters.
+  HD_API
+  void ComputeTriQuadIndices(VtIntArray *indices,
+                             VtIntArray *primitiveParams,
+                             VtVec2iArray *edgeIndices = nullptr) const;
 
   /// Return a quadrangulation of a per-vertex primvar. source is
   /// a buffer of size numElements and type corresponding to dataType
@@ -192,6 +203,8 @@ class HdMeshUtil
                                                HdType dataType,
                                                VtValue *quadrangulated) const;
 
+  /// @}
+
   /// Return a buffer filled with face vertex index pairs corresponding
   /// to the sequence in which edges are visited when iterating through
   /// the mesh topology. The edges of degenerate and hole faces are
@@ -203,7 +216,25 @@ class HdMeshUtil
   void EnumerateEdges(std::vector<GfVec2i> *edgeVerticesOut) const;
 
   // --------------------------------------------------------------------
-  // Primitive param bit encoding
+  /// \anchor PrimitiveParamEncoding
+  /// \name Primitive Param bit encoding
+  ///
+  /// This encoding provides information about each sub-face resulting
+  /// from the triangulation or quadrangulation of a base topology face.
+  ///
+  /// The encoded faceIndex is the index of the base topology face
+  /// corresponding to a triangulated or quadrangulated sub-face.
+  ///
+  /// The encoded edge flag identifies where a sub-face occurs in the
+  /// sequence of sub-faces produced for each base topology face.
+  /// This edge flag can be used to determine which edges of a sub-face
+  /// correspond to edges of a base topology face and which are internal
+  /// edges that were introduced by triangulation or quadrangulation:
+  /// - 0 unaffected triangle or quad base topology face
+  /// - 1 first sub-face produced by triangulation or quadrangulation
+  /// - 2 last sub-face produced by triangulation or quadrangulation
+  /// - 3 intermediate sub-face produced by triangulation or quadrangulation
+  /// @{
 
   // Per-primitive coarse-face-param encoding/decoding functions
   static int EncodeCoarseFaceParam(int faceIndex, int edgeFlag)
@@ -219,18 +250,27 @@ class HdMeshUtil
     return (coarseFaceParam & 3);
   }
 
+  /// }@
+
  private:
+
   /// Return the number of quadrangulated quads.
   /// If degenerate face is found, sets invalidFaceFound as true.
   int _ComputeNumQuads(VtIntArray const &numVerts,
                        VtIntArray const &holeIndices,
                        bool *invalidFaceFound = nullptr) const;
 
+  /// Return quad indices (optionally triangulated after quadrangulation).
+  void _ComputeQuadIndices(VtIntArray *indices,
+                           VtIntArray *primitiveParams,
+                           VtVec2iArray *edgeIndices,
+                           bool triangulate = false) const;
+
   HdMeshTopology const *_topology;
   SdfPath const _id;
 };
 
-/// \class Edge Indices
+/// \class HdMeshEdgeIndexTable
 ///
 /// Mesh edges are described as a pair of adjacent vertices encoded
 /// as GfVec2i.
@@ -279,6 +319,7 @@ class HdMeshUtil
 class HdMeshEdgeIndexTable
 {
  public:
+
   explicit HdMeshEdgeIndexTable(HdMeshTopology const *topology);
   ~HdMeshEdgeIndexTable();
 
@@ -290,15 +331,13 @@ class HdMeshEdgeIndexTable
   bool GetEdgeIndices(GfVec2i const &edgeVertices, std::vector<int> *edgeIndicesOut) const;
 
  private:
+
   struct _Edge
   {
-    _Edge(GfVec2i const &verts_ = GfVec2i(-1), int index_ = -1)
-      : verts(verts_),
-        index(index_)
+    _Edge(GfVec2i const &verts_ = GfVec2i(-1), int index_ = -1) : verts(verts_), index(index_)
     {
       // Simplify sorting and searching by keeping the vertices ordered.
-      if (verts[0] > verts[1])
-      {
+      if (verts[0] > verts[1]) {
         std::swap(verts[0], verts[1]);
       }
     }
@@ -310,7 +349,8 @@ class HdMeshEdgeIndexTable
   {
     bool operator()(_Edge const &lhs, _Edge const &rhs) const
     {
-      return (lhs.verts[0] < rhs.verts[0] || (lhs.verts[0] == rhs.verts[0] && lhs.verts[1] < rhs.verts[1]));
+      return (lhs.verts[0] < rhs.verts[0] ||
+              (lhs.verts[0] == rhs.verts[0] && lhs.verts[1] < rhs.verts[1]));
     }
   };
 
@@ -321,8 +361,7 @@ class HdMeshEdgeIndexTable
     {
       // Triangular numbers for 2-d hash.
       int theMin = v[0], theMax = v[1];
-      if (theMin > theMax)
-      {
+      if (theMin > theMax) {
         std::swap(theMin, theMax);
       }
       size_t x = theMin;
@@ -334,6 +373,47 @@ class HdMeshEdgeIndexTable
   std::vector<GfVec2i> _edgeVertices;
   std::vector<_Edge> _edgesByIndex;
 };
+
+/// \class HdMeshTriQuadBuilder
+///
+/// Helper class for emitting a buffer of quad indices, optionally
+/// splitting each quad into two triangles.
+///
+class HdMeshTriQuadBuilder
+{
+ public:
+
+  static int const NumIndicesPerQuad = 4;
+  static int const NumIndicesPerTriQuad = 6;
+
+  HdMeshTriQuadBuilder(int *indicesBuffer, bool triangulate)
+    : _outputPtr(indicesBuffer),
+      _triangulate(triangulate)
+  {}
+
+  void EmitQuadFace(GfVec4i const &quadIndices)
+  {
+    if (_triangulate) {
+      *_outputPtr++ = quadIndices[0];
+      *_outputPtr++ = quadIndices[1];
+      *_outputPtr++ = quadIndices[2];
+      *_outputPtr++ = quadIndices[2];
+      *_outputPtr++ = quadIndices[3];
+      *_outputPtr++ = quadIndices[0];
+    } else {
+      *_outputPtr++ = quadIndices[0];
+      *_outputPtr++ = quadIndices[1];
+      *_outputPtr++ = quadIndices[2];
+      *_outputPtr++ = quadIndices[3];
+    }
+  }
+
+ private:
+
+  int *_outputPtr;
+  bool const _triangulate;
+};
+
 
 WABI_NAMESPACE_END
 

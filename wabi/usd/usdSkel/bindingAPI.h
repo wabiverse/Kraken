@@ -74,6 +74,7 @@ class SdfAssetPath;
 class UsdSkelBindingAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -84,16 +85,12 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   /// Equivalent to UsdSkelBindingAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelBindingAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdSkelBindingAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdSkelBindingAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelBindingAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelBindingAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdSkelBindingAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDSKEL_API
@@ -135,6 +132,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   static UsdSkelBindingAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -142,6 +140,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSKEL_API
@@ -151,9 +150,11 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDSKEL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // GEOMBINDTRANSFORM
   // --------------------------------------------------------------------- //
@@ -181,6 +182,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // JOINTS
   // --------------------------------------------------------------------- //
@@ -205,9 +207,11 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateJointsAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // JOINTINDICES
   // --------------------------------------------------------------------- //
@@ -238,6 +242,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // JOINTWEIGHTS
   // --------------------------------------------------------------------- //
@@ -266,6 +271,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BLENDSHAPES
   // --------------------------------------------------------------------- //
@@ -295,6 +301,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANIMATIONSOURCE
   // --------------------------------------------------------------------- //
@@ -311,6 +318,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   UsdRelationship CreateAnimationSourceRel() const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SKELETON
   // --------------------------------------------------------------------- //
@@ -327,6 +335,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   UsdRelationship CreateSkeletonRel() const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BLENDSHAPETARGETS
   // --------------------------------------------------------------------- //
@@ -343,6 +352,7 @@ class UsdSkelBindingAPI : public UsdAPISchemaBase
   UsdRelationship CreateBlendShapeTargetsRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

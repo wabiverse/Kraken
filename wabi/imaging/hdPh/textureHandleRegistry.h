@@ -65,6 +65,7 @@ using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 class HdPh_TextureHandleRegistry final
 {
  public:
+
   HDPH_API
   explicit HdPh_TextureHandleRegistry(HdPhResourceRegistry *registry);
 
@@ -145,6 +146,7 @@ class HdPh_TextureHandleRegistry final
   size_t GetNumberOfTextureHandles() const;
 
  private:
+
   void _ComputeMemoryRequest(HdPhTextureObjectSharedPtr const &);
   void _ComputeMemoryRequests(const std::set<HdPhTextureObjectSharedPtr> &);
   void _ComputeAllMemoryRequests();

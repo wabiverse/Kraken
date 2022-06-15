@@ -68,6 +68,7 @@ class TfPyObjWrapper : public boost::python::api::object_operators<TfPyObjWrappe
   typedef boost::python::object object;
 
  public:
+
   /// Default construct a TfPyObjWrapper holding a reference to python None.
   /// The GIL need not be held by the caller.
   TF_API TfPyObjWrapper();
@@ -114,6 +115,7 @@ class TfPyObjWrapper : public boost::python::api::object_operators<TfPyObjWrappe
   TF_API bool operator!=(TfPyObjWrapper const &other) const;
 
  private:
+
   // Befriend object_operators to allow it access to implicit conversion to
   // boost::python::object.
   friend class boost::python::api::object_operators<TfPyObjWrapper>;

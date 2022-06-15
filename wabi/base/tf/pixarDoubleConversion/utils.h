@@ -74,12 +74,12 @@ inline void abort_noreturn()
 // the output of the division with the expected result. (Inlining must be
 // disabled.)
 // On Linux,x86 89255e-22 != Div_double(89255.0/1e22)
-#if defined(_M_X64) || defined(__x86_64__) || defined(__ARMEL__) || defined(__avr32__) ||             \
-  defined(__hppa__) || defined(__ia64__) || defined(__mips__) || defined(__powerpc__) ||              \
-  defined(__ppc__) || defined(__ppc64__) || defined(_POWER) || defined(_ARCH_PPC) ||                  \
-  defined(_ARCH_PPC64) || defined(__sparc__) || defined(__sparc) || defined(__s390__) ||              \
-  defined(__SH4__) || defined(__alpha__) || defined(_MIPS_ARCH_MIPS32R2) || defined(__AARCH64EL__) || \
-  defined(__aarch64__) || defined(__riscv)
+#if defined(_M_X64) || defined(__x86_64__) || defined(__ARMEL__) || defined(__avr32__) || \
+  defined(__hppa__) || defined(__ia64__) || defined(__mips__) || defined(__powerpc__) ||  \
+  defined(__ppc__) || defined(__ppc64__) || defined(_POWER) || defined(_ARCH_PPC) ||      \
+  defined(_ARCH_PPC64) || defined(__sparc__) || defined(__sparc) || defined(__s390__) ||  \
+  defined(__SH4__) || defined(__alpha__) || defined(_MIPS_ARCH_MIPS32R2) ||               \
+  defined(__AARCH64EL__) || defined(__aarch64__) || defined(__riscv)
 #  define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
 #elif defined(__mc68000__)
 #  undef DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS
@@ -130,7 +130,8 @@ typedef uint16_t uc16;
 // array. You should only use ARRAY_SIZE on statically allocated
 // arrays.
 #ifndef ARRAY_SIZE
-#  define ARRAY_SIZE(a) ((sizeof(a) / sizeof(*(a))) / static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
+#  define ARRAY_SIZE(a) \
+    ((sizeof(a) / sizeof(*(a))) / static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 #endif
 
 // A macro to disallow the evil copy constructor and operator= functions
@@ -161,15 +162,13 @@ namespace wabi_double_conversion
   static const int kCharSize = sizeof(char);
 
   // Returns the maximum of the two parameters.
-  template<typename T>
-  static T Max(T a, T b)
+  template<typename T> static T Max(T a, T b)
   {
     return a < b ? b : a;
   }
 
   // Returns the minimum of the two parameters.
-  template<typename T>
-  static T Min(T a, T b)
+  template<typename T> static T Min(T a, T b)
   {
     return a < b ? a : b;
   }
@@ -182,17 +181,12 @@ namespace wabi_double_conversion
   }
 
   // This is a simplified version of V8's Vector class.
-  template<typename T>
-  class Vector
+  template<typename T> class Vector
   {
    public:
-    Vector()
-      : start_(NULL),
-        length_(0)
-    {}
-    Vector(T *data, int len)
-      : start_(data),
-        length_(len)
+
+    Vector() : start_(NULL), length_(0) {}
+    Vector(T *data, int len) : start_(data), length_(len)
     {
       ASSERT(len == 0 || (len > 0 && data != NULL));
     }
@@ -243,6 +237,7 @@ namespace wabi_double_conversion
     }
 
    private:
+
     T *start_;
     int length_;
   };
@@ -253,10 +248,8 @@ namespace wabi_double_conversion
   class StringBuilder
   {
    public:
-    StringBuilder(char *buffer, int buffer_size)
-      : buffer_(buffer, buffer_size),
-        position_(0)
-    {}
+
+    StringBuilder(char *buffer, int buffer_size) : buffer_(buffer, buffer_size), position_(0) {}
 
     ~StringBuilder()
     {
@@ -313,8 +306,7 @@ namespace wabi_double_conversion
     // nothing is added to the builder.
     void AddPadding(char c, int count)
     {
-      for (int i = 0; i < count; i++)
-      {
+      for (int i = 0; i < count; i++) {
         AddCharacter(c);
       }
     }
@@ -333,6 +325,7 @@ namespace wabi_double_conversion
     }
 
    private:
+
     Vector<char> buffer_;
     int position_;
 
@@ -368,8 +361,7 @@ namespace wabi_double_conversion
   // you can use BitCast to cast one pointer type to another.  This confuses gcc
   // enough that it can no longer see that you have cast one pointer type to
   // another thus avoiding the warning.
-  template<class Dest, class Source>
-  inline Dest BitCast(const Source &source)
+  template<class Dest, class Source> inline Dest BitCast(const Source &source)
   {
     // Compile time assertion: sizeof(Dest) == sizeof(Source)
     // A compile error here means your Dest and Source have different sizes.
@@ -381,8 +373,7 @@ namespace wabi_double_conversion
     return dest;
   }
 
-  template<class Dest, class Source>
-  inline Dest BitCast(Source *source)
+  template<class Dest, class Source> inline Dest BitCast(Source *source)
   {
     return BitCast<Dest>(reinterpret_cast<uintptr_t>(source));
   }

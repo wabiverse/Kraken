@@ -48,10 +48,8 @@ namespace AnchorSequencer
     virtual int GetFrameMax() const = 0;
     virtual int GetItemCount() const = 0;
 
-    virtual void BeginEdit(int)
-    {}
-    virtual void EndEdit()
-    {}
+    virtual void BeginEdit(int) {}
+    virtual void EndEdit() {}
     virtual int GetItemTypeCount() const
     {
       return 0;
@@ -66,24 +64,18 @@ namespace AnchorSequencer
     }
 
     virtual void Get(int index, int **start, int **end, int *type, unsigned int *color) = 0;
-    virtual void Add(int)
-    {}
-    virtual void Del(int)
-    {}
-    virtual void Duplicate(int)
-    {}
+    virtual void Add(int) {}
+    virtual void Del(int) {}
+    virtual void Duplicate(int) {}
 
-    virtual void Copy()
-    {}
-    virtual void Paste()
-    {}
+    virtual void Copy() {}
+    virtual void Paste() {}
 
     virtual size_t GetCustomHeight(int)
     {
       return 0;
     }
-    virtual void DoubleClick(int)
-    {}
+    virtual void DoubleClick(int) {}
     virtual void CustomDraw(int,
                             AnchorDrawList *,
                             const AnchorBBox &,

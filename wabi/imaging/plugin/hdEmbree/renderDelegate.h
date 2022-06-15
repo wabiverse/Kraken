@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 
 class HdEmbreeRenderParam;
 
-#define HDEMBREE_RENDER_SETTINGS_TOKENS (enableAmbientOcclusion)(enableSceneColors)(ambientOcclusionSamples)
+#define HDEMBREE_RENDER_SETTINGS_TOKENS \
+  (enableAmbientOcclusion)(enableSceneColors)(ambientOcclusionSamples)
 
 // Also: HdRenderSettingsTokens->convergedSamplesPerPixel
 
@@ -88,6 +89,7 @@ TF_DECLARE_PUBLIC_TOKENS(HdEmbreeRenderSettingsTokens, HDEMBREE_RENDER_SETTINGS_
 class HdEmbreeRenderDelegate final : public HdRenderDelegate
 {
  public:
+
   /// Render delegate constructor. This method creates the RTC device and
   /// scene, and links embree error handling to hydra error handling.
   HdEmbreeRenderDelegate();
@@ -238,6 +240,7 @@ class HdEmbreeRenderDelegate final : public HdRenderDelegate
   virtual VtDictionary GetRenderStats() const override;
 
  private:
+
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;
   static const TfTokenVector SUPPORTED_SPRIM_TYPES;
   static const TfTokenVector SUPPORTED_BPRIM_TYPES;

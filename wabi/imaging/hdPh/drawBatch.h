@@ -59,6 +59,7 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 class HdPh_DrawBatch
 {
  public:
+
   HDPH_API
   HdPh_DrawBatch(HdPhDrawItemInstance *drawItemInstance);
 
@@ -106,6 +107,7 @@ class HdPh_DrawBatch
   virtual void SetEnableTinyPrimCulling(bool tinyPrimCulling);
 
  protected:
+
   HDPH_API
   virtual void _Init(HdPhDrawItemInstance *drawItemInstance);
 
@@ -117,8 +119,8 @@ class HdPh_DrawBatch
   class _DrawingProgram
   {
    public:
-    _DrawingProgram()
-    {}
+
+    _DrawingProgram() {}
 
     HDPH_API
     bool CompileShader(HdPhDrawItem const *drawItem,
@@ -185,24 +187,26 @@ class HdPh_DrawBatch
     HdPhShaderCodeSharedPtrVector GetComposedShaders() const
     {
       HdPhShaderCodeSharedPtrVector shaders = _shaders;
-      if (_surfaceShader)
-      {
+      if (_surfaceShader) {
         shaders.push_back(_surfaceShader);
       }
       return shaders;
     }
 
    protected:
+
     // overrides populate customBindings and enableInstanceDraw which
     // will be used to determine if glVertexAttribDivisor needs to be
     // enabled or not.
     HDPH_API
-    virtual void _GetCustomBindings(HdBindingRequestVector *customBindings, bool *enableInstanceDraw) const;
+    virtual void _GetCustomBindings(HdBindingRequestVector *customBindings,
+                                    bool *enableInstanceDraw) const;
 
     HDPH_API
     virtual bool _Link(HdPhGLSLProgramSharedPtr const &glslProgram);
 
    private:
+
     HdPhGLSLProgramSharedPtr _glslProgram;
     HdPh_ResourceBinder _resourceBinder;
     HdPhShaderCodeSharedPtrVector _shaders;
@@ -216,12 +220,14 @@ class HdPh_DrawBatch
                                       HdPhResourceRegistrySharedPtr const &resourceRegistry);
 
  protected:
+
   HDPH_API
   static bool _IsAggregated(HdPhDrawItem const *drawItem0, HdPhDrawItem const *drawItem1);
 
   std::vector<HdPhDrawItemInstance const *> _drawItemInstances;
 
  private:
+
   _DrawingProgram _program;
   HdPhShaderCode::ID _shaderHash;
 };

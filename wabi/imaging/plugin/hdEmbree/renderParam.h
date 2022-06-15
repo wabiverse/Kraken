@@ -49,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeRenderParam final : public HdRenderParam
 {
  public:
+
   HdEmbreeRenderParam(RTCDevice device,
                       RTCScene scene,
                       HdRenderThread *renderThread,
@@ -74,6 +75,7 @@ class HdEmbreeRenderParam final : public HdRenderParam
   }
 
  private:
+
   /// A handle to the top-level embree scene.
   RTCScene _scene;
   /// A handle to the top-level embree device (library handle).

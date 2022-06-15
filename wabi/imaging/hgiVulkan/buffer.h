@@ -49,6 +49,7 @@ class HgiVulkanDevice;
 class HgiVulkanBuffer final : public HgiBuffer
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanBuffer() override;
 
@@ -91,6 +92,7 @@ class HgiVulkanBuffer final : public HgiBuffer
   static HgiVulkanBuffer *CreateStagingBuffer(HgiVulkanDevice *device, HgiBufferDesc const &desc);
 
  protected:
+
   friend class HgiVulkan;
 
   // Constructor for making buffers
@@ -105,6 +107,7 @@ class HgiVulkanBuffer final : public HgiBuffer
                   HgiBufferDesc const &desc);
 
  private:
+
   HgiVulkanBuffer() = delete;
   HgiVulkanBuffer &operator=(const HgiVulkanBuffer &) = delete;
   HgiVulkanBuffer(const HgiVulkanBuffer &) = delete;

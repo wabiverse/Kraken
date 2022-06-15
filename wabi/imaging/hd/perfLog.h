@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_PERF_LOG_H
 #define WABI_IMAGING_HD_PERF_LOG_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/debugCodes.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/debugCodes.h"
 
 #include "wabi/base/trace/trace.h"
 
@@ -41,6 +41,7 @@
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
+
 
 class SdfPath;
 class HdResourceRegistry;
@@ -73,7 +74,8 @@ class HdResourceRegistry;
 #define HD_PERF_COUNTER_DECR(name) HdPerfLog::GetInstance().DecrementCounter(name);
 #define HD_PERF_COUNTER_SET(name, value) HdPerfLog::GetInstance().SetCounter(name, value);
 #define HD_PERF_COUNTER_ADD(name, value) HdPerfLog::GetInstance().AddCounter(name, value);
-#define HD_PERF_COUNTER_SUBTRACT(name, value) HdPerfLog::GetInstance().SubtractCounter(name, value);
+#define HD_PERF_COUNTER_SUBTRACT(name, value) \
+  HdPerfLog::GetInstance().SubtractCounter(name, value);
 
 //----------------------------------------------------------------------------//
 // PERFORMANCE LOG                                                            //
@@ -86,6 +88,7 @@ class HdResourceRegistry;
 class HdPerfLog
 {
  public:
+
   HD_API
   static HdPerfLog &GetInstance()
   {
@@ -180,6 +183,7 @@ class HdPerfLog
   std::vector<HdResourceRegistry *> const &GetResourceRegistryVector();
 
  private:
+
   // Don't allow copies
   HdPerfLog(const HdPerfLog &) = delete;
   HdPerfLog &operator=(const HdPerfLog &) = delete;
@@ -192,10 +196,8 @@ class HdPerfLog
   class _CacheEntry
   {
    public:
-    _CacheEntry()
-      : _hits(0),
-        _misses(0)
-    {}
+
+    _CacheEntry() : _hits(0), _misses(0) {}
 
     void AddHit()
     {
@@ -231,6 +233,7 @@ class HdPerfLog
     }
 
    private:
+
     size_t _hits;
     size_t _misses;
   };

@@ -43,6 +43,7 @@ class VtValue;
 class HgiInteropVulkan final
 {
  public:
+
   HGIINTEROP_API
   HgiInteropVulkan(Hgi *hgiVulkan);
 
@@ -58,6 +59,7 @@ class HgiInteropVulkan final
                           GfVec4i const &viewport);
 
  private:
+
   HgiInteropVulkan() = delete;
 
   HgiVulkan *_hgiVulkan;

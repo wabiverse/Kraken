@@ -43,14 +43,12 @@ WABI_NAMESPACE_BEGIN
 // A helper struct for thread_local that uses nullptr initialization as a
 // sentinel to prevent guard variable use from being invoked after first
 // initialization.
-template<class T>
-struct Sdf_FastThreadLocalBase
+template<class T> struct Sdf_FastThreadLocalBase
 {
   static T &Get()
   {
     static thread_local T *theTPtr = nullptr;
-    if (ARCH_LIKELY(theTPtr))
-    {
+    if (ARCH_LIKELY(theTPtr)) {
       return *theTPtr;
     }
     static thread_local T theT;
@@ -80,6 +78,7 @@ class Sdf_Pool
   static_assert(ElemSize >= sizeof(uint32_t), "ElemSize must be at least sizeof(uint32_t)");
 
  public:
+
   // Number of pool elements per region.
   static constexpr uint64_t ElemsPerRegion = 1ull << (32 - RegionBits);
 
@@ -95,12 +94,8 @@ class Sdf_Pool
   struct Handle
   {
     constexpr Handle() noexcept = default;
-    constexpr Handle(std::nullptr_t) noexcept
-      : value(0)
-    {}
-    Handle(unsigned region, uint32_t index)
-      : value((index << RegionBits) | region)
-    {}
+    constexpr Handle(std::nullptr_t) noexcept : value(0) {}
+    Handle(unsigned region, uint32_t index) : value((index << RegionBits) | region) {}
     Handle &operator=(Handle const &) = default;
     Handle &operator=(std::nullptr_t)
     {
@@ -141,6 +136,7 @@ class Sdf_Pool
   };
 
  private:
+
   // We maintain per-thread free lists of pool items.
   struct _FreeList
   {
@@ -246,10 +242,12 @@ class Sdf_Pool
   };
 
  public:
+
   static inline Handle Allocate();
   static inline void Free(Handle h);
 
  private:
+
   // Given a region id and index, form the pointer into the pool.
   static inline char *_GetPtr(unsigned region, uint32_t index)
   {
@@ -266,17 +264,15 @@ class Sdf_Pool
   // do this unless you really have to, it has to do a bit of a search.
   static inline Handle _GetHandle(char const *ptr)
   {
-    if (ptr)
-    {
-      for (unsigned region = 1; region != NumRegions + 1; ++region)
-      {
+    if (ptr) {
+      for (unsigned region = 1; region != NumRegions + 1; ++region) {
         char const *start = _regionStarts[region];
         ptrdiff_t diff = ptr - start;
         // Indexes start at 1 to avoid hash collisions when combining
         // multiple pool indexes in a single hash, so strictly greater
         // than 0 rather than greater-equal is appropriate here.
-        if (ARCH_LIKELY(start && (diff > 0) && (diff < static_cast<ptrdiff_t>(ElemsPerRegion * ElemSize))))
-        {
+        if (ARCH_LIKELY(start && (diff > 0) &&
+                        (diff < static_cast<ptrdiff_t>(ElemsPerRegion * ElemSize)))) {
           return Handle(region, static_cast<uint32_t>(diff / ElemSize));
         }
       }

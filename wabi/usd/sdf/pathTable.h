@@ -80,15 +80,16 @@ void Sdf_ClearPathTableInParallel(void **, size_t, void (*)(void *));
 /// elements with paths prefixed by \a p, a call to erase(\a i) may invalidate
 /// many iterators.
 ///
-template<class MappedType>
-class SdfPathTable
+template<class MappedType> class SdfPathTable
 {
  public:
+
   typedef SdfPath key_type;
   typedef MappedType mapped_type;
   typedef std::pair<key_type, mapped_type> value_type;
 
  private:
+
   // An _Entry represents an item in the table.  It holds the item's value, a
   // pointer (\a next) to the next item in the hash bucket's linked list, and
   // two pointers (\a firstChild and \a nextSibling) that describe the tree
@@ -157,16 +158,13 @@ class SdfPathTable
     void RemoveChild(_Entry *child)
     {
       // Remove child from this _Entry's children.
-      if (child == firstChild)
-      {
+      if (child == firstChild) {
         firstChild = child->GetNextSibling();
-      } else
-      {
+      } else {
         // Search the list to find the preceding child, then unlink the
         // child to remove.
         _Entry *prev, *cur = firstChild;
-        do
-        {
+        do {
           prev = cur;
           cur = prev->GetNextSibling();
         } while (cur != child);
@@ -196,24 +194,24 @@ class SdfPathTable
   typedef std::vector<_Entry *> _BucketVec;
 
  public:
+
   // The iterator class, used to make both const and non-const
   // iterators.  Currently only forward traversal is supported.
-  template<class, class>
-  friend class Iterator;
+  template<class, class> friend class Iterator;
   template<class ValType, class EntryPtr>
-  class Iterator
-    : public boost::iterator_facade<Iterator<ValType, EntryPtr>, ValType, boost::forward_traversal_tag>
+  class Iterator : public boost::iterator_facade<Iterator<ValType, EntryPtr>,
+                                                 ValType,
+                                                 boost::forward_traversal_tag>
   {
    public:
+
     /// The standard requires default construction but places practically no
     /// requirements on the semantics of default-constructed iterators.
-    Iterator()
-    {}
+    Iterator() {}
 
     /// Copy constructor (also allows for converting non-const to const).
     template<class OtherVal, class OtherEntryPtr>
-    Iterator(Iterator<OtherVal, OtherEntryPtr> const &other)
-      : _entry(other._entry)
+    Iterator(Iterator<OtherVal, OtherEntryPtr> const &other) : _entry(other._entry)
     {}
 
     /// Return an iterator \a e, defining a maximal range [\a *this, \a e)
@@ -222,20 +220,15 @@ class SdfPathTable
     Iterator GetNextSubtree() const
     {
       Iterator result(0);
-      if (_entry)
-      {
-        if (EntryPtr sibling = _entry->GetNextSibling())
-        {
+      if (_entry) {
+        if (EntryPtr sibling = _entry->GetNextSibling()) {
           // Next subtree is next sibling, if present.
           result._entry = sibling;
-        } else
-        {
+        } else {
           // Otherwise, walk up parents until we either find one with
           // a next sibling or run out.
-          for (EntryPtr p = _entry->GetParentLink(); p; p = p->GetParentLink())
-          {
-            if (EntryPtr sibling = p->GetNextSibling())
-            {
+          for (EntryPtr p = _entry->GetParentLink(); p; p = p->GetParentLink()) {
+            if (EntryPtr sibling = p->GetNextSibling()) {
               result._entry = sibling;
               break;
             }
@@ -246,14 +239,12 @@ class SdfPathTable
     }
 
    protected:
+
     friend class boost::iterator_core_access;
     friend class SdfPathTable;
-    template<class, class>
-    friend class Iterator;
+    template<class, class> friend class Iterator;
 
-    explicit Iterator(EntryPtr entry)
-      : _entry(entry)
-    {}
+    explicit Iterator(EntryPtr entry) : _entry(entry) {}
 
     // Fundamental functionality to implement the iterator.
     // boost::iterator_facade will invoke these as necessary to implement
@@ -291,10 +282,7 @@ class SdfPathTable
   typedef std::pair<iterator, bool> _IterBoolPair;
 
   /// Default constructor.
-  SdfPathTable()
-    : _size(0),
-      _mask(0)
-  {}
+  SdfPathTable() : _size(0), _mask(0) {}
 
   /// Copy constructor.
   SdfPathTable(SdfPathTable const &other)
@@ -305,17 +293,14 @@ class SdfPathTable
   {
     // Walk all elements in the other container, inserting into this one,
     // and creating the right child/sibling links along the way.
-    for (const_iterator i = other.begin(), end = other.end(); i != end; ++i)
-    {
+    for (const_iterator i = other.begin(), end = other.end(); i != end; ++i) {
       iterator j = _InsertInTable(*i).first;
       // Ensure first child and next sibling links are created.
-      if (i._entry->firstChild && !j._entry->firstChild)
-      {
+      if (i._entry->firstChild && !j._entry->firstChild) {
         j._entry->firstChild = _InsertInTable(i._entry->firstChild->value).first._entry;
       }
       // Ensure the nextSibling/parentLink is created.
-      if (i._entry->nextSiblingOrParent.Get() && !j._entry->nextSiblingOrParent.Get())
-      {
+      if (i._entry->nextSiblingOrParent.Get() && !j._entry->nextSiblingOrParent.Get()) {
         j._entry->nextSiblingOrParent.Set(
           _InsertInTable(i._entry->nextSiblingOrParent.Get()->value).first._entry,
           i._entry->nextSiblingOrParent.template BitsAs<bool>());
@@ -421,11 +406,9 @@ class SdfPathTable
   /// if there is none.
   iterator find(SdfPath const &path)
   {
-    if (!empty())
-    {
+    if (!empty()) {
       // Find the item in the list.
-      for (_Entry *e = _buckets[_Hash(path)]; e; e = e->next)
-      {
+      for (_Entry *e = _buckets[_Hash(path)]; e; e = e->next) {
         if (e->value.first == path)
           return iterator(e);
       }
@@ -437,11 +420,9 @@ class SdfPathTable
   /// \a end() if there is none.
   const_iterator find(SdfPath const &path) const
   {
-    if (!empty())
-    {
+    if (!empty()) {
       // Find the item in the list.
-      for (_Entry const *e = _buckets[_Hash(path)]; e; e = e->next)
-      {
+      for (_Entry const *e = _buckets[_Hash(path)]; e; e = e->next) {
         if (e->value.first == path)
           return const_iterator(e);
       }
@@ -504,13 +485,11 @@ class SdfPathTable
   {
     // Insert in table.
     _IterBoolPair result = _InsertInTable(value);
-    if (result.second)
-    {
+    if (result.second) {
       // New element -- make sure the parent is inserted.
       _Entry *const newEntry = result.first._entry;
       SdfPath const &parentPath = _GetParentPath(value.first);
-      if (!parentPath.IsEmpty())
-      {
+      if (!parentPath.IsEmpty()) {
         iterator parIter = insert(value_type(parentPath, mapped_type())).first;
         // Add the new entry to the parent's children.
         parIter._entry->AddChild(newEntry);
@@ -535,11 +514,9 @@ class SdfPathTable
   void clear()
   {
     // Note this leaves the size of _buckets unchanged.
-    for (size_t i = 0, n = _buckets.size(); i != n; ++i)
-    {
+    for (size_t i = 0, n = _buckets.size(); i != n; ++i) {
       _Entry *entry = _buckets[i];
-      while (entry)
-      {
+      while (entry) {
         _Entry *next = entry->next;
         delete entry;
         entry = next;
@@ -572,10 +549,8 @@ class SdfPathTable
   {
     std::vector<size_t> sizes(_buckets.size(), 0u);
     ;
-    for (size_t i = 0, n = _buckets.size(); i != n; ++i)
-    {
-      for (_Entry *entry = _buckets[i]; entry; entry = entry->next)
-      {
+    for (size_t i = 0, n = _buckets.size(); i != n; ++i) {
+      for (_Entry *entry = _buckets[i]; entry; entry = entry->next) {
         sizes[i]++;
       }
     }
@@ -588,15 +563,13 @@ class SdfPathTable
   void UpdateForRename(const SdfPath &oldName, const SdfPath &newName)
   {
 
-    if (oldName.GetParentPath() != newName.GetParentPath())
-    {
+    if (oldName.GetParentPath() != newName.GetParentPath()) {
       TF_CODING_ERROR("Unexpected arguments.");
       return;
     }
 
     std::pair<iterator, iterator> range = FindSubtreeRange(oldName);
-    for (iterator i = range.first; i != range.second; ++i)
-    {
+    for (iterator i = range.first; i != range.second; ++i) {
       insert(value_type(i->first.ReplacePrefix(oldName, newName), i->second));
     }
 
@@ -607,12 +580,12 @@ class SdfPathTable
   /// @}
 
  private:
+
   // Helper to delete entries.
   static void _DeleteEntryChain(void *voidEntry)
   {
     _Entry *entry = static_cast<_Entry *>(voidEntry);
-    while (entry)
-    {
+    while (entry) {
       _Entry *next = entry->next;
       delete entry;
       entry = next;
@@ -641,8 +614,7 @@ class SdfPathTable
 
     // Not present.  If the table is getting full then grow and re-find the
     // bucket.
-    if (_IsTooFull())
-    {
+    if (_IsTooFull()) {
       _Grow();
       bucketHead = &(_buckets[_Hash(value.first)]);
     }
@@ -679,8 +651,7 @@ class SdfPathTable
   void _EraseSubtree(_Entry *entry)
   {
     // Delete descendant nodes, if any.
-    if (_Entry *const firstChild = entry->firstChild)
-    {
+    if (_Entry *const firstChild = entry->firstChild) {
       _EraseSubtreeAndSiblings(firstChild);
       _EraseFromTable(firstChild);
     }
@@ -696,8 +667,7 @@ class SdfPathTable
     // And siblings.
     _Entry *sibling = entry->GetNextSibling();
     _Entry *nextSibling = sibling ? sibling->GetNextSibling() : nullptr;
-    while (sibling)
-    {
+    while (sibling) {
       _EraseSubtree(sibling);
       _EraseFromTable(sibling);
       sibling = nextSibling;
@@ -733,11 +703,9 @@ class SdfPathTable
     _BucketVec newBuckets(_mask + 1);
 
     // Move items to a new bucket list
-    for (size_t i = 0, n = _buckets.size(); i != n; ++i)
-    {
+    for (size_t i = 0, n = _buckets.size(); i != n; ++i) {
       _Entry *elem = _buckets[i];
-      while (elem)
-      {
+      while (elem) {
         // Save pointer to next item
         _Entry *next = elem->next;
 
@@ -770,6 +738,7 @@ class SdfPathTable
   }
 
  private:
+
   _BucketVec _buckets;
   size_t _size;
   size_t _mask;

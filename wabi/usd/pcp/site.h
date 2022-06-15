@@ -46,6 +46,7 @@ class PcpLayerStackSite;
 class PcpSite : boost::totally_ordered<PcpSite>
 {
  public:
+
   PcpLayerStackIdentifier layerStackIdentifier;
   SdfPath path;
 
@@ -82,6 +83,7 @@ class PcpSite : boost::totally_ordered<PcpSite>
 class PcpSiteStr : boost::totally_ordered<PcpSiteStr>
 {
  public:
+
   PcpLayerStackIdentifierStr layerStackIdentifierStr;
   SdfPath path;
 
@@ -119,6 +121,7 @@ class PcpSiteStr : boost::totally_ordered<PcpSiteStr>
 class PcpLayerStackSite : boost::totally_ordered<PcpLayerStackSite>
 {
  public:
+
   PcpLayerStackRefPtr layerStack;
   SdfPath path;
 

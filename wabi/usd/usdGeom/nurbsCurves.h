@@ -77,6 +77,7 @@ class SdfAssetPath;
 class UsdGeomNurbsCurves : public UsdGeomCurves
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -87,16 +88,12 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
   /// Equivalent to UsdGeomNurbsCurves::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomNurbsCurves(const UsdPrim &prim = UsdPrim())
-    : UsdGeomCurves(prim)
-  {}
+  explicit UsdGeomNurbsCurves(const UsdPrim &prim = UsdPrim()) : UsdGeomCurves(prim) {}
 
   /// Construct a UsdGeomNurbsCurves on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomNurbsCurves(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomNurbsCurves(const UsdSchemaBase &schemaObj)
-    : UsdGeomCurves(schemaObj)
-  {}
+  explicit UsdGeomNurbsCurves(const UsdSchemaBase &schemaObj) : UsdGeomCurves(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -146,6 +143,7 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
   static UsdGeomNurbsCurves Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -154,6 +152,7 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -163,9 +162,11 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ORDER
   // --------------------------------------------------------------------- //
@@ -188,9 +189,11 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateOrderAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateOrderAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // KNOTS
   // --------------------------------------------------------------------- //
@@ -213,9 +216,11 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateKnotsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateKnotsAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RANGES
   // --------------------------------------------------------------------- //
@@ -240,9 +245,11 @@ class UsdGeomNurbsCurves : public UsdGeomCurves
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateRangesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRangesAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

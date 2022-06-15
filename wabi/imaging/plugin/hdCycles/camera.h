@@ -51,6 +51,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesCamera final : public HdCamera
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Camera object
    *
@@ -200,6 +201,7 @@ class HdCyclesCamera final : public HdCamera
   }
 
  private:
+
   float m_horizontalAperture;
   float m_verticalAperture;
   float m_horizontalApertureOffset;

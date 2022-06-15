@@ -80,6 +80,7 @@ inline bool operator!=(const HgiShaderProgramDesc &lhs, const HgiShaderProgramDe
 class HgiShaderProgram
 {
  public:
+
   HGI_API
   virtual ~HgiShaderProgram();
 
@@ -119,12 +120,14 @@ class HgiShaderProgram
   virtual uint64_t GetRawResource() const = 0;
 
  protected:
+
   HGI_API
   HgiShaderProgram(HgiShaderProgramDesc const &desc);
 
   HgiShaderProgramDesc _descriptor;
 
  private:
+
   HgiShaderProgram() = delete;
   HgiShaderProgram &operator=(const HgiShaderProgram &) = delete;
   HgiShaderProgram(const HgiShaderProgram &) = delete;

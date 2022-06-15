@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode
 {
  public:
+
   RprUsd_HoudiniPrincipledNode(RprUsd_MaterialBuilderContext *ctx,
                                std::map<TfToken, VtValue> const &surfaceParameters,
                                std::map<TfToken, VtValue> const *displacementParameters);
@@ -52,8 +53,8 @@ class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode
   }
 
  private:
-  template<typename T>
-  T *AddAuxiliaryNode(std::unique_ptr<T> node)
+
+  template<typename T> T *AddAuxiliaryNode(std::unique_ptr<T> node)
   {
     T *ret = node.get();
     m_auxiliaryNodes.push_back(std::move(node));
@@ -69,12 +70,15 @@ class RprUsd_HoudiniPrincipledNode : public RprUsd_BaseRuntimeNode
                            RprUsd_MaterialNode **uvTextureNode = nullptr);
 
  private:
+
   std::vector<std::unique_ptr<RprUsd_MaterialNode>> m_auxiliaryNodes;
   RprUsd_MaterialNode *m_baseColorNode = nullptr;
   VtValue m_displacementOutput;
 };
 
-bool IsHoudiniPrincipledShaderHydraNode(HdSceneDelegate *delegate, SdfPath const &nodePath, bool *isSurface);
+bool IsHoudiniPrincipledShaderHydraNode(HdSceneDelegate *delegate,
+                                        SdfPath const &nodePath,
+                                        bool *isSurface);
 
 WABI_NAMESPACE_END
 

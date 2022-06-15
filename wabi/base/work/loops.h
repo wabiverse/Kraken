@@ -48,8 +48,7 @@ WABI_NAMESPACE_BEGIN
 ///
 ///     void LoopCallback(size_t begin, size_t end);
 ///
-template<typename Fn>
-void WorkSerialForN(size_t n, Fn &&fn)
+template<typename Fn> void WorkSerialForN(size_t n, Fn &&fn)
 {
   std::forward<Fn>(fn)(0, n);
 }
@@ -69,22 +68,19 @@ void WorkSerialForN(size_t n, Fn &&fn)
 /// you want to have at least 10,000 instructions to count for the overhead of
 /// launching a thread.
 ///
-template<typename Fn>
-void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
+template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
 {
   if (n == 0)
     return;
 
   // Don't bother with parallel_for, if concurrency is limited to 1.
-  if (WorkHasConcurrency())
-  {
+  if (WorkHasConcurrency()) {
 
     class Work_ParallelForN_TBB
     {
      public:
-      Work_ParallelForN_TBB(Fn &fn)
-        : _fn(fn)
-      {}
+
+      Work_ParallelForN_TBB(Fn &fn) : _fn(fn) {}
 
       void operator()(const tbb::blocked_range<size_t> &r) const
       {
@@ -97,15 +93,17 @@ void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
       }
 
      private:
+
       Fn &_fn;
     };
 
     // In most cases we do not want to inherit cancellation state from the
     // parent context, so we create an isolated task group context.
     tbb::task_group_context ctx(tbb::task_group_context::isolated);
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, n, grainSize), Work_ParallelForN_TBB(callback), ctx);
-  } else
-  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, n, grainSize),
+                      Work_ParallelForN_TBB(callback),
+                      ctx);
+  } else {
 
     // If concurrency is limited to 1, execute serially.
     WorkSerialForN(n, std::forward<Fn>(callback));
@@ -123,8 +121,7 @@ void WorkParallelForN(size_t n, Fn &&callback, size_t grainSize)
 ///     void LoopCallback(size_t begin, size_t end);
 ///
 ///
-template<typename Fn>
-void WorkParallelForN(size_t n, Fn &&callback)
+template<typename Fn> void WorkParallelForN(size_t n, Fn &&callback)
 {
   WorkParallelForN(n, std::forward<Fn>(callback), 1);
 }

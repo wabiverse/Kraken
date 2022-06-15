@@ -57,6 +57,7 @@ class TraceEventContainer
   class _Node
   {
    public:
+
     using const_iterator = const TraceEvent *;
 
     // Allocate a new node that is able to hold capacity events.
@@ -116,10 +117,12 @@ class TraceEventContainer
     void Unlink();
 
    private:
+
     _Node(TraceEvent *end, size_t capacity);
     ~_Node();
 
    private:
+
     union
     {
       struct
@@ -136,6 +139,7 @@ class TraceEventContainer
   };
 
  public:
+
   ////////////////////////////////////////////////////////////////////////////
   /// \class const_iterator
   /// Bidirectional iterator of TraceEvents.
@@ -143,6 +147,7 @@ class TraceEventContainer
   class const_iterator
   {
    public:
+
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = const TraceEvent;
     using difference_type = int64_t;
@@ -196,16 +201,13 @@ class TraceEventContainer
     }
 
    private:
-    const_iterator(const _Node *node, const TraceEvent *event)
-      : _node(node),
-        _event(event)
-    {}
+
+    const_iterator(const _Node *node, const TraceEvent *event) : _node(node), _event(event) {}
 
     void Advance()
     {
       ++_event;
-      if (_event == _node->end() && _node->GetNextNode())
-      {
+      if (_event == _node->end() && _node->GetNextNode()) {
         _node = _node->GetNextNode();
         _event = _node->begin();
       }
@@ -213,8 +215,7 @@ class TraceEventContainer
 
     void Reverse()
     {
-      if (_event == _node->begin())
-      {
+      if (_event == _node->begin()) {
         _node = _node->GetPrevNode();
         _event = _node->end();
       }
@@ -247,13 +248,11 @@ class TraceEventContainer
 
   /// \name Subset of stl container interface.
   /// @{
-  template<class... Args>
-  TraceEvent &emplace_back(Args &&...args)
+  template<class... Args> TraceEvent &emplace_back(Args &&...args)
   {
     TraceEvent *event = new (_nextEvent++) TraceEvent(std::forward<Args>(args)...);
     _back->ClaimEventEntry();
-    if (_back->IsFull())
-    {
+    if (_back->IsFull()) {
       Allocate();
     }
     return *event;
@@ -290,6 +289,7 @@ class TraceEventContainer
   TRACE_API void Append(TraceEventContainer &&other);
 
  private:
+
   // Allocates a new block of memory for TraceEvent items.
   TRACE_API void Allocate();
 

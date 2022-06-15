@@ -72,6 +72,7 @@ struct HdxColorizeSelectionTaskParams
 class HdxColorizeSelectionTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxColorizeSelectionTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -90,11 +91,13 @@ class HdxColorizeSelectionTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   // The core colorizing logic of this task: given the ID buffers and the
   // selection buffer, produce a color output at each pixel.
   void _ColorizeSelection();
@@ -122,7 +125,8 @@ class HdxColorizeSelectionTask : public HdxTask
 
     bool operator==(const _ParameterBuffer &other) const
     {
-      return texelSize == other.texelSize && enableOutline == other.enableOutline && radius == other.radius;
+      return texelSize == other.texelSize && enableOutline == other.enableOutline &&
+             radius == other.radius;
     }
   };
 
@@ -152,9 +156,11 @@ class HdxColorizeSelectionTask : public HdxTask
 HDX_API
 std::ostream &operator<<(std::ostream &out, const HdxColorizeSelectionTaskParams &pv);
 HDX_API
-bool operator==(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs);
+bool operator==(const HdxColorizeSelectionTaskParams &lhs,
+                const HdxColorizeSelectionTaskParams &rhs);
 HDX_API
-bool operator!=(const HdxColorizeSelectionTaskParams &lhs, const HdxColorizeSelectionTaskParams &rhs);
+bool operator!=(const HdxColorizeSelectionTaskParams &lhs,
+                const HdxColorizeSelectionTaskParams &rhs);
 
 WABI_NAMESPACE_END
 

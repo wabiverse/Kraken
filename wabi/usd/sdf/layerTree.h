@@ -58,6 +58,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 class SdfLayerTree : public TfRefBase, public TfWeakBase, boost::noncopyable
 {
  public:
+
   /// Create a new layer tree node.
   SDF_API
   static SdfLayerTreeHandle New(const SdfLayerHandle &layer,
@@ -74,11 +75,13 @@ class SdfLayerTree : public TfRefBase, public TfWeakBase, boost::noncopyable
   SDF_API const SdfLayerTreeHandleVector &GetChildTrees() const;
 
  private:
+
   SdfLayerTree(const SdfLayerHandle &layer,
                const SdfLayerTreeHandleVector &childTrees,
                const SdfLayerOffset &cumulativeOffset);
 
  private:
+
   const SdfLayerHandle _layer;
   const SdfLayerOffset _offset;
   const SdfLayerTreeHandleVector _childTrees;

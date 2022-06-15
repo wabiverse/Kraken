@@ -24,14 +24,10 @@ namespace internal
   class Double
   {
    public:
-    Double()
-    {}
-    Double(double d)
-      : d_(d)
-    {}
-    Double(uint64_t u)
-      : u_(u)
-    {}
+
+    Double() {}
+    Double(double d) : d_(d) {}
+    Double(uint64_t u) : u_(u) {}
 
     double Value() const
     {
@@ -106,6 +102,7 @@ namespace internal
     }
 
    private:
+
     static const int kSignificandSize = 52;
     static const int kExponentBias = 0x3FF;
     static const int kDenormalExponent = 1 - kExponentBias;

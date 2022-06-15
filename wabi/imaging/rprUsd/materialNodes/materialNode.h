@@ -66,6 +66,7 @@ struct RprUsd_MaterialBuilderContext
 class RprUsd_MaterialNode
 {
  public:
+
   virtual ~RprUsd_MaterialNode() = default;
 
   virtual VtValue GetOutput(TfToken const &outputId) = 0;
@@ -76,9 +77,8 @@ class RprUsd_MaterialNode
 class RprUsd_NodeError : public std::exception
 {
  public:
-  RprUsd_NodeError(std::string errorMessage)
-    : m_msg(std::move(errorMessage))
-  {}
+
+  RprUsd_NodeError(std::string errorMessage) : m_msg(std::move(errorMessage)) {}
   ~RprUsd_NodeError() override = default;
 
   const char *what() const noexcept override
@@ -87,14 +87,14 @@ class RprUsd_NodeError : public std::exception
   }
 
  private:
+
   std::string m_msg;
 };
 
 /// Thrown when node is empty.
 /// There is no point to keep a node in memory when all it does is propagates inputs to outputs.
 class RprUsd_NodeEmpty : public std::exception
-{
-};
+{};
 
 WABI_NAMESPACE_END
 

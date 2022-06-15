@@ -48,6 +48,7 @@ class JsValue;
 class Plug_RegistrationMetadata
 {
  public:
+
   enum Type
   {
     UnknownType,
@@ -58,9 +59,7 @@ class Plug_RegistrationMetadata
     ResourceType
   };
 
-  Plug_RegistrationMetadata()
-    : type(UnknownType)
-  {}
+  Plug_RegistrationMetadata() : type(UnknownType) {}
   Plug_RegistrationMetadata(const JsValue &,
                             const std::string &valuePathname,
                             const std::string &locationForErrorReporting);
@@ -77,21 +76,21 @@ class Plug_RegistrationMetadata
 class Plug_TaskArena
 {
  public:
+
   class Synchronous
-  {
-  };  // For single-threaded debugging.
+  {};  // For single-threaded debugging.
   Plug_TaskArena();
   Plug_TaskArena(Synchronous);
   ~Plug_TaskArena();
 
   /// Schedule \p fn to run.
-  template<class Fn>
-  void Run(Fn const &fn);
+  template<class Fn> void Run(Fn const &fn);
 
   /// Wait for all scheduled tasks to complete.
   void Wait();
 
  private:
+
   class _Impl;
   std::unique_ptr<_Impl> _impl;
 };
@@ -115,7 +114,9 @@ void Plug_ReadPlugInfo(const std::vector<std::string> &pathnames,
 /// messages that should be reported when plugins are registered (if any).
 /// The priority order of elements of the path is honored if pathsAreOrdered.
 /// Defined in registry.cpp.
-void Plug_SetPaths(const std::vector<std::string> &, const std::vector<std::string> &, bool pathsAreOrdered);
+void Plug_SetPaths(const std::vector<std::string> &,
+                   const std::vector<std::string> &,
+                   bool pathsAreOrdered);
 
 WABI_NAMESPACE_END
 

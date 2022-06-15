@@ -49,7 +49,8 @@ WABI_NAMESPACE_BEGIN
 class HdSceneDelegate;
 class HdExtComputation;
 using HdPhGLSLProgramSharedPtr = std::shared_ptr<class HdPhGLSLProgram>;
-using HdExtComputationPrimvarDescriptorVector = std::vector<struct HdExtComputationPrimvarDescriptor>;
+using HdExtComputationPrimvarDescriptorVector =
+  std::vector<struct HdExtComputationPrimvarDescriptor>;
 
 using HdPhExtCompGpuComputationSharedPtr = std::shared_ptr<class HdPhExtCompGpuComputation>;
 
@@ -89,6 +90,7 @@ using HdPhExtCompGpuComputationSharedPtr = std::shared_ptr<class HdPhExtCompGpuC
 class HdPhExtCompGpuComputation final : public HdComputation
 {
  public:
+
   /// Constructs a new GPU ExtComputation computation.
   /// resource provides the set of input data and kernel to execute this
   /// computation.
@@ -166,6 +168,7 @@ class HdPhExtCompGpuComputation final : public HdComputation
   virtual HdPhExtCompGpuComputationResourceSharedPtr const &GetResource() const;
 
  private:
+
   SdfPath _id;
   HdPhExtCompGpuComputationResourceSharedPtr _resource;
   HdExtComputationPrimvarDescriptorVector _compPrimvars;

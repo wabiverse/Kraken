@@ -491,17 +491,15 @@ class TfHashMap : private std::unordered_map<Key, Mapped, HashFn, EqualKey, Allo
   {
     _Base::insert(first, last);
   }
-  
-  template< class... Args >
-  std::pair<iterator, bool> emplace( Args&&... args )
+
+  template<class... Args> std::pair<iterator, bool> emplace(Args &&...args)
   {
-      return _Base::emplace(std::forward<Args>(args)...);
+    return _Base::emplace(std::forward<Args>(args)...);
   }
 
-  template< class... Args >
-  std::pair<iterator, bool> try_emplace( const Key& k, Args&&... args )
+  template<class... Args> std::pair<iterator, bool> try_emplace(const Key &k, Args &&...args)
   {
-      return _Base::try_emplace(k, std::forward<Args>(args)...);
+    return _Base::try_emplace(k, std::forward<Args>(args)...);
   }
   using _Base::key_eq;
   using _Base::load_factor;

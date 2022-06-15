@@ -67,6 +67,7 @@ class PxOsdMeshTopology;
 class PxOsdMeshTopologyValidation
 {
  public:
+
   friend class PxOsdMeshTopology;
   /// Codes for various invalid states for PxOsdMeshTopology
   enum class Code
@@ -124,6 +125,7 @@ class PxOsdMeshTopologyValidation
   };
 
  private:
+
   // TODO: In C++17, this class is uncessary and should be replaced with
   // std::optional<std::vector<Invalidation>>
   class _OptionalInvalidationVector
@@ -131,22 +133,20 @@ class PxOsdMeshTopologyValidation
     std::unique_ptr<std::vector<Invalidation>> _value;
 
    public:
+
     _OptionalInvalidationVector() = default;
     _OptionalInvalidationVector(_OptionalInvalidationVector &&) = default;
     _OptionalInvalidationVector &operator=(_OptionalInvalidationVector &&) = default;
-    _OptionalInvalidationVector(_OptionalInvalidationVector const &other)
-      : _value(nullptr)
+    _OptionalInvalidationVector(_OptionalInvalidationVector const &other) : _value(nullptr)
     {
-      if (other._value)
-      {
+      if (other._value) {
         _value.reset(new std::vector<Invalidation>(*other._value));
       }
     }
     _OptionalInvalidationVector &operator=(_OptionalInvalidationVector const &other)
     {
       _value = nullptr;
-      if (other._value)
-      {
+      if (other._value) {
         _value.reset(new std::vector<Invalidation>(*other._value));
       }
       return *this;
@@ -180,8 +180,7 @@ class PxOsdMeshTopologyValidation
   /// initializes the vector if necessary
   void _AppendInvalidation(const Invalidation &invalidation)
   {
-    if (!_invalidations)
-    {
+    if (!_invalidations) {
       _invalidations.emplace();
     }
     _invalidations.value().push_back(invalidation);
@@ -189,6 +188,7 @@ class PxOsdMeshTopologyValidation
   PxOsdMeshTopologyValidation(PxOsdMeshTopology const &);
 
  public:
+
   PxOsdMeshTopologyValidation() = default;
   PxOsdMeshTopologyValidation(PxOsdMeshTopologyValidation &&) = default;
   PxOsdMeshTopologyValidation &operator=(PxOsdMeshTopologyValidation &&) = default;
@@ -231,6 +231,7 @@ class PxOsdMeshTopologyValidation
   }
 
  private:
+
   void _ValidateScheme(PxOsdMeshTopology const &);
   void _ValidateOrientation(PxOsdMeshTopology const &);
   void _ValidateTriangleSubdivision(PxOsdMeshTopology const &);

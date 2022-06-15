@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class HdPrman_Field final : public HdField
 {
  public:
+
   HdPrman_Field(TfToken const &typeId, SdfPath const &id);
   virtual void Sync(HdSceneDelegate *sceneDelegate,
                     HdRenderParam *renderParam,
@@ -47,15 +48,18 @@ class HdPrman_Field final : public HdField
   virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  private:
+
   TfToken const _typeId;
 };
 
 class HdPrman_Volume final : public HdPrman_Gprim<HdVolume>
 {
  public:
+
   typedef HdPrman_Gprim<HdVolume> BASE;
 
  public:
+
   HF_MALLOC_TAG_NEW("new HdPrman_Volume");
   HdPrman_Volume(SdfPath const &id);
   virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
@@ -108,9 +112,12 @@ class HdPrman_Volume final : public HdPrman_Gprim<HdVolume>
   };
 
   /// Helper method for emitter functions to declare a primvar for a field
-  static void DeclareFieldPrimvar(RtPrimVarList *primvars, RtUString const &fieldName, FieldType type);
+  static void DeclareFieldPrimvar(RtPrimVarList *primvars,
+                                  RtUString const &fieldName,
+                                  FieldType type);
 
  protected:
+
   virtual RtPrimVarList _ConvertGeometry(HdPrman_Context *context,
                                          HdSceneDelegate *sceneDelegate,
                                          const SdfPath &id,

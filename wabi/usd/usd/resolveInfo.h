@@ -67,10 +67,8 @@ enum UsdResolveInfoSource
 class UsdResolveInfo
 {
  public:
-  UsdResolveInfo()
-    : _source(UsdResolveInfoSourceNone),
-      _valueIsBlocked(false)
-  {}
+
+  UsdResolveInfo() : _source(UsdResolveInfoSourceNone), _valueIsBlocked(false) {}
 
   /// Return the source of the associated attribute's value.
   UsdResolveInfoSource GetSource() const
@@ -114,6 +112,7 @@ class UsdResolveInfo
   }
 
  private:
+
   /// The LayerStack that provides the strongest value opinion.
   ///
   /// If \p source is either \p UsdResolveInfoSourceDefault

@@ -25,6 +25,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 HdResource::HdResource(TfToken const &role) : _role(role), _size(0)
 {
   /*NOTHING*/
@@ -39,5 +40,6 @@ void HdResource::SetSize(size_t size)
 {
   _size = size;
 }
+
 
 WABI_NAMESPACE_END

@@ -51,6 +51,7 @@ class TfRegistryManager
   TfRegistryManager &operator=(const TfRegistryManager &) = delete;
 
  public:
+
   // The type of a registration function.  The arguments are not used.
   typedef void (*RegistrationFunctionType)(void *, void *);
   typedef std::function<void()> UnloadFunctionType;
@@ -65,8 +66,7 @@ class TfRegistryManager
   /// this call is made, when new code is dynamically loaded then any
   /// \c TF_REGISTRY_FUNCTION() functions of type \c T in the new code
   /// will automatically be run when the code is loaded.
-  template<class T>
-  void SubscribeTo()
+  template<class T> void SubscribeTo()
   {
     _SubscribeTo(typeid(T));
   }
@@ -75,8 +75,7 @@ class TfRegistryManager
   ///
   /// After this call, newly added code will no longer have \c
   /// TF_REGISTRY_FUNCTION() functions of type \c T run.
-  template<class T>
-  void UnsubscribeFrom()
+  template<class T> void UnsubscribeFrom()
   {
     _UnsubscribeFrom(typeid(T));
   }
@@ -116,6 +115,7 @@ class TfRegistryManager
   TF_API static void RunUnloadersAtExit();
 
  private:
+
   TF_API TfRegistryManager();
   TF_API ~TfRegistryManager();
 
@@ -147,6 +147,7 @@ namespace
 class Tf_RegistryInit
 {
  public:
+
   TF_API static void Add(const char *libName,
                          TfRegistryManager::RegistrationFunctionType func,
                          const char *typeName);
@@ -258,7 +259,8 @@ class Tf_RegistryInit
 /// registered in more than one namespace.
 ///
 /// \hideinitializer
-#define TF_REGISTRY_FUNCTION_WITH_TAG(KEY_TYPE, TAG) TF_REGISTRY_DEFINE(KEY_TYPE, TF_PP_CAT(TAG, __LINE__))
+#define TF_REGISTRY_FUNCTION_WITH_TAG(KEY_TYPE, TAG) \
+  TF_REGISTRY_DEFINE(KEY_TYPE, TF_PP_CAT(TAG, __LINE__))
 
 WABI_NAMESPACE_END
 

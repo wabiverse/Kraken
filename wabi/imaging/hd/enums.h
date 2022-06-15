@@ -24,8 +24,8 @@
 #ifndef WABI_IMAGING_HD_ENUMS_H
 #define WABI_IMAGING_HD_ENUMS_H
 
-#include "wabi/imaging/hd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
 
 WABI_NAMESPACE_BEGIN
 

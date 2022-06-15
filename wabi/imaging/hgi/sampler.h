@@ -97,6 +97,7 @@ bool operator!=(const HgiSamplerDesc &lhs, const HgiSamplerDesc &rhs);
 class HgiSampler
 {
  public:
+
   HGI_API
   virtual ~HgiSampler();
 
@@ -118,12 +119,14 @@ class HgiSampler
   virtual uint64_t GetRawResource() const = 0;
 
  protected:
+
   HGI_API
   HgiSampler(HgiSamplerDesc const &desc);
 
   HgiSamplerDesc _descriptor;
 
  private:
+
   HgiSampler() = delete;
   HgiSampler &operator=(const HgiSampler &) = delete;
   HgiSampler(const HgiSampler &) = delete;

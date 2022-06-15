@@ -167,7 +167,8 @@ using UsdUtilsModifyAssetPathFn = std::function<std::string(const std::string &a
 /// authored: we can replace all paths with their fully resolved equivalents,
 /// for example.
 USDUTILS_API
-void UsdUtilsModifyAssetPaths(const SdfLayerHandle &layer, const UsdUtilsModifyAssetPathFn &modifyFn);
+void UsdUtilsModifyAssetPaths(const SdfLayerHandle &layer,
+                              const UsdUtilsModifyAssetPathFn &modifyFn);
 
 WABI_NAMESPACE_END
 

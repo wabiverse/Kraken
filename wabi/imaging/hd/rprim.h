@@ -24,40 +24,27 @@
 #ifndef WABI_IMAGING_HD_RPRIM_H
 #define WABI_IMAGING_HD_RPRIM_H
 
-#include "wabi/base/arch/inttypes.h"
-#include "wabi/base/gf/range3d.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/changeTracker.h"
-#include "wabi/imaging/hd/drawItem.h"
-#include "wabi/imaging/hd/repr.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/rprimSharedData.h"
+#include "wabi/imaging/hd/repr.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
 #include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/gf/range3d.h"
+#include "wabi/base/arch/inttypes.h"
 
 #include <memory>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
 
-class HdBufferSource;
-class HdDrawItem;
-class HdMaterial;
+class HdChangeTracker;
 class HdRenderIndex;
 class HdRenderParam;
 
 using HdReprSharedPtr = std::shared_ptr<HdRepr>;
-
-using HdBufferSourceSharedPtr = std::shared_ptr<HdBufferSource>;
-using HdBufferSourceSharedPtrVector = std::vector<HdBufferSourceSharedPtr>;
-
-using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
-using HdBufferArrayRangeSharedPtr = std::shared_ptr<HdBufferArrayRange>;
-
-using HdComputationSharedPtr = std::shared_ptr<class HdComputation>;
-using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 
 /// \class HdRprim
 ///
@@ -67,6 +54,7 @@ using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 class HdRprim
 {
  public:
+
   HD_API
   HdRprim(SdfPath const &id);
 
@@ -204,22 +192,14 @@ class HdRprim
   HD_API
   void SetMaterialId(SdfPath const &materialId);
 
-  /// The MaterialTag allows rprims to be organized into different
-  /// collections based on properties of the prim's material.
-  /// E.g. A renderer may wish to organize opaque and translucent prims
-  /// into different collections so they can be rendered seperately.
-  TfToken const &GetMaterialTag() const
-  {
-    return _sharedData.materialTag;
-  }
-
-  /// Sets the material tag used by the rprim.
-  HD_API
-  void SetMaterialTag(TfToken const &materialTag);
-
   HdReprSelector const &GetReprSelector() const
   {
     return _authoredReprSelector;
+  }
+
+  TfToken const &GetRenderTag() const
+  {
+    return _renderTag;
   }
 
   /// Returns the render tag associated to this rprim
@@ -259,7 +239,11 @@ class HdRprim
   HD_API
   void UpdateReprSelector(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits);
 
+  HD_API
+  virtual void UpdateRenderTag(HdSceneDelegate *delegate, HdRenderParam *renderParam);
+
  protected:
+
   // ---------------------------------------------------------------------- //
   /// \name Rprim Hydra Engine API : Pre-Sync & Sync-Phase
   // ---------------------------------------------------------------------- //
@@ -303,6 +287,7 @@ class HdRprim
   void _UpdateInstancer(HdSceneDelegate *sceneDelegate, HdDirtyBits *dirtyBits);
 
  private:
+
   SdfPath _instancerId;
   SdfPath _materialId;
 
@@ -310,47 +295,49 @@ class HdRprim
   int32_t _primId;
 
  protected:
+
   // shared data across reprs: bufferArrayRanges, bounds, visibility
   HdRprimSharedData _sharedData;
 
   // authored repr selector
   HdReprSelector _authoredReprSelector;
 
+  // authored render tag
+  TfToken _renderTag;
+
   // total number of reprs is relatively small (less than 5 or so
   // in most case), we use linear container for efficiency.
-  typedef std::vector<std::pair<TfToken, HdReprSharedPtr>> _ReprVector;
+  using _ReprVector = std::vector<std::pair<TfToken, HdReprSharedPtr>>;
   _ReprVector _reprs;
 
   struct _ReprComparator
   {
-    _ReprComparator(TfToken const &name)
-      : _name(name)
-    {}
+    _ReprComparator(TfToken const &name) : _name(name) {}
     bool operator()(const std::pair<TfToken, HdReprSharedPtr> &e) const
     {
       return _name == e.first;
     }
 
    private:
+
     TfToken _name;
   };
+
 
   // Repr configuration descriptors. All concrete types (HdMesh, HdPoints ..)
   // have this static map to lookup descriptors for the given reprToken.
   //
   // N : # of descriptors for the repr.
   //
-  template<typename DESC_TYPE, int N = 1>
-  struct _ReprDescConfigs
+  template<typename DESC_TYPE, int N = 1> struct _ReprDescConfigs
   {
-    typedef std::array<DESC_TYPE, N> DescArray;
+    using DescArray = std::array<DESC_TYPE, N>;
     static const int MAX_DESCS = N;
 
     DescArray Find(TfToken const &reprToken) const
     {
       // linear search, we expect only a handful reprs configured.
-      TF_FOR_ALL (it, _configs)
-      {
+      TF_FOR_ALL (it, _configs) {
         if (it->first == reprToken)
           return it->second;
       }
@@ -359,10 +346,8 @@ class HdRprim
     }
     void AddOrUpdate(TfToken const &reprToken, DescArray descs)
     {
-      for (auto &config : _configs)
-      {
-        if (config.first == reprToken)
-        {
+      for (auto &config : _configs) {
+        if (config.first == reprToken) {
           // Overrwrite the existing entry.
           config.second = descs;
           return;
@@ -388,8 +373,9 @@ GfRange3d HdRprim::GetExtent(HdSceneDelegate *delegate) const
   return delegate->GetExtent(GetId());
 }
 
-inline HdPrimvarDescriptorVector HdRprim::GetPrimvarDescriptors(HdSceneDelegate *delegate,
-                                                                HdInterpolation interpolation) const
+inline HdPrimvarDescriptorVector HdRprim::GetPrimvarDescriptors(
+  HdSceneDelegate *delegate,
+  HdInterpolation interpolation) const
 {
   return delegate->GetPrimvarDescriptors(GetId(), interpolation);
 }

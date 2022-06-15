@@ -24,12 +24,12 @@
 #ifndef WABI_IMAGING_HD_FLAT_NORMALS_H
 #define WABI_IMAGING_HD_FLAT_NORMALS_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/bufferSource.h"
 #include "wabi/imaging/hd/computation.h"
 #include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
@@ -49,13 +49,16 @@ class HdMeshTopology;
 class Hd_FlatNormals final
 {
  public:
+
   /// Computes the flat normals result using the supplied face coord
   /// information and points data. Returns an array of the same size and
   /// type as the source points, with optional packing.
   HD_API
-  static VtArray<GfVec3f> ComputeFlatNormals(HdMeshTopology const *topology, GfVec3f const *pointsPtr);
+  static VtArray<GfVec3f> ComputeFlatNormals(HdMeshTopology const *topology,
+                                             GfVec3f const *pointsPtr);
   HD_API
-  static VtArray<GfVec3d> ComputeFlatNormals(HdMeshTopology const *topology, GfVec3d const *pointsPtr);
+  static VtArray<GfVec3d> ComputeFlatNormals(HdMeshTopology const *topology,
+                                             GfVec3d const *pointsPtr);
   HD_API
   static VtArray<HdVec4f_2_10_10_10_REV> ComputeFlatNormalsPacked(HdMeshTopology const *topology,
                                                                   GfVec3f const *pointsPtr);
@@ -64,6 +67,7 @@ class Hd_FlatNormals final
                                                                   GfVec3d const *pointsPtr);
 
  private:
+
   Hd_FlatNormals() = delete;
   ~Hd_FlatNormals() = delete;
 };
@@ -75,6 +79,7 @@ class Hd_FlatNormals final
 class Hd_FlatNormalsComputation : public HdComputedBufferSource
 {
  public:
+
   HD_API
   Hd_FlatNormalsComputation(HdMeshTopology const *topology,
                             HdBufferSourceSharedPtr const &points,
@@ -90,10 +95,12 @@ class Hd_FlatNormalsComputation : public HdComputedBufferSource
   virtual TfToken const &GetName() const override;
 
  protected:
+
   HD_API
   virtual bool _CheckValid() const override;
 
  private:
+
   HdMeshTopology const *_topology;
   HdBufferSourceSharedPtr const _points;
   TfToken _dstName;

@@ -54,8 +54,7 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec2i;
 
-template<>
-struct GfIsGfVec<class GfVec2i>
+template<> struct GfIsGfVec<class GfVec2i>
 {
   static const bool value = true;
 };
@@ -71,6 +70,7 @@ struct GfIsGfVec<class GfVec2i>
 class GfVec2i
 {
  public:
+
   /// Scalar element type and dimension.
   typedef int ScalarType;
   static const size_t dimension = 2;
@@ -79,20 +79,13 @@ class GfVec2i
   GfVec2i() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec2i(int value)
-    : _data{value, value}
-  {}
+  constexpr explicit GfVec2i(int value) : _data{value, value} {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec2i(int s0, int s1)
-    : _data{s0, s1}
-  {}
+  constexpr GfVec2i(int s0, int s1) : _data{s0, s1} {}
 
   /// Construct with pointer to values.
-  template<class Scl>
-  constexpr explicit GfVec2i(Scl const *p)
-    : _data{p[0], p[1]}
-  {}
+  template<class Scl> constexpr explicit GfVec2i(Scl const *p) : _data{p[0], p[1]} {}
 
   /// Create a unit vector along the X-axis.
   static GfVec2i XAxis()
@@ -277,6 +270,7 @@ class GfVec2i
   }
 
  private:
+
   int _data[2];
 };
 

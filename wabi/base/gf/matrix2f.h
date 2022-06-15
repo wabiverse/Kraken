@@ -52,8 +52,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<>
-struct GfIsGfMatrix<class GfMatrix2f>
+template<> struct GfIsGfMatrix<class GfMatrix2f>
 {
   static const bool value = true;
 };
@@ -72,6 +71,7 @@ class GfMatrix2f;
 class GfMatrix2f
 {
  public:
+
   typedef float ScalarType;
 
   static const size_t numRows = 2;
@@ -384,6 +384,7 @@ class GfMatrix2f
   }
 
  private:
+
   /// Matrix storage, in row-major order.
   GfMatrixData<float, 2, 2> _mtx;
 

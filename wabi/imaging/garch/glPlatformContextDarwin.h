@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class GarchNSGLContextState
 {
  public:
+
   /// Construct with the current state.
   GarchNSGLContextState();
 
@@ -64,6 +65,7 @@ class GarchNSGLContextState
   static void DoneCurrent();
 
  private:
+
   class Detail;
   std::shared_ptr<Detail> _detail;
 };

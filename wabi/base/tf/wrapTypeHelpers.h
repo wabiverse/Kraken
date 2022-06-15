@@ -45,16 +45,16 @@ namespace TfType_WrapHelpers
     friend class def_visitor_access;
 
    private:
-    template<class CLS, class T>
-    void _Visit(CLS &c, T *) const
+
+    template<class CLS, class T> void _Visit(CLS &c, T *) const
     {
       if (TfType t = TfType::Find<T>())
         t.DefinePythonClass(c);
     }
 
    public:
-    template<class CLS>
-    void visit(CLS &c) const
+
+    template<class CLS> void visit(CLS &c) const
     {
       // Use function template resolution to wrap the type
       // appropriately depending on whether it is a polymorphic
@@ -77,8 +77,7 @@ namespace TfType_WrapHelpers
 /// \endcode
 ///
 struct TfTypePythonClass : public TfType_WrapHelpers::_PythonClass
-{
-};
+{};
 
 /// A helper for wrapping C++ types.
 /// This method defines a TfType for the given python class object, and also

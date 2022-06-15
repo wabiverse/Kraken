@@ -38,6 +38,7 @@ template<class PrimType> Hd_PrimTypeIndex<PrimType>::Hd_PrimTypeIndex() : _entri
 
 template<class PrimType> Hd_PrimTypeIndex<PrimType>::~Hd_PrimTypeIndex() {}
 
+
 template<class PrimType>
 void Hd_PrimTypeIndex<PrimType>::InitPrimTypes(const TfTokenVector &primTypes)
 {
@@ -96,6 +97,7 @@ void Hd_PrimTypeIndex<PrimType>::InsertPrim(const TfToken &typeId,
     return;
   }
 
+
   PrimType *prim = _RenderDelegateCreatePrim(renderDelegate, typeId, primId);
 
   if (prim == nullptr) {
@@ -113,11 +115,13 @@ void Hd_PrimTypeIndex<PrimType>::InsertPrim(const TfToken &typeId,
   if (emplaced) {
     // Only add the primId if this is the first instance in the map.
     typeEntry.primIds.Insert(primId);
+
   } else {
     // The emplace failed so we should destroy the render prim.
     _RenderDelegateDestroyPrim(renderDelegate, prim);
   }
 }
+
 
 template<class PrimType>
 void Hd_PrimTypeIndex<PrimType>::RemovePrim(const TfToken &typeId,
@@ -167,6 +171,7 @@ void Hd_PrimTypeIndex<PrimType>::RemoveSubtree(const SdfPath &root,
     _Range() = default;
     _Range(size_t start, size_t end) : _start(start), _end(end) {}
   };
+
 
   size_t numTypes = _entries.size();
   for (size_t typeIdx = 0; typeIdx < numTypes; ++typeIdx) {
@@ -222,6 +227,7 @@ void Hd_PrimTypeIndex<PrimType>::RemoveSubtree(const SdfPath &root,
   }
 }
 
+
 template<class PrimType>
 PrimType *Hd_PrimTypeIndex<PrimType>::GetPrim(const TfToken &typeId, const SdfPath &primId) const
 {
@@ -258,6 +264,7 @@ PrimType *Hd_PrimTypeIndex<PrimType>::GetFallbackPrim(const TfToken &typeId) con
 
   return typeEntry.fallbackPrim;
 }
+
 
 template<class PrimType>
 void Hd_PrimTypeIndex<PrimType>::GetPrimSubtree(const TfToken &typeId,
@@ -359,6 +366,7 @@ const HdSceneDelegatePtrVector &Hd_PrimTypeIndex<PrimType>::GetSceneDelegatesFor
   return delegates;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Sprim Template Specialization
@@ -376,6 +384,7 @@ template<>
 // static
 void Hd_PrimTypeIndex<HdSprim>::_TrackerRemovePrim(HdChangeTracker &tracker, const SdfPath &path)
 {
+  tracker.RemoveSprimFromSprimSprimDependencies(path);
   tracker.SprimRemoved(path);
 }
 

@@ -52,6 +52,7 @@ class UsdApolloDrawModeAdapter : public UsdImagingPrimAdapter
 {
 
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
   USDAPOLLO_API
@@ -145,16 +146,24 @@ class UsdApolloDrawModeAdapter : public UsdImagingPrimAdapter
               VtIntArray *outIndices) const override;
 
   USDAPOLLO_API
-  HdCullStyle GetCullStyle(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  HdCullStyle GetCullStyle(UsdPrim const &prim,
+                           SdfPath const &cachePath,
+                           UsdTimeCode time) const override;
 
   USDAPOLLO_API
-  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDAPOLLO_API
-  GfRange3d GetExtent(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  GfRange3d GetExtent(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDAPOLLO_API
-  bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  bool GetDoubleSided(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDAPOLLO_API
   GfMatrix4d GetTransform(UsdPrim const &prim,
@@ -163,7 +172,9 @@ class UsdApolloDrawModeAdapter : public UsdImagingPrimAdapter
                           bool ignoreRootTransform = false) const override;
 
   USDAPOLLO_API
-  SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  SdfPath GetMaterialId(UsdPrim const &prim,
+                        SdfPath const &cachePath,
+                        UsdTimeCode time) const override;
 
   USDIMAGING_API
   VtValue GetMaterialResource(UsdPrim const &prim,
@@ -171,14 +182,18 @@ class UsdApolloDrawModeAdapter : public UsdImagingPrimAdapter
                               UsdTimeCode time) const override;
 
  protected:
+
   USDAPOLLO_API
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 
  private:
+
   /**
    * For cards rendering, check if we're rendering any faces with 0 area;
    * if so, issue a warning. */
-  void _SanityCheckFaceSizes(SdfPath const &cachePath, GfRange3d const &extents, uint8_t axes_mask) const;
+  void _SanityCheckFaceSizes(SdfPath const &cachePath,
+                             GfRange3d const &extents,
+                             uint8_t axes_mask) const;
 
   void _ComputeGeometryData(UsdPrim const &prim,
                             SdfPath const &cachePath,

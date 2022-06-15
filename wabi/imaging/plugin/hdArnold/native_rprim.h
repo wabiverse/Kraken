@@ -29,8 +29,11 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldNativeRprim : public HdArnoldRprim<HdRprim>
 {
  public:
+
   HDARNOLD_API
-  HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate, const AtString &arnoldType, const SdfPath &id);
+  HdArnoldNativeRprim(HdArnoldRenderDelegate *renderDelegate,
+                      const AtString &arnoldType,
+                      const SdfPath &id);
 
   ~HdArnoldNativeRprim() override = default;
 
@@ -47,6 +50,7 @@ class HdArnoldNativeRprim : public HdArnoldRprim<HdRprim>
   const TfTokenVector &GetBuiltinPrimvarNames() const;
 
  private:
+
   /// List of parameters to query from the Hydra Primitive.
   const HdArnoldRenderDelegate::NativeRprimParamList *_paramList = nullptr;
 };

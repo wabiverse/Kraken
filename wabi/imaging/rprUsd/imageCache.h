@@ -25,6 +25,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsdImageCache
 {
  public:
+
   RPRUSD_API
   RprUsdImageCache(rpr::Context *context);
 
@@ -36,6 +37,7 @@ class RprUsdImageCache
                                             uint32_t numComponentsRequired);
 
  private:
+
   rpr::Context *m_context;
 
   struct CacheKey

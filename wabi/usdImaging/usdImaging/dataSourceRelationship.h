@@ -37,41 +37,42 @@ WABI_NAMESPACE_BEGIN
 ///
 class UsdImagingDataSourceRelationship : public HdPathArrayDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceRelationship);
+ public:
 
-    /// Returns the extracted path array value of the attribute, as a VtValue.
-    /// \p shutterOffset is ignored.
-    VtValue GetValue(HdSampledDataSource::Time shutterOffset) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceRelationship);
 
-    /// Returns the extracted path array value of the attribute.
-    /// \p shutterOffset is ignored.
-    VtArray<SdfPath> GetTypedValue(
-            HdSampledDataSource::Time shutterOffset) override;
+  /// Returns the extracted path array value of the attribute, as a VtValue.
+  /// \p shutterOffset is ignored.
+  VtValue GetValue(HdSampledDataSource::Time shutterOffset) override;
 
-    /// Returns \c false indicating USD relationhips cannot vary with time.
-    bool GetContributingSampleTimesForInterval(
-            HdSampledDataSource::Time startTime,
-            HdSampledDataSource::Time endTime,
-            std::vector<HdSampledDataSource::Time> *outSampleTimes) override;
+  /// Returns the extracted path array value of the attribute.
+  /// \p shutterOffset is ignored.
+  VtArray<SdfPath> GetTypedValue(HdSampledDataSource::Time shutterOffset) override;
 
-private:
-    /// Constructs a new UsdImagingDataSourceRelationship for the given
-    /// \p usdRel.
-    ///
-    /// \p stageGlobals represents the context object for the UsdStage with
-    /// which to evaluate this relationship.
-    UsdImagingDataSourceRelationship(
-            const UsdRelationship &usdRel,
-            const UsdImagingDataSourceStageGlobals &stageGlobals);
+  /// Returns \c false indicating USD relationhips cannot vary with time.
+  bool GetContributingSampleTimesForInterval(
+    HdSampledDataSource::Time startTime,
+    HdSampledDataSource::Time endTime,
+    std::vector<HdSampledDataSource::Time> *outSampleTimes) override;
 
-private:
-    UsdRelationship _usdRel;
-    const UsdImagingDataSourceStageGlobals & _stageGlobals;
+ private:
+
+  /// Constructs a new UsdImagingDataSourceRelationship for the given
+  /// \p usdRel.
+  ///
+  /// \p stageGlobals represents the context object for the UsdStage with
+  /// which to evaluate this relationship.
+  UsdImagingDataSourceRelationship(const UsdRelationship &usdRel,
+                                   const UsdImagingDataSourceStageGlobals &stageGlobals);
+
+ private:
+
+  UsdRelationship _usdRel;
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceRelationship);
 
 WABI_NAMESPACE_END
 
-#endif // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_RELATIONSHIP_H
+#endif  // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_RELATIONSHIP_H

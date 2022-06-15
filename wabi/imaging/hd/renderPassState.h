@@ -24,26 +24,27 @@
 #ifndef WABI_IMAGING_HD_RENDER_PASS_STATE_H
 #define WABI_IMAGING_HD_RENDER_PASS_STATE_H
 
-#include "wabi/imaging/hd/aov.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/enums.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/aov.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/enums.h"
 
 #include "wabi/imaging/cameraUtil/framing.h"
 
 #include "wabi/usd/sdf/path.h"
 
+#include "wabi/base/tf/token.h"
+#include "wabi/base/vt/value.h"
 #include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec2f.h"
 #include "wabi/base/gf/vec4d.h"
 #include "wabi/base/gf/vec4f.h"
-#include "wabi/base/tf/token.h"
-#include "wabi/base/vt/value.h"
 
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 using HdResourceRegistrySharedPtr = std::shared_ptr<class HdResourceRegistry>;
@@ -59,6 +60,7 @@ class HdCamera;
 class HdRenderPassState
 {
  public:
+
   HD_API
   HdRenderPassState();
   HD_API
@@ -87,9 +89,10 @@ class HdRenderPassState
   /// Note: using std::pair<bool, ...> here instead of std::optional<...>
   /// since the latter is only available in C++17 or later.
   HD_API
-  void SetCameraAndFraming(HdCamera const *camera,
-                           CameraUtilFraming const &framing,
-                           const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy);
+  void SetCameraAndFraming(
+    HdCamera const *camera,
+    CameraUtilFraming const &framing,
+    const std::pair<bool, CameraUtilConformWindowPolicy> &overrideWindowPolicy);
 
   /// Get camera
   HdCamera const *GetCamera() const
@@ -125,30 +128,15 @@ class HdRenderPassState
   void SetCameraAndViewport(HdCamera const *camera, GfVec4d const &viewport);
   /// Camera getter API
   ///
-  /// For backwards compatibility, use the worldToView matrix of the HdCamera
-  /// if given. Otherwise, use the HdCamera's transform.
-  ///
-  /// The HdRenderPassState also has a fallback value for the view
-  /// matrix that is used if no HdCamera was specified, that can be set with,
-  /// e.g.g, HdPhRenderPassState::SetCameraFramingState.
+  /// Returns inverse of HdCamera's transform.
   ///
   HD_API
-  GfMatrix4d GetWorldToViewMatrix() const;
+  virtual GfMatrix4d GetWorldToViewMatrix() const;
 
-  /// It is expected that an HdCamera was specified that has physically based
-  /// attributes. The projection matrix is computed from those attributes and
-  /// the conform window policy is applied.
-  ///
-  /// For backwards compatibility with scene and render delegates:
-  /// if the HdCamera has no physically based attributes (more precisely,
-  /// the scene delegate provided a VtValue for focalLength that is either
-  /// empty or 1.0f), the HdCamera's projection matrix is used.
-  /// The HdRenderPassState also has a fallback value for the projection
-  /// matrix that is used if no HdCamera was specified, that can be set with,
-  /// e.g.g, HdPhRenderPassState::SetCameraFramingState.
+  /// Compute projection matrix using physical attributes of an HdCamera.
   ///
   HD_API
-  GfMatrix4d GetProjectionMatrix() const;
+  virtual GfMatrix4d GetProjectionMatrix() const;
 
   /// Only use when clients did not specify a camera framing.
   ///
@@ -158,13 +146,17 @@ class HdRenderPassState
     return _viewport;
   }
 
+  /// Compute a transform from window relative coordinates (x,y,z,1) to
+  /// homogeneous world coordinates (x,y,z,w), using the HdCamera's
+  /// attributes, framing, and viewport dimensions.
+  ///
   HD_API
-  ClipPlanesVector const &GetClipPlanes() const;
+  GfMatrix4d GetImageToWorldMatrix() const;
 
-  GfMatrix4d GetCullMatrix() const
-  {
-    return _cullMatrix;
-  }
+  /// Returns HdCamera's clip planes.
+  ///
+  HD_API
+  virtual ClipPlanesVector const &GetClipPlanes() const;
 
   // ---------------------------------------------------------------------- //
   /// \name Application rendering state
@@ -293,10 +285,8 @@ class HdRenderPassState
   {
     return _drawRange;
   }  // in pixel
-  GfVec2f GetDrawingRangeNDC() const
-  {  // in ndc
-    return GfVec2f(2 * _drawRange[0] / _viewport[2], 2 * _drawRange[1] / _viewport[3]);
-  }
+  HD_API
+  GfVec2f GetDrawingRangeNDC() const;  // in ndc
 
   HD_API
   void SetDepthBiasUseDefault(bool useDefault);
@@ -325,12 +315,22 @@ class HdRenderPassState
   HD_API
   void SetEnableDepthMask(bool state);
   HD_API
-  bool GetEnableDepthMask();
+  bool GetEnableDepthMask() const;
 
   HD_API
   void SetEnableDepthTest(bool enabled);
   HD_API
   bool GetEnableDepthTest() const;
+
+  HD_API
+  void SetEnableDepthClamp(bool enabled);
+  HD_API
+  bool GetEnableDepthClamp() const;
+
+  HD_API
+  void SetDepthRange(GfVec2f const &depthRange);
+  HD_API
+  const GfVec2f &GetDepthRange() const;
 
   HD_API
   void SetStencil(HdCompareFunction func,
@@ -429,6 +429,16 @@ class HdRenderPassState
     return _colorMaskUseDefault;
   }
 
+  HD_API
+  void SetConservativeRasterizationEnabled(bool enabled);
+  bool GetConservativeRasterizationEnabled() const
+  {
+    return _conservativeRasterizationEnabled;
+  }
+
+  HD_API
+  void SetVolumeRenderingConstants(float stepSize, float stepSizeLighting);
+
   enum ColorMask
   {
     ColorMaskNone,
@@ -443,7 +453,15 @@ class HdRenderPassState
     return _colorMasks;
   }
 
+  HD_API
+  void SetMultiSampleEnabled(bool enabled);
+  bool GetMultiSampleEnabled() const
+  {
+    return _multiSampleEnabled;
+  }
+
  protected:
+
   // ---------------------------------------------------------------------- //
   // Camera and framing state
   // ---------------------------------------------------------------------- //
@@ -451,17 +469,6 @@ class HdRenderPassState
   GfVec4f _viewport;
   CameraUtilFraming _framing;
   std::pair<bool, CameraUtilConformWindowPolicy> _overrideWindowPolicy;
-  GfMatrix4d _cullMatrix;  // updated during Prepare(..)
-
-  // Used by applications setting the view matrix directly instead of
-  // using an HdCamera. Will be removed eventually.
-  GfMatrix4d _worldToViewMatrix;
-  // Used by applications setting the projection matrix directly instead
-  // of using an HdCamera. Will be removed eventually.
-  GfMatrix4d _projectionMatrix;
-  // Used by applications setting the clip planes directly instead
-  // of using an HdCamera. Will be removed eventually.
-  ClipPlanesVector _clipPlanes;
 
   // ---------------------------------------------------------------------- //
   // Application rendering state
@@ -491,6 +498,8 @@ class HdRenderPassState
   HdCompareFunction _depthFunc;
   bool _depthMaskEnabled;
   bool _depthTestEnabled;
+  bool _depthClampEnabled;
+  GfVec2f _depthRange;
 
   HdCullStyle _cullStyle;
 
@@ -525,6 +534,13 @@ class HdRenderPassState
   HdRenderPassAovBindingVector _aovBindings;
   HdRenderPassAovBindingVector _aovInputBindings;
   bool _useMultiSampleAov;
+
+  bool _conservativeRasterizationEnabled;
+
+  float _stepSize;
+  float _stepSizeLighting;
+
+  bool _multiSampleEnabled;
 };
 
 WABI_NAMESPACE_END

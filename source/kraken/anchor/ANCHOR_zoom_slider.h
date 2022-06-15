@@ -102,18 +102,17 @@ namespace ImZoomSlider
     const uint32_t barColor = ANCHOR::GetColorU32(
       (inScrollBar || movingScrollBar) ? AnchorCol_FrameBgHovered : AnchorCol_FrameBg);
     const float middleCoord = (scrollStart + scrollEnd) * 0.5f;
-    const bool insideControl = canUseControl && AnchorBBox(scrollBarMin, scrollBarMax).Contains(io.MousePos);
+    const bool insideControl = canUseControl &&
+                               AnchorBBox(scrollBarMin, scrollBarMax).Contains(io.MousePos);
     const bool hasAnchors = !(flags & AnchorZoomSliderFlags_NoAnchors);
     const float viewMinSize = ((3.f * handleSize) / canvasSizeLength) * (higher - lower);
     const auto ClipView = [lower, higher, &viewLower, &viewHigher]() {
-      if (viewLower < lower)
-      {
+      if (viewLower < lower) {
         const float deltaClip = lower - viewLower;
         viewLower += deltaClip;
         viewHigher += deltaClip;
       }
-      if (viewHigher > higher)
-      {
+      if (viewHigher > higher) {
         const float deltaClip = viewHigher - higher;
         viewLower -= deltaClip;
         viewHigher -= deltaClip;
@@ -127,23 +126,19 @@ namespace ImZoomSlider
     draw_list->AddRectFilled(scrollBarA, scrollBarB, 0xFF222222, 0);
     draw_list->AddRectFilled(scrollTopLeft, scrollBottomRight, barColor, roundRadius);
 
-    if (!(flags & AnchorZoomSliderFlags_NoMiddleCarets))
-    {
-      for (float i = 0.5f; i < 3.f; i += 1.f)
-      {
+    if (!(flags & AnchorZoomSliderFlags_NoMiddleCarets)) {
+      for (float i = 0.5f; i < 3.f; i += 1.f) {
         const float coordA = middleCoord - handleSize * 0.5f;
         const float coordB = middleCoord + handleSize * 0.5f;
         GfVec2f base = scrollBarMin;
         base.x += scrollBarSize.x * 0.25f * i;
         base.y += scrollBarSize.y * 0.25f * i;
 
-        if (isVertical)
-        {
+        if (isVertical) {
           draw_list->AddLine(GfVec2f(base.x, coordA),
                              GfVec2f(base.x, coordB),
                              ANCHOR::GetColorU32(AnchorCol_SliderGrab));
-        } else
-        {
+        } else {
           draw_list->AddLine(GfVec2f(coordA, base.y),
                              GfVec2f(coordB, base.y),
                              ANCHOR::GetColorU32(AnchorCol_SliderGrab));
@@ -152,8 +147,7 @@ namespace ImZoomSlider
     }
 
     // Mouse wheel
-    if (io.MouseClicked[0] && insideControl && !inScrollBar)
-    {
+    if (io.MouseClicked[0] && insideControl && !inScrollBar) {
       const float ratio = (io.MousePos[componentIndex] - scrollBarMin[componentIndex]) /
                           (scrollBarMax[componentIndex] - scrollBarMin[componentIndex]);
       const float size = (higher - lower);
@@ -165,8 +159,7 @@ namespace ImZoomSlider
       interacted = true;
     }
 
-    if (!(flags & AnchorZoomSliderFlags_NoWheel) && inScrollBar && fabsf(io.MouseWheel) > 0.f)
-    {
+    if (!(flags & AnchorZoomSliderFlags_NoWheel) && inScrollBar && fabsf(io.MouseWheel) > 0.f) {
       const float ratio = (io.MousePos[componentIndex] - scrollStart) / (scrollEnd - scrollStart);
       const float amount = io.MouseWheel * wheelRatio * (viewHigher - viewLower);
 
@@ -176,83 +169,70 @@ namespace ImZoomSlider
       interacted = true;
     }
 
-    if (screenSize > handleSize * 2.f && hasAnchors)
-    {
+    if (screenSize > handleSize * 2.f && hasAnchors) {
       const AnchorBBox barHandleLeft(scrollTopLeft,
                                      isVertical ?
                                        GfVec2f(scrollBottomRight.x, scrollTopLeft.y + handleSize) :
                                        GfVec2f(scrollTopLeft.x + handleSize, scrollBottomRight.y));
-      const AnchorBBox barHandleRight(isVertical ?
-                                        GfVec2f(scrollTopLeft.x, scrollBottomRight.y - handleSize) :
-                                        GfVec2f(scrollBottomRight.x - handleSize, scrollTopLeft.y),
-                                      scrollBottomRight);
+      const AnchorBBox barHandleRight(
+        isVertical ? GfVec2f(scrollTopLeft.x, scrollBottomRight.y - handleSize) :
+                     GfVec2f(scrollBottomRight.x - handleSize, scrollTopLeft.y),
+        scrollBottomRight);
 
       onLeft = barHandleLeft.Contains(io.MousePos);
       onRight = barHandleRight.Contains(io.MousePos);
 
-      draw_list->AddRectFilled(
-        barHandleLeft.Min,
-        barHandleLeft.Max,
-        ANCHOR::GetColorU32((onLeft || sizingLBar) ? AnchorCol_SliderGrabActive : AnchorCol_SliderGrab),
-        roundRadius);
-      draw_list->AddRectFilled(
-        barHandleRight.Min,
-        barHandleRight.Max,
-        ANCHOR::GetColorU32((onRight || sizingRBar) ? AnchorCol_SliderGrabActive : AnchorCol_SliderGrab),
-        roundRadius);
+      draw_list->AddRectFilled(barHandleLeft.Min,
+                               barHandleLeft.Max,
+                               ANCHOR::GetColorU32((onLeft || sizingLBar) ?
+                                                     AnchorCol_SliderGrabActive :
+                                                     AnchorCol_SliderGrab),
+                               roundRadius);
+      draw_list->AddRectFilled(barHandleRight.Min,
+                               barHandleRight.Max,
+                               ANCHOR::GetColorU32((onRight || sizingRBar) ?
+                                                     AnchorCol_SliderGrabActive :
+                                                     AnchorCol_SliderGrab),
+                               roundRadius);
     }
 
-    if (sizingRBar)
-    {
-      if (!io.MouseDown[0])
-      {
+    if (sizingRBar) {
+      if (!io.MouseDown[0]) {
         sizingRBarSvg = false;
         editingId = (AnchorID)-1;
-      } else
-      {
+      } else {
         viewHigher = AnchorMin(saveViewHigher + deltaView, higher);
       }
-    } else if (sizingLBar)
-    {
-      if (!io.MouseDown[0])
-      {
+    } else if (sizingLBar) {
+      if (!io.MouseDown[0]) {
         sizingLBarSvg = false;
         editingId = (AnchorID)-1;
-      } else
-      {
+      } else {
         viewLower = AnchorMax(saveViewLower + deltaView, lower);
       }
-    } else
-    {
-      if (movingScrollBar)
-      {
-        if (!io.MouseDown[0])
-        {
+    } else {
+      if (movingScrollBar) {
+        if (!io.MouseDown[0]) {
           movingScrollBarSvg = false;
           editingId = (AnchorID)-1;
-        } else
-        {
+        } else {
           viewLower = saveViewLower + deltaView;
           viewHigher = saveViewHigher + deltaView;
           ClipView();
         }
-      } else
-      {
-        if (inScrollBar && ANCHOR::IsMouseClicked(0))
-        {
+      } else {
+        if (inScrollBar && ANCHOR::IsMouseClicked(0)) {
           movingScrollBarSvg = true;
           scrollingSource = io.MousePos[componentIndex];
           saveViewLower = viewLower;
           saveViewHigher = viewHigher;
           editingId = currentId;
         }
-        if (!sizingRBar && onRight && ANCHOR::IsMouseClicked(0) && hasAnchors)
-        {
+        if (!sizingRBar && onRight && ANCHOR::IsMouseClicked(0) && hasAnchors) {
           sizingRBarSvg = true;
           editingId = currentId;
         }
-        if (!sizingLBar && onLeft && ANCHOR::IsMouseClicked(0) && hasAnchors)
-        {
+        if (!sizingLBar && onLeft && ANCHOR::IsMouseClicked(0) && hasAnchors) {
           sizingLBarSvg = true;
           editingId = currentId;
         }
@@ -260,8 +240,7 @@ namespace ImZoomSlider
     }
 
     // minimal size check
-    if ((viewHigher - viewLower) < viewMinSize)
-    {
+    if ((viewHigher - viewLower) < viewMinSize) {
       const float middle = (viewLower + viewHigher) * 0.5f;
       viewLower = middle - viewMinSize * 0.5f;
       viewHigher = middle + viewMinSize * 0.5f;

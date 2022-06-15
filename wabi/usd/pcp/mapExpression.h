@@ -56,6 +56,7 @@ WABI_NAMESPACE_BEGIN
 class PcpMapExpression
 {
  public:
+
   /// The value type of PcpMapExpression is a PcpMapFunction.
   typedef PcpMapFunction Value;
 
@@ -98,6 +99,7 @@ class PcpMapExpression
     Variable &operator=(Variable const &) = delete;
 
    public:
+
     Variable() = default;
     virtual ~Variable();
     /// Return the current value.
@@ -186,6 +188,7 @@ class PcpMapExpression
   /// @}
 
  private:
+
   // Allow Pcp_Statistics access to internal data for diagnostics.
   friend class Pcp_Statistics;
   friend struct Pcp_VariableImpl;
@@ -193,11 +196,10 @@ class PcpMapExpression
   class _Node;
   typedef boost::intrusive_ptr<_Node> _NodeRefPtr;
 
-  explicit PcpMapExpression(const _NodeRefPtr &node)
-    : _node(node)
-  {}
+  explicit PcpMapExpression(const _NodeRefPtr &node) : _node(node) {}
 
  private:  // data
+
   enum _Op
   {
     _OpConstant,
@@ -210,6 +212,7 @@ class PcpMapExpression
   class _Node : public boost::noncopyable
   {
    public:
+
     // The Key holds all the state needed to uniquely identify
     // this (sub-)expression.
     struct Key
@@ -218,7 +221,10 @@ class PcpMapExpression
       const _NodeRefPtr arg1, arg2;
       const Value valueForConstant;
 
-      Key(_Op op_, const _NodeRefPtr &arg1_, const _NodeRefPtr &arg2_, const Value &valueForConstant_)
+      Key(_Op op_,
+          const _NodeRefPtr &arg1_,
+          const _NodeRefPtr &arg2_,
+          const Value &valueForConstant_)
         : op(op_),
           arg1(arg1_),
           arg2(arg2_),
@@ -255,6 +261,7 @@ class PcpMapExpression
     }
 
    private:
+
     explicit _Node(const Key &key_);
     void _Invalidate();
     Value _EvaluateUncached() const;

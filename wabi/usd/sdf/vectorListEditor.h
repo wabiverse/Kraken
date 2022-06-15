@@ -37,11 +37,9 @@ WABI_NAMESPACE_BEGIN
 // Various adapter classes used by Sdf_VectorListEditor to allow for
 // conversions between the publicly exposed value type and the underlying
 // field data type.
-template<class To, class From>
-struct Sdf_VectorFieldAdapter;
+template<class To, class From> struct Sdf_VectorFieldAdapter;
 
-template<class T>
-struct Sdf_VectorFieldAdapter<T, T>
+template<class T> struct Sdf_VectorFieldAdapter<T, T>
 {
   static const std::vector<T> &Convert(const std::vector<T> &from)
   {
@@ -49,8 +47,7 @@ struct Sdf_VectorFieldAdapter<T, T>
   }
 };
 
-template<>
-struct Sdf_VectorFieldAdapter<TfToken, std::string>
+template<> struct Sdf_VectorFieldAdapter<TfToken, std::string>
 {
   static std::vector<TfToken> Convert(const std::vector<std::string> &from)
   {
@@ -58,8 +55,7 @@ struct Sdf_VectorFieldAdapter<TfToken, std::string>
   }
 };
 
-template<>
-struct Sdf_VectorFieldAdapter<std::string, TfToken>
+template<> struct Sdf_VectorFieldAdapter<std::string, TfToken>
 {
   static std::vector<std::string> Convert(const std::vector<TfToken> &from)
   {
@@ -81,10 +77,12 @@ template<class TypePolicy, class FieldStorageType = typename TypePolicy::value_t
 class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
 {
  private:
+
   typedef Sdf_VectorListEditor<TypePolicy, FieldStorageType> This;
   typedef Sdf_ListEditor<TypePolicy> Parent;
 
  public:
+
   typedef typename Parent::value_type value_type;
   typedef typename Parent::value_vector_type value_vector_type;
 
@@ -108,11 +106,15 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
   typedef typename Parent::ApplyCallback ApplyCallback;
   virtual void ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb);
 
-  virtual bool ReplaceEdits(SdfListOpType op, size_t index, size_t n, const value_vector_type &elems);
+  virtual bool ReplaceEdits(SdfListOpType op,
+                            size_t index,
+                            size_t n,
+                            const value_vector_type &elems);
 
   virtual void ApplyList(SdfListOpType op, const Sdf_ListEditor<TypePolicy> &rhs);
 
  protected:
+
   using Parent::_GetField;
   using Parent::_GetOwner;
   using Parent::_GetTypePolicy;
@@ -121,6 +123,7 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
   virtual const value_vector_type &_GetOperations(SdfListOpType op) const;
 
  private:
+
   static boost::optional<value_type> _ModifyCallbackHelper(const ModifyCallback &cb,
                                                            const TypePolicy &typePolicy,
                                                            const value_type &v)
@@ -131,20 +134,17 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
 
   void _UpdateFieldData(const value_vector_type &newData)
   {
-    if (!_GetOwner())
-    {
+    if (!_GetOwner()) {
       TF_CODING_ERROR("Invalid owner.");
       return;
     }
 
-    if (!_GetOwner()->GetLayer()->PermissionToEdit())
-    {
+    if (!_GetOwner()->GetLayer()->PermissionToEdit()) {
       TF_CODING_ERROR("Layer is not editable.");
       return;
     }
 
-    if (newData == _data || !_ValidateEdit(_op, _data, newData))
-    {
+    if (newData == _data || !_ValidateEdit(_op, _data, newData)) {
       return;
     }
 
@@ -153,11 +153,9 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
     value_vector_type oldData = newData;
     _data.swap(oldData);
 
-    if (newData.empty())
-    {
+    if (newData.empty()) {
       _GetOwner()->ClearField(_GetField());
-    } else
-    {
+    } else {
       typedef Sdf_VectorFieldAdapter<FieldStorageType, value_type> ToFieldType;
       const std::vector<FieldStorageType> newFieldData = ToFieldType::Convert(newData);
       _GetOwner()->SetField(_GetField(), newFieldData);
@@ -167,6 +165,7 @@ class Sdf_VectorListEditor : public Sdf_ListEditor<TypePolicy>
   }
 
  private:
+
   TfToken _field;
   SdfListOpType _op;
   value_vector_type _data;
@@ -182,8 +181,7 @@ Sdf_VectorListEditor<TP, FST>::Sdf_VectorListEditor(const SdfSpecHandle &owner,
   : Parent(owner, field, typePolicy),
     _op(op)
 {
-  if (owner)
-  {
+  if (owner) {
     typedef std::vector<FST> FieldVectorType;
     typedef Sdf_VectorFieldAdapter<value_type, FST> ToValueType;
 
@@ -191,14 +189,12 @@ Sdf_VectorListEditor<TP, FST>::Sdf_VectorListEditor(const SdfSpecHandle &owner,
   }
 }
 
-template<class TP, class FST>
-bool Sdf_VectorListEditor<TP, FST>::IsExplicit() const
+template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::IsExplicit() const
 {
   return _op == SdfListOpTypeExplicit;
 }
 
-template<class TP, class FST>
-bool Sdf_VectorListEditor<TP, FST>::IsOrderedOnly() const
+template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::IsOrderedOnly() const
 {
   return _op == SdfListOpTypeOrdered;
 }
@@ -207,14 +203,12 @@ template<class TP, class FST>
 bool Sdf_VectorListEditor<TP, FST>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
-  if (!rhsEdit)
-  {
+  if (!rhsEdit) {
     TF_CODING_ERROR("Cannot copy from list editor of different type");
     return false;
   }
 
-  if (_op != rhsEdit->_op)
-  {
+  if (_op != rhsEdit->_op) {
     TF_CODING_ERROR("Cannot copy from list editor in different mode");
     return false;
   }
@@ -223,15 +217,13 @@ bool Sdf_VectorListEditor<TP, FST>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
   return true;
 }
 
-template<class TP, class FST>
-bool Sdf_VectorListEditor<TP, FST>::ClearEdits()
+template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::ClearEdits()
 {
   // Per specification of ClearEdits, we need to return false if we're
   // not able to switch to non-explicit mode. This list editor doesn't
   // allow any mode switching at all, so we need to return false if we're
   // explicit.
-  if (_op == SdfListOpTypeExplicit)
-  {
+  if (_op == SdfListOpTypeExplicit) {
     return false;
   }
 
@@ -239,15 +231,13 @@ bool Sdf_VectorListEditor<TP, FST>::ClearEdits()
   return true;
 }
 
-template<class TP, class FST>
-bool Sdf_VectorListEditor<TP, FST>::ClearEditsAndMakeExplicit()
+template<class TP, class FST> bool Sdf_VectorListEditor<TP, FST>::ClearEditsAndMakeExplicit()
 {
   // Per specification of ClearEditsAndMakeExplicit, we need to return
   // false if we're not able to switch to explicit mode. This list editor
   // doesn't allow any mode switching at all, so we need to return false
   // if we're not already explicit.
-  if (_op != SdfListOpTypeExplicit)
-  {
+  if (_op != SdfListOpTypeExplicit) {
     return false;
   }
 
@@ -258,24 +248,24 @@ bool Sdf_VectorListEditor<TP, FST>::ClearEditsAndMakeExplicit()
 template<class TP, class FST>
 void Sdf_VectorListEditor<TP, FST>::ModifyItemEdits(const ModifyCallback &cb)
 {
-  if (_data.empty())
-  {
+  if (_data.empty()) {
     return;
   }
 
   SdfListOp<value_type> valueListOp;
   valueListOp.SetItems(_data, _op);
-  valueListOp.ModifyOperations(
-    [this, &cb](const value_type &t) { return _ModifyCallbackHelper(cb, _GetTypePolicy(), t); });
+  valueListOp.ModifyOperations([this, &cb](const value_type &t) {
+    return _ModifyCallbackHelper(cb, _GetTypePolicy(), t);
+  });
 
   _UpdateFieldData(valueListOp.GetItems(_op));
 }
 
 template<class TP, class FST>
-void Sdf_VectorListEditor<TP, FST>::ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb)
+void Sdf_VectorListEditor<TP, FST>::ApplyEditsToList(value_vector_type *vec,
+                                                     const ApplyCallback &cb)
 {
-  if (_data.empty())
-  {
+  if (_data.empty()) {
     return;
   }
 
@@ -290,15 +280,13 @@ bool Sdf_VectorListEditor<TP, FST>::ReplaceEdits(SdfListOpType op,
                                                  size_t n,
                                                  const value_vector_type &elems)
 {
-  if (op != _op)
-  {
+  if (op != _op) {
     return false;
   }
 
   SdfListOp<value_type> fieldListOp;
   fieldListOp.SetItems(_data, op);
-  if (!fieldListOp.ReplaceOperations(op, index, n, _GetTypePolicy().Canonicalize(elems)))
-  {
+  if (!fieldListOp.ReplaceOperations(op, index, n, _GetTypePolicy().Canonicalize(elems))) {
     return false;
   }
 
@@ -310,14 +298,12 @@ template<class TP, class FST>
 void Sdf_VectorListEditor<TP, FST>::ApplyList(SdfListOpType op, const Sdf_ListEditor<TP> &rhs)
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
-  if (!rhsEdit)
-  {
+  if (!rhsEdit) {
     TF_CODING_ERROR("Cannot apply from list editor of different type");
     return;
   }
 
-  if (op != _op && op != rhsEdit->_op)
-  {
+  if (op != _op && op != rhsEdit->_op) {
     return;
   }
 
@@ -336,8 +322,7 @@ template<class TP, class FST>
 const typename Sdf_VectorListEditor<TP, FST>::value_vector_type &Sdf_VectorListEditor<TP, FST>::
   _GetOperations(SdfListOpType op) const
 {
-  if (op != _op)
-  {
+  if (op != _op) {
     static const value_vector_type empty;
     return empty;
   }

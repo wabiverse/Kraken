@@ -1,33 +1,26 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hd/camera.h"
 
 #include "wabi/imaging/hd/perfLog.h"
@@ -37,6 +30,7 @@
 #include "wabi/base/gf/frustum.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DEFINE_PUBLIC_TOKENS(HdCameraTokens, HD_CAMERA_TOKENS);
 
@@ -54,10 +48,7 @@ HdCamera::HdCamera(SdfPath const &id)
     _shutterOpen(0.0),
     _shutterClose(0.0),
     _exposure(0.0f),
-    _windowPolicy(CameraUtilFit),
-    _worldToViewMatrix(0.0),
-    _worldToViewInverseMatrix(0.0),
-    _projectionMatrix(0.0)
+    _windowPolicy(CameraUtilFit)
 {}
 
 HdCamera::~HdCamera() = default;
@@ -164,27 +155,6 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate,
     }
   }
 
-  if (bits & DirtyViewMatrix) {
-    // extract and store view matrix
-    const VtValue vMatrix = sceneDelegate->GetCameraParamValue(id,
-                                                               HdCameraTokens->worldToViewMatrix);
-
-    if (!vMatrix.IsEmpty()) {
-      _worldToViewMatrix = vMatrix.Get<GfMatrix4d>();
-      _worldToViewInverseMatrix = _worldToViewMatrix.GetInverse();
-    }
-  }
-
-  if (bits & DirtyProjMatrix) {
-    // extract and store projection matrix
-    const VtValue vMatrix = sceneDelegate->GetCameraParamValue(id,
-                                                               HdCameraTokens->projectionMatrix);
-
-    if (!vMatrix.IsEmpty()) {
-      _projectionMatrix = vMatrix.Get<GfMatrix4d>();
-    }
-  }
-
   if (bits & DirtyWindowPolicy) {
     // treat window policy as an optional parameter
     const VtValue vPolicy = sceneDelegate->GetCameraParamValue(id, HdCameraTokens->windowPolicy);
@@ -206,29 +176,9 @@ void HdCamera::Sync(HdSceneDelegate *sceneDelegate,
   *dirtyBits = Clean;
 }
 
-GfMatrix4d HdCamera::GetViewMatrix() const
-{
-  if (_worldToViewMatrix == GfMatrix4d(0.0)) {
-    return _transform.GetInverse();
-  }
-  return _worldToViewMatrix;
-}
-
-GfMatrix4d HdCamera::GetViewInverseMatrix() const
-{
-  if (_worldToViewInverseMatrix == GfMatrix4d(0.0)) {
-    return _transform;
-  }
-  return _worldToViewInverseMatrix;
-}
-
-GfMatrix4d HdCamera::GetProjectionMatrix() const
+GfMatrix4d HdCamera::ComputeProjectionMatrix() const
 {
   HD_TRACE_FUNCTION();
-
-  if (GetFocalLength() == 0.0f) {
-    return _projectionMatrix;
-  }
 
   GfCamera cam;
 

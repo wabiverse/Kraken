@@ -36,6 +36,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhPtexMipmapTextureLoader final
 {
  public:
+
   HDPH_API
   HdPhPtexMipmapTextureLoader(PtexTexture *ptex,
                               int maxNumPages,
@@ -107,6 +108,7 @@ class HdPhPtexMipmapTextureLoader final
    */
 
  private:
+
   struct Block
   {
     int index;  // ptex index

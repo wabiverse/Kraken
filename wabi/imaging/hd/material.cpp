@@ -23,6 +23,7 @@
 //
 #include "wabi/imaging/hd/material.h"
 #include "wabi/imaging/hd/tokens.h"
+#include "wabi/imaging/hd/perfLog.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -31,23 +32,20 @@ HdMaterial::HdMaterial(SdfPath const &id) : HdSprim(id)
   // NOTHING
 }
 
-HdMaterial::~HdMaterial()
-{
-  // NOTHING
-}
+HdMaterial::~HdMaterial() = default;
 
-void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMap &hdNetworkMap,
-                                                       HdMaterialNetwork2 *result,
-                                                       bool *isVolume)
+HdMaterialNetwork2 HdConvertToHdMaterialNetwork2(const HdMaterialNetworkMap &hdNetworkMap,
+                                                 bool *isVolume)
 {
   HD_TRACE_FUNCTION();
+  HdMaterialNetwork2 result;
 
   for (auto const &iter : hdNetworkMap.map) {
     const TfToken &terminalName = iter.first;
     const HdMaterialNetwork &hdNetwork = iter.second;
 
     // Check if there are nodes associated with the volume terminal
-    // This value is used in Phoenix to get the proper glslfx fragment shader
+    // This value is used in Storm to get the proper glslfx fragment shader
     if (terminalName == HdMaterialTerminalTokens->volume && isVolume) {
       *isVolume = !hdNetwork.nodes.empty();
     }
@@ -59,21 +57,21 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
       continue;
     }
     for (const HdMaterialNode &node : hdNetwork.nodes) {
-      HdMaterialNode2 &materialNode2 = result->nodes[node.path];
+      HdMaterialNode2 &materialNode2 = result.nodes[node.path];
       materialNode2.nodeTypeId = node.identifier;
       materialNode2.parameters = node.parameters;
     }
     // Assume that the last entry is the terminal
-    result->terminals[terminalName].upstreamNode = hdNetwork.nodes.back().path;
+    result.terminals[terminalName].upstreamNode = hdNetwork.nodes.back().path;
 
     // Transfer relationships to inputConnections on receiving/downstream nodes.
     for (const HdMaterialRelationship &rel : hdNetwork.relationships) {
 
       // outputId (in hdMaterial terms) is the input of the receiving node
-      auto iter = result->nodes.find(rel.outputId);
+      auto iter = result.nodes.find(rel.outputId);
 
       // skip connection if the destination node doesn't exist
-      if (iter == result->nodes.end()) {
+      if (iter == result.nodes.end()) {
         continue;
       }
 
@@ -88,9 +86,11 @@ void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMa
     }
 
     // Transfer primvars:
-    result->primvars = hdNetwork.primvars;
+    result.primvars = hdNetwork.primvars;
   }
+  return result;
 }
+
 
 // -------------------------------------------------------------------------- //
 // VtValue Requirements
@@ -108,14 +108,6 @@ bool operator==(const HdMaterialRelationship &lhs, const HdMaterialRelationship 
          lhs.inputId == rhs.inputId && lhs.inputName == rhs.inputName;
 }
 
-size_t hash_value(const HdMaterialRelationship &rel)
-{
-  size_t hash = hash_value(rel.inputId);
-  boost::hash_combine(hash, rel.inputName);
-  boost::hash_combine(hash, rel.outputId);
-  boost::hash_combine(hash, rel.outputName);
-  return hash;
-}
 
 bool operator==(const HdMaterialNode &lhs, const HdMaterialNode &rhs)
 {
@@ -123,13 +115,6 @@ bool operator==(const HdMaterialNode &lhs, const HdMaterialNode &rhs)
          lhs.parameters == rhs.parameters;
 }
 
-size_t hash_value(const HdMaterialNode &node)
-{
-  size_t hash = hash_value(node.path);
-  boost::hash_combine(hash, node.identifier);
-  boost::hash_combine(hash, node.parameters);
-  return hash;
-}
 
 bool operator==(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs)
 {
@@ -142,14 +127,6 @@ bool operator!=(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs)
   return !(lhs == rhs);
 }
 
-size_t hash_value(const HdMaterialNetwork &network)
-{
-  size_t hash = 0;
-  boost::hash_combine(hash, network.relationships);
-  boost::hash_combine(hash, network.nodes);
-  boost::hash_combine(hash, network.primvars);
-  return hash;
-}
 
 std::ostream &operator<<(std::ostream &out, const HdMaterialNetworkMap &pv)
 {
@@ -167,12 +144,5 @@ bool operator!=(const HdMaterialNetworkMap &lhs, const HdMaterialNetworkMap &rhs
   return !(lhs == rhs);
 }
 
-size_t hash_value(const HdMaterialNetworkMap &networkMap)
-{
-  size_t hash = 0;
-  boost::hash_combine(hash, networkMap.map);
-  boost::hash_combine(hash, networkMap.terminals);
-  return hash;
-}
 
 WABI_NAMESPACE_END

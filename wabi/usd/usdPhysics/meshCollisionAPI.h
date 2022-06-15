@@ -64,6 +64,7 @@ class SdfAssetPath;
 class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -73,15 +74,12 @@ class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
   /// Equivalent to UsdPhysicsMeshCollisionAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsMeshCollisionAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdPhysicsMeshCollisionAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdPhysicsMeshCollisionAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsMeshCollisionAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsMeshCollisionAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
+  explicit UsdPhysicsMeshCollisionAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -145,6 +143,7 @@ class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
   static UsdPhysicsMeshCollisionAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -152,6 +151,7 @@ class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -161,9 +161,11 @@ class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // APPROXIMATION
   // --------------------------------------------------------------------- //
@@ -187,8 +189,8 @@ class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
   /// | C++ Type | TfToken |
   /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
-  /// | \ref UsdPhysicsTokens "Allowed Values" | none, convexDecomposition, convexHull, boundingSphere,
-  /// boundingCube, meshSimplification |
+  /// | \ref UsdPhysicsTokens "Allowed Values" | none, convexDecomposition, convexHull,
+  /// boundingSphere, boundingCube, meshSimplification |
   USDPHYSICS_API
   UsdAttribute GetApproximationAttr() const;
 
@@ -202,6 +204,7 @@ class UsdPhysicsMeshCollisionAPI : public UsdAPISchemaBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

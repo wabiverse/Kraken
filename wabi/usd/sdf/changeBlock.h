@@ -72,6 +72,7 @@ WABI_NAMESPACE_BEGIN
 class SdfChangeBlock
 {
  public:
+
   SDF_API
   SdfChangeBlock();
   SDF_API

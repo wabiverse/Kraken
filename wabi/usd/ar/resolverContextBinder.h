@@ -51,6 +51,7 @@ class ArResolver;
 class ArResolverContextBinder
 {
  public:
+
   /// Bind the given \p context with the asset resolver.
   ///
   /// Calls ArResolver::BindContext on the configured asset resolver
@@ -74,6 +75,7 @@ class ArResolverContextBinder
   ~ArResolverContextBinder();
 
  private:
+
   ArResolver *_resolver;
   ArResolverContext _context;
   VtValue _bindingData;

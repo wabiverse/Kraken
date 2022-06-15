@@ -65,6 +65,7 @@ struct Usd_Clip
   Usd_Clip &operator=(Usd_Clip const &) = delete;
 
  public:
+
   /// A clip has two time domains: an external and an internal domain.
   /// The internal time domain is what is authored in the clip layer.
   /// The external time domain is what is used by clients of Usd_Clip.
@@ -95,8 +96,7 @@ struct Usd_Clip
     InternalTime internalTime;
     bool isJumpDiscontinuity;
 
-    TimeMapping()
-    {}
+    TimeMapping() {}
     TimeMapping(const ExternalTime e, const InternalTime i)
       : externalTime(e),
         internalTime(i),
@@ -121,8 +121,7 @@ struct Usd_Clip
 
   SdfPropertySpecHandle GetPropertyAtPath(const SdfPath &path) const;
 
-  template<class T>
-  bool HasField(const SdfPath &path, const TfToken &field, T *value) const
+  template<class T> bool HasField(const SdfPath &path, const TfToken &field, T *value) const
   {
     return _GetLayerForClip()->HasField(_TranslatePathToClip(path), field, value);
   }
@@ -201,6 +200,7 @@ struct Usd_Clip
   TimeMappings times;
 
  private:
+
   friend class UsdStage;
 
   // Helpers for retrieving time sample information from within
@@ -210,7 +210,8 @@ struct Usd_Clip
                                                      ExternalTime *tLower,
                                                      ExternalTime *tUpper) const;
 
-  void _ListTimeSamplesForPathFromClipLayer(const SdfPath &path, std::set<ExternalTime> *samples) const;
+  void _ListTimeSamplesForPathFromClipLayer(const SdfPath &path,
+                                            std::set<ExternalTime> *samples) const;
 
   SdfPath _TranslatePathToClip(const SdfPath &path) const;
 
@@ -221,6 +222,7 @@ struct Usd_Clip
   SdfLayerRefPtr _GetLayerForClip() const;
 
  private:
+
   mutable bool _hasLayer;
   mutable std::mutex _layerMutex;
   mutable SdfLayerRefPtr _layer;

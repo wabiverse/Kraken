@@ -26,6 +26,7 @@ namespace Zep
   class ZepFont_ANCHOR : public ZepFont
   {
    public:
+
     ZepFont_ANCHOR(ZepDisplay &display, AnchorFont *pFont, int pixelHeight)
       : ZepFont(display),
         m_pFont(pFont)
@@ -41,8 +42,8 @@ namespace Zep
 
     virtual NVec2f GetTextSize(const uint8_t *pBegin, const uint8_t *pEnd = nullptr) const override
     {
-      // This is the code from ANCHOR internals; we can't call GetTextSize, because it doesn't return
-      // the correct 'advance' formula, which we need as we draw one character at a time...
+      // This is the code from ANCHOR internals; we can't call GetTextSize, because it doesn't
+      // return the correct 'advance' formula, which we need as we draw one character at a time...
       const float font_size = m_pFont->FontSize;
       wabi::GfVec2f text_size = m_pFont->CalcTextSizeA(float(GetPixelHeight()),
                                                        FLT_MAX,
@@ -50,8 +51,7 @@ namespace Zep
                                                        (const char *)pBegin,
                                                        (const char *)pEnd,
                                                        NULL);
-      if (text_size[0] == 0.0)
-      {
+      if (text_size[0] == 0.0) {
         // Make invalid characters a default fixed_size
         const char chDefault = 'A';
         text_size = m_pFont->CalcTextSizeA(float(GetPixelHeight()),
@@ -71,6 +71,7 @@ namespace Zep
     }
 
    private:
+
     AnchorFont *m_pFont;
     float m_fontScale = 1.0f;
   };
@@ -78,9 +79,8 @@ namespace Zep
   class ZepDisplay_ANCHOR : public ZepDisplay
   {
    public:
-    ZepDisplay_ANCHOR(const NVec2f &pixelScale)
-      : ZepDisplay(pixelScale)
-    {}
+
+    ZepDisplay_ANCHOR(const NVec2f &pixelScale) : ZepDisplay(pixelScale) {}
 
     void DrawChars(ZepFont &font,
                    const NVec2f &pos,
@@ -90,20 +90,17 @@ namespace Zep
     {
       auto imFont = static_cast<ZepFont_ANCHOR &>(font).GetAnchorFont();
       ImDrawList *drawList = ANCHOR::GetWindowDrawList();
-      if (text_end == nullptr)
-      {
+      if (text_end == nullptr) {
         text_end = text_begin + strlen((const char *)text_begin);
       }
-      if (m_clipRect.Width() == 0)
-      {
+      if (m_clipRect.Width() == 0) {
         drawList->AddText(imFont,
                           float(font.GetPixelHeight()),
                           toNVec2f(pos),
                           ToPackedABGR(col),
                           (const char *)text_begin,
                           (const char *)text_end);
-      } else
-      {
+      } else {
         drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
         drawList->AddText(imFont,
                           float(font.GetPixelHeight()),
@@ -115,15 +112,16 @@ namespace Zep
       }
     }
 
-    void DrawLine(const NVec2f &start, const NVec2f &end, const NVec4f &color, float width) const override
+    void DrawLine(const NVec2f &start,
+                  const NVec2f &end,
+                  const NVec4f &color,
+                  float width) const override
     {
       ImDrawList *drawList = ANCHOR::GetWindowDrawList();
       // Background rect for numbers
-      if (m_clipRect.Width() == 0)
-      {
+      if (m_clipRect.Width() == 0) {
         drawList->AddLine(toNVec2f(start), toNVec2f(end), ToPackedABGR(color), width);
-      } else
-      {
+      } else {
         drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
         drawList->AddLine(toNVec2f(start), toNVec2f(end), ToPackedABGR(color), width);
         drawList->PopClipRect();
@@ -134,13 +132,15 @@ namespace Zep
     {
       ImDrawList *drawList = ANCHOR::GetWindowDrawList();
       // Background rect for numbers
-      if (m_clipRect.Width() == 0)
-      {
-        drawList->AddRectFilled(toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
-      } else
-      {
+      if (m_clipRect.Width() == 0) {
+        drawList->AddRectFilled(toNVec2f(rc.topLeftPx),
+                                toNVec2f(rc.bottomRightPx),
+                                ToPackedABGR(color));
+      } else {
         drawList->PushClipRect(toNVec2f(m_clipRect.topLeftPx), toNVec2f(m_clipRect.bottomRightPx));
-        drawList->AddRectFilled(toNVec2f(rc.topLeftPx), toNVec2f(rc.bottomRightPx), ToPackedABGR(color));
+        drawList->AddRectFilled(toNVec2f(rc.topLeftPx),
+                                toNVec2f(rc.bottomRightPx),
+                                ToPackedABGR(color));
         drawList->PopClipRect();
       }
     }
@@ -152,16 +152,17 @@ namespace Zep
 
     virtual ZepFont &GetFont(ZepTextType type) override
     {
-      if (m_fonts[(int)type] == nullptr)
-      {
-        m_fonts[(int)type] = std::make_shared<ZepFont_ANCHOR>(*this,
-                                                              ANCHOR::GetIO().Fonts[0].Fonts[FONT_DANKMONO],
-                                                              int(16.0f * GetPixelScale().y));
+      if (m_fonts[(int)type] == nullptr) {
+        m_fonts[(int)type] = std::make_shared<ZepFont_ANCHOR>(
+          *this,
+          ANCHOR::GetIO().Fonts[0].Fonts[FONT_DANKMONO],
+          int(16.0f * GetPixelScale().y));
       }
       return *m_fonts[(int)type];
     }
 
    private:
+
     NRectf m_clipRect;
   };  // namespace Zep
 

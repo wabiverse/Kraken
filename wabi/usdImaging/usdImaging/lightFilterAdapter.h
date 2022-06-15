@@ -48,11 +48,10 @@ class UsdPrim;
 class UsdImagingLightFilterAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   typedef UsdImagingPrimAdapter BaseAdapter;
 
-  UsdImagingLightFilterAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingLightFilterAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingLightFilterAdapter() override;
@@ -121,6 +120,7 @@ class UsdImagingLightFilterAdapter : public UsdImagingPrimAdapter
                               UsdTimeCode time) const override;
 
  protected:
+
   USDIMAGING_API
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 };

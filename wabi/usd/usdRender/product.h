@@ -80,6 +80,7 @@ class SdfAssetPath;
 class UsdRenderProduct : public UsdRenderSettingsBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -90,16 +91,12 @@ class UsdRenderProduct : public UsdRenderSettingsBase
   /// Equivalent to UsdRenderProduct::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderProduct(const UsdPrim &prim = UsdPrim())
-    : UsdRenderSettingsBase(prim)
-  {}
+  explicit UsdRenderProduct(const UsdPrim &prim = UsdPrim()) : UsdRenderSettingsBase(prim) {}
 
   /// Construct a UsdRenderProduct on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderProduct(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderProduct(const UsdSchemaBase &schemaObj)
-    : UsdRenderSettingsBase(schemaObj)
-  {}
+  explicit UsdRenderProduct(const UsdSchemaBase &schemaObj) : UsdRenderSettingsBase(schemaObj) {}
 
   /// Destructor.
   USDRENDER_API
@@ -149,6 +146,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase
   static UsdRenderProduct Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -156,6 +154,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRENDER_API
@@ -165,9 +164,11 @@ class UsdRenderProduct : public UsdRenderSettingsBase
 
   // override SchemaBase virtuals.
   USDRENDER_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PRODUCTTYPE
   // --------------------------------------------------------------------- //
@@ -197,6 +198,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PRODUCTNAME
   // --------------------------------------------------------------------- //
@@ -223,6 +225,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ORDEREDVARS
   // --------------------------------------------------------------------- //
@@ -240,6 +243,7 @@ class UsdRenderProduct : public UsdRenderSettingsBase
   UsdRelationship CreateOrderedVarsRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -44,7 +44,8 @@ WABI_NAMESPACE_BEGIN
 // arguments.
 
 // VtCat
-#    define BOOST_PP_ITERATION_PARAMS_1 (4, (0, VT_FUNCTIONS_MAX_ARGS, "wabi/base/vt/functions.h", 0))
+#    define BOOST_PP_ITERATION_PARAMS_1 \
+      (4, (0, VT_FUNCTIONS_MAX_ARGS, "wabi/base/vt/functions.h", 0))
 #    include BOOST_PP_ITERATE()
 
 // ****************************************************************************
@@ -63,12 +64,9 @@ WABI_NAMESPACE_BEGIN
 /// If one input is a single element (either a single-element array or a scalar
 /// of the same type held in the array), it is compared to all the elements
 /// in the other array.  Otherwise both arrays must have the same shape.
-template<typename T>
-VtArray<T> VtEqual(VtArray<T> const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtEqual(T const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtEqual(VtArray<T> const &a, T const &b);
+template<typename T> VtArray<T> VtEqual(VtArray<T> const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtEqual(T const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtEqual(VtArray<T> const &a, T const &b);
 
 /// Returns a bool array specifying, element-by-element, if the two inputs
 /// contain inequal values.  The shape of the return array is the same as the
@@ -77,12 +75,9 @@ VtArray<T> VtEqual(VtArray<T> const &a, T const &b);
 /// If one input is a single element (either a single-element array or a scalar
 /// of the same type held in the array), it is compared to all the elements
 /// in the other array.  Otherwise both arrays must have the same shape.
-template<typename T>
-VtArray<T> VtNotEqual(VtArray<T> const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtNotEqual(T const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtNotEqual(VtArray<T> const &a, T const &b);
+template<typename T> VtArray<T> VtNotEqual(VtArray<T> const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtNotEqual(T const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtNotEqual(VtArray<T> const &a, T const &b);
 
 /// Returns a bool array specifying, element-by-element, if the first input
 /// contains values greater than those in the second input. The shape of the
@@ -91,12 +86,9 @@ VtArray<T> VtNotEqual(VtArray<T> const &a, T const &b);
 /// If one input is a single element (either a single-element array or a scalar
 /// of the same type held in the array), it is compared to all the elements
 /// in the other array.  Otherwise both arrays must have the same shape.
-template<typename T>
-VtArray<T> VtGreater(VtArray<T> const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtGreater(T const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtGreater(VtArray<T> const &a, T const &b);
+template<typename T> VtArray<T> VtGreater(VtArray<T> const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtGreater(T const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtGreater(VtArray<T> const &a, T const &b);
 
 /// Returns a bool array specifying, element-by-element, if the first input
 /// contains values less than those in the second input. The shape of the
@@ -105,12 +97,9 @@ VtArray<T> VtGreater(VtArray<T> const &a, T const &b);
 /// If one input is a single element (either a single-element array or a scalar
 /// of the same type held in the array), it is compared to all the elements
 /// in the other array.  Otherwise both arrays must have the same shape.
-template<typename T>
-VtArray<T> VtLess(VtArray<T> const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtLess(T const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtLess(VtArray<T> const &a, T const &b);
+template<typename T> VtArray<T> VtLess(VtArray<T> const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtLess(T const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtLess(VtArray<T> const &a, T const &b);
 
 /// Returns a bool array specifying, element-by-element, if the first input
 /// contains values greater than or equal to those in the second input. The
@@ -120,12 +109,9 @@ VtArray<T> VtLess(VtArray<T> const &a, T const &b);
 /// If one input is a single element (either a single-element array or a scalar
 /// of the same type held in the array), it is compared to all the elements
 /// in the other array.  Otherwise both arrays must have the same shape.
-template<typename T>
-VtArray<T> VtGreaterOrEqual(VtArray<T> const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtGreaterOrEqual(T const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtGreaterOrEqual(VtArray<T> const &a, T const &b);
+template<typename T> VtArray<T> VtGreaterOrEqual(VtArray<T> const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtGreaterOrEqual(T const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtGreaterOrEqual(VtArray<T> const &a, T const &b);
 
 /// Returns a bool array specifying, element-by-element, if the first input
 /// contains values less than or equal to those in the second input. The shape
@@ -134,12 +120,9 @@ VtArray<T> VtGreaterOrEqual(VtArray<T> const &a, T const &b);
 /// If one input is a single element (either a single-element array or a scalar
 /// of the same type held in the array), it is compared to all the elements
 /// in the other array.  Otherwise both arrays must have the same shape.
-template<typename T>
-VtArray<T> VtLessOrEqual(VtArray<T> const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtLessOrEqual(T const &a, VtArray<T> const &b);
-template<typename T>
-VtArray<T> VtLessOrEqual(VtArray<T> const &a, T const &b);
+template<typename T> VtArray<T> VtLessOrEqual(VtArray<T> const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtLessOrEqual(T const &a, VtArray<T> const &b);
+template<typename T> VtArray<T> VtLessOrEqual(VtArray<T> const &a, T const &b);
 
 #    endif
 
@@ -171,14 +154,12 @@ VtArray<T> VtCat(VtArray<T> const &a0, VtArray<T> const &a1, ... VtArray<T> cons
 /// (This example, if
 /// you look carefully, evaluates this function not on the strings, but on
 /// the results of the comparison).
-template<typename T>
-bool VtAnyTrue(VtArray<T> const &a)
+template<typename T> bool VtAnyTrue(VtArray<T> const &a)
 {
   if (a.empty())
     return false;
 
-  for (size_t i = 0; i != a.size(); ++i)
-  {
+  for (size_t i = 0; i != a.size(); ++i) {
     if (a[i] != VtZero<T>())
       return true;
   }
@@ -196,14 +177,12 @@ bool VtAnyTrue(VtArray<T> const &a)
 ///
 /// (This example, if you look carefully, evaluates this function not on the
 /// strings, but on the results of the comparison).
-template<typename T>
-bool VtAllTrue(VtArray<T> const &a)
+template<typename T> bool VtAllTrue(VtArray<T> const &a)
 {
   if (a.empty())
     return false;
 
-  for (size_t i = 0; i != a.size(); ++i)
-  {
+  for (size_t i = 0; i != a.size(); ++i) {
     if (a[i] == VtZero<T>())
       return false;
   }
@@ -221,54 +200,43 @@ bool VtAllTrue(VtArray<T> const &a)
 //    The scalar is compared to all the elements in the array.
 // *) array and scalar:
 //    The same as scalar and array.
-#    define VTFUNCTION_BOOL(funcname, op)                              \
-      template<typename T>                                             \
-      VtArray<bool> funcname(T const &scalar, VtArray<T> const &vec)   \
-      {                                                                \
-        VtArray<bool> ret(vec.size());                                 \
-        for (size_t i = 0, n = vec.size(); i != n; ++i)                \
-        {                                                              \
-          ret[i] = (scalar op vec[i]);                                 \
-        }                                                              \
-        return ret;                                                    \
-      }                                                                \
-      template<typename T>                                             \
-      VtArray<bool> funcname(VtArray<T> const &vec, T const &scalar)   \
-      {                                                                \
-        VtArray<bool> ret(vec.size());                                 \
-        for (size_t i = 0, n = vec.size(); i != n; ++i)                \
-        {                                                              \
-          ret[i] = (vec[i] op scalar);                                 \
-        }                                                              \
-        return ret;                                                    \
-      }                                                                \
-      template<typename T>                                             \
-      VtArray<bool> funcname(VtArray<T> const &a, VtArray<T> const &b) \
-      {                                                                \
-        if (a.empty() || b.empty())                                    \
-        {                                                              \
-          return VtArray<bool>();                                      \
-        }                                                              \
-                                                                       \
-        if (a.size() == 1)                                             \
-        {                                                              \
-          return funcname(a[0], b);                                    \
-        } else if (b.size() == 1)                                      \
-        {                                                              \
-          return funcname(a, b[0]);                                    \
-        } else if (a.size() == b.size())                               \
-        {                                                              \
-          VtArray<bool> ret(a.size());                                 \
-          for (size_t i = 0, n = a.size(); i != n; ++i)                \
-          {                                                            \
-            ret[i] = (a[i] op b[i]);                                   \
-          }                                                            \
-          return ret;                                                  \
-        } else                                                         \
-        {                                                              \
-          TF_CODING_ERROR("Non-conforming inputs.");                   \
-          return VtArray<bool>();                                      \
-        }                                                              \
+#    define VTFUNCTION_BOOL(funcname, op)                                                   \
+      template<typename T> VtArray<bool> funcname(T const &scalar, VtArray<T> const &vec)   \
+      {                                                                                     \
+        VtArray<bool> ret(vec.size());                                                      \
+        for (size_t i = 0, n = vec.size(); i != n; ++i) {                                   \
+          ret[i] = (scalar op vec[i]);                                                      \
+        }                                                                                   \
+        return ret;                                                                         \
+      }                                                                                     \
+      template<typename T> VtArray<bool> funcname(VtArray<T> const &vec, T const &scalar)   \
+      {                                                                                     \
+        VtArray<bool> ret(vec.size());                                                      \
+        for (size_t i = 0, n = vec.size(); i != n; ++i) {                                   \
+          ret[i] = (vec[i] op scalar);                                                      \
+        }                                                                                   \
+        return ret;                                                                         \
+      }                                                                                     \
+      template<typename T> VtArray<bool> funcname(VtArray<T> const &a, VtArray<T> const &b) \
+      {                                                                                     \
+        if (a.empty() || b.empty()) {                                                       \
+          return VtArray<bool>();                                                           \
+        }                                                                                   \
+                                                                                            \
+        if (a.size() == 1) {                                                                \
+          return funcname(a[0], b);                                                         \
+        } else if (b.size() == 1) {                                                         \
+          return funcname(a, b[0]);                                                         \
+        } else if (a.size() == b.size()) {                                                  \
+          VtArray<bool> ret(a.size());                                                      \
+          for (size_t i = 0, n = a.size(); i != n; ++i) {                                   \
+            ret[i] = (a[i] op b[i]);                                                        \
+          }                                                                                 \
+          return ret;                                                                       \
+        } else {                                                                            \
+          TF_CODING_ERROR("Non-conforming inputs.");                                        \
+          return VtArray<bool>();                                                           \
+        }                                                                                   \
       }
 
 VTFUNCTION_BOOL(VtEqual, ==)
@@ -301,8 +269,7 @@ WABI_NAMESPACE_END
       offset += s##n.size();
 
 // real documentation is above (for doxygen purposes)
-template<typename T>
-VtArray<T> VtCat(BOOST_PP_ENUM_PARAMS(N, VtArray<T> const &s))
+template<typename T> VtArray<T> VtCat(BOOST_PP_ENUM_PARAMS(N, VtArray<T> const &s))
 {
   size_t newSize = 0;
 

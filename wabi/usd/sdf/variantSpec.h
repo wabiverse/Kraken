@@ -57,6 +57,7 @@ class SdfVariantSpec : public SdfSpec
   SDF_DECLARE_SPEC(SdfVariantSpec, SdfSpec);
 
  public:
+
   ///
   /// \name Spec construction
   /// @{

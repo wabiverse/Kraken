@@ -56,6 +56,7 @@ class GfFrustum;
 class GfCamera
 {
  public:
+
   /// Projection type.
   enum Projection
   {
@@ -84,6 +85,7 @@ class GfCamera
   GF_API static const double DEFAULT_VERTICAL_APERTURE;
 
  public:
+
   GF_API GfCamera(const GfMatrix4d &transform = GfMatrix4d(1.0),
                   Projection projection = Perspective,
                   float horizontalAperture = DEFAULT_HORIZONTAL_APERTURE,
@@ -244,6 +246,7 @@ class GfCamera
   GF_API bool operator!=(const GfCamera &other) const;
 
  private:
+
   // frustum
   GfMatrix4d _transform;
   Projection _projection;

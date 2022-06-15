@@ -30,7 +30,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_ENV_SETTING(HD_ENABLE_OPENSUBDIV3_ADAPTIVE, 0, "Enables OpenSubdiv 3 Adaptive Tessellation");
+
+TF_DEFINE_ENV_SETTING(HD_ENABLE_OPENSUBDIV3_ADAPTIVE, 0,
+                      "Enables OpenSubdiv 3 Adaptive Tessellation");
 
 HdMeshTopology::HdMeshTopology()
   : HdTopology(),

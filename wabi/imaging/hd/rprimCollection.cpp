@@ -23,14 +23,15 @@
 //
 #include "wabi/imaging/hd/rprimCollection.h"
 
-#include "wabi/base/tf/hash.h"
 #include "wabi/imaging/hd/basisCurves.h"
 #include "wabi/imaging/hd/changeTracker.h"
 #include "wabi/imaging/hd/mesh.h"
 #include "wabi/imaging/hd/points.h"
 #include "wabi/imaging/hd/rprim.h"
+#include "wabi/base/tf/hash.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 HdRprimCollection::HdRprimCollection()
   : _forcedRepr(false),

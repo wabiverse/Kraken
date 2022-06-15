@@ -24,12 +24,11 @@
 #ifndef WABI_IMAGING_HD_RENDER_PASS_H
 #define WABI_IMAGING_HD_RENDER_PASS_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/changeTracker.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/rprimCollection.h"
 #include "wabi/imaging/hd/task.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include <memory>
 
@@ -38,7 +37,6 @@ WABI_NAMESPACE_BEGIN
 class HdRenderIndex;
 class HdSceneDelegate;
 
-using HdDirtyListSharedPtr = std::shared_ptr<class HdDirtyList>;
 using HdRenderPassSharedPtr = std::shared_ptr<class HdRenderPass>;
 using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 
@@ -71,6 +69,7 @@ using HdRenderPassStateSharedPtr = std::shared_ptr<class HdRenderPassState>;
 class HdRenderPass
 {
  public:
+
   HD_API
   HdRenderPass(HdRenderIndex *index, HdRprimCollection const &collection);
   HD_API
@@ -87,13 +86,6 @@ class HdRenderPass
   HD_API
   void SetRprimCollection(HdRprimCollection const &col);
 
-  /// Returns the dirty list (maintained in the change tracker) for
-  /// efficient traversal
-  HdDirtyListSharedPtr const &GetDirtyList() const
-  {
-    return _dirtyList;
-  }
-
   /// Return the render index
   HdRenderIndex *GetRenderIndex() const
   {
@@ -107,14 +99,6 @@ class HdRenderPass
   /// Sync the render pass resources
   HD_API
   void Sync();
-
-  // ---------------------------------------------------------------------- //
-  /// \name Prepare
-  // ---------------------------------------------------------------------- //
-
-  /// Prepare renderpass data
-  HD_API
-  void Prepare(TfTokenVector const &renderTags);
 
   // ---------------------------------------------------------------------- //
   /// \name Execution
@@ -134,24 +118,20 @@ class HdRenderPass
   }
 
  protected:
+
   /// Virtual API: Execute the buckets corresponding to renderTags;
   /// renderTags.empty() implies execute everything.
   virtual void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
                         TfTokenVector const &renderTags) = 0;
 
   /// Optional API: let derived classes mark their collection tracking as dirty.
-  virtual void _MarkCollectionDirty()
-  {}
+  virtual void _MarkCollectionDirty() {}
 
   /// Optional API: let derived classes sync data.
-  virtual void _Sync()
-  {}
-
-  /// Optional API: let derived classes prepare data.
-  virtual void _Prepare(TfTokenVector const &renderTags)
-  {}
+  virtual void _Sync() {}
 
  private:
+
   // Don't allow copies
   HdRenderPass(const HdRenderPass &) = delete;
   HdRenderPass &operator=(const HdRenderPass &) = delete;
@@ -162,9 +142,6 @@ class HdRenderPass
   // The renderIndex to which this renderPass belongs
   // (can't change after construction)
   HdRenderIndex *const _renderIndex;
-
-  // cached dirty prims list
-  HdDirtyListSharedPtr _dirtyList;
 
   // ---------------------------------------------------------------------- //
   // \name Core RenderPass State

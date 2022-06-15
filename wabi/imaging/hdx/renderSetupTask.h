@@ -65,6 +65,7 @@ class HdPhRenderPassState;
 class HdxRenderSetupTask : public HdTask
 {
  public:
+
   HDX_API
   HdxRenderSetupTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -95,6 +96,7 @@ class HdxRenderSetupTask : public HdTask
   void Execute(HdTaskContext *ctx) override;
 
  private:
+
   HdRenderPassStateSharedPtr _renderPassState;
   HdPhRenderPassShaderSharedPtr _colorRenderPassShader;
   HdPhRenderPassShaderSharedPtr _idRenderPassShader;

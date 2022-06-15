@@ -42,6 +42,7 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<class UsdImagingPrimAdapt
 class UsdImagingInstancerContext
 {
  public:
+
   /// The cachePath of the instancer.
   SdfPath instancerCachePath;
 

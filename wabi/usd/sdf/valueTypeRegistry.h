@@ -45,6 +45,7 @@ class TfType;
 class Sdf_ValueTypeRegistry : boost::noncopyable
 {
  public:
+
   Sdf_ValueTypeRegistry();
   ~Sdf_ValueTypeRegistry();
 
@@ -83,6 +84,7 @@ class Sdf_ValueTypeRegistry : boost::noncopyable
   class Type
   {
    public:
+
     // Specify a type with the given name, default value, and default
     // array value.
     Type(const TfToken &name, const VtValue &defaultValue, const VtValue &defaultArrayValue)
@@ -100,18 +102,14 @@ class Sdf_ValueTypeRegistry : boost::noncopyable
 
     // Specify a type with the given name and underlying C++ type.
     // No default value or array value will be registered.
-    Type(const TfToken &name, const TfType &type)
-      : _name(name),
-        _type(type)
-    {}
+    Type(const TfToken &name, const TfType &type) : _name(name), _type(type) {}
 
     // Set C++ type name string for this type. Defaults to type name
     // from TfType.
     Type &CPPTypeName(const std::string &cppTypeName)
     {
       _cppTypeName = cppTypeName;
-      if (!_defaultArrayValue.IsEmpty())
-      {
+      if (!_defaultArrayValue.IsEmpty()) {
         _arrayCppTypeName = "VtArray<" + cppTypeName + ">";
       }
       return *this;
@@ -147,6 +145,7 @@ class Sdf_ValueTypeRegistry : boost::noncopyable
     }
 
    private:
+
     friend class Sdf_ValueTypeRegistry;
 
     TfToken _name;
@@ -190,6 +189,7 @@ class Sdf_ValueTypeRegistry : boost::noncopyable
   void Clear();
 
  private:
+
   class _Impl;
   std::unique_ptr<_Impl> _impl;
 };

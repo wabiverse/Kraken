@@ -53,6 +53,7 @@ using HgiGraphicsCmdsUniquePtr = std::unique_ptr<class HgiGraphicsCmds>;
 class HgiGraphicsCmds : public HgiCmds
 {
  public:
+
   HGI_API
   ~HgiGraphicsCmds() override;
 
@@ -187,10 +188,12 @@ class HgiGraphicsCmds : public HgiCmds
   virtual void MemoryBarrier(HgiMemoryBarrier barrier) = 0;
 
  protected:
+
   HGI_API
   HgiGraphicsCmds();
 
  private:
+
   HgiGraphicsCmds &operator=(const HgiGraphicsCmds &) = delete;
   HgiGraphicsCmds(const HgiGraphicsCmds &) = delete;
 };

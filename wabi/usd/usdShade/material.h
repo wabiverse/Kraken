@@ -111,6 +111,7 @@ class SdfAssetPath;
 class UsdShadeMaterial : public UsdShadeNodeGraph
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -121,16 +122,12 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   /// Equivalent to UsdShadeMaterial::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeMaterial(const UsdPrim &prim = UsdPrim())
-    : UsdShadeNodeGraph(prim)
-  {}
+  explicit UsdShadeMaterial(const UsdPrim &prim = UsdPrim()) : UsdShadeNodeGraph(prim) {}
 
   /// Construct a UsdShadeMaterial on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeMaterial(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeMaterial(const UsdSchemaBase &schemaObj)
-    : UsdShadeNodeGraph(schemaObj)
-  {}
+  explicit UsdShadeMaterial(const UsdSchemaBase &schemaObj) : UsdShadeNodeGraph(schemaObj) {}
 
   /// Destructor.
   USDSHADE_API
@@ -180,6 +177,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   static UsdShadeMaterial Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -187,6 +185,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
@@ -196,9 +195,11 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SURFACE
   // --------------------------------------------------------------------- //
@@ -219,9 +220,11 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
-  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DISPLACEMENT
   // --------------------------------------------------------------------- //
@@ -246,6 +249,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VOLUME
   // --------------------------------------------------------------------- //
@@ -266,9 +270,11 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSHADE_API
-  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -480,6 +486,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   /// @}
 
  private:
+
   // Helper method to compute the sources of a given output, identified by its
   // baseName, for the renderContexts in the specified contextVector.
   UsdShadeAttributeVector _ComputeNamedOutputSources(const TfToken &baseName,
@@ -497,6 +504,7 @@ class UsdShadeMaterial : public UsdShadeNodeGraph
   std::vector<UsdShadeOutput> _GetOutputsForTerminalName(const TfToken &terminalName) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   /// \anchor UsdShadeMaterial_Variations
   /// \name Authoring Material Variations

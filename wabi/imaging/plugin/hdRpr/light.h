@@ -40,20 +40,21 @@ class RprUsdMaterial;
 class HdRprLight : public HdLight
 {
  public:
-  HdRprLight(SdfPath const &id, TfToken const &lightType)
-    : HdLight(id),
-      m_lightType(lightType)
-  {}
+
+  HdRprLight(SdfPath const &id, TfToken const &lightType) : HdLight(id), m_lightType(lightType) {}
 
   ~HdRprLight() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
   void Finalize(HdRenderParam *renderParam) override;
 
  private:
+
   void CreateIESLight(HdRprApi *rprApi, std::string const &path);
 
   void CreateAreaLightMesh(HdRprApi *rprApi, HdSceneDelegate *sceneDelegate);
@@ -70,6 +71,7 @@ class HdRprLight : public HdLight
   void ReleaseLight(HdRprApi *rprApi);
 
  private:
+
   const TfToken m_lightType;
 
   struct AreaLight
@@ -79,8 +81,7 @@ class HdRprLight : public HdLight
   };
 
   struct LightVariantEmpty
-  {
-  };
+  {};
   using Light = BOOST_NS::variant<LightVariantEmpty,
                                   rpr::PointLight *,
                                   rpr::SpotLight *,

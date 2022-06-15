@@ -58,6 +58,7 @@ using HioImageSharedPtr = std::shared_ptr<class HioImage>;
 class HioImage
 {
  public:
+
   /// Specifies whether to treat the image origin as the upper-left corner
   /// or the lower left
   enum ImageOriginLocation
@@ -84,6 +85,7 @@ class HioImage
   class StorageSpec
   {
    public:
+
     StorageSpec()
       : width(0),
         height(0),
@@ -100,6 +102,7 @@ class HioImage
   };
 
  public:
+
   HioImage() = default;
 
   HIO_API
@@ -120,11 +123,12 @@ class HioImage
   /// \a mip, using \a sourceColorSpace to help determine the color space
   /// with which to interpret the texture
   HIO_API
-  static HioImageSharedPtr OpenForReading(std::string const &filename,
-                                          int subimage = 0,
-                                          int mip = 0,
-                                          SourceColorSpace sourceColorSpace = SourceColorSpace::Auto,
-                                          bool suppressErrors = false);
+  static HioImageSharedPtr OpenForReading(
+    std::string const &filename,
+    int subimage = 0,
+    int mip = 0,
+    SourceColorSpace sourceColorSpace = SourceColorSpace::Auto,
+    bool suppressErrors = false);
 
   /// Reads the image file into \a storage.
   virtual bool Read(StorageSpec const &storage) = 0;
@@ -146,7 +150,8 @@ class HioImage
   static HioImageSharedPtr OpenForWriting(std::string const &filename);
 
   /// Writes the image with \a metadata.
-  virtual bool Write(StorageSpec const &storage, VtDictionary const &metadata = VtDictionary()) = 0;
+  virtual bool Write(StorageSpec const &storage,
+                     VtDictionary const &metadata = VtDictionary()) = 0;
 
   /// }@
 
@@ -173,8 +178,7 @@ class HioImage
 
   /// \name Metadata
   /// {@
-  template<typename T>
-  bool GetMetadata(TfToken const &key, T *value) const;
+  template<typename T> bool GetMetadata(TfToken const &key, T *value) const;
 
   virtual bool GetMetadata(TfToken const &key, VtValue *value) const = 0;
 
@@ -183,6 +187,7 @@ class HioImage
   /// }@
 
  protected:
+
   virtual bool _OpenForReading(std::string const &filename,
                                int subimage,
                                int mip,
@@ -192,12 +197,10 @@ class HioImage
   virtual bool _OpenForWriting(std::string const &filename) = 0;
 };
 
-template<typename T>
-bool HioImage::GetMetadata(TfToken const &key, T *value) const
+template<typename T> bool HioImage::GetMetadata(TfToken const &key, T *value) const
 {
   VtValue any;
-  if (!GetMetadata(key, &any) || !any.IsHolding<T>())
-  {
+  if (!GetMetadata(key, &any) || !any.IsHolding<T>()) {
     return false;
   }
   *value = any.UncheckedGet<T>();
@@ -207,13 +210,14 @@ bool HioImage::GetMetadata(TfToken const &key, T *value) const
 class HIO_API HioImageFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual HioImageSharedPtr New() const = 0;
 };
 
-template<class T>
-class HioImageFactory : public HioImageFactoryBase
+template<class T> class HioImageFactory : public HioImageFactoryBase
 {
  public:
+
   virtual HioImageSharedPtr New() const
   {
     return HioImageSharedPtr(new T);

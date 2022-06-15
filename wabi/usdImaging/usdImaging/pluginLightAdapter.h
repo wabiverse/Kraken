@@ -41,11 +41,10 @@ class UsdPrim;
 class UsdImagingPluginLightAdapter : public UsdImagingLightAdapter
 {
  public:
+
   typedef UsdImagingLightAdapter BaseAdapter;
 
-  UsdImagingPluginLightAdapter()
-    : UsdImagingLightAdapter()
-  {}
+  UsdImagingPluginLightAdapter() : UsdImagingLightAdapter() {}
 
   USDIMAGING_API
   virtual ~UsdImagingPluginLightAdapter();
@@ -59,6 +58,7 @@ class UsdImagingPluginLightAdapter : public UsdImagingLightAdapter
   virtual bool IsSupported(UsdImagingIndexProxy const *index) const;
 
  protected:
+
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) final;
 };
 

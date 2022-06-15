@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_SCENE_DELEGATE_H
 #define WABI_IMAGING_HD_SCENE_DELEGATE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/aov.h"
 #include "wabi/imaging/hd/basisCurvesTopology.h"
@@ -93,15 +93,27 @@ struct HdDisplayStyle
   /// through?
   bool occludedSelectionShowsThrough;
 
+  /// Should the prim's points get shaded like surfaces, as opposed to
+  /// constant shaded?
+  bool pointsShadingEnabled;
+
+  /// Is this prim exempt from having its material disabled or overridden,
+  /// for example, when a renderer chooses to ignore all scene materials?
+  bool materialIsFinal;
+
   /// Creates a default DisplayStyle.
   /// - refineLevel is 0.
   /// - flatShading is disabled.
   /// - displacement is enabled.
+  /// - occludedSelectionShowsThrough is disabled.
+  /// - pointsShading is disabled.
   HdDisplayStyle()
     : refineLevel(0),
       flatShadingEnabled(false),
       displacementEnabled(true),
-      occludedSelectionShowsThrough(false)
+      occludedSelectionShowsThrough(false),
+      pointsShadingEnabled(false),
+      materialIsFinal(false)
   {}
 
   /// Creates a DisplayStyle.
@@ -111,20 +123,27 @@ struct HdDisplayStyle
   /// \param displacement enables displacement shading, defaults to false.
   /// \param occludedSelectionShowsThrough controls whether the prim lets
   ///        occluded selection show through it, defaults to false.
+  /// \param pointsShadingEnabled controls whether the prim's points
+  ///        are shaded as surfaces or constant-shaded, defaults to false.
+  /// \param materialisFinal controls whether the prim's material should be
+  ///        exempt from override or disabling, such as when a renderer
+  ///        wants to ignore all scene materials.
   HdDisplayStyle(int refineLevel_,
                  bool flatShading = false,
                  bool displacement = true,
-                 bool occludedSelectionShowsThrough_ = false)
+                 bool occludedSelectionShowsThrough_ = false,
+                 bool pointsShadingEnabled_ = false,
+                 bool materialIsFinal_ = false)
     : refineLevel(std::max(0, refineLevel_)),
       flatShadingEnabled(flatShading),
       displacementEnabled(displacement),
-      occludedSelectionShowsThrough(occludedSelectionShowsThrough_)
+      occludedSelectionShowsThrough(occludedSelectionShowsThrough_),
+      pointsShadingEnabled(pointsShadingEnabled_),
+      materialIsFinal(materialIsFinal_)
   {
-    if (refineLevel_ < 0)
-    {
+    if (refineLevel_ < 0) {
       TF_CODING_ERROR("negative refine level is not supported");
-    } else if (refineLevel_ > 8)
-    {
+    } else if (refineLevel_ > 8) {
       TF_CODING_ERROR("refine level > 8 is not supported");
     }
   }
@@ -136,7 +155,9 @@ struct HdDisplayStyle
   {
     return refineLevel == rhs.refineLevel && flatShadingEnabled == rhs.flatShadingEnabled &&
            displacementEnabled == rhs.displacementEnabled &&
-           occludedSelectionShowsThrough == rhs.occludedSelectionShowsThrough;
+           occludedSelectionShowsThrough == rhs.occludedSelectionShowsThrough &&
+           pointsShadingEnabled == rhs.pointsShadingEnabled &&
+           materialIsFinal == rhs.materialIsFinal;
   }
   bool operator!=(HdDisplayStyle const &rhs) const
   {
@@ -162,6 +183,9 @@ struct HdPrimvarDescriptor
   bool indexed;
 
   HdPrimvarDescriptor()
+    : interpolation(HdInterpolationConstant),
+      role(HdPrimvarRoleTokens->none),
+      indexed(false)
   {}
   HdPrimvarDescriptor(TfToken const &name_,
                       HdInterpolation interp_,
@@ -199,8 +223,7 @@ struct HdExtComputationPrimvarDescriptor : public HdPrimvarDescriptor
   TfToken sourceComputationOutputName;
   HdTupleType valueType;
 
-  HdExtComputationPrimvarDescriptor()
-  {}
+  HdExtComputationPrimvarDescriptor() {}
   HdExtComputationPrimvarDescriptor(TfToken const &name_,
                                     HdInterpolation interp_,
                                     TfToken const &role_,
@@ -214,8 +237,10 @@ struct HdExtComputationPrimvarDescriptor : public HdPrimvarDescriptor
   {}
   bool operator==(HdExtComputationPrimvarDescriptor const &rhs) const
   {
-    return HdPrimvarDescriptor::operator==(rhs) && sourceComputationId == rhs.sourceComputationId &&
-           sourceComputationOutputName == rhs.sourceComputationOutputName && valueType == rhs.valueType;
+    return HdPrimvarDescriptor::operator==(rhs) &&
+           sourceComputationId == rhs.sourceComputationId &&
+           sourceComputationOutputName == rhs.sourceComputationOutputName &&
+           valueType == rhs.valueType;
   }
   bool operator!=(HdExtComputationPrimvarDescriptor const &rhs) const
   {
@@ -239,8 +264,7 @@ struct HdExtComputationInputDescriptor
   SdfPath sourceComputationId;
   TfToken sourceComputationOutputName;
 
-  HdExtComputationInputDescriptor()
-  {}
+  HdExtComputationInputDescriptor() {}
   HdExtComputationInputDescriptor(TfToken const &name_,
                                   SdfPath const &sourceComputationId_,
                                   TfToken const &sourceComputationOutputName_)
@@ -273,8 +297,7 @@ struct HdExtComputationOutputDescriptor
   TfToken name;
   HdTupleType valueType;
 
-  HdExtComputationOutputDescriptor()
-  {}
+  HdExtComputationOutputDescriptor() {}
   HdExtComputationOutputDescriptor(TfToken const &name_, HdTupleType const &valueType_)
     : name(name_),
       valueType(valueType_)
@@ -302,9 +325,10 @@ struct HdVolumeFieldDescriptor
   TfToken fieldPrimType;
   SdfPath fieldId;
 
-  HdVolumeFieldDescriptor()
-  {}
-  HdVolumeFieldDescriptor(TfToken const &fieldName_, TfToken const &fieldPrimType_, SdfPath const &fieldId_)
+  HdVolumeFieldDescriptor() {}
+  HdVolumeFieldDescriptor(TfToken const &fieldName_,
+                          TfToken const &fieldPrimType_,
+                          SdfPath const &fieldId_)
     : fieldName(fieldName_),
       fieldPrimType(fieldPrimType_),
       fieldId(fieldId_)
@@ -320,6 +344,7 @@ typedef std::vector<HdVolumeFieldDescriptor> HdVolumeFieldDescriptorVector;
 class HdSceneDelegate
 {
  public:
+
   /// Constructor used for nested delegate objects which share a RenderIndex.
   HD_API
   HdSceneDelegate(HdRenderIndex *parentIndex, SdfPath const &delegateID);
@@ -359,6 +384,7 @@ class HdSceneDelegate
   HD_API
   virtual bool IsEnabled(TfToken const &option) const;
 
+
   // -----------------------------------------------------------------------//
   /// \name Rprim Aspects
   // -----------------------------------------------------------------------//
@@ -374,6 +400,7 @@ class HdSceneDelegate
   /// Gets the subdivision surface tags (sharpness, holes, etc).
   HD_API
   virtual PxOsdSubdivTags GetSubdivTags(SdfPath const &id);
+
 
   /// Gets the axis aligned bounds of a prim.
   /// The returned bounds are in the local space of the prim
@@ -468,8 +495,7 @@ class HdSceneDelegate
   void SampleTransform(SdfPath const &id, HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
   {
     size_t authoredSamples = SampleTransform(id, CAPACITY, sa->times.data(), sa->values.data());
-    if (authoredSamples > CAPACITY)
-    {
+    if (authoredSamples > CAPACITY) {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleTransform(id,
                                                             authoredSamples,
@@ -500,14 +526,14 @@ class HdSceneDelegate
   /// This function returns the union of the authored samples
   /// and the boundaries of the current camera shutter interval.
   template<unsigned int CAPACITY>
-  void SampleInstancerTransform(SdfPath const &instancerId, HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
+  void SampleInstancerTransform(SdfPath const &instancerId,
+                                HdTimeSampleArray<GfMatrix4d, CAPACITY> *sa)
   {
     size_t authoredSamples = SampleInstancerTransform(instancerId,
                                                       CAPACITY,
                                                       sa->times.data(),
                                                       sa->values.data());
-    if (authoredSamples > CAPACITY)
-    {
+    if (authoredSamples > CAPACITY) {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleInstancerTransform(instancerId,
                                                                      authoredSamples,
@@ -548,7 +574,9 @@ class HdSceneDelegate
   /// This function returns the union of the authored samples
   /// and the boundaries of the current camera shutter interval.
   template<unsigned int CAPACITY>
-  void SamplePrimvar(SdfPath const &id, TfToken const &key, HdTimeSampleArray<VtValue, CAPACITY> *sa);
+  void SamplePrimvar(SdfPath const &id,
+                     TfToken const &key,
+                     HdTimeSampleArray<VtValue, CAPACITY> *sa);
 
   /// SamplePrimvar() for getting an unflattened primvar and its indices. If
   /// \a *sampleIndices is not nullptr and the primvar has indices, it will
@@ -612,10 +640,22 @@ class HdSceneDelegate
   /// Returns the scene address of the prim corresponding to the given
   /// rprim/instance index. This is designed to give paths in scene namespace,
   /// rather than hydra namespace, so it always strips the delegate ID.
+  /// \deprecated use GetScenePrimPaths
   HD_API
   virtual SdfPath GetScenePrimPath(SdfPath const &rprimId,
                                    int instanceIndex,
                                    HdInstancerContext *instancerContext = nullptr);
+
+  /// A vectorized version of GetScenePrimPath that allows the prim adapter
+  /// to amortize expensive calculations across a number of path evaluations
+  /// in a single call. Note that only a single rprimId is supported. This
+  /// allows this call to be forwarded directly to a single prim adapter
+  /// rather than requiring a lot of data shuffling.
+  HD_API
+  virtual SdfPathVector GetScenePrimPaths(
+    SdfPath const &rprimId,
+    std::vector<int> instanceIndices,
+    std::vector<HdInstancerContext> *instancerContexts = nullptr);
 
   // -----------------------------------------------------------------------//
   /// \name Material Aspects
@@ -693,6 +733,7 @@ class HdSceneDelegate
   virtual HdExtComputationOutputDescriptorVector GetExtComputationOutputDescriptors(
     SdfPath const &computationId);
 
+
   /// Returns a list of primvar names that should be bound to
   /// a generated output from  an ExtComputation for the given prim id and
   /// interpolation mode.  Binding information is obtained through
@@ -733,11 +774,13 @@ class HdSceneDelegate
                                  TfToken const &input,
                                  HdTimeSampleArray<VtValue, CAPACITY> *sa)
   {
-    size_t authoredSamples =
-      SampleExtComputationInput(computationId, input, CAPACITY, sa->times.data(), sa->values.data());
+    size_t authoredSamples = SampleExtComputationInput(computationId,
+                                                       input,
+                                                       CAPACITY,
+                                                       sa->times.data(),
+                                                       sa->values.data());
 
-    if (authoredSamples > CAPACITY)
-    {
+    if (authoredSamples > CAPACITY) {
       sa->Resize(authoredSamples);
       size_t authoredSamplesSecondAttempt = SampleExtComputationInput(computationId,
                                                                       input,
@@ -768,7 +811,8 @@ class HdSceneDelegate
   /// what HdEngine::Execute() was called on.  It may also invoke
   /// many computations in parallel.
   HD_API
-  virtual void InvokeExtComputation(SdfPath const &computationId, HdExtComputationContext *context);
+  virtual void InvokeExtComputation(SdfPath const &computationId,
+                                    HdExtComputationContext *context);
 
   // -----------------------------------------------------------------------//
   /// \name Primitive Variables
@@ -776,7 +820,8 @@ class HdSceneDelegate
 
   /// Returns descriptors for all primvars of the given interpolation type.
   HD_API
-  virtual HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id, HdInterpolation interpolation);
+  virtual HdPrimvarDescriptorVector GetPrimvarDescriptors(SdfPath const &id,
+                                                          HdInterpolation interpolation);
 
   // -----------------------------------------------------------------------//
   /// \name Task Aspects
@@ -785,6 +830,7 @@ class HdSceneDelegate
   virtual TfTokenVector GetTaskRenderTags(SdfPath const &taskId);
 
  private:
+
   HdRenderIndex *_index;
   SdfPath _delegateID;
 
@@ -799,8 +845,7 @@ void HdSceneDelegate::SamplePrimvar(SdfPath const &id,
                                     HdTimeSampleArray<VtValue, CAPACITY> *sa)
 {
   size_t authoredSamples = SamplePrimvar(id, key, CAPACITY, sa->times.data(), sa->values.data());
-  if (authoredSamples > CAPACITY)
-  {
+  if (authoredSamples > CAPACITY) {
     sa->Resize(authoredSamples);
     size_t authoredSamplesSecondAttempt =
       SamplePrimvar(id, key, authoredSamples, sa->times.data(), sa->values.data());
@@ -816,10 +861,13 @@ void HdSceneDelegate::SampleIndexedPrimvar(SdfPath const &id,
                                            TfToken const &key,
                                            HdIndexedTimeSampleArray<VtValue, CAPACITY> *sa)
 {
-  size_t authoredSamples =
-    SampleIndexedPrimvar(id, key, CAPACITY, sa->times.data(), sa->values.data(), sa->indices.data());
-  if (authoredSamples > CAPACITY)
-  {
+  size_t authoredSamples = SampleIndexedPrimvar(id,
+                                                key,
+                                                CAPACITY,
+                                                sa->times.data(),
+                                                sa->values.data(),
+                                                sa->indices.data());
+  if (authoredSamples > CAPACITY) {
     sa->Resize(authoredSamples);
     size_t authoredSamplesSecondAttempt = SampleIndexedPrimvar(id,
                                                                key,

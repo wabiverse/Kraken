@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class HdCyclesVolumeLoader : public ccl::VDBImageLoader
 {
  public:
+
   HdCyclesVolumeLoader(const char *filepath, const char *grid_name_in)
     : ccl::VDBImageLoader(grid_name_in),
       m_file_path(filepath)
@@ -51,31 +52,27 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader
 
   void UpdateGrid()
   {
-    if (TF_VERIFY(!m_file_path.empty()))
-    {
-      try
-      {
+    if (TF_VERIFY(!m_file_path.empty())) {
+      try {
         openvdb::io::File file(m_file_path);
         file.setCopyMaxBytes(0);
         file.open();
 
-        if (grid)
-        {
+        if (grid) {
           grid.reset();
         }
 
         this->grid = file.readGrid(grid_name);
       }
-      catch (const openvdb::IoError &e)
-      {
-        TF_RUNTIME_ERROR("Unable to load grid %s from file %s", grid_name.c_str(), m_file_path.c_str());
+      catch (const openvdb::IoError &e) {
+        TF_RUNTIME_ERROR("Unable to load grid %s from file %s",
+                         grid_name.c_str(),
+                         m_file_path.c_str());
       }
-      catch (const std::exception &e)
-      {
+      catch (const std::exception &e) {
         TF_RUNTIME_ERROR("Error updating grid: %s", e.what());
       }
-    } else
-    {
+    } else {
       TF_WARN("Volume file path is empty!");
     }
   }
@@ -88,6 +85,7 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader
   }
 
  private:
+
   std::string m_file_path;
 };
 #endif
@@ -96,6 +94,7 @@ class HdCyclesVolumeLoader : public ccl::VDBImageLoader
 class HdCyclesOpenvdbAsset : public HdField
 {
  public:
+
   /// Constructor for HdCyclesOpenvdbAsset
   ///
   /// @param delegate Pointer to the Render Delegate.
@@ -112,7 +111,9 @@ class HdCyclesOpenvdbAsset : public HdField
   /// @param sceneDelegate Pointer to the Hydra Scene Delegate.
   /// @param renderParam Pointer to a HdCyclesRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the initial Dirty Bits for the Primitive.
   ///
@@ -129,6 +130,7 @@ class HdCyclesOpenvdbAsset : public HdField
   void TrackVolumePrimitive(const SdfPath &id);
 
  private:
+
   std::mutex _volumeListMutex;  ///< Lock for the _volumeList.
   /// Storing all the Hydra Volumes using this asset.
   std::unordered_set<SdfPath, SdfPath::Hash> _volumeList;

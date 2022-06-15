@@ -44,6 +44,7 @@ namespace wabi_double_conversion
   class Bignum
   {
    public:
+
     // 3584 = 128 * 28. We can represent 2^3584 > 10^1000 accurately.
     // This bignum can encode much bigger numbers, since it contains an
     // exponent.
@@ -117,6 +118,7 @@ namespace wabi_double_conversion
     }
 
    private:
+
     typedef uint32_t Chunk;
     typedef uint64_t DoubleChunk;
 
@@ -132,8 +134,7 @@ namespace wabi_double_conversion
 
     void EnsureCapacity(int size)
     {
-      if (size > kBigitCapacity)
-      {
+      if (size > kBigitCapacity) {
         UNREACHABLE();
       }
     }

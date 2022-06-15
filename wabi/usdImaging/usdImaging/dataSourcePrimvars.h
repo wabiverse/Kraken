@@ -40,41 +40,42 @@ WABI_NAMESPACE_BEGIN
 ///
 class UsdImagingDataSourcePrimvars : public HdContainerDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourcePrimvars);
+ public:
 
-    bool Has(const TfToken &name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken &name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourcePrimvars);
 
-    // This map is passed to the constructor to specify non-"primvars:"
-    // attributes to include as primvars (e.g., "points" and "normals").
-    // The first token is the datasource name, and the second the USD name.
-    using CustomPrimvarMapping = std::vector<std::pair<TfToken, TfToken>>;
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
 
-private:
-    UsdImagingDataSourcePrimvars(
-            const SdfPath &sceneIndexPath,
-            UsdGeomPrimvarsAPI usdPrimvars,
-            const CustomPrimvarMapping &customPrimvarMapping,
-            const UsdImagingDataSourceStageGlobals &stageGlobals);
+  // This map is passed to the constructor to specify non-"primvars:"
+  // attributes to include as primvars (e.g., "points" and "normals").
+  // The first token is the datasource name, and the second the USD name.
+  using CustomPrimvarMapping = std::vector<std::pair<TfToken, TfToken>>;
 
-private:
+ private:
 
-    TfToken _GetCustomPrimvarInterpolation(const UsdAttributeQuery &attrQuery);
+  UsdImagingDataSourcePrimvars(const SdfPath &sceneIndexPath,
+                               UsdGeomPrimvarsAPI usdPrimvars,
+                               const CustomPrimvarMapping &customPrimvarMapping,
+                               const UsdImagingDataSourceStageGlobals &stageGlobals);
 
-    // Path of the owning prim.
-    SdfPath _sceneIndexPath;
+ private:
 
-    // Stage globals handle.
-    const UsdImagingDataSourceStageGlobals &_stageGlobals;
+  TfToken _GetCustomPrimvarInterpolation(const UsdAttributeQuery &attrQuery);
 
-    // Maps to custom & namespace-enumerated primvars, populated at
-    // construction time...
-    using _CustomPrimvarsMap = std::map<TfToken, UsdAttributeQuery>;
-    _CustomPrimvarsMap _customPrimvars;
-    using _NamespacedPrimvarsMap = std::map<TfToken, UsdGeomPrimvar>;
-    _NamespacedPrimvarsMap _namespacedPrimvars;
+  // Path of the owning prim.
+  SdfPath _sceneIndexPath;
+
+  // Stage globals handle.
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
+
+  // Maps to custom & namespace-enumerated primvars, populated at
+  // construction time...
+  using _CustomPrimvarsMap = std::map<TfToken, UsdAttributeQuery>;
+  _CustomPrimvarsMap _customPrimvars;
+  using _NamespacedPrimvarsMap = std::map<TfToken, UsdGeomPrimvar>;
+  _NamespacedPrimvarsMap _namespacedPrimvars;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourcePrimvars);
@@ -95,33 +96,35 @@ HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourcePrimvars);
 ///
 class UsdImagingDataSourcePrimvar : public HdContainerDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourcePrimvar);
+ public:
 
-    bool Has(const TfToken & name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken & name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourcePrimvar);
 
-private:
-    UsdImagingDataSourcePrimvar(
-            const SdfPath &sceneIndexPath,
-            const TfToken &name,
-            const UsdImagingDataSourceStageGlobals &stageGlobals,
-            UsdAttributeQuery valueQuery,
-            UsdAttributeQuery indicesQuery,
-            HdTokenDataSourceHandle interpolation,
-            HdTokenDataSourceHandle role);
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
 
-private:
-    const UsdImagingDataSourceStageGlobals &_stageGlobals;
-    UsdAttributeQuery _valueQuery;
-    UsdAttributeQuery _indicesQuery;
-    HdTokenDataSourceHandle _interpolation;
-    HdTokenDataSourceHandle _role;
+ private:
+
+  UsdImagingDataSourcePrimvar(const SdfPath &sceneIndexPath,
+                              const TfToken &name,
+                              const UsdImagingDataSourceStageGlobals &stageGlobals,
+                              UsdAttributeQuery valueQuery,
+                              UsdAttributeQuery indicesQuery,
+                              HdTokenDataSourceHandle interpolation,
+                              HdTokenDataSourceHandle role);
+
+ private:
+
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
+  UsdAttributeQuery _valueQuery;
+  UsdAttributeQuery _indicesQuery;
+  HdTokenDataSourceHandle _interpolation;
+  HdTokenDataSourceHandle _role;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourcePrimvar);
 
 WABI_NAMESPACE_END
 
-#endif // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_PRIMVARS_H
+#endif  // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_PRIMVARS_H

@@ -166,7 +166,8 @@ enum eWmMiscKmTypes
 #define ND_POINTCACHE (28 << 16)
 #define ND_PARENT (29 << 16)
 #define ND_LOD (30 << 16)
-#define ND_DRAW_RENDER_VIEWPORT (31 << 16) /* for camera & sequencer viewport update, also /w NC_SCENE */
+#define ND_DRAW_RENDER_VIEWPORT \
+  (31 << 16) /* for camera & sequencer viewport update, also /w NC_SCENE */
 #define ND_SHADERFX (32 << 16)
 /* For updating motion paths in 3dview. */
 #define ND_DRAW_ANIMVIZ (33 << 16)
@@ -816,11 +817,7 @@ struct wmMsgBus
   /** Avoid checking messages when no tags exist. */
   uint messages_tag_count;
 
-  wmMsgBus()
-    : messages_gset{VALUE_ZERO},
-      messages(EMPTY),
-      messages_tag_count(VALUE_ZERO)
-  {}
+  wmMsgBus() : messages_gset{VALUE_ZERO}, messages(EMPTY), messages_tag_count(VALUE_ZERO) {}
 };
 
 
@@ -846,10 +843,7 @@ struct wmDragID
   SdfPath id;
   SdfPath from_parent;
 
-  wmDragID()
-    : id(EMPTY),
-      from_parent(EMPTY)
-  {}
+  wmDragID() : id(EMPTY), from_parent(EMPTY) {}
 };
 
 
@@ -957,10 +951,7 @@ struct wmKeyMapDiffItem
   wmKeyMapItem *remove_item;
   wmKeyMapItem *add_item;
 
-  wmKeyMapDiffItem()
-    : remove_item(POINTER_ZERO),
-      add_item(POINTER_ZERO)
-  {}
+  wmKeyMapDiffItem() : remove_item(POINTER_ZERO), add_item(POINTER_ZERO) {}
 };
 
 

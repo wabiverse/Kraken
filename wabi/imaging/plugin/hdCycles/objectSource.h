@@ -44,10 +44,12 @@ class SdfPath;
 class HdCyclesObjectSource : public HdBufferSource
 {
  public:
+
   explicit HdCyclesObjectSource(ccl::Object *object, const SdfPath &id, bool isReference = true);
   ~HdCyclesObjectSource() override;
 
-  HdBbbObjectPropertiesSource *AddObjectPropertiesSource(HdBbbObjectPropertiesSourceSharedPtr source);
+  HdBbbObjectPropertiesSource *AddObjectPropertiesSource(
+    HdBbbObjectPropertiesSourceSharedPtr source);
 
   /// Add new source to the pending sources list
   HdBbAttributeSource *AddAttributeSource(HdBbAttributeSourceSharedPtr source);
@@ -57,8 +59,7 @@ class HdCyclesObjectSource : public HdBufferSource
   HdBbAttributeSource *CreateAttributeSource(const TfToken &name, Args &&...args)
   {
     const std::string &name_str = name.GetString();
-    if (name_str.find("__", 0) == 0)
-    {
+    if (name_str.find("__", 0) == 0) {
       return nullptr;
     }
 
@@ -79,8 +80,7 @@ class HdCyclesObjectSource : public HdBufferSource
   size_t ResolvePendingSources();
 
   const TfToken &GetName() const override;
-  void GetBufferSpecs(HdBufferSpecVector *specs) const override
-  {}
+  void GetBufferSpecs(HdBufferSpecVector *specs) const override {}
   const void *GetData() const override
   {
     return nullptr;
@@ -95,6 +95,7 @@ class HdCyclesObjectSource : public HdBufferSource
   }
 
  protected:
+
   bool _CheckValid() const override
   {
     return m_object != nullptr;

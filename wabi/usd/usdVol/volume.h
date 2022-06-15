@@ -80,6 +80,7 @@ class SdfAssetPath;
 class UsdVolVolume : public UsdGeomGprim
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -90,16 +91,12 @@ class UsdVolVolume : public UsdGeomGprim
   /// Equivalent to UsdVolVolume::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolVolume(const UsdPrim &prim = UsdPrim())
-    : UsdGeomGprim(prim)
-  {}
+  explicit UsdVolVolume(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim) {}
 
   /// Construct a UsdVolVolume on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolVolume(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolVolume(const UsdSchemaBase &schemaObj)
-    : UsdGeomGprim(schemaObj)
-  {}
+  explicit UsdVolVolume(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj) {}
 
   /// Destructor.
   USDVOL_API
@@ -149,6 +146,7 @@ class UsdVolVolume : public UsdGeomGprim
   static UsdVolVolume Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -156,6 +154,7 @@ class UsdVolVolume : public UsdGeomGprim
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDVOL_API
@@ -165,9 +164,11 @@ class UsdVolVolume : public UsdGeomGprim
 
   // override SchemaBase virtuals.
   USDVOL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -245,6 +246,7 @@ class UsdVolVolume : public UsdGeomGprim
   bool BlockFieldRelationship(const TfToken &name) const;
 
  private:
+
   /// Return \p name prepended with the field namespace, if it isn't
   /// already prefixed.
   ///

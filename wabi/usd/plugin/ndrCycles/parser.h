@@ -31,6 +31,7 @@ WABI_NAMESPACE_BEGIN
 class NdrCyclesParserPlugin : public NdrParserPlugin
 {
  public:
+
   /**
    * @brief Creates an instance of NdrCyclesParserPlugin.
    *

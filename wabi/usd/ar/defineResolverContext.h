@@ -50,11 +50,10 @@ WABI_NAMESPACE_BEGIN
 #ifdef doxygen
 #  define AR_DECLARE_RESOLVER_CONTEXT(ContextObject)
 #else
-#  define AR_DECLARE_RESOLVER_CONTEXT(context) \
-    template<>                                 \
-    struct ArIsContextObject<context>          \
-    {                                          \
-      static const bool value = true;          \
+#  define AR_DECLARE_RESOLVER_CONTEXT(context)   \
+    template<> struct ArIsContextObject<context> \
+    {                                            \
+      static const bool value = true;            \
     }
 #endif
 

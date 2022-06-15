@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class UsdCrateInfo
 {
  public:
+
   struct Section
   {
     Section() = default;
@@ -93,6 +94,7 @@ class UsdCrateInfo
   }
 
  private:
+
   struct _Impl;
   std::shared_ptr<_Impl> _impl;
 };

@@ -63,6 +63,7 @@ namespace wabi_double_conversion
   class Double
   {
    public:
+
     static const uint64_t kSignMask = UINT64_2PART_C(0x80000000, 00000000);
     static const uint64_t kExponentMask = UINT64_2PART_C(0x7FF00000, 00000000);
     static const uint64_t kSignificandMask = UINT64_2PART_C(0x000FFFFF, FFFFFFFF);
@@ -70,18 +71,10 @@ namespace wabi_double_conversion
     static const int kPhysicalSignificandSize = 52;  // Excludes the hidden bit.
     static const int kSignificandSize = 53;
 
-    Double()
-      : d64_(0)
-    {}
-    explicit Double(double d)
-      : d64_(double_to_uint64(d))
-    {}
-    explicit Double(uint64_t d64)
-      : d64_(d64)
-    {}
-    explicit Double(DiyFp diy_fp)
-      : d64_(DiyFpToUint64(diy_fp))
-    {}
+    Double() : d64_(0) {}
+    explicit Double(double d) : d64_(double_to_uint64(d)) {}
+    explicit Double(uint64_t d64) : d64_(d64) {}
+    explicit Double(DiyFp diy_fp) : d64_(DiyFpToUint64(diy_fp)) {}
 
     // The value encoded by this Double must be greater or equal to +0.0.
     // It must not be special (infinity, or NaN).
@@ -100,8 +93,7 @@ namespace wabi_double_conversion
       int e = Exponent();
 
       // The current double could be a denormal.
-      while ((f & kHiddenBit) == 0)
-      {
+      while ((f & kHiddenBit) == 0) {
         f <<= 1;
         e--;
       }
@@ -122,16 +114,13 @@ namespace wabi_double_conversion
     {
       if (d64_ == kInfinity)
         return Double(kInfinity).value();
-      if (Sign() < 0 && Significand() == 0)
-      {
+      if (Sign() < 0 && Significand() == 0) {
         // -0.0
         return 0.0;
       }
-      if (Sign() < 0)
-      {
+      if (Sign() < 0) {
         return Double(d64_ - 1).value();
-      } else
-      {
+      } else {
         return Double(d64_ + 1).value();
       }
     }
@@ -140,11 +129,9 @@ namespace wabi_double_conversion
     {
       if (d64_ == (kInfinity | kSignMask))
         return -Infinity();
-      if (Sign() < 0)
-      {
+      if (Sign() < 0) {
         return Double(d64_ + 1).value();
-      } else
-      {
+      } else {
         if (Significand() == 0)
           return -0.0;
         return Double(d64_ - 1).value();
@@ -165,11 +152,9 @@ namespace wabi_double_conversion
     {
       uint64_t d64 = AsUint64();
       uint64_t significand = d64 & kSignificandMask;
-      if (!IsDenormal())
-      {
+      if (!IsDenormal()) {
         return significand + kHiddenBit;
-      } else
-      {
+      } else {
         return significand;
       }
     }
@@ -225,11 +210,9 @@ namespace wabi_double_conversion
       DiyFp v = this->AsDiyFp();
       DiyFp m_plus = DiyFp::Normalize(DiyFp((v.f() << 1) + 1, v.e() - 1));
       DiyFp m_minus;
-      if (LowerBoundaryIsCloser())
-      {
+      if (LowerBoundaryIsCloser()) {
         m_minus = DiyFp((v.f() << 2) - 1, v.e() - 2);
-      } else
-      {
+      } else {
         m_minus = DiyFp((v.f() << 1) - 1, v.e() - 1);
       }
       m_minus.set_f(m_minus.f() << (m_minus.e() - m_plus.e()));
@@ -265,8 +248,7 @@ namespace wabi_double_conversion
     // leading zeroes and their effective significand-size is hence smaller.
     static int SignificandSizeForOrderOfMagnitude(int order)
     {
-      if (order >= (kDenormalExponent + kSignificandSize))
-      {
+      if (order >= (kDenormalExponent + kSignificandSize)) {
         return kSignificandSize;
       }
       if (order <= kDenormalExponent)
@@ -285,6 +267,7 @@ namespace wabi_double_conversion
     }
 
    private:
+
     static const int kExponentBias = 0x3FF + kPhysicalSignificandSize;
     static const int kDenormalExponent = -kExponentBias + 1;
     static const int kMaxExponent = 0x7FF - kExponentBias;
@@ -297,30 +280,24 @@ namespace wabi_double_conversion
     {
       uint64_t significand = diy_fp.f();
       int exponent = diy_fp.e();
-      while (significand > kHiddenBit + kSignificandMask)
-      {
+      while (significand > kHiddenBit + kSignificandMask) {
         significand >>= 1;
         exponent++;
       }
-      if (exponent >= kMaxExponent)
-      {
+      if (exponent >= kMaxExponent) {
         return kInfinity;
       }
-      if (exponent < kDenormalExponent)
-      {
+      if (exponent < kDenormalExponent) {
         return 0;
       }
-      while (exponent > kDenormalExponent && (significand & kHiddenBit) == 0)
-      {
+      while (exponent > kDenormalExponent && (significand & kHiddenBit) == 0) {
         significand <<= 1;
         exponent--;
       }
       uint64_t biased_exponent;
-      if (exponent == kDenormalExponent && (significand & kHiddenBit) == 0)
-      {
+      if (exponent == kDenormalExponent && (significand & kHiddenBit) == 0) {
         biased_exponent = 0;
-      } else
-      {
+      } else {
         biased_exponent = static_cast<uint64_t>(exponent + kExponentBias);
       }
       return (significand & kSignificandMask) | (biased_exponent << kPhysicalSignificandSize);
@@ -332,6 +309,7 @@ namespace wabi_double_conversion
   class Single
   {
    public:
+
     static const uint32_t kSignMask = 0x80000000;
     static const uint32_t kExponentMask = 0x7F800000;
     static const uint32_t kSignificandMask = 0x007FFFFF;
@@ -339,15 +317,9 @@ namespace wabi_double_conversion
     static const int kPhysicalSignificandSize = 23;  // Excludes the hidden bit.
     static const int kSignificandSize = 24;
 
-    Single()
-      : d32_(0)
-    {}
-    explicit Single(float f)
-      : d32_(float_to_uint32(f))
-    {}
-    explicit Single(uint32_t d32)
-      : d32_(d32)
-    {}
+    Single() : d32_(0) {}
+    explicit Single(float f) : d32_(float_to_uint32(f)) {}
+    explicit Single(uint32_t d32) : d32_(d32) {}
 
     // The value encoded by this Single must be greater or equal to +0.0.
     // It must not be special (infinity, or NaN).
@@ -378,11 +350,9 @@ namespace wabi_double_conversion
     {
       uint32_t d32 = AsUint32();
       uint32_t significand = d32 & kSignificandMask;
-      if (!IsDenormal())
-      {
+      if (!IsDenormal()) {
         return significand + kHiddenBit;
-      } else
-      {
+      } else {
         return significand;
       }
     }
@@ -430,11 +400,9 @@ namespace wabi_double_conversion
       DiyFp v = this->AsDiyFp();
       DiyFp m_plus = DiyFp::Normalize(DiyFp((v.f() << 1) + 1, v.e() - 1));
       DiyFp m_minus;
-      if (LowerBoundaryIsCloser())
-      {
+      if (LowerBoundaryIsCloser()) {
         m_minus = DiyFp((v.f() << 2) - 1, v.e() - 2);
-      } else
-      {
+      } else {
         m_minus = DiyFp((v.f() << 1) - 1, v.e() - 1);
       }
       m_minus.set_f(m_minus.f() << (m_minus.e() - m_plus.e()));
@@ -481,6 +449,7 @@ namespace wabi_double_conversion
     }
 
    private:
+
     static const int kExponentBias = 0x7F + kPhysicalSignificandSize;
     static const int kDenormalExponent = -kExponentBias + 1;
     static const int kMaxExponent = 0xFF - kExponentBias;

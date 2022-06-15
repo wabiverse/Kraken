@@ -43,12 +43,9 @@ WABI_NAMESPACE_BEGIN
 class SdfSite : public boost::totally_ordered<SdfSite>
 {
  public:
-  SdfSite()
-  {}
-  SdfSite(const SdfLayerHandle &layer_, const SdfPath &path_)
-    : layer(layer_),
-      path(path_)
-  {}
+
+  SdfSite() {}
+  SdfSite(const SdfLayerHandle &layer_, const SdfPath &path_) : layer(layer_), path(path_) {}
 
   bool operator==(const SdfSite &other) const
   {
@@ -70,6 +67,7 @@ class SdfSite : public boost::totally_ordered<SdfSite>
   }
 
  public:
+
   SdfLayerHandle layer;
   SdfPath path;
 };

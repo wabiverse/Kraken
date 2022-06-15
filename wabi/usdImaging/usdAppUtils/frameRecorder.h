@@ -60,6 +60,7 @@ WABI_NAMESPACE_BEGIN
 class UsdAppUtilsFrameRecorder
 {
  public:
+
   USDAPPUTILS_API
   UsdAppUtilsFrameRecorder();
 
@@ -84,8 +85,7 @@ class UsdAppUtilsFrameRecorder
   /// The default image width is 960 pixels.
   void SetImageWidth(const size_t imageWidth)
   {
-    if (imageWidth == 0u)
-    {
+    if (imageWidth == 0u) {
       TF_CODING_ERROR("Image width cannot be zero");
       return;
     }
@@ -134,6 +134,7 @@ class UsdAppUtilsFrameRecorder
               const std::string &outputImagePath);
 
  private:
+
   UsdImagingGLEngine _imagingEngine;
   size_t _imageWidth;
   float _complexity;

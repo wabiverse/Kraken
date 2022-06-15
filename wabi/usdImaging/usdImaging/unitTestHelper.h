@@ -50,6 +50,7 @@ using HdRenderPassSharedPtr = std::shared_ptr<HdRenderPass>;
 class UsdImaging_TestTask final : public HdTask
 {
  public:
+
   UsdImaging_TestTask(HdRenderPassSharedPtr const &renderPass, TfTokenVector const &renderTags)
     : HdTask(SdfPath::EmptyPath()),
       _renderPass(renderPass),
@@ -63,11 +64,9 @@ class UsdImaging_TestTask final : public HdTask
     *dirtyBits = HdChangeTracker::Clean;
   }
 
-  virtual void Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex) override
-  {}
+  virtual void Prepare(HdTaskContext *ctx, HdRenderIndex *renderIndex) override {}
 
-  virtual void Execute(HdTaskContext *ctx) override
-  {}
+  virtual void Execute(HdTaskContext *ctx) override {}
 
   virtual const TfTokenVector &GetRenderTags() const override
   {
@@ -75,6 +74,7 @@ class UsdImaging_TestTask final : public HdTask
   }
 
  private:
+
   HdRenderPassSharedPtr _renderPass;
   TfTokenVector _renderTags;
 };
@@ -90,6 +90,7 @@ class UsdImaging_TestTask final : public HdTask
 class UsdImaging_TestDriver final
 {
  public:
+
   UsdImaging_TestDriver(std::string const &usdFilePath)
     : _engine(),
       _renderDelegate(),
@@ -98,7 +99,8 @@ class UsdImaging_TestDriver final
       _geometryPass(),
       _stage()
   {
-    HdRprimCollection collection = HdRprimCollection(HdTokens->geometry, HdReprSelector(HdReprTokens->hull));
+    HdRprimCollection collection = HdRprimCollection(HdTokens->geometry,
+                                                     HdReprSelector(HdReprTokens->hull));
 
     TfTokenVector renderTags;
     renderTags.push_back(HdRenderTagTokens->geometry);
@@ -130,7 +132,8 @@ class UsdImaging_TestDriver final
       _geometryPass(),
       _stage()
   {
-    HdRprimCollection collection = HdRprimCollection(HdTokens->geometry, HdReprSelector(HdReprTokens->hull));
+    HdRprimCollection collection = HdRprimCollection(HdTokens->geometry,
+                                                     HdReprSelector(HdReprTokens->hull));
 
     TfTokenVector renderTags;
     renderTags.push_back(HdRenderTagTokens->geometry);
@@ -176,7 +179,8 @@ class UsdImaging_TestDriver final
 
   void Draw()
   {
-    HdTaskSharedPtrVector tasks = {std::make_shared<UsdImaging_TestTask>(_geometryPass, _renderTags)};
+    HdTaskSharedPtrVector tasks = {
+      std::make_shared<UsdImaging_TestTask>(_geometryPass, _renderTags)};
     _engine.Execute(&_delegate->GetRenderIndex(), &tasks);
   }
   void SetTime(double time)
@@ -203,6 +207,7 @@ class UsdImaging_TestDriver final
   }
 
  private:
+
   HdEngine _engine;
   Hd_UnitTestNullRenderDelegate _renderDelegate;
   HdRenderIndex *_renderIndex;

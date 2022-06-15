@@ -46,34 +46,33 @@ WABI_NAMESPACE_BEGIN
 class TfStackedAccess
 {
  public:
-  template<class Derived>
-  static void InitializeStack()
+
+  template<class Derived> static void InitializeStack()
   {
     return Derived::_InitializeStack();
   }
 };
 
 // Detail for TfStacked storage types.
-template<typename T, bool PerThread>
-class Tf_StackedStorageType
+template<typename T, bool PerThread> class Tf_StackedStorageType
 {
  public:
+
   typedef std::vector<T const *> Stack;
 
  private:
+
   /* This is a wrapper around Stack that makes sure we call InitializeStack    */
   /* once per stack instance.                                                  */
   class _StackHolder
   {
    public:
-    _StackHolder()
-      : _initialized(false)
-    {}
+
+    _StackHolder() : _initialized(false) {}
 
     Stack &Get()
     {
-      if (!_initialized)
-      {
+      if (!_initialized) {
         _initialized = true;
         TfStackedAccess::InitializeStack<T>();
       }
@@ -81,6 +80,7 @@ class Tf_StackedStorageType
     }
 
    private:
+
     Stack _stack;
     bool _initialized;
   };
@@ -104,22 +104,21 @@ class Tf_StackedStorageType
   };
 
  public:
+
   /* Choose the stack storage type based on thea PerThread argument. */
-  typedef typename std::conditional<PerThread, _PerThreadStackStorage, _GlobalStackStorage>::type Type;
+  typedef
+    typename std::conditional<PerThread, _PerThreadStackStorage, _GlobalStackStorage>::type Type;
 };
 
 // Detail for TfStacked storage.  This exists so we can specialize it
 // with exported storage.
-template<typename T, bool PerThread>
-struct Tf_ExportedStackedStorage
-{
-};
+template<typename T, bool PerThread> struct Tf_ExportedStackedStorage
+{};
 
 // Detail for TfStacked storage.  This is for the case we don't need
 // exported storage.  This is the default when simply subclassing
 // TfStacked without using TF_DEFINE_STACKED.
-template<typename T, bool PerThread>
-struct Tf_StackedStorage
+template<typename T, bool PerThread> struct Tf_StackedStorage
 {
   typedef typename Tf_StackedStorageType<T, PerThread>::Stack Stack;
   typedef typename Tf_StackedStorageType<T, PerThread>::Type Type;
@@ -145,7 +144,9 @@ struct Tf_StackedStorage
 /// Note that \a Stacked objects that differ only by \a PerThread will not
 /// share stacks.
 ///
-template<class Derived, bool PerThread = true, class Holder = Tf_StackedStorage<Derived, PerThread>>
+template<class Derived,
+         bool PerThread = true,
+         class Holder = Tf_StackedStorage<Derived, PerThread>>
 class TfStacked
 {
   TfStacked(TfStacked const &) = delete;
@@ -153,6 +154,7 @@ class TfStacked
   typedef typename Holder::Type _StorageType;
 
  public:
+
   typedef Holder Storage;
   typedef typename Storage::Stack Stack;
 
@@ -203,14 +205,14 @@ class TfStacked
   }
 
  private:
+
   friend class TfStackedAccess;
 
   // This function may be hidden (overridden) by derived classes to initialize
   // (pre-populate) the stack with some items.  One way to do this is to
   // allocate objects on the heap, never to be freed.  By default, no
   // initialization is performed.
-  static void _InitializeStack()
-  {}
+  static void _InitializeStack() {}
 
   // Push p on the stack.  Only the constructor should call this.
   static void _Push(Derived const *p)
@@ -222,11 +224,9 @@ class TfStacked
   static void _Pop(Derived const *p)
   {
     // Make sure we pop in reverse order.
-    if (ARCH_LIKELY(IsStackTop(p)))
-    {
+    if (ARCH_LIKELY(IsStackTop(p))) {
       _GetStack().pop_back();
-    } else
-    {
+    } else {
       // CODE_COVERAGE_OFF
       TF_FATAL_ERROR("Destroyed %s out of stack order.", ArchGetDemangled<Derived>().c_str());
       // CODE_COVERAGE_ON
@@ -236,14 +236,12 @@ class TfStacked
   static Stack &_GetStack()
   {
     // Technically unsafe double-checked lock to initialize the stack.
-    if (ARCH_UNLIKELY(Storage::value.load() == nullptr))
-    {
+    if (ARCH_UNLIKELY(Storage::value.load() == nullptr)) {
       // Make a new stack and try to set it.
       _StorageType *old = nullptr;
       _StorageType *tmp = new _StorageType;
       // Attempt to set the stack.
-      if (!Storage::value.compare_exchange_strong(old, tmp))
-      {
+      if (!Storage::value.compare_exchange_strong(old, tmp)) {
         // Another caller won the race.
         delete tmp;
       }
@@ -268,14 +266,14 @@ class TfStacked
 /// to define the storage.
 #define TF_DEFINE_STACKED(Derived, IsPerThread, eiAPI)                         \
   class Derived;                                                               \
-  template<>                                                                   \
-  struct Tf_ExportedStackedStorage<Derived, IsPerThread>                       \
+  template<> struct Tf_ExportedStackedStorage<Derived, IsPerThread>            \
   {                                                                            \
     typedef typename Tf_StackedStorageType<Derived, IsPerThread>::Stack Stack; \
     typedef typename Tf_StackedStorageType<Derived, IsPerThread>::Type Type;   \
     static eiAPI std::atomic<Type *> value;                                    \
   };                                                                           \
-  class Derived : public TfStacked<Derived, IsPerThread, Tf_ExportedStackedStorage<Derived, IsPerThread>>
+  class Derived                                                                \
+    : public TfStacked<Derived, IsPerThread, Tf_ExportedStackedStorage<Derived, IsPerThread>>
 
 WABI_NAMESPACE_END
 

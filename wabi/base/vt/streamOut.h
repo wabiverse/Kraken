@@ -37,7 +37,9 @@ WABI_NAMESPACE_BEGIN
 // Helper that's used to stream a generic string for a type that isn't
 // streamable and doesn't provide VtStreamOut.  Inserts a message like
 // <'typeName' @ 0xXXXXXXXX>.
-VT_API std::ostream &Vt_StreamOutGeneric(std::type_info const &type, void const *addr, std::ostream &stream);
+VT_API std::ostream &Vt_StreamOutGeneric(std::type_info const &type,
+                                         void const *addr,
+                                         std::ostream &stream);
 
 // Function used in the case that T has a stream insertion operator.
 template<class T>
@@ -47,8 +49,7 @@ inline auto Vt_StreamOutImpl(T const &obj, std::ostream &stream, int) -> decltyp
 }
 
 // Function used in the case that T does not have a stream insertion operator.
-template<class T>
-inline std::ostream &Vt_StreamOutImpl(T const &obj, std::ostream &stream, long)
+template<class T> inline std::ostream &Vt_StreamOutImpl(T const &obj, std::ostream &stream, long)
 {
   return Vt_StreamOutGeneric(typeid(T), static_cast<void const *>(&obj), stream);
 }
@@ -57,16 +58,18 @@ inline std::ostream &Vt_StreamOutImpl(T const &obj, std::ostream &stream, long)
 /// values to streams.  Clients may overload VtStreamOut for their own types
 /// if desired.
 template<class T>
-typename std::enable_if<!std::is_enum<T>::value, std::ostream &>::type VtStreamOut(T const &obj,
-                                                                                   std::ostream &stream)
+typename std::enable_if<!std::is_enum<T>::value, std::ostream &>::type VtStreamOut(
+  T const &obj,
+  std::ostream &stream)
 {
   // For types that have an operator<< suitable for ostream, we use the
   // traditional int/long 0-argument technique to disambiguate overloads.
   return Vt_StreamOutImpl(obj, stream, 0);
 }
 template<class EnumT>
-typename std::enable_if<std::is_enum<EnumT>::value, std::ostream &>::type VtStreamOut(EnumT const &e,
-                                                                                      std::ostream &stream)
+typename std::enable_if<std::is_enum<EnumT>::value, std::ostream &>::type VtStreamOut(
+  EnumT const &e,
+  std::ostream &stream)
 {
   return VtStreamOut(TfEnum::GetName(e), stream);
 }
@@ -80,13 +83,17 @@ VT_API std::ostream &VtStreamOut(double const &, std::ostream &);
 class VtStreamOutIterator
 {
  public:
+
   VT_API virtual ~VtStreamOutIterator();
   virtual void Next(std::ostream &) = 0;
 };
 
 struct Vt_ShapeData;
 
-VT_API void VtStreamOutArray(VtStreamOutIterator *, size_t size, const Vt_ShapeData *, std::ostream &);
+VT_API void VtStreamOutArray(VtStreamOutIterator *,
+                             size_t size,
+                             const Vt_ShapeData *,
+                             std::ostream &);
 
 #ifdef WITH_PYTHON
 VT_API std::ostream &VtStreamOut(class TfPyObjWrapper const &, std::ostream &);

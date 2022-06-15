@@ -51,6 +51,7 @@ class VtValue;
 class HgiInterop final
 {
  public:
+
   HGIINTEROP_API
   HgiInterop();
 
@@ -97,6 +98,7 @@ class HgiInterop final
                      GfVec4i const &dstRegion);
 
  private:
+
   HgiInterop &operator=(const HgiInterop &) = delete;
   HgiInterop(const HgiInterop &) = delete;
 

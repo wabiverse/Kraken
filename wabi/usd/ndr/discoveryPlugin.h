@@ -62,6 +62,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPluginContext);
 class NdrDiscoveryPluginContext : public TfRefBase, public TfWeakBase
 {
  public:
+
   NDR_API
   virtual ~NdrDiscoveryPluginContext() = default;
 
@@ -150,6 +151,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(NdrDiscoveryPlugin);
 class NdrDiscoveryPlugin : public TfRefBase, public TfWeakBase
 {
  public:
+
   using Context = NdrDiscoveryPluginContext;
 
   NDR_API
@@ -173,14 +175,15 @@ class NdrDiscoveryPlugin : public TfRefBase, public TfWeakBase
 class NdrDiscoveryPluginFactoryBase : public TfType::FactoryBase
 {
  public:
+
   NDR_API
   virtual NdrDiscoveryPluginRefPtr New() const = 0;
 };
 
-template<class T>
-class NdrDiscoveryPluginFactory : public NdrDiscoveryPluginFactoryBase
+template<class T> class NdrDiscoveryPluginFactory : public NdrDiscoveryPluginFactoryBase
 {
  public:
+
   NdrDiscoveryPluginRefPtr New() const override
   {
     return TfCreateRefPtr(new T);

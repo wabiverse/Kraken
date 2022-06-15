@@ -12,6 +12,7 @@ namespace Zep
   class Scroller : public ZepComponent
   {
    public:
+
     Scroller(ZepEditor &editor, Region &parent);
 
     virtual void Display(ZepTheme &theme);
@@ -24,6 +25,7 @@ namespace Zep
     bool vertical = true;
 
    private:
+
     void CheckState();
     void ClickUp();
     void ClickDown();
@@ -36,6 +38,7 @@ namespace Zep
     NRectf ThumbRect() const;
 
    private:
+
     std::shared_ptr<Region> m_region;
     std::shared_ptr<Region> m_topButtonRegion;
     std::shared_ptr<Region> m_bottomButtonRegion;

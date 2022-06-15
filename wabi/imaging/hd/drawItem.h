@@ -24,17 +24,17 @@
 #ifndef WABI_IMAGING_HD_DRAW_ITEM_H
 #define WABI_IMAGING_HD_DRAW_ITEM_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/drawingCoord.h"
-#include "wabi/imaging/hd/perfLog.h"
-#include "wabi/imaging/hd/rprimSharedData.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/perfLog.h"
+#include "wabi/imaging/hd/drawingCoord.h"
+#include "wabi/imaging/hd/rprimSharedData.h"
 
 #include "wabi/imaging/hf/perfLog.h"
 
-#include "wabi/base/gf/bbox3d.h"
 #include "wabi/base/gf/matrix4d.h"
+#include "wabi/base/gf/bbox3d.h"
 #include "wabi/base/gf/vec2i.h"
 #include "wabi/base/gf/vec4f.h"
 
@@ -66,6 +66,7 @@ WABI_NAMESPACE_BEGIN
 class HdDrawItem
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdDrawItem");
 
   HD_API
@@ -170,6 +171,7 @@ class HdDrawItem
     return _sharedData->barContainer.Get(_drawingCoord.GetVaryingPrimvarIndex());
   }
 
+
   /// Returns a BufferArrayRange of face-varying primvars.
   HD_API
   HdBufferArrayRangeSharedPtr const &GetFaceVaryingPrimvarRange() const
@@ -193,7 +195,13 @@ class HdDrawItem
   HD_API
   TfToken const &GetMaterialTag() const
   {
-    return _sharedData->materialTag;
+    return _materialTag;
+  }
+
+  HD_API
+  void SetMaterialTag(TfToken const &materialTag)
+  {
+    _materialTag = materialTag;
   }
 
   TopologyToPrimvarVector const &GetFvarTopologyToPrimvarVector() const
@@ -235,9 +243,9 @@ class HdDrawItem
   friend std::ostream &operator<<(std::ostream &out, const HdDrawItem &self);
 
  protected:
+
   // TfHash support.
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, HdDrawItem const &di);
+  template<class HashState> friend void TfHashAppend(HashState &h, HdDrawItem const &di);
 
   /// Returns the shared data
   HD_API
@@ -259,6 +267,7 @@ class HdDrawItem
   virtual size_t _GetElementOffsetsHash() const;
 
  private:
+
   // configuration of how to bundle the drawing coordinate for this draw item
   // out of BARs in sharedData
   HdDrawingCoord _drawingCoord;
@@ -266,7 +275,14 @@ class HdDrawItem
   // pointer to shared data across reprs, owned by rprim:
   //    bufferArrayRanges, bounds, visibility
   HdRprimSharedData const *_sharedData;
+
+  /// The materialTag allows the draw items of rprims to be organized into
+  /// different collections based on properties of the prim's material.
+  /// E.g. A renderer may wish to organize opaque and translucent prims
+  /// into different collections so they can be rendered seperately.
+  TfToken _materialTag;
 };
+
 
 WABI_NAMESPACE_END
 

@@ -47,6 +47,7 @@ class HgiMetal;
 class HgiMetalSampler final : public HgiSampler
 {
  public:
+
   HGIMETAL_API
   HgiMetalSampler(HgiMetal *hgi, HgiSamplerDesc const &desc);
 
@@ -60,11 +61,13 @@ class HgiMetalSampler final : public HgiSampler
   id<MTLSamplerState> GetSamplerId() const;
 
  private:
+
   HgiMetalSampler() = delete;
   HgiMetalSampler &operator=(const HgiMetalSampler &) = delete;
   HgiMetalSampler(const HgiMetalSampler &) = delete;
 
  private:
+
   id<MTLSamplerState> _samplerId;
   NSString *_label;
 };

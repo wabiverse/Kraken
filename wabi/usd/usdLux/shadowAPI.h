@@ -68,6 +68,7 @@ class SdfAssetPath;
 class UsdLuxShadowAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -78,16 +79,12 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
   /// Equivalent to UsdLuxShadowAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxShadowAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdLuxShadowAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdLuxShadowAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxShadowAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxShadowAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdLuxShadowAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -129,6 +126,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
   static UsdLuxShadowAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -136,6 +134,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -145,9 +144,11 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHADOW:ENABLE
   // --------------------------------------------------------------------- //
@@ -171,6 +172,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHADOW:COLOR
   // --------------------------------------------------------------------- //
@@ -195,6 +197,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHADOW:DISTANCE
   // --------------------------------------------------------------------- //
@@ -220,6 +223,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHADOW:FALLOFF
   // --------------------------------------------------------------------- //
@@ -245,6 +249,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHADOW:FALLOFFGAMMA
   // --------------------------------------------------------------------- //
@@ -270,6 +275,7 @@ class UsdLuxShadowAPI : public UsdAPISchemaBase
                                             bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

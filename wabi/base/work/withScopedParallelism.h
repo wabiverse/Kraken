@@ -105,8 +105,7 @@ WABI_NAMESPACE_BEGIN
 /// thread that restricts the tasks it can take to the protected scope: all
 /// other worker threads continue unhindered.
 ///
-template<class Fn>
-void WorkWithScopedParallelism(Fn &&fn)
+template<class Fn> void WorkWithScopedParallelism(Fn &&fn)
 {
   tbb::this_task_arena::isolate(std::forward<Fn>(fn));
 }

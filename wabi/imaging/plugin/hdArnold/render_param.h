@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldRenderParam final : public HdRenderParam
 {
  public:
+
   /// Rendering status.
   enum class Status
   {
@@ -89,6 +90,7 @@ class HdArnoldRenderParam final : public HdRenderParam
   void Restart();
 
  private:
+
   /// Indicate if render needs restarting, in case interrupt is called after rendering has
   /// finished.
   std::atomic<bool> _needsRestart;
@@ -101,6 +103,7 @@ class HdArnoldRenderParam final : public HdRenderParam
 class HdArnoldRenderParamInterrupt
 {
  public:
+
   /// Constructor for HdArnoldRenderParamInterrupt.
   ///
   /// @param param Pointer to the HdRenderParam struct.
@@ -113,14 +116,14 @@ class HdArnoldRenderParamInterrupt
   /// Only calls interrupt once per created instance of HdArnoldRenderParamInterrupt.
   void Interrupt()
   {
-    if (!_hasInterrupted)
-    {
+    if (!_hasInterrupted) {
       _hasInterrupted = true;
       _param->Interrupt();
     }
   }
 
  private:
+
   /// Indicate if the render has been interrupted already.
   bool _hasInterrupted = false;
   /// Pointer to the Arnold Render Param struct held inside.

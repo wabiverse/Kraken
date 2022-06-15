@@ -86,6 +86,7 @@ WABI_NAMESPACE_BEGIN
 class CameraUtilFraming final
 {
  public:
+
   /// Creates an invalid framing, i.e., with empty display and data
   /// window.
   CAMERAUTIL_API

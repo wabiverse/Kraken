@@ -40,15 +40,18 @@ using HdPhLightingShaderSharedPtr = std::shared_ptr<class HdPhLightingShader>;
 class HdPhLightingShader : public HdPhShaderCode
 {
  public:
+
   HDPH_API
   HdPhLightingShader();
   HDPH_API
   virtual ~HdPhLightingShader();
 
   /// Sets camera state.
-  virtual void SetCamera(GfMatrix4d const &worldToViewMatrix, GfMatrix4d const &projectionMatrix) = 0;
+  virtual void SetCamera(GfMatrix4d const &worldToViewMatrix,
+                         GfMatrix4d const &projectionMatrix) = 0;
 
  private:
+
   // No copying
   HdPhLightingShader(const HdPhLightingShader &) = delete;
   HdPhLightingShader &operator=(const HdPhLightingShader &) = delete;

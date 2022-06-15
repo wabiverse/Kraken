@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_RENDERER_PLUGIN_HANDLE_H
 #define WABI_IMAGING_HD_RENDERER_PLUGIN_HANDLE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/renderDelegate.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/token.h"
 
@@ -47,12 +47,9 @@ class HdPluginRenderDelegateUniqueHandle;
 class HdRendererPluginHandle final
 {
  public:
-  HdRendererPluginHandle()
-    : _plugin(nullptr)
-  {}
-  HdRendererPluginHandle(const std::nullptr_t &)
-    : _plugin(nullptr)
-  {}
+
+  HdRendererPluginHandle() : _plugin(nullptr) {}
+  HdRendererPluginHandle(const std::nullptr_t &) : _plugin(nullptr) {}
 
   HD_API
   HdRendererPluginHandle(const HdRendererPluginHandle &);
@@ -88,12 +85,11 @@ class HdRendererPluginHandle final
   }
 
  private:
+
   friend class HdRendererPluginRegistry;
   friend class HdRendererPlugin;
 
-  HdRendererPluginHandle(HdRendererPlugin *const plugin)
-    : _plugin(plugin)
-  {}
+  HdRendererPluginHandle(HdRendererPlugin *const plugin) : _plugin(plugin) {}
 
   HdRendererPlugin *_plugin;
 };

@@ -29,6 +29,7 @@ using HdRprVolumeFieldSubscriptionHandle = std::weak_ptr<HdRprVolume>;
 class HdRprRenderParam final : public HdRenderParam
 {
  public:
+
   HdRprRenderParam(HdRprApi *rprApi, HdRprRenderThread *renderThread)
     : m_rprApi(rprApi),
       m_renderThread(renderThread)
@@ -53,7 +54,8 @@ class HdRprRenderParam final : public HdRenderParam
   // Hydra does not mark HdVolume as changed if HdField used by it is changed
   // We implement this volume-to-field dependency by ourself until it's implemented in Hydra
   // More info: https://groups.google.com/forum/#!topic/usd-interest/pabUE0B_5X4
-  HdRprVolumeFieldSubscription SubscribeVolumeForFieldUpdates(HdRprVolume *volume, SdfPath const &fieldId);
+  HdRprVolumeFieldSubscription SubscribeVolumeForFieldUpdates(HdRprVolume *volume,
+                                                              SdfPath const &fieldId);
   void NotifyVolumesAboutFieldChange(HdSceneDelegate *sceneDelegate, SdfPath const &fieldId);
 
   // Hydra does not always mark HdRprim as changed if HdMaterial used by it has been changed.
@@ -73,6 +75,7 @@ class HdRprRenderParam final : public HdRenderParam
   }
 
  private:
+
   HdRprApi *m_rprApi;
   HdRprRenderThread *m_renderThread;
 

@@ -61,6 +61,7 @@ class SdfPropertySpec : public SdfSpec
   SDF_DECLARE_ABSTRACT_SPEC(SdfPropertySpec, SdfSpec);
 
  public:
+
   ///
   /// \name Name
   /// @{
@@ -370,6 +371,7 @@ class SdfPropertySpec : public SdfSpec
   bool HasOnlyRequiredFields() const;
 
  private:
+
   inline TfToken _GetAttributeValueTypeName() const;
 };
 

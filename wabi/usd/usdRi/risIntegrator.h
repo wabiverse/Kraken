@@ -68,6 +68,7 @@ class SdfAssetPath;
 class UsdRiRisIntegrator : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -78,16 +79,12 @@ class UsdRiRisIntegrator : public UsdTyped
   /// Equivalent to UsdRiRisIntegrator::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRisIntegrator(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdRiRisIntegrator(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdRiRisIntegrator on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRisIntegrator(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRisIntegrator(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdRiRisIntegrator(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -137,6 +134,7 @@ class UsdRiRisIntegrator : public UsdTyped
   static UsdRiRisIntegrator Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -144,6 +142,7 @@ class UsdRiRisIntegrator : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -153,9 +152,11 @@ class UsdRiRisIntegrator : public UsdTyped
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FILEPATH
   // --------------------------------------------------------------------- //
@@ -175,9 +176,11 @@ class UsdRiRisIntegrator : public UsdTyped
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ARGSPATH
   // --------------------------------------------------------------------- //
@@ -197,9 +200,11 @@ class UsdRiRisIntegrator : public UsdTyped
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateArgsPathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateArgsPathAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

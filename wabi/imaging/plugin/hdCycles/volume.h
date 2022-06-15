@@ -56,6 +56,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesVolume final : public HdVolume
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Volume object
    *
@@ -103,6 +104,7 @@ class HdCyclesVolume final : public HdVolume
   void Finalize(HdRenderParam *renderParam) override;
 
  protected:
+
   /**
    * @brief Initialize the given representation of this Rprim.
    * This is called prior to syncing the prim.
@@ -121,11 +123,13 @@ class HdCyclesVolume final : public HdVolume
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
  protected:
+
   GfMatrix4f m_transform;
 
   bool m_useMotionBlur;
 
  private:
+
   /**
    * @brief Create the cycles object representation
    *

@@ -51,6 +51,7 @@ class Hgi;
 class HdPh_ImageShaderRenderPass final : public HdRenderPass
 {
  public:
+
   HDPH_API
   HdPh_ImageShaderRenderPass(HdRenderIndex *index, HdRprimCollection const &collection);
 
@@ -58,6 +59,7 @@ class HdPh_ImageShaderRenderPass final : public HdRenderPass
   virtual ~HdPh_ImageShaderRenderPass();
 
  protected:
+
   virtual void _Prepare(TfTokenVector const &renderTags) override;
 
   virtual void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
@@ -66,6 +68,7 @@ class HdPh_ImageShaderRenderPass final : public HdRenderPass
   virtual void _MarkCollectionDirty() override;
 
  private:
+
   // Setup a BAR for a single triangle
   void _SetupVertexPrimvarBAR(HdPhResourceRegistrySharedPtr const &);
 

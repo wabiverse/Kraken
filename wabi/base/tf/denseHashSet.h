@@ -49,15 +49,20 @@ WABI_NAMESPACE_BEGIN
 /// \warning This differs from a TfHashSet in so far that inserting and
 /// removing elements invalidate all iterators of the container.
 ///
-template<class Element, class HashFn, class EqualElement = std::equal_to<Element>, unsigned Threshold = 128>
+template<class Element,
+         class HashFn,
+         class EqualElement = std::equal_to<Element>,
+         unsigned Threshold = 128>
 class TfDenseHashSet
 {
  public:
+
   typedef Element value_type;
 
   ////////////////////////////////////////////////////////////////////////////////
 
  private:
+
   // The vector type holding all data for this dense hash set.
   typedef std::vector<Element> _Vector;
 
@@ -67,6 +72,7 @@ class TfDenseHashSet
   ////////////////////////////////////////////////////////////////////////////////
 
  public:
+
   /// An iterator type for this set.  Note that this one is const as well,
   /// as we can't allow in-place modification of elements due to the
   /// potentially allocated hash map.
@@ -79,9 +85,11 @@ class TfDenseHashSet
   typedef std::pair<const_iterator, bool> insert_result;
 
  public:
+
   /// Ctor.
   ///
-  explicit TfDenseHashSet(const HashFn &hashFn = HashFn(), const EqualElement &equalElement = EqualElement())
+  explicit TfDenseHashSet(const HashFn &hashFn = HashFn(),
+                          const EqualElement &equalElement = EqualElement())
   {
     _hash() = hashFn;
     _equ() = equalElement;
@@ -89,11 +97,9 @@ class TfDenseHashSet
 
   /// Copy Ctor.
   ///
-  TfDenseHashSet(const TfDenseHashSet &rhs)
-    : _vectorHashFnEqualFn(rhs._vectorHashFnEqualFn)
+  TfDenseHashSet(const TfDenseHashSet &rhs) : _vectorHashFnEqualFn(rhs._vectorHashFnEqualFn)
   {
-    if (rhs._h)
-    {
+    if (rhs._h) {
       _h.reset(new _HashMap(*rhs._h));
     }
   }
@@ -104,8 +110,7 @@ class TfDenseHashSet
 
   /// Construct from range.
   ///
-  template<class Iterator>
-  TfDenseHashSet(Iterator begin, Iterator end)
+  template<class Iterator> TfDenseHashSet(Iterator begin, Iterator end)
   {
     insert(begin, end);
   }
@@ -121,8 +126,7 @@ class TfDenseHashSet
   ///
   TfDenseHashSet &operator=(const TfDenseHashSet &rhs)
   {
-    if (this != &rhs)
-    {
+    if (this != &rhs) {
       TfDenseHashSet temp(rhs);
       temp.swap(*this);
     }
@@ -153,8 +157,7 @@ class TfDenseHashSet
     // XXX: Should we compare the HashFn and EqualElement too?
     const_iterator tend = end();
 
-    for (const_iterator iter = begin(); iter != tend; ++iter)
-    {
+    for (const_iterator iter = begin(); iter != tend; ++iter) {
       if (!rhs.count(*iter))
         return false;
     }
@@ -216,8 +219,7 @@ class TfDenseHashSet
   const_iterator find(const Element &k) const
   {
 
-    if (_h)
-    {
+    if (_h) {
       typename _HashMap::const_iterator iter = _h->find(k);
       if (iter == _h->end())
         return end();
@@ -247,8 +249,7 @@ class TfDenseHashSet
   insert_result insert(const value_type &v)
   {
 
-    if (_h)
-    {
+    if (_h) {
 
       // Attempt to insert the new index.  If this fails, we can't
       // insert v.
@@ -257,8 +258,7 @@ class TfDenseHashSet
 
       if (!res.second)
         return insert_result(_vec().begin() + res.first->second, false);
-    } else
-    {
+    } else {
 
       // Bail if already inserted.
       const_iterator iter = find(v);
@@ -276,8 +276,7 @@ class TfDenseHashSet
   /// Insert a range into the hash set.  Note that \p i0 and \p i1 can't
   /// point into the hash set.
   ///
-  template<class IteratorType>
-  void insert(IteratorType i0, IteratorType i1)
+  template<class IteratorType> void insert(IteratorType i0, IteratorType i1)
   {
     // Assume elements are more often than not unique, so if the sum of the
     // current size and the size of the range is greater than or equal to
@@ -294,16 +293,13 @@ class TfDenseHashSet
   /// Insert a range of unique elements into the container.  [begin, end)
   /// *must not* contain any duplicate elements.
   ///
-  template<class Iterator>
-  void insert_unique(Iterator begin, Iterator end)
+  template<class Iterator> void insert_unique(Iterator begin, Iterator end)
   {
     // Special-case empty container.
-    if (empty())
-    {
+    if (empty()) {
       _vec().assign(begin, end);
       _CreateTableIfNeeded();
-    } else
-    {
+    } else {
       // Just insert, since duplicate checking will use the hash.
       insert(begin, end);
     }
@@ -315,8 +311,7 @@ class TfDenseHashSet
   {
 
     const_iterator iter = find(k);
-    if (iter != end())
-    {
+    if (iter != end()) {
       erase(iter);
       return 1;
     }
@@ -333,8 +328,7 @@ class TfDenseHashSet
       _h->erase(*iter);
 
     // If we are not removing that last element...
-    if (iter != std::prev(end()))
-    {
+    if (iter != std::prev(end())) {
       using std::swap;
 
       // ... move the last element into the erased placed.
@@ -355,16 +349,14 @@ class TfDenseHashSet
   void erase(const iterator &i0, const iterator &i1)
   {
 
-    if (_h)
-    {
+    if (_h) {
       for (const_iterator iter = i0; iter != i1; ++iter)
         _h->erase(iter->first);
     }
 
     const_iterator vremain = _vec().erase(i0, i1);
 
-    if (_h)
-    {
+    if (_h) {
       for (; vremain != _vec().end(); ++vremain)
         (*_h)[*vremain] = vremain - _vec().begin();
     }
@@ -384,12 +376,10 @@ class TfDenseHashSet
     size_t sz = size();
 
     // If we have a hash map and are underneath the threshold, discard it.
-    if (sz < Threshold)
-    {
+    if (sz < Threshold) {
 
       _h.reset();
-    } else
-    {
+    } else {
 
       // Otherwise, allocate a new hash map with the optimal size.
       _h.reset(new _HashMap(sz, _hash(), _equ()));
@@ -409,6 +399,7 @@ class TfDenseHashSet
   ////////////////////////////////////////////////////////////////////////////////
 
  private:
+
   // Helper to access the storage vector.
   _Vector &_vec()
   {
@@ -448,8 +439,7 @@ class TfDenseHashSet
   // Helper to create the acceleration table if size dictates.
   inline void _CreateTableIfNeeded()
   {
-    if (size() >= Threshold)
-    {
+    if (size() >= Threshold) {
       _CreateTable();
     }
   }
@@ -458,8 +448,7 @@ class TfDenseHashSet
   // exist.
   inline void _CreateTable()
   {
-    if (!_h)
-    {
+    if (!_h) {
       _h.reset(new _HashMap(Threshold, _hash(), _equ()));
       for (size_t i = 0; i < size(); ++i)
         (*_h)[_vec()[i]] = i;
@@ -470,7 +459,8 @@ class TfDenseHashSet
   // sizeof(EqualElement) == 0 in many cases we use a compressed_pair to not
   // pay a size penalty.
 
-  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualElement> _VectorHashFnEqualFn;
+  typedef boost::compressed_pair<boost::compressed_pair<_Vector, HashFn>, EqualElement>
+    _VectorHashFnEqualFn;
 
   _VectorHashFnEqualFn _vectorHashFnEqualFn;
 

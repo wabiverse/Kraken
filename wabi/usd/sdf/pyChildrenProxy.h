@@ -37,10 +37,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class _View>
-class SdfPyChildrenProxy
+template<class _View> class SdfPyChildrenProxy
 {
  public:
+
   typedef _View View;
   typedef SdfChildrenProxy<View> Proxy;
   typedef typename Proxy::key_type key_type;
@@ -49,8 +49,7 @@ class SdfPyChildrenProxy
   typedef typename Proxy::size_type size_type;
   typedef SdfPyChildrenProxy<View> This;
 
-  SdfPyChildrenProxy(const Proxy &proxy)
-    : _proxy(proxy)
+  SdfPyChildrenProxy(const Proxy &proxy) : _proxy(proxy)
   {
     _Init();
   }
@@ -74,6 +73,7 @@ class SdfPyChildrenProxy
   }
 
  private:
+
   typedef typename Proxy::const_iterator _const_iterator;
   typedef typename View::const_iterator _view_const_iterator;
 
@@ -101,10 +101,10 @@ class SdfPyChildrenProxy
     }
   };
 
-  template<class E>
-  class _Iterator
+  template<class E> class _Iterator
   {
    public:
+
     _Iterator(const boost::python::object &object)
       : _object(object),
         _owner(boost::python::extract<const This &>(object)()._proxy)
@@ -119,8 +119,7 @@ class SdfPyChildrenProxy
 
     boost::python::object GetNext()
     {
-      if (_cur == _owner.end())
-      {
+      if (_cur == _owner.end()) {
         TfPyThrowStopIteration("End of ChildrenProxy iteration");
       }
       boost::python::object result = E::Get(_cur);
@@ -129,6 +128,7 @@ class SdfPyChildrenProxy
     }
 
    private:
+
     boost::python::object _object;
     const Proxy &_owner;
     _const_iterator _cur;
@@ -217,12 +217,10 @@ class SdfPyChildrenProxy
   std::string _GetRepr() const
   {
     std::string result("{");
-    if (!_proxy.empty())
-    {
+    if (!_proxy.empty()) {
       _const_iterator i = _proxy.begin(), n = _proxy.end();
       result += TfPyRepr(i->first) + ": " + TfPyRepr(i->second);
-      while (++i != n)
-      {
+      while (++i != n) {
         result += ", " + TfPyRepr(i->first) + ": " + TfPyRepr(i->second);
       }
     }
@@ -238,12 +236,10 @@ class SdfPyChildrenProxy
   mapped_type _GetItemByKey(const key_type &key) const
   {
     _view_const_iterator i = _GetView().find(key);
-    if (i == _GetView().end())
-    {
+    if (i == _GetView().end()) {
       TfPyThrowIndexError(TfPyRepr(key));
       return mapped_type();
-    } else
-    {
+    } else {
       return *i;
     }
   }
@@ -261,19 +257,16 @@ class SdfPyChildrenProxy
 
   void _SetItemBySlice(const boost::python::slice &slice, const mapped_vector_type &values)
   {
-    if (!TfPyIsNone(slice.start()) || !TfPyIsNone(slice.stop()) || !TfPyIsNone(slice.step()))
-    {
+    if (!TfPyIsNone(slice.start()) || !TfPyIsNone(slice.stop()) || !TfPyIsNone(slice.step())) {
       TfPyThrowIndexError("can only assign to full slice [:]");
-    } else
-    {
+    } else {
       _proxy._Copy(values);
     }
   }
 
   void _DelItemByKey(const key_type &key)
   {
-    if (_GetView().find(key) == _GetView().end())
-    {
+    if (_GetView().find(key) == _GetView().end()) {
       TfPyThrowIndexError(TfPyRepr(key));
     }
     _proxy._Erase(key);
@@ -297,7 +290,9 @@ class SdfPyChildrenProxy
   void _InsertItemByIndex(int index, const mapped_type &value)
   {
     // Note that -1 below means to insert at end for the _proxy._Insert API.
-    index = index < (int)_proxy.size() ? TfPyNormalizeIndex(index, _proxy.size(), false /*throwError*/) : -1;
+    index = index < (int)_proxy.size() ?
+              TfPyNormalizeIndex(index, _proxy.size(), false /*throwError*/) :
+              -1;
 
     _proxy._Insert(value, index);
   }
@@ -339,12 +334,10 @@ class SdfPyChildrenProxy
     return _Iterator<_ExtractValue>(x);
   }
 
-  template<class E>
-  boost::python::list _Get() const
+  template<class E> boost::python::list _Get() const
   {
     boost::python::list result;
-    for (_const_iterator i = _proxy.begin(), n = _proxy.end(); i != n; ++i)
-    {
+    for (_const_iterator i = _proxy.begin(), n = _proxy.end(); i != n; ++i) {
       result.append(E::Get(i));
     }
     return result;
@@ -380,10 +373,10 @@ class SdfPyChildrenProxy
   }
 
  private:
+
   Proxy _proxy;
 
-  template<class E>
-  friend class _Iterator;
+  template<class E> friend class _Iterator;
 };
 
 WABI_NAMESPACE_END

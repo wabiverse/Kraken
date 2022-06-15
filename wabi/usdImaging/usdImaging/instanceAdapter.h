@@ -90,6 +90,7 @@ WABI_NAMESPACE_BEGIN
 class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
   UsdImagingInstanceAdapter();
@@ -107,16 +108,18 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   /// \name Parallel Setup and Resolve
   // ---------------------------------------------------------------------- //
 
-  virtual void TrackVariability(UsdPrim const &prim,
-                                SdfPath const &cachePath,
-                                HdDirtyBits *timeVaryingBits,
-                                UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
-  virtual void UpdateForTime(UsdPrim const &prim,
-                             SdfPath const &cachePath,
-                             UsdTimeCode time,
-                             HdDirtyBits requestedBits,
-                             UsdImagingInstancerContext const *instancerContext = NULL) const override;
+  virtual void UpdateForTime(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    UsdTimeCode time,
+    HdDirtyBits requestedBits,
+    UsdImagingInstancerContext const *instancerContext = NULL) const override;
 
   // ---------------------------------------------------------------------- //
   /// \name Change Processing
@@ -174,7 +177,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
 
   SdfPath GetInstancerId(UsdPrim const &usdPrim, SdfPath const &cachePath) const override;
 
-  SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim, SdfPath const &cachePath) const override;
+  SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim,
+                                       SdfPath const &cachePath) const override;
 
   size_t SampleInstancerTransform(UsdPrim const &instancerPrim,
                                   SdfPath const &instancerPath,
@@ -207,22 +211,34 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
                                 SdfPath const &cachePath,
                                 UsdTimeCode time) const override;
 
-  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
-  HdCullStyle GetCullStyle(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  HdCullStyle GetCullStyle(UsdPrim const &prim,
+                           SdfPath const &cachePath,
+                           UsdTimeCode time) const override;
 
-  GfRange3d GetExtent(UsdPrim const &usdPrim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  GfRange3d GetExtent(UsdPrim const &usdPrim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
-  bool GetVisible(UsdPrim const &usdPrim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  bool GetVisible(UsdPrim const &usdPrim,
+                  SdfPath const &cachePath,
+                  UsdTimeCode time) const override;
 
-  bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  bool GetDoubleSided(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   GfMatrix4d GetTransform(UsdPrim const &prim,
                           SdfPath const &cachePath,
                           UsdTimeCode time,
                           bool ignoreRootTransform = false) const override;
 
-  SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  SdfPath GetMaterialId(UsdPrim const &prim,
+                        SdfPath const &cachePath,
+                        UsdTimeCode time) const override;
 
   HdExtComputationInputDescriptorVector GetExtComputationInputs(
     UsdPrim const &prim,
@@ -240,15 +256,17 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
     HdInterpolation interpolation,
     const UsdImagingInstancerContext *instancerContext) const override;
 
-  VtValue GetExtComputationInput(UsdPrim const &prim,
-                                 SdfPath const &cachePath,
-                                 TfToken const &name,
-                                 UsdTimeCode time,
-                                 const UsdImagingInstancerContext *instancerContext) const override;
+  VtValue GetExtComputationInput(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    TfToken const &name,
+    UsdTimeCode time,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
-  std::string GetExtComputationKernel(UsdPrim const &prim,
-                                      SdfPath const &cachePath,
-                                      const UsdImagingInstancerContext *instancerContext) const override;
+  std::string GetExtComputationKernel(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const override;
 
   VtValue GetInstanceIndices(UsdPrim const &instancerPrim,
                              SdfPath const &instancerCachePath,
@@ -293,9 +311,11 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
                                                                   UsdTimeCode time) const override;
 
  protected:
+
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override final;
 
  private:
+
   SdfPath _Populate(UsdPrim const &prim,
                     UsdImagingIndexProxy *index,
                     UsdImagingInstancerContext const *instancerContext,
@@ -342,7 +362,8 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   // Note: this function assumes the instancer data is already locked by
   // the caller...
   struct _ComputeInstanceMapVariabilityFn;
-  bool _ComputeInstanceMapVariability(UsdPrim const &instancerPrim, _InstancerData const &instrData) const;
+  bool _ComputeInstanceMapVariability(UsdPrim const &instancerPrim,
+                                      _InstancerData const &instrData) const;
 
   // Gets the associated _ProtoPrim and instancer context for the given
   // instancer and cache path.
@@ -385,8 +406,7 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   // Computes the value of a primvar for all instances corresponding to the
   // given instancer. The templated version runs the templated functor,
   // and the un-templated version does type dispatch.
-  template<typename T>
-  struct _ComputeInheritedPrimvarFn;
+  template<typename T> struct _ComputeInheritedPrimvarFn;
 
   template<typename T>
   bool _ComputeInheritedPrimvar(UsdPrim const &instancer,
@@ -445,14 +465,14 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
 
   typedef TfHashMap<SdfPath, size_t, SdfPath::Hash> _InstancerDrawCounts;
   size_t _CountAllInstancesToDraw(UsdPrim const &instancer) const;
-  size_t _CountAllInstancesToDrawImpl(UsdPrim const &instancer, _InstancerDrawCounts *drawCounts) const;
+  size_t _CountAllInstancesToDrawImpl(UsdPrim const &instancer,
+                                      _InstancerDrawCounts *drawCounts) const;
 
   // A proto prim represents a single adapter under a prototype root declared
   // on the instancer.
   struct _ProtoPrim
   {
-    _ProtoPrim()
-    {}
+    _ProtoPrim() {}
     // Each prim will become a prototype "child" under the instancer. This
     // path is the path to the prim on the Usd Stage (the path to a single
     // mesh, for example).
@@ -469,10 +489,7 @@ class UsdImagingInstanceAdapter : public UsdImagingPrimAdapter
   // to keep everything bundled up under the instancer path.
   struct _InstancerData
   {
-    _InstancerData()
-      : numInstancesToDraw(0),
-        refreshVariability(false)
-    {}
+    _InstancerData() : numInstancesToDraw(0), refreshVariability(false) {}
 
     // The prototype prim path associated with this instancer.
     SdfPath prototypePath;

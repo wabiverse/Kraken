@@ -56,6 +56,7 @@ enum
 class HgiMetal final : public Hgi
 {
  public:
+
   enum CommitCommandBufferWaitType
   {
     CommitCommandBuffer_NoWait = 0,
@@ -121,7 +122,8 @@ class HgiMetal final : public Hgi
   void DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) override;
 
   HGIMETAL_API
-  HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) override;
+  HgiGraphicsPipelineHandle CreateGraphicsPipeline(
+    HgiGraphicsPipelineDesc const &pipeDesc) override;
 
   HGIMETAL_API
   void DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) override;
@@ -172,8 +174,9 @@ class HgiMetal final : public Hgi
   HgiMetalCapabilities const &GetCapabilities() const;
 
   HGIMETAL_API
-  void CommitPrimaryCommandBuffer(CommitCommandBufferWaitType waitType = CommitCommandBuffer_NoWait,
-                                  bool forceNewBuffer = false);
+  void CommitPrimaryCommandBuffer(
+    CommitCommandBufferWaitType waitType = CommitCommandBuffer_NoWait,
+    bool forceNewBuffer = false);
 
   HGIMETAL_API
   void CommitSecondaryCommandBuffer(id<MTLCommandBuffer> commandBuffer,
@@ -183,17 +186,18 @@ class HgiMetal final : public Hgi
   void ReleaseSecondaryCommandBuffer(id<MTLCommandBuffer> commandBuffer);
 
  protected:
+
   HGIMETAL_API
   bool _SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiMetal &operator=(const HgiMetal &) = delete;
   HgiMetal(const HgiMetal &) = delete;
 
   // Invalidates the resource handle and destroys the object.
   // Metal's internal garbage collection will handle the rest.
-  template<class T>
-  void _TrashObject(HgiHandle<T> *handle)
+  template<class T> void _TrashObject(HgiHandle<T> *handle)
   {
     delete handle->Get();
     *handle = HgiHandle<T>();

@@ -55,6 +55,7 @@ WABI_NAMESPACE_BEGIN
 class UsdAbc_AlembicDataReader : boost::noncopyable
 {
  public:
+
   typedef int64_t Index;
 
   UsdAbc_AlembicDataReader();
@@ -108,6 +109,7 @@ class UsdAbc_AlembicDataReader : boost::noncopyable
     typedef std::vector<double> _UsdTimeCodes;
 
    public:
+
     typedef _UsdTimeCodes::const_iterator const_iterator;
 
     /// Construct an empty set of samples.
@@ -147,6 +149,7 @@ class UsdAbc_AlembicDataReader : boost::noncopyable
     static bool Bracket(const T &, double usdTime, double *tLower, double *tUpper);
 
    private:
+
     // The monotonically increasing Usd times.
     _UsdTimeCodes _times;
   };
@@ -158,6 +161,7 @@ class UsdAbc_AlembicDataReader : boost::noncopyable
   const TimeSamples &ListTimeSamplesForPath(const SdfPath &path) const;
 
  private:
+
   boost::scoped_ptr<class UsdAbc_AlembicDataReaderImpl> _impl;
   std::string _errorLog;
 };

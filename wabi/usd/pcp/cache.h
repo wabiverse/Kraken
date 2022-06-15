@@ -95,6 +95,7 @@ class PcpCache
   PcpCache &operator=(PcpCache const &) = delete;
 
  public:
+
   /// Construct a PcpCache to compose results for the layer stack identified
   /// by \a layerStackIdentifier.
   ///
@@ -595,6 +596,7 @@ class PcpCache
   /// @}
 
  private:
+
   friend class PcpChanges;
   friend class Pcp_Statistics;
 
@@ -615,10 +617,7 @@ class PcpCache
   // argument marshalling, etc.
   struct _UntypedIndexingChildrenPredicate
   {
-    _UntypedIndexingChildrenPredicate()
-      : pred(nullptr),
-        invoke(nullptr)
-    {}
+    _UntypedIndexingChildrenPredicate() : pred(nullptr), invoke(nullptr) {}
     template<class Pred>
     explicit _UntypedIndexingChildrenPredicate(const Pred *pred)
       : pred(pred),
@@ -631,6 +630,7 @@ class PcpCache
     }
 
    private:
+
     template<class Pred>
     static bool _Invoke(const void *pred, const PcpPrimIndex &index, TfTokenVector *namesToCompose)
     {
@@ -645,9 +645,8 @@ class PcpCache
   struct _UntypedIndexingPayloadPredicate
   {
     template<class Pred>
-    explicit _UntypedIndexingPayloadPredicate(const Pred *pred)
-      : pred(pred),
-        invoke(_Invoke<Pred>)
+    explicit _UntypedIndexingPayloadPredicate(const Pred *pred) : pred(pred),
+                                                                  invoke(_Invoke<Pred>)
     {}
 
     inline bool operator()(const SdfPath &path) const
@@ -656,8 +655,8 @@ class PcpCache
     }
 
    private:
-    template<class Pred>
-    static bool _Invoke(const void *pred, const SdfPath &path)
+
+    template<class Pred> static bool _Invoke(const void *pred, const SdfPath &path)
     {
       return (*static_cast<const Pred *>(pred))(path);
     }
@@ -671,10 +670,11 @@ class PcpCache
                                                             PcpErrorVector *allErrors);
 
   // Friend to allow low-level indexing code access to the above.
-  friend const PcpPrimIndex &Pcp_ComputePrimIndexWithCompatibleInputs(PcpCache &cache,
-                                                                      const SdfPath &path,
-                                                                      const PcpPrimIndexInputs &inputs,
-                                                                      PcpErrorVector *allErrors);
+  friend const PcpPrimIndex &Pcp_ComputePrimIndexWithCompatibleInputs(
+    PcpCache &cache,
+    const SdfPath &path,
+    const PcpPrimIndexInputs &inputs,
+    PcpErrorVector *allErrors);
 
   // Parallel indexing implementation.
   PCP_API
@@ -699,6 +699,7 @@ class PcpCache
   const PcpPropertyIndex *_GetPropertyIndex(const SdfPath &path) const;
 
  private:
+
   // Fixed evaluation parameters, set when the cache is created.  Note that
   // _rootLayer and _sessionLayer are not const because we want to mutate them
   // to enable parallel teardown in the destructor.

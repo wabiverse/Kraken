@@ -52,6 +52,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeConfig
 {
  public:
+
   /// \brief Return the configuration singleton.
   static const HdEmbreeConfig &GetInstance();
 
@@ -93,6 +94,7 @@ class HdEmbreeConfig
   float cameraLightIntensity;
 
  private:
+
   // The constructor initializes the config variables with their
   // default or environment-provided override, and optionally prints
   // them.

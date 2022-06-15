@@ -54,8 +54,7 @@ WABI_NAMESPACE_BEGIN
 class GfRange1d;
 class GfRange1f;
 
-template<>
-struct GfIsGfRange<class GfRange1d>
+template<> struct GfIsGfRange<class GfRange1d>
 {
   static const bool value = true;
 };
@@ -72,6 +71,7 @@ struct GfIsGfRange<class GfRange1d>
 class GfRange1d
 {
  public:
+
   /// Helper typedef.
   typedef double MinMaxType;
 
@@ -93,10 +93,7 @@ class GfRange1d
   }
 
   /// This constructor initializes the minimum and maximum points.
-  GfRange1d(double min, double max)
-    : _min(min),
-      _max(max)
-  {}
+  GfRange1d(double min, double max) : _min(min), _max(max) {}
 
   /// Returns the minimum value of the range.
   double GetMin() const
@@ -294,12 +291,10 @@ class GfRange1d
   /// unary multiply.
   GfRange1d operator*=(double m)
   {
-    if (m > 0)
-    {
+    if (m > 0) {
       _min *= m;
       _max *= m;
-    } else
-    {
+    } else {
       double tmp = _min;
       _min = _max * m;
       _max = tmp * m;
@@ -375,6 +370,7 @@ class GfRange1d
   double GetDistanceSquared(double p) const;
 
  private:
+
   /// Minimum and maximum points.
   double _min, _max;
 

@@ -56,6 +56,7 @@ class HgiVulkanDevice;
 class HgiVulkanCommandQueue final
 {
  public:
+
   // Holds one thread's command pool and list of command buffers .
   struct HgiVulkan_CommandPool
   {
@@ -77,7 +78,8 @@ class HgiVulkanCommandQueue final
   /// Thread safety: Submission must be externally synchronized. Clients
   /// should call HgiVulkan::SubmitToQueue.
   HGIVULKAN_API
-  void SubmitToQueue(HgiVulkanCommandBuffer *cmdBuffer, HgiSubmitWaitType wait = HgiSubmitWaitTypeNoWait);
+  void SubmitToQueue(HgiVulkanCommandBuffer *cmdBuffer,
+                     HgiSubmitWaitType wait = HgiSubmitWaitTypeNoWait);
 
   /// Returns a command buffer that is ready to record commands.
   /// The ownership of the command buffer (ptr) remains with this queue. The
@@ -116,6 +118,7 @@ class HgiVulkanCommandQueue final
   void ResetConsumedCommandBuffers();
 
  private:
+
   HgiVulkanCommandQueue() = delete;
   HgiVulkanCommandQueue &operator=(const HgiVulkanCommandQueue &) = delete;
   HgiVulkanCommandQueue(const HgiVulkanCommandQueue &) = delete;

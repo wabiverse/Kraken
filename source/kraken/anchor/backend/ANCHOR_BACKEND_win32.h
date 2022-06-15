@@ -77,6 +77,7 @@ struct AnchorBackendWin32PointerInfo
 class AnchorSystemWin32 : public AnchorSystem
 {
  public:
+
   AnchorSystemWin32();
   ~AnchorSystemWin32();
 
@@ -146,7 +147,10 @@ class AnchorSystemWin32 : public AnchorSystem
    * @param wParam: The wParam from the wndproc.
    * @param lParam: The lParam from the wndproc.
    * @param isHorizontal: Whether the wheel event is horizontal or (false) for vertical. */
-  static void processWheelEvent(AnchorWindowWin32 *window, WPARAM wParam, LPARAM lParam, bool isHorizontal);
+  static void processWheelEvent(AnchorWindowWin32 *window,
+                                WPARAM wParam,
+                                LPARAM lParam,
+                                bool isHorizontal);
 
   /**
    * Handles minimum window size.
@@ -173,6 +177,7 @@ class AnchorSystemWin32 : public AnchorSystem
   inline void handleKeyboardChange(void);
 
  private:
+
   eAnchorStatus init();
   eAnchorStatus exit();
 
@@ -204,6 +209,7 @@ class AnchorSystemWin32 : public AnchorSystem
   eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
 
  protected:
+
   /**
    * Toggles console
    * @param action:
@@ -313,6 +319,7 @@ inline void AnchorSystemWin32::handleKeyboardChange(void)
 class AnchorDisplayManagerWin32 : public AnchorDisplayManager
 {
  public:
+
   /**
    * Constructor.*/
   AnchorDisplayManagerWin32(void);
@@ -336,7 +343,9 @@ class AnchorDisplayManagerWin32 : public AnchorDisplayManager
    * @param index: The setting index to be returned.
    * @param setting: The setting of the display device with this index.
    * @return Indication of success. */
-  eAnchorStatus getDisplaySetting(AnchorU8 display, AnchorS32 index, ANCHOR_DisplaySetting &setting) const;
+  eAnchorStatus getDisplaySetting(AnchorU8 display,
+                                  AnchorS32 index,
+                                  ANCHOR_DisplaySetting &setting) const;
 
   /**
    * Returns the current setting for this display device.
@@ -362,6 +371,7 @@ struct D3D12FrameContext
 class AnchorWindowWin32 : public AnchorSystemWindow
 {
  private:
+
   AnchorSystemWin32 *m_system;
 
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
@@ -439,6 +449,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   UINT64 m_fenceLastSignaledValue;
 
  public:
+
   AnchorWindowWin32(AnchorSystemWin32 *system,
                     const char *title,
                     const char *icon,
@@ -609,6 +620,7 @@ class AnchorWindowWin32 : public AnchorSystemWindow
   AnchorU16 getDPIHint();
 
  public:
+
   /**
    * True if the window currently resizing. */
   bool m_inLiveResize;
@@ -623,6 +635,7 @@ class VulkanSwapchain
 {
 
  public:
+
   void initSwapchain();
 };
 

@@ -32,6 +32,7 @@ class HdBbMeshTopology;
 class HdBbMeshAttributeSource : public HdBbAttributeSource
 {
  public:
+
   HdBbMeshAttributeSource(TfToken name,
                           const TfToken &role,
                           const VtValue &value,
@@ -47,6 +48,7 @@ class HdBbMeshAttributeSource : public HdBbAttributeSource
   }
 
  private:
+
   bool _CheckValid() const override;
 
   HdInterpolation m_interpolation;

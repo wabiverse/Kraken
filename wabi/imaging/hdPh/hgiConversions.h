@@ -39,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhHgiConversions
 {
  public:
+
   HDPH_API
   static HgiFormat GetHgiFormat(HdFormat hdFormat);
 

@@ -22,11 +22,9 @@ limitations under the License.
 #include <string>
 
 #define RIF_ERROR_CHECK_THROW(status, msg)                                   \
-  do                                                                         \
-  {                                                                          \
+  do {                                                                       \
     auto st = status;                                                        \
-    if (st != RIF_SUCCESS)                                                   \
-    {                                                                        \
+    if (st != RIF_SUCCESS) {                                                 \
       assert(false);                                                         \
       throw rif::Error(st, msg, __ARCH_FILE__, __ARCH_FUNCTION__, __LINE__); \
     }                                                                        \
@@ -52,8 +50,7 @@ namespace rif
                                            size_t line)
   {
     auto rifErrorString = [errorStatus]() -> std::string {
-      switch (errorStatus)
-      {
+      switch (errorStatus) {
         case RIF_ERROR_INVALID_API_VERSION:
           return "invalid api version";
         case RIF_ERROR_INVALID_PARAMETER:
@@ -75,11 +72,9 @@ namespace rif
 #ifdef RPR_GIT_SHORT_HASH
     suffix += TfStringPrintf("(%s)", RPR_GIT_SHORT_HASH);
 #endif  // RPR_GIT_SHORT_HASH
-    if (errorStatus == RIF_SUCCESS)
-    {
+    if (errorStatus == RIF_SUCCESS) {
       return TfStringPrintf("[RIF ERROR] %s%s", messageOnFail.c_str(), suffix.c_str());
-    } else
-    {
+    } else {
       auto errorStr = rifErrorString();
       return TfStringPrintf("[RIF ERROR] %s -- %s%s",
                             messageOnFail.c_str(),
@@ -94,8 +89,7 @@ namespace rif
                            char const *function,
                            size_t line)
   {
-    if (RIF_SUCCESS == status)
-    {
+    if (RIF_SUCCESS == status) {
       return false;
     }
 
@@ -107,6 +101,7 @@ namespace rif
   class Error : public std::runtime_error
   {
    public:
+
     Error(rif_int errorStatus,
           const char *messageOnFail,
           char const *file,
@@ -115,9 +110,7 @@ namespace rif
       : std::runtime_error(ConstructErrorMessage(errorStatus, messageOnFail, file, function, line))
     {}
 
-    Error(std::string const &errorMesssage)
-      : std::runtime_error(errorMesssage)
-    {}
+    Error(std::string const &errorMesssage) : std::runtime_error(errorMesssage) {}
   };
 
 }  // namespace rif

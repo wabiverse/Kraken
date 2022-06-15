@@ -63,6 +63,7 @@ using HgiUniquePtr = std::unique_ptr<class Hgi>;
 class HdPh_TestDriver final
 {
  public:
+
   HdPh_TestDriver();
   HdPh_TestDriver(TfToken const &reprName);
   HdPh_TestDriver(HdReprSelector const &reprToken);
@@ -103,6 +104,7 @@ class HdPh_TestDriver final
   void SetRepr(HdReprSelector const &reprToken);
 
  private:
+
   void _Init(HdReprSelector const &reprToken);
 
   // Hgi and HdDriver should be constructed before HdEngine to ensure they
@@ -132,6 +134,7 @@ using HdPh_TestLightingShaderSharedPtr = std::shared_ptr<class HdPh_TestLighting
 class HdPh_TestLightingShader : public HdPhLightingShader
 {
  public:
+
   HDPH_API
   HdPh_TestLightingShader();
   HDPH_API
@@ -158,6 +161,7 @@ class HdPh_TestLightingShader : public HdPhLightingShader
   void SetLight(int light, GfVec3f const &dir, GfVec3f const &color);
 
  private:
+
   struct Light
   {
     GfVec3f dir;

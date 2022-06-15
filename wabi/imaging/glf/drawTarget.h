@@ -72,9 +72,11 @@ typedef std::shared_ptr<class GlfGLContext> GlfGLContextSharedPtr;
 class GlfDrawTarget : public TfRefBase, public TfWeakBase
 {
  public:
+
   typedef GlfDrawTarget This;
 
  public:
+
   /// Returns a new instance.
   GLF_API
   static GlfDrawTargetRefPtr New(GfVec2i const &size, bool requestMSAA = false);
@@ -93,6 +95,7 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase
   class Attachment : public GlfTexture
   {
    public:
+
     typedef TfDeclarePtrs<class Attachment>::RefPtr AttachmentRefPtr;
 
     GLF_API
@@ -156,6 +159,7 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase
     void TouchContents();
 
    private:
+
     Attachment(int glIndex,
                GLenum format,
                GLenum type,
@@ -272,12 +276,14 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase
   bool IsValid(std::string *reason = NULL);
 
  protected:
+
   /// Weak/Ref-based container for the the map of texture attachments.
   /// Multiple GlfDrawTargets can jointly share their attachment textures :
   /// this construction allows the use of a RefPtr on the map of attachments.
   class AttachmentsContainer : public TfRefBase, public TfWeakBase
   {
    public:
+
     AttachmentsMap attachments;
   };
 
@@ -291,6 +297,7 @@ class GlfDrawTarget : public TfRefBase, public TfWeakBase
   virtual ~GlfDrawTarget();
 
  private:
+
   void _GenFrameBuffer();
 
   void _BindAttachment(GlfDrawTarget::AttachmentRefPtr const &a);

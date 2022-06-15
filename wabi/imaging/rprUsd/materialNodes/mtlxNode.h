@@ -25,6 +25,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsd_MtlxNodeElement : public RprUsdMaterialNodeInput
 {
  public:
+
   RprUsd_MtlxNodeElement(MaterialX::ValueElementPtr element, RprUsdMaterialNodeElement::Type type);
   ~RprUsd_MtlxNodeElement() override = default;
 
@@ -70,6 +71,7 @@ class RprUsd_MtlxNodeElement : public RprUsdMaterialNodeInput
   }
 
  private:
+
   MaterialX::ValueElementPtr m_mtlx;
   std::vector<TfToken> m_tokenValues;
 };
@@ -85,6 +87,7 @@ class RprUsd_MtlxNodeElement : public RprUsdMaterialNodeInput
 class RprUsd_MtlxNodeInfo : public RprUsdMaterialNodeInfo
 {
  public:
+
   RprUsd_MtlxNodeInfo(MaterialX::DocumentPtr const &mtlxDoc,
                       MaterialX::NodeDefPtr const &mtlxNodeDef,
                       std::string const &uiFolder);
@@ -124,6 +127,7 @@ class RprUsd_MtlxNodeInfo : public RprUsdMaterialNodeInfo
   RprUsdMaterialNodeFactoryFnc GetFactory() const;
 
  private:
+
   std::string m_uiFolder;
   MaterialX::DocumentPtr m_mtlxDoc;
   MaterialX::NodeDefPtr m_mtlxNodeDef;

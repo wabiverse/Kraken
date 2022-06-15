@@ -63,8 +63,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdSkel_SkelDefinition);
 class UsdSkel_SkelDefinition : public TfRefBase, public TfWeakBase
 {
  public:
-  virtual ~UsdSkel_SkelDefinition()
-  {}
+
+  virtual ~UsdSkel_SkelDefinition() {}
 
   /// Create a definition from a skeleton.
   /// Returns an empty pointer if \p skel or its structure is invalid.
@@ -91,24 +91,19 @@ class UsdSkel_SkelDefinition : public TfRefBase, public TfWeakBase
   }
 
   /// Returns rest pose joint transforms in joint-local space.
-  template<typename Matrix4>
-  bool GetJointLocalRestTransforms(VtArray<Matrix4> *xforms);
+  template<typename Matrix4> bool GetJointLocalRestTransforms(VtArray<Matrix4> *xforms);
 
   /// Returns rest pose joint transforms in skel space.
-  template<typename Matrix4>
-  bool GetJointSkelRestTransforms(VtArray<Matrix4> *xforms);
+  template<typename Matrix4> bool GetJointSkelRestTransforms(VtArray<Matrix4> *xforms);
 
   /// Returns bind pose joint transforms in world space.
-  template<typename Matrix4>
-  bool GetJointWorldBindTransforms(VtArray<Matrix4> *xforms);
+  template<typename Matrix4> bool GetJointWorldBindTransforms(VtArray<Matrix4> *xforms);
 
   /// Returns the inverse of the world-space joint bind transforms.
-  template<typename Matrix4>
-  bool GetJointWorldInverseBindTransforms(VtArray<Matrix4> *xforms);
+  template<typename Matrix4> bool GetJointWorldInverseBindTransforms(VtArray<Matrix4> *xforms);
 
   /// Returns the inverse of the local-space rest transforms.
-  template<typename Matrix4>
-  bool GetJointLocalInverseRestTransforms(VtArray<Matrix4> *xforms);
+  template<typename Matrix4> bool GetJointLocalInverseRestTransforms(VtArray<Matrix4> *xforms);
 
   /// See UsdSkel_SkeletonQuery::HasBindPose()
   bool HasBindPose();
@@ -117,6 +112,7 @@ class UsdSkel_SkelDefinition : public TfRefBase, public TfWeakBase
   bool HasRestPose();
 
  private:
+
   UsdSkel_SkelDefinition();
 
   bool _Init(const UsdSkelSkeleton &skel);
@@ -130,30 +126,26 @@ class UsdSkel_SkelDefinition : public TfRefBase, public TfWeakBase
   template<int ComputeFlag, typename Matrix4>
   bool _GetJointLocalInverseRestTransforms(VtArray<Matrix4> *xforms);
 
-  template<int ComputeFlag, typename Matrix4>
-  bool _ComputeJointSkelRestTransforms();
+  template<int ComputeFlag, typename Matrix4> bool _ComputeJointSkelRestTransforms();
 
-  template<int ComputeFlag, typename Matrix4>
-  bool _ComputeJointWorldInverseBindTransforms();
+  template<int ComputeFlag, typename Matrix4> bool _ComputeJointWorldInverseBindTransforms();
 
-  template<int ComputeFlag, typename Matrix4>
-  bool _ComputeJointLocalInverseRestTransforms();
+  template<int ComputeFlag, typename Matrix4> bool _ComputeJointLocalInverseRestTransforms();
 
   /// Helper for managing a set of cached transforms
   /// with both float and double precision.
   struct _XformHolder
   {
-    template<typename Matrix4>
-    VtArray<Matrix4> &Get();
+    template<typename Matrix4> VtArray<Matrix4> &Get();
 
-    template<typename Matrix4>
-    const VtArray<Matrix4> &Get() const;
+    template<typename Matrix4> const VtArray<Matrix4> &Get() const;
 
     VtMatrix4dArray xforms4d;
     VtMatrix4fArray xforms4f;
   };
 
  private:
+
   UsdSkelSkeleton _skel;
   VtTokenArray _jointOrder;
   UsdSkelTopology _topology;

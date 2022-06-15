@@ -105,15 +105,13 @@ V WorkParallelReduceN(const V &identity,
     return identity;
 
   // Don't bother with parallel_reduce, if concurrency is limited to 1.
-  if (WorkHasConcurrency())
-  {
+  if (WorkHasConcurrency()) {
 
     class Work_Body_TBB
     {
      public:
-      Work_Body_TBB(Fn &fn)
-        : _fn(fn)
-      {}
+
+      Work_Body_TBB(Fn &fn) : _fn(fn) {}
 
       V operator()(const tbb::blocked_range<size_t> &r, const V &value) const
       {
@@ -126,6 +124,7 @@ V WorkParallelReduceN(const V &identity,
       }
 
      private:
+
       Fn &_fn;
     };
 

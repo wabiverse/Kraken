@@ -70,6 +70,7 @@ WABI_NAMESPACE_BEGIN
 class ArDefaultResolverContext
 {
  public:
+
   /// Default construct a context with no search path.
   ArDefaultResolverContext() = default;
 
@@ -92,6 +93,7 @@ class ArDefaultResolverContext
   AR_API std::string GetAsString() const;
 
  private:
+
   std::vector<std::string> _searchPath;
 };
 

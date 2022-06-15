@@ -28,31 +28,24 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
 
   bool result = true;
 
-  if (diffs.size())
-  {
+  if (diffs.size()) {
     keytype kp = diffs[0];
 
-    for (int i = 1; i < (int)diffs.size(); i++)
-    {
-      if (diffs[i] == kp)
-      {
+    for (int i = 1; i < (int)diffs.size(); i++) {
+      if (diffs[i] == kp) {
         count++;
         continue;
-      } else
-      {
-        if (count > 1)
-        {
+      } else {
+        if (count > 1) {
           result = false;
 
           double pct = 100 * (double(count) / double(reps));
 
-          if (dumpCollisions)
-          {
+          if (dumpCollisions) {
             printbits((unsigned char *)&kp, sizeof(kp));
             printf(" - %4.2f%%\n", pct);
           }
-        } else
-        {
+        } else {
           ignore++;
         }
 
@@ -61,25 +54,23 @@ bool ProcessDifferentials(std::vector<keytype> &diffs, int reps, bool dumpCollis
       }
     }
 
-    if (count > 1)
-    {
+    if (count > 1) {
       double pct = 100 * (double(count) / double(reps));
 
-      if (dumpCollisions)
-      {
+      if (dumpCollisions) {
         printbits((unsigned char *)&kp, sizeof(kp));
         printf(" - %4.2f%%\n", pct);
       }
-    } else
-    {
+    } else {
       ignore++;
     }
   }
 
-  printf("%d total collisions, of which %d single collisions were ignored", (int)diffs.size(), ignore);
+  printf("%d total collisions, of which %d single collisions were ignored",
+         (int)diffs.size(),
+         ignore);
 
-  if (result == false)
-  {
+  if (result == false) {
     printf(" !!!!! ");
   }
 
@@ -109,20 +100,17 @@ void DiffTestRecurse(pfHash hash,
 {
   const int bits = sizeof(keytype) * 8;
 
-  for (int i = start; i < bits; i++)
-  {
+  for (int i = start; i < bits; i++) {
     flipbit(&k2, sizeof(k2), i);
     bitsleft--;
 
     hash(&k2, sizeof(k2), 0, &h2);
 
-    if (h1 == h2)
-    {
+    if (h1 == h2) {
       diffs.push_back(k1 ^ k2);
     }
 
-    if (bitsleft)
-    {
+    if (bitsleft) {
       DiffTestRecurse(hash, k1, k2, h1, h2, i + 1, bitsleft, diffs);
     }
 
@@ -155,10 +143,12 @@ bool DiffTest(pfHash hash, int diffbits, int reps, bool dumpCollisions)
          diffbits,
          keybits,
          hashbits);
-  printf("%d reps, %0.f total tests, expecting %2.2f random collisions", reps, testcount, expected);
+  printf("%d reps, %0.f total tests, expecting %2.2f random collisions",
+         reps,
+         testcount,
+         expected);
 
-  for (int i = 0; i < reps; i++)
-  {
+  for (int i = 0; i < reps; i++) {
     if (i % (reps / 10) == 0)
       printf(".");
 
@@ -200,8 +190,7 @@ void DiffDistTest(pfHash hash, const int diffbits, int trials, double &worst, do
   std::vector<keytype> keys(trials);
   std::vector<hashtype> A(trials), B(trials);
 
-  for (int i = 0; i < trials; i++)
-  {
+  for (int i = 0; i < trials; i++) {
     rand_p(&keys[i], sizeof(keytype));
 
     hash(&keys[i], sizeof(keytype), 0, (uint32_t *)&A[i]);
@@ -222,12 +211,10 @@ void DiffDistTest(pfHash hash, const int diffbits, int trials, double &worst, do
 
   hashtype h2;
 
-  for (size_t j = 0; j < diffs.size(); j++)
-  {
+  for (size_t j = 0; j < diffs.size(); j++) {
     keytype &d = diffs[j];
 
-    for (int i = 0; i < trials; i++)
-    {
+    for (int i = 0; i < trials; i++) {
       keytype k2 = keys[i] ^ d;
 
       hash(&k2, sizeof(k2), 0, &h2);
@@ -251,8 +238,7 @@ void DiffDistTest(pfHash hash, const int diffbits, int trials, double &worst, do
 // generate random key pairs and run full distribution/collision tests on the
 // hash differentials
 
-template<typename keytype, typename hashtype>
-bool DiffDistTest2(pfHash hash)
+template<typename keytype, typename hashtype> bool DiffDistTest2(pfHash hash)
 {
   Rand r(857374);
 
@@ -265,12 +251,10 @@ bool DiffDistTest2(pfHash hash)
 
   bool result = true;
 
-  for (int keybit = 0; keybit < keybits; keybit++)
-  {
+  for (int keybit = 0; keybit < keybits; keybit++) {
     printf("Testing bit %d\n", keybit);
 
-    for (int i = 0; i < keycount; i++)
-    {
+    for (int i = 0; i < keycount; i++) {
       r.rand_p(&k, sizeof(keytype));
 
       hash(&k, sizeof(keytype), 0, &h1);

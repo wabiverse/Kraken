@@ -59,6 +59,7 @@ class TfScriptModuleLoader : public TfWeakBase
 {
 
  public:
+
   typedef TfScriptModuleLoader This;
 
   /// Return the singleton instance.
@@ -103,10 +104,10 @@ class TfScriptModuleLoader : public TfWeakBase
   void WriteDotFile(std::string const &file) const;
 
  private:
+
   struct _LibInfo
   {
-    _LibInfo()
-    {}
+    _LibInfo() {}
     std::vector<TfToken> predecessors, successors;
   };
 
@@ -126,7 +127,8 @@ class TfScriptModuleLoader : public TfWeakBase
   void _GetOrderedDependenciesRecursive(TfToken const &lib,
                                         TfToken::HashSet *seenLibs,
                                         std::vector<TfToken> *result) const;
-  void _GetOrderedDependencies(std::vector<TfToken> const &input, std::vector<TfToken> *result) const;
+  void _GetOrderedDependencies(std::vector<TfToken> const &input,
+                               std::vector<TfToken> *result) const;
   void _TopologicalSort(std::vector<TfToken> *result) const;
 
   bool _HasTransitiveSuccessor(TfToken const &predecessor, TfToken const &successor) const;

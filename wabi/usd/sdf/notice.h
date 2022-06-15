@@ -44,6 +44,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 class SdfNotice
 {
  public:
+
   /// \class Base
   ///
   /// Base notification class for scene.  Only useful for type hierarchy
@@ -52,6 +53,7 @@ class SdfNotice
   class Base : public TfNotice
   {
    public:
+
     SDF_API ~Base();
   };
 
@@ -62,6 +64,7 @@ class SdfNotice
   class BaseLayersDidChange
   {
    public:
+
     BaseLayersDidChange(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
       : _vec(&changeVec),
         _serialNumber(serialNumber)
@@ -116,6 +119,7 @@ class SdfNotice
     }
 
    private:
+
     const SdfLayerChangeListVec *_vec;
     const size_t _serialNumber;
   };
@@ -132,6 +136,7 @@ class SdfNotice
   class LayersDidChangeSentPerLayer : public Base, public BaseLayersDidChange
   {
    public:
+
     LayersDidChangeSentPerLayer(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
       : BaseLayersDidChange(changeVec, serialNumber)
     {}
@@ -145,6 +150,7 @@ class SdfNotice
   class LayersDidChange : public Base, public BaseLayersDidChange
   {
    public:
+
     LayersDidChange(const SdfLayerChangeListVec &changeVec, size_t serialNumber)
       : BaseLayersDidChange(changeVec, serialNumber)
     {}
@@ -158,9 +164,8 @@ class SdfNotice
   class LayerInfoDidChange : public Base
   {
    public:
-    LayerInfoDidChange(const TfToken &key)
-      : _key(key)
-    {}
+
+    LayerInfoDidChange(const TfToken &key) : _key(key) {}
     SDF_API ~LayerInfoDidChange();
 
     /// Return the key affected.
@@ -170,6 +175,7 @@ class SdfNotice
     }
 
    private:
+
     TfToken _key;
   };
 
@@ -180,6 +186,7 @@ class SdfNotice
   class LayerIdentifierDidChange : public Base
   {
    public:
+
     SDF_API
     LayerIdentifierDidChange(const std::string &oldIdentifier, const std::string &newIdentifier);
     SDF_API
@@ -198,6 +205,7 @@ class SdfNotice
     }
 
    private:
+
     std::string _oldId;
     std::string _newId;
   };
@@ -209,6 +217,7 @@ class SdfNotice
   class LayerDidReplaceContent : public Base
   {
    public:
+
     SDF_API ~LayerDidReplaceContent();
   };
 
@@ -217,6 +226,7 @@ class SdfNotice
   class LayerDidReloadContent : public LayerDidReplaceContent
   {
    public:
+
     SDF_API virtual ~LayerDidReloadContent();
   };
 
@@ -227,6 +237,7 @@ class SdfNotice
   class LayerDidSaveLayerToFile : public Base
   {
    public:
+
     SDF_API ~LayerDidSaveLayerToFile();
   };
 
@@ -238,6 +249,7 @@ class SdfNotice
   class LayerDirtinessChanged : public Base
   {
    public:
+
     SDF_API ~LayerDirtinessChanged();
   };
 
@@ -250,6 +262,7 @@ class SdfNotice
   class LayerMutenessChanged : public Base
   {
    public:
+
     LayerMutenessChanged(const std::string &layerPath, bool wasMuted)
       : _layerPath(layerPath),
         _wasMuted(wasMuted)
@@ -270,6 +283,7 @@ class SdfNotice
     }
 
    private:
+
     std::string _layerPath;
     bool _wasMuted;
   };

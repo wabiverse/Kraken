@@ -52,6 +52,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 class Sdf_LayerRegistry : boost::noncopyable
 {
  public:
+
   /// Constructor.
   Sdf_LayerRegistry();
 
@@ -67,7 +68,8 @@ class Sdf_LayerRegistry : boost::noncopyable
   /// cannot be found, a null layer handle is returned. If the \p layerPath
   /// is relative, it is made absolute by anchoring to the current working
   /// directory.
-  SdfLayerHandle Find(const std::string &layerPath, const std::string &resolvedPath = std::string()) const;
+  SdfLayerHandle Find(const std::string &layerPath,
+                      const std::string &resolvedPath = std::string()) const;
 
   /// Returns a layer from the registry, consulting the by_identifier index
   /// with the \p layerPath as provided.
@@ -88,19 +90,16 @@ class Sdf_LayerRegistry : boost::noncopyable
   SdfLayerHandleSet GetLayers() const;
 
  private:
+
   // Index tags.
   struct by_identity
-  {
-  };
+  {};
   struct by_identifier
-  {
-  };
+  {};
   struct by_repository_path
-  {
-  };
+  {};
   struct by_real_path
-  {
-  };
+  {};
 
   // Key Extractors.
   struct layer_identifier
@@ -139,7 +138,8 @@ class Sdf_LayerRegistry : boost::noncopyable
       // Layer<->Identifier, one-to-many. The identifier is the path
       // passed in to CreateNew/FindOrOpen, and may be any path form
       // resolvable to a single real path.
-      boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_identifier>, layer_identifier>,
+      boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_identifier>,
+                                            layer_identifier>,
 
       // Layer<->RepositoryPath
       boost::multi_index::hashed_non_unique<boost::multi_index::tag<by_repository_path>,

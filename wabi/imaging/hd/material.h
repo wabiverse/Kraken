@@ -24,10 +24,9 @@
 #ifndef WABI_IMAGING_HD_MATERIAL_H
 #define WABI_IMAGING_HD_MATERIAL_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/sceneDelegate.h"
-#include "wabi/imaging/hd/sprim.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/sprim.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -37,6 +36,7 @@ WABI_NAMESPACE_BEGIN
 class HdMaterial : public HdSprim
 {
  public:
+
   // change tracking for HdMaterial prim
   enum DirtyBits : HdDirtyBits
   {
@@ -48,18 +48,21 @@ class HdMaterial : public HdSprim
   };
 
   HD_API
-  virtual ~HdMaterial();
+  ~HdMaterial() override;
 
  protected:
+
   HD_API
   HdMaterial(SdfPath const &id);
 
  private:
+
   // Class can not be default constructed or copied.
   HdMaterial() = delete;
   HdMaterial(const HdMaterial &) = delete;
   HdMaterial &operator=(const HdMaterial &) = delete;
 };
+
 
 /// \struct HdMaterialRelationship
 ///
@@ -91,8 +94,7 @@ struct HdMaterialRelationship
 // VtValue requirements
 HD_API
 bool operator==(const HdMaterialRelationship &lhs, const HdMaterialRelationship &rhs);
-HD_API
-size_t hash_value(const HdMaterialRelationship &rel);
+
 
 /// \struct HdMaterialNode
 ///
@@ -108,8 +110,7 @@ struct HdMaterialNode
 // VtValue requirements
 HD_API
 bool operator==(const HdMaterialNode &lhs, const HdMaterialNode &rhs);
-HD_API
-size_t hash_value(const HdMaterialNode &node);
+
 
 /// \struct HdMaterialNetwork
 ///
@@ -131,11 +132,12 @@ struct HdMaterialNetworkMap
   std::vector<SdfPath> terminals;
 };
 
+
 ///
 /// HdMaterialNetwork2
 ///
 /// This struct replaces the previously used MatfiltNetwork and
-/// HdPh_MaterialNetwork.
+/// HdSt_MaterialNetwork.
 /// In the furuture this HdMaterialNetwork2 will replace the current
 /// HdMaterialNetwork defined above.
 ///
@@ -143,7 +145,7 @@ struct HdMaterialNetworkMap
 /// \struct HdMaterialConnection2
 ///
 /// Describes a single connection to an upsream node and output port
-/// Replacement for HdRelationship.
+/// Replacement for HdMaterialRelationship.
 struct HdMaterialConnection2
 {
   SdfPath upstreamNode;
@@ -193,9 +195,9 @@ struct HdMaterialNetwork2
 
 /// Converts a HdMaterialNetworkMap to a HdMaterialNetwork2
 HD_API
-void HdMaterialNetwork2ConvertFromHdMaterialNetworkMap(const HdMaterialNetworkMap &hdNetworkMap,
-                                                       HdMaterialNetwork2 *result,
-                                                       bool *isVolume = nullptr);
+HdMaterialNetwork2 HdConvertToHdMaterialNetwork2(const HdMaterialNetworkMap &hdNetworkMap,
+                                                 bool *isVolume = nullptr);
+
 
 // VtValue requirements
 HD_API
@@ -204,8 +206,6 @@ HD_API
 bool operator==(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs);
 HD_API
 bool operator!=(const HdMaterialNetwork &lhs, const HdMaterialNetwork &rhs);
-HD_API
-size_t hash_value(const HdMaterialNetwork &network);
 
 HD_API
 std::ostream &operator<<(std::ostream &out, const HdMaterialNetworkMap &pv);
@@ -213,8 +213,7 @@ HD_API
 bool operator==(const HdMaterialNetworkMap &lhs, const HdMaterialNetworkMap &rhs);
 HD_API
 bool operator!=(const HdMaterialNetworkMap &lhs, const HdMaterialNetworkMap &rhs);
-HD_API
-size_t hash_value(const HdMaterialNetworkMap &networkMap);
+
 
 WABI_NAMESPACE_END
 

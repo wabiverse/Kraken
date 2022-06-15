@@ -39,6 +39,7 @@ struct HgiTextureDesc;
 class HdPhTextureCpuData
 {
  public:
+
   HDPH_API
   virtual ~HdPhTextureCpuData();
 

@@ -45,15 +45,13 @@ WABI_NAMESPACE_BEGIN
 
 /// A mix-in template that adds shared gprim behavior to support
 /// various HdRprim types.
-template<typename BASE>
-class HdPrman_Gprim : public BASE
+template<typename BASE> class HdPrman_Gprim : public BASE
 {
  public:
+
   typedef BASE BaseType;
 
-  HdPrman_Gprim(SdfPath const &id)
-    : BaseType(id)
-  {}
+  HdPrman_Gprim(SdfPath const &id) : BaseType(id) {}
 
   virtual ~HdPrman_Gprim() = default;
 
@@ -67,18 +65,14 @@ class HdPrman_Gprim : public BASE
     context->ReleaseCoordSysBindings(BASE::GetId());
 
     // Delete instances before deleting the prototypes they use.
-    for (const auto &id : _instanceIds)
-    {
-      if (id != riley::GeometryInstanceId::InvalidId())
-      {
+    for (const auto &id : _instanceIds) {
+      if (id != riley::GeometryInstanceId::InvalidId()) {
         riley->DeleteGeometryInstance(riley::GeometryPrototypeId::InvalidId(), id);
       }
     }
     _instanceIds.clear();
-    for (const auto &id : _prototypeIds)
-    {
-      if (id != riley::GeometryPrototypeId::InvalidId())
-      {
+    for (const auto &id : _prototypeIds) {
+      if (id != riley::GeometryPrototypeId::InvalidId()) {
         riley->DeleteGeometryPrototype(id);
       }
     }
@@ -91,6 +85,7 @@ class HdPrman_Gprim : public BASE
             TfToken const &reprToken) override;
 
  protected:
+
   HdDirtyBits GetInitialDirtyBitsMask() const override = 0;
 
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override
@@ -129,6 +124,7 @@ class HdPrman_Gprim : public BASE
   HdPrman_Gprim &operator=(const HdPrman_Gprim &) = delete;
 
  protected:
+
   std::vector<riley::GeometryPrototypeId> _prototypeIds;
   std::vector<riley::GeometryInstanceId> _instanceIds;
 };
@@ -166,8 +162,7 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
   riley::Riley *riley = context->riley;
 
   // Resolve material binding.  Default to fallbackGprimMaterial.
-  if (*dirtyBits & HdChangeTracker::DirtyMaterialId)
-  {
+  if (*dirtyBits & HdChangeTracker::DirtyMaterialId) {
 #if HD_API_VERSION < 37
     BASE::_SetMaterialId(sceneDelegate->GetRenderIndex().GetChangeTracker(),
                          sceneDelegate->GetMaterialId(id));
@@ -183,8 +178,7 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
   // Convert (and cache) coordinate systems.
   riley::CoordinateSystemList coordSysList = {0, nullptr};
   if (HdPrman_Context::RileyCoordSysIdVecRefPtr convertedCoordSys =
-        context->ConvertAndRetainCoordSysBindings(sceneDelegate, id))
-  {
+        context->ConvertAndRetainCoordSysBindings(sceneDelegate, id)) {
     coordSysList.count = convertedCoordSys->size();
     coordSysList.ids = &(*convertedCoordSys)[0];
   }
@@ -206,12 +200,9 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     // Adjust _prototypeIds array.
     const size_t oldCount = _prototypeIds.size();
     const size_t newCount = std::max((size_t)1, geomSubsets.size());
-    if (newCount != oldCount)
-    {
-      for (const auto &oldPrototypeId : _prototypeIds)
-      {
-        if (oldPrototypeId != riley::GeometryPrototypeId::InvalidId())
-        {
+    if (newCount != oldCount) {
+      for (const auto &oldPrototypeId : _prototypeIds) {
+        if (oldPrototypeId != riley::GeometryPrototypeId::InvalidId()) {
           riley->DeleteGeometryPrototype(oldPrototypeId);
         }
       }
@@ -219,30 +210,25 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     }
 
     // Update Riley geom prototypes.
-    if (geomSubsets.empty())
-    {
+    if (geomSubsets.empty()) {
       // Common case: no subsets.
       TF_VERIFY(newCount == 1);
       TF_VERIFY(_prototypeIds.size() == 1);
-      if (_prototypeIds[0] == riley::GeometryPrototypeId::InvalidId())
-      {
+      if (_prototypeIds[0] == riley::GeometryPrototypeId::InvalidId()) {
         _prototypeIds[0] = riley->CreateGeometryPrototype(riley::UserId::DefaultId(),
                                                           primType,
                                                           dispId,
                                                           primvars);
-      } else if (*dirtyBits & prmanPrimvarBits)
-      {
+      } else if (*dirtyBits & prmanPrimvarBits) {
         riley->ModifyGeometryPrototype(primType, _prototypeIds[0], &dispId, &primvars);
       }
-    } else
-    {
+    } else {
       // Subsets case.
       // We resolve materials here, and hold them in subsetMaterialIds:
       // Displacement networks are passed to the geom prototype;
       // material networks are passed to the instances.
       subsetMaterialIds.reserve(geomSubsets.size());
-      for (size_t j = 0; j < geomSubsets.size(); ++j)
-      {
+      for (size_t j = 0; j < geomSubsets.size(); ++j) {
         auto &prototypeId = _prototypeIds[j];
         HdGeomSubset &subset = geomSubsets[j];
         // Convert indices to int32_t and set as k_shade_faceset.
@@ -251,20 +237,20 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
         // Look up material override for the subset (if any)
         riley::MaterialId subsetMaterialId = materialId;
         riley::DisplacementId subsetDispId = dispId;
-        if (subset.materialId.IsEmpty())
-        {
+        if (subset.materialId.IsEmpty()) {
           subset.materialId = hdMaterialId;
         }
-        HdPrman_ResolveMaterial(sceneDelegate, subset.materialId, &subsetMaterialId, &subsetDispId);
+        HdPrman_ResolveMaterial(sceneDelegate,
+                                subset.materialId,
+                                &subsetMaterialId,
+                                &subsetDispId);
         subsetMaterialIds.push_back(subsetMaterialId);
-        if (prototypeId == riley::GeometryPrototypeId::InvalidId())
-        {
+        if (prototypeId == riley::GeometryPrototypeId::InvalidId()) {
           prototypeId = riley->CreateGeometryPrototype(riley::UserId::DefaultId(),
                                                        primType,
                                                        dispId,
                                                        primvars);
-        } else if (*dirtyBits & prmanPrimvarBits)
-        {
+        } else if (*dirtyBits & prmanPrimvarBits) {
           riley->ModifyGeometryPrototype(primType, prototypeId, &dispId, &primvars);
         }
       }
@@ -276,13 +262,11 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
   //
   // Resolve attributes.
   RtParamList attrs = context->ConvertAttributes(sceneDelegate, id);
-  if (!isHdInstance)
-  {
+  if (!isHdInstance) {
     // Simple case: Singleton instance.
     // Convert transform.
     TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> xf_rt(xf.count);
-    for (size_t i = 0; i < xf.count; ++i)
-    {
+    for (size_t i = 0; i < xf.count; ++i) {
       xf_rt[i] = HdPrman_GfMatrixToRtMatrix(xf.values[i]);
     }
     const riley::Transform xform = {unsigned(xf.count), xf_rt.data(), xf.times.data()};
@@ -296,12 +280,9 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     const size_t newNumHdInstances = 1u;
     const size_t oldCount = _instanceIds.size();
     const size_t newCount = newNumHdInstances * _prototypeIds.size();
-    if (newCount != oldCount)
-    {
-      for (const auto &oldInstanceId : _instanceIds)
-      {
-        if (oldInstanceId != riley::GeometryInstanceId::InvalidId())
-        {
+    if (newCount != oldCount) {
+      for (const auto &oldInstanceId : _instanceIds) {
+        if (oldInstanceId != riley::GeometryInstanceId::InvalidId()) {
           riley->DeleteGeometryInstance(riley::GeometryPrototypeId::InvalidId(), oldInstanceId);
         }
       }
@@ -310,19 +291,16 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     // Create or modify Riley instances corresponding to a
     // singleton Hydra instance.
     TF_VERIFY(_instanceIds.size() == _prototypeIds.size());
-    for (size_t j = 0; j < _prototypeIds.size(); ++j)
-    {
+    for (size_t j = 0; j < _prototypeIds.size(); ++j) {
       auto const &prototypeId = _prototypeIds[j];
       auto &instanceId = _instanceIds[j];
       auto instanceMaterialId = materialId;
       // If a valid subset material was bound, use it.
-      if (!subsetMaterialIds.empty())
-      {
+      if (!subsetMaterialIds.empty()) {
         TF_VERIFY(j < subsetMaterialIds.size());
         instanceMaterialId = subsetMaterialIds[j];
       }
-      if (instanceId == riley::GeometryInstanceId::InvalidId())
-      {
+      if (instanceId == riley::GeometryInstanceId::InvalidId()) {
         instanceId = riley->CreateGeometryInstance(riley::UserId::DefaultId(),
                                                    riley::GeometryPrototypeId::InvalidId(),
                                                    prototypeId,
@@ -330,8 +308,7 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
                                                    coordSysList,
                                                    xform,
                                                    attrs);
-      } else if (*dirtyBits & prmanAttrBits)
-      {
+      } else if (*dirtyBits & prmanAttrBits) {
         riley->ModifyGeometryInstance(riley::GeometryPrototypeId::InvalidId(),
                                       instanceId,
                                       &instanceMaterialId,
@@ -340,8 +317,7 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
                                       &attrs);
       }
     }
-  } else
-  {
+  } else {
     // Hydra Instancer case.
     HdRenderIndex &renderIndex = sceneDelegate->GetRenderIndex();
 
@@ -349,7 +325,8 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     // be done by the render index...)
     HdInstancer::_SyncInstancerAndParents(renderIndex, instancerId);
 
-    HdPrmanInstancer *instancer = static_cast<HdPrmanInstancer *>(renderIndex.GetInstancer(instancerId));
+    HdPrmanInstancer *instancer = static_cast<HdPrmanInstancer *>(
+      renderIndex.GetInstancer(instancerId));
     VtIntArray instanceIndices = sceneDelegate->GetInstanceIndices(instancerId, id);
 
     // Sample per-instance transforms.
@@ -363,10 +340,8 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     const size_t newNumHdInstances = (ixf.count > 0) ? ixf.values[0].size() : 0;
     const size_t oldCount = _instanceIds.size();
     const size_t newCount = newNumHdInstances * _prototypeIds.size();
-    if (newCount != oldCount)
-    {
-      for (const auto &oldInstanceId : _instanceIds)
-      {
+    if (newCount != oldCount) {
+      for (const auto &oldInstanceId : _instanceIds) {
         riley->DeleteGeometryInstance(riley::GeometryPrototypeId::InvalidId(), oldInstanceId);
       }
       _instanceIds.resize(newCount, riley::GeometryInstanceId::InvalidId());
@@ -376,15 +351,14 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
     attrs.SetInteger(RixStr.k_identifier_id, primId);
 
     // Retrieve instance categories.
-    std::vector<VtArray<TfToken>> instanceCategories = sceneDelegate->GetInstanceCategories(instancerId);
+    std::vector<VtArray<TfToken>> instanceCategories = sceneDelegate->GetInstanceCategories(
+      instancerId);
 
     // Process each Hydra instance.
-    for (size_t i = 0; i < newNumHdInstances; ++i)
-    {
+    for (size_t i = 0; i < newNumHdInstances; ++i) {
       // XXX: Add support for nested instancing instance primvars.
       size_t instanceIndex = 0;
-      if (i < instanceIndices.size())
-      {
+      if (i < instanceIndices.size()) {
         instanceIndex = instanceIndices[i];
       }
 
@@ -395,9 +369,10 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
       instanceAttrs.SetInteger(RixStr.k_identifier_id2, i);
 
       // Convert categories.
-      if (instanceIndex < instanceCategories.size())
-      {
-        context->ConvertCategoriesToAttributes(id, instanceCategories[instanceIndex], instanceAttrs);
+      if (instanceIndex < instanceCategories.size()) {
+        context->ConvertCategoriesToAttributes(id,
+                                               instanceCategories[instanceIndex],
+                                               instanceAttrs);
       }
 
       // Convert transform.
@@ -405,18 +380,14 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
       // so we apply that transform (xf) to all the instances, here.
       TfSmallVector<RtMatrix4x4, HDPRMAN_MAX_TIME_SAMPLES> rt_xf(ixf.count);
 
-      if (xf.count == 0 || (xf.count == 1 && (xf.values[0] == GfMatrix4d(1))))
-      {
+      if (xf.count == 0 || (xf.count == 1 && (xf.values[0] == GfMatrix4d(1)))) {
         // Expected case: prototype xf is constant & exactly identity.
-        for (size_t j = 0; j < ixf.count; ++j)
-        {
+        for (size_t j = 0; j < ixf.count; ++j) {
           rt_xf[j] = HdPrman_GfMatrixToRtMatrix(ixf.values[j][i]);
         }
-      } else
-      {
+      } else {
         // Multiply resampled prototype xf against instance xforms.
-        for (size_t j = 0; j < ixf.count; ++j)
-        {
+        for (size_t j = 0; j < ixf.count; ++j) {
           GfMatrix4d xf_j = xf.Resample(ixf.times[j]);
           rt_xf[j] = HdPrman_GfMatrixToRtMatrix(xf_j * ixf.values[j][i]);
         }
@@ -425,19 +396,16 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
 
       // Create or modify Riley instances corresponding to this
       // Hydra instance.
-      for (size_t j = 0; j < _prototypeIds.size(); ++j)
-      {
+      for (size_t j = 0; j < _prototypeIds.size(); ++j) {
         auto const &prototypeId = _prototypeIds[j];
         auto &instanceId = _instanceIds[i * _prototypeIds.size() + j];
         auto instanceMaterialId = materialId;
         // If a valid subset material was bound, use it.
-        if (!subsetMaterialIds.empty())
-        {
+        if (!subsetMaterialIds.empty()) {
           TF_VERIFY(j < subsetMaterialIds.size());
           instanceMaterialId = subsetMaterialIds[j];
         }
-        if (instanceId == riley::GeometryInstanceId::InvalidId())
-        {
+        if (instanceId == riley::GeometryInstanceId::InvalidId()) {
           instanceId = riley->CreateGeometryInstance(riley::UserId::DefaultId(),
                                                      riley::GeometryPrototypeId::InvalidId(),
                                                      prototypeId,
@@ -445,8 +413,7 @@ void HdPrman_Gprim<BASE>::Sync(HdSceneDelegate *sceneDelegate,
                                                      coordSysList,
                                                      xform,
                                                      instanceAttrs);
-        } else if (*dirtyBits & prmanAttrBits)
-        {
+        } else if (*dirtyBits & prmanAttrBits) {
           riley->ModifyGeometryInstance(riley::GeometryPrototypeId::InvalidId(),
                                         instanceId,
                                         &instanceMaterialId,

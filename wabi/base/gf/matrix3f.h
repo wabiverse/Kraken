@@ -52,8 +52,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<>
-struct GfIsGfMatrix<class GfMatrix3f>
+template<> struct GfIsGfMatrix<class GfMatrix3f>
 {
   static const bool value = true;
 };
@@ -92,6 +91,7 @@ class GfQuatf;
 class GfMatrix3f
 {
  public:
+
   typedef float ScalarType;
 
   static const size_t numRows = 3;
@@ -511,7 +511,9 @@ class GfMatrix3f
   /// This is a convenience method that is equivalent to calling
   /// ExtractRotation().Decompose().
   GF_API
-  GfVec3f DecomposeRotation(const GfVec3f &axis0, const GfVec3f &axis1, const GfVec3f &axis2) const;
+  GfVec3f DecomposeRotation(const GfVec3f &axis0,
+                            const GfVec3f &axis1,
+                            const GfVec3f &axis2) const;
 
   /// Returns the quaternion corresponding to this matrix. This works
   /// well only if the matrix represents a rotation.
@@ -524,11 +526,13 @@ class GfMatrix3f
   /// @}
 
  private:
+
   /// Set the matrix to the rotation given by a quaternion,
   /// defined by the real component \p r and imaginary components \p i.
   void _SetRotateFromQuat(float r, const GfVec3f &i);
 
  private:
+
   /// Matrix storage, in row-major order.
   GfMatrixData<float, 3, 3> _mtx;
 

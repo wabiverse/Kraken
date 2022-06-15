@@ -62,6 +62,7 @@ class SdfAssetPath;
 class UsdPhysicsJoint : public UsdGeomImageable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -71,16 +72,12 @@ class UsdPhysicsJoint : public UsdGeomImageable
   /// Equivalent to UsdPhysicsJoint::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsJoint(const UsdPrim &prim = UsdPrim())
-    : UsdGeomImageable(prim)
-  {}
+  explicit UsdPhysicsJoint(const UsdPrim &prim = UsdPrim()) : UsdGeomImageable(prim) {}
 
   /// Construct a UsdPhysicsJoint on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsJoint(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsJoint(const UsdSchemaBase &schemaObj)
-    : UsdGeomImageable(schemaObj)
-  {}
+  explicit UsdPhysicsJoint(const UsdSchemaBase &schemaObj) : UsdGeomImageable(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -130,6 +127,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
   static UsdPhysicsJoint Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -137,6 +135,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -146,9 +145,11 @@ class UsdPhysicsJoint : public UsdGeomImageable
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LOCALPOS0
   // --------------------------------------------------------------------- //
@@ -172,6 +173,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LOCALROT0
   // --------------------------------------------------------------------- //
@@ -195,6 +197,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LOCALPOS1
   // --------------------------------------------------------------------- //
@@ -218,6 +221,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LOCALROT1
   // --------------------------------------------------------------------- //
@@ -241,6 +245,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // JOINTENABLED
   // --------------------------------------------------------------------- //
@@ -264,6 +269,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLLISIONENABLED
   // --------------------------------------------------------------------- //
@@ -287,6 +293,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EXCLUDEFROMARTICULATION
   // --------------------------------------------------------------------- //
@@ -311,6 +318,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BREAKFORCE
   // --------------------------------------------------------------------- //
@@ -336,6 +344,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BREAKTORQUE
   // --------------------------------------------------------------------- //
@@ -361,6 +370,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BODY0
   // --------------------------------------------------------------------- //
@@ -375,6 +385,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
   UsdRelationship CreateBody0Rel() const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BODY1
   // --------------------------------------------------------------------- //
@@ -389,6 +400,7 @@ class UsdPhysicsJoint : public UsdGeomImageable
   UsdRelationship CreateBody1Rel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

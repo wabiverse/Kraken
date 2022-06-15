@@ -49,6 +49,7 @@ struct HfPluginDesc;
 class Hf_PluginEntry final
 {
  public:
+
   HF_MALLOC_TAG_NEW("new Hf_PluginEntry");
 
   ///
@@ -123,6 +124,7 @@ class Hf_PluginEntry final
   static void SetFactory(TfType &type, _PluginFactoryFn &func);
 
  private:
+
   ///
   /// Factory class used for plugin registration.
   /// Even though this class adds another level of indirection
@@ -133,9 +135,8 @@ class Hf_PluginEntry final
   class _Factory final : public TfType::FactoryBase
   {
    public:
-    _Factory(_PluginFactoryFn &func)
-      : _func(func)
-    {}
+
+    _Factory(_PluginFactoryFn &func) : _func(func) {}
 
     HfPluginBase *New() const
     {
@@ -143,6 +144,7 @@ class Hf_PluginEntry final
     }
 
    private:
+
     _PluginFactoryFn _func;
   };
 

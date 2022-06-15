@@ -67,6 +67,7 @@ class SdfAssetPath;
 class UsdLuxCylinderLight : public UsdLuxLight
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -77,16 +78,12 @@ class UsdLuxCylinderLight : public UsdLuxLight
   /// Equivalent to UsdLuxCylinderLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxCylinderLight(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLight(prim)
-  {}
+  explicit UsdLuxCylinderLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim) {}
 
   /// Construct a UsdLuxCylinderLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxCylinderLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxCylinderLight(const UsdSchemaBase &schemaObj)
-    : UsdLuxLight(schemaObj)
-  {}
+  explicit UsdLuxCylinderLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -136,6 +133,7 @@ class UsdLuxCylinderLight : public UsdLuxLight
   static UsdLuxCylinderLight Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -143,6 +141,7 @@ class UsdLuxCylinderLight : public UsdLuxLight
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -152,9 +151,11 @@ class UsdLuxCylinderLight : public UsdLuxLight
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LENGTH
   // --------------------------------------------------------------------- //
@@ -174,9 +175,11 @@ class UsdLuxCylinderLight : public UsdLuxLight
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateLengthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateLengthAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RADIUS
   // --------------------------------------------------------------------- //
@@ -196,9 +199,11 @@ class UsdLuxCylinderLight : public UsdLuxLight
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TREATASLINE
   // --------------------------------------------------------------------- //
@@ -225,6 +230,7 @@ class UsdLuxCylinderLight : public UsdLuxLight
                                      bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

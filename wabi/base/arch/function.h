@@ -53,7 +53,8 @@ WABI_NAMESPACE_BEGIN
 ///
 /// \ingroup group_arch_Diagnostic
 ARCH_API
-std::string ArchGetPrettierFunctionName(const std::string &function, const std::string &prettyFunction);
+std::string ArchGetPrettierFunctionName(const std::string &function,
+                                        const std::string &prettyFunction);
 
 WABI_NAMESPACE_END
 

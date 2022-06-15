@@ -53,6 +53,7 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 class HdPhMesh final : public HdMesh
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdPhMesh");
 
   HDPH_API
@@ -82,6 +83,7 @@ class HdPhMesh final : public HdMesh
   static bool IsEnabledPackedNormals();
 
  protected:
+
   HDPH_API
   void _InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) override;
 
@@ -101,7 +103,8 @@ class HdPhMesh final : public HdMesh
     bool *isFirstInstance,
     HdPhResourceRegistrySharedPtr const &resourceRegistry) const;
 
-  bool _UseQuadIndices(const HdRenderIndex &renderIndex, HdPh_MeshTopologySharedPtr const &topology) const;
+  bool _UseQuadIndices(const HdRenderIndex &renderIndex,
+                       HdPh_MeshTopologySharedPtr const &topology) const;
 
   bool _UseLimitRefinement(const HdRenderIndex &renderIndex) const;
 
@@ -169,6 +172,7 @@ class HdPhMesh final : public HdMesh
   class _FvarTopologyTracker
   {
    public:
+
     const TopologyToPrimvarVector &GetTopologyToPrimvarVector() const
     {
       return _topologies;
@@ -177,15 +181,12 @@ class HdPhMesh final : public HdMesh
     // Add a primvar and its corresponding toplogy to the tracker
     void AddOrUpdateTopology(const TfToken &primvar, const VtIntArray &topology)
     {
-      for (size_t i = 0; i < _topologies.size(); ++i)
-      {
+      for (size_t i = 0; i < _topologies.size(); ++i) {
         // Found existing topology
-        if (_topologies[i].first == topology)
-        {
+        if (_topologies[i].first == topology) {
 
           if (std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar) ==
-              _topologies[i].second.end())
-          {
+              _topologies[i].second.end()) {
             // Topology does not have that primvar assigned
             RemovePrimvar(primvar);
             _topologies[i].second.push_back(primvar);
@@ -202,8 +203,7 @@ class HdPhMesh final : public HdMesh
     // Remove a primvar from the tracker.
     void RemovePrimvar(const TfToken &primvar)
     {
-      for (size_t i = 0; i < _topologies.size(); ++i)
-      {
+      for (size_t i = 0; i < _topologies.size(); ++i) {
         _topologies[i].second.erase(
           std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar),
           _topologies[i].second.end());
@@ -222,11 +222,9 @@ class HdPhMesh final : public HdMesh
     // not in the tracker, returns -1.
     int GetChannelFromPrimvar(const TfToken &primvar) const
     {
-      for (size_t i = 0; i < _topologies.size(); ++i)
-      {
+      for (size_t i = 0; i < _topologies.size(); ++i) {
         if (std::find(_topologies[i].second.begin(), _topologies[i].second.end(), primvar) !=
-            _topologies[i].second.end())
-        {
+            _topologies[i].second.end()) {
           return i;
         }
       }
@@ -237,8 +235,7 @@ class HdPhMesh final : public HdMesh
     std::vector<VtIntArray> GetFvarTopologies() const
     {
       std::vector<VtIntArray> fvarTopologies;
-      for (const auto &it : _topologies)
-      {
+      for (const auto &it : _topologies) {
         fvarTopologies.push_back(it.first);
       }
       return fvarTopologies;
@@ -250,6 +247,7 @@ class HdPhMesh final : public HdMesh
     }
 
    private:
+
     // Helper function that returns true if a <topology, primvar vector> has
     // no primvars.
     static bool NoPrimvars(const std::pair<VtIntArray, std::vector<TfToken>> &topology)
@@ -261,6 +259,7 @@ class HdPhMesh final : public HdMesh
   };
 
  private:
+
   enum DrawingCoord
   {
     HullTopology = HdDrawingCoord::CustomSlotsBegin,

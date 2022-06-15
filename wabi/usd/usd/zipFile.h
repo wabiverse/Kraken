@@ -56,9 +56,11 @@ class ArAsset;
 class UsdZipFile
 {
  private:
+
   class _Impl;
 
  public:
+
   /// Opens the zip archive at \p filePath.
   /// Returns invalid object on error.
   USD_API
@@ -88,6 +90,7 @@ class UsdZipFile
   class FileInfo
   {
    public:
+
     /// Offset of the beginning of this file's data from the start of
     /// the zip archive.
     size_t dataOffset = 0;
@@ -115,6 +118,7 @@ class UsdZipFile
   class Iterator
   {
    public:
+
     USD_API
     Iterator();
 
@@ -123,15 +127,15 @@ class UsdZipFile
     class _ArrowProxy
     {
      public:
-      explicit _ArrowProxy(const std::string &s)
-        : _s(s)
-      {}
+
+      explicit _ArrowProxy(const std::string &s) : _s(s) {}
       const std::string *operator->() const
       {
         return &_s;
       }
 
      private:
+
       std::string _s;
     };
 
@@ -174,6 +178,7 @@ class UsdZipFile
     FileInfo GetFileInfo() const;
 
    private:
+
     friend class UsdZipFile;
     Iterator(const _Impl *impl);
 
@@ -212,6 +217,7 @@ class UsdZipFile
   void DumpContents() const;
 
  private:
+
   UsdZipFile(std::shared_ptr<_Impl> &&impl);
 
   std::shared_ptr<_Impl> _impl;
@@ -228,6 +234,7 @@ class UsdZipFile
 class UsdZipFileWriter
 {
  public:
+
   /// Create a new file writer with \p filePath as the destination file path
   /// where the zip archive will be written. The zip file will not be written
   /// to \p filePath until the writer is destroyed or Save() is called.
@@ -269,7 +276,8 @@ class UsdZipFileWriter
   /// not be the same as \p filePath or \p filePathInArchive. Returns an
   /// empty string on failure.
   USD_API
-  std::string AddFile(const std::string &filePath, const std::string &filePathInArchive = std::string());
+  std::string AddFile(const std::string &filePath,
+                      const std::string &filePathInArchive = std::string());
 
   /// Finalizes the zip archive and saves it to the destination file path.
   /// Once saved, the file writer is invalid and may not be reused.
@@ -284,6 +292,7 @@ class UsdZipFileWriter
   void Discard();
 
  private:
+
   class _Impl;
   UsdZipFileWriter(std::unique_ptr<_Impl> &&impl);
 

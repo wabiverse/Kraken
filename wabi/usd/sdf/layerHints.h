@@ -33,15 +33,14 @@ WABI_NAMESPACE_BEGIN
 class SdfLayerHints
 {
  public:
+
   /// Default constructed hints provide the most conservative set of values
   /// such that consumers of the hints will act correctly if not optimally.
   SdfLayerHints() = default;
 
   /// Construct hints with specific values.  Using this constructor requires
   /// that all hint fields be specified.
-  explicit SdfLayerHints(bool mightHaveRelocates)
-    : mightHaveRelocates(mightHaveRelocates)
-  {}
+  explicit SdfLayerHints(bool mightHaveRelocates) : mightHaveRelocates(mightHaveRelocates) {}
 
   /// If this field is false, the layer does not contain relocates.  If
   /// true, relocates may be present but are not guaranteed to exist.

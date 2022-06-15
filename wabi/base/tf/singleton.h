@@ -118,10 +118,10 @@ WABI_NAMESPACE_BEGIN
 ///
 /// \ref TfSingleton_typicalUse "Typical Use" for a canonical example).
 ///
-template<class T>
-class TfSingleton
+template<class T> class TfSingleton
 {
  public:
+
   /// Return a reference to an object of type \c T, creating it if
   /// necessary.
   ///
@@ -196,6 +196,7 @@ class TfSingleton
   }
 
  private:
+
   static T &_CreateInstance();
   static void _DestroyInstance();
   static T *_instance;

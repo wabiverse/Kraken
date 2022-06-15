@@ -45,12 +45,14 @@ struct wmEvent;
 #define WM_HANDLER_MODAL 4
 
 /* test whether the event is a key on the keyboard */
-#define ISKEYBOARD(event_type) \
-  (((event_type) >= 0x0020 && (event_type) <= 0x00ff) || ((event_type) >= 0x012c && (event_type) <= 0x0143))
+#define ISKEYBOARD(event_type)                           \
+  (((event_type) >= 0x0020 && (event_type) <= 0x00ff) || \
+   ((event_type) >= 0x012c && (event_type) <= 0x0143))
 
 /* test whether the event is a modifier key */
-#define ISKEYMODIFIER(event_type) \
-  (((event_type) >= EVT_LEFTCTRLKEY && (event_type) <= EVT_LEFTSHIFTKEY) || (event_type) == EVT_OSKEY)
+#define ISKEYMODIFIER(event_type)                                           \
+  (((event_type) >= EVT_LEFTCTRLKEY && (event_type) <= EVT_LEFTSHIFTKEY) || \
+   (event_type) == EVT_OSKEY)
 
 /* test whether the event is a mouse button */
 #define ISMOUSE(event_type) \
@@ -58,10 +60,10 @@ struct wmEvent;
 
 #define ISMOUSE_WHEEL(event_type) ((event_type) >= WHEELUPMOUSE && (event_type) <= WHEELOUTMOUSE)
 #define ISMOUSE_GESTURE(event_type) ((event_type) >= MOUSEPAN && (event_type) <= MOUSEROTATE)
-#define ISMOUSE_BUTTON(event_type)                                                                 \
-  ((event_type) == LEFTMOUSE || (event_type) == MIDDLEMOUSE || (event_type) == RIGHTMOUSE ||       \
-   (event_type) == BUTTON4MOUSE || (event_type) == BUTTON5MOUSE || (event_type) == BUTTON6MOUSE || \
-   (event_type) == BUTTON7MOUSE)
+#define ISMOUSE_BUTTON(event_type)                                                           \
+  ((event_type) == LEFTMOUSE || (event_type) == MIDDLEMOUSE || (event_type) == RIGHTMOUSE || \
+   (event_type) == BUTTON4MOUSE || (event_type) == BUTTON5MOUSE ||                           \
+   (event_type) == BUTTON6MOUSE || (event_type) == BUTTON7MOUSE)
 
 void wm_event_free_handler(wmEventHandler *handler);
 void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler *> handlers);
@@ -84,11 +86,17 @@ int WM_event_drag_threshold(const wmEvent *event);
 bool WM_event_drag_test_with_delta(const wmEvent *event, const int drag_delta[2]);
 bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2]);
 
-int WM_operator_name_call_ptr(kContext *C, wmOperatorType *ot, short context, PointerLUXO *properties);
+int WM_operator_name_call_ptr(kContext *C,
+                              wmOperatorType *ot,
+                              short context,
+                              PointerLUXO *properties);
 
 void WM_event_init_from_window(wmWindow *win, wmEvent *event);
 
-int WM_operator_name_call(kContext *C, const TfToken &optoken, short context, PointerLUXO *properties);
+int WM_operator_name_call(kContext *C,
+                          const TfToken &optoken,
+                          short context,
+                          PointerLUXO *properties);
 
 void WM_event_do_refresh_wm(kContext *C);
 

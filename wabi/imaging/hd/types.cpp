@@ -21,11 +21,11 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/types.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/vt/array.h"
 #include "wabi/base/vt/value.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/matrix3d.h"
 #include "wabi/base/gf/matrix3f.h"
@@ -33,20 +33,23 @@
 #include "wabi/base/gf/matrix4f.h"
 #include "wabi/base/gf/vec2d.h"
 #include "wabi/base/gf/vec2f.h"
-#include "wabi/base/gf/vec2h.h"
 #include "wabi/base/gf/vec2i.h"
+#include "wabi/base/gf/vec2h.h"
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
-#include "wabi/base/gf/vec3h.h"
 #include "wabi/base/gf/vec3i.h"
+#include "wabi/base/gf/vec3h.h"
 #include "wabi/base/gf/vec4d.h"
 #include "wabi/base/gf/vec4f.h"
-#include "wabi/base/gf/vec4h.h"
 #include "wabi/base/gf/vec4i.h"
+#include "wabi/base/gf/vec4h.h"
+#include "wabi/base/gf/quath.h"
+#include "wabi/base/gf/quatf.h"
+#include "wabi/base/gf/quatd.h"
 
-#include <typeindex>
-#include <typeinfo>
 #include <unordered_map>
+#include <typeinfo>
+#include <typeindex>
 
 WABI_NAMESPACE_BEGIN
 
@@ -116,10 +119,38 @@ TF_REGISTRY_FUNCTION(TfEnum)
   TF_ADD_ENUM_NAME(HdFormatFloat32UInt8);
 }
 
+HdSamplerParameters::HdSamplerParameters()
+  : HdSamplerParameters(HdWrapRepeat,
+                        HdWrapRepeat,
+                        HdWrapClamp,
+                        HdMinFilterNearest,
+                        HdMagFilterNearest)
+{}
+
+HdSamplerParameters::HdSamplerParameters(HdWrap wrapS,
+                                         HdWrap wrapT,
+                                         HdWrap wrapR,
+                                         HdMinFilter minFilter,
+                                         HdMagFilter magFilter,
+                                         HdBorderColor borderColor,
+                                         bool enableCompare,
+                                         HdCompareFunction compareFunction)
+  : wrapS(wrapS),
+    wrapT(wrapT),
+    wrapR(wrapR),
+    minFilter(minFilter),
+    magFilter(magFilter),
+    borderColor(borderColor),
+    enableCompare(enableCompare),
+    compareFunction(compareFunction)
+{}
+
 bool HdSamplerParameters::operator==(const HdSamplerParameters &other) const
 {
   return (wrapS == other.wrapS) && (wrapT == other.wrapT) && (wrapR == other.wrapR) &&
-         (minFilter == other.minFilter) && (magFilter == other.magFilter);
+         (minFilter == other.minFilter) && (magFilter == other.magFilter) &&
+         (borderColor == other.borderColor) && (enableCompare == other.enableCompare) &&
+         (compareFunction == other.compareFunction);
 }
 
 bool HdSamplerParameters::operator!=(const HdSamplerParameters &other) const
@@ -151,7 +182,8 @@ static inline ValueDataGetterMap _MakeValueDataGetterMap()
     ELEM(GfVec2f),    ELEM(GfVec2h),    ELEM(GfVec2i),
     ELEM(GfVec3d),    ELEM(GfVec3f),    ELEM(GfVec3h),
     ELEM(GfVec3i),    ELEM(GfVec4d),    ELEM(GfVec4f),
-    ELEM(GfVec4h),    ELEM(GfVec4i),    ELEM(HdVec4f_2_10_10_10_REV),
+    ELEM(GfVec4h),    ELEM(GfVec4i),    ELEM(GfQuath),
+    ELEM(GfQuatf),    ELEM(GfQuatd),    ELEM(HdVec4f_2_10_10_10_REV),
     ELEM(bool),       ELEM(char),       ELEM(double),
     ELEM(float),      ELEM(int16_t),    ELEM(int32_t),
     ELEM(uint16_t),   ELEM(uint32_t),   ELEM(unsigned char),
@@ -190,6 +222,9 @@ static inline TupleTypeMap _MakeTupleTypeMap()
     {typeid(GfVec4f),                HdTypeFloatVec4           },
     {typeid(GfVec4h),                HdTypeHalfFloatVec4       },
     {typeid(GfVec4i),                HdTypeInt32Vec4           },
+    {typeid(GfQuath),                HdTypeHalfFloatVec4       },
+    {typeid(GfQuatf),                HdTypeFloatVec4           },
+    {typeid(GfQuatd),                HdTypeDoubleVec4          },
     {typeid(HdVec4f_2_10_10_10_REV), HdTypeInt32_2_10_10_10_REV},
     {typeid(bool),                   HdTypeBool                },
     {typeid(char),                   HdTypeInt8                },

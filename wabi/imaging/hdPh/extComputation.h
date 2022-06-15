@@ -44,6 +44,7 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 class HdPhExtComputation : public HdExtComputation
 {
  public:
+
   /// Construct a new ExtComputation identified by id.
   HDPH_API
   HdPhExtComputation(SdfPath const &id);
@@ -52,7 +53,9 @@ class HdPhExtComputation : public HdExtComputation
   ~HdPhExtComputation() override;
 
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   void Finalize(HdRenderParam *renderParam) override;
@@ -64,6 +67,7 @@ class HdPhExtComputation : public HdExtComputation
   }
 
  private:
+
   // No default construction or copying
   HdPhExtComputation() = delete;
   HdPhExtComputation(const HdPhExtComputation &) = delete;

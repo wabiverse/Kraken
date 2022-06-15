@@ -42,11 +42,7 @@ struct MemoryStream
 {
   typedef char Ch;  // byte
 
-  MemoryStream(const Ch *src, size_t size)
-    : src_(src),
-      begin_(src),
-      end_(src + size),
-      size_(size)
+  MemoryStream(const Ch *src, size_t size) : src_(src), begin_(src), end_(src + size), size_(size)
   {}
 
   Ch Peek() const

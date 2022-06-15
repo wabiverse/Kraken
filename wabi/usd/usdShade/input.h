@@ -48,6 +48,7 @@ class UsdShadeOutput;
 class UsdShadeInput
 {
  public:
+
   /// Default constructor returns an invalid Input.  Exists for the sake of
   /// container classes
   UsdShadeInput()
@@ -83,8 +84,7 @@ class UsdShadeInput
   }
 
   /// Convenience wrapper for the templated UsdAttribute::Get().
-  template<typename T>
-  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return GetAttr().Get(value, time);
   }
@@ -101,8 +101,7 @@ class UsdShadeInput
   /// \overload
   /// Set a value of the Input at \p time.
   ///
-  template<typename T>
-  bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return _attr.Set(value, time);
   }
@@ -516,6 +515,7 @@ class UsdShadeInput
   /// @}
 
  private:
+
   friend class UsdShadeConnectableAPI;
 
   // Constructor that creates a UsdShadeInput with the given name on the

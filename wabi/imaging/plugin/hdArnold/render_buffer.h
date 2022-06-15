@@ -37,6 +37,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldRenderBuffer : public HdRenderBuffer
 {
  public:
+
   HDARNOLD_API
   HdArnoldRenderBuffer(const SdfPath &id);
 
@@ -99,8 +100,7 @@ class HdArnoldRenderBuffer : public HdRenderBuffer
 
   /// Resolve the buffer so that reads reflect the latest writes.
   /// This buffer does not need any resolving.
-  void Resolve() override
-  {}
+  void Resolve() override {}
 
   /// Return whether the buffer is converged (whether the renderer is
   /// still adding samples or not).
@@ -160,6 +160,7 @@ class HdArnoldRenderBuffer : public HdRenderBuffer
   };
 
  private:
+
   /// Deallocates the data stored in the buffer.
   HDARNOLD_API
   void _Deallocate() override;

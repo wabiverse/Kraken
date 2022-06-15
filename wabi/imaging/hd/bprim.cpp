@@ -23,13 +23,11 @@
 //
 #include "wabi/imaging/hd/bprim.h"
 
-#include "wabi/imaging/hd/sceneDelegate.h"
-
 WABI_NAMESPACE_BEGIN
 
 HdBprim::HdBprim(SdfPath const &id) : _id(id) {}
 
-HdBprim::~HdBprim() {}
+HdBprim::~HdBprim() = default;
 
 void HdBprim::Finalize(HdRenderParam *renderParam) {}
 

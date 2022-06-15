@@ -59,9 +59,9 @@ class GfVec4d;
 class GfPlane
 {
  public:
+
   /// The default constructor leaves the plane parameters undefined.
-  GfPlane()
-  {}
+  GfPlane() {}
 
   /// This constructor sets this to the plane perpendicular to \p normal and
   /// at \p distance units from the origin. The passed-in normal is
@@ -175,8 +175,7 @@ class GfPlane
   /// halfspace.
   void Reorient(const GfVec3d &p)
   {
-    if (GetDistance(p) < 0)
-    {
+    if (GetDistance(p) < 0) {
       _normal = -_normal;
       _distance = -_distance;
     }
@@ -196,6 +195,7 @@ class GfPlane
   }
 
  private:
+
   /// The normal to the plane. Points in direction of half-space.
   GfVec3d _normal;
 

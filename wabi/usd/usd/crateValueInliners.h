@@ -40,13 +40,11 @@ namespace Usd_CrateValueInliners
   // Return true and set \p *dst if \p src can be exactly represented as a Dst
   // instance.  This only works for numeric types, and it checks range before
   // doing the conversion.
-  template<class Src, class Dst>
-  inline bool _IsExactlyRepresented(Src const &src, Dst *dst)
+  template<class Src, class Dst> inline bool _IsExactlyRepresented(Src const &src, Dst *dst)
   {
     Src min = static_cast<Src>(std::numeric_limits<Dst>::lowest());
     Src max = static_cast<Src>(std::numeric_limits<Dst>::max());
-    if (min <= src && src <= max && static_cast<Src>(static_cast<Dst>(src)) == src)
-    {
+    if (min <= src && src <= max && static_cast<Src>(static_cast<Dst>(src)) == src) {
       *dst = static_cast<Dst>(src);
       return true;
     }
@@ -54,31 +52,30 @@ namespace Usd_CrateValueInliners
   }
 
   // Base case templates.
-  template<class T>
-  bool _EncodeInline(T, ...)
+  template<class T> bool _EncodeInline(T, ...)
   {
     return false;
   }
-  template<class T>
-  void _DecodeInline(T *, ...)
-  {}
+  template<class T> void _DecodeInline(T *, ...) {}
 
   ////////////////////////////////////////////////////////////////////////
   // Inline double as float if possible.
   template<class FP>
-  typename std::enable_if<std::is_floating_point<FP>::value, bool>::type _EncodeInline(FP fp, uint32_t *ival)
+  typename std::enable_if<std::is_floating_point<FP>::value, bool>::type _EncodeInline(
+    FP fp,
+    uint32_t *ival)
   {
     // If fp is representable exactly as float, encode as inline float.
     float f;
-    if (_IsExactlyRepresented(fp, &f))
-    {
+    if (_IsExactlyRepresented(fp, &f)) {
       memcpy(ival, &f, sizeof(f));
       return true;
     }
     return false;
   }
   template<class FP>
-  typename std::enable_if<std::is_floating_point<FP>::value>::type _DecodeInline(FP *fp, uint32_t ival)
+  typename std::enable_if<std::is_floating_point<FP>::value>::type _DecodeInline(FP *fp,
+                                                                                 uint32_t ival)
   {
     float f;
     memcpy(&f, &ival, sizeof(f));
@@ -88,13 +85,13 @@ namespace Usd_CrateValueInliners
   ////////////////////////////////////////////////////////////////////////
   // Inline integral as int if possible.
   template<class INT>
-  typename std::enable_if<std::is_integral<INT>::value, bool>::type _EncodeInline(INT i, uint32_t *ival)
+  typename std::enable_if<std::is_integral<INT>::value, bool>::type _EncodeInline(INT i,
+                                                                                  uint32_t *ival)
   {
     // If i is in-range for (u)int32_t, encode as such.
     using int_t = typename std::conditional<std::is_signed<INT>::value, int32_t, uint32_t>::type;
     int_t rep;
-    if (_IsExactlyRepresented(i, &rep))
-    {
+    if (_IsExactlyRepresented(i, &rep)) {
       memcpy(ival, &rep, sizeof(rep));
       return true;
     }
@@ -118,8 +115,7 @@ namespace Usd_CrateValueInliners
     // inline it.
     static_assert(T::dimension <= 4, "Vec dimension cannot exceed 4.");
     int8_t ivec[T::dimension];
-    for (int i = 0; i != T::dimension; ++i)
-    {
+    for (int i = 0; i != T::dimension; ++i) {
       if (!_IsExactlyRepresented(vec[i], &ivec[i]))
         return false;
     }
@@ -132,8 +128,7 @@ namespace Usd_CrateValueInliners
   {
     int8_t ivec[T::dimension];
     memcpy(ivec, &in, sizeof(ivec));
-    for (int i = 0; i != T::dimension; ++i)
-    {
+    for (int i = 0; i != T::dimension; ++i) {
       (*vec)[i] = static_cast<typename T::ScalarType>(ivec[i]);
     }
   }
@@ -142,18 +137,17 @@ namespace Usd_CrateValueInliners
   // Inline GfMatrices when they are all zeros off the diagonal and the diagonal
   // entries are exactly represented by int8_t.
   template<class Matrix>
-  typename std::enable_if<GfIsGfMatrix<Matrix>::value, bool>::type _EncodeInline(Matrix m, uint32_t *out)
+  typename std::enable_if<GfIsGfMatrix<Matrix>::value, bool>::type _EncodeInline(Matrix m,
+                                                                                 uint32_t *out)
   {
     static_assert(Matrix::numRows == Matrix::numColumns, "Requires square matrices");
     static_assert(Matrix::numRows <= 4, "Matrix dimension cannot exceed 4");
 
     int8_t diag[Matrix::numRows];
-    for (int i = 0; i != Matrix::numRows; ++i)
-    {
-      for (int j = 0; j != Matrix::numColumns; ++j)
-      {
-        if (((i != j) && m[i][j] != 0) || ((i == j) && !_IsExactlyRepresented(m[i][j], &diag[i])))
-        {
+    for (int i = 0; i != Matrix::numRows; ++i) {
+      for (int j = 0; j != Matrix::numColumns; ++j) {
+        if (((i != j) && m[i][j] != 0) ||
+            ((i == j) && !_IsExactlyRepresented(m[i][j], &diag[i]))) {
           return false;
         }
       }
@@ -170,8 +164,7 @@ namespace Usd_CrateValueInliners
     int8_t diag[Matrix::numRows];
     memcpy(diag, &in, sizeof(diag));
     *m = Matrix(1);
-    for (int i = 0; i != Matrix::numRows; ++i)
-    {
+    for (int i = 0; i != Matrix::numRows; ++i) {
       (*m)[i][i] = static_cast<typename Matrix::ScalarType>(diag[i]);
     }
   }
@@ -180,8 +173,7 @@ namespace Usd_CrateValueInliners
   // Encode VtDictionary inline if it's empty.
   inline bool _EncodeInline(VtDictionary const &dict, uint32_t *ival)
   {
-    if (dict.empty())
-    {
+    if (dict.empty()) {
       *ival = 0;
       return true;
     }

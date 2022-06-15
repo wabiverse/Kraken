@@ -59,6 +59,7 @@ class HdCyclesRenderParam;
 class HdCyclesMesh final : public HdMesh
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdCyclesMesh")
 
   /**
@@ -100,6 +101,7 @@ class HdCyclesMesh final : public HdMesh
             TfToken const &reprToken) override;
 
  protected:
+
   void _InitializeNewCyclesMesh();
 
   /**
@@ -130,7 +132,10 @@ class HdCyclesMesh final : public HdMesh
    * @param uvs
    * @param interpolation
    */
-  void _AddUVSet(const TfToken &name, const VtValue &uvs, ccl::Scene *scene, HdInterpolation interpolation);
+  void _AddUVSet(const TfToken &name,
+                 const VtValue &uvs,
+                 ccl::Scene *scene,
+                 HdInterpolation interpolation);
 
   /**
    * @brief Add vertex/face normals (Not implemented)
@@ -172,6 +177,7 @@ class HdCyclesMesh final : public HdMesh
                        const SdfPath &id);
 
  private:
+
   struct PrimvarSource
   {
     VtValue data;
@@ -215,7 +221,9 @@ class HdCyclesMesh final : public HdMesh
   void _PopulateMotion(HdSceneDelegate *sceneDelegate, const SdfPath &id);
 
   void _PopulateTopology(HdSceneDelegate *sceneDelegate, const SdfPath &id);
-  void _PopulateVertices(HdSceneDelegate *sceneDelegate, const SdfPath &id, HdDirtyBits *dirtyBits);
+  void _PopulateVertices(HdSceneDelegate *sceneDelegate,
+                         const SdfPath &id,
+                         HdDirtyBits *dirtyBits);
   void _PopulateNormals(HdSceneDelegate *sceneDelegate, const SdfPath &id);
   void _PopulateTangents(HdSceneDelegate *sceneDelegate, const SdfPath &id, ccl::Scene *scene);
 
@@ -231,7 +239,10 @@ class HdCyclesMesh final : public HdMesh
                          const SdfPath &id,
                          HdDirtyBits *dirtyBits);
 
-  void _UpdateObject(ccl::Scene *scene, HdCyclesRenderParam *param, HdDirtyBits *dirtyBits, bool rebuildBvh);
+  void _UpdateObject(ccl::Scene *scene,
+                     HdCyclesRenderParam *param,
+                     HdDirtyBits *dirtyBits,
+                     bool rebuildBvh);
 
   /**
    * @brief Populate generated coordinates attribute

@@ -58,18 +58,16 @@ WABI_NAMESPACE_BEGIN
 class TraceDataBuffer
 {
  public:
+
   constexpr static size_t DefaultAllocSize = 1024;
 
   /// Constructor. The buffer will make allocations of \p allocSize.
   ///
-  TraceDataBuffer(size_t allocSize = DefaultAllocSize)
-    : _alloc(allocSize)
-  {}
+  TraceDataBuffer(size_t allocSize = DefaultAllocSize) : _alloc(allocSize) {}
 
   /// Makes a copy of \p value and returns a pointer to it.
   ///
-  template<typename T>
-  const T *StoreData(const T &value)
+  template<typename T> const T *StoreData(const T &value)
   {
     static_assert(std::is_copy_constructible<T>::value, "Must by copy constructible");
     static_assert(std::is_trivially_destructible<T>::value, "No destructors will be called");
@@ -88,14 +86,14 @@ class TraceDataBuffer
   }
 
  private:
+
   // Simple Allocator that only supports allocations, but not frees.
   // Allocated memory is tied to the lifetime of the allocator object.
   class Allocator
   {
    public:
-    Allocator(size_t blockSize)
-      : _desiredBlockSize(blockSize)
-    {}
+
+    Allocator(size_t blockSize) : _desiredBlockSize(blockSize) {}
     Allocator(Allocator &&) = default;
     Allocator &operator=(Allocator &&) = default;
 
@@ -106,8 +104,7 @@ class TraceDataBuffer
     {
       Byte *alignedNext = AlignPointer(_next, align);
       Byte *end = alignedNext + size;
-      if (ARCH_UNLIKELY(end > _blockEnd))
-      {
+      if (ARCH_UNLIKELY(end > _blockEnd)) {
         AllocateBlock(align, size);
         alignedNext = AlignPointer(_next, align);
         end = _next + size;
@@ -117,6 +114,7 @@ class TraceDataBuffer
     }
 
    private:
+
     using Byte = std::uint8_t;
 
     static Byte *AlignPointer(Byte *ptr, const size_t align)

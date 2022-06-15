@@ -81,6 +81,7 @@ class SdfAssetPath;
 class UsdShadeConnectableAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -90,16 +91,12 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// Equivalent to UsdShadeConnectableAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeConnectableAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdShadeConnectableAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdShadeConnectableAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeConnectableAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeConnectableAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdShadeConnectableAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDSHADE_API
@@ -124,6 +121,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   static UsdShadeConnectableAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -131,6 +129,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
@@ -140,9 +139,11 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -155,12 +156,14 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   // --(BEGIN CUSTOM CODE)--
 
  protected:
+
   /// Returns true if the given prim is compatible with this API schema,
   /// i.e. if it is a valid shader or a node-graph.
   USDSHADE_API
   bool _IsCompatible() const override;
 
  public:
+
   /// Returns true if the prim is a container.
   ///
   /// The underlying prim type may provide runtime behavior
@@ -213,7 +216,8 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// owned by a descendant of the node-graph owning the output.
   ///
   USDSHADE_API
-  static bool CanConnect(const UsdShadeOutput &output, const UsdAttribute &source = UsdAttribute());
+  static bool CanConnect(const UsdShadeOutput &output,
+                         const UsdAttribute &source = UsdAttribute());
 
   /// \overload
   USDSHADE_API
@@ -279,20 +283,22 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// UsdShadeConnectionSourceInfo to describe the upstream source
   /// \overload
   USDSHADE_API
-  static bool ConnectToSource(UsdAttribute const &shadingAttr,
-                              UsdShadeConnectableAPI const &source,
-                              TfToken const &sourceName,
-                              UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-                              SdfValueTypeName typeName = SdfValueTypeName());
+  static bool ConnectToSource(
+    UsdAttribute const &shadingAttr,
+    UsdShadeConnectableAPI const &source,
+    TfToken const &sourceName,
+    UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
+    SdfValueTypeName typeName = SdfValueTypeName());
 
   /// \deprecated
   /// \overload
   USDSHADE_API
-  static bool ConnectToSource(UsdShadeInput const &input,
-                              UsdShadeConnectableAPI const &source,
-                              TfToken const &sourceName,
-                              UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-                              SdfValueTypeName typeName = SdfValueTypeName())
+  static bool ConnectToSource(
+    UsdShadeInput const &input,
+    UsdShadeConnectableAPI const &source,
+    TfToken const &sourceName,
+    UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
+    SdfValueTypeName typeName = SdfValueTypeName())
   {
     return ConnectToSource(input.GetAttr(), source, sourceName, sourceType, typeName);
   }
@@ -300,11 +306,12 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// \deprecated
   /// \overload
   USDSHADE_API
-  static bool ConnectToSource(UsdShadeOutput const &output,
-                              UsdShadeConnectableAPI const &source,
-                              TfToken const &sourceName,
-                              UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
-                              SdfValueTypeName typeName = SdfValueTypeName())
+  static bool ConnectToSource(
+    UsdShadeOutput const &output,
+    UsdShadeConnectableAPI const &source,
+    TfToken const &sourceName,
+    UsdShadeAttributeType const sourceType = UsdShadeAttributeType::Output,
+    SdfValueTypeName typeName = SdfValueTypeName())
   {
     return ConnectToSource(output.GetAttr(), source, sourceName, sourceType, typeName);
   }
@@ -488,7 +495,8 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
   /// Returns the "raw" (authored) connected source paths for the given
   /// shading attribute.
   USDSHADE_API
-  static bool GetRawConnectedSourcePaths(UsdAttribute const &shadingAttr, SdfPathVector *sourcePaths);
+  static bool GetRawConnectedSourcePaths(UsdAttribute const &shadingAttr,
+                                         SdfPathVector *sourcePaths);
 
   /// \deprecated
   /// \overload
@@ -578,14 +586,16 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
 
   /// \overload
   USDSHADE_API
-  static bool DisconnectSource(UsdShadeInput const &input, UsdAttribute const &sourceAttr = UsdAttribute())
+  static bool DisconnectSource(UsdShadeInput const &input,
+                               UsdAttribute const &sourceAttr = UsdAttribute())
   {
     return DisconnectSource(input.GetAttr(), sourceAttr);
   }
 
   /// \overload
   USDSHADE_API
-  static bool DisconnectSource(UsdShadeOutput const &output, UsdAttribute const &sourceAttr = UsdAttribute())
+  static bool DisconnectSource(UsdShadeOutput const &output,
+                               UsdAttribute const &sourceAttr = UsdAttribute())
   {
     return DisconnectSource(output.GetAttr(), sourceAttr);
   }
@@ -644,8 +654,7 @@ class UsdShadeConnectableAPI : public UsdAPISchemaBase
 
   /// Return true if the schema type \p T has a connectableAPIBehavior
   /// registered, false otherwise.
-  template<typename T>
-  static bool HasConnectableAPI()
+  template<typename T> static bool HasConnectableAPI()
   {
     static_assert(std::is_base_of<UsdTyped, T>::value, "Provided type must derive UsdTyped.");
     return HasConnectableAPI(TfType::Find<T>());
@@ -767,7 +776,8 @@ struct UsdShadeConnectionSourceInfo
     // Note, for the source we only check that the prim is valid. We do not
     // verify that the prim is compatibel with UsdShadeConnectableAPI. This
     // makes it possible to target pure overs
-    return (sourceType != UsdShadeAttributeType::Invalid) && !sourceName.IsEmpty() && (bool)source.GetPrim();
+    return (sourceType != UsdShadeAttributeType::Invalid) && !sourceName.IsEmpty() &&
+           (bool)source.GetPrim();
   }
   explicit operator bool() const
   {

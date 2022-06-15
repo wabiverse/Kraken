@@ -107,15 +107,13 @@ bool ArchDebuggerIsAttached() ARCH_NOINLINE;
 /// \c ARCH_NOINLINE function attribute.
 #if defined(ARCH_COMPILER_GCC) || defined(ARCH_COMPILER_CLANG)
 #  define ARCH_DEBUGGER_TRAP \
-    do                       \
-    {                        \
+    do {                     \
       ArchDebuggerTrap();    \
       asm("");               \
     } while (0)
 #else
 #  define ARCH_DEBUGGER_TRAP \
-    do                       \
-    {                        \
+    do {                     \
       ArchDebuggerTrap();    \
     } while (0)
 #endif

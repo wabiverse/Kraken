@@ -32,6 +32,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 TF_REGISTRY_FUNCTION(TfType)
 {
   TfType::Define<HdRenderDelegate>();
@@ -181,6 +182,11 @@ bool HdRenderDelegate::IsPauseSupported() const
   return false;
 }
 
+bool HdRenderDelegate::IsPaused() const
+{
+  return false;
+}
+
 bool HdRenderDelegate::Pause()
 {
   return false;
@@ -196,9 +202,14 @@ bool HdRenderDelegate::IsStopSupported() const
   return false;
 }
 
-bool HdRenderDelegate::Stop()
+bool HdRenderDelegate::IsStopped() const
 {
-  return false;
+  return true;
+}
+
+bool HdRenderDelegate::Stop(bool blocking)
+{
+  return true;
 }
 
 bool HdRenderDelegate::Restart()

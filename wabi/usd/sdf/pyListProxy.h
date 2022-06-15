@@ -40,10 +40,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T>
-class SdfPyWrapListProxy
+template<class T> class SdfPyWrapListProxy
 {
  public:
+
   typedef T Type;
   typedef typename Type::TypePolicy TypePolicy;
   typedef typename Type::value_type value_type;
@@ -56,6 +56,7 @@ class SdfPyWrapListProxy
   }
 
  private:
+
   static void _Wrap()
   {
     using namespace boost::python;
@@ -122,19 +123,15 @@ class SdfPyWrapListProxy
 
     list result;
 
-    if (x._Validate())
-    {
-      try
-      {
+    if (x._Validate()) {
+      try {
         slice::range<typename Type::const_iterator> range = index.get_indicies(x.begin(), x.end());
-        for (; range.start != range.stop; range.start += range.step)
-        {
+        for (; range.start != range.stop; range.start += range.step) {
           result.append(*range.start);
         }
         result.append(*range.start);
       }
-      catch (const std::invalid_argument &)
-      {
+      catch (const std::invalid_argument &) {
         // Ignore.
       }
     }
@@ -147,26 +144,25 @@ class SdfPyWrapListProxy
     x[TfPyNormalizeIndex(index, x._GetSize(), true)] = value;
   }
 
-  static void _SetItemSlice(Type &x, const boost::python::slice &index, const value_vector_type &values)
+  static void _SetItemSlice(Type &x,
+                            const boost::python::slice &index,
+                            const value_vector_type &values)
   {
     using namespace boost::python;
 
-    if (!x._Validate())
-    {
+    if (!x._Validate()) {
       return;
     }
 
     // Get the range and the number of items in the slice.
     size_t start, step, count;
-    try
-    {
+    try {
       slice::range<typename Type::iterator> range = index.get_indicies(x.begin(), x.end());
       start = range.start - x.begin();
       step = range.step;
       count = 1 + (range.stop - range.start) / range.step;
     }
-    catch (const std::invalid_argument &)
-    {
+    catch (const std::invalid_argument &) {
       // Empty range.
       extract<int> e(index.start());
       start = e.check() ? TfPyNormalizeIndex(e(), x._GetSize(), true) : 0;
@@ -174,28 +170,22 @@ class SdfPyWrapListProxy
       count = 0;
     }
 
-    if (TfPyIsNone(index.step()))
-    {
+    if (TfPyIsNone(index.step())) {
       // Replace contiguous sequence with values.
       x._Edit(start, count, values);
-    } else
-    {
+    } else {
       // Replace exactly the selected items.
-      if (count != values.size())
-      {
+      if (count != values.size()) {
         TfPyThrowValueError(TfStringPrintf("attempt to assign sequence of size %zd "
                                            "to extended slice of size %zd",
                                            values.size(),
                                            count)
                               .c_str());
-      } else if (step == 1)
-      {
+      } else if (step == 1) {
         x._Edit(start, count, values);
-      } else
-      {
+      } else {
         SdfChangeBlock block;
-        for (size_t i = 0, j = start; i != count; j += step, ++i)
-        {
+        for (size_t i = 0, j = start; i != count; j += step, ++i) {
           x._Edit(j, 1, value_vector_type(1, values[i]));
         }
       }
@@ -211,10 +201,8 @@ class SdfPyWrapListProxy
   {
     using namespace boost::python;
 
-    if (x._Validate())
-    {
-      try
-      {
+    if (x._Validate()) {
+      try {
         // Get the range and the number of items in the slice.
         slice::range<typename Type::iterator> range = index.get_indicies(x.begin(), x.end());
         size_t start = range.start - x.begin();
@@ -222,21 +210,17 @@ class SdfPyWrapListProxy
         size_t count = 1 + (range.stop - range.start) / range.step;
 
         // Erase items.
-        if (step == 1)
-        {
+        if (step == 1) {
           x._Edit(start, count, value_vector_type());
-        } else
-        {
+        } else {
           SdfChangeBlock block;
           value_vector_type empty;
-          for (size_t j = start; count > 0; j += step - 1, --count)
-          {
+          for (size_t j = start; count > 0; j += step - 1, --count) {
             x._Edit(j, 1, empty);
           }
         }
       }
-      catch (const std::invalid_argument &)
-      {
+      catch (const std::invalid_argument &) {
         // Empty slice -- do nothing.
       }
     }
@@ -244,23 +228,19 @@ class SdfPyWrapListProxy
 
   static int _FindIndex(const Type &x, const value_type &value)
   {
-    if (x._Validate())
-    {
+    if (x._Validate()) {
       return static_cast<int>(x.Find(value));
-    } else
-    {
+    } else {
       return -1;
     }
   }
 
   static void _Insert(Type &x, int index, const value_type &value)
   {
-    if (index < 0)
-    {
+    if (index < 0) {
       index += x._GetSize();
     }
-    if (index < 0 || index > static_cast<int>(x._GetSize()))
-    {
+    if (index < 0 || index > static_cast<int>(x._GetSize())) {
       TfPyThrowIndexError("list index out of range");
     }
     x._Edit(index, 0, value_vector_type(1, value));

@@ -88,6 +88,7 @@ WABI_NAMESPACE_BEGIN
 class UsdUtilsSparseAttrValueWriter
 {
  public:
+
   /// The constructor initializes the data required for run-length encoding of
   /// time-samples. It also sets the default value of \p attr to
   /// \p defaultValue, if \p defaultValue is non-empty and different from the
@@ -142,6 +143,7 @@ class UsdUtilsSparseAttrValueWriter
   }
 
  private:
+
   // Helper method to initialize the sparse authoring scheme.
   void _InitializeSparseAuthoring(VtValue *defaultValue);
 
@@ -230,6 +232,7 @@ class UsdUtilsSparseAttrValueWriter
 class UsdUtilsSparseValueWriter
 {
  public:
+
   /// Sets the value of \p attr to \p value at time \p time. The value
   /// is written sparsely, i.e., the default value is authored only if
   /// it is different from the fallback value or the existing default value,
@@ -252,7 +255,9 @@ class UsdUtilsSparseValueWriter
 
   /// \overload
   template<typename T>
-  bool SetAttribute(const UsdAttribute &attr, T &value, const UsdTimeCode time = UsdTimeCode::Default())
+  bool SetAttribute(const UsdAttribute &attr,
+                    T &value,
+                    const UsdTimeCode time = UsdTimeCode::Default())
   {
     VtValue val = VtValue::Take(value);
     return SetAttribute(attr, &val, time);
@@ -272,6 +277,7 @@ class UsdUtilsSparseValueWriter
   std::vector<UsdUtilsSparseAttrValueWriter> GetSparseAttrValueWriters() const;
 
  private:
+
   // Templated helper method used by the two public SetAttribute() methods.
   template<typename T>
   bool _SetAttributeImpl(const UsdAttribute &attr, T &value, const UsdTimeCode time);
@@ -284,7 +290,8 @@ class UsdUtilsSparseValueWriter
     }
   };
 
-  using _AttrValueWriterMap = std::unordered_map<UsdAttribute, UsdUtilsSparseAttrValueWriter, _AttrHash>;
+  using _AttrValueWriterMap =
+    std::unordered_map<UsdAttribute, UsdUtilsSparseAttrValueWriter, _AttrHash>;
   _AttrValueWriterMap _attrValueWriterMap;
 };
 

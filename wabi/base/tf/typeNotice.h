@@ -37,6 +37,7 @@ WABI_NAMESPACE_BEGIN
 class TfTypeWasDeclaredNotice : public TfNotice
 {
  public:
+
   TfTypeWasDeclaredNotice(TfType t);
   virtual ~TfTypeWasDeclaredNotice();
 
@@ -47,6 +48,7 @@ class TfTypeWasDeclaredNotice : public TfNotice
   }
 
  private:
+
   TfType _type;
 };
 

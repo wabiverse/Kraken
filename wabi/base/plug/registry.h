@@ -346,6 +346,7 @@ class PlugRegistry : public TfWeakBase
   PlugRegistry &operator=(PlugRegistry const &) = delete;
 
  public:
+
   typedef PlugRegistry This;
   typedef std::vector<TfType> TypeVector;
 
@@ -395,8 +396,7 @@ class PlugRegistry : public TfWeakBase
   ///
   /// Note that additional plugins may be registered during program runtime.
   /// \sa \ref Plug_Discovery
-  template<class Base>
-  static TfType FindDerivedTypeByName(std::string const &typeName)
+  template<class Base> static TfType FindDerivedTypeByName(std::string const &typeName)
   {
     return FindDerivedTypeByName(TfType::Find<Base>(), typeName);
   }
@@ -423,8 +423,7 @@ class PlugRegistry : public TfWeakBase
   ///
   /// Note that additional plugins may be registered during program runtime.
   /// \sa \ref Plug_Discovery
-  template<class Base>
-  static void GetAllDerivedTypes(std::set<TfType> *result)
+  template<class Base> static void GetAllDerivedTypes(std::set<TfType> *result)
   {
     return GetAllDerivedTypes(TfType::Find<Base>(), result);
   }
@@ -456,6 +455,7 @@ class PlugRegistry : public TfWeakBase
   JsValue GetDataFromPluginMetaData(TfType type, const std::string &key) const;
 
  private:
+
   // Private ctor and dtor since this is a constructed as a singleton.
   PLUG_LOCAL
   PlugRegistry();
@@ -476,6 +476,7 @@ class PlugRegistry : public TfWeakBase
   friend class PlugPlugin;  // For _RegisterPlugins().
 
  private:
+
   TfHashSet<std::string, TfHash> _registeredPluginPaths;
 
   std::mutex _mutex;

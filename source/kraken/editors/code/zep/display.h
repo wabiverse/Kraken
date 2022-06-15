@@ -33,9 +33,8 @@ namespace Zep
   class ZepFont
   {
    public:
-    ZepFont(ZepDisplay &display)
-      : m_display(display)
-    {}
+
+    ZepFont(ZepDisplay &display) : m_display(display) {}
 
     // Implemented in API specific ways
     virtual void SetPixelHeight(int height) = 0;
@@ -53,6 +52,7 @@ namespace Zep
     virtual NVec2f GetCharSize(const uint8_t *pChar);
 
    protected:
+
     int m_pixelHeight;
     std::string m_filePath;
     bool m_charCacheDirty = true;
@@ -67,6 +67,7 @@ namespace Zep
   class ZepDisplay
   {
    public:
+
     virtual ~ZepDisplay(){};
     ZepDisplay(const NVec2f &pixelScale);
 
@@ -97,6 +98,7 @@ namespace Zep
     void Smaller();
 
    protected:
+
     bool m_bRebuildLayout = false;
     std::array<std::shared_ptr<ZepFont>, (int)ZepTextType::Count> m_fonts;
     std::shared_ptr<ZepFont> m_spDefaultFont;
@@ -106,9 +108,8 @@ namespace Zep
   class ZepFontNull : public ZepFont
   {
    public:
-    ZepFontNull(ZepDisplay &display)
-      : ZepFont(display)
-    {}
+
+    ZepFontNull(ZepDisplay &display) : ZepFont(display) {}
 
     virtual void SetPixelHeight(int val) override
     {
@@ -127,9 +128,8 @@ namespace Zep
   class ZepDisplayNull : public ZepDisplay
   {
    public:
-    ZepDisplayNull(const NVec2f &pixelScale)
-      : ZepDisplay(pixelScale)
-    {}
+
+    ZepDisplayNull(const NVec2f &pixelScale) : ZepDisplay(pixelScale) {}
 
     virtual void DrawLine(const NVec2f &start,
                           const NVec2f &end,
@@ -164,10 +164,8 @@ namespace Zep
 
     virtual ZepFont &GetFont(ZepTextType type) override
     {
-      if (m_fonts[(int)type] == nullptr)
-      {
-        if (m_spDefaultFont == nullptr)
-        {
+      if (m_fonts[(int)type] == nullptr) {
+        if (m_spDefaultFont == nullptr) {
           m_spDefaultFont = std::make_shared<ZepFontNull>(*this);
         }
         return *m_spDefaultFont;

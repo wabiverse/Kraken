@@ -59,6 +59,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceReporterBase);
 class TraceReporterBase : public TfRefBase, public TfWeakBase
 {
  public:
+
   using This = TraceReporterBase;
   using ThisPtr = TraceReporterBasePtr;
   using ThisRefPtr = TraceReporterBaseRefPtr;
@@ -75,6 +76,7 @@ class TraceReporterBase : public TfRefBase, public TfWeakBase
   TRACE_API bool SerializeProcessedCollections(std::ostream &ostr) const;
 
  protected:
+
   /// Removes all references to TraceCollections.
   TRACE_API void _Clear();
 
@@ -86,6 +88,7 @@ class TraceReporterBase : public TfRefBase, public TfWeakBase
   virtual void _ProcessCollection(const CollectionPtr &) = 0;
 
  private:
+
   DataSourcePtr _dataSource;
   tbb::concurrent_vector<CollectionPtr> _processedCollections;
 };

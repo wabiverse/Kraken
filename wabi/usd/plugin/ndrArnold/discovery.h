@@ -41,6 +41,7 @@ WABI_NAMESPACE_BEGIN
 class NdrArnoldDiscoveryPlugin : public NdrDiscoveryPlugin
 {
  public:
+
   using Context = NdrDiscoveryPluginContext;
 
   /// Creates an instance of NdrArnoldDiscoveryPlugin.

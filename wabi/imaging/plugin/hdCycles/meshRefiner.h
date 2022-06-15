@@ -53,6 +53,7 @@ class SdfPath;
 class HdCyclesMeshRefiner
 {
  public:
+
   virtual ~HdCyclesMeshRefiner();
 
   VtValue Refine(const TfToken &name,
@@ -64,9 +65,15 @@ class HdCyclesMeshRefiner
   virtual VtValue RefineConstantData(const TfToken &name,
                                      const TfToken &role,
                                      const VtValue &data) const = 0;
-  virtual VtValue RefineUniformData(const TfToken &name, const TfToken &role, const VtValue &data) const = 0;
-  virtual VtValue RefineVaryingData(const TfToken &name, const TfToken &role, const VtValue &data) const = 0;
-  virtual VtValue RefineVertexData(const TfToken &name, const TfToken &role, const VtValue &data) const = 0;
+  virtual VtValue RefineUniformData(const TfToken &name,
+                                    const TfToken &role,
+                                    const VtValue &data) const = 0;
+  virtual VtValue RefineVaryingData(const TfToken &name,
+                                    const TfToken &role,
+                                    const VtValue &data) const = 0;
+  virtual VtValue RefineVertexData(const TfToken &name,
+                                   const TfToken &role,
+                                   const VtValue &data) const = 0;
   virtual VtValue RefineFaceVaryingData(const TfToken &name,
                                         const TfToken &role,
                                         const VtValue &data) const = 0;
@@ -91,6 +98,7 @@ class HdCyclesMeshRefiner
   HdCyclesMeshRefiner &operator=(HdCyclesMeshRefiner &&) noexcept = delete;
 
  protected:
+
   HdCyclesMeshRefiner();
 
   HdMeshTopology m_triangulated_topology;
@@ -102,6 +110,7 @@ class HdCyclesMeshRefiner
 class HdBbMeshTopology : public HdMeshTopology
 {
  public:
+
   HdBbMeshTopology(const SdfPath &id, const HdMeshTopology &src, int refine_level);
 
   const SdfPath &GetId() const
@@ -114,6 +123,7 @@ class HdBbMeshTopology : public HdMeshTopology
   }
 
  private:
+
   const SdfPath m_id;
   std::unique_ptr<HdCyclesMeshRefiner> m_refiner;
 };
@@ -123,8 +133,7 @@ inline VtValue HdCyclesMeshRefiner::Refine(const TfToken &name,
                                            const VtValue &value,
                                            const HdInterpolation &interpolation) const
 {
-  switch (interpolation)
-  {
+  switch (interpolation) {
     case HdInterpolationConstant:
       return RefineConstantData(name, role, value);
     case HdInterpolationUniform:

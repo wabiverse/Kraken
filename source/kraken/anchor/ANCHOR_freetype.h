@@ -40,8 +40,8 @@ struct AnchorFontBuilderIO;
 enum AnchorFreeTypeBuilderFlags
 {
   AnchorFreeTypeBuilderFlags_NoHinting =
-    1 << 0,                                        // Disable hinting. This generally generates 'blurrier' bitmap glyphs when the glyph
-                                                   // are rendered in any of the anti-aliased modes.
+    1 << 0,  // Disable hinting. This generally generates 'blurrier' bitmap glyphs when the glyph
+             // are rendered in any of the anti-aliased modes.
   AnchorFreeTypeBuilderFlags_NoAutoHint = 1 << 1,  // Disable auto-hinter.
   AnchorFreeTypeBuilderFlags_ForceAutoHint =
     1 << 2,  // Indicates that the auto-hinter is preferred over the font's native hinter.
@@ -52,11 +52,12 @@ enum AnchorFreeTypeBuilderFlags
              // ClearType and Adobe's proprietary font renderer. This preserves inter-glyph
              // spacing in horizontal text.
   AnchorFreeTypeBuilderFlags_MonoHinting =
-    1 << 4,                                     // Strong hinting algorithm that should only be used for monochrome output.
-  AnchorFreeTypeBuilderFlags_Bold = 1 << 5,     // Styling: Should we artificially embolden the font?
-  AnchorFreeTypeBuilderFlags_Oblique = 1 << 6,  // Styling: Should we slant the font, emulating italic style?
+    1 << 4,  // Strong hinting algorithm that should only be used for monochrome output.
+  AnchorFreeTypeBuilderFlags_Bold = 1 << 5,  // Styling: Should we artificially embolden the font?
+  AnchorFreeTypeBuilderFlags_Oblique =
+    1 << 6,  // Styling: Should we slant the font, emulating italic style?
   AnchorFreeTypeBuilderFlags_Monochrome =
-    1 << 7,                                       // Disable anti-aliasing. Combine this with MonoHinting for best results!
+    1 << 7,  // Disable anti-aliasing. Combine this with MonoHinting for best results!
   AnchorFreeTypeBuilderFlags_LoadColor = 1 << 8,  // Enable FreeType color-layered glyphs
   AnchorFreeTypeBuilderFlags_Bitmap = 1 << 9      // Enable FreeType bitmap glyphs
 };
@@ -71,8 +72,8 @@ namespace AnchorFreeType
   ANCHOR_API const AnchorFontBuilderIO *GetBuilderForFreeType();
 
   // Override allocators. By default AnchorFreeType will use ANCHOR_ALLOC()/ANCHOR_FREE()
-  // However, as FreeType does lots of allocations we provide a way for the user to redirect it to a
-  // separate memory heap if desired.
+  // However, as FreeType does lots of allocations we provide a way for the user to redirect it to
+  // a separate memory heap if desired.
   ANCHOR_API void SetAllocatorFunctions(void *(*alloc_func)(size_t sz, void *user_data),
                                         void (*free_func)(void *ptr, void *user_data),
                                         void *user_data = NULL);

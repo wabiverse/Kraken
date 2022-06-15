@@ -35,8 +35,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T>
-class TfRefPtr;
+template<typename T> class TfRefPtr;
 
 /// \class TfRefCount
 /// \ingroup group_tf_Memory
@@ -72,18 +71,15 @@ class TfRefPtr;
 class TfRefCount
 {
  public:
+
   /// Initialize counter to one.
-  TfRefCount()
-    : _counter(1)
-  {}
+  TfRefCount() : _counter(1) {}
 
   /// Initialize counter to one.
   ///
   /// Even if you copy from a reference counter, you want the
   /// newly constructed counter to start at one.
-  TfRefCount(const TfRefCount &)
-    : _counter(1)
-  {}
+  TfRefCount(const TfRefCount &) : _counter(1) {}
 
   /// Returns counter's value.
   int Get() const
@@ -98,6 +94,7 @@ class TfRefCount
   }
 
  private:
+
   /// Decrements counter by \c 1, returning true if the result is 0.
   bool _DecrementAndTestIfZero() const
   {
@@ -111,9 +108,9 @@ class TfRefCount
   }
 
  private:
+
   mutable std::atomic<int> _counter;
-  template<typename T>
-  friend class TfRefPtr;
+  template<typename T> friend class TfRefPtr;
   friend struct Tf_RefPtr_UniqueChangedCounter;
   friend struct Tf_RefPtr_Counter;
 };

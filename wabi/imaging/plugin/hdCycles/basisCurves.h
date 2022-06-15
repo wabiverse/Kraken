@@ -56,6 +56,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesBasisCurves final : public HdBasisCurves
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Basis Curve object
    *
@@ -103,6 +104,7 @@ class HdCyclesBasisCurves final : public HdBasisCurves
   void Finalize(HdRenderParam *renderParam) override;
 
  protected:
+
   /**
    * @brief Initialize the given representation of this Rprim.
    * This is called prior to syncing the prim.
@@ -151,6 +153,7 @@ class HdCyclesBasisCurves final : public HdBasisCurves
   void _PopulateGenerated();
 
  protected:
+
   VtVec3fArray m_points;
   VtVec3fArray m_normals;
   VtFloatArray m_widths;
@@ -178,6 +181,7 @@ class HdCyclesBasisCurves final : public HdBasisCurves
   ccl::vector<ccl::Shader *> m_usedShaders;
 
  private:
+
   /**
    * @brief Populate the Cycles mesh representation from delegate's data
    */
@@ -215,6 +219,7 @@ class HdCyclesBasisCurves final : public HdBasisCurves
 class HdBbHairAttributeSource : public HdBbAttributeSource
 {
  public:
+
   HdBbHairAttributeSource(TfToken name,
                           const TfToken &role,
                           const VtValue &value,

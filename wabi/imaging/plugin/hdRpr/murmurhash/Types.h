@@ -45,23 +45,18 @@ struct ByteVec : public std::vector<uint8_t>
 
 template<typename hashtype, typename keytype>
 struct CollisionMap : public std::map<hashtype, std::vector<keytype>>
-{
-};
+{};
 
-template<typename hashtype>
-struct HashSet : public std::set<hashtype>
-{
-};
+template<typename hashtype> struct HashSet : public std::set<hashtype>
+{};
 
 //-----------------------------------------------------------------------------
 
-template<class T>
-class hashfunc
+template<class T> class hashfunc
 {
  public:
-  hashfunc(pfHash h)
-    : m_hash(h)
-  {}
+
+  hashfunc(pfHash h) : m_hash(h) {}
 
   inline void operator()(const void *key, const int len, const uint32_t seed, uint32_t *out)
   {
@@ -90,12 +85,9 @@ class hashfunc
 
 struct KeyCallback
 {
-  KeyCallback()
-    : m_count(0)
-  {}
+  KeyCallback() : m_count(0) {}
 
-  virtual ~KeyCallback()
-  {}
+  virtual ~KeyCallback() {}
 
   virtual void operator()(const void *key, int len)
   {
@@ -109,14 +101,11 @@ struct KeyCallback
 
 //----------
 
-template<typename hashtype>
-struct HashCallback : public KeyCallback
+template<typename hashtype> struct HashCallback : public KeyCallback
 {
   typedef std::vector<hashtype> hashvec;
 
-  HashCallback(pfHash hash, hashvec &hashes)
-    : m_hashes(hashes),
-      m_pfHash(hash)
+  HashCallback(pfHash hash, hashvec &hashes) : m_hashes(hashes), m_pfHash(hash)
   {
     m_hashes.clear();
   }
@@ -141,13 +130,13 @@ struct HashCallback : public KeyCallback
   //----------
 
  private:
+
   HashCallback &operator=(const HashCallback &);
 };
 
 //----------
 
-template<typename hashtype>
-struct CollisionCallback : public KeyCallback
+template<typename hashtype> struct CollisionCallback : public KeyCallback
 {
   typedef HashSet<hashtype> hashset;
   typedef CollisionMap<hashtype, ByteVec> collmap;
@@ -164,8 +153,7 @@ struct CollisionCallback : public KeyCallback
 
     m_pfHash(key, len, 0, &h);
 
-    if (m_collisions.count(h))
-    {
+    if (m_collisions.count(h)) {
       m_collmap[h].push_back(ByteVec(key, len));
     }
   }
@@ -177,27 +165,26 @@ struct CollisionCallback : public KeyCallback
   collmap &m_collmap;
 
  private:
+
   CollisionCallback &operator=(const CollisionCallback &c);
 };
 
 //-----------------------------------------------------------------------------
 
-template<int _bits>
-class Blob
+template<int _bits> class Blob
 {
  public:
+
   Blob()
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       bytes[i] = 0;
     }
   }
 
   Blob(int x)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       bytes[i] = 0;
     }
 
@@ -206,16 +193,14 @@ class Blob
 
   Blob(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       bytes[i] = k.bytes[i];
     }
   }
 
   Blob &operator=(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       bytes[i] = k.bytes[i];
     }
 
@@ -234,13 +219,11 @@ class Blob
 
     len = len > sizeof(bytes) ? sizeof(bytes) : len;
 
-    for (size_t i = 0; i < len; i++)
-    {
+    for (size_t i = 0; i < len; i++) {
       bytes[i] = k[i];
     }
 
-    for (size_t i = len; i < sizeof(bytes); i++)
-    {
+    for (size_t i = len; i < sizeof(bytes); i++) {
       bytes[i] = 0;
     }
   }
@@ -260,8 +243,7 @@ class Blob
 
   bool operator<(const Blob &k) const
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       if (bytes[i] < k.bytes[i])
         return true;
       if (bytes[i] > k.bytes[i])
@@ -273,8 +255,7 @@ class Blob
 
   bool operator==(const Blob &k) const
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       if (bytes[i] != k.bytes[i])
         return false;
     }
@@ -294,8 +275,7 @@ class Blob
   {
     Blob t;
 
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       t.bytes[i] = bytes[i] ^ k.bytes[i];
     }
 
@@ -304,8 +284,7 @@ class Blob
 
   Blob &operator^=(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       bytes[i] ^= k.bytes[i];
     }
 
@@ -319,8 +298,7 @@ class Blob
 
   Blob &operator&=(const Blob &k)
   {
-    for (size_t i = 0; i < sizeof(bytes); i++)
-    {
+    for (size_t i = 0; i < sizeof(bytes); i++) {
       bytes[i] &= k.bytes[i];
     }
   }
@@ -360,6 +338,7 @@ class Blob
   //----------
 
  private:
+
   uint8_t bytes[(_bits + 7) / 8];
 };
 

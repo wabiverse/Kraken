@@ -66,6 +66,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GlfTexture);
 class GlfTexture : public TfRefBase, public TfWeakBase
 {
  public:
+
   /// \class Binding
   ///
   /// A texture has one or more bindings which describe how the different
@@ -147,6 +148,7 @@ class GlfTexture : public TfRefBase, public TfWeakBase
   bool IsOriginLowerLeft() const;
 
  protected:
+
   GLF_API
   GlfTexture();
 
@@ -163,6 +165,7 @@ class GlfTexture : public TfRefBase, public TfWeakBase
   void _UpdateContentsID();
 
  private:
+
   size_t _memoryUsed;
   size_t _memoryRequested;
   size_t _contentsID;
@@ -172,6 +175,7 @@ class GlfTexture : public TfRefBase, public TfWeakBase
 class GlfTextureFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual GlfTextureRefPtr New(const TfToken &texturePath,
                                HioImage::ImageOriginLocation originLocation) const = 0;
 };

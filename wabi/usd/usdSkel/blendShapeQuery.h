@@ -53,6 +53,7 @@ class UsdSkelBindingAPI;
 class UsdSkelBlendShapeQuery
 {
  public:
+
   UsdSkelBlendShapeQuery() = default;
 
   USDSKEL_API UsdSkelBlendShapeQuery(const UsdSkelBindingAPI &binding);
@@ -180,6 +181,7 @@ class UsdSkelBlendShapeQuery
   std::string GetDescription() const;
 
  private:
+
   /// Object identifying a general subshape.
   struct _SubShape
   {
@@ -220,6 +222,7 @@ class UsdSkelBlendShapeQuery
     }
 
    private:
+
     unsigned _blendShapeIndex = 0;
     int _inbetweenIndex = 0;
     float _weight = 0;

@@ -23,11 +23,14 @@ class RprUsdMaterial;
 class HdRprMaterial final : public HdMaterial
 {
  public:
+
   HdRprMaterial(SdfPath const &id);
 
   ~HdRprMaterial() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
@@ -39,6 +42,7 @@ class HdRprMaterial final : public HdMaterial
   RprUsdMaterial const *GetRprMaterialObject() const;
 
  private:
+
   RprUsdMaterial *m_rprMaterial = nullptr;
 };
 

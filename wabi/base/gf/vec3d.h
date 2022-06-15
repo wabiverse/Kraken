@@ -56,8 +56,7 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec3d;
 
-template<>
-struct GfIsGfVec<class GfVec3d>
+template<> struct GfIsGfVec<class GfVec3d>
 {
   static const bool value = true;
 };
@@ -73,6 +72,7 @@ struct GfIsGfVec<class GfVec3d>
 class GfVec3d
 {
  public:
+
   /// Scalar element type and dimension.
   typedef double ScalarType;
   static const size_t dimension = 3;
@@ -81,20 +81,13 @@ class GfVec3d
   GfVec3d() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec3d(double value)
-    : _data{value, value, value}
-  {}
+  constexpr explicit GfVec3d(double value) : _data{value, value, value} {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec3d(double s0, double s1, double s2)
-    : _data{s0, s1, s2}
-  {}
+  constexpr GfVec3d(double s0, double s1, double s2) : _data{s0, s1, s2} {}
 
   /// Construct with pointer to values.
-  template<class Scl>
-  constexpr explicit GfVec3d(Scl const *p)
-    : _data{p[0], p[1], p[2]}
-  {}
+  template<class Scl> constexpr explicit GfVec3d(Scl const *p) : _data{p[0], p[1], p[2]} {}
 
   /// Implicitly convert from GfVec3f.
   GfVec3d(class GfVec3f const &other);
@@ -356,6 +349,7 @@ class GfVec3d
   void BuildOrthonormalFrame(GfVec3d *v1, GfVec3d *v2, double eps = GF_MIN_VECTOR_LENGTH) const;
 
  private:
+
   double _data[3];
 };
 

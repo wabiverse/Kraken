@@ -65,6 +65,7 @@ WABI_NAMESPACE_BEGIN
 class UsdAttributeQuery
 {
  public:
+
   /// Construct an invalid query object.
   USD_API
   UsdAttributeQuery();
@@ -82,7 +83,8 @@ class UsdAttributeQuery
   /// the prim \p prim. The objects in the returned vector will line up
   /// 1-to-1 with \p attrNames.
   USD_API
-  static std::vector<UsdAttributeQuery> CreateQueries(const UsdPrim &prim, const TfTokenVector &attrNames);
+  static std::vector<UsdAttributeQuery> CreateQueries(const UsdPrim &prim,
+                                                      const TfTokenVector &attrNames);
 
   // --------------------------------------------------------------------- //
   /// \name Query information
@@ -102,6 +104,7 @@ class UsdAttributeQuery
   }
 
  public:
+
   /// Returns \c true if the query object is valid, \c false otherwise.
   explicit operator bool() const
   {
@@ -120,8 +123,7 @@ class UsdAttributeQuery
   /// with this query at the requested UsdTimeCode \p time.
   ///
   /// \sa UsdAttribute::Get
-  template<typename T>
-  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     static_assert(SdfValueTypeTraits<T>::IsValueType, "T must be an SdfValueType.");
     return _Get(value, time);
@@ -239,12 +241,13 @@ class UsdAttributeQuery
   /// @}
 
  private:
+
   void _Initialize(const UsdAttribute &attr);
 
-  template<typename T>
-  USD_API bool _Get(T *value, UsdTimeCode time) const;
+  template<typename T> USD_API bool _Get(T *value, UsdTimeCode time) const;
 
  private:
+
   UsdAttribute _attr;
   UsdResolveInfo _resolveInfo;
 };

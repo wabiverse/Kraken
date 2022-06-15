@@ -33,6 +33,7 @@
 class AnchorWindowManager
 {
  public:
+
   /**
    * Constructor.
    */
@@ -131,6 +132,7 @@ class AnchorWindowManager
   bool getAnyModifiedState();
 
  protected:
+
   /** The list of windows managed */
   std::vector<AnchorISystemWindow *> m_windows;
 

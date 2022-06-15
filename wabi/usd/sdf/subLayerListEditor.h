@@ -42,11 +42,13 @@ SDF_DECLARE_HANDLES(SdfLayer);
 class Sdf_SubLayerListEditor : public Sdf_VectorListEditor<SdfSubLayerTypePolicy>
 {
  public:
+
   Sdf_SubLayerListEditor(const SdfLayerHandle &owner);
 
   virtual ~Sdf_SubLayerListEditor();
 
  private:
+
   typedef Sdf_VectorListEditor<SdfSubLayerTypePolicy> Parent;
 
   virtual void _OnEdit(SdfListOpType op,

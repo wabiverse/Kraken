@@ -171,6 +171,7 @@ struct HdArnoldConfig
   std::string osl_includepath;  ///< OSL includepath.
 
  private:
+
   /// Constructor for reading the values from the environment variables.
   HDARNOLD_API
   HdArnoldConfig();

@@ -1,50 +1,44 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HD_PRIM_GATHER_H
 #define WABI_IMAGING_HD_PRIM_GATHER_H
 
-#include "wabi/imaging/hd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
 
 #include "wabi/usd/sdf/path.h"
 
-#include <tbb/blocked_range.h>
-#include <tbb/enumerable_thread_specific.h>
 #include <vector>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/blocked_range.h>
 
 WABI_NAMESPACE_BEGIN
 
 class HdPrimGather final
 {
  public:
+
   typedef bool (*FilterPredicateFn)(const SdfPath &path, const void *param);
 
   HdPrimGather() = default;
@@ -138,18 +132,19 @@ class HdPrimGather final
   /// If the rootPath wasn't found or an error occurred, that
   /// otherwise produces an invalid range. The method returns false.
   HD_API
-  bool SubtreeAsRange(const SdfPathVector &paths, const SdfPath &rootPath, size_t *start, size_t *end);
+  bool SubtreeAsRange(const SdfPathVector &paths,
+                      const SdfPath &rootPath,
+                      size_t *start,
+                      size_t *end);
 
  private:
+
   struct _PathFilter
   {
     SdfPath _path;
     bool _includePath;  // false = exclude path
 
-    _PathFilter(const SdfPath &path, bool includePath)
-      : _path(path),
-        _includePath(includePath)
-    {}
+    _PathFilter(const SdfPath &path, bool includePath) : _path(path), _includePath(includePath) {}
 
     bool operator>(const _PathFilter &other) const
     {
@@ -167,21 +162,26 @@ class HdPrimGather final
     size_t _start;
     size_t _end;  // Inclusive
 
-    _Range(size_t start, size_t end)
-      : _start(start),
-        _end(end)
-    {}
+    _Range(size_t start, size_t end) : _start(start), _end(end) {}
   };
   typedef std::vector<_Range> _RangeArray;
   typedef tbb::enumerable_thread_specific<_RangeArray> _ConcurrentRangeArray;
   typedef tbb::blocked_range<size_t> _ConcurrentRange;
 
+
   _PathFilterArray _filterList;
   _RangeArray _gatheredRanges;
   _ConcurrentRangeArray _resultRanges;
 
-  size_t _FindLowerBound(const SdfPathVector &paths, size_t start, size_t end, const SdfPath &path) const;
-  size_t _FindUpperBound(const SdfPathVector &paths, size_t start, size_t end, const SdfPath &path) const;
+
+  size_t _FindLowerBound(const SdfPathVector &paths,
+                         size_t start,
+                         size_t end,
+                         const SdfPath &path) const;
+  size_t _FindUpperBound(const SdfPathVector &paths,
+                         size_t start,
+                         size_t end,
+                         const SdfPath &path) const;
 
   void _FilterRange(const SdfPathVector &paths, size_t start, size_t end, bool include);
 
@@ -213,6 +213,7 @@ class HdPrimGather final
   HdPrimGather(const HdPrimGather &) = delete;
   HdPrimGather &operator=(const HdPrimGather &) = delete;
 };
+
 
 WABI_NAMESPACE_END
 

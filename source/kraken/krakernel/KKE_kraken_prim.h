@@ -57,6 +57,7 @@ typedef bool (*KrakenPrimInitFunction)(KrakenPrim *prim);
 class KrakenPrimRegistry : public TfWeakBase
 {
  public:
+
   KrakenPrimRegistry();
 
   static KrakenPrimRegistry &GetInstance();
@@ -65,6 +66,7 @@ class KrakenPrimRegistry : public TfWeakBase
 
 
  private:
+
   void WaitUntilInitialized();
   std::vector<TfType> GetTypesThatMayHaveRegisteredFunctions(const TfType &type) const;
   bool LoadPluginForType(const TfType &type) const;
@@ -73,6 +75,7 @@ class KrakenPrimRegistry : public TfWeakBase
 
 
  private:
+
   using RWMutex = tbb::queuing_rw_mutex;
   mutable RWMutex m_mutex;
 
@@ -85,10 +88,10 @@ class KrakenPrimRegistry : public TfWeakBase
 /**
  * Register the init function with Kraken. */
 
-template<class PrimType>
-inline void RegisterKrakenInitFunction(const KrakenPrimInitFunction &fn)
+template<class PrimType> inline void RegisterKrakenInitFunction(const KrakenPrimInitFunction &fn)
 {
-  static_assert(std::is_base_of<KrakenPrim, PrimType>::value, "Prim type must derive from KrakenPrim");
+  static_assert(std::is_base_of<KrakenPrim, PrimType>::value,
+                "Prim type must derive from KrakenPrim");
 
   RegisterKrakenInitFunction(TfType::Find<PrimType>(), fn);
 }

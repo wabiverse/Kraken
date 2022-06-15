@@ -70,6 +70,7 @@ class SdfAssetPath;
 class UsdPhysicsDriveAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -190,6 +191,7 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
   static UsdPhysicsDriveAPI Apply(const UsdPrim &prim, const TfToken &name);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -197,6 +199,7 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -206,9 +209,11 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TYPE
   // --------------------------------------------------------------------- //
@@ -231,9 +236,11 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateTypeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateTypeAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MAXFORCE
   // --------------------------------------------------------------------- //
@@ -257,9 +264,11 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateMaxForceAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateMaxForceAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TARGETPOSITION
   // --------------------------------------------------------------------- //
@@ -285,6 +294,7 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TARGETVELOCITY
   // --------------------------------------------------------------------- //
@@ -310,6 +320,7 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DAMPING
   // --------------------------------------------------------------------- //
@@ -331,9 +342,11 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateDampingAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateDampingAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // STIFFNESS
   // --------------------------------------------------------------------- //
@@ -359,6 +372,7 @@ class UsdPhysicsDriveAPI : public UsdAPISchemaBase
                                    bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

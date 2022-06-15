@@ -47,6 +47,7 @@ class VtValue;
 class PcpDynamicFileFormatInterface
 {
  public:
+
   /// Empty virtual destructor to prevent build errors with some compilers.
   PCP_API
   virtual ~PcpDynamicFileFormatInterface();
@@ -84,10 +85,11 @@ class PcpDynamicFileFormatInterface
   /// by the call to ComposeFieldsForFileFormatArguments when the payload arc
   /// was computed.
   PCP_API
-  virtual bool CanFieldChangeAffectFileFormatArguments(const TfToken &field,
-                                                       const VtValue &oldValue,
-                                                       const VtValue &newValue,
-                                                       const VtValue &dependencyContextData) const = 0;
+  virtual bool CanFieldChangeAffectFileFormatArguments(
+    const TfToken &field,
+    const VtValue &oldValue,
+    const VtValue &newValue,
+    const VtValue &dependencyContextData) const = 0;
 };
 
 WABI_NAMESPACE_END

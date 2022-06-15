@@ -35,8 +35,7 @@ void calcBias(pfHash hash, std::vector<int> &counts, int reps, Rand &r)
   keytype K;
   hashtype A, B;
 
-  for (int irep = 0; irep < reps; irep++)
-  {
+  for (int irep = 0; irep < reps; irep++) {
     if (irep % (reps / 10) == 0)
       printf(".");
 
@@ -46,14 +45,12 @@ void calcBias(pfHash hash, std::vector<int> &counts, int reps, Rand &r)
 
     int *cursor = &counts[0];
 
-    for (int iBit = 0; iBit < keybits; iBit++)
-    {
+    for (int iBit = 0; iBit < keybits; iBit++) {
       flipbit(&K, keybytes, iBit);
       hash(&K, keybytes, 0, &B);
       flipbit(&K, keybytes, iBit);
 
-      for (int iOut = 0; iOut < hashbits; iOut++)
-      {
+      for (int iOut = 0; iOut < hashbits; iOut++) {
         int bitA = getbit(&A, hashbytes, iOut);
         int bitB = getbit(&B, hashbytes, iOut);
 
@@ -65,8 +62,7 @@ void calcBias(pfHash hash, std::vector<int> &counts, int reps, Rand &r)
 
 //-----------------------------------------------------------------------------
 
-template<typename keytype, typename hashtype>
-bool AvalancheTest(pfHash hash, const int reps)
+template<typename keytype, typename hashtype> bool AvalancheTest(pfHash hash, const int reps)
 {
   Rand r(48273);
 
@@ -92,8 +88,7 @@ bool AvalancheTest(pfHash hash, const int reps)
 
   printf(" worst bias is %f%%", b * 100.0);
 
-  if (b > AVALANCHE_FAIL)
-  {
+  if (b > AVALANCHE_FAIL) {
     printf(" !!!!! ");
     result = false;
   }
@@ -127,10 +122,8 @@ void BicTest(pfHash hash,
   keytype key;
   hashtype h1, h2;
 
-  for (int irep = 0; irep < reps; irep++)
-  {
-    if (verbose)
-    {
+  for (int irep = 0; irep < reps; irep++) {
+    if (verbose) {
       if (irep % (reps / 10) == 0)
         printf(".");
     }
@@ -144,8 +137,7 @@ void BicTest(pfHash hash,
     hashtype d = h1 ^ h2;
 
     for (int out1 = 0; out1 < hashbits; out1++)
-      for (int out2 = 0; out2 < hashbits; out2++)
-      {
+      for (int out2 = 0; out2 < hashbits; out2++) {
         if (out1 == out2)
           continue;
 
@@ -160,12 +152,9 @@ void BicTest(pfHash hash,
 
   maxBias = 0;
 
-  for (int out1 = 0; out1 < hashbits; out1++)
-  {
-    for (int out2 = 0; out2 < hashbits; out2++)
-    {
-      if (out1 == out2)
-      {
+  for (int out1 = 0; out1 < hashbits; out1++) {
+    for (int out2 = 0; out2 < hashbits; out2++) {
+      if (out1 == out2) {
         if (verbose)
           printf("\\");
         continue;
@@ -173,8 +162,7 @@ void BicTest(pfHash hash,
 
       double bias = 0;
 
-      for (int b = 0; b < 4; b++)
-      {
+      for (int b = 0; b < 4; b++) {
         double b2 = double(bins[(out1 * hashbits + out2) * 4 + b]) / double(reps / 2);
         b2 = fabs(b2 * 2 - 1);
 
@@ -182,15 +170,13 @@ void BicTest(pfHash hash,
           bias = b2;
       }
 
-      if (bias > maxBias)
-      {
+      if (bias > maxBias) {
         maxBias = bias;
         maxA = out1;
         maxB = out2;
       }
 
-      if (verbose)
-      {
+      if (verbose) {
         if (bias < 0.01)
           printf(".");
         else if (bias < 0.05)
@@ -209,8 +195,7 @@ void BicTest(pfHash hash,
 
 //----------
 
-template<typename keytype, typename hashtype>
-bool BicTest(pfHash hash, const int reps)
+template<typename keytype, typename hashtype> bool BicTest(pfHash hash, const int reps)
 {
   const int keybytes = sizeof(keytype);
   const int keybits = keybytes * 8;
@@ -220,8 +205,7 @@ bool BicTest(pfHash hash, const int reps)
   int maxA = 0;
   int maxB = 0;
 
-  for (int i = 0; i < keybits; i++)
-  {
+  for (int i = 0; i < keybits; i++) {
     if (i % (keybits / 10) == 0)
       printf(".");
 
@@ -230,8 +214,7 @@ bool BicTest(pfHash hash, const int reps)
 
     BicTest<keytype, hashtype>(hash, i, reps, bias, a, b, true);
 
-    if (bias > maxBias)
-    {
+    if (bias > maxBias) {
       maxBias = bias;
       maxK = i;
       maxA = a;
@@ -273,15 +256,13 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
 
   std::vector<int> bins(keybits * pagesize, 0);
 
-  for (int keybit = 0; keybit < keybits; keybit++)
-  {
+  for (int keybit = 0; keybit < keybits; keybit++) {
     if (keybit % (keybits / 10) == 0)
       printf(".");
 
     int *page = &bins[keybit * pagesize];
 
-    for (int irep = 0; irep < reps; irep++)
-    {
+    for (int irep = 0; irep < reps; irep++) {
       r.rand_p(&key, keybytes);
       hash(&key, keybytes, 0, &h1);
       flipbit(key, keybit);
@@ -290,8 +271,7 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
       hashtype d = h1 ^ h2;
 
       for (int out1 = 0; out1 < hashbits - 1; out1++)
-        for (int out2 = out1 + 1; out2 < hashbits; out2++)
-        {
+        for (int out2 = out1 + 1; out2 < hashbits; out2++) {
           int *b = &page[(out1 * hashbits + out2) * 4];
 
           uint32_t x = getbit(d, out1) | (getbit(d, out2) << 1);
@@ -303,22 +283,18 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
 
   printf("\n");
 
-  for (int out1 = 0; out1 < hashbits - 1; out1++)
-  {
-    for (int out2 = out1 + 1; out2 < hashbits; out2++)
-    {
+  for (int out1 = 0; out1 < hashbits - 1; out1++) {
+    for (int out2 = out1 + 1; out2 < hashbits; out2++) {
       if (verbose)
         printf("(%3d,%3d) - ", out1, out2);
 
-      for (int keybit = 0; keybit < keybits; keybit++)
-      {
+      for (int keybit = 0; keybit < keybits; keybit++) {
         int *page = &bins[keybit * pagesize];
         int *bins = &page[(out1 * hashbits + out2) * 4];
 
         double bias = 0;
 
-        for (int b = 0; b < 4; b++)
-        {
+        for (int b = 0; b < 4; b++) {
           double b2 = double(bins[b]) / double(reps / 2);
           b2 = fabs(b2 * 2 - 1);
 
@@ -326,16 +302,14 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
             bias = b2;
         }
 
-        if (bias > maxBias)
-        {
+        if (bias > maxBias) {
           maxBias = bias;
           maxK = keybit;
           maxA = out1;
           maxB = out2;
         }
 
-        if (verbose)
-        {
+        if (verbose) {
           if (bias < 0.01)
             printf(".");
           else if (bias < 0.05)
@@ -353,8 +327,7 @@ void BicTest3(pfHash hash, const int reps, bool verbose = true)
         printf("\n");
     }
 
-    if (verbose)
-    {
+    if (verbose) {
       for (int i = 0; i < keybits + 12; i++)
         printf("-");
       printf("\n");
@@ -387,17 +360,14 @@ void BicTest2(pfHash hash, const int reps, bool verbose = true)
   hashtype h1, h2;
 
   for (int out1 = 0; out1 < hashbits - 1; out1++)
-    for (int out2 = out1 + 1; out2 < hashbits; out2++)
-    {
+    for (int out2 = out1 + 1; out2 < hashbits; out2++) {
       if (verbose)
         printf("(%3d,%3d) - ", out1, out2);
 
-      for (int keybit = 0; keybit < keybits; keybit++)
-      {
+      for (int keybit = 0; keybit < keybits; keybit++) {
         int bins[4] = {0, 0, 0, 0};
 
-        for (int irep = 0; irep < reps; irep++)
-        {
+        for (int irep = 0; irep < reps; irep++) {
           r.rand_p(&key, keybytes);
           hash(&key, keybytes, 0, &h1);
           flipbit(key, keybit);
@@ -412,8 +382,7 @@ void BicTest2(pfHash hash, const int reps, bool verbose = true)
 
         double bias = 0;
 
-        for (int b = 0; b < 4; b++)
-        {
+        for (int b = 0; b < 4; b++) {
           double b2 = double(bins[b]) / double(reps / 2);
           b2 = fabs(b2 * 2 - 1);
 
@@ -421,16 +390,14 @@ void BicTest2(pfHash hash, const int reps, bool verbose = true)
             bias = b2;
         }
 
-        if (bias > maxBias)
-        {
+        if (bias > maxBias) {
           maxBias = bias;
           maxK = keybit;
           maxA = out1;
           maxB = out2;
         }
 
-        if (verbose)
-        {
+        if (verbose) {
           if (bias < 0.05)
             printf(".");
           else if (bias < 0.10)

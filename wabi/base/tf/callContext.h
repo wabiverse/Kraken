@@ -44,11 +44,13 @@
 WABI_NAMESPACE_BEGIN
 
 /// \hideinitializer
-#define TF_CALL_CONTEXT TfCallContext(__ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, __ARCH_PRETTY_FUNCTION__)
+#define TF_CALL_CONTEXT \
+  TfCallContext(__ARCH_FILE__, __ARCH_FUNCTION__, __LINE__, __ARCH_PRETTY_FUNCTION__)
 
 class TfCallContext
 {
  public:
+
   constexpr TfCallContext()
     : _file(nullptr),
       _function(nullptr),
@@ -58,7 +60,10 @@ class TfCallContext
       _hidden(false)
   {}
 
-  constexpr TfCallContext(char const *file, char const *function, size_t line, char const *prettyFunction)
+  constexpr TfCallContext(char const *file,
+                          char const *function,
+                          size_t line,
+                          char const *prettyFunction)
     : _file(file),
       _function(function),
       _line(line),
@@ -115,6 +120,7 @@ class TfCallContext
   }
 
  private:
+
   char const *_file;
   char const *_function;
   size_t _line;

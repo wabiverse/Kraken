@@ -48,11 +48,14 @@ struct HdPrman_Context;
 class HdPrmanLightFilter final : public HdSprim
 {
  public:
+
   HdPrmanLightFilter(SdfPath const &id, TfToken const &lightFilterType);
   virtual ~HdPrmanLightFilter();
 
   /// Synchronizes state from the delegate to this object.
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the minimal set of dirty bits to place in the
   /// change tracker for use in the first sync of this prim.
@@ -70,6 +73,7 @@ class HdPrmanLightFilter final : public HdSprim
   void Finalize(HdRenderParam *renderParam) override;
 
  private:
+
   void _ResetLightFilter(HdPrman_Context *context);
 
   const TfToken _hdLightFilterType;

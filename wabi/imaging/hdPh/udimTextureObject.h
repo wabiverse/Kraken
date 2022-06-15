@@ -54,6 +54,7 @@ HDPH_API bool HdPhIsSupportedUdimTexture(std::string const &imageFilePath);
 class HdPhUdimTextureObject final : public HdPhTextureObject
 {
  public:
+
   HDPH_API
   HdPhUdimTextureObject(const HdPhTextureIdentifier &textureId,
                         HdPh_TextureObjectRegistry *textureObjectRegistry);
@@ -86,6 +87,7 @@ class HdPhUdimTextureObject final : public HdPhTextureObject
   HdTextureType GetTextureType() const override;
 
  protected:
+
   HDPH_API
   void _Load() override;
 
@@ -93,6 +95,7 @@ class HdPhUdimTextureObject final : public HdPhTextureObject
   void _Commit() override;
 
  private:
+
   std::vector<uint8_t> _textureData;
   std::vector<float> _layoutData;
 
@@ -107,8 +110,7 @@ class HdPhUdimTextureObject final : public HdPhTextureObject
   void _DestroyTextures();
 };
 
-template<>
-struct HdPh_TypedTextureObjectHelper<HdTextureType::Udim>
+template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Udim>
 {
   using type = HdPhUdimTextureObject;
 };

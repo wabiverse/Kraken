@@ -35,7 +35,8 @@ WABI_NAMESPACE_BEGIN
 
 TF_DECLARE_WEAK_AND_REF_PTRS(UsdUsdFileFormat);
 
-#define USD_USD_FILE_FORMAT_TOKENS ((Id, "usd"))((Version, "1.0"))((Target, "usd"))((FormatArg, "format"))
+#define USD_USD_FILE_FORMAT_TOKENS \
+  ((Id, "usd"))((Version, "1.0"))((Target, "usd"))((FormatArg, "format"))
 
 TF_DECLARE_PUBLIC_TOKENS(UsdUsdFileFormatTokens, USD_API, USD_USD_FILE_FORMAT_TOKENS);
 
@@ -55,6 +56,7 @@ TF_DECLARE_PUBLIC_TOKENS(UsdUsdFileFormatTokens, USD_API, USD_USD_FILE_FORMAT_TO
 class UsdUsdFileFormat : public SdfFileFormat
 {
  public:
+
   using SdfFileFormat::FileFormatArguments;
 
   USD_API
@@ -64,7 +66,9 @@ class UsdUsdFileFormat : public SdfFileFormat
   virtual bool CanRead(const std::string &file) const override;
 
   USD_API
-  virtual bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const override;
+  virtual bool Read(SdfLayer *layer,
+                    const std::string &resolvedPath,
+                    bool metadataOnly) const override;
 
   USD_API
   virtual bool WriteToFile(const SdfLayer &layer,
@@ -81,7 +85,9 @@ class UsdUsdFileFormat : public SdfFileFormat
                              const std::string &comment = std::string()) const override;
 
   USD_API
-  virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
+  virtual bool WriteToStream(const SdfSpecHandle &spec,
+                             std::ostream &out,
+                             size_t indent) const override;
 
   /// Returns the value of the "format" argument to be used in the
   /// FileFormatArguments when exporting or saving the given layer.
@@ -92,9 +98,11 @@ class UsdUsdFileFormat : public SdfFileFormat
   static TfToken GetUnderlyingFormatForLayer(const SdfLayer &layer);
 
  protected:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
  private:
+
   UsdUsdFileFormat();
   virtual ~UsdUsdFileFormat();
 

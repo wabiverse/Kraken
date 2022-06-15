@@ -68,10 +68,7 @@ using HdPhShaderCodeSharedPtr = std::shared_ptr<class HdPhShaderCode>;
 /// context.
 struct HdxPickTaskParams
 {
-  HdxPickTaskParams()
-    : cullStyle(HdCullStyleNothing),
-      enableSceneMaterials(true)
-  {}
+  HdxPickTaskParams() : cullStyle(HdCullStyleNothing), enableSceneMaterials(true) {}
 
   HdCullStyle cullStyle;
   bool enableSceneMaterials;
@@ -175,6 +172,7 @@ struct HdxPickTaskContextParams
 class HdxPickTask : public HdTask
 {
  public:
+
   HDX_API
   HdxPickTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -204,6 +202,7 @@ class HdxPickTask : public HdTask
   }
 
  private:
+
   HdxPickTaskParams _params;
   HdxPickTaskContextParams _contextParams;
   TfTokenVector _renderTags;
@@ -239,6 +238,7 @@ class HdxPickTask : public HdTask
 class HdxPickResult
 {
  public:
+
   // Pick result takes a tuple of ID buffers:
   // - (primId, instanceId, elementId, edgeId, pointId)
   // along with some geometric buffers:
@@ -307,6 +307,7 @@ class HdxPickResult
   void ResolveUnique(HdxPickHitVector *allHits) const;
 
  private:
+
   bool _ResolveHit(int index, int x, int y, float z, HdxPickHit *hit) const;
   size_t _GetHash(int index) const;
   bool _IsValidHit(int index) const;

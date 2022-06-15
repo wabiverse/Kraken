@@ -37,10 +37,10 @@ RAPIDJSON_NAMESPACE_BEGIN
     \tparam Allocator type for allocating memory buffer.
     \note implements Stream concept
 */
-template<typename Encoding, typename Allocator = CrtAllocator>
-class GenericStringBuffer
+template<typename Encoding, typename Allocator = CrtAllocator> class GenericStringBuffer
 {
  public:
+
   typedef typename Encoding::Ch Ch;
 
   GenericStringBuffer(Allocator *allocator = 0, size_t capacity = kDefaultCapacity)
@@ -48,9 +48,7 @@ class GenericStringBuffer
   {}
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
-  GenericStringBuffer(GenericStringBuffer &&rhs)
-    : stack_(std::move(rhs.stack_))
-  {}
+  GenericStringBuffer(GenericStringBuffer &&rhs) : stack_(std::move(rhs.stack_)) {}
   GenericStringBuffer &operator=(GenericStringBuffer &&rhs)
   {
     if (&rhs != this)
@@ -67,8 +65,7 @@ class GenericStringBuffer
   {
     *stack_.template PushUnsafe<Ch>() = c;
   }
-  void Flush()
-  {}
+  void Flush() {}
 
   void Clear()
   {
@@ -117,6 +114,7 @@ class GenericStringBuffer
   mutable internal::Stack<Allocator> stack_;
 
  private:
+
   // Prohibit copy constructor & assignment operator.
   GenericStringBuffer(const GenericStringBuffer &);
   GenericStringBuffer &operator=(const GenericStringBuffer &);
@@ -138,8 +136,7 @@ inline void PutUnsafe(GenericStringBuffer<Encoding, Allocator> &stream, typename
 }
 
 //! Implement specialized version of PutN() with memset() for better performance.
-template<>
-inline void PutN(GenericStringBuffer<UTF8<>> &stream, char c, size_t n)
+template<> inline void PutN(GenericStringBuffer<UTF8<>> &stream, char c, size_t n)
 {
   std::memset(stream.stack_.Push<char>(n), c, n * sizeof(c));
 }

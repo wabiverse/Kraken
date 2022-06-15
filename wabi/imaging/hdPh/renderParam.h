@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhRenderParam final : public HdRenderParam
 {
  public:
+
   HdPhRenderParam();
   ~HdPhRenderParam() override;
 
@@ -83,6 +84,7 @@ class HdPhRenderParam final : public HdRenderParam
   }
 
  private:
+
   std::atomic_uint _drawBatchesVersion;
   std::atomic_uint _materialTagsVersion;
   bool _needsGarbageCollection;  // Doesn't need to be atomic since parallel

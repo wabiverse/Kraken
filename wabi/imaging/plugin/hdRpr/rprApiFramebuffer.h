@@ -24,6 +24,7 @@ WABI_NAMESPACE_BEGIN
 class HdRprApiFramebuffer
 {
  public:
+
   static constexpr uint32_t kNumChannels = 4;
 
   HdRprApiFramebuffer(rpr::Context *context, uint32_t width, uint32_t height);
@@ -53,10 +54,12 @@ class HdRprApiFramebuffer
   }
 
  protected:
+
   HdRprApiFramebuffer() = default;
   void Delete();
 
  protected:
+
   rpr::Context *m_context;
   rpr::FrameBuffer *m_rprFb;
   uint32_t m_width;
@@ -64,6 +67,7 @@ class HdRprApiFramebuffer
   rpr::Aov m_aov;
 
  private:
+
   void Create(uint32_t width, uint32_t height);
 };
 

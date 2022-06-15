@@ -59,6 +59,7 @@ class HdRenderBuffer;
 class HdxTaskController final
 {
  public:
+
   HDX_API
   HdxTaskController(HdRenderIndex *renderIndex, SdfPath const &controllerId);
   HDX_API
@@ -267,6 +268,7 @@ class HdxTaskController final
   void SetEnablePresentation(bool enabled);
 
  private:
+
   ///
   /// This class is not intended to be copied.
   ///
@@ -297,7 +299,8 @@ class HdxTaskController final
   void _SetCameraFramingForTasks();
   void _UpdateAovDimensions(GfVec2i const &dimensions);
 
-  void _SetBlendStateForMaterialTag(TfToken const &materialTag, HdxRenderTaskParams *renderParams) const;
+  void _SetBlendStateForMaterialTag(TfToken const &materialTag,
+                                    HdxRenderTaskParams *renderParams) const;
 
   // Render graph topology control.
   bool _ShadowsEnabled() const;
@@ -319,7 +322,9 @@ class HdxTaskController final
   void _SetParameters(SdfPath const &pathName, GlfSimpleLight const &light);
   GlfSimpleLight _GetLightAtId(size_t const &pathIdx);
   void _RemoveLightSprim(size_t const &pathIdx);
-  void _ReplaceLightSprim(size_t const &pathIdx, GlfSimpleLight const &light, SdfPath const &pathName);
+  void _ReplaceLightSprim(size_t const &pathIdx,
+                          GlfSimpleLight const &light,
+                          SdfPath const &pathName);
 
   // A private scene delegate member variable backs the tasks and the free cam
   // this controller generates. To keep _Delegate simple, the containing class
@@ -327,19 +332,18 @@ class HdxTaskController final
   class _Delegate : public HdSceneDelegate
   {
    public:
+
     _Delegate(HdRenderIndex *parentIndex, SdfPath const &delegateID)
       : HdSceneDelegate(parentIndex, delegateID)
     {}
     ~_Delegate() override = default;
 
     // HdxTaskController set/get interface
-    template<typename T>
-    void SetParameter(SdfPath const &id, TfToken const &key, T const &value)
+    template<typename T> void SetParameter(SdfPath const &id, TfToken const &key, T const &value)
     {
       _valueCacheMap[id][key] = value;
     }
-    template<typename T>
-    T GetParameter(SdfPath const &id, TfToken const &key) const
+    template<typename T> T GetParameter(SdfPath const &id, TfToken const &key) const
     {
       VtValue vParams;
       _ValueCache vCache;
@@ -350,8 +354,7 @@ class HdxTaskController final
     bool HasParameter(SdfPath const &id, TfToken const &key) const
     {
       _ValueCache vCache;
-      if (TfMapLookup(_valueCacheMap, id, &vCache) && vCache.count(key) > 0)
-      {
+      if (TfMapLookup(_valueCacheMap, id, &vCache) && vCache.count(key) > 0) {
         return true;
       }
       return false;
@@ -366,6 +369,7 @@ class HdxTaskController final
     TfTokenVector GetTaskRenderTags(SdfPath const &taskId) override;
 
    private:
+
     using _ValueCache = TfHashMap<TfToken, VtValue, TfToken::HashFunctor>;
     using _ValueCacheMap = TfHashMap<SdfPath, _ValueCache, SdfPath::Hash>;
     _ValueCacheMap _valueCacheMap;

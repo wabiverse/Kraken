@@ -61,6 +61,7 @@ bool HgiVulkanIsMaxFPSEnabled();
 class HgiVulkan final : public Hgi
 {
  public:
+
   HGIVULKAN_API
   HgiVulkan();
 
@@ -128,7 +129,8 @@ class HgiVulkan final : public Hgi
   void DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) override;
 
   HGIVULKAN_API
-  HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) override;
+  HgiGraphicsPipelineHandle CreateGraphicsPipeline(
+    HgiGraphicsPipelineDesc const &pipeDesc) override;
 
   HGIVULKAN_API
   void DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) override;
@@ -170,8 +172,7 @@ class HgiVulkan final : public Hgi
   /// Invalidates the resource handle and places the object in the garbage
   /// collector vector for future destruction.
   /// This is helpful to avoid destroying GPU resources still in-flight.
-  template<class T, class H>
-  void TrashObject(H *handle, std::vector<T *> *collector)
+  template<class T, class H> void TrashObject(H *handle, std::vector<T *> *collector)
   {
     T *object = static_cast<T *>(handle->Get());
     HgiVulkanDevice *device = object->GetDevice();
@@ -182,10 +183,12 @@ class HgiVulkan final : public Hgi
   }
 
  protected:
+
   HGIVULKAN_API
   bool _SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiVulkan &operator=(const HgiVulkan &) = delete;
   HgiVulkan(const HgiVulkan &) = delete;
 

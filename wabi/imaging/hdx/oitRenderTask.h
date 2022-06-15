@@ -43,6 +43,7 @@ using HdPhRenderPassShaderSharedPtr = std::shared_ptr<HdPhRenderPassShader>;
 class HdxOitRenderTask : public HdxRenderTask
 {
  public:
+
   HDX_API
   HdxOitRenderTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -58,11 +59,13 @@ class HdxOitRenderTask : public HdxRenderTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   HdxOitRenderTask() = delete;
   HdxOitRenderTask(const HdxOitRenderTask &) = delete;
   HdxOitRenderTask &operator=(const HdxOitRenderTask &) = delete;

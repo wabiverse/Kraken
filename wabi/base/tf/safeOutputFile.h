@@ -59,6 +59,7 @@ class TfSafeOutputFile
   TfSafeOutputFile &operator=(TfSafeOutputFile const &) = delete;
 
  public:
+
   TfSafeOutputFile() = default;
 
   TfSafeOutputFile(TfSafeOutputFile &&other)
@@ -114,6 +115,7 @@ class TfSafeOutputFile
   TF_API bool IsOpenForUpdate() const;
 
  private:
+
   FILE *_file = nullptr;
   std::string _targetFileName;
   std::string _tempFileName;

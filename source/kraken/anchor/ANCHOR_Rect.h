@@ -29,6 +29,7 @@
 class AnchorRect
 {
  public:
+
   /**
    * Constructs a rectangle with the given values.
    * @param l: requested left coordinate of the rectangle.
@@ -45,8 +46,7 @@ class AnchorRect
   /**
    * Destructor.
    */
-  virtual ~AnchorRect()
-  {}
+  virtual ~AnchorRect() {}
 
   /**
    * Access to rectangle width.
@@ -82,7 +82,8 @@ class AnchorRect
   /**
    * Grows (or shrinks the rectangle).
    * The method avoids negative insets making the rectangle invalid
-   * @param i: The amount of offset given to each extreme (negative values shrink the rectangle). */
+   * @param i: The amount of offset given to each extreme (negative values shrink the rectangle).
+   */
   virtual void inset(AnchorS32 i);
 
   /**
@@ -210,20 +211,17 @@ inline void AnchorRect::wrapPoint(AnchorS32 &x, AnchorS32 &y, AnchorS32 ofs, eAn
   AnchorS32 h = getHeight();
 
   /* highly unlikely but avoid eternal loop */
-  if (w - ofs * 2 <= 0 || h - ofs * 2 <= 0)
-  {
+  if (w - ofs * 2 <= 0 || h - ofs * 2 <= 0) {
     return;
   }
 
-  if (axis & ANCHOR_GrabAxisX)
-  {
+  if (axis & ANCHOR_GrabAxisX) {
     while (x - ofs < m_l)
       x += w - (ofs * 2);
     while (x + ofs > m_r)
       x -= w - (ofs * 2);
   }
-  if (axis & ANCHOR_GrabAxisY)
-  {
+  if (axis & ANCHOR_GrabAxisY) {
     while (y - ofs < m_t)
       y += h - (ofs * 2);
     while (y + ofs > m_b)

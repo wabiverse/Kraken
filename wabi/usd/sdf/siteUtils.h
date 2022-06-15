@@ -59,8 +59,7 @@ inline bool SdfHasField(const SdfSite &site, const TfToken &field)
   return site.layer->HasField(site.path, field);
 }
 
-template<class T>
-inline bool SdfHasField(const SdfSite &site, const TfToken &field, T *value)
+template<class T> inline bool SdfHasField(const SdfSite &site, const TfToken &field, T *value)
 {
   return site.layer->HasField(site.path, field, value);
 }

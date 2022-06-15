@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class HgiMetalConversions final
 {
  public:
+
   //
   // Hgi to Metal conversions
   //

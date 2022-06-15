@@ -36,10 +36,15 @@ WABI_NAMESPACE_BEGIN
 class HdPhGLUtils
 {
  public:
+
   /// Reads the content of VBO back to VtArray.
   /// The \p vboOffset is expressed in bytes.
   HDPH_API
-  static VtValue ReadBuffer(uint64_t vbo, HdTupleType tupleType, int vboOffset, int stride, int numElements);
+  static VtValue ReadBuffer(uint64_t vbo,
+                            HdTupleType tupleType,
+                            int vboOffset,
+                            int stride,
+                            int numElements);
 };
 
 /// \class HdPhBufferRelocator
@@ -49,6 +54,7 @@ class HdPhGLUtils
 class HdPhBufferRelocator
 {
  public:
+
   HdPhBufferRelocator(HgiBufferHandle const &srcBuffer, HgiBufferHandle const &dstBuffer)
     : _srcBuffer(srcBuffer),
       _dstBuffer(dstBuffer)
@@ -64,6 +70,7 @@ class HdPhBufferRelocator
   void Commit(class HgiBlitCmds *blitCmds);
 
  private:
+
   struct _CopyUnit
   {
     _CopyUnit(ptrdiff_t read, ptrdiff_t write, ptrdiff_t size)
@@ -74,8 +81,7 @@ class HdPhBufferRelocator
 
     bool Concat(_CopyUnit const &next)
     {
-      if (readOffset + copySize == next.readOffset && writeOffset + copySize == next.writeOffset)
-      {
+      if (readOffset + copySize == next.readOffset && writeOffset + copySize == next.writeOffset) {
         copySize += next.copySize;
         return true;
       }

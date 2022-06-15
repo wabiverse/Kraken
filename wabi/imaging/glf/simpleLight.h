@@ -52,6 +52,7 @@ WABI_NAMESPACE_BEGIN
 class GlfSimpleLight final
 {
  public:
+
   GLF_API
   GlfSimpleLight(GfVec4f const &position = GfVec4f(0.0, 0.0, 0.0, 1.0));
   GLF_API
@@ -194,6 +195,7 @@ class GlfSimpleLight final
   bool operator!=(GlfSimpleLight const &other) const;
 
  private:
+
   GLF_API
   friend std::ostream &operator<<(std::ostream &out, const GlfSimpleLight &v);
   GfVec4f _ambient;

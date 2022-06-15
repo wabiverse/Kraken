@@ -21,21 +21,19 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/points.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 HdPoints::HdPoints(SdfPath const &id) : HdRprim(id)
 {
   /*NOTHING*/
 }
 
-HdPoints::~HdPoints()
-{
-  /*NOTHING*/
-}
+HdPoints::~HdPoints() = default;
 
 /* virtual */
 TfTokenVector const &HdPoints::GetBuiltinPrimvarNames() const

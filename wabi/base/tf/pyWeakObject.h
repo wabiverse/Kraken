@@ -47,6 +47,7 @@ typedef TfWeakPtr<struct Tf_PyWeakObject> Tf_PyWeakObjectPtr;
 struct Tf_PyWeakObject : public TfWeakBase
 {
  public:
+
   typedef Tf_PyWeakObject This;
 
   static Tf_PyWeakObjectPtr GetOrCreate(boost::python::object const &obj);
@@ -54,6 +55,7 @@ struct Tf_PyWeakObject : public TfWeakBase
   void Delete();
 
  private:
+
   explicit Tf_PyWeakObject(boost::python::object const &obj);
 
   boost::python::handle<> _weakRef;

@@ -46,15 +46,12 @@ WABI_NAMESPACE_BEGIN
 class ArResolvedPath
 {
  public:
+
   /// Construct an ArResolvedPath holding the given \p resolvedPath.
-  explicit ArResolvedPath(const std::string &resolvedPath)
-    : _resolvedPath(resolvedPath)
-  {}
+  explicit ArResolvedPath(const std::string &resolvedPath) : _resolvedPath(resolvedPath) {}
 
   /// \overload
-  explicit ArResolvedPath(std::string &&resolvedPath)
-    : _resolvedPath(std::move(resolvedPath))
-  {}
+  explicit ArResolvedPath(std::string &&resolvedPath) : _resolvedPath(std::move(resolvedPath)) {}
 
   ArResolvedPath() = default;
 
@@ -164,11 +161,11 @@ class ArResolvedPath
   }
 
  private:
+
   std::string _resolvedPath;
 };
 
-template<class HashState>
-void TfHashAppend(HashState &h, const ArResolvedPath &p)
+template<class HashState> void TfHashAppend(HashState &h, const ArResolvedPath &p)
 {
   h.Append(p.GetPathString());
 }

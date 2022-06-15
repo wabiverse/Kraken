@@ -46,12 +46,15 @@ class HdSceneDelegate;
 class HdPrmanCamera final : public HdCamera
 {
  public:
+
   HdPrmanCamera(SdfPath const &id);
   ~HdPrmanCamera() override;
 
   /// Synchronizes state from the delegate to this object.
   HDPRMAN_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns true if any physical camera parameter was updated during Sync,
   /// and reset the internal tracking state.
@@ -73,6 +76,7 @@ class HdPrmanCamera final : public HdCamera
   void SetRileyCameraParams(RtParamList &camParams, RtParamList &projParams) const;
 
  private:
+
   HdTimeSampleArray<GfMatrix4d, HDPRMAN_MAX_TIME_SAMPLES> _sampleXforms;
 
   bool _dirtyParams;

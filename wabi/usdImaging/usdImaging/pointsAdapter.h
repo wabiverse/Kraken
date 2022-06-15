@@ -40,11 +40,10 @@ WABI_NAMESPACE_BEGIN
 class UsdImagingPointsAdapter : public UsdImagingGprimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingPointsAdapter()
-    : UsdImagingGprimAdapter()
-  {}
+  UsdImagingPointsAdapter() : UsdImagingGprimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingPointsAdapter() override;
@@ -63,10 +62,11 @@ class UsdImagingPointsAdapter : public UsdImagingGprimAdapter
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDIMAGING_API
@@ -97,6 +97,7 @@ class UsdImagingPointsAdapter : public UsdImagingGprimAdapter
               VtIntArray *outIndices) const override;
 
  protected:
+
   USDIMAGING_API
   bool _IsBuiltinPrimvar(TfToken const &primvarName) const override;
 };

@@ -54,11 +54,9 @@ namespace Zep
     str << std::hex << &region << "(" << region.name << ") -> ";
 
     str << "RC: " << region.rect << ", pParent: " << std::hex << region.pParent;
-    if (!region.children.empty())
-    {
+    if (!region.children.empty()) {
       str << std::endl;
-      for (auto &child : region.children)
-      {
+      for (auto &child : region.children) {
         indent++;
         str << *child;
         indent--;

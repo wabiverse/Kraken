@@ -56,6 +56,7 @@ bool HgiDX3DIsMaxFPSEnabled();
 class HgiDX3D final : public Hgi
 {
  public:
+
   HGIDX3D_API
   HgiDX3D();
 
@@ -114,7 +115,8 @@ class HgiDX3D final : public Hgi
   void DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) override;
 
   HGIDX3D_API
-  HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) override;
+  HgiGraphicsPipelineHandle CreateGraphicsPipeline(
+    HgiGraphicsPipelineDesc const &pipeDesc) override;
 
   HGIDX3D_API
   void DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) override;
@@ -135,10 +137,12 @@ class HgiDX3D final : public Hgi
   void EndFrame() override;
 
  protected:
+
   HGIDX3D_API
   bool _SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiDX3D &operator=(const HgiDX3D &) = delete;
   HgiDX3D(const HgiDX3D &) = delete;
 

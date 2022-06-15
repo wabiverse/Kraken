@@ -58,6 +58,7 @@ WABI_NAMESPACE_BEGIN
 class GfSize3
 {
  public:
+
   /// Default constructor initializes components to zero
   GfSize3()
   {
@@ -221,6 +222,7 @@ class GfSize3
   }
 
  private:
+
   size_t _vec[3];
 };
 

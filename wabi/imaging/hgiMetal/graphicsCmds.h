@@ -52,6 +52,7 @@ struct HgiGraphicsCmdsDesc;
 class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalGraphicsCmds() override;
 
@@ -112,6 +113,7 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API
@@ -121,6 +123,7 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiMetalGraphicsCmds() = delete;
   HgiMetalGraphicsCmds &operator=(const HgiMetalGraphicsCmds &) = delete;
   HgiMetalGraphicsCmds(const HgiMetalGraphicsCmds &) = delete;

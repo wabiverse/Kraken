@@ -74,6 +74,7 @@ bool UsdPhysicsMassUnitsAre(double authoredUnits, double standardUnits, double e
 class UsdPhysicsMassUnits
 {
  public:
+
   static constexpr double grams = 0.001;
   static constexpr double kilograms = 1.0;
   static constexpr double slugs = 14.5939;

@@ -31,6 +31,7 @@ class HdRprApi;
 class HdRprDelegate final : public HdRenderDelegate
 {
  public:
+
   HdRprDelegate(HdRenderSettingsMap const &renderSettings);
   ~HdRprDelegate() override;
 
@@ -44,13 +45,15 @@ class HdRprDelegate final : public HdRenderDelegate
   HdRenderParam *GetRenderParam() const override;
   HdResourceRegistrySharedPtr GetResourceRegistry() const override;
 
-  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
+                                         HdRprimCollection const &collection) override;
 
   HdInstancer *CreateInstancer(HdSceneDelegate *delegate,
                                SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL) override;
   void DestroyInstancer(HdInstancer *instancer) override;
 
-  HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId HDRPR_INSTANCER_ID_ARG_DECL) override;
+  HdRprim *CreateRprim(TfToken const &typeId,
+                       SdfPath const &rprimId HDRPR_INSTANCER_ID_ARG_DECL) override;
   void DestroyRprim(HdRprim *rPrim) override;
 
   HdSprim *CreateSprim(TfToken const &typeId, SdfPath const &sprimId) override;
@@ -85,6 +88,7 @@ class HdRprDelegate final : public HdRenderDelegate
   void SetDrivers(HdDriverVector const &drivers) override;
 
  private:
+
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;
   static const TfTokenVector SUPPORTED_SPRIM_TYPES;
   static const TfTokenVector SUPPORTED_BPRIM_TYPES;

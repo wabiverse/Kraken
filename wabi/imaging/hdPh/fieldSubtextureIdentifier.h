@@ -36,6 +36,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhOpenVDBAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextureIdentifier
 {
  public:
+
   /// C'tor
   ///
   /// fieldName corresponds to the gridName in the OpenVDB file.
@@ -50,6 +51,7 @@ class HdPhOpenVDBAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextur
   ~HdPhOpenVDBAssetSubtextureIdentifier() override;
 
  protected:
+
   HDPH_API
   ID _Hash() const override;
 };
@@ -63,6 +65,7 @@ class HdPhOpenVDBAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextur
 class HdPhField3DAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextureIdentifier
 {
  public:
+
   /// C'tor
   ///
   /// fieldName corresponds (e.g., density) to the
@@ -90,10 +93,12 @@ class HdPhField3DAssetSubtextureIdentifier final : public HdPhFieldBaseSubtextur
   ~HdPhField3DAssetSubtextureIdentifier() override;
 
  protected:
+
   HDPH_API
   ID _Hash() const override;
 
  private:
+
   TfToken _fieldPurpose;
 };
 

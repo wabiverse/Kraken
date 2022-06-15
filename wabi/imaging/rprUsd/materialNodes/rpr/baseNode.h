@@ -30,6 +30,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsd_BaseRuntimeNode : public RprUsd_MaterialNode
 {
  public:
+
   RprUsd_BaseRuntimeNode(rpr::MaterialNodeType type, RprUsd_MaterialBuilderContext *ctx);
 
   ~RprUsd_BaseRuntimeNode() override = default;
@@ -40,6 +41,7 @@ class RprUsd_BaseRuntimeNode : public RprUsd_MaterialNode
   VtValue GetOutput(TfToken const &outputId) override;
 
  protected:
+
   rpr::MaterialNodeType m_type;
   RprUsd_MaterialBuilderContext *m_ctx;
   std::shared_ptr<rpr::MaterialNode> m_rprNode;

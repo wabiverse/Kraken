@@ -104,6 +104,7 @@ struct HdCommandDescriptor
 
 using HdCommandDescriptors = std::vector<HdCommandDescriptor>;
 
+
 WABI_NAMESPACE_END
 
 #endif  // WABI_IMAGING_HD_COMMAND_H

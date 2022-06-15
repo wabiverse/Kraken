@@ -50,8 +50,8 @@ WABI_NAMESPACE_BEGIN
 class UsdSkelBinding
 {
  public:
-  UsdSkelBinding()
-  {}
+
+  UsdSkelBinding() {}
 
   UsdSkelBinding(const UsdSkelSkeleton &skel, const VtArray<UsdSkelSkinningQuery> &skinningQueries)
     : _skel(skel),
@@ -71,6 +71,7 @@ class UsdSkelBinding
   }
 
  private:
+
   UsdSkelSkeleton _skel;
   VtArray<UsdSkelSkinningQuery> _skinningQueries;
 };

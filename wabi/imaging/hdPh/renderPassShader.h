@@ -49,6 +49,7 @@ using HdRenderPassAovBindingVector = std::vector<struct HdRenderPassAovBinding>;
 class HdPhRenderPassShader : public HdPhShaderCode
 {
  public:
+
   HDPH_API
   HdPhRenderPassShader();
   HDPH_API
@@ -110,6 +111,7 @@ class HdPhRenderPassShader : public HdPhShaderCode
                               HdRenderIndex *const renderIndex);
 
  private:
+
   TfToken _glslfxFile;
   std::unique_ptr<HioGlslfx> _glslfx;
   mutable size_t _hash;

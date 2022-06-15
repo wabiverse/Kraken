@@ -39,6 +39,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesRenderBuffer : public HdRenderBuffer
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Render Buffer object
    *
@@ -150,6 +151,7 @@ class HdCyclesRenderBuffer : public HdRenderBuffer
                 uint8_t const *data);
 
  protected:
+
   /**
    * @brief Deallocate memory allocated by the render buffer
    * TODO: Implement this
@@ -157,6 +159,7 @@ class HdCyclesRenderBuffer : public HdRenderBuffer
   void _Deallocate() override;
 
  private:
+
   unsigned int m_width;
   unsigned int m_height;
   HdFormat m_format;

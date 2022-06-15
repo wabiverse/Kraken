@@ -34,22 +34,23 @@ WABI_NAMESPACE_BEGIN
 
 /// \class UsdImagingDataSourcePointsPrim
 ///
-/// A prim data source representing a UsdGeomPoints prim. 
+/// A prim data source representing a UsdGeomPoints prim.
 ///
 class UsdImagingDataSourcePointsPrim : public UsdImagingDataSourceGprim
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourcePointsPrim);
+ public:
 
-private:
-    UsdImagingDataSourcePointsPrim(
-        const SdfPath &sceneIndexPath,
-        UsdPrim usdPrim,
-        const UsdImagingDataSourceStageGlobals &stageGlobals);
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourcePointsPrim);
+
+ private:
+
+  UsdImagingDataSourcePointsPrim(const SdfPath &sceneIndexPath,
+                                 UsdPrim usdPrim,
+                                 const UsdImagingDataSourceStageGlobals &stageGlobals);
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourcePointsPrim);
 
 WABI_NAMESPACE_END
 
-#endif // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_POINTS_H
+#endif  // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_POINTS_H

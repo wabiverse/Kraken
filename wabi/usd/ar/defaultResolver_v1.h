@@ -74,6 +74,7 @@ WABI_NAMESPACE_BEGIN
 class ArDefaultResolver : public ArResolver
 {
  public:
+
   AR_API
   ArDefaultResolver();
 
@@ -98,7 +99,8 @@ class ArDefaultResolver : public ArResolver
   virtual void ConfigureResolverForAsset(const std::string &path) override;
 
   AR_API
-  virtual std::string AnchorRelativePath(const std::string &anchorPath, const std::string &path) override;
+  virtual std::string AnchorRelativePath(const std::string &anchorPath,
+                                         const std::string &path) override;
 
   AR_API
   virtual bool IsRelativePath(const std::string &path) override;
@@ -125,7 +127,8 @@ class ArDefaultResolver : public ArResolver
   virtual std::string Resolve(const std::string &path) override;
 
   AR_API
-  virtual std::string ResolveWithAssetInfo(const std::string &path, ArAssetInfo *assetInfo) override;
+  virtual std::string ResolveWithAssetInfo(const std::string &path,
+                                           ArAssetInfo *assetInfo) override;
 
   AR_API
   virtual void UpdateAssetInfo(const std::string &identifier,
@@ -138,7 +141,8 @@ class ArDefaultResolver : public ArResolver
                                            const std::string &resolvedPath) override;
 
   AR_API
-  virtual bool FetchToLocalResolvedPath(const std::string &path, const std::string &resolvedPath) override;
+  virtual bool FetchToLocalResolvedPath(const std::string &path,
+                                        const std::string &resolvedPath) override;
 
   AR_API
   virtual std::shared_ptr<ArAsset> OpenAsset(const std::string &resolvedPath) override;
@@ -150,7 +154,8 @@ class ArDefaultResolver : public ArResolver
   virtual bool CanWriteLayerToPath(const std::string &path, std::string *whyNot) override;
 
   AR_API
-  virtual bool CanCreateNewLayerWithIdentifier(const std::string &identifier, std::string *whyNot) override;
+  virtual bool CanCreateNewLayerWithIdentifier(const std::string &identifier,
+                                               std::string *whyNot) override;
 
   AR_API
   virtual ArResolverContext CreateDefaultContext() override;
@@ -184,6 +189,7 @@ class ArDefaultResolver : public ArResolver
   virtual void UnbindContext(const ArResolverContext &context, VtValue *bindingData) override;
 
  private:
+
   struct _Cache;
   using _PerThreadCache = ArThreadLocalScopedCache<_Cache>;
   using _CachePtr = _PerThreadCache::CachePtr;
@@ -194,6 +200,7 @@ class ArDefaultResolver : public ArResolver
   std::string _ResolveNoCache(const std::string &path);
 
  private:
+
   ArDefaultResolverContext _fallbackContext;
   ArResolverContext _defaultContext;
 

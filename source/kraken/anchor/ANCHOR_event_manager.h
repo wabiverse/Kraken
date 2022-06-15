@@ -31,6 +31,7 @@ class AnchorIEventConsumer;
 class AnchorEventManager
 {
  public:
+
   /**
    * Constructor. */
   AnchorEventManager();
@@ -85,6 +86,7 @@ class AnchorEventManager
   eAnchorStatus removeConsumer(AnchorIEventConsumer *consumer);
 
  protected:
+
   /**
    * Removes all events from the stack. */
   void destroyEvents();

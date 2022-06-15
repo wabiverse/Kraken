@@ -45,6 +45,7 @@ namespace Zep
   class ProfileBlock
   {
    public:
+
     const char *strTimer;
     timer blockTimer;
     uint64_t elapsed = 0;

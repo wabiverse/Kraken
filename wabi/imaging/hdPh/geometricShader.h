@@ -58,6 +58,7 @@ struct HdPh_ShaderKey;
 class HdPh_GeometricShader : public HdPhShaderCode
 {
  public:
+
   /// Used in HdPh_CodeGen to generate the appropriate shader source
   enum class PrimitiveType
   {
@@ -239,10 +240,12 @@ class HdPh_GeometricShader : public HdPhShaderCode
   int GetNumPrimitiveVertsForGeometryShader() const;
 
   // Factory for convenience.
-  static HdPh_GeometricShaderSharedPtr Create(HdPh_ShaderKey const &shaderKey,
-                                              HdPhResourceRegistrySharedPtr const &resourceRegistry);
+  static HdPh_GeometricShaderSharedPtr Create(
+    HdPh_ShaderKey const &shaderKey,
+    HdPhResourceRegistrySharedPtr const &resourceRegistry);
 
  private:
+
   PrimitiveType _primType;
   HdCullStyle _cullStyle;
   bool _useHardwareFaceCulling;

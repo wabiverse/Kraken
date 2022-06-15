@@ -76,6 +76,7 @@ typedef std::vector<SdfReference> SdfReferenceVector;
 class SdfReference : boost::totally_ordered<SdfReference>
 {
  public:
+
   /// Creates a reference with all its meta data.  The default reference is an
   /// internal reference to the default prim.  See SdfAssetPath for what
   /// characters are valid in \p assetPath.  If \p assetPath contains invalid
@@ -212,6 +213,7 @@ class SdfReference : boost::totally_ordered<SdfReference>
   };
 
  private:
+
   // The asset path to the external layer.
   std::string _assetPath;
 

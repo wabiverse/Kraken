@@ -23,27 +23,13 @@
 //
 #include "wabi/imaging/hd/rprim.h"
 
-#include "wabi/imaging/hd/bufferSpec.h"
 #include "wabi/imaging/hd/changeTracker.h"
-#include "wabi/imaging/hd/computation.h"
-#include "wabi/imaging/hd/drawItem.h"
-#include "wabi/imaging/hd/extComputation.h"
-#include "wabi/imaging/hd/instanceRegistry.h"
 #include "wabi/imaging/hd/instancer.h"
-#include "wabi/imaging/hd/material.h"
 #include "wabi/imaging/hd/perfLog.h"
 #include "wabi/imaging/hd/renderIndex.h"
-#include "wabi/imaging/hd/repr.h"
-#include "wabi/imaging/hd/resourceRegistry.h"
-#include "wabi/imaging/hd/sceneDelegate.h"
-#include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hd/vtBufferSource.h"
-
-#include "wabi/base/tf/envSetting.h"
-
-#include "wabi/base/arch/hash.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 HdRprim::HdRprim(SdfPath const &id)
   : _instancerId(),
@@ -54,10 +40,7 @@ HdRprim::HdRprim(SdfPath const &id)
   _sharedData.rprimID = id;
 }
 
-HdRprim::~HdRprim()
-{
-  /*NOTHING*/
-}
+HdRprim::~HdRprim() = default;
 
 // -------------------------------------------------------------------------- //
 ///                 Rprim Hydra Engine API : Pre-Sync & Sync-Phase
@@ -164,11 +147,6 @@ void HdRprim::SetMaterialId(SdfPath const &materialId)
   _materialId = materialId;
 }
 
-void HdRprim::SetMaterialTag(TfToken const &materialTag)
-{
-  _sharedData.materialTag = materialTag;
-}
-
 bool HdRprim::IsDirty(HdChangeTracker &changeTracker) const
 {
   return changeTracker.IsRprimDirty(GetId());
@@ -176,11 +154,15 @@ bool HdRprim::IsDirty(HdChangeTracker &changeTracker) const
 
 void HdRprim::UpdateReprSelector(HdSceneDelegate *delegate, HdDirtyBits *dirtyBits)
 {
-  SdfPath const &id = GetId();
-  if (HdChangeTracker::IsReprDirty(*dirtyBits, id)) {
-    _authoredReprSelector = delegate->GetReprSelector(id);
+  if (HdChangeTracker::IsReprDirty(*dirtyBits, GetId())) {
+    _authoredReprSelector = delegate->GetReprSelector(GetId());
     *dirtyBits &= ~HdChangeTracker::DirtyRepr;
   }
+}
+
+void HdRprim::UpdateRenderTag(HdSceneDelegate *delegate, HdRenderParam *renderParam)
+{
+  _renderTag = delegate->GetRenderTag(GetId());
 }
 
 // -------------------------------------------------------------------------- //

@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit>
 {
  public:
+
   typedef SdfNamespaceEdit This;
   typedef SdfPath Path;
   typedef int Index;
@@ -59,9 +60,7 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit>
   static const Index Same = -2;
 
   /// The default edit maps the empty path to the empty path.
-  SdfNamespaceEdit()
-    : index(AtEnd)
-  {}
+  SdfNamespaceEdit() : index(AtEnd) {}
 
   /// The fully general edit.
   SdfNamespaceEdit(const Path &currentPath_, const Path &newPath_, Index index_ = AtEnd)
@@ -94,7 +93,9 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit>
   /// \p currentPath to be under \p newParentPath at index \p index.
   static This Reparent(const Path &currentPath, const Path &newParentPath, Index index)
   {
-    return This(currentPath, currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath), index);
+    return This(currentPath,
+                currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath),
+                index);
   }
 
   /// Returns a namespace edit to reparent the prim or property at
@@ -105,14 +106,16 @@ struct SdfNamespaceEdit : boost::equality_comparable<SdfNamespaceEdit>
                                 const TfToken &name,
                                 Index index)
   {
-    return This(currentPath,
-                currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath).ReplaceName(name),
-                index);
+    return This(
+      currentPath,
+      currentPath.ReplacePrefix(currentPath.GetParentPath(), newParentPath).ReplaceName(name),
+      index);
   }
 
   SDF_API bool operator==(const This &rhs) const;
 
  public:
+
   Path currentPath;  ///< Path of the object when this edit starts.
   Path newPath;      ///< Path of the object when this edit ends.
   Index index;       ///< Index for prim insertion.
@@ -131,6 +134,7 @@ SDF_API std::ostream &operator<<(std::ostream &, const SdfNamespaceEditVector &)
 struct SdfNamespaceEditDetail : boost::equality_comparable<SdfNamespaceEditDetail>
 {
  public:
+
   /// Validity of an edit.
   enum Result
   {
@@ -145,6 +149,7 @@ struct SdfNamespaceEditDetail : boost::equality_comparable<SdfNamespaceEditDetai
   SDF_API bool operator==(const SdfNamespaceEditDetail &rhs) const;
 
  public:
+
   Result result;          ///< Validity.
   SdfNamespaceEdit edit;  ///< The edit.
   std::string reason;     ///< The reason the edit will not succeed cleanly.
@@ -203,6 +208,7 @@ inline SdfNamespaceEditDetail::Result CombineUnbatched(SdfNamespaceEditDetail::R
 class SdfBatchNamespaceEdit
 {
  public:
+
   /// Create an empty sequence of edits.
   SDF_API SdfBatchNamespaceEdit();
   SDF_API SdfBatchNamespaceEdit(const SdfBatchNamespaceEdit &);
@@ -284,6 +290,7 @@ class SdfBatchNamespaceEdit
                bool fixBackpointers = true) const;
 
  private:
+
   SdfNamespaceEditVector _edits;
 };
 

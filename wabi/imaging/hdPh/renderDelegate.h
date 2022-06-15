@@ -47,6 +47,7 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 class HdPhRenderDelegate final : public HdRenderDelegate
 {
  public:
+
   HDPH_API
   HdPhRenderDelegate();
   HDPH_API
@@ -140,6 +141,7 @@ class HdPhRenderDelegate final : public HdRenderDelegate
   Hgi *GetHgi();
 
  private:
+
   void _ApplyTextureSettings();
   HdSprim *_CreateFallbackMaterialPrim();
 

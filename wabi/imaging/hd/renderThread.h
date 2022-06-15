@@ -24,8 +24,8 @@
 #ifndef WABI_IMAGING_HD_RENDER_THREAD_H
 #define WABI_IMAGING_HD_RENDER_THREAD_H
 
-#include "wabi/imaging/hd/api.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -34,6 +34,7 @@
 #include <thread>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdRenderThread
 ///
@@ -145,6 +146,7 @@ WABI_NAMESPACE_BEGIN
 class HdRenderThread
 {
  public:
+
   HD_API
   HdRenderThread();
 
@@ -278,6 +280,7 @@ class HdRenderThread
   /// @}
 
  private:
+
   // _RenderLoop implements the render thread's state machine; see
   // \ref HdRenderThread_StateMachine for details.  It runs in a background
   // thread and manages synchronization with hydra.  To implement rendering,
@@ -361,6 +364,7 @@ class HdRenderThread
   // render thread's resources and the application's resources.
   std::mutex _frameBufferMutex;
 };
+
 
 WABI_NAMESPACE_END
 

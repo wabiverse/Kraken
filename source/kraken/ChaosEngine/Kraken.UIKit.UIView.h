@@ -34,11 +34,17 @@ namespace winrt::Kraken::UIKit::implementation
   {
     UIView();
 
-    void TitleBarLayoutEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
-    void TitleBarVisibilityEvent(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const& sender, IInspectable const& event);
-    void WindowActivatedEvent(IInspectable const& sender, Windows::UI::Core::WindowActivatedEventArgs const& event);
-    void NavigationViewControl_DisplayModeChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
-                                                  Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const& event);
+    void TitleBarLayoutEvent(
+      Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const &sender,
+      IInspectable const &event);
+    void TitleBarVisibilityEvent(
+      Windows::ApplicationModel::Core::CoreApplicationViewTitleBar const &sender,
+      IInspectable const &event);
+    void WindowActivatedEvent(IInspectable const &sender,
+                              Windows::UI::Core::WindowActivatedEventArgs const &event);
+    void NavigationViewControl_DisplayModeChanged(
+      Microsoft::UI::Xaml::Controls::NavigationView const &sender,
+      Microsoft::UI::Xaml::Controls::NavigationViewDisplayModeChangedEventArgs const &event);
   };
 }  // winrt::Kraken::UIKit::implementation
 

@@ -77,6 +77,7 @@ class PxOsdMeshTopology
 {
 
  public:
+
   typedef uint64_t ID;
 
   PXOSD_API
@@ -121,6 +122,7 @@ class PxOsdMeshTopology
                     PxOsdSubdivTags const &subdivTags);
 
  public:
+
   /// Returns the subdivision scheme
   TfToken const GetScheme() const
   {
@@ -206,6 +208,7 @@ class PxOsdMeshTopology
   }
 
  public:
+
   /// Returns the hash value of this topology to be used for instancing.
   PXOSD_API
   ID ComputeHash() const;
@@ -238,6 +241,7 @@ class PxOsdMeshTopology
   PxOsdMeshTopologyValidation Validate() const;
 
  private:
+
   // note: if you're going to add more members, make sure
   // ComputeHash will be updated too.
 
@@ -253,14 +257,9 @@ class PxOsdMeshTopology
   {
     std::atomic<bool> value;
 
-    _Validated()
-      : value(false)
-    {}
-    _Validated(const _Validated &other)
-      : value(other.value.load())
-    {}
-    _Validated(_Validated &&other)
-      : value(other.value.load())
+    _Validated() : value(false) {}
+    _Validated(const _Validated &other) : value(other.value.load()) {}
+    _Validated(_Validated &&other) : value(other.value.load())
     {
       other.value = false;
     }

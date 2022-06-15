@@ -71,6 +71,7 @@ class SdfAssetPath;
 class UsdRenderSettingsBase : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -81,16 +82,12 @@ class UsdRenderSettingsBase : public UsdTyped
   /// Equivalent to UsdRenderSettingsBase::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderSettingsBase(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdRenderSettingsBase(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdRenderSettingsBase on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderSettingsBase(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderSettingsBase(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdRenderSettingsBase(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDRENDER_API
@@ -115,6 +112,7 @@ class UsdRenderSettingsBase : public UsdTyped
   static UsdRenderSettingsBase Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -122,6 +120,7 @@ class UsdRenderSettingsBase : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRENDER_API
@@ -131,9 +130,11 @@ class UsdRenderSettingsBase : public UsdTyped
 
   // override SchemaBase virtuals.
   USDRENDER_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RESOLUTION
   // --------------------------------------------------------------------- //
@@ -159,6 +160,7 @@ class UsdRenderSettingsBase : public UsdTyped
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PIXELASPECTRATIO
   // --------------------------------------------------------------------- //
@@ -184,6 +186,7 @@ class UsdRenderSettingsBase : public UsdTyped
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ASPECTRATIOCONFORMPOLICY
   // --------------------------------------------------------------------- //
@@ -233,6 +236,7 @@ class UsdRenderSettingsBase : public UsdTyped
                                                   bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DATAWINDOWNDC
   // --------------------------------------------------------------------- //
@@ -286,6 +290,7 @@ class UsdRenderSettingsBase : public UsdTyped
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // INSTANTANEOUSSHUTTER
   // --------------------------------------------------------------------- //
@@ -313,6 +318,7 @@ class UsdRenderSettingsBase : public UsdTyped
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CAMERA
   // --------------------------------------------------------------------- //
@@ -328,6 +334,7 @@ class UsdRenderSettingsBase : public UsdTyped
   UsdRelationship CreateCameraRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

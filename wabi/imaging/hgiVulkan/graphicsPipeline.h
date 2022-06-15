@@ -53,6 +53,7 @@ using VkClearValueVector = std::vector<VkClearValue>;
 class HgiVulkanGraphicsPipeline final : public HgiGraphicsPipeline
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanGraphicsPipeline() override;
 
@@ -85,12 +86,14 @@ class HgiVulkanGraphicsPipeline final : public HgiGraphicsPipeline
   uint64_t &GetInflightBits();
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
   HgiVulkanGraphicsPipeline(HgiVulkanDevice *device, HgiGraphicsPipelineDesc const &desc);
 
  private:
+
   HgiVulkanGraphicsPipeline() = delete;
   HgiVulkanGraphicsPipeline &operator=(const HgiVulkanGraphicsPipeline &) = delete;
   HgiVulkanGraphicsPipeline(const HgiVulkanGraphicsPipeline &) = delete;

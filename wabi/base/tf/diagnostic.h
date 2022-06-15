@@ -443,7 +443,9 @@ void Tf_TerminateHandler();
            Tf_FailedVerifyHelper(TF_CALL_CONTEXT, #cond, Tf_VerifyStringFormat(__VA_ARGS__)))
 
 // Helpers for TF_VERIFY.
-TF_API bool Tf_FailedVerifyHelper(TfCallContext const &context, char const *condition, char const *msg);
+TF_API bool Tf_FailedVerifyHelper(TfCallContext const &context,
+                                  char const *condition,
+                                  char const *msg);
 
 // Helpers for TF_VERIFY.
 inline char const *Tf_VerifyStringFormat()
@@ -493,6 +495,7 @@ struct Tf_DiagnosticHelper
   TF_API void IssueStatus(char const *fmt, ...) const ARCH_PRINTF_FUNCTION(2, 3);
 
  private:
+
   TfCallContext _context;
   TfDiagnosticType _type;
 };

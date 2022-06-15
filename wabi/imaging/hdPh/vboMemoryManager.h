@@ -50,6 +50,7 @@ class HdPhResourceRegistry;
 class HdPhVBOMemoryManager : public HdAggregationStrategy
 {
  public:
+
   HdPhVBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : HdAggregationStrategy(),
       _resourceRegistry(resourceRegistry)
@@ -80,12 +81,14 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy
                                        VtDictionary &result) const;
 
  protected:
+
   class _StripedBufferArray;
 
   /// specialized buffer array range
   class _StripedBufferArrayRange : public HdPhBufferArrayRange
   {
    public:
+
     /// Constructor.
     _StripedBufferArrayRange(HdPhResourceRegistry *resourceRegistry)
       : HdPhBufferArrayRange(resourceRegistry),
@@ -213,11 +216,13 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy
     }
 
    protected:
+
     /// Returns the aggregation container
     HDPH_API
     const void *_GetAggregation() const override;
 
    private:
+
     // Returns the byte offset at which the BAR begins for the resource.
     size_t _GetByteOffset(HdPhBufferResourceSharedPtr const &resource) const;
 
@@ -238,6 +243,7 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy
   class _StripedBufferArray : public HdBufferArray
   {
    public:
+
     /// Constructor.
     HDPH_API
     _StripedBufferArray(HdPhResourceRegistry *resourceRegistry,
@@ -308,6 +314,7 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy
     HdBufferSpecVector GetBufferSpecs() const;
 
    protected:
+
     HDPH_API
     void _DeallocateResources();
 
@@ -319,6 +326,7 @@ class HdPhVBOMemoryManager : public HdAggregationStrategy
                                              int stride);
 
    private:
+
     HdPhResourceRegistry *_resourceRegistry;
     bool _needsCompaction;
     int _totalCapacity;

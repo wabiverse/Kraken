@@ -34,6 +34,7 @@ WABI_NAMESPACE_BEGIN
 class HdxPrman_RenderParam : public HdPrman_RenderParam
 {
  public:
+
   HdxPrman_RenderParam(std::shared_ptr<HdxPrman_InteractiveContext> context)
     : HdPrman_RenderParam(context)
   {}

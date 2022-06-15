@@ -72,6 +72,7 @@ class SdfAssetPath;
 class UsdSkelBlendShape : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -82,16 +83,12 @@ class UsdSkelBlendShape : public UsdTyped
   /// Equivalent to UsdSkelBlendShape::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelBlendShape(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdSkelBlendShape(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdSkelBlendShape on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelBlendShape(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelBlendShape(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdSkelBlendShape(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDSKEL_API
@@ -141,6 +138,7 @@ class UsdSkelBlendShape : public UsdTyped
   static UsdSkelBlendShape Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -148,6 +146,7 @@ class UsdSkelBlendShape : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSKEL_API
@@ -157,9 +156,11 @@ class UsdSkelBlendShape : public UsdTyped
 
   // override SchemaBase virtuals.
   USDSKEL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // OFFSETS
   // --------------------------------------------------------------------- //
@@ -181,9 +182,11 @@ class UsdSkelBlendShape : public UsdTyped
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDSKEL_API
-  UsdAttribute CreateOffsetsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateOffsetsAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // NORMALOFFSETS
   // --------------------------------------------------------------------- //
@@ -209,6 +212,7 @@ class UsdSkelBlendShape : public UsdTyped
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // POINTINDICES
   // --------------------------------------------------------------------- //
@@ -236,6 +240,7 @@ class UsdSkelBlendShape : public UsdTyped
                                       bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -305,6 +310,7 @@ class UsdSkelBlendShape : public UsdTyped
                                    std::string *reason = nullptr);
 
  private:
+
   std::vector<UsdSkelInbetweenShape> _MakeInbetweens(const std::vector<UsdProperty> &props) const;
 };
 

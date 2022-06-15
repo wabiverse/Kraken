@@ -69,9 +69,9 @@ class GfRay
 {
 
  public:
+
   /// The default constructor leaves the ray parameters undefined.
-  GfRay()
-  {}
+  GfRay() {}
 
   /// This constructor takes a starting point and a direction.
   GfRay(const GfVec3d &startPoint, const GfVec3d &direction)
@@ -182,14 +182,18 @@ class GfRay
   /// this also returns the parametric distances to the two intersection
   /// points in \p enterDistance and \p exitDistance.
   GF_API
-  bool Intersect(const GfRange3d &box, double *enterDistance = NULL, double *exitDistance = NULL) const;
+  bool Intersect(const GfRange3d &box,
+                 double *enterDistance = NULL,
+                 double *exitDistance = NULL) const;
 
   /// Intersects the ray with an oriented box, returning \c true if the
   /// ray intersects it at all within bounds. If there is an intersection,
   /// this also returns the parametric distances to the two intersection
   /// points in \p enterDistance and \p exitDistance.
   GF_API
-  bool Intersect(const GfBBox3d &box, double *enterDistance = NULL, double *exitDistance = NULL) const;
+  bool Intersect(const GfBBox3d &box,
+                 double *enterDistance = NULL,
+                 double *exitDistance = NULL) const;
 
   /// Intersects the ray with a sphere, returning \c true if the ray
   /// intersects it at all within bounds.  If there is an intersection,
@@ -235,8 +239,14 @@ class GfRay
   ///@}
 
  private:
+
   GF_API
-  friend bool GfFindClosestPoints(const GfRay &, const GfLine &, GfVec3d *, GfVec3d *, double *, double *);
+  friend bool GfFindClosestPoints(const GfRay &,
+                                  const GfLine &,
+                                  GfVec3d *,
+                                  GfVec3d *,
+                                  double *,
+                                  double *);
   GF_API
   friend bool GfFindClosestPoints(const GfRay &,
                                   const GfLineSeg &,

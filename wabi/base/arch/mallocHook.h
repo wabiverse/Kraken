@@ -82,6 +82,7 @@ ARCH_API bool ArchIsStlAllocatorOff();
 class ArchMallocHook
 {
  public:
+
   /// Initialize hooks.
   ///
   /// Calling \c Initialize() installs the supplied functions as call-back
@@ -157,6 +158,7 @@ class ArchMallocHook
   }
 
  private:
+
   // Note: this is a POD (plain 'ol data structure) so we depend on zero
   // initialization here to null these out.  Do not add a constructor or
   // destructor to this class.

@@ -57,6 +57,7 @@ WABI_NAMESPACE_BEGIN
 class TraceCounterAccumulator : private TraceCollection::Visitor
 {
  public:
+
   using CounterValues = std::vector<std::pair<TraceEvent::TimeStamp, double>>;
   using CounterValuesMap = std::unordered_map<TfToken, CounterValues, TfToken::HashFunctor>;
   using CounterMap = std::unordered_map<TfToken, double, TfToken::HashFunctor>;
@@ -84,17 +85,18 @@ class TraceCounterAccumulator : private TraceCollection::Visitor
   TRACE_API void Update(const TraceCollection &collection);
 
  protected:
+
   /// Determines whether or not counter events with \p id should be processed.
   virtual bool _AcceptsCategory(TraceCategoryId id) = 0;
 
  private:
+
   // TraceCollection::Visitor Interface
   virtual void OnBeginCollection() override;
   virtual void OnEndCollection() override;
   virtual void OnBeginThread(const TraceThreadId &) override;
   virtual void OnEndThread(const TraceThreadId &) override;
-  virtual bool AcceptsCategory(TraceCategoryId)
-  override;
+  virtual bool AcceptsCategory(TraceCategoryId) override;
   virtual void OnEvent(const TraceThreadId &, const TfToken &, const TraceEvent &) override;
 
   struct _CounterValue

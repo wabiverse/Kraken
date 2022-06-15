@@ -39,10 +39,10 @@ WABI_NAMESPACE_BEGIN
 /// parameter is the specific SdfListOp type being wrapped (e.g.,
 /// SdfPathListOp)
 ///
-template<class T>
-class SdfPyWrapListOp
+template<class T> class SdfPyWrapListOp
 {
  public:
+
   typedef typename T::ItemType ItemType;
   typedef typename T::ItemVector ItemVector;
 
@@ -50,10 +50,13 @@ class SdfPyWrapListOp
 
   SdfPyWrapListOp(const std::string &name)
   {
-    TfPyWrapOnce<T>([name]() { SdfPyWrapListOp::_Wrap(name); });
+    TfPyWrapOnce<T>([name]() {
+      SdfPyWrapListOp::_Wrap(name);
+    });
   }
 
  private:
+
   static ItemVector _ApplyOperations1(const T &listOp, ItemVector input)
   {
     ItemVector result = input;
@@ -62,11 +65,9 @@ class SdfPyWrapListOp
   }
   static boost::python::object _ApplyOperations2(const T &outer, const T &inner)
   {
-    if (boost::optional<T> r = outer.ApplyOperations(inner))
-    {
+    if (boost::optional<T> r = outer.ApplyOperations(inner)) {
       return boost::python::object(*r);
-    } else
-    {
+    } else {
       return boost::python::object();
     }
   }

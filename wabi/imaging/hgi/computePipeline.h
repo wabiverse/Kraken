@@ -63,10 +63,12 @@ struct HgiComputeShaderConstantsDesc
 };
 
 HGI_API
-bool operator==(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShaderConstantsDesc &rhs);
+bool operator==(const HgiComputeShaderConstantsDesc &lhs,
+                const HgiComputeShaderConstantsDesc &rhs);
 
 HGI_API
-bool operator!=(const HgiComputeShaderConstantsDesc &lhs, const HgiComputeShaderConstantsDesc &rhs);
+bool operator!=(const HgiComputeShaderConstantsDesc &lhs,
+                const HgiComputeShaderConstantsDesc &rhs);
 
 /// \struct HgiComputePipelineDesc
 ///
@@ -107,6 +109,7 @@ bool operator!=(const HgiComputePipelineDesc &lhs, const HgiComputePipelineDesc 
 class HgiComputePipeline
 {
  public:
+
   HGI_API
   virtual ~HgiComputePipeline();
 
@@ -115,12 +118,14 @@ class HgiComputePipeline
   HgiComputePipelineDesc const &GetDescriptor() const;
 
  protected:
+
   HGI_API
   HgiComputePipeline(HgiComputePipelineDesc const &desc);
 
   HgiComputePipelineDesc _descriptor;
 
  private:
+
   HgiComputePipeline() = delete;
   HgiComputePipeline &operator=(const HgiComputePipeline &) = delete;
   HgiComputePipeline(const HgiComputePipeline &) = delete;

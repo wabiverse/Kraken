@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLSampler final : public HgiSampler
 {
  public:
+
   HGIGL_API
   ~HgiGLSampler() override;
 
@@ -56,17 +57,20 @@ class HgiGLSampler final : public HgiSampler
   uint32_t GetSamplerId() const;
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
   HgiGLSampler(HgiSamplerDesc const &desc);
 
  private:
+
   HgiGLSampler() = delete;
   HgiGLSampler &operator=(const HgiGLSampler &) = delete;
   HgiGLSampler(const HgiGLSampler &) = delete;
 
  private:
+
   uint32_t _samplerId;
 };
 

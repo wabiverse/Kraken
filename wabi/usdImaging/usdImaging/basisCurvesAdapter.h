@@ -40,11 +40,10 @@ WABI_NAMESPACE_BEGIN
 class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingGprimAdapter;
 
-  UsdImagingBasisCurvesAdapter()
-    : UsdImagingGprimAdapter()
-  {}
+  UsdImagingBasisCurvesAdapter() : UsdImagingGprimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingBasisCurvesAdapter() override;
@@ -63,10 +62,11 @@ class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDIMAGING_API
@@ -90,7 +90,9 @@ class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
   // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
-  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDIMAGING_API
   VtValue Get(UsdPrim const &prim,
@@ -100,6 +102,7 @@ class UsdImagingBasisCurvesAdapter : public UsdImagingGprimAdapter
               VtIntArray *outIndices) const override;
 
  protected:
+
   USDIMAGING_API
   bool _IsBuiltinPrimvar(TfToken const &primvarName) const override;
 };

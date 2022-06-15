@@ -57,6 +57,7 @@ WABI_NAMESPACE_BEGIN
 class Vt_ArrayForeignDataSource
 {
  public:
+
   explicit Vt_ArrayForeignDataSource(void (*detachedFn)(Vt_ArrayForeignDataSource *self) = nullptr,
                                      size_t initRefCount = 0)
     : _refCount(initRefCount),
@@ -64,18 +65,18 @@ class Vt_ArrayForeignDataSource
   {}
 
  private:
-  template<class T>
-  friend class VtArray;
+
+  template<class T> friend class VtArray;
   // Invoked when no more arrays share this data source.
   void _ArraysDetached()
   {
-    if (_detachedFn)
-    {
+    if (_detachedFn) {
       _detachedFn(this);
     }
   }
 
  protected:
+
   std::atomic<size_t> _refCount;
   void (*_detachedFn)(Vt_ArrayForeignDataSource *self);
 };
@@ -84,19 +85,14 @@ class Vt_ArrayForeignDataSource
 class Vt_ArrayBase
 {
  public:
-  Vt_ArrayBase()
-    : _shapeData{0},
-      _foreignSource(nullptr)
-  {}
 
-  Vt_ArrayBase(Vt_ArrayForeignDataSource *foreignSrc)
-    : _shapeData{0},
-      _foreignSource(foreignSrc)
+  Vt_ArrayBase() : _shapeData{0}, _foreignSource(nullptr) {}
+
+  Vt_ArrayBase(Vt_ArrayForeignDataSource *foreignSrc) : _shapeData{0}, _foreignSource(foreignSrc)
   {}
 
   Vt_ArrayBase(Vt_ArrayBase const &other) = default;
-  Vt_ArrayBase(Vt_ArrayBase &&other)
-    : Vt_ArrayBase(other)
+  Vt_ArrayBase(Vt_ArrayBase &&other) : Vt_ArrayBase(other)
   {
     other._shapeData.clear();
     other._foreignSource = nullptr;
@@ -114,19 +110,15 @@ class Vt_ArrayBase
   }
 
  protected:
+
   // Control block header for native data representation.  Houses refcount and
   // capacity.  For arrays with native data, this structure always lives
   // immediately preceding the start of the array's _data in memory.  See
   // _GetControlBlock() for details.
   struct _ControlBlock
   {
-    _ControlBlock()
-      : nativeRefCount(0),
-        capacity(0)
-    {}
-    _ControlBlock(size_t initCount, size_t initCap)
-      : nativeRefCount(initCount),
-        capacity(initCap)
+    _ControlBlock() : nativeRefCount(0), capacity(0) {}
+    _ControlBlock(size_t initCount, size_t initCap) : nativeRefCount(initCount), capacity(initCap)
     {}
     mutable std::atomic<size_t> nativeRefCount;
     size_t capacity;
@@ -252,10 +244,10 @@ class Vt_ArrayBase
 /// determine where unintended copy-on-write detaches come from.  When set,
 /// VtArray will log a stack trace for every copy-on-write detach that occurs.
 ///
-template<typename ELEM>
-class VtArray : public Vt_ArrayBase
+template<typename ELEM> class VtArray : public Vt_ArrayBase
 {
  public:
+
   /// Type this array holds.
   typedef ELEM ElementType;
   typedef ELEM value_type;
@@ -264,12 +256,9 @@ class VtArray : public Vt_ArrayBase
   class PointerIterator : public boost::iterator_adaptor<PointerIterator<Value>, Value *>
   {
    public:
-    PointerIterator()
-      : PointerIterator::iterator_adaptor_(0)
-    {}
-    explicit PointerIterator(Value *p)
-      : PointerIterator::iterator_adaptor_(p)
-    {}
+
+    PointerIterator() : PointerIterator::iterator_adaptor_(0) {}
+    explicit PointerIterator(Value *p) : PointerIterator::iterator_adaptor_(p) {}
     template<typename OtherValue>
     PointerIterator(PointerIterator<OtherValue> const &other,
                     typename boost::enable_if_convertible<OtherValue *, Value *>::type * = 0)
@@ -277,6 +266,7 @@ class VtArray : public Vt_ArrayBase
     {}
 
    private:
+
     friend class boost::iterator_core_access;
   };
 
@@ -304,9 +294,7 @@ class VtArray : public Vt_ArrayBase
   /// @}
 
   /// Create an empty array.
-  VtArray()
-    : _data(nullptr)
-  {}
+  VtArray() : _data(nullptr) {}
 
   /// Create an array from a pair of iterators
   ///
@@ -321,69 +309,63 @@ class VtArray : public Vt_ArrayBase
   ///
   /// VtArray(size_t n, value_type const &value = value_type())
   template<typename LegacyInputIterator>
-  VtArray(LegacyInputIterator first,
-          LegacyInputIterator last,
-          typename std::enable_if<!std::is_integral<LegacyInputIterator>::value, void>::type * = nullptr)
+  VtArray(
+    LegacyInputIterator first,
+    LegacyInputIterator last,
+    typename std::enable_if<!std::is_integral<LegacyInputIterator>::value, void>::type * = nullptr)
     : VtArray()
   {
     assign(first, last);
   }
 
   /// Create an array with foreign source.
-  VtArray(Vt_ArrayForeignDataSource *foreignSrc, ElementType *data, size_t size, bool addRef = true)
+  VtArray(Vt_ArrayForeignDataSource *foreignSrc,
+          ElementType *data,
+          size_t size,
+          bool addRef = true)
     : Vt_ArrayBase(foreignSrc),
       _data(data)
   {
-    if (addRef)
-    {
+    if (addRef) {
       foreignSrc->_refCount.fetch_add(1, std::memory_order_relaxed);
     }
     _shapeData.totalSize = size;
   }
 
   /// Copy \p other.  The new array shares underlying data with \p other.
-  VtArray(VtArray const &other)
-    : Vt_ArrayBase(other),
-      _data(other._data)
+  VtArray(VtArray const &other) : Vt_ArrayBase(other), _data(other._data)
   {
     if (!_data)
       return;
 
-    if (ARCH_LIKELY(!_foreignSource))
-    {
+    if (ARCH_LIKELY(!_foreignSource)) {
       _GetNativeRefCount(_data).fetch_add(1, std::memory_order_relaxed);
-    } else
-    {
+    } else {
       _foreignSource->_refCount.fetch_add(1, std::memory_order_relaxed);
     }
   }
 
   /// Move from \p other.  The new array takes ownership of \p other's
   /// underlying data.
-  VtArray(VtArray &&other)
-    : Vt_ArrayBase(std::move(other)),
-      _data(other._data)
+  VtArray(VtArray &&other) : Vt_ArrayBase(std::move(other)), _data(other._data)
   {
     other._data = nullptr;
   }
 
   /// Initialize array from the contents of a \p initializerList.
-  VtArray(std::initializer_list<ELEM> initializerList)
-    : VtArray()
+  VtArray(std::initializer_list<ELEM> initializerList) : VtArray()
   {
     assign(initializerList);
   }
 
   /// Create an array filled with \p n value-initialized elements.
-  explicit VtArray(size_t n)
-    : VtArray()
+  explicit VtArray(size_t n) : VtArray()
   {
     assign(n, value_type());
   }
 
   /// Create an array filled with \p n copies of \p value.
-  explicit VtArray(size_t n, value_type const &value)
-    : VtArray()
+  explicit VtArray(size_t n, value_type const &value) : VtArray()
   {
     assign(n, value);
   }
@@ -533,19 +515,16 @@ class VtArray : public Vt_ArrayBase
   ///
   /// \sa push_back(ElementType const&)
   /// \sa push_back(ElementType&&)
-  template<typename... Args>
-  void emplace_back(Args &&...args)
+  template<typename... Args> void emplace_back(Args &&...args)
   {
     // If this is a non-pxr array with rank > 1, disallow push_back.
-    if (ARCH_UNLIKELY(_shapeData.otherDims[0]))
-    {
+    if (ARCH_UNLIKELY(_shapeData.otherDims[0])) {
       TF_CODING_ERROR("Array rank %u != 1", _shapeData.GetRank());
       return;
     }
     // If we don't own the data, or if we need more space, realloc.
     size_t curSize = size();
-    if (ARCH_UNLIKELY(_foreignSource || !_IsUnique() || curSize == capacity()))
-    {
+    if (ARCH_UNLIKELY(_foreignSource || !_IsUnique() || curSize == capacity())) {
       value_type *newData = _AllocateCopy(_data, _CapacityForSize(curSize + 1), curSize);
       _DecRef();
       _data = newData;
@@ -581,8 +560,7 @@ class VtArray : public Vt_ArrayBase
   void pop_back()
   {
     // If this is a presto array with rank > 1, disallow push_back.
-    if (ARCH_UNLIKELY(_shapeData.otherDims[0]))
-    {
+    if (ARCH_UNLIKELY(_shapeData.otherDims[0])) {
       TF_CODING_ERROR("Array rank %u != 1", _shapeData.GetRank());
       return;
     }
@@ -605,8 +583,7 @@ class VtArray : public Vt_ArrayBase
   /// there is remaining capacity.
   size_t capacity() const
   {
-    if (!_data)
-    {
+    if (!_data) {
       return 0;
     }
     // We do not allow mutation to foreign source data, so always report
@@ -695,16 +672,13 @@ class VtArray : public Vt_ArrayBase
   /// any newly added elements by calling \p fillElems(first, last).  Note
   /// that this function is passed pointers to uninitialized memory, so the
   /// elements must be filled with something like placement-new.
-  template<class FillElemsFn>
-  void resize(size_t newSize, FillElemsFn &&fillElems)
+  template<class FillElemsFn> void resize(size_t newSize, FillElemsFn &&fillElems)
   {
     const size_t oldSize = size();
-    if (oldSize == newSize)
-    {
+    if (oldSize == newSize) {
       return;
     }
-    if (newSize == 0)
-    {
+    if (newSize == 0) {
       clear();
       return;
     }
@@ -712,42 +686,33 @@ class VtArray : public Vt_ArrayBase
     const bool growing = newSize > oldSize;
     value_type *newData = _data;
 
-    if (!_data)
-    {
+    if (!_data) {
       // Allocate newSize elements and initialize.
       newData = _AllocateNew(newSize);
       std::forward<FillElemsFn>(fillElems)(newData, newData + newSize);
-    } else if (_IsUnique())
-    {
-      if (growing)
-      {
-        if (newSize > _GetCapacity(_data))
-        {
+    } else if (_IsUnique()) {
+      if (growing) {
+        if (newSize > _GetCapacity(_data)) {
           newData = _AllocateCopy(_data, newSize, oldSize);
         }
         // fill with newly added elements from oldSize to newSize.
         std::forward<FillElemsFn>(fillElems)(newData + oldSize, newData + newSize);
-      } else
-      {
+      } else {
         // destroy removed elements
-        for (auto *cur = newData + newSize, *end = newData + oldSize; cur != end; ++cur)
-        {
+        for (auto *cur = newData + newSize, *end = newData + oldSize; cur != end; ++cur) {
           cur->~value_type();
         }
       }
-    } else
-    {
+    } else {
       newData = _AllocateCopy(_data, newSize, growing ? oldSize : newSize);
-      if (growing)
-      {
+      if (growing) {
         // fill with newly added elements from oldSize to newSize.
         std::forward<FillElemsFn>(fillElems)(newData + oldSize, newData + newSize);
       }
     }
 
     // If we created new data, clean up the old and move over to the new.
-    if (newData != _data)
-    {
+    if (newData != _data) {
       _DecRef();
       _data = newData;
     }
@@ -760,15 +725,12 @@ class VtArray : public Vt_ArrayBase
   {
     if (!_data)
       return;
-    if (_IsUnique())
-    {
+    if (_IsUnique()) {
       // Clear out elements, run dtors, keep capacity.
-      for (value_type *p = _data, *e = _data + size(); p != e; ++p)
-      {
+      for (value_type *p = _data, *e = _data + size(); p != e; ++p) {
         p->~value_type();
       }
-    } else
-    {
+    } else {
       // Detach to empty.
       _DecRef();
     }
@@ -810,12 +772,10 @@ class VtArray : public Vt_ArrayBase
   /// \sa erase(const_iterator)
   iterator erase(const_iterator first, const_iterator last)
   {
-    if (first == last)
-    {
+    if (first == last) {
       return std::next(begin(), std::distance(cbegin(), last));
     }
-    if ((first == cbegin()) && (last == cend()))
-    {
+    if ((first == cbegin()) && (last == cend())) {
       clear();
       return end();
     }
@@ -826,19 +786,16 @@ class VtArray : public Vt_ArrayBase
     value_type *removeEnd = std::next(_data, std::distance(cbegin(), last));
     value_type *endIt = std::next(_data, size());
     size_t newSize = size() - std::distance(first, last);
-    if (_IsUnique())
-    {
+    if (_IsUnique()) {
       // If the array is unique, we can simply move the tail elements
       // and free to the end of the array.
       value_type *deleteIt = std::move(removeEnd, endIt, removeStart);
-      for (; deleteIt != endIt; ++deleteIt)
-      {
+      for (; deleteIt != endIt; ++deleteIt) {
         deleteIt->~value_type();
       }
       _shapeData.totalSize = newSize;
       return iterator(removeStart);
-    } else
-    {
+    } else {
       // If the array is not unique, we want to avoid copying the
       // elements in the range we are erasing. We allocate a
       // new buffer and copy the head and tail ranges, omitting
@@ -933,14 +890,15 @@ class VtArray : public Vt_ArrayBase
   /// the same underlying copy-on-write data.  See also operator==().
   bool IsIdentical(VtArray const &other) const
   {
-    return _data == other._data && _shapeData == other._shapeData && _foreignSource == other._foreignSource;
+    return _data == other._data && _shapeData == other._shapeData &&
+           _foreignSource == other._foreignSource;
   }
 
   /// Tests two arrays for equality.  See also IsIdentical().
   bool operator==(VtArray const &other) const
   {
-    return IsIdentical(other) ||
-           (*_GetShapeData() == *other._GetShapeData() && std::equal(cbegin(), cend(), other.cbegin()));
+    return IsIdentical(other) || (*_GetShapeData() == *other._GetShapeData() &&
+                                  std::equal(cbegin(), cend(), other.cbegin()));
   }
 
   /// Tests two arrays for inequality.
@@ -962,6 +920,7 @@ class VtArray : public Vt_ArrayBase
   ARCH_PRAGMA_POP
 
  public:
+
   // XXX -- Public so VtValue::_ArrayHelper<T,U>::GetShapeData() has access.
   Vt_ShapeData const *_GetShapeData() const
   {
@@ -973,20 +932,20 @@ class VtArray : public Vt_ArrayBase
   }
 
  private:
+
   class _Streamer : public VtStreamOutIterator
   {
    public:
-    _Streamer(const_pointer data)
-      : _p(data)
-    {}
-    virtual ~_Streamer()
-    {}
+
+    _Streamer(const_pointer data) : _p(data) {}
+    virtual ~_Streamer() {}
     virtual void Next(std::ostream &out)
     {
       VtStreamOut(*_p++, out);
     }
 
    private:
+
     const_pointer _p;
   };
 
@@ -1024,8 +983,7 @@ class VtArray : public Vt_ArrayBase
   {
     // Currently just successive powers of two.
     size_t cap = 1;
-    while (cap < sz)
-    {
+    while (cap < sz) {
       cap += cap;
     }
     return cap;
@@ -1054,24 +1012,19 @@ class VtArray : public Vt_ArrayBase
   {
     if (!_data)
       return;
-    if (ARCH_LIKELY(!_foreignSource))
-    {
+    if (ARCH_LIKELY(!_foreignSource)) {
       // Drop the refcount.  If we take it to zero, destroy the data.
-      if (_GetNativeRefCount(_data).fetch_sub(1, std::memory_order_release) == 1)
-      {
+      if (_GetNativeRefCount(_data).fetch_sub(1, std::memory_order_release) == 1) {
         std::atomic_thread_fence(std::memory_order_acquire);
-        for (value_type *p = _data, *e = _data + _shapeData.totalSize; p != e; ++p)
-        {
+        for (value_type *p = _data, *e = _data + _shapeData.totalSize; p != e; ++p) {
           p->~value_type();
         }
         free(std::addressof(_GetControlBlock(_data)));
       }
-    } else
-    {
+    } else {
       // Drop the refcount in the foreign source.  If we take it to zero,
       // invoke the function pointer to alert the foreign source.
-      if (_foreignSource->_refCount.fetch_sub(1, std::memory_order_release) == 1)
-      {
+      if (_foreignSource->_refCount.fetch_sub(1, std::memory_order_release) == 1) {
         std::atomic_thread_fence(std::memory_order_acquire);
         _foreignSource->_ArraysDetached();
       }
@@ -1087,18 +1040,15 @@ template<class ELEM>
 typename std::enable_if<VtIsHashable<ELEM>(), size_t>::type hash_value(VtArray<ELEM> const &array)
 {
   size_t h = array.size();
-  for (auto const &x : array)
-  {
+  for (auto const &x : array) {
     boost::hash_combine(h, x);
   }
   return h;
 }
 
 // Specialize traits so others can figure out that VtArray is an array.
-template<typename T>
-struct VtIsArray<VtArray<T>> : public std::true_type
-{
-};
+template<typename T> struct VtIsArray<VtArray<T>> : public std::true_type
+{};
 
 // free functions for operators combining scalar and array types
 ARCH_PRAGMA_PUSH

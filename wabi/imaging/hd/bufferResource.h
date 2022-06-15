@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HD_BUFFER_RESOURCE_H
 #define WABI_IMAGING_HD_BUFFER_RESOURCE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/resource.h"
 #include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/token.h"
 
@@ -38,6 +38,7 @@
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 class HdBufferResource;
 
@@ -51,6 +52,7 @@ using HdBufferResourceNamedList = std::vector<std::pair<TfToken, HdBufferResourc
 class HdBufferResource : public HdResource
 {
  public:
+
   HD_API
   HdBufferResource(TfToken const &role, HdTupleType tupleType, int offset, int stride);
   HD_API
@@ -75,10 +77,12 @@ class HdBufferResource : public HdResource
   }
 
  protected:
+
   HdTupleType _tupleType;
   int _offset;
   int _stride;
 };
+
 
 WABI_NAMESPACE_END
 

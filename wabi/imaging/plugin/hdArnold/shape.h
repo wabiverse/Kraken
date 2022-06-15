@@ -35,6 +35,7 @@ class HdRprim;
 class HdArnoldShape
 {
  public:
+
   /// Constructor for HdArnoldShape.
   ///
   /// @param shapeType AtString storing the type of the Arnold Shape node.
@@ -102,6 +103,7 @@ class HdArnoldShape
   }
 
  protected:
+
   /// Sets a new hydra-provided primId.
   ///
   /// @param primId The new prim ID to set.

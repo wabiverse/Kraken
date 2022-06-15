@@ -39,6 +39,7 @@ struct MxHdInfo;
 class HdPhMaterialXShaderGen : public MaterialX::GlslShaderGenerator
 {
  public:
+
   HdPhMaterialXShaderGen(MxHdInfo const &mxHdInfo);
 
   static MaterialX::ShaderGeneratorPtr create(MxHdInfo const &mxHdInfo)
@@ -51,11 +52,13 @@ class HdPhMaterialXShaderGen : public MaterialX::GlslShaderGenerator
                                 MaterialX::GenContext &mxContext) const override;
 
  protected:
+
   void _EmitGlslfxShader(const MaterialX::ShaderGraph &mxGraph,
                          MaterialX::GenContext &mxContext,
                          MaterialX::ShaderStage &mxStage) const;
 
  private:
+
   /// These three helper functions generate the Glslfx Shader
   void _EmitGlslfxHeader(MaterialX::ShaderStage &mxStage) const;
 

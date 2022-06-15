@@ -49,6 +49,7 @@ struct Tf_MallocPathNode;
 class TfMallocTag
 {
  public:
+
   struct CallStackInfo;
 
   /// \struct CallTree
@@ -132,7 +133,8 @@ class TfMallocTag
     ///
     /// \b %%Totl : (%% Total). BytesExcl / TotalBytes * 100
     TF_API
-    std::string GetPrettyPrintString(PrintSetting setting = BOTH, size_t maxPrintedNodes = 100000) const;
+    std::string GetPrettyPrintString(PrintSetting setting = BOTH,
+                                     size_t maxPrintedNodes = 100000) const;
 
     /// Generates a report to the ostream \p out.
     ///
@@ -224,6 +226,7 @@ class TfMallocTag
   TF_API static bool GetCallTree(CallTree *tree, bool skipRepeated = true);
 
  private:
+
   // Enum describing whether allocations are being tagged in an associated
   // thread.
   enum _Tagging
@@ -239,6 +242,7 @@ class TfMallocTag
   struct _ThreadData;
 
  public:
+
   /// \class Auto
   /// \ingroup group_tf_MallocTag
   ///
@@ -263,6 +267,7 @@ class TfMallocTag
   class Auto
   {
    public:
+
     Auto(const Auto &) = delete;
     Auto &operator=(const Auto &) = delete;
 
@@ -280,8 +285,7 @@ class TfMallocTag
     /// you can't create your object as a local variable, you can make
     /// manual calls to \c TfMallocTag::Push() and \c TfMallocTag::Pop(),
     /// though you should do this only as a last resort.
-    Auto(const char *name)
-      : _threadData(0)
+    Auto(const char *name) : _threadData(0)
     {
       if (TfMallocTag::_doTagging)
         _Begin(name);
@@ -303,8 +307,7 @@ class TfMallocTag
     /// you can't create your object as a local variable, you can make
     /// manual calls to \c TfMallocTag::Push() and \c TfMallocTag::Pop(),
     /// though you should do this only as a last resort.
-    Auto(const std::string &name)
-      : _threadData(0)
+    Auto(const std::string &name) : _threadData(0)
     {
       if (TfMallocTag::_doTagging)
         _Begin(name);
@@ -322,8 +325,7 @@ class TfMallocTag
     /// exceptions.
     inline void Release()
     {
-      if (_threadData)
-      {
+      if (_threadData) {
         _End();
         _threadData = NULL;
       }
@@ -340,6 +342,7 @@ class TfMallocTag
     }
 
    private:
+
     TF_API void _Begin(const char *name);
     TF_API void _Begin(const std::string &name);
     TF_API void _End();
@@ -358,21 +361,16 @@ class TfMallocTag
   class Auto2
   {
    public:
+
     /// Push two memory tags onto the local-call stack.
     ///
     /// \see TfMallocTag::Auto(const char* name).
-    Auto2(const char *name1, const char *name2)
-      : _tag1(name1),
-        _tag2(name2)
-    {}
+    Auto2(const char *name1, const char *name2) : _tag1(name1), _tag2(name2) {}
 
     /// Push two memory tags onto the local-call stack.
     ///
     /// \see TfMallocTag::Auto(const std::string& name).
-    Auto2(const std::string &name1, const std::string &name2)
-      : _tag1(name1),
-        _tag2(name2)
-    {}
+    Auto2(const std::string &name1, const std::string &name2) : _tag1(name1), _tag2(name2) {}
 
     /// Pop two memory tags from the local-call stack.
     ///
@@ -384,6 +382,7 @@ class TfMallocTag
     }
 
    private:
+
     Auto _tag1;
     Auto _tag2;
   };
@@ -476,11 +475,13 @@ class TfMallocTag
   TF_API static std::vector<std::vector<uintptr_t>> GetCapturedMallocStacks();
 
  private:
+
   friend struct Tf_MallocGlobalData;
 
   class _TemporaryTaggingState
   {
    public:
+
     explicit _TemporaryTaggingState(_Tagging state);
     ~_TemporaryTaggingState();
 
@@ -491,6 +492,7 @@ class TfMallocTag
     _TemporaryTaggingState &operator=(_TemporaryTaggingState &&);
 
    private:
+
     _Tagging _oldState;
   };
 
@@ -582,8 +584,7 @@ WABI_NAMESPACE_END
   }                                                       \
                                                           \
   /* Required due to the placement-new override above. */ \
-  inline void operator delete(void *ptr, void *place)     \
-  {}                                                      \
+  inline void operator delete(void *ptr, void *place) {}  \
                                                           \
   inline void operator delete(void *ptr, size_t)          \
   {                                                       \

@@ -48,6 +48,7 @@ SDF_DECLARE_HANDLES(SdfLayer);
 class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier>
 {
  public:
+
   typedef PcpLayerStackIdentifier This;
 
   /// Construct with all empty pointers.
@@ -93,6 +94,7 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier>
   }
 
  public:
+
   /// The root layer.
   const SdfLayerHandle rootLayer;
 
@@ -103,9 +105,11 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier>
   const ArResolverContext pathResolverContext;
 
  private:
+
   size_t _ComputeHash() const;
 
  private:
+
   const size_t _hash;
 };
 
@@ -118,15 +122,17 @@ class PcpLayerStackIdentifier : boost::totally_ordered<PcpLayerStackIdentifier>
 class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifierStr>
 {
  public:
+
   typedef PcpLayerStackIdentifierStr This;
 
   /// Construct with given identifier strings and context.  If all arguments
   /// are empty strings and default-constructed ArResolverContext, then the
   /// result is identical to the default constructed object.
   PCP_API
-  explicit PcpLayerStackIdentifierStr(std::string const &rootLayerId = std::string(),
-                                      std::string const &sessionLayerId = std::string(),
-                                      ArResolverContext const &resolverContext = ArResolverContext());
+  explicit PcpLayerStackIdentifierStr(
+    std::string const &rootLayerId = std::string(),
+    std::string const &sessionLayerId = std::string(),
+    ArResolverContext const &resolverContext = ArResolverContext());
 
   /// Allow implicit conversion from PcpLayerStackIdentifier
   PCP_API
@@ -159,6 +165,7 @@ class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifie
   }
 
  public:
+
   /// The root layer.
   std::string rootLayerId;
 
@@ -169,9 +176,11 @@ class PcpLayerStackIdentifierStr : boost::totally_ordered<PcpLayerStackIdentifie
   ArResolverContext pathResolverContext;
 
  private:
+
   size_t _ComputeHash() const;
 
  private:
+
   size_t _hash;
 };
 

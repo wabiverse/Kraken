@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class SdfAssetPath : public boost::totally_ordered<SdfAssetPath>
 {
  public:
+
   /// \name Constructors
   /// @{
   ///
@@ -130,6 +131,7 @@ class SdfAssetPath : public boost::totally_ordered<SdfAssetPath>
   /// @}
 
  private:
+
   friend inline void swap(SdfAssetPath &lhs, SdfAssetPath &rhs)
   {
     lhs._assetPath.swap(rhs._assetPath);

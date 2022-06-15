@@ -51,8 +51,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<>
-struct GfIsGfQuat<class GfQuath>
+template<> struct GfIsGfQuat<class GfQuath>
 {
   static const bool value = true;
 };
@@ -69,12 +68,12 @@ GfHalf GfDot(const GfQuath &q1, const GfQuath &q2);
 class GfQuath
 {
  public:
+
   typedef GfHalf ScalarType;
   typedef GfVec3h ImaginaryType;
 
   /// Default constructor leaves the quaternion undefined.
-  GfQuath()
-  {}
+  GfQuath() {}
 
   /// Initialize the real coefficient to \p realVal and the imaginary
   /// coefficients to zero.
@@ -83,22 +82,13 @@ class GfQuath
   /// \p realVal are -1, 0, or 1.  Other values are legal but are likely to
   /// be meaningless.
   ///
-  explicit GfQuath(GfHalf realVal)
-    : _imaginary(0),
-      _real(realVal)
-  {}
+  explicit GfQuath(GfHalf realVal) : _imaginary(0), _real(realVal) {}
 
   /// Initialize the real and imaginary coefficients.
-  GfQuath(GfHalf real, GfHalf i, GfHalf j, GfHalf k)
-    : _imaginary(i, j, k),
-      _real(real)
-  {}
+  GfQuath(GfHalf real, GfHalf i, GfHalf j, GfHalf k) : _imaginary(i, j, k), _real(real) {}
 
   /// Initialize the real and imaginary coefficients.
-  GfQuath(GfHalf real, const GfVec3h &imaginary)
-    : _imaginary(imaginary),
-      _real(real)
-  {}
+  GfQuath(GfHalf real, const GfVec3h &imaginary) : _imaginary(imaginary), _real(real) {}
 
   /// Construct from GfQuatd.
   GF_API
@@ -290,6 +280,7 @@ class GfQuath
   }
 
  private:
+
   /// Imaginary part
   GfVec3h _imaginary;
 

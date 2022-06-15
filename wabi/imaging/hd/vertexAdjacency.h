@@ -24,12 +24,12 @@
 #ifndef WABI_IMAGING_HD_VERTEX_ADJACENCY_H
 #define WABI_IMAGING_HD_VERTEX_ADJACENCY_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/bufferArrayRange.h"
 #include "wabi/imaging/hd/bufferSource.h"
 #include "wabi/imaging/hd/computation.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/vt/array.h"
 
@@ -37,8 +37,10 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 using Hd_VertexAdjacencySharedPtr = std::shared_ptr<class Hd_VertexAdjacency>;
-using Hd_AdjacencyBuilderComputationSharedPtr = std::shared_ptr<class Hd_AdjacencyBuilderComputation>;
+using Hd_AdjacencyBuilderComputationSharedPtr =
+  std::shared_ptr<class Hd_AdjacencyBuilderComputation>;
 using Hd_AdjacencyBuilderComputationPtr = std::weak_ptr<class Hd_AdjacencyBuilderComputation>;
 
 class HdMeshTopology;
@@ -79,6 +81,7 @@ class HdMeshTopology;
 class Hd_VertexAdjacency final
 {
  public:
+
   HD_API
   Hd_VertexAdjacency();
 
@@ -123,6 +126,7 @@ class Hd_VertexAdjacency final
   }
 
  private:
+
   int _numPoints;
   VtIntArray _adjacencyTable;
 
@@ -143,16 +147,19 @@ class Hd_VertexAdjacency final
 class Hd_AdjacencyBuilderComputation : public HdNullBufferSource
 {
  public:
+
   HD_API
   Hd_AdjacencyBuilderComputation(Hd_VertexAdjacency *adjacency, HdMeshTopology const *topology);
   HD_API
   virtual bool Resolve() override;
 
  protected:
+
   HD_API
   virtual bool _CheckValid() const override;
 
  private:
+
   Hd_VertexAdjacency *_adjacency;
   HdMeshTopology const *_topology;
 };
@@ -166,6 +173,7 @@ class Hd_AdjacencyBuilderComputation : public HdNullBufferSource
 class Hd_AdjacencyBufferSource : public HdComputedBufferSource
 {
  public:
+
   HD_API
   Hd_AdjacencyBufferSource(Hd_VertexAdjacency const *adjacency,
                            HdBufferSourceSharedPtr const &adjacencyBuilder);
@@ -177,13 +185,16 @@ class Hd_AdjacencyBufferSource : public HdComputedBufferSource
   virtual bool Resolve() override;
 
  protected:
+
   HD_API
   virtual bool _CheckValid() const override;
 
  private:
+
   Hd_VertexAdjacency const *_adjacency;
   HdBufferSourceSharedPtr const _adjacencyBuilder;
 };
+
 
 WABI_NAMESPACE_END
 

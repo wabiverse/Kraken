@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLShaderFunction final : public HgiShaderFunction
 {
  public:
+
   HGIGL_API
   ~HgiGLShaderFunction() override;
 
@@ -64,17 +65,20 @@ class HgiGLShaderFunction final : public HgiShaderFunction
   uint32_t GetShaderId() const;
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
   HgiGLShaderFunction(HgiShaderFunctionDesc const &desc);
 
  private:
+
   HgiGLShaderFunction() = delete;
   HgiGLShaderFunction &operator=(const HgiGLShaderFunction &) = delete;
   HgiGLShaderFunction(const HgiGLShaderFunction &) = delete;
 
  private:
+
   std::string _errors;
   uint32_t _shaderId;
 };

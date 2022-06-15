@@ -85,6 +85,7 @@ class UsdStageCacheRequest;
 class UsdStageCache
 {
  public:
+
   /// \class Id
   ///
   /// A lightweight identifier that may be used to identify a
@@ -99,9 +100,7 @@ class UsdStageCache
   struct Id : private boost::totally_ordered<Id>
   {
     /// Default construct an invalid id.
-    Id()
-      : _value(-1)
-    {}
+    Id() : _value(-1) {}
 
     /// Create an Id from an integral value.  The supplied \p val must have
     /// been obtained by calling ToLongInt() previously.
@@ -142,6 +141,7 @@ class UsdStageCache
     }
 
    private:
+
     /// Equality comparison.
     friend bool operator==(const Id &lhs, const Id &rhs)
     {
@@ -158,9 +158,7 @@ class UsdStageCache
       return ~size_t(id.ToLongInt());
     }
 
-    explicit Id(long int val)
-      : _value(val)
-    {}
+    explicit Id(long int val) : _value(val) {}
 
     long int _value;
   };
@@ -243,7 +241,8 @@ class UsdStageCache
   /// than one matching stage in this cache, return an arbitrary matching one.
   /// See also FindAllMatching().
   USD_API
-  UsdStageRefPtr FindOneMatching(const SdfLayerHandle &rootLayer, const SdfLayerHandle &sessionLayer) const;
+  UsdStageRefPtr FindOneMatching(const SdfLayerHandle &rootLayer,
+                                 const SdfLayerHandle &sessionLayer) const;
 
   /// Find a stage in this cache with \p rootLayer and \p pathResolverContext.
   /// If there is no matching stage in this cache, return null.  If there is
@@ -372,6 +371,7 @@ class UsdStageCache
   std::string GetDebugName() const;
 
  private:
+
   friend void swap(UsdStageCache &lhs, UsdStageCache &rhs)
   {
     lhs.swap(rhs);
@@ -385,6 +385,7 @@ class UsdStageCache
 class UsdStageCacheRequest
 {
  public:
+
   USD_API
   virtual ~UsdStageCacheRequest();
 
@@ -400,6 +401,7 @@ class UsdStageCacheRequest
   virtual UsdStageRefPtr Manufacture() = 0;
 
  private:
+
   friend class UsdStageCache;
 
   struct _Mailbox;

@@ -52,6 +52,7 @@ WABI_NAMESPACE_BEGIN
 class HioGlslfxConfig
 {
  public:
+
   /// Enumerates Roles that parameters can have.
   ///
   /// <b>enum Role:</b>
@@ -73,6 +74,7 @@ class HioGlslfxConfig
   class Parameter
   {
    public:
+
     Parameter(std::string const &name,
               VtValue const &defaultValue,
               std::string const &docString = "",
@@ -98,7 +100,10 @@ class HioGlslfxConfig
   class Texture
   {
    public:
-    Texture(std::string const &name, VtValue const &defaultValue, std::string const &docString = "")
+
+    Texture(std::string const &name,
+            VtValue const &defaultValue,
+            std::string const &docString = "")
       : name(name),
         defaultValue(defaultValue),
         docString(docString)
@@ -118,7 +123,10 @@ class HioGlslfxConfig
   class Attribute
   {
    public:
-    Attribute(std::string const &name, VtValue const &defaultValue, std::string const &docString = "")
+
+    Attribute(std::string const &name,
+              VtValue const &defaultValue,
+              std::string const &docString = "")
       : name(name),
         defaultValue(defaultValue),
         docString(docString)
@@ -166,6 +174,7 @@ class HioGlslfxConfig
   MetadataDictionary GetMetadata() const;
 
  private:
+
   // private ctor. should only be called by ::Read
   HioGlslfxConfig(TfToken const &technique, VtDictionary const &dict, std::string *errorStr);
 

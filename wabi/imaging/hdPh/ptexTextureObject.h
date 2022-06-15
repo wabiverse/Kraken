@@ -59,6 +59,7 @@ using HgiTextureHandle = HgiHandle<class HgiTexture>;
 class HdPhPtexTextureObject final : public HdPhTextureObject
 {
  public:
+
   HDPH_API
   HdPhPtexTextureObject(const HdPhTextureIdentifier &textureId,
                         HdPh_TextureObjectRegistry *textureObjectRegistry);
@@ -91,6 +92,7 @@ class HdPhPtexTextureObject final : public HdPhTextureObject
   HdTextureType GetTextureType() const override;
 
  protected:
+
   HDPH_API
   void _Load() override;
 
@@ -98,6 +100,7 @@ class HdPhPtexTextureObject final : public HdPhTextureObject
   void _Commit() override;
 
  private:
+
   HgiFormat _format;
   GfVec3i _texelDimensions;
   int _texelLayers;
@@ -114,8 +117,7 @@ class HdPhPtexTextureObject final : public HdPhTextureObject
   void _DestroyTextures();
 };
 
-template<>
-struct HdPh_TypedTextureObjectHelper<HdTextureType::Ptex>
+template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Ptex>
 {
   using type = HdPhPtexTextureObject;
 };

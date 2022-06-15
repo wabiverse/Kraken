@@ -107,16 +107,11 @@ enum ParseErrorCode
 struct ParseResult
 {
  public:
+
   //! Default constructor, no error.
-  ParseResult()
-    : code_(kParseErrorNone),
-      offset_(0)
-  {}
+  ParseResult() : code_(kParseErrorNone), offset_(0) {}
   //! Constructor to set an error.
-  ParseResult(ParseErrorCode code, size_t offset)
-    : code_(code),
-      offset_(offset)
-  {}
+  ParseResult(ParseErrorCode code, size_t offset) : code_(code), offset_(offset) {}
 
   //! Get the error code.
   ParseErrorCode Code() const
@@ -166,6 +161,7 @@ struct ParseResult
   }
 
  private:
+
   ParseErrorCode code_;
   size_t offset_;
 };

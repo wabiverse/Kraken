@@ -68,6 +68,7 @@ class SdfAssetPath;
 class UsdRiTextureAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -78,16 +79,12 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
   /// Equivalent to UsdRiTextureAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiTextureAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdRiTextureAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdRiTextureAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiTextureAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiTextureAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdRiTextureAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -129,6 +126,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
   static UsdRiTextureAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -136,6 +134,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -145,9 +144,11 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RITEXTUREGAMMA
   // --------------------------------------------------------------------- //
@@ -171,6 +172,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RITEXTURESATURATION
   // --------------------------------------------------------------------- //
@@ -194,6 +196,7 @@ class UsdRiTextureAPI : public UsdAPISchemaBase
                                              bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -52,18 +52,12 @@ WABI_NAMESPACE_BEGIN
 /// If shared/weak ptr functionality is desired, the client creating Hgi objects
 /// can wrap the returned handle in a shared_ptr.
 ///
-template<class T>
-class HgiHandle
+template<class T> class HgiHandle
 {
  public:
-  HgiHandle()
-    : _ptr(nullptr),
-      _id(0)
-  {}
-  HgiHandle(T *obj, uint64_t id)
-    : _ptr(obj),
-      _id(id)
-  {}
+
+  HgiHandle() : _ptr(nullptr), _id(0) {}
+  HgiHandle(T *obj, uint64_t id) : _ptr(obj), _id(id) {}
 
   T *Get() const
   {
@@ -93,6 +87,7 @@ class HgiHandle
   }
 
  private:
+
   T *_ptr;
   uint64_t _id;
 };

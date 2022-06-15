@@ -24,23 +24,24 @@
 #ifndef WABI_IMAGING_HD_UNIT_TEST_NULL_RENDER_DELEGATE_H
 #define WABI_IMAGING_HD_UNIT_TEST_NULL_RENDER_DELEGATE_H
 
-#include "wabi/imaging/hd/instancer.h"
-#include "wabi/imaging/hd/renderDelegate.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/renderDelegate.h"
+#include "wabi/imaging/hd/instancer.h"
 
 WABI_NAMESPACE_BEGIN
 
 class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
 {
  public:
-  Hd_UnitTestNullRenderDelegate() = default;
-  virtual ~Hd_UnitTestNullRenderDelegate() = default;
 
-  virtual const TfTokenVector &GetSupportedRprimTypes() const override;
-  virtual const TfTokenVector &GetSupportedSprimTypes() const override;
-  virtual const TfTokenVector &GetSupportedBprimTypes() const override;
-  virtual HdRenderParam *GetRenderParam() const override;
-  virtual HdResourceRegistrySharedPtr GetResourceRegistry() const override;
+  Hd_UnitTestNullRenderDelegate() = default;
+  ~Hd_UnitTestNullRenderDelegate() override = default;
+
+  const TfTokenVector &GetSupportedRprimTypes() const override;
+  const TfTokenVector &GetSupportedSprimTypes() const override;
+  const TfTokenVector &GetSupportedBprimTypes() const override;
+  HdRenderParam *GetRenderParam() const override;
+  HdResourceRegistrySharedPtr GetResourceRegistry() const override;
 
   ////////////////////////////////////////////////////////////////////////////
   ///
@@ -48,8 +49,8 @@ class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
   ///
   ////////////////////////////////////////////////////////////////////////////
 
-  virtual HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
-                                                 HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
+                                         HdRprimCollection const &collection) override;
 
   ////////////////////////////////////////////////////////////////////////////
   ///
@@ -57,9 +58,9 @@ class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
   ///
   ////////////////////////////////////////////////////////////////////////////
 
-  virtual HdInstancer *CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id) override;
+  HdInstancer *CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id) override;
 
-  virtual void DestroyInstancer(HdInstancer *instancer) override;
+  void DestroyInstancer(HdInstancer *instancer) override;
 
   ////////////////////////////////////////////////////////////////////////////
   ///
@@ -67,20 +68,20 @@ class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
   ///
   ////////////////////////////////////////////////////////////////////////////
 
-  virtual HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId) override;
+  HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId) override;
 
-  virtual void DestroyRprim(HdRprim *rPrim) override;
+  void DestroyRprim(HdRprim *rPrim) override;
 
-  virtual HdSprim *CreateSprim(TfToken const &typeId, SdfPath const &sprimId) override;
+  HdSprim *CreateSprim(TfToken const &typeId, SdfPath const &sprimId) override;
 
-  virtual HdSprim *CreateFallbackSprim(TfToken const &typeId) override;
-  virtual void DestroySprim(HdSprim *sprim) override;
+  HdSprim *CreateFallbackSprim(TfToken const &typeId) override;
+  void DestroySprim(HdSprim *sprim) override;
 
-  virtual HdBprim *CreateBprim(TfToken const &typeId, SdfPath const &bprimId) override;
+  HdBprim *CreateBprim(TfToken const &typeId, SdfPath const &bprimId) override;
 
-  virtual HdBprim *CreateFallbackBprim(TfToken const &typeId) override;
+  HdBprim *CreateFallbackBprim(TfToken const &typeId) override;
 
-  virtual void DestroyBprim(HdBprim *bprim) override;
+  void DestroyBprim(HdBprim *bprim) override;
 
   ////////////////////////////////////////////////////////////////////////////
   ///
@@ -88,7 +89,8 @@ class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
   ///
   ////////////////////////////////////////////////////////////////////////////
 
-  virtual void CommitResources(HdChangeTracker *tracker) override;
+  void CommitResources(HdChangeTracker *tracker) override;
+
 
   ////////////////////////////////////////////////////////////////////////////
   ///
@@ -96,11 +98,13 @@ class Hd_UnitTestNullRenderDelegate final : public HdRenderDelegate
   ///
   ////////////////////////////////////////////////////////////////////////////
 
-  virtual HdCommandDescriptors GetCommandDescriptors() const;
+  HdCommandDescriptors GetCommandDescriptors() const override;
 
-  virtual bool InvokeCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs());
+  bool InvokeCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs()) override;
+
 
  private:
+
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;
   static const TfTokenVector SUPPORTED_SPRIM_TYPES;
   static const TfTokenVector SUPPORTED_BPRIM_TYPES;

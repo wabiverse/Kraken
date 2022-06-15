@@ -133,6 +133,7 @@ class SdfAssetPath;
 class UsdGeomMesh : public UsdGeomPointBased
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -143,16 +144,12 @@ class UsdGeomMesh : public UsdGeomPointBased
   /// Equivalent to UsdGeomMesh::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomMesh(const UsdPrim &prim = UsdPrim())
-    : UsdGeomPointBased(prim)
-  {}
+  explicit UsdGeomMesh(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim) {}
 
   /// Construct a UsdGeomMesh on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomMesh(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomMesh(const UsdSchemaBase &schemaObj)
-    : UsdGeomPointBased(schemaObj)
-  {}
+  explicit UsdGeomMesh(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -202,6 +199,7 @@ class UsdGeomMesh : public UsdGeomPointBased
   static UsdGeomMesh Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -210,6 +208,7 @@ class UsdGeomMesh : public UsdGeomPointBased
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -219,9 +218,11 @@ class UsdGeomMesh : public UsdGeomPointBased
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FACEVERTEXINDICES
   // --------------------------------------------------------------------- //
@@ -247,6 +248,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FACEVERTEXCOUNTS
   // --------------------------------------------------------------------- //
@@ -274,6 +276,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SUBDIVISIONSCHEME
   // --------------------------------------------------------------------- //
@@ -316,6 +319,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // INTERPOLATEBOUNDARY
   // --------------------------------------------------------------------- //
@@ -353,6 +357,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FACEVARYINGLINEARINTERPOLATION
   // --------------------------------------------------------------------- //
@@ -399,6 +404,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TRIANGLESUBDIVISIONRULE
   // --------------------------------------------------------------------- //
@@ -429,6 +435,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HOLEINDICES
   // --------------------------------------------------------------------- //
@@ -454,6 +461,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CORNERINDICES
   // --------------------------------------------------------------------- //
@@ -479,6 +487,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CORNERSHARPNESSES
   // --------------------------------------------------------------------- //
@@ -505,6 +514,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CREASEINDICES
   // --------------------------------------------------------------------- //
@@ -530,6 +540,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CREASELENGTHS
   // --------------------------------------------------------------------- //
@@ -558,6 +569,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CREASESHARPNESSES
   // --------------------------------------------------------------------- //
@@ -589,6 +601,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                            bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -614,6 +627,7 @@ class UsdGeomMesh : public UsdGeomPointBased
                                std::string *reason = nullptr);
 
  public:
+
   /// Returns whether or not \p sharpness is considered infinite.
   ///
   /// The \p sharpness value is usually intended for 'creaseSharpness' or

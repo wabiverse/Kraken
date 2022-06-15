@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class UsdImagingIndexProxy
 {
  public:
+
   /// A note on paths/prims: the core function of UsdImagingIndexProxy and
   /// UsdImagingDelegate is to maintain a set of mappings between USD prims
   /// and hydra prims (and a set of adapters that know how to translate
@@ -195,6 +196,7 @@ class UsdImagingIndexProxy
   void RemovePrimInfoDependency(SdfPath const &cachePath);
 
  private:
+
   friend class UsdImagingDelegate;
   UsdImagingIndexProxy(UsdImagingDelegate *delegate, UsdImagingDelegate::_Worker *worker)
     : _delegate(delegate),

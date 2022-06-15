@@ -65,9 +65,11 @@ using HdPhSamplerObjectSharedPtr = std::shared_ptr<class HdPhSamplerObject>;
 class HdPhSamplerObject
 {
  public:
+
   virtual ~HdPhSamplerObject() = 0;
 
  protected:
+
   explicit HdPhSamplerObject(HdPh_SamplerObjectRegistry *samplerObjectRegistry);
 
   Hgi *_GetHgi() const;
@@ -81,6 +83,7 @@ class HdPhSamplerObject
 class HdPhUvSamplerObject final : public HdPhSamplerObject
 {
  public:
+
   HDPH_API
   HdPhUvSamplerObject(HdPhUvTextureObject const &uvTexture,
                       HdSamplerParameters const &samplerParameters,
@@ -108,6 +111,7 @@ class HdPhUvSamplerObject final : public HdPhSamplerObject
   }
 
  private:
+
   HgiSamplerHandle _sampler;
   const uint64_t _glTextureSamplerHandle;
 };
@@ -119,6 +123,7 @@ class HdPhUvSamplerObject final : public HdPhSamplerObject
 class HdPhFieldSamplerObject final : public HdPhSamplerObject
 {
  public:
+
   HdPhFieldSamplerObject(HdPhFieldTextureObject const &uvTexture,
                          HdSamplerParameters const &samplerParameters,
                          bool createBindlessHandle,
@@ -144,6 +149,7 @@ class HdPhFieldSamplerObject final : public HdPhSamplerObject
   }
 
  private:
+
   HgiSamplerHandle _sampler;
   const uint64_t _glTextureSamplerHandle;
 };
@@ -156,6 +162,7 @@ class HdPhFieldSamplerObject final : public HdPhSamplerObject
 class HdPhPtexSamplerObject final : public HdPhSamplerObject
 {
  public:
+
   HdPhPtexSamplerObject(HdPhPtexTextureObject const &ptexTexture,
                         // samplerParameters are ignored by ptex
                         HdSamplerParameters const &samplerParameters,
@@ -189,6 +196,7 @@ class HdPhPtexSamplerObject final : public HdPhSamplerObject
   }
 
  private:
+
   HgiSamplerHandle _texelsSampler;
 
   const uint64_t _texelsGLTextureHandle;
@@ -203,6 +211,7 @@ class HdPhPtexSamplerObject final : public HdPhSamplerObject
 class HdPhUdimSamplerObject final : public HdPhSamplerObject
 {
  public:
+
   HdPhUdimSamplerObject(HdPhUdimTextureObject const &ptexTexture,
                         // samplerParameters are ignored by udim (at least for now)
                         HdSamplerParameters const &samplerParameters,
@@ -236,14 +245,14 @@ class HdPhUdimSamplerObject final : public HdPhSamplerObject
   }
 
  private:
+
   HgiSamplerHandle _texelsSampler;
 
   const uint64_t _texelsGLTextureHandle;
   const uint64_t _layoutGLTextureHandle;
 };
 
-template<HdTextureType textureType>
-struct HdPh_TypedSamplerObjectHelper;
+template<HdTextureType textureType> struct HdPh_TypedSamplerObjectHelper;
 
 /// \class HdPhTypedSamplerObject
 ///
@@ -253,26 +262,22 @@ struct HdPh_TypedSamplerObjectHelper;
 template<HdTextureType textureType>
 using HdPhTypedSamplerObject = typename HdPh_TypedSamplerObjectHelper<textureType>::type;
 
-template<>
-struct HdPh_TypedSamplerObjectHelper<HdTextureType::Uv>
+template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Uv>
 {
   using type = HdPhUvSamplerObject;
 };
 
-template<>
-struct HdPh_TypedSamplerObjectHelper<HdTextureType::Field>
+template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Field>
 {
   using type = HdPhFieldSamplerObject;
 };
 
-template<>
-struct HdPh_TypedSamplerObjectHelper<HdTextureType::Ptex>
+template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Ptex>
 {
   using type = HdPhPtexSamplerObject;
 };
 
-template<>
-struct HdPh_TypedSamplerObjectHelper<HdTextureType::Udim>
+template<> struct HdPh_TypedSamplerObjectHelper<HdTextureType::Udim>
 {
   using type = HdPhUdimSamplerObject;
 };

@@ -42,17 +42,16 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<int M>
-class _TestPlugBase : public TfRefBase, public TfWeakBase
+template<int M> class _TestPlugBase : public TfRefBase, public TfWeakBase
 {
  public:
+
   typedef _TestPlugBase This;
   typedef TfRefPtr<This> RefPtr;
   typedef TfWeakPtr<This> Ptr;
   constexpr static int N = M;
 
-  virtual ~_TestPlugBase()
-  {}
+  virtual ~_TestPlugBase() {}
 
   virtual std::string GetTypeName()
   {
@@ -68,21 +67,21 @@ class _TestPlugBase : public TfRefBase, public TfWeakBase
   static RefPtr Manufacture(const std::string &subclass);
 
  protected:
-  _TestPlugBase()
-  {}
+
+  _TestPlugBase() {}
 };
 
-template<int N>
-class _TestPlugFactoryBase : public TfType::FactoryBase
+template<int N> class _TestPlugFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual TfRefPtr<_TestPlugBase<N>> New() const = 0;
 };
 
-template<typename T>
-class _TestPlugFactory : public _TestPlugFactoryBase<T::N>
+template<typename T> class _TestPlugFactory : public _TestPlugFactoryBase<T::N>
 {
  public:
+
   virtual TfRefPtr<_TestPlugBase<T::N>> New() const
   {
     return T::New();

@@ -112,6 +112,7 @@ namespace Zep
   class ZepBuffer : public ZepComponent
   {
    public:
+
     ZepBuffer(ZepEditor &editor, const std::string &strName);
     ZepBuffer(ZepEditor &editor, const ZepPath &path);
     virtual ~ZepBuffer();
@@ -150,7 +151,9 @@ namespace Zep
     bool Delete(const GlyphIterator &startOffset,
                 const GlyphIterator &endOffset,
                 ChangeRecord &changeRecord);
-    bool Insert(const GlyphIterator &startOffset, const std::string &str, ChangeRecord &changeRecord);
+    bool Insert(const GlyphIterator &startOffset,
+                const std::string &str,
+                ChangeRecord &changeRecord);
     bool Replace(const GlyphIterator &startOffset,
                  const GlyphIterator &endOffset,
                  /*note; not ref*/ std::string str,
@@ -188,13 +191,10 @@ namespace Zep
 
     void SetSyntaxProvider(SyntaxProvider provider)
     {
-      if (provider.syntaxID != m_syntaxProvider.syntaxID)
-      {
-        if (provider.factory)
-        {
+      if (provider.syntaxID != m_syntaxProvider.syntaxID) {
+        if (provider.factory) {
           m_spSyntax = provider.factory(this);
-        } else
-        {
+        } else {
           m_spSyntax.reset();
         }
 
@@ -237,7 +237,9 @@ namespace Zep
                        const GlyphIterator &begin,
                        const GlyphIterator &end,
                        std::function<bool(const std::shared_ptr<RangeMarker> &)> fnCB) const;
-    std::shared_ptr<RangeMarker> FindNextMarker(GlyphIterator start, Direction dir, uint32_t markerType);
+    std::shared_ptr<RangeMarker> FindNextMarker(GlyphIterator start,
+                                                Direction dir,
+                                                uint32_t markerType);
 
     void SetBufferType(BufferType type);
     BufferType GetBufferType() const;
@@ -281,12 +283,15 @@ namespace Zep
     static ZepBuffer *FromHandle(ZepEditor &editor, uint64_t handle);
 
     Zep::signal<void(ZepBuffer &buffer, const GlyphIterator &, const std::string &)> sigPreInsert;
-    Zep::signal<void(ZepBuffer &buffer, const GlyphIterator &, const GlyphIterator &)> sigPreDelete;
+    Zep::signal<void(ZepBuffer &buffer, const GlyphIterator &, const GlyphIterator &)>
+      sigPreDelete;
 
    private:
+
     void MarkUpdate();
 
    private:
+
     // Buffer & record of the line end locations
     GapBuffer<uint8_t> m_workingBuffer;
 

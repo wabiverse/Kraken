@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class FormFactory
 {
  public:
+
   FormFactory(UsdAttribute formfactor, UsdTimeCode time = UsdTimeCode::Default())
     : m_describe(formfactor),
       m_time(time)
@@ -55,19 +56,14 @@ class FormFactory
     m_describe.Set(val, time);
   }
 
-  template<typename T>
-  FormFactory(UsdRelationship formfactor, T val)
-    : m_relate(formfactor)
+  template<typename T> FormFactory(UsdRelationship formfactor, T val) : m_relate(formfactor)
   {
     m_relate.AddTarget(val);
   }
 
-  FormFactory(UsdRelationship formfactor)
-    : m_relate(formfactor)
-  {}
+  FormFactory(UsdRelationship formfactor) : m_relate(formfactor) {}
 
-  template<typename T>
-  operator T()
+  template<typename T> operator T()
   {
     T factor;
     m_describe.Get(&factor, m_time);
@@ -75,6 +71,7 @@ class FormFactory
   }
 
  private:
+
   UsdAttribute m_describe;
   UsdRelationship m_relate;
   UsdTimeCode m_time;
@@ -107,7 +104,9 @@ namespace CreationFactory
       strprop.variability = SdfVariabilityUniform;
       strprop.custom = false;
 
-      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name, strprop.type, strprop.variability);
+      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
+                                                         strprop.type,
+                                                         strprop.variability);
       attr.Set(std::string(value));
       ptr->props.push_back(attr);
     }
@@ -122,79 +121,72 @@ namespace CreationFactory
       strprop.variability = SdfVariabilityUniform;
       strprop.custom = false;
 
-      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name, strprop.type, strprop.variability);
+      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
+                                                         strprop.type,
+                                                         strprop.variability);
       attr.Set(bool(value));
       ptr->props.push_back(attr);
     }
   }  // namespace BOOL
 }  // namespace CreationFactory
 
-template<>
-inline FormFactory::operator bool()
+template<> inline FormFactory::operator bool()
 {
   bool factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator int()
+template<> inline FormFactory::operator int()
 {
   int factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator TfToken()
+template<> inline FormFactory::operator TfToken()
 {
   TfToken factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator SdfPathVector()
+template<> inline FormFactory::operator SdfPathVector()
 {
   SdfPathVector factor;
   m_relate.GetTargets(&factor);
   return factor;
 }
 
-template<>
-inline FormFactory::operator SdfAssetPath()
+template<> inline FormFactory::operator SdfAssetPath()
 {
   SdfAssetPath factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator GfVec2i()
+template<> inline FormFactory::operator GfVec2i()
 {
   GfVec2i factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator GfVec2f()
+template<> inline FormFactory::operator GfVec2f()
 {
   GfVec2f factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator GfVec4i()
+template<> inline FormFactory::operator GfVec4i()
 {
   GfVec4i factor;
   m_describe.Get(&factor, m_time);
   return factor;
 }
 
-template<>
-inline FormFactory::operator GfVec4f()
+template<> inline FormFactory::operator GfVec4f()
 {
   GfVec4f factor;
   m_describe.Get(&factor, m_time);

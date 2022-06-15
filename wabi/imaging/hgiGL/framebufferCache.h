@@ -50,6 +50,7 @@ using HgiGLDescriptorCacheVec = std::vector<struct HgiGLDescriptorCacheItem *>;
 class HgiGLFramebufferCache final
 {
  public:
+
   HGIGL_API
   HgiGLFramebufferCache();
 
@@ -73,6 +74,7 @@ class HgiGLFramebufferCache final
   void Clear();
 
  private:
+
   friend std::ostream &operator<<(std::ostream &out, const HgiGLFramebufferCache &fbc);
 
   HgiGLDescriptorCacheVec _descriptorCache;

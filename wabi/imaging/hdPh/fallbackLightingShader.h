@@ -43,6 +43,7 @@ class HioGlslfx;
 class HdPh_FallbackLightingShader : public HdPhLightingShader
 {
  public:
+
   HDPH_API
   HdPh_FallbackLightingShader();
   HDPH_API
@@ -69,6 +70,7 @@ class HdPh_FallbackLightingShader : public HdPhLightingShader
   void SetCamera(GfMatrix4d const &worldToViewMatrix, GfMatrix4d const &projectionMatrix) override;
 
  private:
+
   std::unique_ptr<HioGlslfx> _glslfx;
 };
 

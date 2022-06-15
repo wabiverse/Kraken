@@ -50,6 +50,7 @@ using VkDescriptorSetLayoutVector = std::vector<VkDescriptorSetLayout>;
 class HgiVulkanComputePipeline final : public HgiComputePipeline
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanComputePipeline() override;
 
@@ -70,12 +71,14 @@ class HgiVulkanComputePipeline final : public HgiComputePipeline
   uint64_t &GetInflightBits();
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
   HgiVulkanComputePipeline(HgiVulkanDevice *device, HgiComputePipelineDesc const &desc);
 
  private:
+
   HgiVulkanComputePipeline() = delete;
   HgiVulkanComputePipeline &operator=(const HgiVulkanComputePipeline &) = delete;
   HgiVulkanComputePipeline(const HgiVulkanComputePipeline &) = delete;

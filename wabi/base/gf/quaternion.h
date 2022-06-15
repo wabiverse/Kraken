@@ -57,9 +57,9 @@ WABI_NAMESPACE_BEGIN
 class GfQuaternion
 {
  public:
+
   /// The default constructor leaves the quaternion undefined.
-  GfQuaternion()
-  {}
+  GfQuaternion() {}
 
   /// This constructor initializes the real part to the argument and
   /// the imaginary parts to zero.
@@ -67,16 +67,10 @@ class GfQuaternion
   /// Since quaternions typically need to be normalized, the only reasonable
   /// values for \p realVal are -1, 0, or 1.  Other values are legal but are
   /// likely to be meaningless.
-  explicit GfQuaternion(int realVal)
-    : _real(realVal),
-      _imaginary(0)
-  {}
+  explicit GfQuaternion(int realVal) : _real(realVal), _imaginary(0) {}
 
   /// This constructor initializes the real and imaginary parts.
-  GfQuaternion(double real, const GfVec3d &imaginary)
-    : _real(real),
-      _imaginary(imaginary)
-  {}
+  GfQuaternion(double real, const GfVec3d &imaginary) : _real(real), _imaginary(imaginary) {}
 
   /// Sets the real part of the quaternion.
   void SetReal(double real)
@@ -236,6 +230,7 @@ class GfQuaternion
   friend GF_API GfQuaternion GfSlerp(const GfQuaternion &q0, const GfQuaternion &q1, double alpha);
 
  private:
+
   /// Real part
   double _real;
   /// Imaginary part

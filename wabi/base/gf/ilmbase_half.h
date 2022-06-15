@@ -98,6 +98,7 @@ namespace wabi_half
   class half
   {
    public:
+
     //-------------
     // Constructors
     //-------------
@@ -205,6 +206,7 @@ namespace wabi_half
     GF_API void setBits(unsigned short bits);
 
    public:
+
     union uif
     {
       unsigned int i;
@@ -212,6 +214,7 @@ namespace wabi_half
     };
 
    private:
+
     GF_API static short convert(int i);
     GF_API static float overflow();
 
@@ -436,16 +439,14 @@ namespace wabi_half
 
     x.f = f;
 
-    if (f == 0)
-    {
+    if (f == 0) {
       //
       // Common special case - zero.
       // Preserve the zero's sign bit.
       //
 
       _h = (x.i >> 16);
-    } else
-    {
+    } else {
       //
       // We extract the combined sign and exponent, e, from our
       // floating-point number, f.  Then we convert e to the sign
@@ -466,8 +467,7 @@ namespace wabi_half
 
       e = _eLut[e];
 
-      if (e)
-      {
+      if (e) {
         //
         // Simple case - round the significand, m, to 10
         // bits and combine it with the sign and exponent.
@@ -475,8 +475,7 @@ namespace wabi_half
 
         int m = x.i & 0x007fffff;
         _h = e + ((m + 0x00000fff + ((m >> 13) & 1)) >> 13);
-      } else
-      {
+      } else {
         //
         // Difficult case - call a function.
         //
@@ -531,8 +530,7 @@ namespace wabi_half
     // Check for exponent overflow.
     //
 
-    if (e >= 0x7c00)
-    {
+    if (e >= 0x7c00) {
       //
       // Overflow occurred -- truncate instead of rounding.
       //

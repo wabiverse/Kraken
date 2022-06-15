@@ -55,6 +55,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(SdfAbstractData);
 class UsdAbc_AlembicDataWriter : boost::noncopyable
 {
  public:
+
   UsdAbc_AlembicDataWriter();
   ~UsdAbc_AlembicDataWriter();
 
@@ -68,6 +69,7 @@ class UsdAbc_AlembicDataWriter : boost::noncopyable
   void SetFlag(const TfToken &, bool set = true);
 
  private:
+
   boost::scoped_ptr<class UsdAbc_AlembicDataWriterImpl> _impl;
   std::string _errorLog;
 };

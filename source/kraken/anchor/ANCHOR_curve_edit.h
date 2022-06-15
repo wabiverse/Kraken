@@ -81,10 +81,8 @@ namespace AnchorCurveEdit
       return 0xFF202020;
     }
     // handle undo/redo thru this functions
-    virtual void BeginEdit(int /*index*/)
-    {}
-    virtual void EndEdit()
-    {}
+    virtual void BeginEdit(int /*index*/) {}
+    virtual void EndEdit() {}
   };
 
   int Edit(Delegate &delegate,

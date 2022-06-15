@@ -49,6 +49,7 @@ namespace Zep
   class ZepEditor_ANCHOR : public ZepEditor
   {
    public:
+
     ZepEditor_ANCHOR(const ZepPath &root,
                      const NVec2f &pixelScale,
                      uint32_t flags = 0,
@@ -78,53 +79,42 @@ namespace Zep
         {ZEP_KEY_F11, ExtKeys::F11},
         {ZEP_KEY_F12, ExtKeys::F12}
       };
-      if (io.MouseDelta[0] != 0 || io.MouseDelta[1] != 0)
-      {
+      if (io.MouseDelta[0] != 0 || io.MouseDelta[1] != 0) {
         OnMouseMove(toNVec2f(io.MousePos));
       }
 
-      if (io.MouseClicked[0])
-      {
-        if (OnMouseDown(toNVec2f(io.MousePos), ZepMouseButton::Left))
-        {
+      if (io.MouseClicked[0]) {
+        if (OnMouseDown(toNVec2f(io.MousePos), ZepMouseButton::Left)) {
           // Hide the mouse click from imgui if we handled it
           io.MouseClicked[0] = false;
         }
       }
 
-      if (io.MouseClicked[1])
-      {
-        if (OnMouseDown(toNVec2f(io.MousePos), ZepMouseButton::Right))
-        {
+      if (io.MouseClicked[1]) {
+        if (OnMouseDown(toNVec2f(io.MousePos), ZepMouseButton::Right)) {
           // Hide the mouse click from imgui if we handled it
           io.MouseClicked[0] = false;
         }
       }
 
-      if (io.MouseReleased[0])
-      {
-        if (OnMouseUp(toNVec2f(io.MousePos), ZepMouseButton::Left))
-        {
+      if (io.MouseReleased[0]) {
+        if (OnMouseUp(toNVec2f(io.MousePos), ZepMouseButton::Left)) {
           // Hide the mouse click from imgui if we handled it
           io.MouseClicked[0] = false;
         }
       }
 
-      if (io.MouseReleased[1])
-      {
-        if (OnMouseUp(toNVec2f(io.MousePos), ZepMouseButton::Right))
-        {
+      if (io.MouseReleased[1]) {
+        if (OnMouseUp(toNVec2f(io.MousePos), ZepMouseButton::Right)) {
           // Hide the mouse click from imgui if we handled it
           io.MouseClicked[0] = false;
         }
       }
 
-      if (io.KeyCtrl)
-      {
+      if (io.KeyCtrl) {
         mod |= ModifierKey::Ctrl;
       }
-      if (io.KeyShift)
-      {
+      if (io.KeyShift) {
         mod |= ModifierKey::Shift;
       }
 
@@ -132,121 +122,93 @@ namespace Zep
       const auto &buffer = pWindow->GetBuffer();
 
       // Check USB Keys
-      for (auto &usbKey : MapUSBKeys)
-      {
-        if (ANCHOR::IsKeyPressed(usbKey.first))
-        {
+      for (auto &usbKey : MapUSBKeys) {
+        if (ANCHOR::IsKeyPressed(usbKey.first)) {
           buffer.GetMode()->AddKeyPress(usbKey.second, mod);
           return;
         }
       }
 
-      if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Tab)))
-      {
+      if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Tab))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::TAB, mod);
         return;
       }
-      if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Escape)))
-      {
+      if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Escape))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::ESCAPE, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Enter)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Enter))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::RETURN, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Delete)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Delete))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::DEL, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Home)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Home))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::HOME, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_End)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_End))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::END, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Backspace)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_Backspace))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::BACKSPACE, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_RightArrow)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_RightArrow))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::RIGHT, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_LeftArrow)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_LeftArrow))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::LEFT, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_UpArrow)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_UpArrow))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::UP, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_DownArrow)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_DownArrow))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::DOWN, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_PageDown)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_PageDown))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::PAGEDOWN, mod);
         return;
-      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_PageUp)))
-      {
+      } else if (ANCHOR::IsKeyPressed(ANCHOR::GetKeyIndex(AnchorKey_PageUp))) {
         buffer.GetMode()->AddKeyPress(ExtKeys::PAGEUP, mod);
         return;
-      } else if (io.KeyCtrl)
-      {
+      } else if (io.KeyCtrl) {
         // SDL Remaps to its own scancodes; and since we can't look them up in the standard IMGui
         // list without modifying the ANCHOR base code, we have special handling here for CTRL. For
         // the Win32 case, we use VK_A (ASCII) is handled below
 #if defined(_SDL_H) || defined(ZEP_USE_SDL)
-        if (ANCHOR::IsKeyPressed(ZEP_KEY_1))
-        {
+        if (ANCHOR::IsKeyPressed(ZEP_KEY_1)) {
           SetGlobalMode(ZepMode_Standard::StaticName());
           handled = true;
-        } else if (ANCHOR::IsKeyPressed(ZEP_KEY_2))
-        {
+        } else if (ANCHOR::IsKeyPressed(ZEP_KEY_2)) {
           SetGlobalMode(ZepMode_Vim::StaticName());
           handled = true;
-        } else
-        {
-          for (int ch = ZEP_KEY_A; ch <= ZEP_KEY_Z; ch++)
-          {
-            if (ANCHOR::IsKeyPressed(ch))
-            {
+        } else {
+          for (int ch = ZEP_KEY_A; ch <= ZEP_KEY_Z; ch++) {
+            if (ANCHOR::IsKeyPressed(ch)) {
               buffer.GetMode()->AddKeyPress((ch - ZEP_KEY_A) + 'a', mod);
               handled = true;
             }
           }
 
-          if (ANCHOR::IsKeyPressed(ZEP_KEY_SPACE))
-          {
+          if (ANCHOR::IsKeyPressed(ZEP_KEY_SPACE)) {
             buffer.GetMode()->AddKeyPress(' ', mod);
             handled = true;
           }
         }
 #else
-        if (ANCHOR::IsKeyPressed('1'))
-        {
+        if (ANCHOR::IsKeyPressed('1')) {
           SetGlobalMode(ZepMode_Standard::StaticName());
           handled = true;
-        } else if (ANCHOR::IsKeyPressed('2'))
-        {
+        } else if (ANCHOR::IsKeyPressed('2')) {
           SetGlobalMode(ZepMode_Vim::StaticName());
           handled = true;
-        } else
-        {
-          for (int ch = 'A'; ch <= 'Z'; ch++)
-          {
-            if (ANCHOR::IsKeyPressed(ch))
-            {
+        } else {
+          for (int ch = 'A'; ch <= 'Z'; ch++) {
+            if (ANCHOR::IsKeyPressed(ch)) {
               buffer.GetMode()->AddKeyPress(ch - 'A' + 'a', mod);
               handled = true;
             }
           }
 
-          if (ANCHOR::IsKeyPressed(ZEP_KEY_SPACE))
-          {
+          if (ANCHOR::IsKeyPressed(ZEP_KEY_SPACE)) {
             buffer.GetMode()->AddKeyPress(' ', mod);
             handled = true;
           }
@@ -254,10 +216,8 @@ namespace Zep
 #endif
       }
 
-      if (!handled)
-      {
-        for (int n = 0; n < io.InputQueueCharacters.Size && io.InputQueueCharacters[n]; n++)
-        {
+      if (!handled) {
+        for (int n = 0; n < io.InputQueueCharacters.Size && io.InputQueueCharacters[n]; n++) {
           // Ignore '\r' - sometimes ANCHOR generates it!
           if (io.InputQueueCharacters[n] == '\r')
             continue;

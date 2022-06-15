@@ -64,6 +64,8 @@ const char *LUXO_object_identifier(const KrakenPrim *type);
 
 SdfValueTypeName LUXO_property_type(PropertyLUXO *prop);
 
-void LUXO_property_collection_begin(PointerLUXO *ptr, PropertyLUXO *prop, CollectionPropertyLUXO iter);
+void LUXO_property_collection_begin(PointerLUXO *ptr,
+                                    PropertyLUXO *prop,
+                                    CollectionPropertyLUXO iter);
 
 WABI_NAMESPACE_END

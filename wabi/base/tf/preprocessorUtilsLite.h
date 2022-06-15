@@ -288,8 +288,45 @@
 #define TF_PP_VAE_13(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, ...) a13
 #define TF_PP_VAE_14(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, ...) a14
 #define TF_PP_VAE_15(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, ...) a15
-#define TF_PP_VAE_16(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, ...) a16
-#define TF_PP_VAE_17(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, ...) a17
+#define TF_PP_VAE_16(a0,  \
+                     a1,  \
+                     a2,  \
+                     a3,  \
+                     a4,  \
+                     a5,  \
+                     a6,  \
+                     a7,  \
+                     a8,  \
+                     a9,  \
+                     a10, \
+                     a11, \
+                     a12, \
+                     a13, \
+                     a14, \
+                     a15, \
+                     a16, \
+                     ...) \
+  a16
+#define TF_PP_VAE_17(a0,  \
+                     a1,  \
+                     a2,  \
+                     a3,  \
+                     a4,  \
+                     a5,  \
+                     a6,  \
+                     a7,  \
+                     a8,  \
+                     a9,  \
+                     a10, \
+                     a11, \
+                     a12, \
+                     a13, \
+                     a14, \
+                     a15, \
+                     a16, \
+                     a17, \
+                     ...) \
+  a17
 #define TF_PP_VAE_18(a0,  \
                      a1,  \
                      a2,  \

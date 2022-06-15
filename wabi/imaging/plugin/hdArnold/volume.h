@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldVolume : public HdVolume
 {
  public:
+
   /// Constructor for HdArnoldVolume.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
@@ -82,6 +83,7 @@ class HdArnoldVolume : public HdVolume
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   /// Allows setting additional Dirty Bits based on the ones already set.
   ///
   /// @param bits The current Dirty Bits.
@@ -115,22 +117,20 @@ class HdArnoldVolume : public HdVolume
   ///
   /// @tparam F Generic type for the function.
   /// @param f Function to run on the volumes.
-  template<typename F>
-  void _ForEachVolume(F &&f)
+  template<typename F> void _ForEachVolume(F &&f)
   {
-    for (auto *v : _volumes)
-    {
+    for (auto *v : _volumes) {
       f(v);
     }
-    for (auto *v : _inMemoryVolumes)
-    {
+    for (auto *v : _inMemoryVolumes) {
       f(v);
     }
   }
 
-  HdArnoldRenderDelegate *_renderDelegate;   ///< Pointer to the Render Delegate.
-  HdArnoldMaterialTracker _materialTracker;  ///< Utility to track material assignments to the volume.
-  std::vector<HdArnoldShape *> _volumes;     ///< Vector storing all the Volumes created.
+  HdArnoldRenderDelegate *_renderDelegate;  ///< Pointer to the Render Delegate.
+  HdArnoldMaterialTracker
+    _materialTracker;                     ///< Utility to track material assignments to the volume.
+  std::vector<HdArnoldShape *> _volumes;  ///< Vector storing all the Volumes created.
   std::vector<HdArnoldShape *>
     _inMemoryVolumes;  ///< Vectoring storing all the Volumes for in-memory VDB storage.
 };

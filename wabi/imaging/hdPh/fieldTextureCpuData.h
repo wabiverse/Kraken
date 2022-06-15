@@ -46,6 +46,7 @@ using HioFieldTextureDataSharedPtr = std::shared_ptr<class HioFieldTextureData>;
 class HdPh_FieldTextureCpuData : public HdPhTextureCpuData
 {
  public:
+
   /// It is assumed that Read(...) has already been called
   /// on textureData.
 
@@ -67,6 +68,7 @@ class HdPh_FieldTextureCpuData : public HdPhTextureCpuData
   bool IsValid() const override;
 
  private:
+
   // The result, including a pointer to the potentially
   // converted texture data in _textureDesc.initialData.
   HgiTextureDesc _textureDesc;

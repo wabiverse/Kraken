@@ -49,6 +49,7 @@ class Pcp_MutedLayers;
 class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase
 {
  public:
+
   /// Create a new Pcp_LayerStackRegistry.
   static Pcp_LayerStackRegistryRefPtr New(const std::string &fileFormatTarget = std::string(),
                                           bool isUsd = false);
@@ -79,7 +80,8 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase
   /// Returns the layer stack for \p identifier if it exists, otherwise
   /// creates a new layer stack for \p identifier.  This returns \c NULL
   /// if \p identifier is invalid (i.e. its root layer is \c NULL).
-  PcpLayerStackRefPtr FindOrCreate(const PcpLayerStackIdentifier &identifier, PcpErrorVector *allErrors);
+  PcpLayerStackRefPtr FindOrCreate(const PcpLayerStackIdentifier &identifier,
+                                   PcpErrorVector *allErrors);
 
   /// Returns the layer stack for \p identifier if it exists, otherwise
   /// returns \c NULL.
@@ -100,6 +102,7 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase
   std::vector<PcpLayerStackPtr> GetAllLayerStacks() const;
 
  private:
+
   /// Private constructor -- see New().
   Pcp_LayerStackRegistry(const std::string &fileFormatTarget, bool isUsd);
   ~Pcp_LayerStackRegistry();
@@ -131,6 +134,7 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase
   friend class PcpLayerStack;
 
  private:
+
   std::unique_ptr<Pcp_LayerStackRegistryData> _data;
 };
 
@@ -141,6 +145,7 @@ class Pcp_LayerStackRegistry : public TfRefBase, public TfWeakBase
 class Pcp_MutedLayers
 {
  public:
+
   const std::vector<std::string> &GetMutedLayers() const;
   void MuteAndUnmuteLayers(const SdfLayerHandle &anchorLayer,
                            std::vector<std::string> *layersToMute,
@@ -150,6 +155,7 @@ class Pcp_MutedLayers
                     std::string *canonicalLayerIdentifier = nullptr) const;
 
  private:
+
   std::vector<std::string> _layers;
 };
 

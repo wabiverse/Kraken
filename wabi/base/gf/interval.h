@@ -57,20 +57,15 @@ WABI_NAMESPACE_BEGIN
 class GfInterval
 {
  public:
+
   /// \name Constructors
   ///@{
 
   /// Construct an empty open interval, (0,0).
-  GfInterval()
-    : _min(0.0, false),
-      _max(0.0, false)
-  {}
+  GfInterval() : _min(0.0, false), _max(0.0, false) {}
 
   /// Construct a closed interval representing the single point, as [val,val].
-  GfInterval(double val)
-    : _min(val, true),
-      _max(val, true)
-  {}
+  GfInterval(double val) : _min(val, true), _max(val, true) {}
 
   /// Construct an interval with the given arguments.
   GfInterval(double min, double max, bool minClosed = true, bool maxClosed = true)
@@ -205,7 +200,8 @@ class GfInterval
   /// Return true iff the interval is empty.
   bool IsEmpty() const
   {
-    return (_min.value > _max.value) || ((_min.value == _max.value) && (!_min.closed || !_max.closed));
+    return (_min.value > _max.value) ||
+           ((_min.value == _max.value) && (!_min.closed || !_max.closed));
   }
 
   /// Width of the interval.
@@ -255,15 +251,12 @@ class GfInterval
   /// Boolean intersection.
   GfInterval &operator&=(const GfInterval &rhs)
   {
-    if (IsEmpty())
-    {
+    if (IsEmpty()) {
       // No change
-    } else if (rhs.IsEmpty())
-    {
+    } else if (rhs.IsEmpty()) {
       // Intersection is empty
       *this = GfInterval();
-    } else
-    {
+    } else {
       // Intersect min edge
       if (_min.value < rhs._min.value)
         _min = rhs._min;
@@ -282,14 +275,11 @@ class GfInterval
   /// Returns the interval that bounds the union of this interval and rhs.
   GfInterval &operator|=(const GfInterval &rhs)
   {
-    if (IsEmpty())
-    {
+    if (IsEmpty()) {
       *this = rhs;
-    } else if (rhs.IsEmpty())
-    {
+    } else if (rhs.IsEmpty()) {
       // No change
-    } else
-    {
+    } else {
       // Expand min edge
       if (_min.value > rhs._min.value)
         _min = rhs._min;
@@ -308,8 +298,7 @@ class GfInterval
   /// Interval addition.
   GfInterval &operator+=(const GfInterval &rhs)
   {
-    if (!rhs.IsEmpty())
-    {
+    if (!rhs.IsEmpty()) {
       _min.value += rhs._min.value;
       _max.value += rhs._max.value;
       _min.closed &= rhs._min.closed;
@@ -420,6 +409,7 @@ class GfInterval
   }
 
  private:
+
   // Helper struct to represent interval boundaries.
   struct _Bound
   {
@@ -429,15 +419,12 @@ class GfInterval
     // only if the boundary is closed.
     bool closed;
 
-    _Bound(double val, bool isClosed)
-      : value(val),
-        closed(isClosed)
+    _Bound(double val, bool isClosed) : value(val), closed(isClosed)
     {
       // Closed boundaries on infinite values do not make sense so
       // force the bound to be open
       if (value == -std::numeric_limits<double>::infinity() ||
-          value == std::numeric_limits<double>::infinity())
-      {
+          value == std::numeric_limits<double>::infinity()) {
         closed = false;
       }
     }

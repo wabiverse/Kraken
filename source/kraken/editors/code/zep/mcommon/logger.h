@@ -46,21 +46,19 @@ namespace Zep
   class ZLog
   {
    public:
-    ZLog()
-    {}
+
+    ZLog() {}
     ZLog(ZLT type)
     {
       msglevel = type;
-      if (logger.headers && msglevel >= logger.level)
-      {
+      if (logger.headers && msglevel >= logger.level) {
         operator<<("[" + getLabel(type) + "] ");
       }
       out << "(T:" << std::this_thread::get_id() << ") ";
     }
     ~ZLog()
     {
-      if (opened)
-      {
+      if (opened) {
         out << std::endl;
 #ifdef WIN32
         OutputDebugStringA(out.str().c_str());
@@ -70,8 +68,7 @@ namespace Zep
       }
       opened = false;
     }
-    template<class T>
-    ZLog &operator<<(const T &msg)
+    template<class T> ZLog &operator<<(const T &msg)
     {
       if (disabled || msglevel < logger.level)
         return *this;
@@ -83,13 +80,13 @@ namespace Zep
     static bool disabled;
 
    private:
+
     bool opened = false;
     ZLT msglevel = ZLT::DBG;
     inline std::string getLabel(ZLT type)
     {
       std::string label;
-      switch (type)
-      {
+      switch (type) {
         case ZLT::DBG:
           label = "DEBUG";
           break;

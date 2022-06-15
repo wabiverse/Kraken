@@ -37,7 +37,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdPh_QuadInfoBuilderComputationSharedPtr = std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
+using HdPh_QuadInfoBuilderComputationSharedPtr =
+  std::shared_ptr<class HdPh_QuadInfoBuilderComputation>;
 
 class HdPh_MeshTopology;
 
@@ -110,13 +111,16 @@ class HdPh_MeshTopology;
 class HdPh_QuadInfoBuilderComputation : public HdNullBufferSource
 {
  public:
+
   HdPh_QuadInfoBuilderComputation(HdPh_MeshTopology *topology, SdfPath const &id);
   virtual bool Resolve() override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
 };
@@ -143,6 +147,7 @@ class HdPh_QuadInfoBuilderComputation : public HdNullBufferSource
 class HdPh_QuadIndexBuilderComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_QuadIndexBuilderComputation(HdPh_MeshTopology *topology,
                                    HdPh_QuadInfoBuilderComputationSharedPtr const &quadInfoBuilder,
                                    SdfPath const &id);
@@ -153,9 +158,11 @@ class HdPh_QuadIndexBuilderComputation : public HdComputedBufferSource
   virtual HdBufferSourceSharedPtrVector GetChainedBuffers() const override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   HdPh_QuadInfoBuilderComputationSharedPtr _quadInfoBuilder;
@@ -170,15 +177,18 @@ class HdPh_QuadIndexBuilderComputation : public HdComputedBufferSource
 class HdPh_QuadrangulateTableComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_QuadrangulateTableComputation(HdPh_MeshTopology *topology,
                                      HdBufferSourceSharedPtr const &quadInfoBuilder);
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
   virtual bool Resolve() override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   HdBufferSourceSharedPtr _quadInfoBuilder;
@@ -191,6 +201,7 @@ class HdPh_QuadrangulateTableComputation : public HdComputedBufferSource
 class HdPh_QuadrangulateComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_QuadrangulateComputation(HdPh_MeshTopology *topology,
                                 HdBufferSourceSharedPtr const &source,
                                 HdBufferSourceSharedPtr const &quadInfoBuilder,
@@ -203,9 +214,11 @@ class HdPh_QuadrangulateComputation : public HdComputedBufferSource
   virtual HdBufferSourceSharedPtr GetPreChainedBuffer() const override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   HdBufferSourceSharedPtr _source;
@@ -219,6 +232,7 @@ class HdPh_QuadrangulateComputation : public HdComputedBufferSource
 class HdPh_QuadrangulateFaceVaryingComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_QuadrangulateFaceVaryingComputation(HdPh_MeshTopology *topolgoy,
                                            HdBufferSourceSharedPtr const &source,
                                            SdfPath const &id);
@@ -227,9 +241,11 @@ class HdPh_QuadrangulateFaceVaryingComputation : public HdComputedBufferSource
   virtual bool Resolve() override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   HdBufferSourceSharedPtr _source;
@@ -242,6 +258,7 @@ class HdPh_QuadrangulateFaceVaryingComputation : public HdComputedBufferSource
 class HdPh_QuadrangulateComputationGPU : public HdComputation
 {
  public:
+
   /// This computaion doesn't generate buffer source (i.e. 2nd phase)
   HdPh_QuadrangulateComputationGPU(HdPh_MeshTopology *topology,
                                    TfToken const &sourceName,
@@ -253,6 +270,7 @@ class HdPh_QuadrangulateComputationGPU : public HdComputation
   virtual int GetNumOutputElements() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   TfToken _name;

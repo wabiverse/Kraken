@@ -30,6 +30,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 /*static*/
 bool HdBufferSpec::IsSubset(HdBufferSpecVector const &subset, HdBufferSpecVector const &superset)
 {
@@ -89,5 +90,6 @@ void HdBufferSpec::Dump(HdBufferSpecVector const &specs)
               << " (" << specs[i].tupleType.type << "), " << specs[i].tupleType.count << "\n";
   }
 }
+
 
 WABI_NAMESPACE_END

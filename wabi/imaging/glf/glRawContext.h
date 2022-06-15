@@ -47,6 +47,7 @@ typedef std::shared_ptr<class GlfGLRawContext> GlfGLRawContextSharedPtr;
 class GlfGLRawContext : public GlfGLContext
 {
  public:
+
   /// Returns a new object with the current context.
   GLF_API
   static GlfGLRawContextSharedPtr New();
@@ -69,6 +70,7 @@ class GlfGLRawContext : public GlfGLContext
   virtual bool IsValid() const;
 
  protected:
+
   // GlfGLContext overrides
   GLF_API
   virtual void _MakeCurrent();
@@ -78,9 +80,11 @@ class GlfGLRawContext : public GlfGLContext
   virtual bool _IsEqual(const GlfGLContextSharedPtr &rhs) const;
 
  private:
+
   GlfGLRawContext(const GarchGLPlatformContextState &);
 
  private:
+
   GarchGLPlatformContextState _state;
 };
 

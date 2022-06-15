@@ -24,6 +24,7 @@ class RprUsd_RprArithmeticNode;
 class RprUsd_UsdPreviewSurface : public RprUsd_BaseRuntimeNode
 {
  public:
+
   RprUsd_UsdPreviewSurface(RprUsd_MaterialBuilderContext *ctx,
                            std::map<TfToken, VtValue> const &hydraParameters);
   ~RprUsd_UsdPreviewSurface() override = default;
@@ -33,6 +34,7 @@ class RprUsd_UsdPreviewSurface : public RprUsd_BaseRuntimeNode
   bool SetInput(TfToken const &inputId, VtValue const &value) override;
 
  private:
+
   bool m_useSpecular;
   VtValue m_albedo;
   VtValue m_reflection;
@@ -59,7 +61,9 @@ TF_DECLARE_PUBLIC_TOKENS(RprUsd_UsdUVTextureTokens, RPRUSD_USD_UV_TEXTURE_TOKENS
 class RprUsd_UsdUVTexture : public RprUsd_MaterialNode
 {
  public:
-  RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx, std::map<TfToken, VtValue> const &hydraParameters);
+
+  RprUsd_UsdUVTexture(RprUsd_MaterialBuilderContext *ctx,
+                      std::map<TfToken, VtValue> const &hydraParameters);
   ~RprUsd_UsdUVTexture() override = default;
 
   VtValue GetOutput(TfToken const &outputId) override;
@@ -67,6 +71,7 @@ class RprUsd_UsdUVTexture : public RprUsd_MaterialNode
   bool SetInput(TfToken const &inputId, VtValue const &value) override;
 
  private:
+
   RprUsd_MaterialBuilderContext *m_ctx;
 
   std::shared_ptr<RprUsdCoreImage> m_image;
@@ -80,6 +85,7 @@ class RprUsd_UsdUVTexture : public RprUsd_MaterialNode
 class RprUsd_UsdPrimvarReader : public RprUsd_BaseRuntimeNode
 {
  public:
+
   RprUsd_UsdPrimvarReader(RprUsd_MaterialBuilderContext *ctx,
                           std::map<TfToken, VtValue> const &hydraParameters);
   ~RprUsd_UsdPrimvarReader() override = default;
@@ -90,6 +96,7 @@ class RprUsd_UsdPrimvarReader : public RprUsd_BaseRuntimeNode
 class RprUsd_UsdTransform2d : public RprUsd_MaterialNode
 {
  public:
+
   RprUsd_UsdTransform2d(RprUsd_MaterialBuilderContext *ctx,
                         std::map<TfToken, VtValue> const &hydraParameters);
   ~RprUsd_UsdTransform2d() override = default;
@@ -99,6 +106,7 @@ class RprUsd_UsdTransform2d : public RprUsd_MaterialNode
   bool SetInput(TfToken const &inputId, VtValue const &value) override;
 
  private:
+
   RprUsd_MaterialBuilderContext *m_ctx;
 
   std::unique_ptr<RprUsd_RprArithmeticNode> m_setZToOneNode;

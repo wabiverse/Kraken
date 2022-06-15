@@ -46,6 +46,7 @@ class HgiVulkanDevice;
 class HgiVulkanCapabilities final
 {
  public:
+
   HGIVULKAN_API
   HgiVulkanCapabilities(HgiVulkanDevice *device);
 

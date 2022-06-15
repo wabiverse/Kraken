@@ -52,6 +52,7 @@ using HdPhRenderPassShaderSharedPtr = std::shared_ptr<class HdPhRenderPassShader
 class HdxOitResolveTask : public HdTask
 {
  public:
+
   HDX_API
   static bool IsOitEnabled();
 
@@ -78,11 +79,14 @@ class HdxOitResolveTask : public HdTask
   void Execute(HdTaskContext *ctx) override;
 
  private:
+
   HdxOitResolveTask() = delete;
   HdxOitResolveTask(const HdxOitResolveTask &) = delete;
   HdxOitResolveTask &operator=(const HdxOitResolveTask &) = delete;
 
-  void _PrepareOitBuffers(HdTaskContext *ctx, HdRenderIndex *renderIndex, GfVec2i const &screenSize);
+  void _PrepareOitBuffers(HdTaskContext *ctx,
+                          HdRenderIndex *renderIndex,
+                          GfVec2i const &screenSize);
 
   GfVec2i _ComputeScreenSize(HdTaskContext *ctx, HdRenderIndex *renderIndex) const;
 

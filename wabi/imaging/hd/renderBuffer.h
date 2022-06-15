@@ -24,15 +24,14 @@
 #ifndef WABI_IMAGING_HD_RENDER_BUFFER_H
 #define WABI_IMAGING_HD_RENDER_BUFFER_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/bprim.h"
-#include "wabi/imaging/hd/enums.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/vec2i.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class HdRenderBuffer
 ///
@@ -48,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class HdRenderBuffer : public HdBprim
 {
  public:
+
   // change tracking for HdRenderBuffer
   enum DirtyBits : HdDirtyBits
   {
@@ -59,7 +59,7 @@ class HdRenderBuffer : public HdBprim
   HD_API
   HdRenderBuffer(SdfPath const &id);
   HD_API
-  virtual ~HdRenderBuffer();
+  ~HdRenderBuffer() override;
 
   // ---------------------------------------------------------------------- //
   /// \name Prim API
@@ -67,17 +67,17 @@ class HdRenderBuffer : public HdBprim
 
   /// Get initial invalidation state.
   HD_API
-  virtual HdDirtyBits GetInitialDirtyBitsMask() const override;
+  HdDirtyBits GetInitialDirtyBitsMask() const override;
 
   /// Get allocation information from the scene delegate.
   HD_API
-  virtual void Sync(HdSceneDelegate *sceneDelegate,
-                    HdRenderParam *renderParam,
-                    HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Deallocate before deletion.
   HD_API
-  virtual void Finalize(HdRenderParam *renderParam) override;
+  void Finalize(HdRenderParam *renderParam) override;
 
   // ---------------------------------------------------------------------- //
   /// \name Renderbuffer API
@@ -131,6 +131,7 @@ class HdRenderBuffer : public HdBprim
   }
 
  protected:
+
   /// Deallocate the buffer, freeing any owned resources.
   virtual void _Deallocate() = 0;
 };

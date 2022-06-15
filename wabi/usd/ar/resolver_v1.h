@@ -64,6 +64,7 @@ class VtValue;
 class ArResolver
 {
  public:
+
   AR_API
   virtual ~ArResolver();
 
@@ -94,7 +95,8 @@ class ArResolver
   /// If \p path is empty or not a relative path, it will be
   /// returned as-is.
   AR_API
-  virtual std::string AnchorRelativePath(const std::string &anchorPath, const std::string &path) = 0;
+  virtual std::string AnchorRelativePath(const std::string &anchorPath,
+                                         const std::string &path) = 0;
 
   /// Returns true if the given path is a relative path.
   AR_API
@@ -227,7 +229,8 @@ class ArResolver
   ///
   /// If a timestamp cannot be retrieved, returns an empty VtValue.
   AR_API
-  virtual VtValue GetModificationTimestamp(const std::string &path, const std::string &resolvedPath) = 0;
+  virtual VtValue GetModificationTimestamp(const std::string &path,
+                                           const std::string &resolvedPath) = 0;
 
   /// Fetch the asset identified by \p path to the filesystem location
   /// specified by \p resolvedPath. \p resolvedPath is the resolved path
@@ -244,7 +247,8 @@ class ArResolver
   /// is not a local path or the asset could not be fetched to that path,
   /// returns false.
   AR_API
-  virtual bool FetchToLocalResolvedPath(const std::string &path, const std::string &resolvedPath) = 0;
+  virtual bool FetchToLocalResolvedPath(const std::string &path,
+                                        const std::string &resolvedPath) = 0;
 
   /// Returns an ArAsset object for the asset located at \p resolvedPath.
   /// Returns an invalid std::shared_ptr if object could not be created.
@@ -294,7 +298,8 @@ class ArResolver
   /// If this function returns false and \p whyNot is not \c nullptr,
   /// it will be filled in with an explanation.
   AR_API
-  virtual bool CanCreateNewLayerWithIdentifier(const std::string &identifier, std::string *whyNot) = 0;
+  virtual bool CanCreateNewLayerWithIdentifier(const std::string &identifier,
+                                               std::string *whyNot) = 0;
 
   /// @}
 
@@ -357,6 +362,7 @@ class ArResolver
   /// @}
 
  protected:
+
   AR_API
   ArResolver();
 };

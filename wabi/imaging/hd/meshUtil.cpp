@@ -1,46 +1,39 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #include "wabi/imaging/hd/meshUtil.h"
 
 #include "wabi/imaging/hd/perfLog.h"
 #include "wabi/imaging/hd/tokens.h"
 #include "wabi/imaging/hd/types.h"
 
-#include "wabi/base/gf/vec2d.h"
-#include "wabi/base/gf/vec2f.h"
-#include "wabi/base/gf/vec3d.h"
-#include "wabi/base/gf/vec3f.h"
 #include "wabi/base/gf/vec3i.h"
-#include "wabi/base/gf/vec4d.h"
+#include "wabi/base/gf/vec2f.h"
+#include "wabi/base/gf/vec3f.h"
 #include "wabi/base/gf/vec4f.h"
+#include "wabi/base/gf/vec2d.h"
+#include "wabi/base/gf/vec3d.h"
+#include "wabi/base/gf/vec4d.h"
 
 #include <unordered_set>
 
@@ -507,9 +500,10 @@ void HdMeshUtil::ComputeQuadInfo(HdQuadInfo *quadInfo) const
   }
 }
 
-void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
-                                    VtIntArray *primitiveParams,
-                                    VtVec2iArray *edgeIndices /*=nullptr*/) const
+void HdMeshUtil::_ComputeQuadIndices(VtIntArray *indices,
+                                     VtIntArray *primitiveParams,
+                                     VtVec2iArray *edgeIndices /*=nullptr*/,
+                                     bool triangulate /*=false*/) const
 {
   HD_TRACE_FUNCTION();
 
@@ -542,7 +536,12 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
 
   int holeIndex = 0;
 
-  indices->resize(numQuads);
+  int const numIndicesPerQuad = triangulate ? HdMeshTriQuadBuilder::NumIndicesPerTriQuad :
+                                              HdMeshTriQuadBuilder::NumIndicesPerQuad;
+  indices->resize(numQuads * numIndicesPerQuad);
+
+  HdMeshTriQuadBuilder outputIndices(indices->data(), triangulate);
+
   primitiveParams->resize(numQuads);
   if (edgeIndices) {
     edgeIndices->resize(numQuads);
@@ -576,10 +575,10 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
     if (v + nv > numVertIndices) {
       invalidTopology = true;
       if (nv == 4) {
-        (*indices)[qv++] = GfVec4i(0);
+        outputIndices.EmitQuadFace(GfVec4i(0));
       } else {
         for (int j = 0; j < nv; ++j) {
-          (*indices)[qv++] = GfVec4i(0);
+          outputIndices.EmitQuadFace(GfVec4i(0));
         }
       }
       v += nv;
@@ -589,17 +588,19 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
 
     int edgeIndex = ev;
     if (nv == 4) {
+      GfVec4i quadIndices;
       if (flip) {
-        (*indices)[qv][0] = (vertsPtr[v + 0]);
-        (*indices)[qv][1] = (vertsPtr[v + 3]);
-        (*indices)[qv][2] = (vertsPtr[v + 2]);
-        (*indices)[qv][3] = (vertsPtr[v + 1]);
+        quadIndices[0] = (vertsPtr[v + 0]);
+        quadIndices[1] = (vertsPtr[v + 3]);
+        quadIndices[2] = (vertsPtr[v + 2]);
+        quadIndices[3] = (vertsPtr[v + 1]);
       } else {
-        (*indices)[qv][0] = (vertsPtr[v + 0]);
-        (*indices)[qv][1] = (vertsPtr[v + 1]);
-        (*indices)[qv][2] = (vertsPtr[v + 2]);
-        (*indices)[qv][3] = (vertsPtr[v + 3]);
+        quadIndices[0] = (vertsPtr[v + 0]);
+        quadIndices[1] = (vertsPtr[v + 1]);
+        quadIndices[2] = (vertsPtr[v + 2]);
+        quadIndices[3] = (vertsPtr[v + 3]);
       }
+      outputIndices.EmitQuadFace(quadIndices);
 
       //  Case             EdgeFlag    Draw
       //  Quad/Refined face   0        hide common edge for the tri-pair
@@ -630,23 +631,26 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
       // *second non-quad
       //   ...
       for (int j = 0; j < nv; ++j) {
+        GfVec4i quadIndices;
         // vertex
-        (*indices)[qv][0] = vertsPtr[v + j];
+        quadIndices[0] = vertsPtr[v + j];
         if (flip) {
           // edge prev
-          (*indices)[qv][1] = vertIndex + (j + nv - 1) % nv;
+          quadIndices[1] = vertIndex + (j + nv - 1) % nv;
           // center
-          (*indices)[qv][2] = vertIndex + nv;
+          quadIndices[2] = vertIndex + nv;
           // edge next
-          (*indices)[qv][3] = vertIndex + j;
+          quadIndices[3] = vertIndex + j;
         } else {
           // edge next
-          (*indices)[qv][1] = vertIndex + j;
+          quadIndices[1] = vertIndex + j;
           // center
-          (*indices)[qv][2] = vertIndex + nv;
+          quadIndices[2] = vertIndex + nv;
           // edge prev
-          (*indices)[qv][3] = vertIndex + (j + nv - 1) % nv;
+          quadIndices[3] = vertIndex + (j + nv - 1) % nv;
         }
+        outputIndices.EmitQuadFace(quadIndices);
+
         // edge flag != 0 => quad face is from quadrangulation
         // it is used to hide internal edges (edge-center) of the quad
         // The first quad gets flag = 1, intermediate quads get flag = 3
@@ -682,6 +686,20 @@ void HdMeshUtil::ComputeQuadIndices(VtVec4iArray *indices,
   if (invalidTopology) {
     TF_WARN("numVerts and verts are incosistent [%s]", _id.GetText());
   }
+}
+
+void HdMeshUtil::ComputeQuadIndices(VtIntArray *indices,
+                                    VtIntArray *primitiveParams,
+                                    VtVec2iArray *edgeIndices /*=nullptr*/) const
+{
+  _ComputeQuadIndices(indices, primitiveParams, edgeIndices);
+}
+
+void HdMeshUtil::ComputeTriQuadIndices(VtIntArray *indices,
+                                       VtIntArray *primitiveParams,
+                                       VtVec2iArray *edgeIndices /*=nullptr*/) const
+{
+  _ComputeQuadIndices(indices, primitiveParams, edgeIndices, /*triangulate=*/true);
 }
 
 template<typename T>
@@ -1139,5 +1157,6 @@ bool HdMeshEdgeIndexTable::GetEdgeIndices(GfVec2i const &edgeVertices,
 
   return !edgeIndicesOut->empty();
 }
+
 
 WABI_NAMESPACE_END

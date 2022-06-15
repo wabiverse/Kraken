@@ -61,6 +61,7 @@ TF_DECLARE_REF_PTRS(UsdSkelBinding);
 class UsdSkelCache
 {
  public:
+
   USDSKEL_API
   UsdSkelCache();
 
@@ -126,6 +127,7 @@ class UsdSkelCache
                           Usd_PrimFlagsPredicate predicate) const;
 
  private:
+
   std::shared_ptr<class UsdSkel_CacheImpl> _impl;
 
   friend class UsdSkelAnimQuery;

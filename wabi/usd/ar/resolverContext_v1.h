@@ -53,15 +53,13 @@ WABI_NAMESPACE_BEGIN
 /// Metafunction to determine whether the templated object type is a
 /// valid context object.
 ///
-template<class T>
-struct ArIsContextObject
+template<class T> struct ArIsContextObject
 {
   static const bool value = false;
 };
 
 /// Default implementation for providing debug info on the contained context.
-template<class Context>
-std::string ArGetDebugString(const Context &context);
+template<class Context> std::string ArGetDebugString(const Context &context);
 
 /// \class ArResolverContext
 ///
@@ -99,15 +97,15 @@ std::string ArGetDebugString(const Context &context);
 class ArResolverContext
 {
  public:
+
   /// Construct an empty asset resolver context.
-  ArResolverContext()
-  {}
+  ArResolverContext() {}
 
   /// Construct a resolver context using the context object \p context.
   /// See class documentation for requirements.
-  template<class Context, typename std::enable_if<ArIsContextObject<Context>::value>::type * = nullptr>
-  ArResolverContext(const Context &context)
-    : _context(new _Typed<Context>(context))
+  template<class Context,
+           typename std::enable_if<ArIsContextObject<Context>::value>::type * = nullptr>
+  ArResolverContext(const Context &context) : _context(new _Typed<Context>(context))
   {}
 
   /// Returns whether this context object is empty.
@@ -119,10 +117,11 @@ class ArResolverContext
   /// Return pointer to the context object held in this asset resolver
   /// context if the context is holding an object of the requested type,
   /// NULL otherwise.
-  template<class Context>
-  const Context *Get() const
+  template<class Context> const Context *Get() const
   {
-    return _context && _context->IsHolding(typeid(Context)) ? &_GetTyped<Context>(*_context)._context : NULL;
+    return _context && _context->IsHolding(typeid(Context)) ?
+             &_GetTyped<Context>(*_context)._context :
+             NULL;
   }
 
   /// Returns a debug string representing the contained context
@@ -135,8 +134,7 @@ class ArResolverContext
   /// @{
   bool operator==(const ArResolverContext &rhs) const
   {
-    if (_context && rhs._context)
-    {
+    if (_context && rhs._context) {
       return (_context->IsHolding(rhs._context->GetTypeid()) && _context->Equals(*rhs._context));
     }
     return (!_context && !rhs._context);
@@ -149,18 +147,15 @@ class ArResolverContext
 
   bool operator<(const ArResolverContext &rhs) const
   {
-    if (_context && rhs._context)
-    {
-      if (_context->IsHolding(rhs._context->GetTypeid()))
-      {
+    if (_context && rhs._context) {
+      if (_context->IsHolding(rhs._context->GetTypeid())) {
         return _context->LessThan(*rhs._context);
       }
-      return (std::string(_context->GetTypeid().name()) < std::string(rhs._context->GetTypeid().name()));
-    } else if (_context && !rhs._context)
-    {
+      return (std::string(_context->GetTypeid().name()) <
+              std::string(rhs._context->GetTypeid().name()));
+    } else if (_context && !rhs._context) {
       return false;
-    } else if (!_context && rhs._context)
-    {
+    } else if (!_context && rhs._context) {
       return true;
     }
     return false;
@@ -175,13 +170,12 @@ class ArResolverContext
   }
 
  private:
+
   // Type-erased storage for context objects.
   struct _Untyped;
-  template<class Context>
-  struct _Typed;
+  template<class Context> struct _Typed;
 
-  template<class Context>
-  static const _Typed<Context> &_GetTyped(const _Untyped &untyped)
+  template<class Context> static const _Typed<Context> &_GetTyped(const _Untyped &untyped)
   {
     return static_cast<const _Typed<Context> &>(untyped);
   }
@@ -203,15 +197,11 @@ class ArResolverContext
     virtual std::string GetDebugString() const = 0;
   };
 
-  template<class Context>
-  struct _Typed : public _Untyped
+  template<class Context> struct _Typed : public _Untyped
   {
-    virtual ~_Typed()
-    {}
+    virtual ~_Typed() {}
 
-    _Typed(const Context &context)
-      : _context(context)
-    {}
+    _Typed(const Context &context) : _context(context) {}
 
     virtual const std::type_info &GetTypeid() const
     {
@@ -248,8 +238,7 @@ class ArResolverContext
 AR_API
 std::string Ar_GetDebugString(const std::type_info &, void const *);
 
-template<class Context>
-std::string ArGetDebugString(const Context &context)
+template<class Context> std::string ArGetDebugString(const Context &context)
 {
   return Ar_GetDebugString(typeid(Context), static_cast<void const *>(&context));
 }

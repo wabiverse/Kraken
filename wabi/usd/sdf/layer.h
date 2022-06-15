@@ -96,6 +96,7 @@ struct Sdf_AssetInfo;
 class SdfLayer : public TfRefBase, public TfWeakBase
 {
  public:
+
   /// Destructor
   SDF_API
   virtual ~SdfLayer();
@@ -177,9 +178,10 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// Arguments in \p args will override any arguments specified in
   /// \p identifier.
   SDF_API
-  static SdfLayerHandle FindRelativeToLayer(const SdfLayerHandle &anchor,
-                                            const std::string &identifier,
-                                            const FileFormatArguments &args = FileFormatArguments());
+  static SdfLayerHandle FindRelativeToLayer(
+    const SdfLayerHandle &anchor,
+    const std::string &identifier,
+    const FileFormatArguments &args = FileFormatArguments());
 
   /// Return an existing layer with the given \p identifier and \p args, or
   /// else load it. If the layer can't be found or loaded, an error is posted
@@ -202,9 +204,10 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// Arguments in \p args will override any arguments specified in
   /// \p identifier.
   SDF_API
-  static SdfLayerRefPtr FindOrOpenRelativeToLayer(const SdfLayerHandle &anchor,
-                                                  const std::string &identifier,
-                                                  const FileFormatArguments &args = FileFormatArguments());
+  static SdfLayerRefPtr FindOrOpenRelativeToLayer(
+    const SdfLayerHandle &anchor,
+    const std::string &identifier,
+    const FileFormatArguments &args = FileFormatArguments());
 
   /// Load the given layer from disk as a new anonymous layer. If the
   /// layer can't be found or loaded, an error is posted and a null
@@ -441,7 +444,8 @@ class SdfLayer : public TfRefBase, public TfWeakBase
 
   /// Joins the given layer path and arguments into an identifier.
   SDF_API
-  static std::string CreateIdentifier(const std::string &layerPath, const FileFormatArguments &arguments);
+  static std::string CreateIdentifier(const std::string &layerPath,
+                                      const FileFormatArguments &arguments);
 
   /// Returns the layer identifier.
   SDF_API
@@ -554,19 +558,16 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// Returns \c true if the object has a non-empty value with name
   /// \p name and type \p T.  If value ptr is provided, returns the
   /// value found.
-  template<class T>
-  bool HasField(const SdfPath &path, const TfToken &name, T *value) const
+  template<class T> bool HasField(const SdfPath &path, const TfToken &name, T *value) const
   {
-    if (!value)
-    {
+    if (!value) {
       return HasField(path, name, static_cast<VtValue *>(NULL));
     }
 
     SdfAbstractDataTypedValue<T> outValue(value);
     const bool hasValue = HasField(path, name, static_cast<SdfAbstractDataValue *>(&outValue));
 
-    if (std::is_same<T, SdfValueBlock>::value)
-    {
+    if (std::is_same<T, SdfValueBlock>::value) {
       return hasValue && outValue.isValueBlock;
     }
 
@@ -599,10 +600,12 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// value found.  The \p keyPath is a ':'-separated path addressing an
   /// element in sub-dictionaries.
   template<class T>
-  bool HasFieldDictKey(const SdfPath &path, const TfToken &name, const TfToken &keyPath, T *value) const
+  bool HasFieldDictKey(const SdfPath &path,
+                       const TfToken &name,
+                       const TfToken &keyPath,
+                       T *value) const
   {
-    if (!value)
-    {
+    if (!value) {
       return HasFieldDictKey(path, name, keyPath, static_cast<VtValue *>(NULL));
     }
 
@@ -618,7 +621,9 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// Return the value for the given \a path and \a fieldName. Returns the
   /// provided \a defaultValue value if none is set.
   template<class T>
-  inline T GetFieldAs(const SdfPath &path, const TfToken &fieldName, const T &defaultValue = T()) const
+  inline T GetFieldAs(const SdfPath &path,
+                      const TfToken &fieldName,
+                      const T &defaultValue = T()) const
   {
     return _data->GetAs<T>(path, fieldName, defaultValue);
   }
@@ -635,11 +640,12 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   SDF_API
   void SetField(const SdfPath &path, const TfToken &fieldName, const VtValue &value);
   SDF_API
-  void SetField(const SdfPath &path, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
+  void SetField(const SdfPath &path,
+                const TfToken &fieldName,
+                const SdfAbstractDataConstValue &value);
 
   /// Set the value of the given \a path and \a fieldName.
-  template<class T>
-  void SetField(const SdfPath &path, const TfToken &fieldName, const T &val)
+  template<class T> void SetField(const SdfPath &path, const TfToken &fieldName, const T &val)
   {
     // Ideally, this would make use of the SdfAbstractDataConstValue
     // API to avoid unnecessarily copying the value into a VtValue.
@@ -690,7 +696,9 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   /// exists.  The \p keyPath is a ':'-separated path addressing an
   /// element in sub-dictionaries.
   SDF_API
-  void EraseFieldDictValueByKey(const SdfPath &path, const TfToken &fieldName, const TfToken &keyPath);
+  void EraseFieldDictValueByKey(const SdfPath &path,
+                                const TfToken &fieldName,
+                                const TfToken &keyPath);
 
   /// \name Traversal
   /// @{
@@ -1313,26 +1321,28 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   size_t GetNumTimeSamplesForPath(const SdfPath &path) const;
 
   SDF_API
-  bool GetBracketingTimeSamplesForPath(const SdfPath &path, double time, double *tLower, double *tUpper);
+  bool GetBracketingTimeSamplesForPath(const SdfPath &path,
+                                       double time,
+                                       double *tLower,
+                                       double *tUpper);
 
   SDF_API
   bool QueryTimeSample(const SdfPath &path, double time, VtValue *value = NULL) const;
   SDF_API
   bool QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *value) const;
 
-  template<class T>
-  bool QueryTimeSample(const SdfPath &path, double time, T *data) const
+  template<class T> bool QueryTimeSample(const SdfPath &path, double time, T *data) const
   {
-    if (!data)
-    {
+    if (!data) {
       return QueryTimeSample(path, time);
     }
 
     SdfAbstractDataTypedValue<T> outValue(data);
-    const bool hasValue = QueryTimeSample(path, time, static_cast<SdfAbstractDataValue *>(&outValue));
+    const bool hasValue = QueryTimeSample(path,
+                                          time,
+                                          static_cast<SdfAbstractDataValue *>(&outValue));
 
-    if (std::is_same<T, SdfValueBlock>::value)
-    {
+    if (std::is_same<T, SdfValueBlock>::value) {
       return hasValue && outValue.isValueBlock;
     }
 
@@ -1344,8 +1354,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   SDF_API
   void SetTimeSample(const SdfPath &path, double time, const SdfAbstractDataConstValue &value);
 
-  template<class T>
-  void SetTimeSample(const SdfPath &path, double time, const T &value)
+  template<class T> void SetTimeSample(const SdfPath &path, double time, const T &value)
   {
     const SdfAbstractDataConstTypedValue<T> inValue(&value);
     const SdfAbstractDataConstValue &untypedInValue = inValue;
@@ -1370,6 +1379,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   // @}
 
  protected:
+
   // Private constructor -- use New(), FindOrCreate(), etc.
   // Precondition: _layerRegistryMutex must be locked.
   SdfLayer(const SdfFileFormatConstPtr &fileFormat,
@@ -1380,17 +1390,19 @@ class SdfLayer : public TfRefBase, public TfWeakBase
            bool validateAuthoring = false);
 
  private:
+
   // Create a new layer.
   // Precondition: _layerRegistryMutex must be locked.
   static SdfLayerRefPtr _CreateNew(SdfFileFormatConstPtr fileFormat,
                                    const std::string &identifier,
                                    const FileFormatArguments &args);
 
-  static SdfLayerRefPtr _CreateNewWithFormat(const SdfFileFormatConstPtr &fileFormat,
-                                             const std::string &identifier,
-                                             const std::string &realPath,
-                                             const ArAssetInfo &assetInfo = ArAssetInfo(),
-                                             const FileFormatArguments &args = FileFormatArguments());
+  static SdfLayerRefPtr _CreateNewWithFormat(
+    const SdfFileFormatConstPtr &fileFormat,
+    const std::string &identifier,
+    const std::string &realPath,
+    const ArAssetInfo &assetInfo = ArAssetInfo(),
+    const FileFormatArguments &args = FileFormatArguments());
 
   static SdfLayerRefPtr _CreateAnonymousWithFormat(const SdfFileFormatConstPtr &fileFormat,
                                                    const std::string &tag,
@@ -1427,8 +1439,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
 
   // Returns a handle to the spec at the given path if it exists and matches
   // type T.
-  template<class T>
-  SdfHandle<T> _GetSpecAtPath(const SdfPath &path);
+  template<class T> SdfHandle<T> _GetSpecAtPath(const SdfPath &path);
 
   // Returns true if a spec can be retrieved at the given path, false
   // otherwise. This function will return the canonicalized path to the
@@ -1572,12 +1583,10 @@ class SdfLayer : public TfRefBase, public TfWeakBase
                                   const TfToken &fieldName);
 
   // Set a value.
-  template<class T>
-  void _SetValue(const TfToken &key, T value);
+  template<class T> void _SetValue(const TfToken &key, T value);
 
   // Get a value.
-  template<class T>
-  T _GetValue(const TfToken &key) const;
+  template<class T> T _GetValue(const TfToken &key) const;
 
   enum _ReloadResult
   {
@@ -1666,14 +1675,20 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   bool _DeleteSpec(const SdfPath &path);
 
   // Inverse primitive for deleting a spec.
-  void _PrimCreateSpec(const SdfPath &path, SdfSpecType specType, bool inert, bool useDelegate = true);
+  void _PrimCreateSpec(const SdfPath &path,
+                       SdfSpecType specType,
+                       bool inert,
+                       bool useDelegate = true);
 
   // Inverse primitive for deleting a spec.
   void _PrimDeleteSpec(const SdfPath &path, bool inert, bool useDelegate = true);
 
   // Inverse primitive for setting time samples.
   template<class T>
-  void _PrimSetTimeSample(const SdfPath &path, double time, const T &value, bool useDelegate = true);
+  void _PrimSetTimeSample(const SdfPath &path,
+                          double time,
+                          const T &value,
+                          bool useDelegate = true);
 
   // Helper method for Traverse. Visits the children of \a path using the
   // specified \a ChildPolicy.
@@ -1681,6 +1696,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   void _TraverseChildren(const SdfPath &path, const TraversalFunction &func);
 
  private:
+
   SdfLayerHandle _self;
 
   // File format and arguments for this layer.
@@ -1747,8 +1763,7 @@ class SdfLayer : public TfRefBase, public TfWeakBase
   friend class Sdf_ChangeManager;
 
   // Allow access to _CreateSpec and _DeleteSpec and _MoveSpec
-  template<class ChildPolicy>
-  friend class Sdf_ChildrenUtils;
+  template<class ChildPolicy> friend class Sdf_ChildrenUtils;
 
   // Give the file format access to our data.  Limit breaking encapsulation
   // to the base SdFileFormat class so we don't have to friend every

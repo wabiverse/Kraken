@@ -48,11 +48,10 @@ class UsdPrim;
 class UsdRiImagingPxrIntMultLightFilterAdapter : public UsdImagingLightFilterAdapter
 {
  public:
+
   typedef UsdImagingLightFilterAdapter BaseAdapter;
 
-  UsdRiImagingPxrIntMultLightFilterAdapter()
-    : UsdImagingLightFilterAdapter()
-  {}
+  UsdRiImagingPxrIntMultLightFilterAdapter() : UsdImagingLightFilterAdapter() {}
 
   USDRIIMAGING_API
   virtual ~UsdRiImagingPxrIntMultLightFilterAdapter();
@@ -66,6 +65,7 @@ class UsdRiImagingPxrIntMultLightFilterAdapter : public UsdImagingLightFilterAda
   virtual bool IsSupported(UsdImagingIndexProxy const *index) const;
 
  protected:
+
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) final;
 };
 

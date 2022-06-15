@@ -21,6 +21,7 @@ namespace Zep
   class FloatSlider : public IWidget
   {
    public:
+
     FloatSlider(ZepEditor &editor, uint32_t dimension, fnWidgetValueChanged fnChanged = nullptr)
       : m_editor(editor),
         m_dimension(dimension),
@@ -36,12 +37,14 @@ namespace Zep
     virtual const NVec4f &Get() const override;
 
    private:
+
     virtual ZepEditor &GetEditor() const
     {
       return m_editor;
     };
 
    private:
+
     ZepEditor &m_editor;
     uint32_t m_dimension = 1;
     NVec2f m_range = NVec2f(0.0f, 1.0f);
@@ -53,6 +56,7 @@ namespace Zep
   class ColorPicker : public IWidget
   {
    public:
+
     ColorPicker(ZepEditor &editor, fnWidgetValueChanged fnChanged = nullptr)
       : m_editor(editor),
         m_fnChanged(fnChanged)
@@ -67,12 +71,14 @@ namespace Zep
     virtual const NVec4f &Get() const override;
 
    private:
+
     virtual ZepEditor &GetEditor() const
     {
       return m_editor;
     };
 
    private:
+
     ZepEditor &m_editor;
     fnWidgetValueChanged m_fnChanged = nullptr;
     NVec4f m_color;

@@ -46,25 +46,22 @@ namespace Tf_PyClassMethod
   {
     friend class def_visitor_access;
 
-    _TfPyClassMethod(const std::string &methodName)
-      : _methodName(methodName)
-    {}
-    explicit _TfPyClassMethod(const char *methodName)
-      : _methodName(methodName)
-    {}
+    _TfPyClassMethod(const std::string &methodName) : _methodName(methodName) {}
+    explicit _TfPyClassMethod(const char *methodName) : _methodName(methodName) {}
 
-    template<typename CLS>
-    void visit(CLS &c) const
+    template<typename CLS> void visit(CLS &c) const
     {
       PyTypeObject *self = downcast<PyTypeObject>(c.ptr());
       dict d((handle<>(borrowed(self->tp_dict))));
 
       object method(d[_methodName]);
 
-      c.attr(_methodName.c_str()) = object(handle<>(PyClassMethod_New((_CallableCheck)(method.ptr()))));
+      c.attr(_methodName.c_str()) = object(
+        handle<>(PyClassMethod_New((_CallableCheck)(method.ptr()))));
     }
 
    private:
+
     PyObject *_CallableCheck(PyObject *callable) const
     {
       if (PyCallable_Check(expect_non_null(callable)))

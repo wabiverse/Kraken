@@ -47,6 +47,7 @@ class HgiMetal;
 class HgiMetalBlitCmds final : public HgiBlitCmds
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalBlitCmds() override;
 
@@ -84,6 +85,7 @@ class HgiMetalBlitCmds final : public HgiBlitCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API
@@ -93,6 +95,7 @@ class HgiMetalBlitCmds final : public HgiBlitCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiMetalBlitCmds() = delete;
   HgiMetalBlitCmds &operator=(const HgiMetalBlitCmds &) = delete;
   HgiMetalBlitCmds(const HgiMetalBlitCmds &) = delete;

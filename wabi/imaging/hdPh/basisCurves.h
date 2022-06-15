@@ -70,6 +70,7 @@ using HdPh_BasisCurvesTopologySharedPtr = std::shared_ptr<class HdPh_BasisCurves
 class HdPhBasisCurves final : public HdBasisCurves
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdPhBasisCurves");
 
   HDPH_API
@@ -91,6 +92,7 @@ class HdPhBasisCurves final : public HdBasisCurves
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HDPH_API
   void _InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) override;
 
@@ -124,6 +126,7 @@ class HdPhBasisCurves final : public HdBasisCurves
                                 HdDirtyBits *dirtyBits);
 
  private:
+
   enum DrawingCoord
   {
     HullTopology = HdDrawingCoord::CustomSlotsBegin,

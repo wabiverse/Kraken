@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HD_STRATEGY_BASE_H
 #define WABI_IMAGING_HD_STRATEGY_BASE_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/bufferArray.h"
-#include "wabi/imaging/hd/bufferSpec.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/bufferSpec.h"
+#include "wabi/imaging/hd/bufferArray.h"
 
 #include "wabi/base/tf/token.h"
 #include "wabi/base/vt/dictionary.h"
@@ -36,6 +36,7 @@
 #include <memory>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdBufferArraySharedPtr = std::shared_ptr<class HdBufferArray>;
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
@@ -47,6 +48,7 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 class HdAggregationStrategy
 {
  public:
+
   /// Aggregation ID
   typedef size_t AggregationId;
 
@@ -61,6 +63,7 @@ class HdAggregationStrategy
   /// Factory for creating HdBufferArrayRange
   virtual HdBufferArrayRangeSharedPtr CreateBufferArrayRange() = 0;
 
+
   /// Returns id for given bufferSpecs to be used for aggregation
   virtual AggregationId ComputeAggregationId(HdBufferSpecVector const &bufferSpecs,
                                              HdBufferArrayUsageHint usageHint) const = 0;
@@ -68,16 +71,16 @@ class HdAggregationStrategy
   /// Returns the buffer specs from a given buffer array
   virtual HdBufferSpecVector GetBufferSpecs(HdBufferArraySharedPtr const &bufferArray) const = 0;
 
-  /// Returns the accumulated GPU resource allocation      /// for items in the BufferArray passed
-  /// as parameter
+  /// Returns the accumulated GPU resource allocation
+  /// for items in the BufferArray passed as parameter
   virtual size_t GetResourceAllocation(HdBufferArraySharedPtr const &bufferArray,
                                        VtDictionary &result) const = 0;
 
   /// (Optional) called to Flush consolidated / staging buffers.
   HD_API
-  virtual void Flush()
-  {}
+  virtual void Flush() {}
 };
+
 
 WABI_NAMESPACE_END
 

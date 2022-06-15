@@ -43,7 +43,9 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<UsdImagingPrimAdapter>;
 #define USD_IMAGING_ADAPTER_KEY_TOKENS \
   ((instanceAdapterKey, "__instanceAdapter"))((drawModeAdapterKey, "__drawModeAdapter"))
 
-TF_DECLARE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens, USDIMAGING_API, USD_IMAGING_ADAPTER_KEY_TOKENS);
+TF_DECLARE_PUBLIC_TOKENS(UsdImagingAdapterKeyTokens,
+                         USDIMAGING_API,
+                         USD_IMAGING_ADAPTER_KEY_TOKENS);
 
 /// \class UsdImagingAdapterRegistry
 ///
@@ -58,6 +60,7 @@ class UsdImagingAdapterRegistry : public TfSingleton<UsdImagingAdapterRegistry>
   _TypeMap _typeMap;
 
  public:
+
   /// Returns true if external plugins are enabled.
   /// Internal plugins have isInternal=1 set in their metadata. This flag is
   /// only intended to be set for critical imaging plugins  (mesh, cube,

@@ -24,10 +24,11 @@
 #ifndef WABI_IMAGING_HD_TYPES_H
 #define WABI_IMAGING_HD_TYPES_H
 
-#include "wabi/base/vt/value.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/enums.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/base/vt/value.h"
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -108,6 +109,23 @@ enum HdMagFilter
   HdMagFilterLinear,
 };
 
+/// \enum HdBorderColor
+///
+/// Border color to use for clamped texture values.
+///
+/// <ul>
+///     <li>HdBorderColorTransparentBlack</li>
+///     <li>HdBorderColorOpaqueBlack</li>
+///     <li>HdBorderColorOpaqueWhite</li>
+/// </ul>
+///
+enum HdBorderColor
+{
+  HdBorderColorTransparentBlack,
+  HdBorderColorOpaqueBlack,
+  HdBorderColorOpaqueWhite,
+};
+
 /// \class HdSamplerParameters
 ///
 /// Collection of standard parameters such as wrap modes to sample a texture.
@@ -115,11 +133,28 @@ enum HdMagFilter
 class HdSamplerParameters
 {
  public:
+
   HdWrap wrapS;
   HdWrap wrapT;
   HdWrap wrapR;
   HdMinFilter minFilter;
   HdMagFilter magFilter;
+  HdBorderColor borderColor;
+  bool enableCompare;
+  HdCompareFunction compareFunction;
+
+  HD_API
+  HdSamplerParameters();
+
+  HD_API
+  HdSamplerParameters(HdWrap wrapS,
+                      HdWrap wrapT,
+                      HdWrap wrapR,
+                      HdMinFilter minFilter,
+                      HdMagFilter magFilter,
+                      HdBorderColor borderColor = HdBorderColorTransparentBlack,
+                      bool enableCompare = false,
+                      HdCompareFunction compareFunction = HdCmpFuncNever);
 
   HD_API
   bool operator==(const HdSamplerParameters &other) const;
@@ -154,11 +189,9 @@ inline float HdConvertFixedToFloat(int v, int b)
 ///
 struct HdVec4f_2_10_10_10_REV
 {
-  HdVec4f_2_10_10_10_REV()
-  {}
+  HdVec4f_2_10_10_10_REV() {}
 
-  template<typename Vec3Type>
-  HdVec4f_2_10_10_10_REV(Vec3Type const &value)
+  template<typename Vec3Type> HdVec4f_2_10_10_10_REV(Vec3Type const &value)
   {
     x = HdConvertFloatToFixed(value[0], 10);
     y = HdConvertFloatToFixed(value[1], 10);
@@ -175,8 +208,7 @@ struct HdVec4f_2_10_10_10_REV
     w = other->w;
   }
 
-  template<typename Vec3Type>
-  Vec3Type GetAsVec() const
+  template<typename Vec3Type> Vec3Type GetAsVec() const
   {
     return Vec3Type(HdConvertFixedToFloat(x, 10),
                     HdConvertFixedToFloat(y, 10),
@@ -323,6 +355,8 @@ enum HdType
   /// Corresponds to GL_INT_2_10_10_10_REV.
   /// \see HdVec4f_2_10_10_10_REV
   HdTypeInt32_2_10_10_10_REV,
+
+  HdTypeCount
 };
 
 /// HdTupleType represents zero, one, or more values of the same HdType.
@@ -348,8 +382,7 @@ struct HdTupleType
 };
 
 // Support TfHash.
-template<class HashState>
-void TfHashAppend(HashState &h, HdTupleType const &tt)
+template<class HashState> void TfHashAppend(HashState &h, HdTupleType const &tt)
 {
   h.Append(tt.type, tt.count);
 }

@@ -70,6 +70,7 @@ class SdfAssetPath;
 class UsdVolField3DAsset : public UsdVolFieldAsset
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -80,16 +81,12 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
   /// Equivalent to UsdVolField3DAsset::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolField3DAsset(const UsdPrim &prim = UsdPrim())
-    : UsdVolFieldAsset(prim)
-  {}
+  explicit UsdVolField3DAsset(const UsdPrim &prim = UsdPrim()) : UsdVolFieldAsset(prim) {}
 
   /// Construct a UsdVolField3DAsset on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolField3DAsset(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolField3DAsset(const UsdSchemaBase &schemaObj)
-    : UsdVolFieldAsset(schemaObj)
-  {}
+  explicit UsdVolField3DAsset(const UsdSchemaBase &schemaObj) : UsdVolFieldAsset(schemaObj) {}
 
   /// Destructor.
   USDVOL_API
@@ -139,6 +136,7 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
   static UsdVolField3DAsset Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -146,6 +144,7 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDVOL_API
@@ -155,9 +154,11 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
 
   // override SchemaBase virtuals.
   USDVOL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FIELDDATATYPE
   // --------------------------------------------------------------------- //
@@ -186,6 +187,7 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FIELDPURPOSE
   // --------------------------------------------------------------------- //
@@ -211,6 +213,7 @@ class UsdVolField3DAsset : public UsdVolFieldAsset
                                       bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

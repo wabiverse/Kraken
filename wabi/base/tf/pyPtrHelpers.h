@@ -74,8 +74,7 @@ WABI_NAMESPACE_BEGIN
 
 // Helper class to return or create a PyObject holder for a Ptr.  This
 // can be specialized for custom behavior.
-template<typename Ptr>
-struct TfMakePyPtr
+template<typename Ptr> struct TfMakePyPtr
 {
   typedef typename Ptr::DataType Pointee;
   typedef boost::python::objects::pointer_holder<Ptr, Pointee> Holder;
@@ -113,15 +112,13 @@ namespace Tf_PyDefHelpers
 
   using namespace boost::python;
 
-  template<typename Ptr>
-  struct _PtrInterface
+  template<typename Ptr> struct _PtrInterface
   {
     typedef typename Ptr::DataType Pointee;
     typedef typename boost::add_const<Pointee>::type ConstPointee;
     typedef typename boost::remove_const<Pointee>::type NonConstPointee;
 
-    template<typename U>
-    struct Rebind
+    template<typename U> struct Rebind
     {
       typedef typename Ptr::template Rebind<U>::Type Type;
     };
@@ -130,50 +127,41 @@ namespace Tf_PyDefHelpers
     typedef typename Rebind<NonConstPointee>::Type NonConstPtr;
   };
 
-  template<typename PtrType>
-  bool _IsPtrExpired(object const &self)
+  template<typename PtrType> bool _IsPtrExpired(object const &self)
   {
-    try
-    {
+    try {
       PtrType p = extract<PtrType>(self);
       return !p;
     }
-    catch (boost::python::error_already_set const &)
-    {
+    catch (boost::python::error_already_set const &) {
       PyErr_Clear();
       return true;
     }
   }
 
-  template<typename PtrType>
-  bool _IsPtrValid(object const &self)
+  template<typename PtrType> bool _IsPtrValid(object const &self)
   {
     return !_IsPtrExpired<PtrType>(self);
   }
 
-  template<typename PtrType>
-  bool _ArePtrsEqual(PtrType const &self, PtrType const &other)
+  template<typename PtrType> bool _ArePtrsEqual(PtrType const &self, PtrType const &other)
   {
     return self == other;
   }
-  template<typename PtrType>
-  bool _ArePtrsNotEqual(PtrType const &self, PtrType const &other)
+  template<typename PtrType> bool _ArePtrsNotEqual(PtrType const &self, PtrType const &other)
   {
     return self != other;
   }
 
   // Default ownership policy does nothing.
-  template<class PtrType>
-  struct _PtrFromPythonConversionPolicy
+  template<class PtrType> struct _PtrFromPythonConversionPolicy
   {
-    static void Apply(PtrType const &, PyObject *)
-    {}
+    static void Apply(PtrType const &, PyObject *) {}
   };
 
   // Ownership policy for ref ptrs when going from python to c++ is to
   // transfer ownership (remove ownership from python if it has it).
-  template<typename T>
-  struct _PtrFromPythonConversionPolicy<TfRefPtr<T>>
+  template<typename T> struct _PtrFromPythonConversionPolicy<TfRefPtr<T>>
   {
     static void Apply(TfRefPtr<T> const &p, PyObject *obj)
     {
@@ -181,8 +169,7 @@ namespace Tf_PyDefHelpers
     }
   };
 
-  template<class Ptr>
-  struct _PtrFromPython
+  template<class Ptr> struct _PtrFromPython
   {
     typedef typename _PtrInterface<Ptr>::Pointee Pointee;
     _PtrFromPython()
@@ -191,11 +178,13 @@ namespace Tf_PyDefHelpers
     }
 
    private:
+
     static void *convertible(PyObject *p)
     {
       if (p == Py_None)
         return p;
-      void *result = converter::get_lvalue_from_python(p, converter::registered<Pointee>::converters);
+      void *result = converter::get_lvalue_from_python(p,
+                                                       converter::registered<Pointee>::converters);
       return result;
     }
 
@@ -205,8 +194,7 @@ namespace Tf_PyDefHelpers
       // Deal with the "None" case.
       if (data->convertible == source)
         new (storage) Ptr();
-      else
-      {
+      else {
         Ptr ptr(static_cast<Pointee *>(data->convertible));
         new (storage) Ptr(ptr);
         _PtrFromPythonConversionPolicy<Ptr>::Apply(ptr, source);
@@ -221,8 +209,7 @@ namespace Tf_PyDefHelpers
   // Converter from python to AnyWeakPtr.  We use this converter to wrap
   // the weak-pointable object into an AnyWeakPtr when we don't know what
   // specific C++ type it has--for example, see wrapNotice.cpp.
-  template<typename PtrType>
-  struct _AnyWeakPtrFromPython
+  template<typename PtrType> struct _AnyWeakPtrFromPython
   {
 
     _AnyWeakPtrFromPython()
@@ -242,12 +229,12 @@ namespace Tf_PyDefHelpers
 
     static void construct(PyObject *source, converter::rvalue_from_python_stage1_data *data)
     {
-      void *const storage = ((converter::rvalue_from_python_storage<TfAnyWeakPtr> *)data)->storage.bytes;
+      void *const storage =
+        ((converter::rvalue_from_python_storage<TfAnyWeakPtr> *)data)->storage.bytes;
       // Deal with the "None" case.
       if (data->convertible == source)
         new (storage) TfAnyWeakPtr();
-      else
-      {
+      else {
         typedef typename _PtrInterface<PtrType>::Pointee T;
         T *ptr = static_cast<T *>(data->convertible);
         PtrType smartPtr(ptr);
@@ -257,8 +244,7 @@ namespace Tf_PyDefHelpers
     }
   };
 
-  template<typename Ptr>
-  struct _ConstPtrToPython
+  template<typename Ptr> struct _ConstPtrToPython
   {
     typedef typename _PtrInterface<Ptr>::ConstPtr ConstPtr;
     typedef typename _PtrInterface<Ptr>::NonConstPtr NonConstPtr;
@@ -272,8 +258,7 @@ namespace Tf_PyDefHelpers
     }
   };
 
-  template<typename Ptr>
-  struct _PtrToPython
+  template<typename Ptr> struct _PtrToPython
   {
     _PtrToPython()
     {
@@ -282,16 +267,14 @@ namespace Tf_PyDefHelpers
     static PyObject *convert(Ptr const &p)
     {
       std::pair<PyObject *, bool> ret = TfMakePyPtr<Ptr>::Execute(p);
-      if (ret.second)
-      {
+      if (ret.second) {
         Tf_PySetPythonIdentity(p, ret.first);
       }
       return ret.first;
     }
   };
 
-  template<typename SrcPtr, typename DstPtr>
-  struct _ConvertPtrToPython
+  template<typename SrcPtr, typename DstPtr> struct _ConvertPtrToPython
   {
     _ConvertPtrToPython()
     {
@@ -304,8 +287,7 @@ namespace Tf_PyDefHelpers
     }
   };
 
-  template<typename Ptr>
-  struct _PtrToPythonWrapper
+  template<typename Ptr> struct _PtrToPythonWrapper
   {
 
     // We store the original to-python converter for our use.  It's fine to be
@@ -320,14 +302,12 @@ namespace Tf_PyDefHelpers
       Ptr const &p = *static_cast<Ptr const *>(x);
 
       std::pair<PyObject *, bool> ret = TfMakePyPtr<Ptr>::Execute(p);
-      if (ret.first == Py_None)
-      {
+      if (ret.first == Py_None) {
         // Fallback to the original converter.
         Py_DECREF(ret.first);
         ret.first = _originalConverter(x);
       }
-      if (ret.second)
-      {
+      if (ret.second) {
         Tf_PySetPythonIdentity(p, ret.first);
       }
       return ret.first;
@@ -377,12 +357,10 @@ namespace Tf_PyDefHelpers
       // have to replace an existing converter, we can just register our own.
       converter::registration *r = const_cast<converter::registration *>(
         converter::registry::query(type_id<WrapperPtrType>()));
-      if (r)
-      {
+      if (r) {
         _PtrToPythonWrapper<WrapperPtrType>::_originalConverter = r->m_to_python;
         r->m_to_python = _PtrToPythonWrapper<WrapperPtrType>::Convert;
-      } else
-      {
+      } else {
         // CODE_COVERAGE_OFF Can only happen if there's a bug.
         TF_CODING_ERROR("No python registration for '%s'!",
                         ArchGetDemangled(typeid(WrapperPtrType)).c_str());
@@ -409,8 +387,7 @@ namespace Tf_PyDefHelpers
       c.def(TfTypePythonClass());
     }
 
-    template<typename CLS>
-    void visit(CLS &c) const
+    template<typename CLS> void visit(CLS &c) const
     {
       typedef typename CLS::wrapped_type Type;
       typedef typename CLS::metadata::held_type_arg PtrType;
@@ -430,16 +407,15 @@ namespace Tf_PyDefHelpers
   {
     friend class def_visitor_access;
 
-    template<typename CLS, typename Wrapper, typename T>
-    static void _AddAPI(Wrapper *, T *)
+    template<typename CLS, typename Wrapper, typename T> static void _AddAPI(Wrapper *, T *)
     {
       _PtrFromPython<TfRefPtr<T>>();
-      typedef typename _PtrInterface<typename CLS::metadata::held_type>::template Rebind<T>::Type PtrType;
+      typedef typename _PtrInterface<typename CLS::metadata::held_type>::template Rebind<T>::Type
+        PtrType;
       _ConvertPtrToPython<TfRefPtr<T>, PtrType>();
     }
 
-    template<typename CLS>
-    void visit(CLS &c) const
+    template<typename CLS> void visit(CLS &c) const
     {
       typedef typename CLS::wrapped_type Type;
       static_assert(TF_SUPPORTS_REFPTR(Type), "Type must support TfRefPtr.");
@@ -452,11 +428,9 @@ namespace Tf_PyDefHelpers
 };  // namespace Tf_PyDefHelpers
 
 struct TfPyWeakPtr : Tf_PyDefHelpers::WeakPtr
-{
-};
+{};
 struct TfPyRefAndWeakPtr : Tf_PyDefHelpers::RefAndWeakPtr
-{
-};
+{};
 
 WABI_NAMESPACE_END
 

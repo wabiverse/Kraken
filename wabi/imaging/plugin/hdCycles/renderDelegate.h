@@ -151,17 +151,17 @@ TF_DECLARE_PUBLIC_TOKENS(HdCyclesAovTokens,
 class HdCyclesDiagnosticDelegate : public TfDiagnosticMgr::Delegate
 {
  public:
+
   explicit HdCyclesDiagnosticDelegate(std::ostream &os);
   ~HdCyclesDiagnosticDelegate() override;
 
   void IssueError(const TfError &err) override;
   void IssueFatalError(const TfCallContext &context, const std::string &msg) override;
-  void IssueStatus(const TfStatus &status) override
-  {}
-  void IssueWarning(const TfWarning &warning) override
-  {}
+  void IssueStatus(const TfStatus &status) override {}
+  void IssueWarning(const TfWarning &warning) override {}
 
  private:
+
   void IssueDiagnosticBase(const TfDiagnosticBase &d);
   void IssueMessage(const std::string &message)
   {
@@ -180,6 +180,7 @@ class HdCyclesDiagnosticDelegate : public TfDiagnosticMgr::Delegate
 class HdCyclesRenderDelegate : public HdRenderDelegate
 {
  public:
+
   /**
    * @brief Render delegate constructor.
    *
@@ -212,7 +213,8 @@ class HdCyclesRenderDelegate : public HdRenderDelegate
   virtual HdResourceRegistrySharedPtr GetResourceRegistry() const override;
 
   // Render Pass and State
-  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
+                                         HdRprimCollection const &collection) override;
   HdRenderPassStateSharedPtr CreateRenderPassState() const override;
 
   // Prims
@@ -240,6 +242,7 @@ class HdCyclesRenderDelegate : public HdRenderDelegate
   virtual VtDictionary GetRenderStats() const override;
 
  private:
+
   static const TfTokenVector SUPPORTED_RPRIM_TYPES;
   static const TfTokenVector SUPPORTED_SPRIM_TYPES;
   static const TfTokenVector SUPPORTED_BPRIM_TYPES;
@@ -264,10 +267,12 @@ class HdCyclesRenderDelegate : public HdRenderDelegate
   class HdCyclesDiagnosticDelegateHolder
   {
    public:
+
     HdCyclesDiagnosticDelegateHolder();
     ~HdCyclesDiagnosticDelegateHolder();
 
    private:
+
     std::unique_ptr<HdCyclesDiagnosticDelegate> _delegate;
   };
 

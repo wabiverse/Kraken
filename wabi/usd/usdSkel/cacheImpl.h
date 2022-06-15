@@ -79,6 +79,7 @@ struct UsdSkel_HashPrim
 class UsdSkel_CacheImpl
 {
  public:
+
   using RWMutex = tbb::queuing_rw_mutex;
 
   struct _SkinningQueryKey
@@ -118,6 +119,7 @@ class UsdSkel_CacheImpl
     UsdSkelSkinningQuery GetSkinningQuery(const UsdPrim &prim) const;
 
    private:
+
     UsdSkelSkinningQuery _FindOrCreateSkinningQuery(const UsdPrim &skinnedPrim,
                                                     const _SkinningQueryKey &key);
 
@@ -133,6 +135,7 @@ class UsdSkel_CacheImpl
                             size_t depth = 1);
 
    private:
+
     UsdSkel_CacheImpl *_cache;
     RWMutex::scoped_lock _lock;
   };
@@ -146,19 +149,24 @@ class UsdSkel_CacheImpl
     void Clear();
 
    private:
+
     UsdSkel_CacheImpl *_cache;
     RWMutex::scoped_lock _lock;
   };
 
  private:
-  using _PrimToAnimMap = tbb::concurrent_hash_map<UsdPrim, UsdSkel_AnimQueryImplRefPtr, UsdSkel_HashPrim>;
+
+  using _PrimToAnimMap =
+    tbb::concurrent_hash_map<UsdPrim, UsdSkel_AnimQueryImplRefPtr, UsdSkel_HashPrim>;
 
   using _PrimToSkelDefinitionMap =
     tbb::concurrent_hash_map<UsdPrim, UsdSkel_SkelDefinitionRefPtr, UsdSkel_HashPrim>;
 
-  using _PrimToSkelQueryMap = tbb::concurrent_hash_map<UsdPrim, UsdSkelSkeletonQuery, UsdSkel_HashPrim>;
+  using _PrimToSkelQueryMap =
+    tbb::concurrent_hash_map<UsdPrim, UsdSkelSkeletonQuery, UsdSkel_HashPrim>;
 
-  using _PrimToSkinningQueryMap = tbb::concurrent_hash_map<UsdPrim, UsdSkelSkinningQuery, UsdSkel_HashPrim>;
+  using _PrimToSkinningQueryMap =
+    tbb::concurrent_hash_map<UsdPrim, UsdSkelSkinningQuery, UsdSkel_HashPrim>;
 
   using _RWMutex = tbb::queuing_rw_mutex;
 

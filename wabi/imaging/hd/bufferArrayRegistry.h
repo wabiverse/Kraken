@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_BUFFER_ARRAY_REGISTRY_H
 #define WABI_IMAGING_HD_BUFFER_ARRAY_REGISTRY_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/bufferArrayRange.h"
 #include "wabi/imaging/hd/bufferSpec.h"
@@ -35,8 +35,8 @@
 
 #include "wabi/imaging/hf/perfLog.h"
 
-#include "wabi/base/tf/token.h"
 #include "wabi/base/vt/dictionary.h"
+#include "wabi/base/tf/token.h"
 
 #include <tbb/concurrent_unordered_map.h>
 
@@ -45,6 +45,7 @@
 #include <mutex>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdBufferArraySharedPtr = std::shared_ptr<class HdBufferArray>;
 
@@ -55,6 +56,7 @@ using HdBufferArraySharedPtr = std::shared_ptr<class HdBufferArray>;
 class HdBufferArrayRegistry
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdBufferArrayRegistry");
 
   HD_API
@@ -88,6 +90,7 @@ class HdBufferArrayRegistry
   friend std::ostream &operator<<(std::ostream &out, const HdBufferArrayRegistry &self);
 
  private:
+
   HdBufferArrayRegistry(const HdBufferArrayRegistry &) = delete;
   HdBufferArrayRegistry &operator=(const HdBufferArrayRegistry &) = delete;
 
@@ -110,13 +113,13 @@ class HdBufferArrayRegistry
 
     // Default / Copy constructors needed for std::make_pair.
     // as the version of TBB doesn't have emplace() yet.
-    _Entry()
-    {}
+    _Entry() {}
     _Entry(const _Entry &other)
     {
       TF_VERIFY(bufferArrays.empty());
     }
   };
+
 
   /// Predicate class for determine if an entry
   /// has been consturcted (determined by there
@@ -124,9 +127,8 @@ class HdBufferArrayRegistry
   class _EntryIsNotEmpty
   {
    public:
-    _EntryIsNotEmpty(const _Entry &entry)
-      : _entry(entry)
-    {}
+
+    _EntryIsNotEmpty(const _Entry &entry) : _entry(entry) {}
 
     bool operator()()
     {
@@ -134,10 +136,12 @@ class HdBufferArrayRegistry
     }
 
    private:
+
     const _Entry &_entry;
   };
 
-  typedef tbb::concurrent_unordered_map<HdAggregationStrategy::AggregationId, _Entry> _BufferArrayIndex;
+  typedef tbb::concurrent_unordered_map<HdAggregationStrategy::AggregationId, _Entry>
+    _BufferArrayIndex;
 
   _BufferArrayIndex _entries;
 
@@ -155,6 +159,7 @@ class HdBufferArrayRegistry
                              HdBufferSpecVector const &bufferSpecs,
                              HdBufferArrayUsageHint usageHint);
 };
+
 
 WABI_NAMESPACE_END
 

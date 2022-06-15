@@ -87,25 +87,23 @@ struct TfTokenFastArbitraryLessThan;
 class TfToken
 {
  public:
+
   enum _ImmortalTag
   {
     Immortal
   };
 
   /// Create the empty token, containing the empty string.
-  constexpr TfToken() noexcept
-  {}
+  constexpr TfToken() noexcept {}
 
   /// Copy constructor.
-  TfToken(TfToken const &rhs) noexcept
-    : _rep(rhs._rep)
+  TfToken(TfToken const &rhs) noexcept : _rep(rhs._rep)
   {
     _AddRef();
   }
 
   /// Move constructor.
-  TfToken(TfToken &&rhs) noexcept
-    : _rep(rhs._rep)
+  TfToken(TfToken &&rhs) noexcept : _rep(rhs._rep)
   {
     rhs._rep = TfPointerAndBits<const _Rep>();
   }
@@ -113,8 +111,7 @@ class TfToken
   /// Copy assignment.
   TfToken &operator=(TfToken const &rhs) noexcept
   {
-    if (&rhs != this)
-    {
+    if (&rhs != this) {
       rhs._AddRef();
       _RemoveRef();
       _rep = rhs._rep;
@@ -125,8 +122,7 @@ class TfToken
   /// Move assignment.
   TfToken &operator=(TfToken &&rhs) noexcept
   {
-    if (&rhs != this)
-    {
+    if (&rhs != this) {
       _RemoveRef();
       _rep = rhs._rep;
       rhs._rep = TfPointerAndBits<const _Rep>();
@@ -304,8 +300,7 @@ class TfToken
   inline bool operator<(TfToken const &r) const
   {
     auto ll = _rep.GetLiteral(), rl = r._rep.GetLiteral();
-    if (ll && rl)
-    {
+    if (ll && rl) {
       auto lrep = _rep.Get(), rrep = r._rep.Get();
       uint64_t lcc = lrep->_compareCode, rcc = rrep->_compareCode;
       return lcc < rcc || (lcc == rcc && lrep->_str < rrep->_str);
@@ -356,13 +351,13 @@ class TfToken
   friend TF_API std::ostream &operator<<(std::ostream &stream, TfToken const &);
 
   /// TfHash support.
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, TfToken const &token)
+  template<class HashState> friend void TfHashAppend(HashState &h, TfToken const &token)
   {
     h.Append(token._rep.Get());
   }
 
  private:
+
   // Add global swap overload.
   friend void swap(TfToken &lhs, TfToken &rhs)
   {
@@ -371,11 +366,9 @@ class TfToken
 
   void _AddRef() const
   {
-    if (_rep.BitsAs<bool>())
-    {
+    if (_rep.BitsAs<bool>()) {
       // We believe this rep is refCounted.
-      if (!_rep->IncrementIfCounted())
-      {
+      if (!_rep->IncrementIfCounted()) {
         // Our belief is wrong, update our cache of countedness.
         _rep.SetBits(false);
       }
@@ -384,16 +377,12 @@ class TfToken
 
   void _RemoveRef() const
   {
-    if (_rep.BitsAs<bool>())
-    {
+    if (_rep.BitsAs<bool>()) {
       // We believe this rep is refCounted.
-      if (_rep->_isCounted)
-      {
-        if (_rep->_refCount.load(std::memory_order_relaxed) == 1)
-        {
+      if (_rep->_isCounted) {
+        if (_rep->_refCount.load(std::memory_order_relaxed) == 1) {
           _PossiblyDestroyRep();
-        } else
-        {
+        } else {
           /*
            * This is deliberately racy.  It's possible the statement
            * below drops our count to zero, and we leak the rep
@@ -409,8 +398,7 @@ class TfToken
            */
           _rep->_refCount.fetch_sub(1, std::memory_order_relaxed);
         }
-      } else
-      {
+      } else {
         // Our belief is wrong, update our cache of countedness.
         _rep.SetBits(false);
       }
@@ -421,16 +409,9 @@ class TfToken
 
   struct _Rep
   {
-    _Rep()
-    {}
-    explicit _Rep(char const *s)
-      : _str(s),
-        _cstr(_str.c_str())
-    {}
-    explicit _Rep(std::string const &s)
-      : _str(s),
-        _cstr(_str.c_str())
-    {}
+    _Rep() {}
+    explicit _Rep(char const *s) : _str(s), _cstr(_str.c_str()) {}
+    explicit _Rep(std::string const &s) : _str(s), _cstr(_str.c_str()) {}
 
     // Make sure we reacquire _cstr from _str on copy and assignment
     // to avoid holding on to a dangling pointer. However, if rhs'
@@ -459,8 +440,7 @@ class TfToken
     inline bool IncrementIfCounted() const
     {
       const bool isCounted = _isCounted;
-      if (isCounted)
-      {
+      if (isCounted) {
         _refCount.fetch_add(1, std::memory_order_relaxed);
       }
       return isCounted;

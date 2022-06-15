@@ -5061,7 +5061,9 @@ namespace internal
     typedef void (*PFNGLALPHATOCOVERAGEDITHERCONTROLNVPROC)(GLenum mode);
     typedef void (*PFNGLAPPLYFRAMEBUFFERATTACHMENTCMAAINTELPROC)();
     typedef void (*PFNGLAPPLYTEXTUREEXTPROC)(GLenum mode);
-    typedef GLboolean (*PFNGLACQUIREKEYEDMUTEXWIN32EXTPROC)(GLuint memory, GLuint64 key, GLuint timeout);
+    typedef GLboolean (*PFNGLACQUIREKEYEDMUTEXWIN32EXTPROC)(GLuint memory,
+                                                            GLuint64 key,
+                                                            GLuint timeout);
     typedef GLboolean (*PFNGLAREPROGRAMSRESIDENTNVPROC)(GLsizei n,
                                                         const GLuint *programs,
                                                         GLboolean *residences);
@@ -5139,7 +5141,10 @@ namespace internal
                                                  GLuint index,
                                                  GLuint buffer,
                                                  GLintptr offset);
-    typedef void (*PFNGLBINDBUFFEROFFSETNVPROC)(GLenum target, GLuint index, GLuint buffer, GLintptr offset);
+    typedef void (*PFNGLBINDBUFFEROFFSETNVPROC)(GLenum target,
+                                                GLuint index,
+                                                GLuint buffer,
+                                                GLintptr offset);
     typedef void (*PFNGLBINDBUFFERRANGEPROC)(GLenum target,
                                              GLuint index,
                                              GLuint buffer,
@@ -5165,8 +5170,12 @@ namespace internal
                                               const GLuint *buffers,
                                               const GLintptr *offsets,
                                               const GLsizeiptr *sizes);
-    typedef void (*PFNGLBINDFRAGDATALOCATIONPROC)(GLuint program, GLuint color, const GLchar *name);
-    typedef void (*PFNGLBINDFRAGDATALOCATIONEXTPROC)(GLuint program, GLuint color, const GLchar *name);
+    typedef void (*PFNGLBINDFRAGDATALOCATIONPROC)(GLuint program,
+                                                  GLuint color,
+                                                  const GLchar *name);
+    typedef void (*PFNGLBINDFRAGDATALOCATIONEXTPROC)(GLuint program,
+                                                     GLuint color,
+                                                     const GLchar *name);
     typedef void (*PFNGLBINDFRAGDATALOCATIONINDEXEDPROC)(GLuint program,
                                                          GLuint colorNumber,
                                                          GLuint index,
@@ -5187,7 +5196,9 @@ namespace internal
                                                  GLint layer,
                                                  GLenum access,
                                                  GLint format);
-    typedef void (*PFNGLBINDIMAGETEXTURESPROC)(GLuint first, GLsizei count, const GLuint *textures);
+    typedef void (*PFNGLBINDIMAGETEXTURESPROC)(GLuint first,
+                                               GLsizei count,
+                                               const GLuint *textures);
     typedef GLuint (*PFNGLBINDLIGHTPARAMETEREXTPROC)(GLenum light, GLenum value);
     typedef GLuint (*PFNGLBINDMATERIALPARAMETEREXTPROC)(GLenum face, GLenum value);
     typedef void (*PFNGLBINDMULTITEXTUREEXTPROC)(GLenum texunit, GLenum target, GLuint texture);
@@ -5251,15 +5262,22 @@ namespace internal
     typedef void (*PFNGLBLENDBARRIERKHRPROC)();
     typedef void (*PFNGLBLENDBARRIERNVPROC)();
     typedef void (*PFNGLBLENDCOLORPROC)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-    typedef void (*PFNGLBLENDCOLOREXTPROC)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+    typedef void (*PFNGLBLENDCOLOREXTPROC)(GLfloat red,
+                                           GLfloat green,
+                                           GLfloat blue,
+                                           GLfloat alpha);
     typedef void (*PFNGLBLENDEQUATIONPROC)(GLenum mode);
     typedef void (*PFNGLBLENDEQUATIONEXTPROC)(GLenum mode);
     typedef void (*PFNGLBLENDEQUATIONINDEXEDAMDPROC)(GLuint buf, GLenum mode);
     typedef void (*PFNGLBLENDEQUATIONSEPARATEPROC)(GLenum modeRGB, GLenum modeAlpha);
     typedef void (*PFNGLBLENDEQUATIONSEPARATEEXTPROC)(GLenum modeRGB, GLenum modeAlpha);
-    typedef void (*PFNGLBLENDEQUATIONSEPARATEINDEXEDAMDPROC)(GLuint buf, GLenum modeRGB, GLenum modeAlpha);
+    typedef void (*PFNGLBLENDEQUATIONSEPARATEINDEXEDAMDPROC)(GLuint buf,
+                                                             GLenum modeRGB,
+                                                             GLenum modeAlpha);
     typedef void (*PFNGLBLENDEQUATIONSEPARATEIPROC)(GLuint buf, GLenum modeRGB, GLenum modeAlpha);
-    typedef void (*PFNGLBLENDEQUATIONSEPARATEIARBPROC)(GLuint buf, GLenum modeRGB, GLenum modeAlpha);
+    typedef void (*PFNGLBLENDEQUATIONSEPARATEIARBPROC)(GLuint buf,
+                                                       GLenum modeRGB,
+                                                       GLenum modeAlpha);
     typedef void (*PFNGLBLENDEQUATIONIPROC)(GLuint buf, GLenum mode);
     typedef void (*PFNGLBLENDEQUATIONIARBPROC)(GLuint buf, GLenum mode);
     typedef void (*PFNGLBLENDFUNCPROC)(GLenum sfactor, GLenum dfactor);
@@ -5327,7 +5345,10 @@ namespace internal
                                                   GLuint64EXT address,
                                                   GLsizeiptr length);
     typedef void (*PFNGLBUFFERATTACHMEMORYNVPROC)(GLenum target, GLuint memory, GLuint64 offset);
-    typedef void (*PFNGLBUFFERDATAPROC)(GLenum target, GLsizeiptr size, const void *data, GLenum usage);
+    typedef void (*PFNGLBUFFERDATAPROC)(GLenum target,
+                                        GLsizeiptr size,
+                                        const void *data,
+                                        GLenum usage);
     typedef void (*PFNGLBUFFERDATAARBPROC)(GLenum target,
                                            GLsizeiptrARB size,
                                            const void *data,
@@ -5387,7 +5408,10 @@ namespace internal
                                                 GLenum format,
                                                 GLenum type,
                                                 const void *data);
-    typedef void (*PFNGLCLEARBUFFERFIPROC)(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
+    typedef void (*PFNGLCLEARBUFFERFIPROC)(GLenum buffer,
+                                           GLint drawbuffer,
+                                           GLfloat depth,
+                                           GLint stencil);
     typedef void (*PFNGLCLEARBUFFERFVPROC)(GLenum buffer, GLint drawbuffer, const GLfloat *value);
     typedef void (*PFNGLCLEARBUFFERIVPROC)(GLenum buffer, GLint drawbuffer, const GLint *value);
     typedef void (*PFNGLCLEARBUFFERUIVPROC)(GLenum buffer, GLint drawbuffer, const GLuint *value);
@@ -5440,8 +5464,11 @@ namespace internal
                                                       GLint drawbuffer,
                                                       const GLuint *value);
     typedef void (*PFNGLCLEARSTENCILPROC)(GLint s);
-    typedef void (
-      *PFNGLCLEARTEXIMAGEPROC)(GLuint texture, GLint level, GLenum format, GLenum type, const void *data);
+    typedef void (*PFNGLCLEARTEXIMAGEPROC)(GLuint texture,
+                                           GLint level,
+                                           GLenum format,
+                                           GLenum type,
+                                           const void *data);
     typedef void (*PFNGLCLEARTEXSUBIMAGEPROC)(GLuint texture,
                                               GLint level,
                                               GLint xoffset,
@@ -5486,7 +5513,10 @@ namespace internal
     typedef void (*PFNGLCOLOR4DVPROC)(const GLdouble *v);
     typedef void (*PFNGLCOLOR4FPROC)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
     typedef void (*PFNGLCOLOR4FVPROC)(const GLfloat *v);
-    typedef void (*PFNGLCOLOR4HNVPROC)(GLhalfNV red, GLhalfNV green, GLhalfNV blue, GLhalfNV alpha);
+    typedef void (*PFNGLCOLOR4HNVPROC)(GLhalfNV red,
+                                       GLhalfNV green,
+                                       GLhalfNV blue,
+                                       GLhalfNV alpha);
     typedef void (*PFNGLCOLOR4HVNVPROC)(const GLhalfNV *v);
     typedef void (*PFNGLCOLOR4IPROC)(GLint red, GLint green, GLint blue, GLint alpha);
     typedef void (*PFNGLCOLOR4IVPROC)(const GLint *v);
@@ -5499,16 +5529,26 @@ namespace internal
     typedef void (*PFNGLCOLOR4USPROC)(GLushort red, GLushort green, GLushort blue, GLushort alpha);
     typedef void (*PFNGLCOLOR4USVPROC)(const GLushort *v);
     typedef void (*PFNGLCOLORFORMATNVPROC)(GLint size, GLenum type, GLsizei stride);
-    typedef void (*PFNGLCOLORMASKPROC)(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
+    typedef void (*PFNGLCOLORMASKPROC)(GLboolean red,
+                                       GLboolean green,
+                                       GLboolean blue,
+                                       GLboolean alpha);
+    typedef void (*PFNGLCOLORMASKINDEXEDEXTPROC)(GLuint index,
+                                                 GLboolean r,
+                                                 GLboolean g,
+                                                 GLboolean b,
+                                                 GLboolean a);
     typedef void (
-      *PFNGLCOLORMASKINDEXEDEXTPROC)(GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a);
-    typedef void (*PFNGLCOLORMASKIPROC)(GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a);
+      *PFNGLCOLORMASKIPROC)(GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a);
     typedef void (*PFNGLCOLORMATERIALPROC)(GLenum face, GLenum mode);
     typedef void (*PFNGLCOLORP3UIPROC)(GLenum type, GLuint color);
     typedef void (*PFNGLCOLORP3UIVPROC)(GLenum type, const GLuint *color);
     typedef void (*PFNGLCOLORP4UIPROC)(GLenum type, GLuint color);
     typedef void (*PFNGLCOLORP4UIVPROC)(GLenum type, const GLuint *color);
-    typedef void (*PFNGLCOLORPOINTERPROC)(GLint size, GLenum type, GLsizei stride, const void *pointer);
+    typedef void (*PFNGLCOLORPOINTERPROC)(GLint size,
+                                          GLenum type,
+                                          GLsizei stride,
+                                          const void *pointer);
     typedef void (*PFNGLCOLORPOINTEREXTPROC)(GLint size,
                                              GLenum type,
                                              GLsizei stride,
@@ -5539,8 +5579,12 @@ namespace internal
                                            GLenum format,
                                            GLenum type,
                                            const void *table);
-    typedef void (*PFNGLCOLORTABLEPARAMETERFVPROC)(GLenum target, GLenum pname, const GLfloat *params);
-    typedef void (*PFNGLCOLORTABLEPARAMETERIVPROC)(GLenum target, GLenum pname, const GLint *params);
+    typedef void (*PFNGLCOLORTABLEPARAMETERFVPROC)(GLenum target,
+                                                   GLenum pname,
+                                                   const GLfloat *params);
+    typedef void (*PFNGLCOLORTABLEPARAMETERIVPROC)(GLenum target,
+                                                   GLenum pname,
+                                                   const GLint *params);
     typedef void (*PFNGLCOMBINERINPUTNVPROC)(GLenum stage,
                                              GLenum portion,
                                              GLenum variable,
@@ -5561,7 +5605,9 @@ namespace internal
     typedef void (*PFNGLCOMBINERPARAMETERFVNVPROC)(GLenum pname, const GLfloat *params);
     typedef void (*PFNGLCOMBINERPARAMETERINVPROC)(GLenum pname, GLint param);
     typedef void (*PFNGLCOMBINERPARAMETERIVNVPROC)(GLenum pname, const GLint *params);
-    typedef void (*PFNGLCOMBINERSTAGEPARAMETERFVNVPROC)(GLenum stage, GLenum pname, const GLfloat *params);
+    typedef void (*PFNGLCOMBINERSTAGEPARAMETERFVNVPROC)(GLenum stage,
+                                                        GLenum pname,
+                                                        const GLfloat *params);
     typedef void (*PFNGLCOMMANDLISTSEGMENTSNVPROC)(GLuint list, GLuint segments);
     typedef void (*PFNGLCOMPILECOMMANDLISTNVPROC)(GLuint list);
     typedef void (*PFNGLCOMPILESHADERPROC)(GLuint shader);
@@ -5843,12 +5889,20 @@ namespace internal
                                                     const void *image);
     typedef void (*PFNGLCONVOLUTIONPARAMETERFPROC)(GLenum target, GLenum pname, GLfloat params);
     typedef void (*PFNGLCONVOLUTIONPARAMETERFEXTPROC)(GLenum target, GLenum pname, GLfloat params);
-    typedef void (*PFNGLCONVOLUTIONPARAMETERFVPROC)(GLenum target, GLenum pname, const GLfloat *params);
-    typedef void (*PFNGLCONVOLUTIONPARAMETERFVEXTPROC)(GLenum target, GLenum pname, const GLfloat *params);
+    typedef void (*PFNGLCONVOLUTIONPARAMETERFVPROC)(GLenum target,
+                                                    GLenum pname,
+                                                    const GLfloat *params);
+    typedef void (*PFNGLCONVOLUTIONPARAMETERFVEXTPROC)(GLenum target,
+                                                       GLenum pname,
+                                                       const GLfloat *params);
     typedef void (*PFNGLCONVOLUTIONPARAMETERIPROC)(GLenum target, GLenum pname, GLint params);
     typedef void (*PFNGLCONVOLUTIONPARAMETERIEXTPROC)(GLenum target, GLenum pname, GLint params);
-    typedef void (*PFNGLCONVOLUTIONPARAMETERIVPROC)(GLenum target, GLenum pname, const GLint *params);
-    typedef void (*PFNGLCONVOLUTIONPARAMETERIVEXTPROC)(GLenum target, GLenum pname, const GLint *params);
+    typedef void (*PFNGLCONVOLUTIONPARAMETERIVPROC)(GLenum target,
+                                                    GLenum pname,
+                                                    const GLint *params);
+    typedef void (*PFNGLCONVOLUTIONPARAMETERIVEXTPROC)(GLenum target,
+                                                       GLenum pname,
+                                                       const GLint *params);
     typedef void (*PFNGLCOPYBUFFERSUBDATAPROC)(GLenum readTarget,
                                                GLenum writeTarget,
                                                GLintptr readOffset,
@@ -5856,10 +5910,16 @@ namespace internal
                                                GLsizeiptr size);
     typedef void (
       *PFNGLCOPYCOLORSUBTABLEPROC)(GLenum target, GLsizei start, GLint x, GLint y, GLsizei width);
-    typedef void (
-      *PFNGLCOPYCOLORSUBTABLEEXTPROC)(GLenum target, GLsizei start, GLint x, GLint y, GLsizei width);
-    typedef void (
-      *PFNGLCOPYCOLORTABLEPROC)(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width);
+    typedef void (*PFNGLCOPYCOLORSUBTABLEEXTPROC)(GLenum target,
+                                                  GLsizei start,
+                                                  GLint x,
+                                                  GLint y,
+                                                  GLsizei width);
+    typedef void (*PFNGLCOPYCOLORTABLEPROC)(GLenum target,
+                                            GLenum internalformat,
+                                            GLint x,
+                                            GLint y,
+                                            GLsizei width);
     typedef void (*PFNGLCOPYCONVOLUTIONFILTER1DPROC)(GLenum target,
                                                      GLenum internalformat,
                                                      GLint x,
@@ -5961,7 +6021,8 @@ namespace internal
                                                     GLintptr writeOffset,
                                                     GLsizeiptr size);
     typedef void (*PFNGLCOPYPATHNVPROC)(GLuint resultPath, GLuint srcPath);
-    typedef void (*PFNGLCOPYPIXELSPROC)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type);
+    typedef void (
+      *PFNGLCOPYPIXELSPROC)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type);
     typedef void (*PFNGLCOPYTEXIMAGE1DPROC)(GLenum target,
                                             GLint level,
                                             GLenum internalformat,
@@ -6141,7 +6202,9 @@ namespace internal
     typedef GLuint (*PFNGLCREATESHADERPROGRAMVPROC)(GLenum type,
                                                     GLsizei count,
                                                     const GLchar *const *strings);
-    typedef GLuint (*PFNGLCREATESHADERPROGRAMVEXTPROC)(GLenum type, GLsizei count, const GLchar **strings);
+    typedef GLuint (*PFNGLCREATESHADERPROGRAMVEXTPROC)(GLenum type,
+                                                       GLsizei count,
+                                                       const GLchar **strings);
     typedef void (*PFNGLCREATESTATESNVPROC)(GLsizei n, GLuint *states);
     typedef GLsync (*PFNGLCREATESYNCFROMCLEVENTARBPROC)(struct _cl_context *context,
                                                         struct _cl_event *event,
@@ -6155,8 +6218,10 @@ namespace internal
     typedef void (*PFNGLCURRENTPALETTEMATRIXARBPROC)(GLint index);
     typedef void (*PFNGLDEBUGMESSAGECALLBACKPROC)(GLDEBUGPROC callback, const void *userParam);
     typedef void (*PFNGLDEBUGMESSAGECALLBACKAMDPROC)(GLDEBUGPROCAMD callback, void *userParam);
-    typedef void (*PFNGLDEBUGMESSAGECALLBACKARBPROC)(GLDEBUGPROCARB callback, const void *userParam);
-    typedef void (*PFNGLDEBUGMESSAGECALLBACKKHRPROC)(GLDEBUGPROCKHR callback, const void *userParam);
+    typedef void (*PFNGLDEBUGMESSAGECALLBACKARBPROC)(GLDEBUGPROCARB callback,
+                                                     const void *userParam);
+    typedef void (*PFNGLDEBUGMESSAGECALLBACKKHRPROC)(GLDEBUGPROCKHR callback,
+                                                     const void *userParam);
     typedef void (*PFNGLDEBUGMESSAGECONTROLPROC)(GLenum source,
                                                  GLenum type,
                                                  GLenum severity,
@@ -6267,7 +6332,9 @@ namespace internal
     typedef void (*PFNGLDISABLEVERTEXATTRIBARRAYPROC)(GLuint index);
     typedef void (*PFNGLDISABLEVERTEXATTRIBARRAYARBPROC)(GLuint index);
     typedef void (*PFNGLDISABLEIPROC)(GLenum target, GLuint index);
-    typedef void (*PFNGLDISPATCHCOMPUTEPROC)(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+    typedef void (*PFNGLDISPATCHCOMPUTEPROC)(GLuint num_groups_x,
+                                             GLuint num_groups_y,
+                                             GLuint num_groups_z);
     typedef void (*PFNGLDISPATCHCOMPUTEGROUPSIZEARBPROC)(GLuint num_groups_x,
                                                          GLuint num_groups_y,
                                                          GLuint num_groups_z,
@@ -6319,7 +6386,10 @@ namespace internal
                                                   const GLuint *fbos,
                                                   GLuint count);
     typedef void (*PFNGLDRAWELEMENTARRAYAPPLEPROC)(GLenum mode, GLint first, GLsizei count);
-    typedef void (*PFNGLDRAWELEMENTSPROC)(GLenum mode, GLsizei count, GLenum type, const void *indices);
+    typedef void (*PFNGLDRAWELEMENTSPROC)(GLenum mode,
+                                          GLsizei count,
+                                          GLenum type,
+                                          const void *indices);
     typedef void (*PFNGLDRAWELEMENTSBASEVERTEXPROC)(GLenum mode,
                                                     GLsizei count,
                                                     GLenum type,
@@ -6362,8 +6432,11 @@ namespace internal
                                                       GLsizei primcount);
     typedef void (*PFNGLDRAWMESHTASKSNVPROC)(GLuint first, GLuint count);
     typedef void (*PFNGLDRAWMESHTASKSINDIRECTNVPROC)(GLintptr indirect);
-    typedef void (
-      *PFNGLDRAWPIXELSPROC)(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+    typedef void (*PFNGLDRAWPIXELSPROC)(GLsizei width,
+                                        GLsizei height,
+                                        GLenum format,
+                                        GLenum type,
+                                        const void *pixels);
     typedef void (*PFNGLDRAWRANGEELEMENTARRAYAPPLEPROC)(GLenum mode,
                                                         GLuint start,
                                                         GLuint end,
@@ -6400,7 +6473,9 @@ namespace internal
                                            GLfloat s1,
                                            GLfloat t1);
     typedef void (*PFNGLDRAWTRANSFORMFEEDBACKPROC)(GLenum mode, GLuint id);
-    typedef void (*PFNGLDRAWTRANSFORMFEEDBACKINSTANCEDPROC)(GLenum mode, GLuint id, GLsizei instancecount);
+    typedef void (*PFNGLDRAWTRANSFORMFEEDBACKINSTANCEDPROC)(GLenum mode,
+                                                            GLuint id,
+                                                            GLsizei instancecount);
     typedef void (*PFNGLDRAWTRANSFORMFEEDBACKNVPROC)(GLenum mode, GLuint id);
     typedef void (*PFNGLDRAWTRANSFORMFEEDBACKSTREAMPROC)(GLenum mode, GLuint id, GLuint stream);
     typedef void (*PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC)(GLenum mode,
@@ -6416,7 +6491,9 @@ namespace internal
     typedef void (*PFNGLEDGEFLAGPROC)(GLboolean flag);
     typedef void (*PFNGLEDGEFLAGFORMATNVPROC)(GLsizei stride);
     typedef void (*PFNGLEDGEFLAGPOINTERPROC)(GLsizei stride, const void *pointer);
-    typedef void (*PFNGLEDGEFLAGPOINTEREXTPROC)(GLsizei stride, GLsizei count, const GLboolean *pointer);
+    typedef void (*PFNGLEDGEFLAGPOINTEREXTPROC)(GLsizei stride,
+                                                GLsizei count,
+                                                const GLboolean *pointer);
     typedef void (*PFNGLEDGEFLAGVPROC)(const GLboolean *flag);
     typedef void (*PFNGLELEMENTPOINTERAPPLEPROC)(GLenum type, const void *pointer);
     typedef void (*PFNGLENABLEPROC)(GLenum cap);
@@ -6475,9 +6552,15 @@ namespace internal
     typedef void (*PFNGLFINISHFENCENVPROC)(GLuint fence);
     typedef void (*PFNGLFINISHOBJECTAPPLEPROC)(GLenum object, GLint name);
     typedef void (*PFNGLFLUSHPROC)();
-    typedef void (*PFNGLFLUSHMAPPEDBUFFERRANGEPROC)(GLenum target, GLintptr offset, GLsizeiptr length);
-    typedef void (*PFNGLFLUSHMAPPEDBUFFERRANGEAPPLEPROC)(GLenum target, GLintptr offset, GLsizeiptr size);
-    typedef void (*PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC)(GLuint buffer, GLintptr offset, GLsizeiptr length);
+    typedef void (*PFNGLFLUSHMAPPEDBUFFERRANGEPROC)(GLenum target,
+                                                    GLintptr offset,
+                                                    GLsizeiptr length);
+    typedef void (*PFNGLFLUSHMAPPEDBUFFERRANGEAPPLEPROC)(GLenum target,
+                                                         GLintptr offset,
+                                                         GLsizeiptr size);
+    typedef void (*PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC)(GLuint buffer,
+                                                         GLintptr offset,
+                                                         GLsizeiptr length);
     typedef void (*PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEEXTPROC)(GLuint buffer,
                                                             GLintptr offset,
                                                             GLsizeiptr length);
@@ -6503,7 +6586,9 @@ namespace internal
     typedef void (*PFNGLFOGIVPROC)(GLenum pname, const GLint *params);
     typedef void (*PFNGLFRAGMENTCOVERAGECOLORNVPROC)(GLuint color);
     typedef void (*PFNGLFRAMEBUFFERDRAWBUFFEREXTPROC)(GLuint framebuffer, GLenum mode);
-    typedef void (*PFNGLFRAMEBUFFERDRAWBUFFERSEXTPROC)(GLuint framebuffer, GLsizei n, const GLenum *bufs);
+    typedef void (*PFNGLFRAMEBUFFERDRAWBUFFERSEXTPROC)(GLuint framebuffer,
+                                                       GLsizei n,
+                                                       const GLenum *bufs);
     typedef void (*PFNGLFRAMEBUFFERFETCHBARRIEREXTPROC)();
     typedef void (*PFNGLFRAMEBUFFERPARAMETERIPROC)(GLenum target, GLenum pname, GLint param);
     typedef void (*PFNGLFRAMEBUFFERREADBUFFEREXTPROC)(GLuint framebuffer, GLenum mode);
@@ -6732,21 +6817,35 @@ namespace internal
     typedef void (*PFNGLGETBUFFERPARAMETERI64VPROC)(GLenum target, GLenum pname, GLint64 *params);
     typedef void (*PFNGLGETBUFFERPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
     typedef void (*PFNGLGETBUFFERPARAMETERIVARBPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETBUFFERPARAMETERUI64VNVPROC)(GLenum target, GLenum pname, GLuint64EXT *params);
+    typedef void (*PFNGLGETBUFFERPARAMETERUI64VNVPROC)(GLenum target,
+                                                       GLenum pname,
+                                                       GLuint64EXT *params);
     typedef void (*PFNGLGETBUFFERPOINTERVPROC)(GLenum target, GLenum pname, void **params);
     typedef void (*PFNGLGETBUFFERPOINTERVARBPROC)(GLenum target, GLenum pname, void **params);
-    typedef void (*PFNGLGETBUFFERSUBDATAPROC)(GLenum target, GLintptr offset, GLsizeiptr size, void *data);
+    typedef void (*PFNGLGETBUFFERSUBDATAPROC)(GLenum target,
+                                              GLintptr offset,
+                                              GLsizeiptr size,
+                                              void *data);
     typedef void (*PFNGLGETBUFFERSUBDATAARBPROC)(GLenum target,
                                                  GLintptrARB offset,
                                                  GLsizeiptrARB size,
                                                  void *data);
     typedef void (*PFNGLGETCLIPPLANEPROC)(GLenum plane, GLdouble *equation);
     typedef void (*PFNGLGETCOLORTABLEPROC)(GLenum target, GLenum format, GLenum type, void *table);
-    typedef void (*PFNGLGETCOLORTABLEEXTPROC)(GLenum target, GLenum format, GLenum type, void *data);
-    typedef void (*PFNGLGETCOLORTABLEPARAMETERFVPROC)(GLenum target, GLenum pname, GLfloat *params);
-    typedef void (*PFNGLGETCOLORTABLEPARAMETERFVEXTPROC)(GLenum target, GLenum pname, GLfloat *params);
+    typedef void (*PFNGLGETCOLORTABLEEXTPROC)(GLenum target,
+                                              GLenum format,
+                                              GLenum type,
+                                              void *data);
+    typedef void (*PFNGLGETCOLORTABLEPARAMETERFVPROC)(GLenum target,
+                                                      GLenum pname,
+                                                      GLfloat *params);
+    typedef void (*PFNGLGETCOLORTABLEPARAMETERFVEXTPROC)(GLenum target,
+                                                         GLenum pname,
+                                                         GLfloat *params);
     typedef void (*PFNGLGETCOLORTABLEPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETCOLORTABLEPARAMETERIVEXTPROC)(GLenum target, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETCOLORTABLEPARAMETERIVEXTPROC)(GLenum target,
+                                                         GLenum pname,
+                                                         GLint *params);
     typedef void (*PFNGLGETCOMBINERINPUTPARAMETERFVNVPROC)(GLenum stage,
                                                            GLenum portion,
                                                            GLenum variable,
@@ -6765,7 +6864,9 @@ namespace internal
                                                             GLenum portion,
                                                             GLenum pname,
                                                             GLint *params);
-    typedef void (*PFNGLGETCOMBINERSTAGEPARAMETERFVNVPROC)(GLenum stage, GLenum pname, GLfloat *params);
+    typedef void (*PFNGLGETCOMBINERSTAGEPARAMETERFVNVPROC)(GLenum stage,
+                                                           GLenum pname,
+                                                           GLfloat *params);
     typedef GLuint (*PFNGLGETCOMMANDHEADERNVPROC)(GLenum tokenID, GLuint size);
     typedef void (*PFNGLGETCOMPRESSEDMULTITEXIMAGEEXTPROC)(GLenum texunit,
                                                            GLenum target,
@@ -6791,12 +6892,24 @@ namespace internal
                                                           GLsizei depth,
                                                           GLsizei bufSize,
                                                           void *pixels);
-    typedef void (*PFNGLGETCONVOLUTIONFILTERPROC)(GLenum target, GLenum format, GLenum type, void *image);
-    typedef void (*PFNGLGETCONVOLUTIONFILTEREXTPROC)(GLenum target, GLenum format, GLenum type, void *image);
-    typedef void (*PFNGLGETCONVOLUTIONPARAMETERFVPROC)(GLenum target, GLenum pname, GLfloat *params);
-    typedef void (*PFNGLGETCONVOLUTIONPARAMETERFVEXTPROC)(GLenum target, GLenum pname, GLfloat *params);
+    typedef void (*PFNGLGETCONVOLUTIONFILTERPROC)(GLenum target,
+                                                  GLenum format,
+                                                  GLenum type,
+                                                  void *image);
+    typedef void (*PFNGLGETCONVOLUTIONFILTEREXTPROC)(GLenum target,
+                                                     GLenum format,
+                                                     GLenum type,
+                                                     void *image);
+    typedef void (*PFNGLGETCONVOLUTIONPARAMETERFVPROC)(GLenum target,
+                                                       GLenum pname,
+                                                       GLfloat *params);
+    typedef void (*PFNGLGETCONVOLUTIONPARAMETERFVEXTPROC)(GLenum target,
+                                                          GLenum pname,
+                                                          GLfloat *params);
     typedef void (*PFNGLGETCONVOLUTIONPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETCONVOLUTIONPARAMETERIVEXTPROC)(GLenum target, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETCONVOLUTIONPARAMETERIVEXTPROC)(GLenum target,
+                                                          GLenum pname,
+                                                          GLint *params);
     typedef void (*PFNGLGETCOVERAGEMODULATIONTABLENVPROC)(GLsizei bufSize, GLfloat *v);
     typedef GLuint (*PFNGLGETDEBUGMESSAGELOGPROC)(GLuint count,
                                                   GLsizei bufSize,
@@ -6864,19 +6977,31 @@ namespace internal
                                                           GLsizei size,
                                                           GLfloat *values);
     typedef void (*PFNGLGETFRAMEBUFFERPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETFRAMEBUFFERPARAMETERIVEXTPROC)(GLuint framebuffer, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETFRAMEBUFFERPARAMETERIVEXTPROC)(GLuint framebuffer,
+                                                          GLenum pname,
+                                                          GLint *params);
     typedef GLenum (*PFNGLGETGRAPHICSRESETSTATUSPROC)();
     typedef GLenum (*PFNGLGETGRAPHICSRESETSTATUSARBPROC)();
     typedef GLenum (*PFNGLGETGRAPHICSRESETSTATUSKHRPROC)();
     typedef GLhandleARB (*PFNGLGETHANDLEARBPROC)(GLenum pname);
-    typedef void (
-      *PFNGLGETHISTOGRAMPROC)(GLenum target, GLboolean reset, GLenum format, GLenum type, void *values);
-    typedef void (
-      *PFNGLGETHISTOGRAMEXTPROC)(GLenum target, GLboolean reset, GLenum format, GLenum type, void *values);
+    typedef void (*PFNGLGETHISTOGRAMPROC)(GLenum target,
+                                          GLboolean reset,
+                                          GLenum format,
+                                          GLenum type,
+                                          void *values);
+    typedef void (*PFNGLGETHISTOGRAMEXTPROC)(GLenum target,
+                                             GLboolean reset,
+                                             GLenum format,
+                                             GLenum type,
+                                             void *values);
     typedef void (*PFNGLGETHISTOGRAMPARAMETERFVPROC)(GLenum target, GLenum pname, GLfloat *params);
-    typedef void (*PFNGLGETHISTOGRAMPARAMETERFVEXTPROC)(GLenum target, GLenum pname, GLfloat *params);
+    typedef void (*PFNGLGETHISTOGRAMPARAMETERFVEXTPROC)(GLenum target,
+                                                        GLenum pname,
+                                                        GLfloat *params);
     typedef void (*PFNGLGETHISTOGRAMPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETHISTOGRAMPARAMETERIVEXTPROC)(GLenum target, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETHISTOGRAMPARAMETERIVEXTPROC)(GLenum target,
+                                                        GLenum pname,
+                                                        GLint *params);
     typedef GLuint64 (*PFNGLGETIMAGEHANDLEARBPROC)(GLuint texture,
                                                    GLint level,
                                                    GLboolean layered,
@@ -6949,11 +7074,19 @@ namespace internal
                                                                    GLint first,
                                                                    GLsizei count,
                                                                    GLuint *params);
-    typedef void (*PFNGLGETMEMORYOBJECTPARAMETERIVEXTPROC)(GLuint memoryObject, GLenum pname, GLint *params);
-    typedef void (
-      *PFNGLGETMINMAXPROC)(GLenum target, GLboolean reset, GLenum format, GLenum type, void *values);
-    typedef void (
-      *PFNGLGETMINMAXEXTPROC)(GLenum target, GLboolean reset, GLenum format, GLenum type, void *values);
+    typedef void (*PFNGLGETMEMORYOBJECTPARAMETERIVEXTPROC)(GLuint memoryObject,
+                                                           GLenum pname,
+                                                           GLint *params);
+    typedef void (*PFNGLGETMINMAXPROC)(GLenum target,
+                                       GLboolean reset,
+                                       GLenum format,
+                                       GLenum type,
+                                       void *values);
+    typedef void (*PFNGLGETMINMAXEXTPROC)(GLenum target,
+                                          GLboolean reset,
+                                          GLenum format,
+                                          GLenum type,
+                                          void *values);
     typedef void (*PFNGLGETMINMAXPARAMETERFVPROC)(GLenum target, GLenum pname, GLfloat *params);
     typedef void (*PFNGLGETMINMAXPARAMETERFVEXTPROC)(GLenum target, GLenum pname, GLfloat *params);
     typedef void (*PFNGLGETMINMAXPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
@@ -6962,7 +7095,10 @@ namespace internal
                                                  GLenum target,
                                                  GLenum pname,
                                                  GLfloat *params);
-    typedef void (*PFNGLGETMULTITEXENVIVEXTPROC)(GLenum texunit, GLenum target, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETMULTITEXENVIVEXTPROC)(GLenum texunit,
+                                                 GLenum target,
+                                                 GLenum pname,
+                                                 GLint *params);
     typedef void (*PFNGLGETMULTITEXGENDVEXTPROC)(GLenum texunit,
                                                  GLenum coord,
                                                  GLenum pname,
@@ -6971,7 +7107,10 @@ namespace internal
                                                  GLenum coord,
                                                  GLenum pname,
                                                  GLfloat *params);
-    typedef void (*PFNGLGETMULTITEXGENIVEXTPROC)(GLenum texunit, GLenum coord, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETMULTITEXGENIVEXTPROC)(GLenum texunit,
+                                                 GLenum coord,
+                                                 GLenum pname,
+                                                 GLint *params);
     typedef void (*PFNGLGETMULTITEXIMAGEEXTPROC)(GLenum texunit,
                                                  GLenum target,
                                                  GLint level,
@@ -7006,9 +7145,13 @@ namespace internal
                                                        GLint *params);
     typedef void (*PFNGLGETMULTISAMPLEFVPROC)(GLenum pname, GLuint index, GLfloat *val);
     typedef void (*PFNGLGETMULTISAMPLEFVNVPROC)(GLenum pname, GLuint index, GLfloat *val);
-    typedef void (*PFNGLGETNAMEDBUFFERPARAMETERI64VPROC)(GLuint buffer, GLenum pname, GLint64 *params);
+    typedef void (*PFNGLGETNAMEDBUFFERPARAMETERI64VPROC)(GLuint buffer,
+                                                         GLenum pname,
+                                                         GLint64 *params);
     typedef void (*PFNGLGETNAMEDBUFFERPARAMETERIVPROC)(GLuint buffer, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETNAMEDBUFFERPARAMETERIVEXTPROC)(GLuint buffer, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETNAMEDBUFFERPARAMETERIVEXTPROC)(GLuint buffer,
+                                                          GLenum pname,
+                                                          GLint *params);
     typedef void (*PFNGLGETNAMEDBUFFERPARAMETERUI64VNVPROC)(GLuint buffer,
                                                             GLenum pname,
                                                             GLuint64EXT *params);
@@ -7036,7 +7179,9 @@ namespace internal
                                                                          GLenum attachment,
                                                                          GLenum pname,
                                                                          GLint *params);
-    typedef void (*PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVPROC)(GLuint framebuffer, GLenum pname, GLint *param);
+    typedef void (*PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVPROC)(GLuint framebuffer,
+                                                            GLenum pname,
+                                                            GLint *param);
     typedef void (*PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVEXTPROC)(GLuint framebuffer,
                                                                GLenum pname,
                                                                GLint *params);
@@ -7095,7 +7240,9 @@ namespace internal
                                                GLsizei bufSize,
                                                GLsizei *length,
                                                GLchar *label);
-    typedef void (*PFNGLGETOBJECTPARAMETERFVARBPROC)(GLhandleARB obj, GLenum pname, GLfloat *params);
+    typedef void (*PFNGLGETOBJECTPARAMETERFVARBPROC)(GLhandleARB obj,
+                                                     GLenum pname,
+                                                     GLfloat *params);
     typedef void (*PFNGLGETOBJECTPARAMETERIVAPPLEPROC)(GLenum objectType,
                                                        GLuint name,
                                                        GLenum pname,
@@ -7116,7 +7263,9 @@ namespace internal
     typedef void (*PFNGLGETPATHCOMMANDSNVPROC)(GLuint path, GLubyte *commands);
     typedef void (*PFNGLGETPATHCOORDSNVPROC)(GLuint path, GLfloat *coords);
     typedef void (*PFNGLGETPATHDASHARRAYNVPROC)(GLuint path, GLfloat *dashArray);
-    typedef GLfloat (*PFNGLGETPATHLENGTHNVPROC)(GLuint path, GLsizei startSegment, GLsizei numSegments);
+    typedef GLfloat (*PFNGLGETPATHLENGTHNVPROC)(GLuint path,
+                                                GLsizei startSegment,
+                                                GLsizei numSegments);
     typedef void (*PFNGLGETPATHMETRICRANGENVPROC)(GLbitfield metricQueryMask,
                                                   GLuint firstPathName,
                                                   GLsizei numPaths,
@@ -7176,7 +7325,9 @@ namespace internal
                                                           GLsizei bufSize,
                                                           GLsizei *length,
                                                           GLchar *groupString);
-    typedef void (*PFNGLGETPERFMONITORGROUPSAMDPROC)(GLint *numGroups, GLsizei groupsSize, GLuint *groups);
+    typedef void (*PFNGLGETPERFMONITORGROUPSAMDPROC)(GLint *numGroups,
+                                                     GLsizei groupsSize,
+                                                     GLuint *groups);
     typedef void (*PFNGLGETPERFQUERYDATAINTELPROC)(GLuint queryHandle,
                                                    GLuint flags,
                                                    GLsizei dataSize,
@@ -7193,8 +7344,12 @@ namespace internal
     typedef void (*PFNGLGETPIXELMAPFVPROC)(GLenum map, GLfloat *values);
     typedef void (*PFNGLGETPIXELMAPUIVPROC)(GLenum map, GLuint *values);
     typedef void (*PFNGLGETPIXELMAPUSVPROC)(GLenum map, GLushort *values);
-    typedef void (*PFNGLGETPIXELTRANSFORMPARAMETERFVEXTPROC)(GLenum target, GLenum pname, GLfloat *params);
-    typedef void (*PFNGLGETPIXELTRANSFORMPARAMETERIVEXTPROC)(GLenum target, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETPIXELTRANSFORMPARAMETERFVEXTPROC)(GLenum target,
+                                                             GLenum pname,
+                                                             GLfloat *params);
+    typedef void (*PFNGLGETPIXELTRANSFORMPARAMETERIVEXTPROC)(GLenum target,
+                                                             GLenum pname,
+                                                             GLint *params);
     typedef void (*PFNGLGETPOINTERINDEXEDVEXTPROC)(GLenum target, GLuint index, void **data);
     typedef void (*PFNGLGETPOINTERI_VEXTPROC)(GLenum pname, GLuint index, void **params);
     typedef void (*PFNGLGETPOINTERVPROC)(GLenum pname, void **params);
@@ -7206,10 +7361,18 @@ namespace internal
                                               GLsizei *length,
                                               GLenum *binaryFormat,
                                               void *binary);
-    typedef void (*PFNGLGETPROGRAMENVPARAMETERIIVNVPROC)(GLenum target, GLuint index, GLint *params);
-    typedef void (*PFNGLGETPROGRAMENVPARAMETERIUIVNVPROC)(GLenum target, GLuint index, GLuint *params);
-    typedef void (*PFNGLGETPROGRAMENVPARAMETERDVARBPROC)(GLenum target, GLuint index, GLdouble *params);
-    typedef void (*PFNGLGETPROGRAMENVPARAMETERFVARBPROC)(GLenum target, GLuint index, GLfloat *params);
+    typedef void (*PFNGLGETPROGRAMENVPARAMETERIIVNVPROC)(GLenum target,
+                                                         GLuint index,
+                                                         GLint *params);
+    typedef void (*PFNGLGETPROGRAMENVPARAMETERIUIVNVPROC)(GLenum target,
+                                                          GLuint index,
+                                                          GLuint *params);
+    typedef void (*PFNGLGETPROGRAMENVPARAMETERDVARBPROC)(GLenum target,
+                                                         GLuint index,
+                                                         GLdouble *params);
+    typedef void (*PFNGLGETPROGRAMENVPARAMETERFVARBPROC)(GLenum target,
+                                                         GLuint index,
+                                                         GLfloat *params);
     typedef void (*PFNGLGETPROGRAMINFOLOGPROC)(GLuint program,
                                                GLsizei bufSize,
                                                GLsizei *length,
@@ -7218,10 +7381,18 @@ namespace internal
                                                    GLenum programInterface,
                                                    GLenum pname,
                                                    GLint *params);
-    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERIIVNVPROC)(GLenum target, GLuint index, GLint *params);
-    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERIUIVNVPROC)(GLenum target, GLuint index, GLuint *params);
-    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERDVARBPROC)(GLenum target, GLuint index, GLdouble *params);
-    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERFVARBPROC)(GLenum target, GLuint index, GLfloat *params);
+    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERIIVNVPROC)(GLenum target,
+                                                           GLuint index,
+                                                           GLint *params);
+    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERIUIVNVPROC)(GLenum target,
+                                                            GLuint index,
+                                                            GLuint *params);
+    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERDVARBPROC)(GLenum target,
+                                                           GLuint index,
+                                                           GLdouble *params);
+    typedef void (*PFNGLGETPROGRAMLOCALPARAMETERFVARBPROC)(GLenum target,
+                                                           GLuint index,
+                                                           GLfloat *params);
     typedef void (*PFNGLGETPROGRAMNAMEDPARAMETERDVNVPROC)(GLuint id,
                                                           GLsizei len,
                                                           const GLubyte *name,
@@ -7285,7 +7456,9 @@ namespace internal
                                                GLint *values);
     typedef void (*PFNGLGETPROGRAMSTRINGARBPROC)(GLenum target, GLenum pname, void *string);
     typedef void (*PFNGLGETPROGRAMSTRINGNVPROC)(GLuint id, GLenum pname, GLubyte *program);
-    typedef void (*PFNGLGETPROGRAMSUBROUTINEPARAMETERUIVNVPROC)(GLenum target, GLuint index, GLuint *param);
+    typedef void (*PFNGLGETPROGRAMSUBROUTINEPARAMETERUIVNVPROC)(GLenum target,
+                                                                GLuint index,
+                                                                GLuint *param);
     typedef void (*PFNGLGETPROGRAMIVPROC)(GLuint program, GLenum pname, GLint *params);
     typedef void (*PFNGLGETPROGRAMIVARBPROC)(GLenum target, GLenum pname, GLint *params);
     typedef void (*PFNGLGETPROGRAMIVNVPROC)(GLuint id, GLenum pname, GLint *params);
@@ -7293,7 +7466,10 @@ namespace internal
                                                       GLuint buffer,
                                                       GLenum pname,
                                                       GLintptr offset);
-    typedef void (*PFNGLGETQUERYBUFFEROBJECTIVPROC)(GLuint id, GLuint buffer, GLenum pname, GLintptr offset);
+    typedef void (*PFNGLGETQUERYBUFFEROBJECTIVPROC)(GLuint id,
+                                                    GLuint buffer,
+                                                    GLenum pname,
+                                                    GLintptr offset);
     typedef void (*PFNGLGETQUERYBUFFEROBJECTUI64VPROC)(GLuint id,
                                                        GLuint buffer,
                                                        GLenum pname,
@@ -7302,7 +7478,10 @@ namespace internal
                                                      GLuint buffer,
                                                      GLenum pname,
                                                      GLintptr offset);
-    typedef void (*PFNGLGETQUERYINDEXEDIVPROC)(GLenum target, GLuint index, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETQUERYINDEXEDIVPROC)(GLenum target,
+                                               GLuint index,
+                                               GLenum pname,
+                                               GLint *params);
     typedef void (*PFNGLGETQUERYOBJECTI64VPROC)(GLuint id, GLenum pname, GLint64 *params);
     typedef void (*PFNGLGETQUERYOBJECTI64VEXTPROC)(GLuint id, GLenum pname, GLint64 *params);
     typedef void (*PFNGLGETQUERYOBJECTIVPROC)(GLuint id, GLenum pname, GLint *params);
@@ -7313,14 +7492,22 @@ namespace internal
     typedef void (*PFNGLGETQUERYOBJECTUIVARBPROC)(GLuint id, GLenum pname, GLuint *params);
     typedef void (*PFNGLGETQUERYIVPROC)(GLenum target, GLenum pname, GLint *params);
     typedef void (*PFNGLGETQUERYIVARBPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETRENDERBUFFERPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC)(GLenum target, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETRENDERBUFFERPARAMETERIVPROC)(GLenum target,
+                                                        GLenum pname,
+                                                        GLint *params);
+    typedef void (*PFNGLGETRENDERBUFFERPARAMETERIVEXTPROC)(GLenum target,
+                                                           GLenum pname,
+                                                           GLint *params);
     typedef void (*PFNGLGETSAMPLERPARAMETERIIVPROC)(GLuint sampler, GLenum pname, GLint *params);
     typedef void (*PFNGLGETSAMPLERPARAMETERIUIVPROC)(GLuint sampler, GLenum pname, GLuint *params);
     typedef void (*PFNGLGETSAMPLERPARAMETERFVPROC)(GLuint sampler, GLenum pname, GLfloat *params);
     typedef void (*PFNGLGETSAMPLERPARAMETERIVPROC)(GLuint sampler, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETSEMAPHOREPARAMETERIVNVPROC)(GLuint semaphore, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETSEMAPHOREPARAMETERUI64VEXTPROC)(GLuint semaphore, GLenum pname, GLuint64 *params);
+    typedef void (*PFNGLGETSEMAPHOREPARAMETERIVNVPROC)(GLuint semaphore,
+                                                       GLenum pname,
+                                                       GLint *params);
+    typedef void (*PFNGLGETSEMAPHOREPARAMETERUI64VEXTPROC)(GLuint semaphore,
+                                                           GLenum pname,
+                                                           GLuint64 *params);
     typedef void (*PFNGLGETSEPARABLEFILTERPROC)(GLenum target,
                                                 GLenum format,
                                                 GLenum type,
@@ -7350,7 +7537,9 @@ namespace internal
                                                 GLsizei *length,
                                                 GLcharARB *source);
     typedef void (*PFNGLGETSHADERIVPROC)(GLuint shader, GLenum pname, GLint *params);
-    typedef void (*PFNGLGETSHADINGRATEIMAGEPALETTENVPROC)(GLuint viewport, GLuint entry, GLenum *rate);
+    typedef void (*PFNGLGETSHADINGRATEIMAGEPALETTENVPROC)(GLuint viewport,
+                                                          GLuint entry,
+                                                          GLenum *rate);
     typedef void (*PFNGLGETSHADINGRATESAMPLELOCATIONIVNVPROC)(GLenum rate,
                                                               GLuint samples,
                                                               GLuint index,
@@ -7358,12 +7547,17 @@ namespace internal
     typedef GLushort (*PFNGLGETSTAGEINDEXNVPROC)(GLenum shadertype);
     typedef const GLubyte *(*PFNGLGETSTRINGPROC)(GLenum name);
     typedef const GLubyte *(*PFNGLGETSTRINGIPROC)(GLenum name, GLuint index);
-    typedef GLuint (*PFNGLGETSUBROUTINEINDEXPROC)(GLuint program, GLenum shadertype, const GLchar *name);
+    typedef GLuint (*PFNGLGETSUBROUTINEINDEXPROC)(GLuint program,
+                                                  GLenum shadertype,
+                                                  const GLchar *name);
     typedef GLint (*PFNGLGETSUBROUTINEUNIFORMLOCATIONPROC)(GLuint program,
                                                            GLenum shadertype,
                                                            const GLchar *name);
-    typedef void (
-      *PFNGLGETSYNCIVPROC)(GLsync sync, GLenum pname, GLsizei count, GLsizei *length, GLint *values);
+    typedef void (*PFNGLGETSYNCIVPROC)(GLsync sync,
+                                       GLenum pname,
+                                       GLsizei count,
+                                       GLsizei *length,
+                                       GLint *values);
     typedef void (*PFNGLGETTEXENVFVPROC)(GLenum target, GLenum pname, GLfloat *params);
     typedef void (*PFNGLGETTEXENVIVPROC)(GLenum target, GLenum pname, GLint *params);
     typedef void (*PFNGLGETTEXGENDVPROC)(GLenum coord, GLenum pname, GLdouble *params);
@@ -7375,12 +7569,17 @@ namespace internal
                                                     GLint level,
                                                     GLenum pname,
                                                     GLfloat *params);
-    typedef void (*PFNGLGETTEXLEVELPARAMETERIVPROC)(GLenum target, GLint level, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETTEXLEVELPARAMETERIVPROC)(GLenum target,
+                                                    GLint level,
+                                                    GLenum pname,
+                                                    GLint *params);
     typedef void (*PFNGLGETTEXPARAMETERIIVPROC)(GLenum target, GLenum pname, GLint *params);
     typedef void (*PFNGLGETTEXPARAMETERIIVEXTPROC)(GLenum target, GLenum pname, GLint *params);
     typedef void (*PFNGLGETTEXPARAMETERIUIVPROC)(GLenum target, GLenum pname, GLuint *params);
     typedef void (*PFNGLGETTEXPARAMETERIUIVEXTPROC)(GLenum target, GLenum pname, GLuint *params);
-    typedef void (*PFNGLGETTEXPARAMETERPOINTERVAPPLEPROC)(GLenum target, GLenum pname, void **params);
+    typedef void (*PFNGLGETTEXPARAMETERPOINTERVAPPLEPROC)(GLenum target,
+                                                          GLenum pname,
+                                                          void **params);
     typedef void (*PFNGLGETTEXPARAMETERFVPROC)(GLenum target, GLenum pname, GLfloat *params);
     typedef void (*PFNGLGETTEXPARAMETERIVPROC)(GLenum target, GLenum pname, GLint *params);
     typedef GLuint64 (*PFNGLGETTEXTUREHANDLEARBPROC)(GLuint texture);
@@ -7449,7 +7648,10 @@ namespace internal
                                                 GLenum type,
                                                 GLsizei bufSize,
                                                 void *pixels);
-    typedef void (*PFNGLGETTRACKMATRIXIVNVPROC)(GLenum target, GLuint address, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETTRACKMATRIXIVNVPROC)(GLenum target,
+                                                GLuint address,
+                                                GLenum pname,
+                                                GLint *params);
     typedef void (*PFNGLGETTRANSFORMFEEDBACKVARYINGPROC)(GLuint program,
                                                          GLuint index,
                                                          GLsizei bufSize,
@@ -7464,14 +7666,20 @@ namespace internal
                                                             GLsizei *size,
                                                             GLenum *type,
                                                             GLchar *name);
-    typedef void (*PFNGLGETTRANSFORMFEEDBACKVARYINGNVPROC)(GLuint program, GLuint index, GLint *location);
+    typedef void (*PFNGLGETTRANSFORMFEEDBACKVARYINGNVPROC)(GLuint program,
+                                                           GLuint index,
+                                                           GLint *location);
     typedef void (*PFNGLGETTRANSFORMFEEDBACKI64_VPROC)(GLuint xfb,
                                                        GLenum pname,
                                                        GLuint index,
                                                        GLint64 *param);
-    typedef void (*PFNGLGETTRANSFORMFEEDBACKI_VPROC)(GLuint xfb, GLenum pname, GLuint index, GLint *param);
+    typedef void (*PFNGLGETTRANSFORMFEEDBACKI_VPROC)(GLuint xfb,
+                                                     GLenum pname,
+                                                     GLuint index,
+                                                     GLint *param);
     typedef void (*PFNGLGETTRANSFORMFEEDBACKIVPROC)(GLuint xfb, GLenum pname, GLint *param);
-    typedef GLuint (*PFNGLGETUNIFORMBLOCKINDEXPROC)(GLuint program, const GLchar *uniformBlockName);
+    typedef GLuint (*PFNGLGETUNIFORMBLOCKINDEXPROC)(GLuint program,
+                                                    const GLchar *uniformBlockName);
     typedef GLint (*PFNGLGETUNIFORMBUFFERSIZEEXTPROC)(GLuint program, GLint location);
     typedef void (*PFNGLGETUNIFORMINDICESPROC)(GLuint program,
                                                GLsizei uniformCount,
@@ -7480,16 +7688,24 @@ namespace internal
     typedef GLint (*PFNGLGETUNIFORMLOCATIONPROC)(GLuint program, const GLchar *name);
     typedef GLint (*PFNGLGETUNIFORMLOCATIONARBPROC)(GLhandleARB programObj, const GLcharARB *name);
     typedef GLintptr (*PFNGLGETUNIFORMOFFSETEXTPROC)(GLuint program, GLint location);
-    typedef void (*PFNGLGETUNIFORMSUBROUTINEUIVPROC)(GLenum shadertype, GLint location, GLuint *params);
+    typedef void (*PFNGLGETUNIFORMSUBROUTINEUIVPROC)(GLenum shadertype,
+                                                     GLint location,
+                                                     GLuint *params);
     typedef void (*PFNGLGETUNIFORMDVPROC)(GLuint program, GLint location, GLdouble *params);
     typedef void (*PFNGLGETUNIFORMFVPROC)(GLuint program, GLint location, GLfloat *params);
-    typedef void (*PFNGLGETUNIFORMFVARBPROC)(GLhandleARB programObj, GLint location, GLfloat *params);
+    typedef void (*PFNGLGETUNIFORMFVARBPROC)(GLhandleARB programObj,
+                                             GLint location,
+                                             GLfloat *params);
     typedef void (*PFNGLGETUNIFORMI64VARBPROC)(GLuint program, GLint location, GLint64 *params);
     typedef void (*PFNGLGETUNIFORMI64VNVPROC)(GLuint program, GLint location, GLint64EXT *params);
     typedef void (*PFNGLGETUNIFORMIVPROC)(GLuint program, GLint location, GLint *params);
-    typedef void (*PFNGLGETUNIFORMIVARBPROC)(GLhandleARB programObj, GLint location, GLint *params);
+    typedef void (*PFNGLGETUNIFORMIVARBPROC)(GLhandleARB programObj,
+                                             GLint location,
+                                             GLint *params);
     typedef void (*PFNGLGETUNIFORMUI64VARBPROC)(GLuint program, GLint location, GLuint64 *params);
-    typedef void (*PFNGLGETUNIFORMUI64VNVPROC)(GLuint program, GLint location, GLuint64EXT *params);
+    typedef void (*PFNGLGETUNIFORMUI64VNVPROC)(GLuint program,
+                                               GLint location,
+                                               GLuint64EXT *params);
     typedef void (*PFNGLGETUNIFORMUIVPROC)(GLuint program, GLint location, GLuint *params);
     typedef void (*PFNGLGETUNIFORMUIVEXTPROC)(GLuint program, GLint location, GLuint *params);
     typedef void (*PFNGLGETUNSIGNEDBYTEVEXTPROC)(GLenum pname, GLubyte *data);
@@ -7503,7 +7719,10 @@ namespace internal
                                                        GLuint index,
                                                        GLenum pname,
                                                        GLint64 *param);
-    typedef void (*PFNGLGETVERTEXARRAYINDEXEDIVPROC)(GLuint vaobj, GLuint index, GLenum pname, GLint *param);
+    typedef void (*PFNGLGETVERTEXARRAYINDEXEDIVPROC)(GLuint vaobj,
+                                                     GLuint index,
+                                                     GLenum pname,
+                                                     GLint *param);
     typedef void (*PFNGLGETVERTEXARRAYINTEGERI_VEXTPROC)(GLuint vaobj,
                                                          GLuint index,
                                                          GLenum pname,
@@ -7521,11 +7740,19 @@ namespace internal
     typedef void (*PFNGLGETVERTEXATTRIBIUIVEXTPROC)(GLuint index, GLenum pname, GLuint *params);
     typedef void (*PFNGLGETVERTEXATTRIBLDVPROC)(GLuint index, GLenum pname, GLdouble *params);
     typedef void (*PFNGLGETVERTEXATTRIBLDVEXTPROC)(GLuint index, GLenum pname, GLdouble *params);
-    typedef void (*PFNGLGETVERTEXATTRIBLI64VNVPROC)(GLuint index, GLenum pname, GLint64EXT *params);
-    typedef void (*PFNGLGETVERTEXATTRIBLUI64VARBPROC)(GLuint index, GLenum pname, GLuint64EXT *params);
-    typedef void (*PFNGLGETVERTEXATTRIBLUI64VNVPROC)(GLuint index, GLenum pname, GLuint64EXT *params);
+    typedef void (*PFNGLGETVERTEXATTRIBLI64VNVPROC)(GLuint index,
+                                                    GLenum pname,
+                                                    GLint64EXT *params);
+    typedef void (*PFNGLGETVERTEXATTRIBLUI64VARBPROC)(GLuint index,
+                                                      GLenum pname,
+                                                      GLuint64EXT *params);
+    typedef void (*PFNGLGETVERTEXATTRIBLUI64VNVPROC)(GLuint index,
+                                                     GLenum pname,
+                                                     GLuint64EXT *params);
     typedef void (*PFNGLGETVERTEXATTRIBPOINTERVPROC)(GLuint index, GLenum pname, void **pointer);
-    typedef void (*PFNGLGETVERTEXATTRIBPOINTERVARBPROC)(GLuint index, GLenum pname, void **pointer);
+    typedef void (*PFNGLGETVERTEXATTRIBPOINTERVARBPROC)(GLuint index,
+                                                        GLenum pname,
+                                                        void **pointer);
     typedef void (*PFNGLGETVERTEXATTRIBPOINTERVNVPROC)(GLuint index, GLenum pname, void **pointer);
     typedef void (*PFNGLGETVERTEXATTRIBDVPROC)(GLuint index, GLenum pname, GLdouble *params);
     typedef void (*PFNGLGETVERTEXATTRIBDVARBPROC)(GLuint index, GLenum pname, GLdouble *params);
@@ -7548,17 +7775,31 @@ namespace internal
                                                        GLuint stream,
                                                        GLenum pname,
                                                        GLint *params);
-    typedef void (*PFNGLGETVIDEOCAPTUREIVNVPROC)(GLuint video_capture_slot, GLenum pname, GLint *params);
+    typedef void (*PFNGLGETVIDEOCAPTUREIVNVPROC)(GLuint video_capture_slot,
+                                                 GLenum pname,
+                                                 GLint *params);
     typedef void (*PFNGLGETVIDEOI64VNVPROC)(GLuint video_slot, GLenum pname, GLint64EXT *params);
     typedef void (*PFNGLGETVIDEOIVNVPROC)(GLuint video_slot, GLenum pname, GLint *params);
     typedef void (*PFNGLGETVIDEOUI64VNVPROC)(GLuint video_slot, GLenum pname, GLuint64EXT *params);
     typedef void (*PFNGLGETVIDEOUIVNVPROC)(GLuint video_slot, GLenum pname, GLuint *params);
-    typedef void (
-      *PFNGLGETNCOLORTABLEPROC)(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table);
-    typedef void (
-      *PFNGLGETNCOLORTABLEARBPROC)(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table);
-    typedef void (*PFNGLGETNCOMPRESSEDTEXIMAGEPROC)(GLenum target, GLint lod, GLsizei bufSize, void *pixels);
-    typedef void (*PFNGLGETNCOMPRESSEDTEXIMAGEARBPROC)(GLenum target, GLint lod, GLsizei bufSize, void *img);
+    typedef void (*PFNGLGETNCOLORTABLEPROC)(GLenum target,
+                                            GLenum format,
+                                            GLenum type,
+                                            GLsizei bufSize,
+                                            void *table);
+    typedef void (*PFNGLGETNCOLORTABLEARBPROC)(GLenum target,
+                                               GLenum format,
+                                               GLenum type,
+                                               GLsizei bufSize,
+                                               void *table);
+    typedef void (*PFNGLGETNCOMPRESSEDTEXIMAGEPROC)(GLenum target,
+                                                    GLint lod,
+                                                    GLsizei bufSize,
+                                                    void *pixels);
+    typedef void (*PFNGLGETNCOMPRESSEDTEXIMAGEARBPROC)(GLenum target,
+                                                       GLint lod,
+                                                       GLsizei bufSize,
+                                                       void *img);
     typedef void (*PFNGLGETNCONVOLUTIONFILTERPROC)(GLenum target,
                                                    GLenum format,
                                                    GLenum type,
@@ -7582,9 +7823,15 @@ namespace internal
                                               GLsizei bufSize,
                                               void *values);
     typedef void (*PFNGLGETNMAPDVPROC)(GLenum target, GLenum query, GLsizei bufSize, GLdouble *v);
-    typedef void (*PFNGLGETNMAPDVARBPROC)(GLenum target, GLenum query, GLsizei bufSize, GLdouble *v);
+    typedef void (*PFNGLGETNMAPDVARBPROC)(GLenum target,
+                                          GLenum query,
+                                          GLsizei bufSize,
+                                          GLdouble *v);
     typedef void (*PFNGLGETNMAPFVPROC)(GLenum target, GLenum query, GLsizei bufSize, GLfloat *v);
-    typedef void (*PFNGLGETNMAPFVARBPROC)(GLenum target, GLenum query, GLsizei bufSize, GLfloat *v);
+    typedef void (*PFNGLGETNMAPFVARBPROC)(GLenum target,
+                                          GLenum query,
+                                          GLsizei bufSize,
+                                          GLfloat *v);
     typedef void (*PFNGLGETNMAPIVPROC)(GLenum target, GLenum query, GLsizei bufSize, GLint *v);
     typedef void (*PFNGLGETNMAPIVARBPROC)(GLenum target, GLenum query, GLsizei bufSize, GLint *v);
     typedef void (*PFNGLGETNMINMAXPROC)(GLenum target,
@@ -7643,7 +7890,10 @@ namespace internal
                                               GLint location,
                                               GLsizei bufSize,
                                               GLdouble *params);
-    typedef void (*PFNGLGETNUNIFORMFVPROC)(GLuint program, GLint location, GLsizei bufSize, GLfloat *params);
+    typedef void (*PFNGLGETNUNIFORMFVPROC)(GLuint program,
+                                           GLint location,
+                                           GLsizei bufSize,
+                                           GLfloat *params);
     typedef void (*PFNGLGETNUNIFORMFVARBPROC)(GLuint program,
                                               GLint location,
                                               GLsizei bufSize,
@@ -7656,7 +7906,10 @@ namespace internal
                                                 GLint location,
                                                 GLsizei bufSize,
                                                 GLint64 *params);
-    typedef void (*PFNGLGETNUNIFORMIVPROC)(GLuint program, GLint location, GLsizei bufSize, GLint *params);
+    typedef void (*PFNGLGETNUNIFORMIVPROC)(GLuint program,
+                                           GLint location,
+                                           GLsizei bufSize,
+                                           GLint *params);
     typedef void (*PFNGLGETNUNIFORMIVARBPROC)(GLuint program,
                                               GLint location,
                                               GLsizei bufSize,
@@ -7669,7 +7922,10 @@ namespace internal
                                                  GLint location,
                                                  GLsizei bufSize,
                                                  GLuint64 *params);
-    typedef void (*PFNGLGETNUNIFORMUIVPROC)(GLuint program, GLint location, GLsizei bufSize, GLuint *params);
+    typedef void (*PFNGLGETNUNIFORMUIVPROC)(GLuint program,
+                                            GLint location,
+                                            GLsizei bufSize,
+                                            GLuint *params);
     typedef void (*PFNGLGETNUNIFORMUIVARBPROC)(GLuint program,
                                                GLint location,
                                                GLsizei bufSize,
@@ -7679,12 +7935,18 @@ namespace internal
                                                GLsizei bufSize,
                                                GLuint *params);
     typedef void (*PFNGLHINTPROC)(GLenum target, GLenum mode);
-    typedef void (*PFNGLHISTOGRAMPROC)(GLenum target, GLsizei width, GLenum internalformat, GLboolean sink);
+    typedef void (*PFNGLHISTOGRAMPROC)(GLenum target,
+                                       GLsizei width,
+                                       GLenum internalformat,
+                                       GLboolean sink);
     typedef void (*PFNGLHISTOGRAMEXTPROC)(GLenum target,
                                           GLsizei width,
                                           GLenum internalformat,
                                           GLboolean sink);
-    typedef void (*PFNGLIMPORTMEMORYFDEXTPROC)(GLuint memory, GLuint64 size, GLenum handleType, GLint fd);
+    typedef void (*PFNGLIMPORTMEMORYFDEXTPROC)(GLuint memory,
+                                               GLuint64 size,
+                                               GLenum handleType,
+                                               GLint fd);
     typedef void (*PFNGLIMPORTMEMORYWIN32HANDLEEXTPROC)(GLuint memory,
                                                         GLuint64 size,
                                                         GLenum handleType,
@@ -7731,7 +7993,9 @@ namespace internal
                                                 GLuint pathB,
                                                 GLfloat weight);
     typedef void (*PFNGLINVALIDATEBUFFERDATAPROC)(GLuint buffer);
-    typedef void (*PFNGLINVALIDATEBUFFERSUBDATAPROC)(GLuint buffer, GLintptr offset, GLsizeiptr length);
+    typedef void (*PFNGLINVALIDATEBUFFERSUBDATAPROC)(GLuint buffer,
+                                                     GLintptr offset,
+                                                     GLsizeiptr length);
     typedef void (*PFNGLINVALIDATEFRAMEBUFFERPROC)(GLenum target,
                                                    GLsizei numAttachments,
                                                    const GLenum *attachments);
@@ -7781,7 +8045,10 @@ namespace internal
     typedef GLboolean (*PFNGLISNAMEDSTRINGARBPROC)(GLint namelen, const GLchar *name);
     typedef GLboolean (*PFNGLISOCCLUSIONQUERYNVPROC)(GLuint id);
     typedef GLboolean (*PFNGLISPATHNVPROC)(GLuint path);
-    typedef GLboolean (*PFNGLISPOINTINFILLPATHNVPROC)(GLuint path, GLuint mask, GLfloat x, GLfloat y);
+    typedef GLboolean (*PFNGLISPOINTINFILLPATHNVPROC)(GLuint path,
+                                                      GLuint mask,
+                                                      GLfloat x,
+                                                      GLfloat y);
     typedef GLboolean (*PFNGLISPOINTINSTROKEPATHNVPROC)(GLuint path, GLfloat x, GLfloat y);
     typedef GLboolean (*PFNGLISPROGRAMPROC)(GLuint program);
     typedef GLboolean (*PFNGLISPROGRAMARBPROC)(GLuint program);
@@ -7830,7 +8097,10 @@ namespace internal
                                                        GLintptr offset,
                                                        GLsizeiptr size,
                                                        const void *data);
-    typedef void (*PFNGLLABELOBJECTEXTPROC)(GLenum type, GLuint object, GLsizei length, const GLchar *label);
+    typedef void (*PFNGLLABELOBJECTEXTPROC)(GLenum type,
+                                            GLuint object,
+                                            GLsizei length,
+                                            const GLchar *label);
     typedef void (*PFNGLLIGHTMODELFPROC)(GLenum pname, GLfloat param);
     typedef void (*PFNGLLIGHTMODELFVPROC)(GLenum pname, const GLfloat *params);
     typedef void (*PFNGLLIGHTMODELIPROC)(GLenum pname, GLint param);
@@ -7855,7 +8125,10 @@ namespace internal
     typedef void (*PFNGLLOADMATRIXDPROC)(const GLdouble *m);
     typedef void (*PFNGLLOADMATRIXFPROC)(const GLfloat *m);
     typedef void (*PFNGLLOADNAMEPROC)(GLuint name);
-    typedef void (*PFNGLLOADPROGRAMNVPROC)(GLenum target, GLuint id, GLsizei len, const GLubyte *program);
+    typedef void (*PFNGLLOADPROGRAMNVPROC)(GLenum target,
+                                           GLuint id,
+                                           GLsizei len,
+                                           const GLubyte *program);
     typedef void (*PFNGLLOADTRANSPOSEMATRIXDPROC)(const GLdouble *m);
     typedef void (*PFNGLLOADTRANSPOSEMATRIXDARBPROC)(const GLdouble *m);
     typedef void (*PFNGLLOADTRANSPOSEMATRIXFPROC)(const GLfloat *m);
@@ -7925,7 +8198,8 @@ namespace internal
     typedef void (*PFNGLMAPGRID1FPROC)(GLint un, GLfloat u1, GLfloat u2);
     typedef void (
       *PFNGLMAPGRID2DPROC)(GLint un, GLdouble u1, GLdouble u2, GLint vn, GLdouble v1, GLdouble v2);
-    typedef void (*PFNGLMAPGRID2FPROC)(GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloat v1, GLfloat v2);
+    typedef void (
+      *PFNGLMAPGRID2FPROC)(GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloat v1, GLfloat v2);
     typedef void *(*PFNGLMAPNAMEDBUFFERPROC)(GLuint buffer, GLenum access);
     typedef void *(*PFNGLMAPNAMEDBUFFEREXTPROC)(GLuint buffer, GLenum access);
     typedef void *(*PFNGLMAPNAMEDBUFFERRANGEPROC)(GLuint buffer,
@@ -8024,7 +8298,8 @@ namespace internal
     typedef void (*PFNGLMATRIXPUSHEXTPROC)(GLenum mode);
     typedef void (
       *PFNGLMATRIXROTATEDEXTPROC)(GLenum mode, GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
-    typedef void (*PFNGLMATRIXROTATEFEXTPROC)(GLenum mode, GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
+    typedef void (
+      *PFNGLMATRIXROTATEFEXTPROC)(GLenum mode, GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
     typedef void (*PFNGLMATRIXSCALEDEXTPROC)(GLenum mode, GLdouble x, GLdouble y, GLdouble z);
     typedef void (*PFNGLMATRIXSCALEFEXTPROC)(GLenum mode, GLfloat x, GLfloat y, GLfloat z);
     typedef void (*PFNGLMATRIXTRANSLATEDEXTPROC)(GLenum mode, GLdouble x, GLdouble y, GLdouble z);
@@ -8210,13 +8485,16 @@ namespace internal
     typedef void (*PFNGLMULTITEXCOORD3SARBPROC)(GLenum target, GLshort s, GLshort t, GLshort r);
     typedef void (*PFNGLMULTITEXCOORD3SVPROC)(GLenum target, const GLshort *v);
     typedef void (*PFNGLMULTITEXCOORD3SVARBPROC)(GLenum target, const GLshort *v);
-    typedef void (*PFNGLMULTITEXCOORD4DPROC)(GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q);
+    typedef void (
+      *PFNGLMULTITEXCOORD4DPROC)(GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q);
     typedef void (
       *PFNGLMULTITEXCOORD4DARBPROC)(GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q);
     typedef void (*PFNGLMULTITEXCOORD4DVPROC)(GLenum target, const GLdouble *v);
     typedef void (*PFNGLMULTITEXCOORD4DVARBPROC)(GLenum target, const GLdouble *v);
-    typedef void (*PFNGLMULTITEXCOORD4FPROC)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
-    typedef void (*PFNGLMULTITEXCOORD4FARBPROC)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
+    typedef void (
+      *PFNGLMULTITEXCOORD4FPROC)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
+    typedef void (
+      *PFNGLMULTITEXCOORD4FARBPROC)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
     typedef void (*PFNGLMULTITEXCOORD4FVPROC)(GLenum target, const GLfloat *v);
     typedef void (*PFNGLMULTITEXCOORD4FVARBPROC)(GLenum target, const GLfloat *v);
     typedef void (
@@ -8226,8 +8504,10 @@ namespace internal
     typedef void (*PFNGLMULTITEXCOORD4IARBPROC)(GLenum target, GLint s, GLint t, GLint r, GLint q);
     typedef void (*PFNGLMULTITEXCOORD4IVPROC)(GLenum target, const GLint *v);
     typedef void (*PFNGLMULTITEXCOORD4IVARBPROC)(GLenum target, const GLint *v);
-    typedef void (*PFNGLMULTITEXCOORD4SPROC)(GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
-    typedef void (*PFNGLMULTITEXCOORD4SARBPROC)(GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
+    typedef void (
+      *PFNGLMULTITEXCOORD4SPROC)(GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
+    typedef void (
+      *PFNGLMULTITEXCOORD4SARBPROC)(GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
     typedef void (*PFNGLMULTITEXCOORD4SVPROC)(GLenum target, const GLshort *v);
     typedef void (*PFNGLMULTITEXCOORD4SVARBPROC)(GLenum target, const GLshort *v);
     typedef void (*PFNGLMULTITEXCOORDP1UIPROC)(GLenum texture, GLenum type, GLuint coords);
@@ -8243,27 +8523,42 @@ namespace internal
                                                      GLenum type,
                                                      GLsizei stride,
                                                      const void *pointer);
-    typedef void (*PFNGLMULTITEXENVFEXTPROC)(GLenum texunit, GLenum target, GLenum pname, GLfloat param);
+    typedef void (*PFNGLMULTITEXENVFEXTPROC)(GLenum texunit,
+                                             GLenum target,
+                                             GLenum pname,
+                                             GLfloat param);
     typedef void (*PFNGLMULTITEXENVFVEXTPROC)(GLenum texunit,
                                               GLenum target,
                                               GLenum pname,
                                               const GLfloat *params);
-    typedef void (*PFNGLMULTITEXENVIEXTPROC)(GLenum texunit, GLenum target, GLenum pname, GLint param);
+    typedef void (*PFNGLMULTITEXENVIEXTPROC)(GLenum texunit,
+                                             GLenum target,
+                                             GLenum pname,
+                                             GLint param);
     typedef void (*PFNGLMULTITEXENVIVEXTPROC)(GLenum texunit,
                                               GLenum target,
                                               GLenum pname,
                                               const GLint *params);
-    typedef void (*PFNGLMULTITEXGENDEXTPROC)(GLenum texunit, GLenum coord, GLenum pname, GLdouble param);
+    typedef void (*PFNGLMULTITEXGENDEXTPROC)(GLenum texunit,
+                                             GLenum coord,
+                                             GLenum pname,
+                                             GLdouble param);
     typedef void (*PFNGLMULTITEXGENDVEXTPROC)(GLenum texunit,
                                               GLenum coord,
                                               GLenum pname,
                                               const GLdouble *params);
-    typedef void (*PFNGLMULTITEXGENFEXTPROC)(GLenum texunit, GLenum coord, GLenum pname, GLfloat param);
+    typedef void (*PFNGLMULTITEXGENFEXTPROC)(GLenum texunit,
+                                             GLenum coord,
+                                             GLenum pname,
+                                             GLfloat param);
     typedef void (*PFNGLMULTITEXGENFVEXTPROC)(GLenum texunit,
                                               GLenum coord,
                                               GLenum pname,
                                               const GLfloat *params);
-    typedef void (*PFNGLMULTITEXGENIEXTPROC)(GLenum texunit, GLenum coord, GLenum pname, GLint param);
+    typedef void (*PFNGLMULTITEXGENIEXTPROC)(GLenum texunit,
+                                             GLenum coord,
+                                             GLenum pname,
+                                             GLint param);
     typedef void (*PFNGLMULTITEXGENIVEXTPROC)(GLenum texunit,
                                               GLenum coord,
                                               GLenum pname,
@@ -8314,12 +8609,17 @@ namespace internal
                                                     GLenum target,
                                                     GLenum pname,
                                                     const GLfloat *params);
-    typedef void (*PFNGLMULTITEXPARAMETERIEXTPROC)(GLenum texunit, GLenum target, GLenum pname, GLint param);
+    typedef void (*PFNGLMULTITEXPARAMETERIEXTPROC)(GLenum texunit,
+                                                   GLenum target,
+                                                   GLenum pname,
+                                                   GLint param);
     typedef void (*PFNGLMULTITEXPARAMETERIVEXTPROC)(GLenum texunit,
                                                     GLenum target,
                                                     GLenum pname,
                                                     const GLint *params);
-    typedef void (*PFNGLMULTITEXRENDERBUFFEREXTPROC)(GLenum texunit, GLenum target, GLuint renderbuffer);
+    typedef void (*PFNGLMULTITEXRENDERBUFFEREXTPROC)(GLenum texunit,
+                                                     GLenum target,
+                                                     GLuint renderbuffer);
     typedef void (*PFNGLMULTITEXSUBIMAGE1DEXTPROC)(GLenum texunit,
                                                    GLenum target,
                                                    GLint level,
@@ -8401,7 +8701,10 @@ namespace internal
                                                            GLuint id,
                                                            GLenum pname,
                                                            GLint64 *params);
-    typedef void (*PFNGLMULTICASTGETQUERYOBJECTIVNVPROC)(GLuint gpu, GLuint id, GLenum pname, GLint *params);
+    typedef void (*PFNGLMULTICASTGETQUERYOBJECTIVNVPROC)(GLuint gpu,
+                                                         GLuint id,
+                                                         GLenum pname,
+                                                         GLint *params);
     typedef void (*PFNGLMULTICASTGETQUERYOBJECTUI64VNVPROC)(GLuint gpu,
                                                             GLuint id,
                                                             GLenum pname,
@@ -8423,8 +8726,13 @@ namespace internal
                                                                 GLfloat xcoeff,
                                                                 GLfloat ycoeff);
     typedef void (*PFNGLMULTICASTWAITSYNCNVPROC)(GLuint signalGpu, GLbitfield waitGpuMask);
-    typedef void (*PFNGLNAMEDBUFFERATTACHMEMORYNVPROC)(GLuint buffer, GLuint memory, GLuint64 offset);
-    typedef void (*PFNGLNAMEDBUFFERDATAPROC)(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage);
+    typedef void (*PFNGLNAMEDBUFFERATTACHMEMORYNVPROC)(GLuint buffer,
+                                                       GLuint memory,
+                                                       GLuint64 offset);
+    typedef void (*PFNGLNAMEDBUFFERDATAPROC)(GLuint buffer,
+                                             GLsizeiptr size,
+                                             const void *data,
+                                             GLenum usage);
     typedef void (*PFNGLNAMEDBUFFERDATAEXTPROC)(GLuint buffer,
                                                 GLsizeiptr size,
                                                 const void *data,
@@ -8474,9 +8782,15 @@ namespace internal
                                                        GLintptr writeOffset,
                                                        GLsizeiptr size);
     typedef void (*PFNGLNAMEDFRAMEBUFFERDRAWBUFFERPROC)(GLuint framebuffer, GLenum buf);
-    typedef void (*PFNGLNAMEDFRAMEBUFFERDRAWBUFFERSPROC)(GLuint framebuffer, GLsizei n, const GLenum *bufs);
-    typedef void (*PFNGLNAMEDFRAMEBUFFERPARAMETERIPROC)(GLuint framebuffer, GLenum pname, GLint param);
-    typedef void (*PFNGLNAMEDFRAMEBUFFERPARAMETERIEXTPROC)(GLuint framebuffer, GLenum pname, GLint param);
+    typedef void (*PFNGLNAMEDFRAMEBUFFERDRAWBUFFERSPROC)(GLuint framebuffer,
+                                                         GLsizei n,
+                                                         const GLenum *bufs);
+    typedef void (*PFNGLNAMEDFRAMEBUFFERPARAMETERIPROC)(GLuint framebuffer,
+                                                        GLenum pname,
+                                                        GLint param);
+    typedef void (*PFNGLNAMEDFRAMEBUFFERPARAMETERIEXTPROC)(GLuint framebuffer,
+                                                           GLenum pname,
+                                                           GLint param);
     typedef void (*PFNGLNAMEDFRAMEBUFFERREADBUFFERPROC)(GLuint framebuffer, GLenum src);
     typedef void (*PFNGLNAMEDFRAMEBUFFERRENDERBUFFERPROC)(GLuint framebuffer,
                                                           GLenum attachment,
@@ -8620,12 +8934,13 @@ namespace internal
                                                                             GLenum internalformat,
                                                                             GLsizei width,
                                                                             GLsizei height);
-    typedef void (*PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXTPROC)(GLuint renderbuffer,
-                                                                            GLsizei coverageSamples,
-                                                                            GLsizei colorSamples,
-                                                                            GLenum internalformat,
-                                                                            GLsizei width,
-                                                                            GLsizei height);
+    typedef void (*PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXTPROC)(
+      GLuint renderbuffer,
+      GLsizei coverageSamples,
+      GLsizei colorSamples,
+      GLenum internalformat,
+      GLsizei width,
+      GLsizei height);
     typedef void (*PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)(GLuint renderbuffer,
                                                                     GLsizei samples,
                                                                     GLenum internalformat,
@@ -8667,9 +8982,13 @@ namespace internal
                                             GLsizei length,
                                             const GLchar *label);
     typedef void (*PFNGLOBJECTPTRLABELPROC)(const void *ptr, GLsizei length, const GLchar *label);
-    typedef void (*PFNGLOBJECTPTRLABELKHRPROC)(const void *ptr, GLsizei length, const GLchar *label);
+    typedef void (*PFNGLOBJECTPTRLABELKHRPROC)(const void *ptr,
+                                               GLsizei length,
+                                               const GLchar *label);
     typedef GLenum (*PFNGLOBJECTPURGEABLEAPPLEPROC)(GLenum objectType, GLuint name, GLenum option);
-    typedef GLenum (*PFNGLOBJECTUNPURGEABLEAPPLEPROC)(GLenum objectType, GLuint name, GLenum option);
+    typedef GLenum (*PFNGLOBJECTUNPURGEABLEAPPLEPROC)(GLenum objectType,
+                                                      GLuint name,
+                                                      GLenum option);
     typedef void (*PFNGLORTHOPROC)(GLdouble left,
                                    GLdouble right,
                                    GLdouble bottom,
@@ -8694,7 +9013,9 @@ namespace internal
                                           GLenum coordType,
                                           const void *coords);
     typedef void (*PFNGLPATHCOVERDEPTHFUNCNVPROC)(GLenum func);
-    typedef void (*PFNGLPATHDASHARRAYNVPROC)(GLuint path, GLsizei dashCount, const GLfloat *dashArray);
+    typedef void (*PFNGLPATHDASHARRAYNVPROC)(GLuint path,
+                                             GLsizei dashCount,
+                                             const GLfloat *dashArray);
     typedef void (*PFNGLPATHFOGGENNVPROC)(GLenum genMode);
     typedef GLenum (*PFNGLPATHGLYPHINDEXARRAYNVPROC)(GLuint firstPathName,
                                                      GLenum fontTarget,
@@ -8775,12 +9096,16 @@ namespace internal
     typedef void (*PFNGLPIXELSTOREIPROC)(GLenum pname, GLint param);
     typedef void (*PFNGLPIXELTRANSFERFPROC)(GLenum pname, GLfloat param);
     typedef void (*PFNGLPIXELTRANSFERIPROC)(GLenum pname, GLint param);
-    typedef void (*PFNGLPIXELTRANSFORMPARAMETERFEXTPROC)(GLenum target, GLenum pname, GLfloat param);
+    typedef void (*PFNGLPIXELTRANSFORMPARAMETERFEXTPROC)(GLenum target,
+                                                         GLenum pname,
+                                                         GLfloat param);
     typedef void (*PFNGLPIXELTRANSFORMPARAMETERFVEXTPROC)(GLenum target,
                                                           GLenum pname,
                                                           const GLfloat *params);
     typedef void (*PFNGLPIXELTRANSFORMPARAMETERIEXTPROC)(GLenum target, GLenum pname, GLint param);
-    typedef void (*PFNGLPIXELTRANSFORMPARAMETERIVEXTPROC)(GLenum target, GLenum pname, const GLint *params);
+    typedef void (*PFNGLPIXELTRANSFORMPARAMETERIVEXTPROC)(GLenum target,
+                                                          GLenum pname,
+                                                          const GLint *params);
     typedef void (*PFNGLPIXELZOOMPROC)(GLfloat xfactor, GLfloat yfactor);
     typedef GLboolean (*PFNGLPOINTALONGPATHNVPROC)(GLuint path,
                                                    GLsizei startSegment,
@@ -8880,24 +9205,36 @@ namespace internal
                                                       GLdouble y,
                                                       GLdouble z,
                                                       GLdouble w);
-    typedef void (*PFNGLPROGRAMENVPARAMETER4DVARBPROC)(GLenum target, GLuint index, const GLdouble *params);
+    typedef void (*PFNGLPROGRAMENVPARAMETER4DVARBPROC)(GLenum target,
+                                                       GLuint index,
+                                                       const GLdouble *params);
     typedef void (*PFNGLPROGRAMENVPARAMETER4FARBPROC)(GLenum target,
                                                       GLuint index,
                                                       GLfloat x,
                                                       GLfloat y,
                                                       GLfloat z,
                                                       GLfloat w);
-    typedef void (*PFNGLPROGRAMENVPARAMETER4FVARBPROC)(GLenum target, GLuint index, const GLfloat *params);
-    typedef void (
-      *PFNGLPROGRAMENVPARAMETERI4INVPROC)(GLenum target, GLuint index, GLint x, GLint y, GLint z, GLint w);
-    typedef void (*PFNGLPROGRAMENVPARAMETERI4IVNVPROC)(GLenum target, GLuint index, const GLint *params);
+    typedef void (*PFNGLPROGRAMENVPARAMETER4FVARBPROC)(GLenum target,
+                                                       GLuint index,
+                                                       const GLfloat *params);
+    typedef void (*PFNGLPROGRAMENVPARAMETERI4INVPROC)(GLenum target,
+                                                      GLuint index,
+                                                      GLint x,
+                                                      GLint y,
+                                                      GLint z,
+                                                      GLint w);
+    typedef void (*PFNGLPROGRAMENVPARAMETERI4IVNVPROC)(GLenum target,
+                                                       GLuint index,
+                                                       const GLint *params);
     typedef void (*PFNGLPROGRAMENVPARAMETERI4UINVPROC)(GLenum target,
                                                        GLuint index,
                                                        GLuint x,
                                                        GLuint y,
                                                        GLuint z,
                                                        GLuint w);
-    typedef void (*PFNGLPROGRAMENVPARAMETERI4UIVNVPROC)(GLenum target, GLuint index, const GLuint *params);
+    typedef void (*PFNGLPROGRAMENVPARAMETERI4UIVNVPROC)(GLenum target,
+                                                        GLuint index,
+                                                        const GLuint *params);
     typedef void (*PFNGLPROGRAMENVPARAMETERS4FVEXTPROC)(GLenum target,
                                                         GLuint index,
                                                         GLsizei count,
@@ -8925,17 +9262,27 @@ namespace internal
                                                         GLfloat y,
                                                         GLfloat z,
                                                         GLfloat w);
-    typedef void (*PFNGLPROGRAMLOCALPARAMETER4FVARBPROC)(GLenum target, GLuint index, const GLfloat *params);
-    typedef void (
-      *PFNGLPROGRAMLOCALPARAMETERI4INVPROC)(GLenum target, GLuint index, GLint x, GLint y, GLint z, GLint w);
-    typedef void (*PFNGLPROGRAMLOCALPARAMETERI4IVNVPROC)(GLenum target, GLuint index, const GLint *params);
+    typedef void (*PFNGLPROGRAMLOCALPARAMETER4FVARBPROC)(GLenum target,
+                                                         GLuint index,
+                                                         const GLfloat *params);
+    typedef void (*PFNGLPROGRAMLOCALPARAMETERI4INVPROC)(GLenum target,
+                                                        GLuint index,
+                                                        GLint x,
+                                                        GLint y,
+                                                        GLint z,
+                                                        GLint w);
+    typedef void (*PFNGLPROGRAMLOCALPARAMETERI4IVNVPROC)(GLenum target,
+                                                         GLuint index,
+                                                         const GLint *params);
     typedef void (*PFNGLPROGRAMLOCALPARAMETERI4UINVPROC)(GLenum target,
                                                          GLuint index,
                                                          GLuint x,
                                                          GLuint y,
                                                          GLuint z,
                                                          GLuint w);
-    typedef void (*PFNGLPROGRAMLOCALPARAMETERI4UIVNVPROC)(GLenum target, GLuint index, const GLuint *params);
+    typedef void (*PFNGLPROGRAMLOCALPARAMETERI4UIVNVPROC)(GLenum target,
+                                                          GLuint index,
+                                                          const GLuint *params);
     typedef void (*PFNGLPROGRAMLOCALPARAMETERS4FVEXTPROC)(GLenum target,
                                                           GLuint index,
                                                           GLsizei count,
@@ -9000,7 +9347,10 @@ namespace internal
                                                            GLenum genMode,
                                                            GLint components,
                                                            const GLfloat *coeffs);
-    typedef void (*PFNGLPROGRAMSTRINGARBPROC)(GLenum target, GLenum format, GLsizei len, const void *string);
+    typedef void (*PFNGLPROGRAMSTRINGARBPROC)(GLenum target,
+                                              GLenum format,
+                                              GLsizei len,
+                                              const void *string);
     typedef void (*PFNGLPROGRAMSUBROUTINEPARAMETERSUIVNVPROC)(GLenum target,
                                                               GLsizei count,
                                                               const GLuint *params);
@@ -9064,8 +9414,14 @@ namespace internal
                                                    GLint location,
                                                    GLsizei count,
                                                    const GLuint *value);
-    typedef void (*PFNGLPROGRAMUNIFORM2DPROC)(GLuint program, GLint location, GLdouble v0, GLdouble v1);
-    typedef void (*PFNGLPROGRAMUNIFORM2DEXTPROC)(GLuint program, GLint location, GLdouble x, GLdouble y);
+    typedef void (*PFNGLPROGRAMUNIFORM2DPROC)(GLuint program,
+                                              GLint location,
+                                              GLdouble v0,
+                                              GLdouble v1);
+    typedef void (*PFNGLPROGRAMUNIFORM2DEXTPROC)(GLuint program,
+                                                 GLint location,
+                                                 GLdouble x,
+                                                 GLdouble y);
     typedef void (*PFNGLPROGRAMUNIFORM2DVPROC)(GLuint program,
                                                GLint location,
                                                GLsizei count,
@@ -9074,8 +9430,14 @@ namespace internal
                                                   GLint location,
                                                   GLsizei count,
                                                   const GLdouble *value);
-    typedef void (*PFNGLPROGRAMUNIFORM2FPROC)(GLuint program, GLint location, GLfloat v0, GLfloat v1);
-    typedef void (*PFNGLPROGRAMUNIFORM2FEXTPROC)(GLuint program, GLint location, GLfloat v0, GLfloat v1);
+    typedef void (*PFNGLPROGRAMUNIFORM2FPROC)(GLuint program,
+                                              GLint location,
+                                              GLfloat v0,
+                                              GLfloat v1);
+    typedef void (*PFNGLPROGRAMUNIFORM2FEXTPROC)(GLuint program,
+                                                 GLint location,
+                                                 GLfloat v0,
+                                                 GLfloat v1);
     typedef void (*PFNGLPROGRAMUNIFORM2FVPROC)(GLuint program,
                                                GLint location,
                                                GLsizei count,
@@ -9085,7 +9447,10 @@ namespace internal
                                                   GLsizei count,
                                                   const GLfloat *value);
     typedef void (*PFNGLPROGRAMUNIFORM2IPROC)(GLuint program, GLint location, GLint v0, GLint v1);
-    typedef void (*PFNGLPROGRAMUNIFORM2I64ARBPROC)(GLuint program, GLint location, GLint64 x, GLint64 y);
+    typedef void (*PFNGLPROGRAMUNIFORM2I64ARBPROC)(GLuint program,
+                                                   GLint location,
+                                                   GLint64 x,
+                                                   GLint64 y);
     typedef void (*PFNGLPROGRAMUNIFORM2I64NVPROC)(GLuint program,
                                                   GLint location,
                                                   GLint64EXT x,
@@ -9098,7 +9463,10 @@ namespace internal
                                                    GLint location,
                                                    GLsizei count,
                                                    const GLint64EXT *value);
-    typedef void (*PFNGLPROGRAMUNIFORM2IEXTPROC)(GLuint program, GLint location, GLint v0, GLint v1);
+    typedef void (*PFNGLPROGRAMUNIFORM2IEXTPROC)(GLuint program,
+                                                 GLint location,
+                                                 GLint v0,
+                                                 GLint v1);
     typedef void (*PFNGLPROGRAMUNIFORM2IVPROC)(GLuint program,
                                                GLint location,
                                                GLsizei count,
@@ -9107,8 +9475,14 @@ namespace internal
                                                   GLint location,
                                                   GLsizei count,
                                                   const GLint *value);
-    typedef void (*PFNGLPROGRAMUNIFORM2UIPROC)(GLuint program, GLint location, GLuint v0, GLuint v1);
-    typedef void (*PFNGLPROGRAMUNIFORM2UI64ARBPROC)(GLuint program, GLint location, GLuint64 x, GLuint64 y);
+    typedef void (*PFNGLPROGRAMUNIFORM2UIPROC)(GLuint program,
+                                               GLint location,
+                                               GLuint v0,
+                                               GLuint v1);
+    typedef void (*PFNGLPROGRAMUNIFORM2UI64ARBPROC)(GLuint program,
+                                                    GLint location,
+                                                    GLuint64 x,
+                                                    GLuint64 y);
     typedef void (*PFNGLPROGRAMUNIFORM2UI64NVPROC)(GLuint program,
                                                    GLint location,
                                                    GLuint64EXT x,
@@ -9121,7 +9495,10 @@ namespace internal
                                                     GLint location,
                                                     GLsizei count,
                                                     const GLuint64EXT *value);
-    typedef void (*PFNGLPROGRAMUNIFORM2UIEXTPROC)(GLuint program, GLint location, GLuint v0, GLuint v1);
+    typedef void (*PFNGLPROGRAMUNIFORM2UIEXTPROC)(GLuint program,
+                                                  GLint location,
+                                                  GLuint v0,
+                                                  GLuint v1);
     typedef void (*PFNGLPROGRAMUNIFORM2UIVPROC)(GLuint program,
                                                 GLint location,
                                                 GLsizei count,
@@ -9130,10 +9507,16 @@ namespace internal
                                                    GLint location,
                                                    GLsizei count,
                                                    const GLuint *value);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3DPROC)(GLuint program, GLint location, GLdouble v0, GLdouble v1, GLdouble v2);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3DEXTPROC)(GLuint program, GLint location, GLdouble x, GLdouble y, GLdouble z);
+    typedef void (*PFNGLPROGRAMUNIFORM3DPROC)(GLuint program,
+                                              GLint location,
+                                              GLdouble v0,
+                                              GLdouble v1,
+                                              GLdouble v2);
+    typedef void (*PFNGLPROGRAMUNIFORM3DEXTPROC)(GLuint program,
+                                                 GLint location,
+                                                 GLdouble x,
+                                                 GLdouble y,
+                                                 GLdouble z);
     typedef void (*PFNGLPROGRAMUNIFORM3DVPROC)(GLuint program,
                                                GLint location,
                                                GLsizei count,
@@ -9142,10 +9525,16 @@ namespace internal
                                                   GLint location,
                                                   GLsizei count,
                                                   const GLdouble *value);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3FPROC)(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3FEXTPROC)(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+    typedef void (*PFNGLPROGRAMUNIFORM3FPROC)(GLuint program,
+                                              GLint location,
+                                              GLfloat v0,
+                                              GLfloat v1,
+                                              GLfloat v2);
+    typedef void (*PFNGLPROGRAMUNIFORM3FEXTPROC)(GLuint program,
+                                                 GLint location,
+                                                 GLfloat v0,
+                                                 GLfloat v1,
+                                                 GLfloat v2);
     typedef void (*PFNGLPROGRAMUNIFORM3FVPROC)(GLuint program,
                                                GLint location,
                                                GLsizei count,
@@ -9154,9 +9543,13 @@ namespace internal
                                                   GLint location,
                                                   GLsizei count,
                                                   const GLfloat *value);
-    typedef void (*PFNGLPROGRAMUNIFORM3IPROC)(GLuint program, GLint location, GLint v0, GLint v1, GLint v2);
     typedef void (
-      *PFNGLPROGRAMUNIFORM3I64ARBPROC)(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z);
+      *PFNGLPROGRAMUNIFORM3IPROC)(GLuint program, GLint location, GLint v0, GLint v1, GLint v2);
+    typedef void (*PFNGLPROGRAMUNIFORM3I64ARBPROC)(GLuint program,
+                                                   GLint location,
+                                                   GLint64 x,
+                                                   GLint64 y,
+                                                   GLint64 z);
     typedef void (*PFNGLPROGRAMUNIFORM3I64NVPROC)(GLuint program,
                                                   GLint location,
                                                   GLint64EXT x,
@@ -9180,10 +9573,16 @@ namespace internal
                                                   GLint location,
                                                   GLsizei count,
                                                   const GLint *value);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3UIPROC)(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3UI64ARBPROC)(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z);
+    typedef void (*PFNGLPROGRAMUNIFORM3UIPROC)(GLuint program,
+                                               GLint location,
+                                               GLuint v0,
+                                               GLuint v1,
+                                               GLuint v2);
+    typedef void (*PFNGLPROGRAMUNIFORM3UI64ARBPROC)(GLuint program,
+                                                    GLint location,
+                                                    GLuint64 x,
+                                                    GLuint64 y,
+                                                    GLuint64 z);
     typedef void (*PFNGLPROGRAMUNIFORM3UI64NVPROC)(GLuint program,
                                                    GLint location,
                                                    GLuint64EXT x,
@@ -9197,8 +9596,11 @@ namespace internal
                                                     GLint location,
                                                     GLsizei count,
                                                     const GLuint64EXT *value);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM3UIEXTPROC)(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2);
+    typedef void (*PFNGLPROGRAMUNIFORM3UIEXTPROC)(GLuint program,
+                                                  GLint location,
+                                                  GLuint v0,
+                                                  GLuint v1,
+                                                  GLuint v2);
     typedef void (*PFNGLPROGRAMUNIFORM3UIVPROC)(GLuint program,
                                                 GLint location,
                                                 GLsizei count,
@@ -9247,8 +9649,12 @@ namespace internal
                                                   GLint location,
                                                   GLsizei count,
                                                   const GLfloat *value);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM4IPROC)(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+    typedef void (*PFNGLPROGRAMUNIFORM4IPROC)(GLuint program,
+                                              GLint location,
+                                              GLint v0,
+                                              GLint v1,
+                                              GLint v2,
+                                              GLint v3);
     typedef void (*PFNGLPROGRAMUNIFORM4I64ARBPROC)(GLuint program,
                                                    GLint location,
                                                    GLint64 x,
@@ -9269,8 +9675,12 @@ namespace internal
                                                    GLint location,
                                                    GLsizei count,
                                                    const GLint64EXT *value);
-    typedef void (
-      *PFNGLPROGRAMUNIFORM4IEXTPROC)(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+    typedef void (*PFNGLPROGRAMUNIFORM4IEXTPROC)(GLuint program,
+                                                 GLint location,
+                                                 GLint v0,
+                                                 GLint v1,
+                                                 GLint v2,
+                                                 GLint v3);
     typedef void (*PFNGLPROGRAMUNIFORM4IVPROC)(GLuint program,
                                                GLint location,
                                                GLsizei count,
@@ -9319,8 +9729,12 @@ namespace internal
                                                    GLint location,
                                                    GLsizei count,
                                                    const GLuint *value);
-    typedef void (*PFNGLPROGRAMUNIFORMHANDLEUI64ARBPROC)(GLuint program, GLint location, GLuint64 value);
-    typedef void (*PFNGLPROGRAMUNIFORMHANDLEUI64NVPROC)(GLuint program, GLint location, GLuint64 value);
+    typedef void (*PFNGLPROGRAMUNIFORMHANDLEUI64ARBPROC)(GLuint program,
+                                                         GLint location,
+                                                         GLuint64 value);
+    typedef void (*PFNGLPROGRAMUNIFORMHANDLEUI64NVPROC)(GLuint program,
+                                                        GLint location,
+                                                        GLuint64 value);
     typedef void (*PFNGLPROGRAMUNIFORMHANDLEUI64VARBPROC)(GLuint program,
                                                           GLint location,
                                                           GLsizei count,
@@ -9509,7 +9923,9 @@ namespace internal
                                                           GLsizei count,
                                                           GLboolean transpose,
                                                           const GLfloat *value);
-    typedef void (*PFNGLPROGRAMUNIFORMUI64NVPROC)(GLuint program, GLint location, GLuint64EXT value);
+    typedef void (*PFNGLPROGRAMUNIFORMUI64NVPROC)(GLuint program,
+                                                  GLint location,
+                                                  GLuint64EXT value);
     typedef void (*PFNGLPROGRAMUNIFORMUI64VNVPROC)(GLuint program,
                                                    GLint location,
                                                    GLsizei count,
@@ -9520,7 +9936,10 @@ namespace internal
     typedef void (*PFNGLPUSHATTRIBPROC)(GLbitfield mask);
     typedef void (*PFNGLPUSHCLIENTATTRIBPROC)(GLbitfield mask);
     typedef void (*PFNGLPUSHCLIENTATTRIBDEFAULTEXTPROC)(GLbitfield mask);
-    typedef void (*PFNGLPUSHDEBUGGROUPPROC)(GLenum source, GLuint id, GLsizei length, const GLchar *message);
+    typedef void (*PFNGLPUSHDEBUGGROUPPROC)(GLenum source,
+                                            GLuint id,
+                                            GLsizei length,
+                                            const GLchar *message);
     typedef void (*PFNGLPUSHDEBUGGROUPKHRPROC)(GLenum source,
                                                GLuint id,
                                                GLsizei length,
@@ -9529,8 +9948,14 @@ namespace internal
     typedef void (*PFNGLPUSHMATRIXPROC)();
     typedef void (*PFNGLPUSHNAMEPROC)(GLuint name);
     typedef void (*PFNGLQUERYCOUNTERPROC)(GLuint id, GLenum target);
-    typedef void (*PFNGLQUERYOBJECTPARAMETERUIAMDPROC)(GLenum target, GLuint id, GLenum pname, GLuint param);
-    typedef GLint (*PFNGLQUERYRESOURCENVPROC)(GLenum queryType, GLint tagId, GLuint count, GLint *buffer);
+    typedef void (*PFNGLQUERYOBJECTPARAMETERUIAMDPROC)(GLenum target,
+                                                       GLuint id,
+                                                       GLenum pname,
+                                                       GLuint param);
+    typedef GLint (*PFNGLQUERYRESOURCENVPROC)(GLenum queryType,
+                                              GLint tagId,
+                                              GLuint count,
+                                              GLint *buffer);
     typedef void (*PFNGLQUERYRESOURCETAGNVPROC)(GLint tagId, const GLchar *tagString);
     typedef void (*PFNGLRASTERPOS2DPROC)(GLdouble x, GLdouble y);
     typedef void (*PFNGLRASTERPOS2DVPROC)(const GLdouble *v);
@@ -9649,9 +10074,13 @@ namespace internal
     typedef void (*PFNGLSAMPLEMASKIPROC)(GLuint maskNumber, GLbitfield mask);
     typedef void (*PFNGLSAMPLEPATTERNEXTPROC)(GLenum pattern);
     typedef void (*PFNGLSAMPLERPARAMETERIIVPROC)(GLuint sampler, GLenum pname, const GLint *param);
-    typedef void (*PFNGLSAMPLERPARAMETERIUIVPROC)(GLuint sampler, GLenum pname, const GLuint *param);
+    typedef void (*PFNGLSAMPLERPARAMETERIUIVPROC)(GLuint sampler,
+                                                  GLenum pname,
+                                                  const GLuint *param);
     typedef void (*PFNGLSAMPLERPARAMETERFPROC)(GLuint sampler, GLenum pname, GLfloat param);
-    typedef void (*PFNGLSAMPLERPARAMETERFVPROC)(GLuint sampler, GLenum pname, const GLfloat *param);
+    typedef void (*PFNGLSAMPLERPARAMETERFVPROC)(GLuint sampler,
+                                                GLenum pname,
+                                                const GLfloat *param);
     typedef void (*PFNGLSAMPLERPARAMETERIPROC)(GLuint sampler, GLenum pname, GLint param);
     typedef void (*PFNGLSAMPLERPARAMETERIVPROC)(GLuint sampler, GLenum pname, const GLint *param);
     typedef void (*PFNGLSCALEDPROC)(GLdouble x, GLdouble y, GLdouble z);
@@ -9660,8 +10089,11 @@ namespace internal
     typedef void (*PFNGLSCISSORARRAYVPROC)(GLuint first, GLsizei count, const GLint *v);
     typedef void (*PFNGLSCISSOREXCLUSIVEARRAYVNVPROC)(GLuint first, GLsizei count, const GLint *v);
     typedef void (*PFNGLSCISSOREXCLUSIVENVPROC)(GLint x, GLint y, GLsizei width, GLsizei height);
-    typedef void (
-      *PFNGLSCISSORINDEXEDPROC)(GLuint index, GLint left, GLint bottom, GLsizei width, GLsizei height);
+    typedef void (*PFNGLSCISSORINDEXEDPROC)(GLuint index,
+                                            GLint left,
+                                            GLint bottom,
+                                            GLsizei width,
+                                            GLsizei height);
     typedef void (*PFNGLSCISSORINDEXEDVPROC)(GLuint index, const GLint *v);
     typedef void (*PFNGLSECONDARYCOLOR3BPROC)(GLbyte red, GLbyte green, GLbyte blue);
     typedef void (*PFNGLSECONDARYCOLOR3BEXTPROC)(GLbyte red, GLbyte green, GLbyte blue);
@@ -9714,7 +10146,9 @@ namespace internal
                                                           GLuint group,
                                                           GLint numCounters,
                                                           GLuint *counterList);
-    typedef void (*PFNGLSEMAPHOREPARAMETERIVNVPROC)(GLuint semaphore, GLenum pname, const GLint *params);
+    typedef void (*PFNGLSEMAPHOREPARAMETERIVNVPROC)(GLuint semaphore,
+                                                    GLenum pname,
+                                                    const GLint *params);
     typedef void (*PFNGLSEMAPHOREPARAMETERUI64VEXTPROC)(GLuint semaphore,
                                                         GLenum pname,
                                                         const GLuint64 *params);
@@ -9747,7 +10181,8 @@ namespace internal
                                           GLsizei length);
     typedef void (*PFNGLSHADEROP1EXTPROC)(GLenum op, GLuint res, GLuint arg1);
     typedef void (*PFNGLSHADEROP2EXTPROC)(GLenum op, GLuint res, GLuint arg1, GLuint arg2);
-    typedef void (*PFNGLSHADEROP3EXTPROC)(GLenum op, GLuint res, GLuint arg1, GLuint arg2, GLuint arg3);
+    typedef void (
+      *PFNGLSHADEROP3EXTPROC)(GLenum op, GLuint res, GLuint arg1, GLuint arg2, GLuint arg3);
     typedef void (*PFNGLSHADERSOURCEPROC)(GLuint shader,
                                           GLsizei count,
                                           const GLchar *const *string,
@@ -9804,7 +10239,10 @@ namespace internal
     typedef void (*PFNGLSTENCILMASKPROC)(GLuint mask);
     typedef void (*PFNGLSTENCILMASKSEPARATEPROC)(GLenum face, GLuint mask);
     typedef void (*PFNGLSTENCILOPPROC)(GLenum fail, GLenum zfail, GLenum zpass);
-    typedef void (*PFNGLSTENCILOPSEPARATEPROC)(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass);
+    typedef void (*PFNGLSTENCILOPSEPARATEPROC)(GLenum face,
+                                               GLenum sfail,
+                                               GLenum dpfail,
+                                               GLenum dppass);
     typedef void (*PFNGLSTENCILOPVALUEAMDPROC)(GLenum face, GLuint value);
     typedef void (*PFNGLSTENCILSTROKEPATHINSTANCEDNVPROC)(GLsizei numPaths,
                                                           GLenum pathNameType,
@@ -9842,8 +10280,12 @@ namespace internal
                                                           GLuint mask,
                                                           GLenum coverMode);
     typedef void (*PFNGLSUBPIXELPRECISIONBIASNVPROC)(GLuint xbits, GLuint ybits);
-    typedef void (
-      *PFNGLSWIZZLEEXTPROC)(GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW);
+    typedef void (*PFNGLSWIZZLEEXTPROC)(GLuint res,
+                                        GLuint in,
+                                        GLenum outX,
+                                        GLenum outY,
+                                        GLenum outZ,
+                                        GLenum outW);
     typedef void (*PFNGLSYNCTEXTUREINTELPROC)(GLuint texture);
     typedef void (*PFNGLTANGENT3BEXTPROC)(GLbyte tx, GLbyte ty, GLbyte tz);
     typedef void (*PFNGLTANGENT3BVEXTPROC)(const GLbyte *v);
@@ -9919,7 +10361,10 @@ namespace internal
     typedef void (*PFNGLTEXCOORDP3UIVPROC)(GLenum type, const GLuint *coords);
     typedef void (*PFNGLTEXCOORDP4UIPROC)(GLenum type, GLuint coords);
     typedef void (*PFNGLTEXCOORDP4UIVPROC)(GLenum type, const GLuint *coords);
-    typedef void (*PFNGLTEXCOORDPOINTERPROC)(GLint size, GLenum type, GLsizei stride, const void *pointer);
+    typedef void (*PFNGLTEXCOORDPOINTERPROC)(GLint size,
+                                             GLenum type,
+                                             GLsizei stride,
+                                             const void *pointer);
     typedef void (*PFNGLTEXCOORDPOINTEREXTPROC)(GLint size,
                                                 GLenum type,
                                                 GLsizei stride,
@@ -10025,7 +10470,9 @@ namespace internal
     typedef void (*PFNGLTEXPARAMETERIIVPROC)(GLenum target, GLenum pname, const GLint *params);
     typedef void (*PFNGLTEXPARAMETERIIVEXTPROC)(GLenum target, GLenum pname, const GLint *params);
     typedef void (*PFNGLTEXPARAMETERIUIVPROC)(GLenum target, GLenum pname, const GLuint *params);
-    typedef void (*PFNGLTEXPARAMETERIUIVEXTPROC)(GLenum target, GLenum pname, const GLuint *params);
+    typedef void (*PFNGLTEXPARAMETERIUIVEXTPROC)(GLenum target,
+                                                 GLenum pname,
+                                                 const GLuint *params);
     typedef void (*PFNGLTEXPARAMETERFPROC)(GLenum target, GLenum pname, GLfloat param);
     typedef void (*PFNGLTEXPARAMETERFVPROC)(GLenum target, GLenum pname, const GLfloat *params);
     typedef void (*PFNGLTEXPARAMETERIPROC)(GLenum target, GLenum pname, GLint param);
@@ -10263,12 +10710,16 @@ namespace internal
                                                         GLuint memory,
                                                         GLuint64 offset,
                                                         GLboolean commit);
-    typedef void (*PFNGLTEXTUREPARAMETERIIVPROC)(GLuint texture, GLenum pname, const GLint *params);
+    typedef void (*PFNGLTEXTUREPARAMETERIIVPROC)(GLuint texture,
+                                                 GLenum pname,
+                                                 const GLint *params);
     typedef void (*PFNGLTEXTUREPARAMETERIIVEXTPROC)(GLuint texture,
                                                     GLenum target,
                                                     GLenum pname,
                                                     const GLint *params);
-    typedef void (*PFNGLTEXTUREPARAMETERIUIVPROC)(GLuint texture, GLenum pname, const GLuint *params);
+    typedef void (*PFNGLTEXTUREPARAMETERIUIVPROC)(GLuint texture,
+                                                  GLenum pname,
+                                                  const GLuint *params);
     typedef void (*PFNGLTEXTUREPARAMETERIUIVEXTPROC)(GLuint texture,
                                                      GLenum target,
                                                      GLenum pname,
@@ -10278,20 +10729,27 @@ namespace internal
                                                   GLenum target,
                                                   GLenum pname,
                                                   GLfloat param);
-    typedef void (*PFNGLTEXTUREPARAMETERFVPROC)(GLuint texture, GLenum pname, const GLfloat *param);
+    typedef void (*PFNGLTEXTUREPARAMETERFVPROC)(GLuint texture,
+                                                GLenum pname,
+                                                const GLfloat *param);
     typedef void (*PFNGLTEXTUREPARAMETERFVEXTPROC)(GLuint texture,
                                                    GLenum target,
                                                    GLenum pname,
                                                    const GLfloat *params);
     typedef void (*PFNGLTEXTUREPARAMETERIPROC)(GLuint texture, GLenum pname, GLint param);
-    typedef void (*PFNGLTEXTUREPARAMETERIEXTPROC)(GLuint texture, GLenum target, GLenum pname, GLint param);
+    typedef void (*PFNGLTEXTUREPARAMETERIEXTPROC)(GLuint texture,
+                                                  GLenum target,
+                                                  GLenum pname,
+                                                  GLint param);
     typedef void (*PFNGLTEXTUREPARAMETERIVPROC)(GLuint texture, GLenum pname, const GLint *param);
     typedef void (*PFNGLTEXTUREPARAMETERIVEXTPROC)(GLuint texture,
                                                    GLenum target,
                                                    GLenum pname,
                                                    const GLint *params);
     typedef void (*PFNGLTEXTURERANGEAPPLEPROC)(GLenum target, GLsizei length, const void *pointer);
-    typedef void (*PFNGLTEXTURERENDERBUFFEREXTPROC)(GLuint texture, GLenum target, GLuint renderbuffer);
+    typedef void (*PFNGLTEXTURERENDERBUFFEREXTPROC)(GLuint texture,
+                                                    GLenum target,
+                                                    GLuint renderbuffer);
     typedef void (*PFNGLTEXTURESTORAGE1DPROC)(GLuint texture,
                                               GLsizei levels,
                                               GLenum internalformat,
@@ -10464,7 +10922,10 @@ namespace internal
                                          GLuint numlevels,
                                          GLuint minlayer,
                                          GLuint numlayers);
-    typedef void (*PFNGLTRACKMATRIXNVPROC)(GLenum target, GLuint address, GLenum matrix, GLenum transform);
+    typedef void (*PFNGLTRACKMATRIXNVPROC)(GLenum target,
+                                           GLuint address,
+                                           GLenum matrix,
+                                           GLenum transform);
     typedef void (*PFNGLTRANSFORMFEEDBACKATTRIBSNVPROC)(GLsizei count,
                                                         const GLint *attribs,
                                                         GLenum bufferMode);
@@ -10507,15 +10968,21 @@ namespace internal
     typedef void (*PFNGLUNIFORM1I64ARBPROC)(GLint location, GLint64 x);
     typedef void (*PFNGLUNIFORM1I64NVPROC)(GLint location, GLint64EXT x);
     typedef void (*PFNGLUNIFORM1I64VARBPROC)(GLint location, GLsizei count, const GLint64 *value);
-    typedef void (*PFNGLUNIFORM1I64VNVPROC)(GLint location, GLsizei count, const GLint64EXT *value);
+    typedef void (*PFNGLUNIFORM1I64VNVPROC)(GLint location,
+                                            GLsizei count,
+                                            const GLint64EXT *value);
     typedef void (*PFNGLUNIFORM1IARBPROC)(GLint location, GLint v0);
     typedef void (*PFNGLUNIFORM1IVPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM1IVARBPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM1UIPROC)(GLint location, GLuint v0);
     typedef void (*PFNGLUNIFORM1UI64ARBPROC)(GLint location, GLuint64 x);
     typedef void (*PFNGLUNIFORM1UI64NVPROC)(GLint location, GLuint64EXT x);
-    typedef void (*PFNGLUNIFORM1UI64VARBPROC)(GLint location, GLsizei count, const GLuint64 *value);
-    typedef void (*PFNGLUNIFORM1UI64VNVPROC)(GLint location, GLsizei count, const GLuint64EXT *value);
+    typedef void (*PFNGLUNIFORM1UI64VARBPROC)(GLint location,
+                                              GLsizei count,
+                                              const GLuint64 *value);
+    typedef void (*PFNGLUNIFORM1UI64VNVPROC)(GLint location,
+                                             GLsizei count,
+                                             const GLuint64EXT *value);
     typedef void (*PFNGLUNIFORM1UIEXTPROC)(GLint location, GLuint v0);
     typedef void (*PFNGLUNIFORM1UIVPROC)(GLint location, GLsizei count, const GLuint *value);
     typedef void (*PFNGLUNIFORM1UIVEXTPROC)(GLint location, GLsizei count, const GLuint *value);
@@ -10529,15 +10996,21 @@ namespace internal
     typedef void (*PFNGLUNIFORM2I64ARBPROC)(GLint location, GLint64 x, GLint64 y);
     typedef void (*PFNGLUNIFORM2I64NVPROC)(GLint location, GLint64EXT x, GLint64EXT y);
     typedef void (*PFNGLUNIFORM2I64VARBPROC)(GLint location, GLsizei count, const GLint64 *value);
-    typedef void (*PFNGLUNIFORM2I64VNVPROC)(GLint location, GLsizei count, const GLint64EXT *value);
+    typedef void (*PFNGLUNIFORM2I64VNVPROC)(GLint location,
+                                            GLsizei count,
+                                            const GLint64EXT *value);
     typedef void (*PFNGLUNIFORM2IARBPROC)(GLint location, GLint v0, GLint v1);
     typedef void (*PFNGLUNIFORM2IVPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM2IVARBPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM2UIPROC)(GLint location, GLuint v0, GLuint v1);
     typedef void (*PFNGLUNIFORM2UI64ARBPROC)(GLint location, GLuint64 x, GLuint64 y);
     typedef void (*PFNGLUNIFORM2UI64NVPROC)(GLint location, GLuint64EXT x, GLuint64EXT y);
-    typedef void (*PFNGLUNIFORM2UI64VARBPROC)(GLint location, GLsizei count, const GLuint64 *value);
-    typedef void (*PFNGLUNIFORM2UI64VNVPROC)(GLint location, GLsizei count, const GLuint64EXT *value);
+    typedef void (*PFNGLUNIFORM2UI64VARBPROC)(GLint location,
+                                              GLsizei count,
+                                              const GLuint64 *value);
+    typedef void (*PFNGLUNIFORM2UI64VNVPROC)(GLint location,
+                                             GLsizei count,
+                                             const GLuint64EXT *value);
     typedef void (*PFNGLUNIFORM2UIEXTPROC)(GLint location, GLuint v0, GLuint v1);
     typedef void (*PFNGLUNIFORM2UIVPROC)(GLint location, GLsizei count, const GLuint *value);
     typedef void (*PFNGLUNIFORM2UIVEXTPROC)(GLint location, GLsizei count, const GLuint *value);
@@ -10549,42 +11022,73 @@ namespace internal
     typedef void (*PFNGLUNIFORM3FVARBPROC)(GLint location, GLsizei count, const GLfloat *value);
     typedef void (*PFNGLUNIFORM3IPROC)(GLint location, GLint v0, GLint v1, GLint v2);
     typedef void (*PFNGLUNIFORM3I64ARBPROC)(GLint location, GLint64 x, GLint64 y, GLint64 z);
-    typedef void (*PFNGLUNIFORM3I64NVPROC)(GLint location, GLint64EXT x, GLint64EXT y, GLint64EXT z);
+    typedef void (*PFNGLUNIFORM3I64NVPROC)(GLint location,
+                                           GLint64EXT x,
+                                           GLint64EXT y,
+                                           GLint64EXT z);
     typedef void (*PFNGLUNIFORM3I64VARBPROC)(GLint location, GLsizei count, const GLint64 *value);
-    typedef void (*PFNGLUNIFORM3I64VNVPROC)(GLint location, GLsizei count, const GLint64EXT *value);
+    typedef void (*PFNGLUNIFORM3I64VNVPROC)(GLint location,
+                                            GLsizei count,
+                                            const GLint64EXT *value);
     typedef void (*PFNGLUNIFORM3IARBPROC)(GLint location, GLint v0, GLint v1, GLint v2);
     typedef void (*PFNGLUNIFORM3IVPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM3IVARBPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM3UIPROC)(GLint location, GLuint v0, GLuint v1, GLuint v2);
     typedef void (*PFNGLUNIFORM3UI64ARBPROC)(GLint location, GLuint64 x, GLuint64 y, GLuint64 z);
-    typedef void (*PFNGLUNIFORM3UI64NVPROC)(GLint location, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z);
-    typedef void (*PFNGLUNIFORM3UI64VARBPROC)(GLint location, GLsizei count, const GLuint64 *value);
-    typedef void (*PFNGLUNIFORM3UI64VNVPROC)(GLint location, GLsizei count, const GLuint64EXT *value);
+    typedef void (*PFNGLUNIFORM3UI64NVPROC)(GLint location,
+                                            GLuint64EXT x,
+                                            GLuint64EXT y,
+                                            GLuint64EXT z);
+    typedef void (*PFNGLUNIFORM3UI64VARBPROC)(GLint location,
+                                              GLsizei count,
+                                              const GLuint64 *value);
+    typedef void (*PFNGLUNIFORM3UI64VNVPROC)(GLint location,
+                                             GLsizei count,
+                                             const GLuint64EXT *value);
     typedef void (*PFNGLUNIFORM3UIEXTPROC)(GLint location, GLuint v0, GLuint v1, GLuint v2);
     typedef void (*PFNGLUNIFORM3UIVPROC)(GLint location, GLsizei count, const GLuint *value);
     typedef void (*PFNGLUNIFORM3UIVEXTPROC)(GLint location, GLsizei count, const GLuint *value);
-    typedef void (*PFNGLUNIFORM4DPROC)(GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+    typedef void (
+      *PFNGLUNIFORM4DPROC)(GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
     typedef void (*PFNGLUNIFORM4DVPROC)(GLint location, GLsizei count, const GLdouble *value);
-    typedef void (*PFNGLUNIFORM4FPROC)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
-    typedef void (*PFNGLUNIFORM4FARBPROC)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+    typedef void (
+      *PFNGLUNIFORM4FPROC)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+    typedef void (
+      *PFNGLUNIFORM4FARBPROC)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
     typedef void (*PFNGLUNIFORM4FVPROC)(GLint location, GLsizei count, const GLfloat *value);
     typedef void (*PFNGLUNIFORM4FVARBPROC)(GLint location, GLsizei count, const GLfloat *value);
     typedef void (*PFNGLUNIFORM4IPROC)(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
-    typedef void (*PFNGLUNIFORM4I64ARBPROC)(GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w);
     typedef void (
-      *PFNGLUNIFORM4I64NVPROC)(GLint location, GLint64EXT x, GLint64EXT y, GLint64EXT z, GLint64EXT w);
+      *PFNGLUNIFORM4I64ARBPROC)(GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w);
+    typedef void (*PFNGLUNIFORM4I64NVPROC)(GLint location,
+                                           GLint64EXT x,
+                                           GLint64EXT y,
+                                           GLint64EXT z,
+                                           GLint64EXT w);
     typedef void (*PFNGLUNIFORM4I64VARBPROC)(GLint location, GLsizei count, const GLint64 *value);
-    typedef void (*PFNGLUNIFORM4I64VNVPROC)(GLint location, GLsizei count, const GLint64EXT *value);
+    typedef void (*PFNGLUNIFORM4I64VNVPROC)(GLint location,
+                                            GLsizei count,
+                                            const GLint64EXT *value);
     typedef void (*PFNGLUNIFORM4IARBPROC)(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
     typedef void (*PFNGLUNIFORM4IVPROC)(GLint location, GLsizei count, const GLint *value);
     typedef void (*PFNGLUNIFORM4IVARBPROC)(GLint location, GLsizei count, const GLint *value);
-    typedef void (*PFNGLUNIFORM4UIPROC)(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
-    typedef void (*PFNGLUNIFORM4UI64ARBPROC)(GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w);
     typedef void (
-      *PFNGLUNIFORM4UI64NVPROC)(GLint location, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z, GLuint64EXT w);
-    typedef void (*PFNGLUNIFORM4UI64VARBPROC)(GLint location, GLsizei count, const GLuint64 *value);
-    typedef void (*PFNGLUNIFORM4UI64VNVPROC)(GLint location, GLsizei count, const GLuint64EXT *value);
-    typedef void (*PFNGLUNIFORM4UIEXTPROC)(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
+      *PFNGLUNIFORM4UIPROC)(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
+    typedef void (
+      *PFNGLUNIFORM4UI64ARBPROC)(GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w);
+    typedef void (*PFNGLUNIFORM4UI64NVPROC)(GLint location,
+                                            GLuint64EXT x,
+                                            GLuint64EXT y,
+                                            GLuint64EXT z,
+                                            GLuint64EXT w);
+    typedef void (*PFNGLUNIFORM4UI64VARBPROC)(GLint location,
+                                              GLsizei count,
+                                              const GLuint64 *value);
+    typedef void (*PFNGLUNIFORM4UI64VNVPROC)(GLint location,
+                                             GLsizei count,
+                                             const GLuint64EXT *value);
+    typedef void (
+      *PFNGLUNIFORM4UIEXTPROC)(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
     typedef void (*PFNGLUNIFORM4UIVPROC)(GLint location, GLsizei count, const GLuint *value);
     typedef void (*PFNGLUNIFORM4UIVEXTPROC)(GLint location, GLsizei count, const GLuint *value);
     typedef void (*PFNGLUNIFORMBLOCKBINDINGPROC)(GLuint program,
@@ -10593,8 +11097,12 @@ namespace internal
     typedef void (*PFNGLUNIFORMBUFFEREXTPROC)(GLuint program, GLint location, GLuint buffer);
     typedef void (*PFNGLUNIFORMHANDLEUI64ARBPROC)(GLint location, GLuint64 value);
     typedef void (*PFNGLUNIFORMHANDLEUI64NVPROC)(GLint location, GLuint64 value);
-    typedef void (*PFNGLUNIFORMHANDLEUI64VARBPROC)(GLint location, GLsizei count, const GLuint64 *value);
-    typedef void (*PFNGLUNIFORMHANDLEUI64VNVPROC)(GLint location, GLsizei count, const GLuint64 *value);
+    typedef void (*PFNGLUNIFORMHANDLEUI64VARBPROC)(GLint location,
+                                                   GLsizei count,
+                                                   const GLuint64 *value);
+    typedef void (*PFNGLUNIFORMHANDLEUI64VNVPROC)(GLint location,
+                                                  GLsizei count,
+                                                  const GLuint64 *value);
     typedef void (*PFNGLUNIFORMMATRIX2DVPROC)(GLint location,
                                               GLsizei count,
                                               GLboolean transpose,
@@ -10679,9 +11187,13 @@ namespace internal
                                                 GLsizei count,
                                                 GLboolean transpose,
                                                 const GLfloat *value);
-    typedef void (*PFNGLUNIFORMSUBROUTINESUIVPROC)(GLenum shadertype, GLsizei count, const GLuint *indices);
+    typedef void (*PFNGLUNIFORMSUBROUTINESUIVPROC)(GLenum shadertype,
+                                                   GLsizei count,
+                                                   const GLuint *indices);
     typedef void (*PFNGLUNIFORMUI64NVPROC)(GLint location, GLuint64EXT value);
-    typedef void (*PFNGLUNIFORMUI64VNVPROC)(GLint location, GLsizei count, const GLuint64EXT *value);
+    typedef void (*PFNGLUNIFORMUI64VNVPROC)(GLint location,
+                                            GLsizei count,
+                                            const GLuint64EXT *value);
     typedef void (*PFNGLUNLOCKARRAYSEXTPROC)();
     typedef GLboolean (*PFNGLUNMAPBUFFERPROC)(GLenum target);
     typedef GLboolean (*PFNGLUNMAPBUFFERARBPROC)(GLenum target);
@@ -10692,7 +11204,9 @@ namespace internal
     typedef void (*PFNGLUSEPROGRAMPROC)(GLuint program);
     typedef void (*PFNGLUSEPROGRAMOBJECTARBPROC)(GLhandleARB programObj);
     typedef void (*PFNGLUSEPROGRAMSTAGESPROC)(GLuint pipeline, GLbitfield stages, GLuint program);
-    typedef void (*PFNGLUSEPROGRAMSTAGESEXTPROC)(GLuint pipeline, GLbitfield stages, GLuint program);
+    typedef void (*PFNGLUSEPROGRAMSTAGESEXTPROC)(GLuint pipeline,
+                                                 GLbitfield stages,
+                                                 GLuint program);
     typedef void (*PFNGLUSESHADERPROGRAMEXTPROC)(GLenum type, GLuint program);
     typedef void (*PFNGLVDPAUFININVPROC)();
     typedef void (*PFNGLVDPAUGETSURFACEIVNVPROC)(GLvdpauSurfaceNV surface,
@@ -10702,7 +11216,8 @@ namespace internal
                                                  GLint *values);
     typedef void (*PFNGLVDPAUINITNVPROC)(const void *vdpDevice, const void *getProcAddress);
     typedef GLboolean (*PFNGLVDPAUISSURFACENVPROC)(GLvdpauSurfaceNV surface);
-    typedef void (*PFNGLVDPAUMAPSURFACESNVPROC)(GLsizei numSurfaces, const GLvdpauSurfaceNV *surfaces);
+    typedef void (*PFNGLVDPAUMAPSURFACESNVPROC)(GLsizei numSurfaces,
+                                                const GLvdpauSurfaceNV *surfaces);
     typedef GLvdpauSurfaceNV (*PFNGLVDPAUREGISTEROUTPUTSURFACENVPROC)(const void *vdpSurface,
                                                                       GLenum target,
                                                                       GLsizei numTextureNames,
@@ -10718,13 +11233,17 @@ namespace internal
       const GLuint *textureNames,
       GLboolean isFrameStructure);
     typedef void (*PFNGLVDPAUSURFACEACCESSNVPROC)(GLvdpauSurfaceNV surface, GLenum access);
-    typedef void (*PFNGLVDPAUUNMAPSURFACESNVPROC)(GLsizei numSurface, const GLvdpauSurfaceNV *surfaces);
+    typedef void (*PFNGLVDPAUUNMAPSURFACESNVPROC)(GLsizei numSurface,
+                                                  const GLvdpauSurfaceNV *surfaces);
     typedef void (*PFNGLVDPAUUNREGISTERSURFACENVPROC)(GLvdpauSurfaceNV surface);
     typedef void (*PFNGLVALIDATEPROGRAMPROC)(GLuint program);
     typedef void (*PFNGLVALIDATEPROGRAMARBPROC)(GLhandleARB programObj);
     typedef void (*PFNGLVALIDATEPROGRAMPIPELINEPROC)(GLuint pipeline);
     typedef void (*PFNGLVALIDATEPROGRAMPIPELINEEXTPROC)(GLuint pipeline);
-    typedef void (*PFNGLVARIANTPOINTEREXTPROC)(GLuint id, GLenum type, GLuint stride, const void *addr);
+    typedef void (*PFNGLVARIANTPOINTEREXTPROC)(GLuint id,
+                                               GLenum type,
+                                               GLuint stride,
+                                               const void *addr);
     typedef void (*PFNGLVARIANTBVEXTPROC)(GLuint id, const GLbyte *addr);
     typedef void (*PFNGLVARIANTDVEXTPROC)(GLuint id, const GLdouble *addr);
     typedef void (*PFNGLVARIANTFVEXTPROC)(GLuint id, const GLfloat *addr);
@@ -10763,7 +11282,9 @@ namespace internal
     typedef void (*PFNGLVERTEX4IVPROC)(const GLint *v);
     typedef void (*PFNGLVERTEX4SPROC)(GLshort x, GLshort y, GLshort z, GLshort w);
     typedef void (*PFNGLVERTEX4SVPROC)(const GLshort *v);
-    typedef void (*PFNGLVERTEXARRAYATTRIBBINDINGPROC)(GLuint vaobj, GLuint attribindex, GLuint bindingindex);
+    typedef void (*PFNGLVERTEXARRAYATTRIBBINDINGPROC)(GLuint vaobj,
+                                                      GLuint attribindex,
+                                                      GLuint bindingindex);
     typedef void (*PFNGLVERTEXARRAYATTRIBFORMATPROC)(GLuint vaobj,
                                                      GLuint attribindex,
                                                      GLint size,
@@ -10785,7 +11306,9 @@ namespace internal
                                                             GLuint buffer,
                                                             GLintptr offset,
                                                             GLsizei stride);
-    typedef void (*PFNGLVERTEXARRAYBINDINGDIVISORPROC)(GLuint vaobj, GLuint bindingindex, GLuint divisor);
+    typedef void (*PFNGLVERTEXARRAYBINDINGDIVISORPROC)(GLuint vaobj,
+                                                       GLuint bindingindex,
+                                                       GLuint divisor);
     typedef void (*PFNGLVERTEXARRAYCOLOROFFSETEXTPROC)(GLuint vaobj,
                                                        GLuint buffer,
                                                        GLint size,
@@ -10837,7 +11360,9 @@ namespace internal
     typedef void (*PFNGLVERTEXARRAYVERTEXATTRIBBINDINGEXTPROC)(GLuint vaobj,
                                                                GLuint attribindex,
                                                                GLuint bindingindex);
-    typedef void (*PFNGLVERTEXARRAYVERTEXATTRIBDIVISOREXTPROC)(GLuint vaobj, GLuint index, GLuint divisor);
+    typedef void (*PFNGLVERTEXARRAYVERTEXATTRIBDIVISOREXTPROC)(GLuint vaobj,
+                                                               GLuint index,
+                                                               GLuint divisor);
     typedef void (*PFNGLVERTEXARRAYVERTEXATTRIBFORMATEXTPROC)(GLuint vaobj,
                                                               GLuint attribindex,
                                                               GLint size,
@@ -10962,8 +11487,10 @@ namespace internal
     typedef void (*PFNGLVERTEXATTRIB4NIVARBPROC)(GLuint index, const GLint *v);
     typedef void (*PFNGLVERTEXATTRIB4NSVPROC)(GLuint index, const GLshort *v);
     typedef void (*PFNGLVERTEXATTRIB4NSVARBPROC)(GLuint index, const GLshort *v);
-    typedef void (*PFNGLVERTEXATTRIB4NUBPROC)(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w);
-    typedef void (*PFNGLVERTEXATTRIB4NUBARBPROC)(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4NUBPROC)(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4NUBARBPROC)(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w);
     typedef void (*PFNGLVERTEXATTRIB4NUBVPROC)(GLuint index, const GLubyte *v);
     typedef void (*PFNGLVERTEXATTRIB4NUBVARBPROC)(GLuint index, const GLubyte *v);
     typedef void (*PFNGLVERTEXATTRIB4NUIVPROC)(GLuint index, const GLuint *v);
@@ -10972,29 +11499,40 @@ namespace internal
     typedef void (*PFNGLVERTEXATTRIB4NUSVARBPROC)(GLuint index, const GLushort *v);
     typedef void (*PFNGLVERTEXATTRIB4BVPROC)(GLuint index, const GLbyte *v);
     typedef void (*PFNGLVERTEXATTRIB4BVARBPROC)(GLuint index, const GLbyte *v);
-    typedef void (*PFNGLVERTEXATTRIB4DPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
-    typedef void (*PFNGLVERTEXATTRIB4DARBPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
-    typedef void (*PFNGLVERTEXATTRIB4DNVPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4DPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4DARBPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4DNVPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
     typedef void (*PFNGLVERTEXATTRIB4DVPROC)(GLuint index, const GLdouble *v);
     typedef void (*PFNGLVERTEXATTRIB4DVARBPROC)(GLuint index, const GLdouble *v);
     typedef void (*PFNGLVERTEXATTRIB4DVNVPROC)(GLuint index, const GLdouble *v);
-    typedef void (*PFNGLVERTEXATTRIB4FPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    typedef void (*PFNGLVERTEXATTRIB4FARBPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    typedef void (*PFNGLVERTEXATTRIB4FNVPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4FPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4FARBPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4FNVPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
     typedef void (*PFNGLVERTEXATTRIB4FVPROC)(GLuint index, const GLfloat *v);
     typedef void (*PFNGLVERTEXATTRIB4FVARBPROC)(GLuint index, const GLfloat *v);
     typedef void (*PFNGLVERTEXATTRIB4FVNVPROC)(GLuint index, const GLfloat *v);
-    typedef void (*PFNGLVERTEXATTRIB4HNVPROC)(GLuint index, GLhalfNV x, GLhalfNV y, GLhalfNV z, GLhalfNV w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4HNVPROC)(GLuint index, GLhalfNV x, GLhalfNV y, GLhalfNV z, GLhalfNV w);
     typedef void (*PFNGLVERTEXATTRIB4HVNVPROC)(GLuint index, const GLhalfNV *v);
     typedef void (*PFNGLVERTEXATTRIB4IVPROC)(GLuint index, const GLint *v);
     typedef void (*PFNGLVERTEXATTRIB4IVARBPROC)(GLuint index, const GLint *v);
-    typedef void (*PFNGLVERTEXATTRIB4SPROC)(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w);
-    typedef void (*PFNGLVERTEXATTRIB4SARBPROC)(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w);
-    typedef void (*PFNGLVERTEXATTRIB4SNVPROC)(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4SPROC)(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4SARBPROC)(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4SNVPROC)(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w);
     typedef void (*PFNGLVERTEXATTRIB4SVPROC)(GLuint index, const GLshort *v);
     typedef void (*PFNGLVERTEXATTRIB4SVARBPROC)(GLuint index, const GLshort *v);
     typedef void (*PFNGLVERTEXATTRIB4SVNVPROC)(GLuint index, const GLshort *v);
-    typedef void (*PFNGLVERTEXATTRIB4UBNVPROC)(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w);
+    typedef void (
+      *PFNGLVERTEXATTRIB4UBNVPROC)(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w);
     typedef void (*PFNGLVERTEXATTRIB4UBVPROC)(GLuint index, const GLubyte *v);
     typedef void (*PFNGLVERTEXATTRIB4UBVARBPROC)(GLuint index, const GLubyte *v);
     typedef void (*PFNGLVERTEXATTRIB4UBVNVPROC)(GLuint index, const GLubyte *v);
@@ -11049,8 +11587,10 @@ namespace internal
     typedef void (*PFNGLVERTEXATTRIBI4SVEXTPROC)(GLuint index, const GLshort *v);
     typedef void (*PFNGLVERTEXATTRIBI4UBVPROC)(GLuint index, const GLubyte *v);
     typedef void (*PFNGLVERTEXATTRIBI4UBVEXTPROC)(GLuint index, const GLubyte *v);
-    typedef void (*PFNGLVERTEXATTRIBI4UIPROC)(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
-    typedef void (*PFNGLVERTEXATTRIBI4UIEXTPROC)(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
+    typedef void (
+      *PFNGLVERTEXATTRIBI4UIPROC)(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
+    typedef void (
+      *PFNGLVERTEXATTRIBI4UIEXTPROC)(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
     typedef void (*PFNGLVERTEXATTRIBI4UIVPROC)(GLuint index, const GLuint *v);
     typedef void (*PFNGLVERTEXATTRIBI4UIVEXTPROC)(GLuint index, const GLuint *v);
     typedef void (*PFNGLVERTEXATTRIBI4USVPROC)(GLuint index, const GLushort *v);
@@ -11059,7 +11599,10 @@ namespace internal
                                                  GLint size,
                                                  GLenum type,
                                                  GLuint relativeoffset);
-    typedef void (*PFNGLVERTEXATTRIBIFORMATNVPROC)(GLuint index, GLint size, GLenum type, GLsizei stride);
+    typedef void (*PFNGLVERTEXATTRIBIFORMATNVPROC)(GLuint index,
+                                                   GLint size,
+                                                   GLenum type,
+                                                   GLsizei stride);
     typedef void (*PFNGLVERTEXATTRIBIPOINTERPROC)(GLuint index,
                                                   GLint size,
                                                   GLenum type,
@@ -11092,17 +11635,27 @@ namespace internal
     typedef void (*PFNGLVERTEXATTRIBL3DEXTPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z);
     typedef void (*PFNGLVERTEXATTRIBL3DVPROC)(GLuint index, const GLdouble *v);
     typedef void (*PFNGLVERTEXATTRIBL3DVEXTPROC)(GLuint index, const GLdouble *v);
-    typedef void (*PFNGLVERTEXATTRIBL3I64NVPROC)(GLuint index, GLint64EXT x, GLint64EXT y, GLint64EXT z);
+    typedef void (*PFNGLVERTEXATTRIBL3I64NVPROC)(GLuint index,
+                                                 GLint64EXT x,
+                                                 GLint64EXT y,
+                                                 GLint64EXT z);
     typedef void (*PFNGLVERTEXATTRIBL3I64VNVPROC)(GLuint index, const GLint64EXT *v);
-    typedef void (*PFNGLVERTEXATTRIBL3UI64NVPROC)(GLuint index, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z);
+    typedef void (*PFNGLVERTEXATTRIBL3UI64NVPROC)(GLuint index,
+                                                  GLuint64EXT x,
+                                                  GLuint64EXT y,
+                                                  GLuint64EXT z);
     typedef void (*PFNGLVERTEXATTRIBL3UI64VNVPROC)(GLuint index, const GLuint64EXT *v);
-    typedef void (*PFNGLVERTEXATTRIBL4DPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+    typedef void (
+      *PFNGLVERTEXATTRIBL4DPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
     typedef void (
       *PFNGLVERTEXATTRIBL4DEXTPROC)(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
     typedef void (*PFNGLVERTEXATTRIBL4DVPROC)(GLuint index, const GLdouble *v);
     typedef void (*PFNGLVERTEXATTRIBL4DVEXTPROC)(GLuint index, const GLdouble *v);
-    typedef void (
-      *PFNGLVERTEXATTRIBL4I64NVPROC)(GLuint index, GLint64EXT x, GLint64EXT y, GLint64EXT z, GLint64EXT w);
+    typedef void (*PFNGLVERTEXATTRIBL4I64NVPROC)(GLuint index,
+                                                 GLint64EXT x,
+                                                 GLint64EXT y,
+                                                 GLint64EXT z,
+                                                 GLint64EXT w);
     typedef void (*PFNGLVERTEXATTRIBL4I64VNVPROC)(GLuint index, const GLint64EXT *v);
     typedef void (*PFNGLVERTEXATTRIBL4UI64NVPROC)(GLuint index,
                                                   GLuint64EXT x,
@@ -11114,7 +11667,10 @@ namespace internal
                                                  GLint size,
                                                  GLenum type,
                                                  GLuint relativeoffset);
-    typedef void (*PFNGLVERTEXATTRIBLFORMATNVPROC)(GLuint index, GLint size, GLenum type, GLsizei stride);
+    typedef void (*PFNGLVERTEXATTRIBLFORMATNVPROC)(GLuint index,
+                                                   GLint size,
+                                                   GLenum type,
+                                                   GLsizei stride);
     typedef void (*PFNGLVERTEXATTRIBLPOINTERPROC)(GLuint index,
                                                   GLint size,
                                                   GLenum type,
@@ -11125,22 +11681,34 @@ namespace internal
                                                      GLenum type,
                                                      GLsizei stride,
                                                      const void *pointer);
-    typedef void (*PFNGLVERTEXATTRIBP1UIPROC)(GLuint index, GLenum type, GLboolean normalized, GLuint value);
+    typedef void (*PFNGLVERTEXATTRIBP1UIPROC)(GLuint index,
+                                              GLenum type,
+                                              GLboolean normalized,
+                                              GLuint value);
     typedef void (*PFNGLVERTEXATTRIBP1UIVPROC)(GLuint index,
                                                GLenum type,
                                                GLboolean normalized,
                                                const GLuint *value);
-    typedef void (*PFNGLVERTEXATTRIBP2UIPROC)(GLuint index, GLenum type, GLboolean normalized, GLuint value);
+    typedef void (*PFNGLVERTEXATTRIBP2UIPROC)(GLuint index,
+                                              GLenum type,
+                                              GLboolean normalized,
+                                              GLuint value);
     typedef void (*PFNGLVERTEXATTRIBP2UIVPROC)(GLuint index,
                                                GLenum type,
                                                GLboolean normalized,
                                                const GLuint *value);
-    typedef void (*PFNGLVERTEXATTRIBP3UIPROC)(GLuint index, GLenum type, GLboolean normalized, GLuint value);
+    typedef void (*PFNGLVERTEXATTRIBP3UIPROC)(GLuint index,
+                                              GLenum type,
+                                              GLboolean normalized,
+                                              GLuint value);
     typedef void (*PFNGLVERTEXATTRIBP3UIVPROC)(GLuint index,
                                                GLenum type,
                                                GLboolean normalized,
                                                const GLuint *value);
-    typedef void (*PFNGLVERTEXATTRIBP4UIPROC)(GLuint index, GLenum type, GLboolean normalized, GLuint value);
+    typedef void (*PFNGLVERTEXATTRIBP4UIPROC)(GLuint index,
+                                              GLenum type,
+                                              GLboolean normalized,
+                                              GLuint value);
     typedef void (*PFNGLVERTEXATTRIBP4UIVPROC)(GLuint index,
                                                GLenum type,
                                                GLboolean normalized,
@@ -11189,7 +11757,10 @@ namespace internal
     typedef void (*PFNGLVERTEXP3UIVPROC)(GLenum type, const GLuint *value);
     typedef void (*PFNGLVERTEXP4UIPROC)(GLenum type, GLuint value);
     typedef void (*PFNGLVERTEXP4UIVPROC)(GLenum type, const GLuint *value);
-    typedef void (*PFNGLVERTEXPOINTERPROC)(GLint size, GLenum type, GLsizei stride, const void *pointer);
+    typedef void (*PFNGLVERTEXPOINTERPROC)(GLint size,
+                                           GLenum type,
+                                           GLsizei stride,
+                                           const void *pointer);
     typedef void (*PFNGLVERTEXPOINTEREXTPROC)(GLint size,
                                               GLenum type,
                                               GLsizei stride,
@@ -11221,9 +11792,12 @@ namespace internal
                                                              const GLint *params);
     typedef void (*PFNGLVIEWPORTPROC)(GLint x, GLint y, GLsizei width, GLsizei height);
     typedef void (*PFNGLVIEWPORTARRAYVPROC)(GLuint first, GLsizei count, const GLfloat *v);
-    typedef void (*PFNGLVIEWPORTINDEXEDFPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+    typedef void (
+      *PFNGLVIEWPORTINDEXEDFPROC)(GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h);
     typedef void (*PFNGLVIEWPORTINDEXEDFVPROC)(GLuint index, const GLfloat *v);
-    typedef void (*PFNGLVIEWPORTPOSITIONWSCALENVPROC)(GLuint index, GLfloat xcoeff, GLfloat ycoeff);
+    typedef void (*PFNGLVIEWPORTPOSITIONWSCALENVPROC)(GLuint index,
+                                                      GLfloat xcoeff,
+                                                      GLfloat ycoeff);
     typedef void (*PFNGLVIEWPORTSWIZZLENVPROC)(GLuint index,
                                                GLenum swizzlex,
                                                GLenum swizzley,
@@ -11244,7 +11818,10 @@ namespace internal
                                            GLsizei numPaths,
                                            const GLuint *paths,
                                            const GLfloat *weights);
-    typedef void (*PFNGLWEIGHTPOINTERARBPROC)(GLint size, GLenum type, GLsizei stride, const void *pointer);
+    typedef void (*PFNGLWEIGHTPOINTERARBPROC)(GLint size,
+                                              GLenum type,
+                                              GLsizei stride,
+                                              const void *pointer);
     typedef void (*PFNGLWEIGHTBVARBPROC)(GLint size, const GLbyte *weights);
     typedef void (*PFNGLWEIGHTDVARBPROC)(GLint size, const GLdouble *weights);
     typedef void (*PFNGLWEIGHTFVARBPROC)(GLint size, const GLfloat *weights);
@@ -11286,8 +11863,12 @@ namespace internal
     typedef void (*PFNGLWINDOWPOS3SVPROC)(const GLshort *v);
     typedef void (*PFNGLWINDOWPOS3SVARBPROC)(const GLshort *v);
     typedef void (*PFNGLWINDOWRECTANGLESEXTPROC)(GLenum mode, GLsizei count, const GLint *box);
-    typedef void (
-      *PFNGLWRITEMASKEXTPROC)(GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW);
+    typedef void (*PFNGLWRITEMASKEXTPROC)(GLuint res,
+                                          GLuint in,
+                                          GLenum outX,
+                                          GLenum outY,
+                                          GLenum outZ,
+                                          GLenum outW);
     typedef void (*PFNGLDRAWVKIMAGENVPROC)(GLuint64 vkImage,
                                            GLuint sampler,
                                            GLfloat x0,
@@ -11823,7 +12404,8 @@ namespace internal
     GARCH_API extern PFNGLACTIVEVARYINGNVPROC glActiveVaryingNV;
     GARCH_API extern PFNGLALPHAFUNCPROC glAlphaFunc;
     GARCH_API extern PFNGLALPHATOCOVERAGEDITHERCONTROLNVPROC glAlphaToCoverageDitherControlNV;
-    GARCH_API extern PFNGLAPPLYFRAMEBUFFERATTACHMENTCMAAINTELPROC glApplyFramebufferAttachmentCMAAINTEL;
+    GARCH_API extern PFNGLAPPLYFRAMEBUFFERATTACHMENTCMAAINTELPROC
+      glApplyFramebufferAttachmentCMAAINTEL;
     GARCH_API extern PFNGLAPPLYTEXTUREEXTPROC glApplyTextureEXT;
     GARCH_API extern PFNGLACQUIREKEYEDMUTEXWIN32EXTPROC glAcquireKeyedMutexWin32EXT;
     GARCH_API extern PFNGLAREPROGRAMSRESIDENTNVPROC glAreProgramsResidentNV;
@@ -12268,7 +12850,8 @@ namespace internal
     GARCH_API extern PFNGLDRAWELEMENTSINDIRECTPROC glDrawElementsIndirect;
     GARCH_API extern PFNGLDRAWELEMENTSINSTANCEDPROC glDrawElementsInstanced;
     GARCH_API extern PFNGLDRAWELEMENTSINSTANCEDARBPROC glDrawElementsInstancedARB;
-    GARCH_API extern PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEPROC glDrawElementsInstancedBaseInstance;
+    GARCH_API extern PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEPROC
+      glDrawElementsInstancedBaseInstance;
     GARCH_API extern PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC glDrawElementsInstancedBaseVertex;
     GARCH_API extern PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC
       glDrawElementsInstancedBaseVertexBaseInstance;
@@ -12285,7 +12868,8 @@ namespace internal
     GARCH_API extern PFNGLDRAWTRANSFORMFEEDBACKINSTANCEDPROC glDrawTransformFeedbackInstanced;
     GARCH_API extern PFNGLDRAWTRANSFORMFEEDBACKNVPROC glDrawTransformFeedbackNV;
     GARCH_API extern PFNGLDRAWTRANSFORMFEEDBACKSTREAMPROC glDrawTransformFeedbackStream;
-    GARCH_API extern PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC glDrawTransformFeedbackStreamInstanced;
+    GARCH_API extern PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC
+      glDrawTransformFeedbackStreamInstanced;
     GARCH_API extern PFNGLEGLIMAGETARGETTEXSTORAGEEXTPROC glEGLImageTargetTexStorageEXT;
     GARCH_API extern PFNGLEGLIMAGETARGETTEXTURESTORAGEEXTPROC glEGLImageTargetTextureStorageEXT;
     GARCH_API extern PFNGLEDGEFLAGPROC glEdgeFlag;
@@ -12497,8 +13081,10 @@ namespace internal
     GARCH_API extern PFNGLGETDOUBLEVPROC glGetDoublev;
     GARCH_API extern PFNGLGETERRORPROC glGetError;
     GARCH_API extern PFNGLGETFENCEIVNVPROC glGetFenceivNV;
-    GARCH_API extern PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC glGetFinalCombinerInputParameterfvNV;
-    GARCH_API extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC glGetFinalCombinerInputParameterivNV;
+    GARCH_API extern PFNGLGETFINALCOMBINERINPUTPARAMETERFVNVPROC
+      glGetFinalCombinerInputParameterfvNV;
+    GARCH_API extern PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC
+      glGetFinalCombinerInputParameterivNV;
     GARCH_API extern PFNGLGETFIRSTPERFQUERYIDINTELPROC glGetFirstPerfQueryIdINTEL;
     GARCH_API extern PFNGLGETFLOATINDEXEDVEXTPROC glGetFloatIndexedvEXT;
     GARCH_API extern PFNGLGETFLOATI_VPROC glGetFloati_v;
@@ -12507,7 +13093,8 @@ namespace internal
     GARCH_API extern PFNGLGETFRAGDATAINDEXPROC glGetFragDataIndex;
     GARCH_API extern PFNGLGETFRAGDATALOCATIONPROC glGetFragDataLocation;
     GARCH_API extern PFNGLGETFRAGDATALOCATIONEXTPROC glGetFragDataLocationEXT;
-    GARCH_API extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentParameteriv;
+    GARCH_API extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
+      glGetFramebufferAttachmentParameteriv;
     GARCH_API extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC
       glGetFramebufferAttachmentParameterivEXT;
     GARCH_API extern PFNGLGETFRAMEBUFFERPARAMETERFVAMDPROC glGetFramebufferParameterfvAMD;
@@ -12554,7 +13141,8 @@ namespace internal
     GARCH_API extern PFNGLGETMAPIVPROC glGetMapiv;
     GARCH_API extern PFNGLGETMATERIALFVPROC glGetMaterialfv;
     GARCH_API extern PFNGLGETMATERIALIVPROC glGetMaterialiv;
-    GARCH_API extern PFNGLGETMEMORYOBJECTDETACHEDRESOURCESUIVNVPROC glGetMemoryObjectDetachedResourcesuivNV;
+    GARCH_API extern PFNGLGETMEMORYOBJECTDETACHEDRESOURCESUIVNVPROC
+      glGetMemoryObjectDetachedResourcesuivNV;
     GARCH_API extern PFNGLGETMEMORYOBJECTPARAMETERIVEXTPROC glGetMemoryObjectParameterivEXT;
     GARCH_API extern PFNGLGETMINMAXPROC glGetMinmax;
     GARCH_API extern PFNGLGETMINMAXEXTPROC glGetMinmaxEXT;
@@ -12584,21 +13172,28 @@ namespace internal
     GARCH_API extern PFNGLGETNAMEDBUFFERPOINTERVEXTPROC glGetNamedBufferPointervEXT;
     GARCH_API extern PFNGLGETNAMEDBUFFERSUBDATAPROC glGetNamedBufferSubData;
     GARCH_API extern PFNGLGETNAMEDBUFFERSUBDATAEXTPROC glGetNamedBufferSubDataEXT;
-    GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERPARAMETERFVAMDPROC glGetNamedFramebufferParameterfvAMD;
+    GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERPARAMETERFVAMDPROC
+      glGetNamedFramebufferParameterfvAMD;
     GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVPROC
       glGetNamedFramebufferAttachmentParameteriv;
     GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC
       glGetNamedFramebufferAttachmentParameterivEXT;
     GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVPROC glGetNamedFramebufferParameteriv;
-    GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVEXTPROC glGetNamedFramebufferParameterivEXT;
-    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERIIVEXTPROC glGetNamedProgramLocalParameterIivEXT;
-    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXTPROC glGetNamedProgramLocalParameterIuivEXT;
-    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERDVEXTPROC glGetNamedProgramLocalParameterdvEXT;
-    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERFVEXTPROC glGetNamedProgramLocalParameterfvEXT;
+    GARCH_API extern PFNGLGETNAMEDFRAMEBUFFERPARAMETERIVEXTPROC
+      glGetNamedFramebufferParameterivEXT;
+    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERIIVEXTPROC
+      glGetNamedProgramLocalParameterIivEXT;
+    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXTPROC
+      glGetNamedProgramLocalParameterIuivEXT;
+    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERDVEXTPROC
+      glGetNamedProgramLocalParameterdvEXT;
+    GARCH_API extern PFNGLGETNAMEDPROGRAMLOCALPARAMETERFVEXTPROC
+      glGetNamedProgramLocalParameterfvEXT;
     GARCH_API extern PFNGLGETNAMEDPROGRAMSTRINGEXTPROC glGetNamedProgramStringEXT;
     GARCH_API extern PFNGLGETNAMEDPROGRAMIVEXTPROC glGetNamedProgramivEXT;
     GARCH_API extern PFNGLGETNAMEDRENDERBUFFERPARAMETERIVPROC glGetNamedRenderbufferParameteriv;
-    GARCH_API extern PFNGLGETNAMEDRENDERBUFFERPARAMETERIVEXTPROC glGetNamedRenderbufferParameterivEXT;
+    GARCH_API extern PFNGLGETNAMEDRENDERBUFFERPARAMETERIVEXTPROC
+      glGetNamedRenderbufferParameterivEXT;
     GARCH_API extern PFNGLGETNAMEDSTRINGARBPROC glGetNamedStringARB;
     GARCH_API extern PFNGLGETNAMEDSTRINGIVARBPROC glGetNamedStringivARB;
     GARCH_API extern PFNGLGETNEXTPERFQUERYIDINTELPROC glGetNextPerfQueryIdINTEL;
@@ -12674,7 +13269,8 @@ namespace internal
     GARCH_API extern PFNGLGETPROGRAMSTAGEIVPROC glGetProgramStageiv;
     GARCH_API extern PFNGLGETPROGRAMSTRINGARBPROC glGetProgramStringARB;
     GARCH_API extern PFNGLGETPROGRAMSTRINGNVPROC glGetProgramStringNV;
-    GARCH_API extern PFNGLGETPROGRAMSUBROUTINEPARAMETERUIVNVPROC glGetProgramSubroutineParameteruivNV;
+    GARCH_API extern PFNGLGETPROGRAMSUBROUTINEPARAMETERUIVNVPROC
+      glGetProgramSubroutineParameteruivNV;
     GARCH_API extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
     GARCH_API extern PFNGLGETPROGRAMIVARBPROC glGetProgramivARB;
     GARCH_API extern PFNGLGETPROGRAMIVNVPROC glGetProgramivNV;
@@ -12894,7 +13490,8 @@ namespace internal
     GARCH_API extern PFNGLINVALIDATEBUFFERSUBDATAPROC glInvalidateBufferSubData;
     GARCH_API extern PFNGLINVALIDATEFRAMEBUFFERPROC glInvalidateFramebuffer;
     GARCH_API extern PFNGLINVALIDATENAMEDFRAMEBUFFERDATAPROC glInvalidateNamedFramebufferData;
-    GARCH_API extern PFNGLINVALIDATENAMEDFRAMEBUFFERSUBDATAPROC glInvalidateNamedFramebufferSubData;
+    GARCH_API extern PFNGLINVALIDATENAMEDFRAMEBUFFERSUBDATAPROC
+      glInvalidateNamedFramebufferSubData;
     GARCH_API extern PFNGLINVALIDATESUBFRAMEBUFFERPROC glInvalidateSubFramebuffer;
     GARCH_API extern PFNGLINVALIDATETEXIMAGEPROC glInvalidateTexImage;
     GARCH_API extern PFNGLINVALIDATETEXSUBIMAGEPROC glInvalidateTexSubImage;
@@ -13064,7 +13661,8 @@ namespace internal
     GARCH_API extern PFNGLMULTIDRAWARRAYSINDIRECTAMDPROC glMultiDrawArraysIndirectAMD;
     GARCH_API extern PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNVPROC
       glMultiDrawArraysIndirectBindlessCountNV;
-    GARCH_API extern PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC glMultiDrawArraysIndirectBindlessNV;
+    GARCH_API extern PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC
+      glMultiDrawArraysIndirectBindlessNV;
     GARCH_API extern PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC glMultiDrawArraysIndirectCount;
     GARCH_API extern PFNGLMULTIDRAWARRAYSINDIRECTCOUNTARBPROC glMultiDrawArraysIndirectCountARB;
     GARCH_API extern PFNGLMULTIDRAWELEMENTARRAYAPPLEPROC glMultiDrawElementArrayAPPLE;
@@ -13075,11 +13673,14 @@ namespace internal
     GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTAMDPROC glMultiDrawElementsIndirectAMD;
     GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNVPROC
       glMultiDrawElementsIndirectBindlessCountNV;
-    GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSNVPROC glMultiDrawElementsIndirectBindlessNV;
+    GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTBINDLESSNVPROC
+      glMultiDrawElementsIndirectBindlessNV;
     GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC glMultiDrawElementsIndirectCount;
-    GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTARBPROC glMultiDrawElementsIndirectCountARB;
+    GARCH_API extern PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTARBPROC
+      glMultiDrawElementsIndirectCountARB;
     GARCH_API extern PFNGLMULTIDRAWMESHTASKSINDIRECTNVPROC glMultiDrawMeshTasksIndirectNV;
-    GARCH_API extern PFNGLMULTIDRAWMESHTASKSINDIRECTCOUNTNVPROC glMultiDrawMeshTasksIndirectCountNV;
+    GARCH_API extern PFNGLMULTIDRAWMESHTASKSINDIRECTCOUNTNVPROC
+      glMultiDrawMeshTasksIndirectCountNV;
     GARCH_API extern PFNGLMULTIDRAWRANGEELEMENTARRAYAPPLEPROC glMultiDrawRangeElementArrayAPPLE;
     GARCH_API extern PFNGLMULTITEXBUFFEREXTPROC glMultiTexBufferEXT;
     GARCH_API extern PFNGLMULTITEXCOORD1DPROC glMultiTexCoord1d;
@@ -13199,7 +13800,8 @@ namespace internal
     GARCH_API extern PFNGLMULTICASTGETQUERYOBJECTUIVNVPROC glMulticastGetQueryObjectuivNV;
     GARCH_API extern PFNGLMULTICASTSCISSORARRAYVNVXPROC glMulticastScissorArrayvNVX;
     GARCH_API extern PFNGLMULTICASTVIEWPORTARRAYVNVXPROC glMulticastViewportArrayvNVX;
-    GARCH_API extern PFNGLMULTICASTVIEWPORTPOSITIONWSCALENVXPROC glMulticastViewportPositionWScaleNVX;
+    GARCH_API extern PFNGLMULTICASTVIEWPORTPOSITIONWSCALENVXPROC
+      glMulticastViewportPositionWScaleNVX;
     GARCH_API extern PFNGLMULTICASTWAITSYNCNVPROC glMulticastWaitSyncNV;
     GARCH_API extern PFNGLNAMEDBUFFERATTACHMEMORYNVPROC glNamedBufferAttachMemoryNV;
     GARCH_API extern PFNGLNAMEDBUFFERDATAPROC glNamedBufferData;
@@ -13221,10 +13823,13 @@ namespace internal
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERREADBUFFERPROC glNamedFramebufferReadBuffer;
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERRENDERBUFFERPROC glNamedFramebufferRenderbuffer;
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERRENDERBUFFEREXTPROC glNamedFramebufferRenderbufferEXT;
-    GARCH_API extern PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARBPROC glNamedFramebufferSampleLocationsfvARB;
-    GARCH_API extern PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNVPROC glNamedFramebufferSampleLocationsfvNV;
+    GARCH_API extern PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARBPROC
+      glNamedFramebufferSampleLocationsfvARB;
+    GARCH_API extern PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNVPROC
+      glNamedFramebufferSampleLocationsfvNV;
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERTEXTUREPROC glNamedFramebufferTexture;
-    GARCH_API extern PFNGLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMDPROC glNamedFramebufferSamplePositionsfvAMD;
+    GARCH_API extern PFNGLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMDPROC
+      glNamedFramebufferSamplePositionsfvAMD;
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERTEXTURE1DEXTPROC glNamedFramebufferTexture1DEXT;
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERTEXTURE2DEXTPROC glNamedFramebufferTexture2DEXT;
     GARCH_API extern PFNGLNAMEDFRAMEBUFFERTEXTURE3DEXTPROC glNamedFramebufferTexture3DEXT;
@@ -13237,16 +13842,23 @@ namespace internal
     GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETER4FEXTPROC glNamedProgramLocalParameter4fEXT;
     GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETER4FVEXTPROC glNamedProgramLocalParameter4fvEXT;
     GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4IEXTPROC glNamedProgramLocalParameterI4iEXT;
-    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4IVEXTPROC glNamedProgramLocalParameterI4ivEXT;
-    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIEXTPROC glNamedProgramLocalParameterI4uiEXT;
-    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIVEXTPROC glNamedProgramLocalParameterI4uivEXT;
-    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERS4FVEXTPROC glNamedProgramLocalParameters4fvEXT;
-    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERSI4IVEXTPROC glNamedProgramLocalParametersI4ivEXT;
-    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXTPROC glNamedProgramLocalParametersI4uivEXT;
+    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4IVEXTPROC
+      glNamedProgramLocalParameterI4ivEXT;
+    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIEXTPROC
+      glNamedProgramLocalParameterI4uiEXT;
+    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERI4UIVEXTPROC
+      glNamedProgramLocalParameterI4uivEXT;
+    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERS4FVEXTPROC
+      glNamedProgramLocalParameters4fvEXT;
+    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERSI4IVEXTPROC
+      glNamedProgramLocalParametersI4ivEXT;
+    GARCH_API extern PFNGLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXTPROC
+      glNamedProgramLocalParametersI4uivEXT;
     GARCH_API extern PFNGLNAMEDPROGRAMSTRINGEXTPROC glNamedProgramStringEXT;
     GARCH_API extern PFNGLNAMEDRENDERBUFFERSTORAGEPROC glNamedRenderbufferStorage;
     GARCH_API extern PFNGLNAMEDRENDERBUFFERSTORAGEEXTPROC glNamedRenderbufferStorageEXT;
-    GARCH_API extern PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEPROC glNamedRenderbufferStorageMultisample;
+    GARCH_API extern PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEPROC
+      glNamedRenderbufferStorageMultisample;
     GARCH_API extern PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC
       glNamedRenderbufferStorageMultisampleAdvancedAMD;
     GARCH_API extern PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXTPROC
@@ -13596,7 +14208,8 @@ namespace internal
       glRenderbufferStorageMultisampleAdvancedAMD;
     GARCH_API extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENVPROC
       glRenderbufferStorageMultisampleCoverageNV;
-    GARCH_API extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glRenderbufferStorageMultisampleEXT;
+    GARCH_API extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC
+      glRenderbufferStorageMultisampleEXT;
     GARCH_API extern PFNGLREQUESTRESIDENTPROGRAMSNVPROC glRequestResidentProgramsNV;
     GARCH_API extern PFNGLRESETHISTOGRAMPROC glResetHistogram;
     GARCH_API extern PFNGLRESETHISTOGRAMEXTPROC glResetHistogramEXT;
@@ -13707,9 +14320,11 @@ namespace internal
     GARCH_API extern PFNGLSTENCILOPVALUEAMDPROC glStencilOpValueAMD;
     GARCH_API extern PFNGLSTENCILSTROKEPATHINSTANCEDNVPROC glStencilStrokePathInstancedNV;
     GARCH_API extern PFNGLSTENCILSTROKEPATHNVPROC glStencilStrokePathNV;
-    GARCH_API extern PFNGLSTENCILTHENCOVERFILLPATHINSTANCEDNVPROC glStencilThenCoverFillPathInstancedNV;
+    GARCH_API extern PFNGLSTENCILTHENCOVERFILLPATHINSTANCEDNVPROC
+      glStencilThenCoverFillPathInstancedNV;
     GARCH_API extern PFNGLSTENCILTHENCOVERFILLPATHNVPROC glStencilThenCoverFillPathNV;
-    GARCH_API extern PFNGLSTENCILTHENCOVERSTROKEPATHINSTANCEDNVPROC glStencilThenCoverStrokePathInstancedNV;
+    GARCH_API extern PFNGLSTENCILTHENCOVERSTROKEPATHINSTANCEDNVPROC
+      glStencilThenCoverStrokePathInstancedNV;
     GARCH_API extern PFNGLSTENCILTHENCOVERSTROKEPATHNVPROC glStencilThenCoverStrokePathNV;
     GARCH_API extern PFNGLSUBPIXELPRECISIONBIASNVPROC glSubpixelPrecisionBiasNV;
     GARCH_API extern PFNGLSWIZZLEEXTPROC glSwizzleEXT;
@@ -13842,10 +14457,12 @@ namespace internal
     GARCH_API extern PFNGLTEXTUREBUFFERRANGEEXTPROC glTextureBufferRangeEXT;
     GARCH_API extern PFNGLTEXTUREIMAGE1DEXTPROC glTextureImage1DEXT;
     GARCH_API extern PFNGLTEXTUREIMAGE2DEXTPROC glTextureImage2DEXT;
-    GARCH_API extern PFNGLTEXTUREIMAGE2DMULTISAMPLECOVERAGENVPROC glTextureImage2DMultisampleCoverageNV;
+    GARCH_API extern PFNGLTEXTUREIMAGE2DMULTISAMPLECOVERAGENVPROC
+      glTextureImage2DMultisampleCoverageNV;
     GARCH_API extern PFNGLTEXTUREIMAGE2DMULTISAMPLENVPROC glTextureImage2DMultisampleNV;
     GARCH_API extern PFNGLTEXTUREIMAGE3DEXTPROC glTextureImage3DEXT;
-    GARCH_API extern PFNGLTEXTUREIMAGE3DMULTISAMPLECOVERAGENVPROC glTextureImage3DMultisampleCoverageNV;
+    GARCH_API extern PFNGLTEXTUREIMAGE3DMULTISAMPLECOVERAGENVPROC
+      glTextureImage3DMultisampleCoverageNV;
     GARCH_API extern PFNGLTEXTUREIMAGE3DMULTISAMPLENVPROC glTextureImage3DMultisampleNV;
     GARCH_API extern PFNGLTEXTURELIGHTEXTPROC glTextureLightEXT;
     GARCH_API extern PFNGLTEXTUREMATERIALEXTPROC glTextureMaterialEXT;
@@ -13878,9 +14495,11 @@ namespace internal
     GARCH_API extern PFNGLTEXTURESTORAGE3DMULTISAMPLEEXTPROC glTextureStorage3DMultisampleEXT;
     GARCH_API extern PFNGLTEXTURESTORAGEMEM1DEXTPROC glTextureStorageMem1DEXT;
     GARCH_API extern PFNGLTEXTURESTORAGEMEM2DEXTPROC glTextureStorageMem2DEXT;
-    GARCH_API extern PFNGLTEXTURESTORAGEMEM2DMULTISAMPLEEXTPROC glTextureStorageMem2DMultisampleEXT;
+    GARCH_API extern PFNGLTEXTURESTORAGEMEM2DMULTISAMPLEEXTPROC
+      glTextureStorageMem2DMultisampleEXT;
     GARCH_API extern PFNGLTEXTURESTORAGEMEM3DEXTPROC glTextureStorageMem3DEXT;
-    GARCH_API extern PFNGLTEXTURESTORAGEMEM3DMULTISAMPLEEXTPROC glTextureStorageMem3DMultisampleEXT;
+    GARCH_API extern PFNGLTEXTURESTORAGEMEM3DMULTISAMPLEEXTPROC
+      glTextureStorageMem3DMultisampleEXT;
     GARCH_API extern PFNGLTEXTURESTORAGESPARSEAMDPROC glTextureStorageSparseAMD;
     GARCH_API extern PFNGLTEXTURESUBIMAGE1DPROC glTextureSubImage1D;
     GARCH_API extern PFNGLTEXTURESUBIMAGE1DEXTPROC glTextureSubImage1DEXT;
@@ -14096,22 +14715,31 @@ namespace internal
     GARCH_API extern PFNGLVERTEXARRAYELEMENTBUFFERPROC glVertexArrayElementBuffer;
     GARCH_API extern PFNGLVERTEXARRAYFOGCOORDOFFSETEXTPROC glVertexArrayFogCoordOffsetEXT;
     GARCH_API extern PFNGLVERTEXARRAYINDEXOFFSETEXTPROC glVertexArrayIndexOffsetEXT;
-    GARCH_API extern PFNGLVERTEXARRAYMULTITEXCOORDOFFSETEXTPROC glVertexArrayMultiTexCoordOffsetEXT;
+    GARCH_API extern PFNGLVERTEXARRAYMULTITEXCOORDOFFSETEXTPROC
+      glVertexArrayMultiTexCoordOffsetEXT;
     GARCH_API extern PFNGLVERTEXARRAYNORMALOFFSETEXTPROC glVertexArrayNormalOffsetEXT;
     GARCH_API extern PFNGLVERTEXARRAYPARAMETERIAPPLEPROC glVertexArrayParameteriAPPLE;
     GARCH_API extern PFNGLVERTEXARRAYRANGEAPPLEPROC glVertexArrayRangeAPPLE;
     GARCH_API extern PFNGLVERTEXARRAYRANGENVPROC glVertexArrayRangeNV;
-    GARCH_API extern PFNGLVERTEXARRAYSECONDARYCOLOROFFSETEXTPROC glVertexArraySecondaryColorOffsetEXT;
+    GARCH_API extern PFNGLVERTEXARRAYSECONDARYCOLOROFFSETEXTPROC
+      glVertexArraySecondaryColorOffsetEXT;
     GARCH_API extern PFNGLVERTEXARRAYTEXCOORDOFFSETEXTPROC glVertexArrayTexCoordOffsetEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBBINDINGEXTPROC glVertexArrayVertexAttribBindingEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBDIVISOREXTPROC glVertexArrayVertexAttribDivisorEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBBINDINGEXTPROC
+      glVertexArrayVertexAttribBindingEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBDIVISOREXTPROC
+      glVertexArrayVertexAttribDivisorEXT;
     GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBFORMATEXTPROC glVertexArrayVertexAttribFormatEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBIFORMATEXTPROC glVertexArrayVertexAttribIFormatEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBIOFFSETEXTPROC glVertexArrayVertexAttribIOffsetEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBLFORMATEXTPROC glVertexArrayVertexAttribLFormatEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBLOFFSETEXTPROC glVertexArrayVertexAttribLOffsetEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBIFORMATEXTPROC
+      glVertexArrayVertexAttribIFormatEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBIOFFSETEXTPROC
+      glVertexArrayVertexAttribIOffsetEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBLFORMATEXTPROC
+      glVertexArrayVertexAttribLFormatEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBLOFFSETEXTPROC
+      glVertexArrayVertexAttribLOffsetEXT;
     GARCH_API extern PFNGLVERTEXARRAYVERTEXATTRIBOFFSETEXTPROC glVertexArrayVertexAttribOffsetEXT;
-    GARCH_API extern PFNGLVERTEXARRAYVERTEXBINDINGDIVISOREXTPROC glVertexArrayVertexBindingDivisorEXT;
+    GARCH_API extern PFNGLVERTEXARRAYVERTEXBINDINGDIVISOREXTPROC
+      glVertexArrayVertexBindingDivisorEXT;
     GARCH_API extern PFNGLVERTEXARRAYVERTEXBUFFERPROC glVertexArrayVertexBuffer;
     GARCH_API extern PFNGLVERTEXARRAYVERTEXBUFFERSPROC glVertexArrayVertexBuffers;
     GARCH_API extern PFNGLVERTEXARRAYVERTEXOFFSETEXTPROC glVertexArrayVertexOffsetEXT;

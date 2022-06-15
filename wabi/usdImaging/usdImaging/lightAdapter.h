@@ -48,14 +48,13 @@ class UsdPrim;
 class UsdImagingLightAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   typedef UsdImagingPrimAdapter BaseAdapter;
 
   USDIMAGING_API
   static bool IsEnabledSceneLights();
 
-  UsdImagingLightAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingLightAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingLightAdapter() override;
@@ -129,6 +128,7 @@ class UsdImagingLightAdapter : public UsdImagingPrimAdapter
                               UsdTimeCode time) const override;
 
  protected:
+
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 };
 

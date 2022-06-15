@@ -59,6 +59,7 @@ class SdfAssetPath;
 class UsdPhysicsMassAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -68,16 +69,12 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   /// Equivalent to UsdPhysicsMassAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsMassAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdPhysicsMassAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdPhysicsMassAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsMassAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsMassAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdPhysicsMassAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -140,6 +137,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   static UsdPhysicsMassAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -147,6 +145,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -156,9 +155,11 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MASS
   // --------------------------------------------------------------------- //
@@ -186,9 +187,11 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateMassAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateMassAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DENSITY
   // --------------------------------------------------------------------- //
@@ -219,9 +222,11 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateDensityAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateDensityAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CENTEROFMASS
   // --------------------------------------------------------------------- //
@@ -245,6 +250,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DIAGONALINERTIA
   // --------------------------------------------------------------------- //
@@ -270,6 +276,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PRINCIPALAXES
   // --------------------------------------------------------------------- //
@@ -294,6 +301,7 @@ class UsdPhysicsMassAPI : public UsdAPISchemaBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -168,8 +168,9 @@ WABI_NAMESPACE_BEGIN
 //
 #define _TF_TOKENS_DECLARE_MEMBER(r, data, elem)                                    \
   TfToken BOOST_PP_IIF(TF_PP_IS_TUPLE(elem), BOOST_PP_TUPLE_ELEM(2, 0, elem), elem) \
-  BOOST_PP_EXPR_IIF(TF_PP_IS_TUPLE(BOOST_PP_TUPLE_ELEM(2, 1, elem)),                \
-                    [BOOST_PP_SEQ_SIZE(BOOST_PP_TUPLE_ELEM(1, 0, BOOST_PP_TUPLE_ELEM(2, 1, elem)))]);
+    BOOST_PP_EXPR_IIF(                                                              \
+      TF_PP_IS_TUPLE(BOOST_PP_TUPLE_ELEM(2, 1, elem)),                              \
+      [BOOST_PP_SEQ_SIZE(BOOST_PP_TUPLE_ELEM(1, 0, BOOST_PP_TUPLE_ELEM(2, 1, elem)))]);
 
 // Private macro used to declare the list of members as TfTokens
 //
@@ -235,13 +236,15 @@ WABI_NAMESPACE_BEGIN
 
 #define _TF_TOKENS_APPEND_MEMBER_BODY(r, data, elem) allTokens.push_back(elem);
 
-#define _TF_TOKENS_BUILD_ALLTOKENS_VECTOR(seq) BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_APPEND_MEMBER, ~, seq)
+#define _TF_TOKENS_BUILD_ALLTOKENS_VECTOR(seq) \
+  BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_APPEND_MEMBER, ~, seq)
 
 // Private macros to generate the list of initialized members.
 //
 #define _TF_TOKENS_INITIALIZE_SEQ(seq) BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_DEFINE_MEMBER, ~, seq)
 
-#define _TF_TOKENS_ASSIGN_ARRAY_SEQ(seq) BOOST_PP_SEQ_FOR_EACH(_TF_TOKENS_DEFINE_ARRAY_MEMBERS, ~, seq)
+#define _TF_TOKENS_ASSIGN_ARRAY_SEQ(seq) \
+  BOOST_PP_SEQ_FOR_EACH(_TF_TOKENS_DEFINE_ARRAY_MEMBERS, ~, seq)
 
 #define _TF_TOKENS_DEFINE_ARRAY_MEMBERS(r, data, elem)     \
   BOOST_PP_SEQ_FOR_EACH_I(_TF_TOKENS_DEFINE_ARRAY_MEMBER,  \

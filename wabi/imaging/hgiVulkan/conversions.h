@@ -48,6 +48,7 @@ WABI_NAMESPACE_BEGIN
 class HgiVulkanConversions final
 {
  public:
+
   HGIVULKAN_API
   static VkFormat GetFormat(HgiFormat inFormat);
 

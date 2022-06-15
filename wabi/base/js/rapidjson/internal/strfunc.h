@@ -28,8 +28,7 @@ namespace internal
       \note This has the same semantics as strlen(), the return value is not number of Unicode
      codepoints.
   */
-  template<typename Ch>
-  inline SizeType StrLen(const Ch *s)
+  template<typename Ch> inline SizeType StrLen(const Ch *s)
   {
     const Ch *p = s;
     while (*p)
@@ -44,8 +43,7 @@ namespace internal
     GenericStringStream<Encoding> is(s);
     const typename Encoding::Ch *end = s + length;
     SizeType count = 0;
-    while (is.src_ < end)
-    {
+    while (is.src_ < end) {
       unsigned codepoint;
       if (!Encoding::Decode(is, &codepoint))
         return false;

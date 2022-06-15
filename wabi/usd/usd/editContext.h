@@ -69,6 +69,7 @@ class UsdEditContext
   UsdEditContext &operator=(UsdEditContext const &) = delete;
 
  public:
+
   /// Construct without modifying \a stage's current EditTarget.  Save
   /// \a stage's current EditTarget to restore on destruction.
   USD_API
@@ -98,6 +99,7 @@ class UsdEditContext
   ~UsdEditContext();
 
  private:
+
   // The stage this context is bound to.
   UsdStagePtr _stage;
 

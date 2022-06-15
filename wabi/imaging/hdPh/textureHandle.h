@@ -56,6 +56,7 @@ class HdPh_TextureHandleRegistry;
 class HdPhTextureHandle
 {
  public:
+
   /// See HdPhResourceRegistry::AllocateTextureHandle for details.
   HDPH_API
   HdPhTextureHandle(HdPhTextureObjectSharedPtr const &textureObject,
@@ -114,6 +115,7 @@ class HdPhTextureHandle
   void ReallocateSamplerIfNecessary();
 
  private:
+
   HdPhTextureObjectSharedPtr _textureObject;
   HdPhSamplerObjectSharedPtr _samplerObject;
   HdSamplerParameters _samplerParams;

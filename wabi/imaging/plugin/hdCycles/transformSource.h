@@ -43,11 +43,14 @@ static constexpr ccl::uint HD_CYCLES_MAX_GEOMETRY_STEPS = ccl::Geometry::MAX_MOT
 /// Common aliases used in motion sampling
 ///
 using HdCyclesValueTimeSampleArray = HdTimeSampleArray<VtValue, HD_CYCLES_MAX_GEOMETRY_STEPS>;
-using HdCyclesVec3fArrayTimeSampleArray = HdTimeSampleArray<VtVec3fArray, HD_CYCLES_MAX_GEOMETRY_STEPS>;
-using HdCyclesMatrix4dTimeSampleArray = HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MAX_TRANSFORM_STEPS>;
+using HdCyclesVec3fArrayTimeSampleArray =
+  HdTimeSampleArray<VtVec3fArray, HD_CYCLES_MAX_GEOMETRY_STEPS>;
+using HdCyclesMatrix4dTimeSampleArray =
+  HdTimeSampleArray<GfMatrix4d, HD_CYCLES_MAX_TRANSFORM_STEPS>;
 using HdCyclesMatrix4dArrayTimeSampleArray =
   HdTimeSampleArray<VtMatrix4dArray, HD_CYCLES_MAX_TRANSFORM_STEPS>;
-using HdCyclesTransformTimeSampleArray = HdTimeSampleArray<ccl::Transform, HD_CYCLES_MAX_TRANSFORM_STEPS>;
+using HdCyclesTransformTimeSampleArray =
+  HdTimeSampleArray<ccl::Transform, HD_CYCLES_MAX_TRANSFORM_STEPS>;
 
 using HdCyclesTransformSmallVector = TfSmallVector<ccl::Transform, HD_CYCLES_MAX_TRANSFORM_STEPS>;
 
@@ -57,6 +60,7 @@ using HdCyclesTransformSmallVector = TfSmallVector<ccl::Transform, HD_CYCLES_MAX
 class HdBbbObjectPropertiesSource : public HdBufferSource
 {
  protected:
+
   using HdBufferSource::HdBufferSource;
 };
 
@@ -68,6 +72,7 @@ using HdBbbObjectPropertiesSourceSharedPtr = std::shared_ptr<HdBbbObjectProperti
 class HdCyclesTransformSource : public HdBbbObjectPropertiesSource
 {
  public:
+
   HdCyclesTransformSource(ccl::Object *object,
                           const HdCyclesMatrix4dTimeSampleArray &samples,
                           const GfMatrix4d &fallback,
@@ -78,8 +83,7 @@ class HdCyclesTransformSource : public HdBbbObjectPropertiesSource
   {
     return HdTokens->transform;
   }
-  void GetBufferSpecs(HdBufferSpecVector *specs) const override
-  {}
+  void GetBufferSpecs(HdBufferSpecVector *specs) const override {}
   const void *GetData() const override
   {
     return nullptr;
@@ -98,10 +102,12 @@ class HdCyclesTransformSource : public HdBbbObjectPropertiesSource
     return m_object;
   }
 
-  static HdCyclesTransformTimeSampleArray ResampleUniform(const HdCyclesMatrix4dTimeSampleArray &samples,
-                                                          unsigned int new_num_samples);
+  static HdCyclesTransformTimeSampleArray ResampleUniform(
+    const HdCyclesMatrix4dTimeSampleArray &samples,
+    unsigned int new_num_samples);
 
  private:
+
   bool _CheckValid() const override;
 
   ccl::Object *m_object;

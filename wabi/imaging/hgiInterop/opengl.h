@@ -40,6 +40,7 @@ class VtValue;
 class HgiInteropOpenGL final
 {
  public:
+
   HGIINTEROP_API
   HgiInteropOpenGL();
 
@@ -55,6 +56,7 @@ class HgiInteropOpenGL final
                           GfVec4i const &viewport);
 
  private:
+
   uint32_t _vs;
   uint32_t _fsNoDepth;
   uint32_t _fsDepth;

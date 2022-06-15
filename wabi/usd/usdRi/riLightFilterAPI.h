@@ -69,6 +69,7 @@ class SdfAssetPath;
 class UsdRiRiLightFilterAPI : public UsdSchemaBase
 {
  public:
+
   /// Compile-time constant indicating whether or not this class corresponds
   /// to a concrete instantiable prim type in scene description.  If this is
   /// true, GetStaticPrimDefinition() will return a valid prim definition with
@@ -79,16 +80,12 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
   /// Equivalent to UsdRiRiLightFilterAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiRiLightFilterAPI(const UsdPrim &prim = UsdPrim())
-    : UsdSchemaBase(prim)
-  {}
+  explicit UsdRiRiLightFilterAPI(const UsdPrim &prim = UsdPrim()) : UsdSchemaBase(prim) {}
 
   /// Construct a UsdRiRiLightFilterAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiRiLightFilterAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiRiLightFilterAPI(const UsdSchemaBase &schemaObj)
-    : UsdSchemaBase(schemaObj)
-  {}
+  explicit UsdRiRiLightFilterAPI(const UsdSchemaBase &schemaObj) : UsdSchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -113,6 +110,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
   static UsdRiRiLightFilterAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -125,6 +123,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
   virtual const TfType &GetType() const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RICOMBINEMODE
   // --------------------------------------------------------------------- //
@@ -166,6 +165,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIDENSITY
   // --------------------------------------------------------------------- //
@@ -188,6 +188,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIINVERT
   // --------------------------------------------------------------------- //
@@ -206,9 +207,11 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateRiInvertAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRiInvertAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIINTENSITY
   // --------------------------------------------------------------------- //
@@ -231,6 +234,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIDIFFUSE
   // --------------------------------------------------------------------- //
@@ -254,6 +258,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RISPECULAR
   // --------------------------------------------------------------------- //
@@ -277,6 +282,7 @@ class UsdRiRiLightFilterAPI : public UsdSchemaBase
                                     bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

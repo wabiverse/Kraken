@@ -70,6 +70,7 @@ class SdfAssetPath;
 class UsdSkelRoot : public UsdGeomBoundable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -80,16 +81,12 @@ class UsdSkelRoot : public UsdGeomBoundable
   /// Equivalent to UsdSkelRoot::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdSkelRoot(const UsdPrim &prim = UsdPrim())
-    : UsdGeomBoundable(prim)
-  {}
+  explicit UsdSkelRoot(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim) {}
 
   /// Construct a UsdSkelRoot on the prim held by \p schemaObj .
   /// Should be preferred over UsdSkelRoot(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdSkelRoot(const UsdSchemaBase &schemaObj)
-    : UsdGeomBoundable(schemaObj)
-  {}
+  explicit UsdSkelRoot(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj) {}
 
   /// Destructor.
   USDSKEL_API
@@ -139,6 +136,7 @@ class UsdSkelRoot : public UsdGeomBoundable
   static UsdSkelRoot Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -146,6 +144,7 @@ class UsdSkelRoot : public UsdGeomBoundable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSKEL_API
@@ -155,9 +154,11 @@ class UsdSkelRoot : public UsdGeomBoundable
 
   // override SchemaBase virtuals.
   USDSKEL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -45,6 +45,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdUsdaFileFormat);
 class UsdUsdaFileFormat : public SdfTextFileFormat
 {
  private:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
   UsdUsdaFileFormat();

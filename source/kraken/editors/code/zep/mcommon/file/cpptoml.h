@@ -55,20 +55,16 @@ namespace cpptoml
   // such that static_cast can be used instead of dynamic_cast
   // #define CPPTOML_NO_RTTI
 
-  template<class T>
-  class option
+  template<class T> class option
   {
    public:
-    option()
-      : empty_{true},
-        value_()
+
+    option() : empty_{true}, value_()
     {
       // nothing
     }
 
-    option(T value)
-      : empty_{false},
-        value_(std::move(value))
+    option(T value) : empty_{false}, value_(std::move(value))
     {
       // nothing
     }
@@ -88,8 +84,7 @@ namespace cpptoml
       return &value_;
     }
 
-    template<class U>
-    T value_or(U &&alternative) const
+    template<class U> T value_or(U &&alternative) const
     {
       if (!empty_)
         return value_;
@@ -97,6 +92,7 @@ namespace cpptoml
     }
 
    private:
+
     bool empty_;
     T value_;
   };
@@ -123,8 +119,7 @@ namespace cpptoml
   };
 
   struct local_datetime : local_date, local_time
-  {
-  };
+  {};
 
   struct offset_datetime : local_datetime, zone_offset
   {
@@ -172,9 +167,8 @@ namespace cpptoml
   class fill_guard
   {
    public:
-    fill_guard(std::ostream &os)
-      : os_(os),
-        fill_{os.fill()}
+
+    fill_guard(std::ostream &os) : os_(os), fill_{os.fill()}
     {
       // nothing
     }
@@ -185,6 +179,7 @@ namespace cpptoml
     }
 
    private:
+
     std::ostream &os_;
     std::ostream::char_type fill_;
   };
@@ -206,14 +201,13 @@ namespace cpptoml
     os.fill('0');
 
     using std::setw;
-    os << setw(2) << ltime.hour << ":" << setw(2) << ltime.minute << ":" << setw(2) << ltime.second;
+    os << setw(2) << ltime.hour << ":" << setw(2) << ltime.minute << ":" << setw(2)
+       << ltime.second;
 
-    if (ltime.microsecond > 0)
-    {
+    if (ltime.microsecond > 0) {
       os << ".";
       int power = 100000;
-      for (int curr_us = ltime.microsecond; curr_us; power /= 10)
-      {
+      for (int curr_us = ltime.microsecond; curr_us; power /= 10) {
         auto num = curr_us / power;
         os << num;
         curr_us -= num * power;
@@ -230,18 +224,14 @@ namespace cpptoml
 
     using std::setw;
 
-    if (zo.hour_offset != 0 || zo.minute_offset != 0)
-    {
-      if (zo.hour_offset > 0)
-      {
+    if (zo.hour_offset != 0 || zo.minute_offset != 0) {
+      if (zo.hour_offset > 0) {
         os << "+";
-      } else
-      {
+      } else {
         os << "-";
       }
       os << setw(2) << std::abs(zo.hour_offset) << ":" << setw(2) << std::abs(zo.minute_offset);
-    } else
-    {
+    } else {
       os << "Z";
     }
 
@@ -258,22 +248,17 @@ namespace cpptoml
     return os << static_cast<const local_datetime &>(dt) << static_cast<const zone_offset &>(dt);
   }
 
-  template<class T, class... Ts>
-  struct is_one_of;
+  template<class T, class... Ts> struct is_one_of;
 
-  template<class T, class V>
-  struct is_one_of<T, V> : std::is_same<T, V>
-  {
-  };
+  template<class T, class V> struct is_one_of<T, V> : std::is_same<T, V>
+  {};
 
-  template<class T, class V, class... Ts>
-  struct is_one_of<T, V, Ts...>
+  template<class T, class V, class... Ts> struct is_one_of<T, V, Ts...>
   {
     const static bool value = std::is_same<T, V>::value || is_one_of<T, Ts...>::value;
   };
 
-  template<class T>
-  class value;
+  template<class T> class value;
 
   template<class T>
   struct valid_value : is_one_of<T,
@@ -285,14 +270,11 @@ namespace cpptoml
                                  local_time,
                                  local_datetime,
                                  offset_datetime>
-  {
-  };
+  {};
 
-  template<class T, class Enable = void>
-  struct value_traits;
+  template<class T, class Enable = void> struct value_traits;
 
-  template<class T>
-  struct valid_value_or_string_convertible
+  template<class T> struct valid_value_or_string_convertible
   {
 
     const static bool value = valid_value<typename std::decay<T>::type>::value ||
@@ -300,7 +282,8 @@ namespace cpptoml
   };
 
   template<class T>
-  struct value_traits<T, typename std::enable_if<valid_value_or_string_convertible<T>::value>::type>
+  struct value_traits<T,
+                      typename std::enable_if<valid_value_or_string_convertible<T>::value>::type>
   {
     using value_type = typename std::conditional<valid_value<typename std::decay<T>::type>::value,
                                                  typename std::decay<T>::type,
@@ -331,10 +314,11 @@ namespace cpptoml
   };
 
   template<class T>
-  struct value_traits<T,
-                      typename std::enable_if<!valid_value_or_string_convertible<T>::value &&
-                                              !std::is_floating_point<typename std::decay<T>::type>::value &&
-                                              std::is_signed<typename std::decay<T>::type>::value>::type>
+  struct value_traits<
+    T,
+    typename std::enable_if<!valid_value_or_string_convertible<T>::value &&
+                            !std::is_floating_point<typename std::decay<T>::type>::value &&
+                            std::is_signed<typename std::decay<T>::type>::value>::type>
   {
     using value_type = int64_t;
 
@@ -358,9 +342,10 @@ namespace cpptoml
   };
 
   template<class T>
-  struct value_traits<T,
-                      typename std::enable_if<!valid_value_or_string_convertible<T>::value &&
-                                              std::is_unsigned<typename std::decay<T>::type>::value>::type>
+  struct value_traits<
+    T,
+    typename std::enable_if<!valid_value_or_string_convertible<T>::value &&
+                            std::is_unsigned<typename std::decay<T>::type>::value>::type>
   {
     using value_type = int64_t;
 
@@ -381,26 +366,22 @@ namespace cpptoml
   class table;
   class table_array;
 
-  template<class T>
-  struct array_of_trait
+  template<class T> struct array_of_trait
   {
     using return_type = option<std::vector<T>>;
   };
 
-  template<>
-  struct array_of_trait<array>
+  template<> struct array_of_trait<array>
   {
     using return_type = option<std::vector<std::shared_ptr<array>>>;
   };
 
-  template<class T>
-  inline std::shared_ptr<typename value_traits<T>::type> make_value(T &&val);
+  template<class T> inline std::shared_ptr<typename value_traits<T>::type> make_value(T &&val);
   inline std::shared_ptr<array> make_array();
 
   namespace detail
   {
-    template<class T>
-    inline std::shared_ptr<T> make_element();
+    template<class T> inline std::shared_ptr<T> make_element();
   }
 
   inline std::shared_ptr<table> make_table();
@@ -425,71 +406,59 @@ namespace cpptoml
   };
 
   /// Type traits class to convert C++ types to enum member
-  template<class T>
-  struct base_type_traits;
+  template<class T> struct base_type_traits;
 
-  template<>
-  struct base_type_traits<std::string>
+  template<> struct base_type_traits<std::string>
   {
     static const base_type type = base_type::STRING;
   };
 
-  template<>
-  struct base_type_traits<local_time>
+  template<> struct base_type_traits<local_time>
   {
     static const base_type type = base_type::LOCAL_TIME;
   };
 
-  template<>
-  struct base_type_traits<local_date>
+  template<> struct base_type_traits<local_date>
   {
     static const base_type type = base_type::LOCAL_DATE;
   };
 
-  template<>
-  struct base_type_traits<local_datetime>
+  template<> struct base_type_traits<local_datetime>
   {
     static const base_type type = base_type::LOCAL_DATETIME;
   };
 
-  template<>
-  struct base_type_traits<offset_datetime>
+  template<> struct base_type_traits<offset_datetime>
   {
     static const base_type type = base_type::OFFSET_DATETIME;
   };
 
-  template<>
-  struct base_type_traits<int64_t>
+  template<> struct base_type_traits<int64_t>
   {
     static const base_type type = base_type::INT;
   };
 
-  template<>
-  struct base_type_traits<double>
+  template<> struct base_type_traits<double>
   {
     static const base_type type = base_type::FLOAT;
   };
 
-  template<>
-  struct base_type_traits<bool>
+  template<> struct base_type_traits<bool>
   {
     static const base_type type = base_type::BOOL;
   };
 
-  template<>
-  struct base_type_traits<table>
+  template<> struct base_type_traits<table>
   {
     static const base_type type = base_type::TABLE;
   };
 
-  template<>
-  struct base_type_traits<array>
+  template<> struct base_type_traits<array>
   {
     static const base_type type = base_type::ARRAY;
   };
 
-  template<>
-  struct base_type_traits<table_array>
+  template<> struct base_type_traits<table_array>
   {
     static const base_type type = base_type::TABLE_ARRAY;
   };
@@ -501,6 +470,7 @@ namespace cpptoml
   class base : public std::enable_shared_from_this<base>
   {
    public:
+
     virtual ~base() = default;
 
     virtual std::shared_ptr<base> clone() const = 0;
@@ -570,14 +540,11 @@ namespace cpptoml
      * Attempts to coerce the TOML element into a concrete TOML value
      * of type T.
      */
-    template<class T>
-    std::shared_ptr<value<T>> as();
+    template<class T> std::shared_ptr<value<T>> as();
 
-    template<class T>
-    std::shared_ptr<const value<T>> as() const;
+    template<class T> std::shared_ptr<const value<T>> as() const;
 
-    template<class Visitor, class... Args>
-    void accept(Visitor &&visitor, Args &&...args) const;
+    template<class Visitor, class... Args> void accept(Visitor &&visitor, Args &&...args) const;
 
 #if defined(CPPTOML_NO_RTTI)
     base_type type() const
@@ -586,18 +553,20 @@ namespace cpptoml
     }
 
    protected:
-    base(const base_type t)
-      : type_(t)
+
+    base(const base_type t) : type_(t)
     {
       // nothing
     }
 
    private:
+
     const base_type type_ = base_type::NONE;
 
 #else
 
    protected:
+
     base()
     {
       // nothing
@@ -608,8 +577,7 @@ namespace cpptoml
   /**
    * A concrete TOML value representing the "leaves" of the "tree".
    */
-  template<class T>
-  class value : public base
+  template<class T> class value : public base
   {
     struct make_shared_enabler
     {
@@ -620,12 +588,12 @@ namespace cpptoml
     friend std::shared_ptr<typename value_traits<U>::type> cpptoml::make_value(U &&val);
 
    public:
+
     static_assert(valid_value<T>::value, "invalid value type");
 
     std::shared_ptr<base> clone() const override;
 
-    value(const make_shared_enabler &, const T &val)
-      : value(val)
+    value(const make_shared_enabler &, const T &val) : value(val)
     {
       // nothing; note that users cannot actually invoke this function
       // because they lack access to the make_shared_enabler.
@@ -653,36 +621,31 @@ namespace cpptoml
     }
 
    private:
+
     T data_;
 
     /**
      * Constructs a value from the given data.
      */
 #if defined(CPPTOML_NO_RTTI)
-    value(const T &val)
-      : base(base_type_traits<T>::type),
-        data_(val)
-    {}
+    value(const T &val) : base(base_type_traits<T>::type), data_(val) {}
 #else
-    value(const T &val)
-      : data_(val)
-    {}
+    value(const T &val) : data_(val) {}
 #endif
 
     value(const value &val) = delete;
     value &operator=(const value &val) = delete;
   };
 
-  template<class T>
-  std::shared_ptr<typename value_traits<T>::type> make_value(T &&val)
+  template<class T> std::shared_ptr<typename value_traits<T>::type> make_value(T &&val)
   {
     using value_type = typename value_traits<T>::type;
     using enabler = typename value_type::make_shared_enabler;
-    return std::make_shared<value_type>(enabler{}, value_traits<T>::construct(std::forward<T>(val)));
+    return std::make_shared<value_type>(enabler{},
+                                        value_traits<T>::construct(std::forward<T>(val)));
   }
 
-  template<class T>
-  inline std::shared_ptr<value<T>> base::as()
+  template<class T> inline std::shared_ptr<value<T>> base::as()
   {
 #if defined(CPPTOML_NO_RTTI)
     if (type() == base_type_traits<T>::type)
@@ -696,15 +659,13 @@ namespace cpptoml
 
   // special case value<double> to allow getting an integer parameter as a
   // double value
-  template<>
-  inline std::shared_ptr<value<double>> base::as()
+  template<> inline std::shared_ptr<value<double>> base::as()
   {
 #if defined(CPPTOML_NO_RTTI)
     if (type() == base_type::FLOAT)
       return std::static_pointer_cast<value<double>>(shared_from_this());
 
-    if (type() == base_type::INT)
-    {
+    if (type() == base_type::INT) {
       auto v = std::static_pointer_cast<value<int64_t>>(shared_from_this());
       return make_value<double>(static_cast<double>(v->get()));
     }
@@ -719,8 +680,7 @@ namespace cpptoml
     return nullptr;
   }
 
-  template<class T>
-  inline std::shared_ptr<const value<T>> base::as() const
+  template<class T> inline std::shared_ptr<const value<T>> base::as() const
   {
 #if defined(CPPTOML_NO_RTTI)
     if (type() == base_type_traits<T>::type)
@@ -734,15 +694,13 @@ namespace cpptoml
 
   // special case value<double> to allow getting an integer parameter as a
   // double value
-  template<>
-  inline std::shared_ptr<const value<double>> base::as() const
+  template<> inline std::shared_ptr<const value<double>> base::as() const
   {
 #if defined(CPPTOML_NO_RTTI)
     if (type() == base_type::FLOAT)
       return std::static_pointer_cast<const value<double>>(shared_from_this());
 
-    if (type() == base_type::INT)
-    {
+    if (type() == base_type::INT) {
       auto v = as<int64_t>();
       // the below has to be a non-const value<double> due to a bug in
       // libc++: https://llvm.org/bugs/show_bug.cgi?id=18843
@@ -752,8 +710,7 @@ namespace cpptoml
     if (auto v = std::dynamic_pointer_cast<const value<double>>(shared_from_this()))
       return v;
 
-    if (auto v = as<int64_t>())
-    {
+    if (auto v = as<int64_t>()) {
       // the below has to be a non-const value<double> due to a bug in
       // libc++: https://llvm.org/bugs/show_bug.cgi?id=18843
       return make_value<double>(static_cast<double>(v->get()));
@@ -769,14 +726,14 @@ namespace cpptoml
   class array_exception : public std::runtime_error
   {
    public:
-    array_exception(const std::string &err)
-      : std::runtime_error{err}
-    {}
+
+    array_exception(const std::string &err) : std::runtime_error{err} {}
   };
 
   class array : public base
   {
    public:
+
     friend std::shared_ptr<array> make_array();
 
     std::shared_ptr<base> clone() const override;
@@ -843,8 +800,7 @@ namespace cpptoml
      * Obtains an array of value<T>s. Note that elements may be
      * nullptr if they cannot be converted to a value<T>.
      */
-    template<class T>
-    std::vector<std::shared_ptr<value<T>>> array_of() const
+    template<class T> std::vector<std::shared_ptr<value<T>>> array_of() const
     {
       std::vector<std::shared_ptr<value<T>>> result(values_.size());
 
@@ -859,14 +815,12 @@ namespace cpptoml
      * Obtains a option<vector<T>>. The option will be empty if the array
      * contains values that are not of type T.
      */
-    template<class T>
-    inline typename array_of_trait<T>::return_type get_array_of() const
+    template<class T> inline typename array_of_trait<T>::return_type get_array_of() const
     {
       std::vector<T> result;
       result.reserve(values_.size());
 
-      for (const auto &val : values_)
-      {
+      for (const auto &val : values_) {
         if (auto v = val->as<T>())
           result.push_back(v->get());
         else
@@ -899,14 +853,11 @@ namespace cpptoml
     /**
      * Add a value to the end of the array
      */
-    template<class T>
-    void push_back(const std::shared_ptr<value<T>> &val)
+    template<class T> void push_back(const std::shared_ptr<value<T>> &val)
     {
-      if (values_.empty() || values_[0]->as<T>())
-      {
+      if (values_.empty() || values_[0]->as<T>()) {
         values_.push_back(val);
-      } else
-      {
+      } else {
         throw array_exception{"Arrays must be homogenous."};
       }
     }
@@ -916,11 +867,9 @@ namespace cpptoml
      */
     void push_back(const std::shared_ptr<array> &val)
     {
-      if (values_.empty() || values_[0]->is_array())
-      {
+      if (values_.empty() || values_[0]->is_array()) {
         values_.push_back(val);
-      } else
-      {
+      } else {
         throw array_exception{"Arrays must be homogenous."};
       }
     }
@@ -929,8 +878,7 @@ namespace cpptoml
      * Convenience function for adding a simple element to the end
      * of the array.
      */
-    template<class T>
-    void push_back(T &&val, typename value_traits<T>::type * = 0)
+    template<class T> void push_back(T &&val, typename value_traits<T>::type * = 0)
     {
       push_back(make_value(std::forward<T>(val)));
     }
@@ -938,14 +886,11 @@ namespace cpptoml
     /**
      * Insert a value into the array
      */
-    template<class T>
-    iterator insert(iterator position, const std::shared_ptr<value<T>> &value)
+    template<class T> iterator insert(iterator position, const std::shared_ptr<value<T>> &value)
     {
-      if (values_.empty() || values_[0]->as<T>())
-      {
+      if (values_.empty() || values_[0]->as<T>()) {
         return values_.insert(position, value);
-      } else
-      {
+      } else {
         throw array_exception{"Arrays must be homogenous."};
       }
     }
@@ -955,11 +900,9 @@ namespace cpptoml
      */
     iterator insert(iterator position, const std::shared_ptr<array> &value)
     {
-      if (values_.empty() || values_[0]->is_array())
-      {
+      if (values_.empty() || values_[0]->is_array()) {
         return values_.insert(position, value);
-      } else
-      {
+      } else {
         throw array_exception{"Arrays must be homogenous."};
       }
     }
@@ -998,9 +941,9 @@ namespace cpptoml
     }
 
    private:
+
 #if defined(CPPTOML_NO_RTTI)
-    array()
-      : base(base_type::ARRAY)
+    array() : base(base_type::ARRAY)
     {
       // empty
     }
@@ -1009,8 +952,7 @@ namespace cpptoml
 #endif
 
     template<class InputIterator>
-    array(InputIterator begin, InputIterator end)
-      : values_{begin, end}
+    array(InputIterator begin, InputIterator end) : values_{begin, end}
     {
       // nothing
     }
@@ -1036,8 +978,7 @@ namespace cpptoml
 
   namespace detail
   {
-    template<>
-    inline std::shared_ptr<array> make_element<array>()
+    template<> inline std::shared_ptr<array> make_element<array>()
     {
       return make_array();
     }
@@ -1047,14 +988,12 @@ namespace cpptoml
    * Obtains a option<vector<T>>. The option will be empty if the array
    * contains values that are not of type T.
    */
-  template<>
-  inline typename array_of_trait<array>::return_type array::get_array_of<array>() const
+  template<> inline typename array_of_trait<array>::return_type array::get_array_of<array>() const
   {
     std::vector<std::shared_ptr<array>> result;
     result.reserve(values_.size());
 
-    for (const auto &val : values_)
-    {
+    for (const auto &val : values_) {
       if (auto v = val->as_array())
         result.push_back(v);
       else
@@ -1072,6 +1011,7 @@ namespace cpptoml
     friend std::shared_ptr<table_array> make_table_array(bool);
 
    public:
+
     std::shared_ptr<base> clone() const override;
 
     using size_type = std::size_t;
@@ -1172,16 +1112,14 @@ namespace cpptoml
     }
 
    private:
+
 #if defined(CPPTOML_NO_RTTI)
-    table_array(bool is_inline = false)
-      : base(base_type::TABLE_ARRAY),
-        is_inline_(is_inline)
+    table_array(bool is_inline = false) : base(base_type::TABLE_ARRAY), is_inline_(is_inline)
     {
       // nothing
     }
 #else
-    table_array(bool is_inline = false)
-      : is_inline_(is_inline)
+    table_array(bool is_inline = false) : is_inline_(is_inline)
     {
       // nothing
     }
@@ -1198,8 +1136,7 @@ namespace cpptoml
   {
     struct make_shared_enabler : public table_array
     {
-      make_shared_enabler(bool mse_is_inline)
-        : table_array(mse_is_inline)
+      make_shared_enabler(bool mse_is_inline) : table_array(mse_is_inline)
       {
         // nothing
       }
@@ -1210,8 +1147,7 @@ namespace cpptoml
 
   namespace detail
   {
-    template<>
-    inline std::shared_ptr<table_array> make_element<table_array>()
+    template<> inline std::shared_ptr<table_array> make_element<table_array>()
     {
       return make_table_array(true);
     }
@@ -1221,11 +1157,11 @@ namespace cpptoml
   // where special casting behavior (like bounds checking) is desired
 
   template<class T>
-  typename std::enable_if<!std::is_floating_point<T>::value && std::is_signed<T>::value, option<T>>::type
+  typename std::enable_if<!std::is_floating_point<T>::value && std::is_signed<T>::value,
+                          option<T>>::type
   get_impl(const std::shared_ptr<base> &elem)
   {
-    if (auto v = elem->as<int64_t>())
-    {
+    if (auto v = elem->as<int64_t>()) {
       if (v->get() < (std::numeric_limits<T>::min)())
         throw std::underflow_error{"T cannot represent the value requested in get"};
 
@@ -1233,18 +1169,17 @@ namespace cpptoml
         throw std::overflow_error{"T cannot represent the value requested in get"};
 
       return {static_cast<T>(v->get())};
-    } else
-    {
+    } else {
       return {};
     }
   }
 
   template<class T>
-  typename std::enable_if<!std::is_same<T, bool>::value && std::is_unsigned<T>::value, option<T>>::type
+  typename std::enable_if<!std::is_same<T, bool>::value && std::is_unsigned<T>::value,
+                          option<T>>::type
   get_impl(const std::shared_ptr<base> &elem)
   {
-    if (auto v = elem->as<int64_t>())
-    {
+    if (auto v = elem->as<int64_t>()) {
       if (v->get() < 0)
         throw std::underflow_error{"T cannot store negative value in get"};
 
@@ -1252,21 +1187,19 @@ namespace cpptoml
         throw std::overflow_error{"T cannot represent the value requested in get"};
 
       return {static_cast<T>(v->get())};
-    } else
-    {
+    } else {
       return {};
     }
   }
 
   template<class T>
-  typename std::enable_if<!std::is_integral<T>::value || std::is_same<T, bool>::value, option<T>>::type
+  typename std::enable_if<!std::is_integral<T>::value || std::is_same<T, bool>::value,
+                          option<T>>::type
   get_impl(const std::shared_ptr<base> &elem)
   {
-    if (auto v = elem->as<T>())
-    {
+    if (auto v = elem->as<T>()) {
       return {v->get()};
-    } else
-    {
+    } else {
       return {};
     }
   }
@@ -1277,6 +1210,7 @@ namespace cpptoml
   class table : public base
   {
    public:
+
     friend class table_array;
     friend std::shared_ptr<table> make_table();
 
@@ -1429,15 +1363,12 @@ namespace cpptoml
      * Helper function that attempts to get a value corresponding
      * to the template parameter from a given key.
      */
-    template<class T>
-    option<T> get_as(const std::string &key) const
+    template<class T> option<T> get_as(const std::string &key) const
     {
-      try
-      {
+      try {
         return get_impl<T>(get(key));
       }
-      catch (const std::out_of_range &)
-      {
+      catch (const std::out_of_range &) {
         return {};
       }
     }
@@ -1447,15 +1378,12 @@ namespace cpptoml
      * to the template parameter from a given key. Will resolve "qualified
      * keys".
      */
-    template<class T>
-    option<T> get_qualified_as(const std::string &key) const
+    template<class T> option<T> get_qualified_as(const std::string &key) const
     {
-      try
-      {
+      try {
         return get_impl<T>(get_qualified(key));
       }
-      catch (const std::out_of_range &)
-      {
+      catch (const std::out_of_range &) {
         return {};
       }
     }
@@ -1472,13 +1400,11 @@ namespace cpptoml
     template<class T>
     inline typename array_of_trait<T>::return_type get_array_of(const std::string &key) const
     {
-      if (auto v = get_array(key))
-      {
+      if (auto v = get_array(key)) {
         std::vector<T> result;
         result.reserve(v->get().size());
 
-        for (const auto &b : v->get())
-        {
+        for (const auto &b : v->get()) {
           if (auto val = b->as<T>())
             result.push_back(val->get());
           else
@@ -1501,15 +1427,14 @@ namespace cpptoml
      * is returned.
      */
     template<class T>
-    inline typename array_of_trait<T>::return_type get_qualified_array_of(const std::string &key) const
+    inline typename array_of_trait<T>::return_type get_qualified_array_of(
+      const std::string &key) const
     {
-      if (auto v = get_array_qualified(key))
-      {
+      if (auto v = get_array_qualified(key)) {
         std::vector<T> result;
         result.reserve(v->get().size());
 
-        for (const auto &b : v->get())
-        {
+        for (const auto &b : v->get()) {
           if (auto val = b->as<T>())
             result.push_back(val->get());
           else
@@ -1548,9 +1473,9 @@ namespace cpptoml
     }
 
    private:
+
 #if defined(CPPTOML_NO_RTTI)
-    table()
-      : base(base_type::TABLE)
+    table() : base(base_type::TABLE)
     {
       // nothing
     }
@@ -1569,8 +1494,7 @@ namespace cpptoml
       std::vector<std::string> result;
       std::string::size_type p = 0;
       std::string::size_type q;
-      while ((q = value.find(separator, p)) != std::string::npos)
-      {
+      while ((q = value.find(separator, p)) != std::string::npos) {
         result.emplace_back(value, p, q - p);
         p = q + 1;
       }
@@ -1590,11 +1514,9 @@ namespace cpptoml
       parts.pop_back();
 
       auto cur_table = this;
-      for (const auto &part : parts)
-      {
+      for (const auto &part : parts) {
         cur_table = cur_table->get_table(part).get();
-        if (!cur_table)
-        {
+        if (!cur_table) {
           if (!p)
             return false;
 
@@ -1622,15 +1544,14 @@ namespace cpptoml
    * is returned.
    */
   template<>
-  inline typename array_of_trait<array>::return_type table::get_array_of<array>(const std::string &key) const
+  inline typename array_of_trait<array>::return_type table::get_array_of<array>(
+    const std::string &key) const
   {
-    if (auto v = get_array(key))
-    {
+    if (auto v = get_array(key)) {
       std::vector<std::shared_ptr<array>> result;
       result.reserve(v->get().size());
 
-      for (const auto &b : v->get())
-      {
+      for (const auto &b : v->get()) {
         if (auto val = b->as_array())
           result.push_back(val);
         else
@@ -1656,13 +1577,11 @@ namespace cpptoml
   inline typename array_of_trait<array>::return_type table::get_qualified_array_of<array>(
     const std::string &key) const
   {
-    if (auto v = get_array_qualified(key))
-    {
+    if (auto v = get_array_qualified(key)) {
       std::vector<std::shared_ptr<array>> result;
       result.reserve(v->get().size());
 
-      for (const auto &b : v->get())
-      {
+      for (const auto &b : v->get()) {
         if (auto val = b->as_array())
           result.push_back(val);
         else
@@ -1690,15 +1609,13 @@ namespace cpptoml
 
   namespace detail
   {
-    template<>
-    inline std::shared_ptr<table> make_element<table>()
+    template<> inline std::shared_ptr<table> make_element<table>()
     {
       return make_table();
     }
   }  // namespace detail
 
-  template<class T>
-  std::shared_ptr<base> value<T>::clone() const
+  template<class T> std::shared_ptr<base> value<T>::clone() const
   {
     return make_value(data_);
   }
@@ -1735,9 +1652,8 @@ namespace cpptoml
   class parse_exception : public std::runtime_error
   {
    public:
-    parse_exception(const std::string &err)
-      : std::runtime_error{err}
-    {}
+
+    parse_exception(const std::string &err) : std::runtime_error{err} {}
 
     parse_exception(const std::string &err, std::size_t line_number)
       : std::runtime_error{err + " at line " + std::to_string(line_number)}
@@ -1757,10 +1673,10 @@ namespace cpptoml
   /**
    * Helper object for consuming expected characters.
    */
-  template<class OnError>
-  class consumer
+  template<class OnError> class consumer
   {
    public:
+
     consumer(std::string::iterator &it, const std::string::iterator &end, OnError &&on_error)
       : it_(it),
         end_(end),
@@ -1776,10 +1692,11 @@ namespace cpptoml
       ++it_;
     }
 
-    template<std::size_t N>
-    void operator()(const char (&str)[N])
+    template<std::size_t N> void operator()(const char (&str)[N])
     {
-      std::for_each(std::begin(str), std::end(str) - 1, [&](char c) { (*this)(c); });
+      std::for_each(std::begin(str), std::end(str) - 1, [&](char c) {
+        (*this)(c);
+      });
     }
 
     void eat_or(char a, char b)
@@ -1792,8 +1709,7 @@ namespace cpptoml
     int eat_digits(int len)
     {
       int val = 0;
-      for (int i = 0; i < len; ++i)
-      {
+      for (int i = 0; i < len; ++i) {
         if (!is_number(*it_) || it_ == end_)
           on_error_();
         val = 10 * val + (*it_++ - '0');
@@ -1807,6 +1723,7 @@ namespace cpptoml
     }
 
    private:
+
     std::string::iterator &it_;
     const std::string::iterator &end_;
     OnError on_error_;
@@ -1831,11 +1748,9 @@ namespace cpptoml
       std::istream::sentry sentry{input, true};
       auto sb = input.rdbuf();
 
-      while (true)
-      {
+      while (true) {
         auto c = sb->sbumpc();
-        if (c == '\r')
-        {
+        if (c == '\r') {
           if (sb->sgetc() == '\n')
             c = sb->sbumpc();
         }
@@ -1843,8 +1758,7 @@ namespace cpptoml
         if (c == '\n')
           return input;
 
-        if (c == std::istream::traits_type::eof())
-        {
+        if (c == std::istream::traits_type::eof()) {
           if (line.empty())
             input.setstate(std::ios::eofbit);
           return input;
@@ -1861,11 +1775,11 @@ namespace cpptoml
   class parser
   {
    public:
+
     /**
      * Parsers are constructed from streams.
      */
-    parser(std::istream &stream)
-      : input_(stream)
+    parser(std::istream &stream) : input_(stream)
     {
       // nothing
     }
@@ -1882,26 +1796,22 @@ namespace cpptoml
 
       table *curr_table = root.get();
 
-      while (detail::getline(input_, line_))
-      {
+      while (detail::getline(input_, line_)) {
         line_number_++;
         auto it = line_.begin();
         auto end = line_.end();
         consume_whitespace(it, end);
 
-        if (it != end && *it == 0)
-        {
+        if (it != end && *it == 0) {
           it++;
         }
 
         if (it == end || *it == '#')
           continue;
-        if (*it == '[')
-        {
+        if (*it == '[') {
           curr_table = root.get();
           parse_table(it, end, curr_table);
-        } else
-        {
+        } else {
           parse_key_value(it, end, curr_table);
           consume_whitespace(it, end);
           eol_or_comment(it, end);
@@ -1911,6 +1821,7 @@ namespace cpptoml
     }
 
    private:
+
 #if defined _MSC_VER
     __declspec(noreturn)
 #elif defined __GNUC__
@@ -1921,7 +1832,9 @@ namespace cpptoml
       throw parse_exception{err, line_number_};
     }
 
-    void parse_table(std::string::iterator &it, const std::string::iterator &end, table *&curr_table)
+    void parse_table(std::string::iterator &it,
+                     const std::string::iterator &end,
+                     table *&curr_table)
     {
       // remove the beginning keytable marker
       ++it;
@@ -1933,7 +1846,9 @@ namespace cpptoml
         parse_single_table(it, end, curr_table);
     }
 
-    void parse_single_table(std::string::iterator &it, const std::string::iterator &end, table *&curr_table)
+    void parse_single_table(std::string::iterator &it,
+                            const std::string::iterator &end,
+                            table *&curr_table)
     {
       if (it == end || *it == ']')
         throw_parse_exception("Table name cannot be empty");
@@ -1941,7 +1856,9 @@ namespace cpptoml
       std::string full_table_name;
       bool inserted = false;
 
-      auto key_end = [](char c) { return c == ']'; };
+      auto key_end = [](char c) {
+        return c == ']';
+      };
 
       auto key_part_handler = [&](const std::string &part) {
         if (part.empty())
@@ -1951,8 +1868,7 @@ namespace cpptoml
           full_table_name += '.';
         full_table_name += part;
 
-        if (curr_table->contains(part))
-        {
+        if (curr_table->contains(part)) {
 #if !defined(__PGI)
           auto b = curr_table->get(part);
 #else
@@ -1965,8 +1881,7 @@ namespace cpptoml
             curr_table = std::static_pointer_cast<table_array>(b)->get().back().get();
           else
             throw_parse_exception("Key " + full_table_name + "already exists as a value");
-        } else
-        {
+        } else {
           inserted = true;
           curr_table->insert(part, make_table());
           curr_table = static_cast<table *>(curr_table->get(part).get());
@@ -1978,8 +1893,7 @@ namespace cpptoml
       if (it == end)
         throw_parse_exception("Unterminated table declaration; did you forget a ']'?");
 
-      if (*it != ']')
-      {
+      if (*it != ']') {
         std::string errmsg{"Unexpected character in table definition: "};
         errmsg += '"';
         errmsg += *it;
@@ -1988,18 +1902,17 @@ namespace cpptoml
       }
 
       // table already existed
-      if (!inserted)
-      {
-        auto is_value = [](const std::pair<const std::string &, const std::shared_ptr<base> &> &p) {
-          return p.second->is_value();
-        };
+      if (!inserted) {
+        auto is_value =
+          [](const std::pair<const std::string &, const std::shared_ptr<base> &> &p) {
+            return p.second->is_value();
+          };
 
         // if there are any values, we can't add values to this table
         // since it has already been defined. If there aren't any
         // values, then it was implicitly created by something like
         // [a.b]
-        if (curr_table->empty() || std::any_of(curr_table->begin(), curr_table->end(), is_value))
-        {
+        if (curr_table->empty() || std::any_of(curr_table->begin(), curr_table->end(), is_value)) {
           throw_parse_exception("Redefinition of table " + full_table_name);
         }
       }
@@ -2009,13 +1922,17 @@ namespace cpptoml
       eol_or_comment(it, end);
     }
 
-    void parse_table_array(std::string::iterator &it, const std::string::iterator &end, table *&curr_table)
+    void parse_table_array(std::string::iterator &it,
+                           const std::string::iterator &end,
+                           table *&curr_table)
     {
       ++it;
       if (it == end || *it == ']')
         throw_parse_exception("Table array name cannot be empty");
 
-      auto key_end = [](char c) { return c == ']'; };
+      auto key_end = [](char c) {
+        return c == ']';
+      };
 
       std::string full_ta_name;
       auto key_part_handler = [&](const std::string &part) {
@@ -2026,8 +1943,7 @@ namespace cpptoml
           full_ta_name += '.';
         full_ta_name += part;
 
-        if (curr_table->contains(part))
-        {
+        if (curr_table->contains(part)) {
 #if !defined(__PGI)
           auto b = curr_table->get(part);
 #else
@@ -2038,17 +1954,14 @@ namespace cpptoml
           // if this is the end of the table array name, add an
           // element to the table array that we just looked up,
           // provided it was not declared inline
-          if (it != end && *it == ']')
-          {
-            if (!b->is_table_array())
-            {
+          if (it != end && *it == ']') {
+            if (!b->is_table_array()) {
               throw_parse_exception("Key " + full_ta_name + " is not a table array");
             }
 
             auto v = b->as_table_array();
 
-            if (v->is_inline())
-            {
+            if (v->is_inline()) {
               throw_parse_exception("Static array " + full_ta_name + " cannot be appended to");
             }
 
@@ -2056,8 +1969,7 @@ namespace cpptoml
             curr_table = v->get().back().get();
           }
           // otherwise, just keep traversing down the key name
-          else
-          {
+          else {
             if (b->is_table())
               curr_table = static_cast<table *>(b.get());
             else if (b->is_table_array())
@@ -2065,13 +1977,11 @@ namespace cpptoml
             else
               throw_parse_exception("Key " + full_ta_name + " already exists as a value");
           }
-        } else
-        {
+        } else {
           // if this is the end of the table array name, add a new
           // table array and a new table inside that array for us to
           // add keys to next
-          if (it != end && *it == ']')
-          {
+          if (it != end && *it == ']') {
             curr_table->insert(part, make_table_array());
             auto arr = std::static_pointer_cast<table_array>(curr_table->get(part));
             arr->get().push_back(make_table());
@@ -2079,8 +1989,7 @@ namespace cpptoml
           }
           // otherwise, create the implicitly defined table and move
           // down to it
-          else
-          {
+          else {
             curr_table->insert(part, make_table());
             curr_table = static_cast<table *>(curr_table->get(part).get());
           }
@@ -2102,24 +2011,22 @@ namespace cpptoml
 
     void parse_key_value(std::string::iterator &it, std::string::iterator &end, table *curr_table)
     {
-      auto key_end = [](char c) { return c == '='; };
+      auto key_end = [](char c) {
+        return c == '=';
+      };
 
       auto key_part_handler = [&](const std::string &part) {
         // two cases: this key part exists already, in which case it must
         // be a table, or it doesn't exist in which case we must create
         // an implicitly defined table
-        if (curr_table->contains(part))
-        {
+        if (curr_table->contains(part)) {
           auto val = curr_table->get(part);
-          if (val->is_table())
-          {
+          if (val->is_table()) {
             curr_table = static_cast<table *>(val.get());
-          } else
-          {
+          } else {
             throw_parse_exception("Key " + part + " already exists as a value");
           }
-        } else
-        {
+        } else {
           auto newtable = make_table();
           curr_table->insert(part, newtable);
           curr_table = newtable.get();
@@ -2145,18 +2052,15 @@ namespace cpptoml
                           KeyPartHandler &&key_part_handler)
     {
       // parse the key as a series of one or more simple-keys joined with '.'
-      while (it != end && !key_end(*it))
-      {
+      while (it != end && !key_end(*it)) {
         auto part = parse_simple_key(it, end);
         consume_whitespace(it, end);
 
-        if (it == end || key_end(*it))
-        {
+        if (it == end || key_end(*it)) {
           return part;
         }
 
-        if (*it != '.')
-        {
+        if (*it != '.') {
           std::string errmsg{"Unexpected character in key: "};
           errmsg += '"';
           errmsg += *it;
@@ -2180,20 +2084,19 @@ namespace cpptoml
       if (it == end)
         throw_parse_exception("Unexpected end of key (blank key?)");
 
-      if (*it == '"' || *it == '\'')
-      {
+      if (*it == '"' || *it == '\'') {
         return string_literal(it, end, *it);
-      } else
-      {
-        auto bke = std::find_if(it, end, [](char c) { return c == '.' || c == '=' || c == ']'; });
+      } else {
+        auto bke = std::find_if(it, end, [](char c) {
+          return c == '.' || c == '=' || c == ']';
+        });
         return parse_bare_key(it, bke);
       }
     }
 
     std::string parse_bare_key(std::string::iterator &it, const std::string::iterator &end)
     {
-      if (it == end)
-      {
+      if (it == end) {
         throw_parse_exception("Bare key missing name");
       }
 
@@ -2203,18 +2106,19 @@ namespace cpptoml
       ++key_end;
       std::string key{it, key_end};
 
-      if (std::find(it, key_end, '#') != key_end)
-      {
+      if (std::find(it, key_end, '#') != key_end) {
         throw_parse_exception("Bare key " + key + " cannot contain #");
       }
 
-      if (std::find_if(it, key_end, [](char c) { return c == ' ' || c == '\t'; }) != key_end)
-      {
+      if (std::find_if(it, key_end, [](char c) {
+            return c == ' ' || c == '\t';
+          }) != key_end) {
         throw_parse_exception("Bare key " + key + " cannot contain whitespace");
       }
 
-      if (std::find_if(it, key_end, [](char c) { return c == '[' || c == ']'; }) != key_end)
-      {
+      if (std::find_if(it, key_end, [](char c) {
+            return c == '[' || c == ']';
+          }) != key_end) {
         throw_parse_exception("Bare key " + key + " cannot contain '[' or ']'");
       }
 
@@ -2239,8 +2143,7 @@ namespace cpptoml
     std::shared_ptr<base> parse_value(std::string::iterator &it, std::string::iterator &end)
     {
       parse_type type = determine_value_type(it, end);
-      switch (type)
-      {
+      switch (type) {
         case parse_type::STRING:
           return parse_string(it, end);
         case parse_type::LOCAL_TIME:
@@ -2263,40 +2166,34 @@ namespace cpptoml
       }
     }
 
-    parse_type determine_value_type(const std::string::iterator &it, const std::string::iterator &end)
+    parse_type determine_value_type(const std::string::iterator &it,
+                                    const std::string::iterator &end)
     {
-      if (it == end)
-      {
+      if (it == end) {
         throw_parse_exception("Failed to parse value type");
       }
-      if (*it == '"' || *it == '\'')
-      {
+      if (*it == '"' || *it == '\'') {
         return parse_type::STRING;
-      } else if (is_time(it, end))
-      {
+      } else if (is_time(it, end)) {
         return parse_type::LOCAL_TIME;
-      } else if (auto dtype = date_type(it, end))
-      {
+      } else if (auto dtype = date_type(it, end)) {
         return *dtype;
       } else if (is_number(*it) || *it == '-' || *it == '+' ||
                  (*it == 'i' && it + 1 != end && it[1] == 'n' && it + 2 != end && it[2] == 'f') ||
-                 (*it == 'n' && it + 1 != end && it[1] == 'a' && it + 2 != end && it[2] == 'n'))
-      {
+                 (*it == 'n' && it + 1 != end && it[1] == 'a' && it + 2 != end && it[2] == 'n')) {
         return determine_number_type(it, end);
-      } else if (*it == 't' || *it == 'f')
-      {
+      } else if (*it == 't' || *it == 'f') {
         return parse_type::BOOL;
-      } else if (*it == '[')
-      {
+      } else if (*it == '[') {
         return parse_type::ARRAY;
-      } else if (*it == '{')
-      {
+      } else if (*it == '{') {
         return parse_type::INLINE_TABLE;
       }
       throw_parse_exception("Failed to parse value type");
     }
 
-    parse_type determine_number_type(const std::string::iterator &it, const std::string::iterator &end)
+    parse_type determine_number_type(const std::string::iterator &it,
+                                     const std::string::iterator &end)
     {
       // determine if we are an integer or a float
       auto check_it = it;
@@ -2311,19 +2208,18 @@ namespace cpptoml
 
       while (check_it != end && is_number(*check_it))
         ++check_it;
-      if (check_it != end && *check_it == '.')
-      {
+      if (check_it != end && *check_it == '.') {
         ++check_it;
         while (check_it != end && is_number(*check_it))
           ++check_it;
         return parse_type::FLOAT;
-      } else
-      {
+      } else {
         return parse_type::INT;
       }
     }
 
-    std::shared_ptr<value<std::string>> parse_string(std::string::iterator &it, std::string::iterator &end)
+    std::shared_ptr<value<std::string>> parse_string(std::string::iterator &it,
+                                                     std::string::iterator &end)
     {
       auto delim = *it;
       assert(delim == '"' || delim == '\'');
@@ -2332,11 +2228,9 @@ namespace cpptoml
       // parse multiple lines in a string, not just one
       auto check_it = it;
       ++check_it;
-      if (check_it != end && *check_it == delim)
-      {
+      if (check_it != end && *check_it == delim) {
         ++check_it;
-        if (check_it != end && *check_it == delim)
-        {
+        if (check_it != end && *check_it == delim) {
           it = ++check_it;
           return parse_multiline_string(it, end, delim);
         }
@@ -2350,14 +2244,15 @@ namespace cpptoml
     {
       std::stringstream ss;
 
-      auto is_ws = [](char c) { return c == ' ' || c == '\t'; };
+      auto is_ws = [](char c) {
+        return c == ' ' || c == '\t';
+      };
 
       bool consuming = false;
       std::shared_ptr<value<std::string>> ret;
 
       auto handle_line = [&](std::string::iterator &local_it, std::string::iterator &local_end) {
-        if (consuming)
-        {
+        if (consuming) {
           local_it = std::find_if_not(local_it, local_end, is_ws);
 
           // whole line is whitespace
@@ -2367,18 +2262,15 @@ namespace cpptoml
 
         consuming = false;
 
-        while (local_it != local_end)
-        {
+        while (local_it != local_end) {
           // handle escaped characters
-          if (delim == '"' && *local_it == '\\')
-          {
+          if (delim == '"' && *local_it == '\\') {
             auto check = local_it;
             // check if this is an actual escape sequence or a
             // whitespace escaping backslash
             ++check;
             consume_whitespace(check, local_end);
-            if (check == local_end)
-            {
+            if (check == local_end) {
               consuming = true;
               break;
             }
@@ -2388,12 +2280,10 @@ namespace cpptoml
           }
 
           // if we can end the string
-          if (std::distance(local_it, local_end) >= 3)
-          {
+          if (std::distance(local_it, local_end) >= 3) {
             auto check = local_it;
             // check for """
-            if (*check++ == delim && *check++ == delim && *check++ == delim)
-            {
+            if (*check++ == delim && *check++ == delim && *check++ == delim) {
               local_it = check;
               ret = make_value<std::string>(ss.str());
               break;
@@ -2410,8 +2300,7 @@ namespace cpptoml
         return ret;
 
       // start eating lines
-      while (detail::getline(input_, line_))
-      {
+      while (detail::getline(input_, line_)) {
         ++line_number_;
 
         it = line_.begin();
@@ -2429,23 +2318,21 @@ namespace cpptoml
       throw_parse_exception("Unterminated multi-line basic string");
     }
 
-    std::string string_literal(std::string::iterator &it, const std::string::iterator &end, char delim)
+    std::string string_literal(std::string::iterator &it,
+                               const std::string::iterator &end,
+                               char delim)
     {
       ++it;
       std::string val;
-      while (it != end)
-      {
+      while (it != end) {
         // handle escaped characters
-        if (delim == '"' && *it == '\\')
-        {
+        if (delim == '"' && *it == '\\') {
           val += parse_escape_code(it, end);
-        } else if (*it == delim)
-        {
+        } else if (*it == delim) {
           ++it;
           consume_whitespace(it, end);
           return val;
-        } else
-        {
+        } else {
           val += *it++;
         }
       }
@@ -2458,32 +2345,23 @@ namespace cpptoml
       if (it == end)
         throw_parse_exception("Invalid escape sequence");
       char value;
-      if (*it == 'b')
-      {
+      if (*it == 'b') {
         value = '\b';
-      } else if (*it == 't')
-      {
+      } else if (*it == 't') {
         value = '\t';
-      } else if (*it == 'n')
-      {
+      } else if (*it == 'n') {
         value = '\n';
-      } else if (*it == 'f')
-      {
+      } else if (*it == 'f') {
         value = '\f';
-      } else if (*it == 'r')
-      {
+      } else if (*it == 'r') {
         value = '\r';
-      } else if (*it == '"')
-      {
+      } else if (*it == '"') {
         value = '"';
-      } else if (*it == '\\')
-      {
+      } else if (*it == '\\') {
         value = '\\';
-      } else if (*it == 'u' || *it == 'U')
-      {
+      } else if (*it == 'u' || *it == 'U') {
         return parse_unicode(it, end);
-      } else
-      {
+      } else {
         throw_parse_exception("Invalid escape sequence");
       }
       ++it;
@@ -2495,20 +2373,17 @@ namespace cpptoml
       bool large = *it++ == 'U';
       auto codepoint = parse_hex(it, end, large ? 0x10000000 : 0x1000);
 
-      if ((codepoint > 0xd7ff && codepoint < 0xe000) || codepoint > 0x10ffff)
-      {
+      if ((codepoint > 0xd7ff && codepoint < 0xe000) || codepoint > 0x10ffff) {
         throw_parse_exception("Unicode escape sequence is not a Unicode scalar value");
       }
 
       std::string result;
       // See Table 3-6 of the Unicode standard
-      if (codepoint <= 0x7f)
-      {
+      if (codepoint <= 0x7f) {
         // 1-byte codepoints: 00000000 0xxxxxxx
         // repr: 0xxxxxxx
         result += static_cast<char>(codepoint & 0x7f);
-      } else if (codepoint <= 0x7ff)
-      {
+      } else if (codepoint <= 0x7ff) {
         // 2-byte codepoints: 00000yyy yyxxxxxx
         // repr: 110yyyyy 10xxxxxx
         //
@@ -2521,8 +2396,7 @@ namespace cpptoml
         // 0x3f = 00111111
         //
         result += static_cast<char>(0x80 | (codepoint & 0x3f));
-      } else if (codepoint <= 0xffff)
-      {
+      } else if (codepoint <= 0xffff) {
         // 3-byte codepoints: zzzzyyyy yyxxxxxx
         // repr: 1110zzzz 10yyyyyy 10xxxxxx
         //
@@ -2532,8 +2406,7 @@ namespace cpptoml
         result += static_cast<char>(0xe0 | ((codepoint >> 12) & 0x0f));
         result += static_cast<char>(0x80 | ((codepoint >> 6) & 0x1f));
         result += static_cast<char>(0x80 | (codepoint & 0x3f));
-      } else
-      {
+      } else {
         // 4-byte codepoints: 000uuuuu zzzzyyyy yyxxxxxx
         // repr: 11110uuu 10uuzzzz 10yyyyyy 10xxxxxx
         //
@@ -2551,8 +2424,7 @@ namespace cpptoml
     uint32_t parse_hex(std::string::iterator &it, const std::string::iterator &end, uint32_t place)
     {
       uint32_t value = 0;
-      while (place > 0)
-      {
+      while (place > 0) {
         if (it == end)
           throw_parse_exception("Unexpected end of unicode sequence");
 
@@ -2583,19 +2455,17 @@ namespace cpptoml
       };
 
       auto check_no_leading_zero = [&]() {
-        if (check_it != end && *check_it == '0' && check_it + 1 != check_end && check_it[1] != '.')
-        {
+        if (check_it != end && *check_it == '0' && check_it + 1 != check_end &&
+            check_it[1] != '.') {
           throw_parse_exception("Numbers may not have leading zeros");
         }
       };
 
       auto eat_digits = [&](bool (*check_char)(char)) {
         auto beg = check_it;
-        while (check_it != end && check_char(*check_it))
-        {
+        while (check_it != end && check_char(*check_it)) {
           ++check_it;
-          if (check_it != end && *check_it == '_')
-          {
+          if (check_it != end && *check_it == '_') {
             ++check_it;
             if (check_it == end || !check_char(*check_it))
               throw_parse_exception("Malformed number");
@@ -2606,22 +2476,23 @@ namespace cpptoml
           throw_parse_exception("Malformed number");
       };
 
-      auto eat_hex = [&]() { eat_digits(&is_hex); };
+      auto eat_hex = [&]() {
+        eat_digits(&is_hex);
+      };
 
-      auto eat_numbers = [&]() { eat_digits(&is_number); };
+      auto eat_numbers = [&]() {
+        eat_digits(&is_number);
+      };
 
       if (check_it != end && *check_it == '0' && check_it + 1 != check_end &&
-          (check_it[1] == 'x' || check_it[1] == 'o' || check_it[1] == 'b'))
-      {
+          (check_it[1] == 'x' || check_it[1] == 'o' || check_it[1] == 'b')) {
         ++check_it;
         char base = *check_it;
         ++check_it;
-        if (base == 'x')
-        {
+        if (base == 'x') {
           eat_hex();
           return parse_int(it, check_it, 16);
-        } else if (base == 'o')
-        {
+        } else if (base == 'o') {
           auto start = check_it;
           eat_numbers();
           auto val = parse_int(start, check_it, 8, "0");
@@ -2640,17 +2511,14 @@ namespace cpptoml
       eat_sign();
       check_no_leading_zero();
 
-      if (check_it != end && check_it + 1 != end && check_it + 2 != end)
-      {
-        if (check_it[0] == 'i' && check_it[1] == 'n' && check_it[2] == 'f')
-        {
+      if (check_it != end && check_it + 1 != end && check_it + 2 != end) {
+        if (check_it[0] == 'i' && check_it[1] == 'n' && check_it[2] == 'f') {
           auto val = std::numeric_limits<double>::infinity();
           if (*it == '-')
             val = -val;
           it = check_it + 3;
           return make_value(val);
-        } else if (check_it[0] == 'n' && check_it[1] == 'a' && check_it[2] == 'n')
-        {
+        } else if (check_it[0] == 'n' && check_it[1] == 'a' && check_it[2] == 'n') {
           auto val = std::numeric_limits<double>::quiet_NaN();
           if (*it == '-')
             val = -val;
@@ -2661,8 +2529,7 @@ namespace cpptoml
 
       eat_numbers();
 
-      if (check_it != end && (*check_it == '.' || *check_it == 'e' || *check_it == 'E'))
-      {
+      if (check_it != end && (*check_it == '.' || *check_it == 'e' || *check_it == 'E')) {
         bool is_exp = *check_it == 'e' || *check_it == 'E';
 
         ++check_it;
@@ -2680,15 +2547,13 @@ namespace cpptoml
         else
           eat_numbers();
 
-        if (!is_exp && check_it != end && (*check_it == 'e' || *check_it == 'E'))
-        {
+        if (!is_exp && check_it != end && (*check_it == 'e' || *check_it == 'E')) {
           ++check_it;
           eat_exp();
         }
 
         return parse_float(it, check_it);
-      } else
-      {
+      } else {
         return parse_int(it, check_it);
       }
     }
@@ -2702,53 +2567,49 @@ namespace cpptoml
       v = prefix + v;
       v.erase(std::remove(v.begin(), v.end(), '_'), v.end());
       it = end;
-      try
-      {
+      try {
         return make_value<int64_t>(std::stoll(v, nullptr, base));
       }
-      catch (const std::invalid_argument &ex)
-      {
-        throw_parse_exception("Malformed number (invalid argument: " + std::string{ex.what()} + ")");
+      catch (const std::invalid_argument &ex) {
+        throw_parse_exception("Malformed number (invalid argument: " + std::string{ex.what()} +
+                              ")");
       }
-      catch (const std::out_of_range &ex)
-      {
+      catch (const std::out_of_range &ex) {
         throw_parse_exception("Malformed number (out of range: " + std::string{ex.what()} + ")");
       }
     }
 
-    std::shared_ptr<value<double>> parse_float(std::string::iterator &it, const std::string::iterator &end)
+    std::shared_ptr<value<double>> parse_float(std::string::iterator &it,
+                                               const std::string::iterator &end)
     {
       std::string v{it, end};
       v.erase(std::remove(v.begin(), v.end(), '_'), v.end());
       it = end;
       char decimal_point = std::localeconv()->decimal_point[0];
       std::replace(v.begin(), v.end(), '.', decimal_point);
-      try
-      {
+      try {
         return make_value<double>(std::stod(v));
       }
-      catch (const std::invalid_argument &ex)
-      {
-        throw_parse_exception("Malformed number (invalid argument: " + std::string{ex.what()} + ")");
+      catch (const std::invalid_argument &ex) {
+        throw_parse_exception("Malformed number (invalid argument: " + std::string{ex.what()} +
+                              ")");
       }
-      catch (const std::out_of_range &ex)
-      {
+      catch (const std::out_of_range &ex) {
         throw_parse_exception("Malformed number (out of range: " + std::string{ex.what()} + ")");
       }
     }
 
-    std::shared_ptr<value<bool>> parse_bool(std::string::iterator &it, const std::string::iterator &end)
+    std::shared_ptr<value<bool>> parse_bool(std::string::iterator &it,
+                                            const std::string::iterator &end)
     {
       auto eat = make_consumer(it, end, [this]() {
         throw_parse_exception("Attempted to parse invalid boolean value");
       });
 
-      if (*it == 't')
-      {
+      if (*it == 't') {
         eat("true");
         return make_value<bool>(true);
-      } else if (*it == 'f')
-      {
+      } else if (*it == 'f') {
         eat("false");
         return make_value<bool>(false);
       }
@@ -2760,14 +2621,12 @@ namespace cpptoml
     std::string::iterator find_end_of_number(std::string::iterator it, std::string::iterator end)
     {
       auto ret = std::find_if(it, end, [](char c) {
-        return !is_number(c) && c != '_' && c != '.' && c != 'e' && c != 'E' && c != '-' && c != '+' &&
-               c != 'x' && c != 'o' && c != 'b';
+        return !is_number(c) && c != '_' && c != '.' && c != 'e' && c != 'E' && c != '-' &&
+               c != '+' && c != 'x' && c != 'o' && c != 'b';
       });
-      if (ret != end && ret + 1 != end && ret + 2 != end)
-      {
+      if (ret != end && ret + 1 != end && ret + 2 != end) {
         if ((ret[0] == 'i' && ret[1] == 'n' && ret[2] == 'f') ||
-            (ret[0] == 'n' && ret[1] == 'a' && ret[2] == 'n'))
-        {
+            (ret[0] == 'n' && ret[1] == 'a' && ret[2] == 'n')) {
           ret = ret + 3;
         }
       }
@@ -2776,24 +2635,32 @@ namespace cpptoml
 
     std::string::iterator find_end_of_date(std::string::iterator it, std::string::iterator end)
     {
-      auto end_of_date = std::find_if(it, end, [](char c) { return !is_number(c) && c != '-'; });
-      if (end_of_date != end && *end_of_date == ' ' && end_of_date + 1 != end && is_number(end_of_date[1]))
+      auto end_of_date = std::find_if(it, end, [](char c) {
+        return !is_number(c) && c != '-';
+      });
+      if (end_of_date != end && *end_of_date == ' ' && end_of_date + 1 != end &&
+          is_number(end_of_date[1]))
         end_of_date++;
       return std::find_if(end_of_date, end, [](char c) {
-        return !is_number(c) && c != 'T' && c != 'Z' && c != ':' && c != '-' && c != '+' && c != '.';
+        return !is_number(c) && c != 'T' && c != 'Z' && c != ':' && c != '-' && c != '+' &&
+               c != '.';
       });
     }
 
     std::string::iterator find_end_of_time(std::string::iterator it, std::string::iterator end)
     {
-      return std::find_if(it, end, [](char c) { return !is_number(c) && c != ':' && c != '.'; });
+      return std::find_if(it, end, [](char c) {
+        return !is_number(c) && c != ':' && c != '.';
+      });
     }
 
     local_time read_time(std::string::iterator &it, const std::string::iterator &end)
     {
       auto time_end = find_end_of_time(it, end);
 
-      auto eat = make_consumer(it, time_end, [&]() { throw_parse_exception("Malformed time"); });
+      auto eat = make_consumer(it, time_end, [&]() {
+        throw_parse_exception("Malformed time");
+      });
 
       local_time ltime;
 
@@ -2804,11 +2671,9 @@ namespace cpptoml
       ltime.second = eat.eat_digits(2);
 
       int power = 100000;
-      if (it != time_end && *it == '.')
-      {
+      if (it != time_end && *it == '.') {
         ++it;
-        while (it != time_end && is_number(*it))
-        {
+        while (it != time_end && is_number(*it)) {
           ltime.microsecond += power * (*it++ - '0');
           power /= 10;
         }
@@ -2830,7 +2695,9 @@ namespace cpptoml
     {
       auto date_end = find_end_of_date(it, end);
 
-      auto eat = make_consumer(it, date_end, [&]() { throw_parse_exception("Malformed date"); });
+      auto eat = make_consumer(it, date_end, [&]() {
+        throw_parse_exception("Malformed date");
+      });
 
       local_date ldate;
       ldate.year = eat.eat_digits(4);
@@ -2856,8 +2723,7 @@ namespace cpptoml
 
       int hoff = 0;
       int moff = 0;
-      if (*it == '+' || *it == '-')
-      {
+      if (*it == '+' || *it == '-') {
         auto plus = *it == '+';
         ++it;
 
@@ -2866,8 +2732,7 @@ namespace cpptoml
         eat(':');
         moff = eat.eat_digits(2);
         dt.minute_offset = (plus) ? moff : -moff;
-      } else if (*it == 'Z')
-      {
+      } else if (*it == 'Z') {
         ++it;
       }
 
@@ -2891,16 +2756,16 @@ namespace cpptoml
       skip_whitespace_and_comments(it, end);
 
       // edge case---empty array
-      if (*it == ']')
-      {
+      if (*it == ']') {
         ++it;
         return make_array();
       }
 
-      auto val_end = std::find_if(it, end, [](char c) { return c == ',' || c == ']' || c == '#'; });
+      auto val_end = std::find_if(it, end, [](char c) {
+        return c == ',' || c == ']' || c == '#';
+      });
       parse_type type = determine_value_type(it, val_end);
-      switch (type)
-      {
+      switch (type) {
         case parse_type::STRING:
           return parse_value_array<std::string>(it, end);
         case parse_type::LOCAL_TIME:
@@ -2930,8 +2795,7 @@ namespace cpptoml
     std::shared_ptr<array> parse_value_array(std::string::iterator &it, std::string::iterator &end)
     {
       auto arr = make_array();
-      while (it != end && *it != ']')
-      {
+      while (it != end && *it != ']') {
         auto val = parse_value(it, end);
         if (auto v = val->as<Value>())
           arr->get().push_back(val);
@@ -2956,8 +2820,7 @@ namespace cpptoml
     {
       auto arr = detail::make_element<Object>();
 
-      while (it != end && *it != ']')
-      {
+      while (it != end && *it != ']') {
         if (*it != delim)
           throw_parse_exception("Unexpected character in array");
 
@@ -2978,18 +2841,17 @@ namespace cpptoml
       return arr;
     }
 
-    std::shared_ptr<table> parse_inline_table(std::string::iterator &it, std::string::iterator &end)
+    std::shared_ptr<table> parse_inline_table(std::string::iterator &it,
+                                              std::string::iterator &end)
     {
       auto tbl = make_table();
-      do
-      {
+      do {
         ++it;
         if (it == end)
           throw_parse_exception("Unterminated inline table");
 
         consume_whitespace(it, end);
-        if (it != end && *it != '}')
-        {
+        if (it != end && *it != '}') {
           parse_key_value(it, end, tbl.get());
           consume_whitespace(it, end);
         }
@@ -3007,8 +2869,7 @@ namespace cpptoml
     void skip_whitespace_and_comments(std::string::iterator &start, std::string::iterator &end)
     {
       consume_whitespace(start, end);
-      while (start == end || *start == '#')
-      {
+      while (start == end || *start == '#') {
         if (!detail::getline(input_, line_))
           throw_parse_exception("Unclosed array");
         line_number_++;
@@ -3024,7 +2885,8 @@ namespace cpptoml
         ++it;
     }
 
-    void consume_backwards_whitespace(std::string::iterator &back, const std::string::iterator &front)
+    void consume_backwards_whitespace(std::string::iterator &back,
+                                      const std::string::iterator &front)
     {
       while (back != front && (*back == ' ' || *back == '\t'))
         --back;
@@ -3065,16 +2927,14 @@ namespace cpptoml
       if (it[4] != '-' || it[7] != '-')
         return {};
 
-      if (len >= 19 && (it[10] == 'T' || it[10] == ' ') && is_time(it + 11, date_end))
-      {
+      if (len >= 19 && (it[10] == 'T' || it[10] == ' ') && is_time(it + 11, date_end)) {
         // datetime type
         auto time_end = find_end_of_time(it + 11, date_end);
         if (time_end == date_end)
           return {parse_type::LOCAL_DATETIME};
         else
           return {parse_type::OFFSET_DATETIME};
-      } else if (len == 10)
-      {
+      } else if (len == 10) {
         // just a regular date
         return {parse_type::LOCAL_DATE};
       }
@@ -3106,31 +2966,27 @@ namespace cpptoml
     return p.parse();
   }
 
-  template<class... Ts>
-  struct value_accept;
+  template<class... Ts> struct value_accept;
 
-  template<>
-  struct value_accept<>
+  template<> struct value_accept<>
   {
-    template<class Visitor, class... Args>
-    static void accept(const base &, Visitor &&, Args &&...)
+    template<class Visitor, class... Args> static void accept(const base &, Visitor &&, Args &&...)
     {
       // nothing
     }
   };
 
-  template<class T, class... Ts>
-  struct value_accept<T, Ts...>
+  template<class T, class... Ts> struct value_accept<T, Ts...>
   {
     template<class Visitor, class... Args>
     static void accept(const base &b, Visitor &&visitor, Args &&...args)
     {
-      if (auto v = b.as<T>())
-      {
+      if (auto v = b.as<T>()) {
         visitor.visit(*v, std::forward<Args>(args)...);
-      } else
-      {
-        value_accept<Ts...>::accept(b, std::forward<Visitor>(visitor), std::forward<Args>(args)...);
+      } else {
+        value_accept<Ts...>::accept(b,
+                                    std::forward<Visitor>(visitor),
+                                    std::forward<Args>(args)...);
       }
     }
   };
@@ -3139,11 +2995,9 @@ namespace cpptoml
    * base implementation of accept() that calls visitor.visit() on the concrete
    * class.
    */
-  template<class Visitor, class... Args>
-  void base::accept(Visitor &&visitor, Args &&...args) const
+  template<class Visitor, class... Args> void base::accept(Visitor &&visitor, Args &&...args) const
   {
-    if (is_value())
-    {
+    if (is_value()) {
       using value_acceptor = value_accept<std::string,
                                           int64_t,
                                           double,
@@ -3153,14 +3007,11 @@ namespace cpptoml
                                           local_datetime,
                                           offset_datetime>;
       value_acceptor::accept(*this, std::forward<Visitor>(visitor), std::forward<Args>(args)...);
-    } else if (is_table())
-    {
+    } else if (is_table()) {
       visitor.visit(static_cast<const table &>(*this), std::forward<Args>(args)...);
-    } else if (is_array())
-    {
+    } else if (is_array()) {
       visitor.visit(static_cast<const array &>(*this), std::forward<Args>(args)...);
-    } else if (is_table_array())
-    {
+    } else if (is_table_array()) {
       visitor.visit(static_cast<const table_array &>(*this), std::forward<Args>(args)...);
     }
   }
@@ -3172,6 +3023,7 @@ namespace cpptoml
   class toml_writer
   {
    public:
+
     /**
      * Construct a toml_writer that will write to the given stream
      */
@@ -3184,11 +3036,11 @@ namespace cpptoml
     }
 
    public:
+
     /**
      * Output a base value of the TOML tree.
      */
-    template<class T>
-    void visit(const value<T> &v, bool = false)
+    template<class T> void visit(const value<T> &v, bool = false)
     {
       write(v);
     }
@@ -3202,19 +3054,15 @@ namespace cpptoml
       std::vector<std::string> values;
       std::vector<std::string> tables;
 
-      for (const auto &i : t)
-      {
-        if (i.second->is_table() || i.second->is_table_array())
-        {
+      for (const auto &i : t) {
+        if (i.second->is_table() || i.second->is_table_array()) {
           tables.push_back(i.first);
-        } else
-        {
+        } else {
           values.push_back(i.first);
         }
       }
 
-      for (unsigned int i = 0; i < values.size(); ++i)
-      {
+      for (unsigned int i = 0; i < values.size(); ++i) {
         path_.push_back(values[i]);
 
         if (i > 0)
@@ -3225,8 +3073,7 @@ namespace cpptoml
         path_.pop_back();
       }
 
-      for (unsigned int i = 0; i < tables.size(); ++i)
-      {
+      for (unsigned int i = 0; i < tables.size(); ++i) {
         path_.push_back(tables[i]);
 
         if (values.size() > 0 || i > 0)
@@ -3247,16 +3094,13 @@ namespace cpptoml
     {
       write("[");
 
-      for (unsigned int i = 0; i < a.get().size(); ++i)
-      {
+      for (unsigned int i = 0; i < a.get().size(); ++i) {
         if (i > 0)
           write(", ");
 
-        if (a.get()[i]->is_array())
-        {
+        if (a.get()[i]->is_array()) {
           a.get()[i]->as_array()->accept(*this, true);
-        } else
-        {
+        } else {
           a.get()[i]->accept(*this, true);
         }
       }
@@ -3269,8 +3113,7 @@ namespace cpptoml
      */
     void visit(const table_array &t, bool = false)
     {
-      for (unsigned int j = 0; j < t.get().size(); ++j)
-      {
+      for (unsigned int j = 0; j < t.get().size(); ++j) {
         if (j > 0)
           endline();
 
@@ -3286,37 +3129,27 @@ namespace cpptoml
     static std::string escape_string(const std::string &str)
     {
       std::string res;
-      for (auto it = str.begin(); it != str.end(); ++it)
-      {
-        if (*it == '\b')
-        {
+      for (auto it = str.begin(); it != str.end(); ++it) {
+        if (*it == '\b') {
           res += "\\b";
-        } else if (*it == '\t')
-        {
+        } else if (*it == '\t') {
           res += "\\t";
-        } else if (*it == '\n')
-        {
+        } else if (*it == '\n') {
           res += "\\n";
-        } else if (*it == '\f')
-        {
+        } else if (*it == '\f') {
           res += "\\f";
-        } else if (*it == '\r')
-        {
+        } else if (*it == '\r') {
           res += "\\r";
-        } else if (*it == '"')
-        {
+        } else if (*it == '"') {
           res += "\\\"";
-        } else if (*it == '\\')
-        {
+        } else if (*it == '\\') {
           res += "\\\\";
-        } else if (static_cast<uint32_t>(*it) <= UINT32_C(0x001f))
-        {
+        } else if (static_cast<uint32_t>(*it) <= UINT32_C(0x001f)) {
           res += "\\u";
           std::stringstream ss;
           ss << std::hex << static_cast<uint32_t>(*it);
           res += ss.str();
-        } else
-        {
+        } else {
           res += *it;
         }
       }
@@ -3324,6 +3157,7 @@ namespace cpptoml
     }
 
    protected:
+
     /**
      * Write out a string.
      */
@@ -3340,7 +3174,8 @@ namespace cpptoml
     void write(const value<double> &v)
     {
       std::stringstream ss;
-      ss << std::showpoint << std::setprecision(std::numeric_limits<double>::max_digits10) << v.get();
+      ss << std::showpoint << std::setprecision(std::numeric_limits<double>::max_digits10)
+         << v.get();
 
       auto double_str = ss.str();
       auto pos = double_str.find("e0");
@@ -3379,39 +3214,32 @@ namespace cpptoml
      */
     void write_table_header(bool in_array = false)
     {
-      if (!path_.empty())
-      {
+      if (!path_.empty()) {
         indent();
 
         write("[");
 
-        if (in_array)
-        {
+        if (in_array) {
           write("[");
         }
 
-        for (unsigned int i = 0; i < path_.size(); ++i)
-        {
-          if (i > 0)
-          {
+        for (unsigned int i = 0; i < path_.size(); ++i) {
+          if (i > 0) {
             write(".");
           }
 
           if (path_[i].find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcde"
                                          "fghijklmnopqrstuvwxyz0123456789"
-                                         "_-") == std::string::npos)
-          {
+                                         "_-") == std::string::npos) {
             write(path_[i]);
-          } else
-          {
+          } else {
             write("\"");
             write(escape_string(path_[i]));
             write("\"");
           }
         }
 
-        if (in_array)
-        {
+        if (in_array) {
           write("]");
         }
 
@@ -3425,17 +3253,14 @@ namespace cpptoml
      */
     void write_table_item_header(const base &b)
     {
-      if (!b.is_table() && !b.is_table_array())
-      {
+      if (!b.is_table() && !b.is_table_array()) {
         indent();
 
         if (path_.back().find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcde"
                                            "fghijklmnopqrstuvwxyz0123456789"
-                                           "_-") == std::string::npos)
-        {
+                                           "_-") == std::string::npos) {
           write(path_.back());
-        } else
-        {
+        } else {
           write("\"");
           write(escape_string(path_.back()));
           write("\"");
@@ -3446,6 +3271,7 @@ namespace cpptoml
     }
 
    private:
+
     /**
      * Indent the proper number of tabs given the size of
      * the path.
@@ -3459,8 +3285,7 @@ namespace cpptoml
     /**
      * Write a value out to the stream.
      */
-    template<class T>
-    void write(const T &v)
+    template<class T> void write(const T &v)
     {
       stream_ << v;
       has_naked_endline_ = false;
@@ -3471,14 +3296,14 @@ namespace cpptoml
      */
     void endline()
     {
-      if (!has_naked_endline_)
-      {
+      if (!has_naked_endline_) {
         stream_ << "\n";
         has_naked_endline_ = true;
       }
     }
 
    private:
+
     std::ostream &stream_;
     const std::string indent_;
     std::vector<std::string> path_;
@@ -3492,8 +3317,7 @@ namespace cpptoml
     return stream;
   }
 
-  template<class T>
-  std::ostream &operator<<(std::ostream &stream, const value<T> &v)
+  template<class T> std::ostream &operator<<(std::ostream &stream, const value<T> &v)
   {
     toml_writer writer{stream};
     v.accept(writer);

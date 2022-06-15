@@ -49,6 +49,7 @@ class TfPatternMatcher
 {
 
  public:
+
   /// Construct an empty (invalid) TfPatternMatcher.
   TF_API TfPatternMatcher();
 
@@ -118,6 +119,7 @@ class TfPatternMatcher
   TF_API void SetPattern(const std::string &pattern);
 
  private:
+
   void _Compile() const;
 
   bool _caseSensitive;

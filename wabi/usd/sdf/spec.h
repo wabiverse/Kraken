@@ -53,6 +53,7 @@ class SdfSpec
   SDF_DECLARE_BASE_SPEC(SdfSpec);
 
  public:
+
   SDF_API
   SdfSpec &operator=(const SdfSpec &other);
 
@@ -129,7 +130,9 @@ class SdfSpec
   /// Sets the value for \p entryKey to \p value within the dictionary
   ///        with the given metadata key \p dictionaryKey
   SDF_API
-  void SetInfoDictionaryValue(const TfToken &dictionaryKey, const TfToken &entryKey, const VtValue &value);
+  void SetInfoDictionaryValue(const TfToken &dictionaryKey,
+                              const TfToken &entryKey,
+                              const VtValue &value);
 
   /// Returns whether there is a setting for the scene spec info
   /// with the given key.
@@ -201,11 +204,9 @@ class SdfSpec
   /// Returns \c true if the object has a non-empty value with name
   /// \p name and type \p T.  If value ptr is provided, returns the
   /// value found.
-  template<class T>
-  bool HasField(const TfToken &name, T *value) const
+  template<class T> bool HasField(const TfToken &name, T *value) const
   {
-    if (!value)
-    {
+    if (!value) {
       return HasField(name);
     }
 
@@ -220,8 +221,7 @@ class SdfSpec
   /// Returns a field value by name.  If the object is invalid, or the
   /// value doesn't exist, isn't set, or isn't of the given type then
   /// returns defaultValue.
-  template<typename T>
-  T GetFieldAs(const TfToken &name, const T &defaultValue = T()) const
+  template<typename T> T GetFieldAs(const TfToken &name, const T &defaultValue = T()) const
   {
     VtValue v = GetField(name);
     if (v.IsEmpty() || !v.IsHolding<T>())
@@ -234,8 +234,7 @@ class SdfSpec
   bool SetField(const TfToken &name, const VtValue &value);
 
   /// Sets a field value of type T.
-  template<typename T>
-  bool SetField(const TfToken &name, const T &value)
+  template<typename T> bool SetField(const TfToken &name, const T &value)
   {
     return SetField(name, VtValue(value));
   }
@@ -261,14 +260,17 @@ class SdfSpec
   }
 
  private:
+
   SDF_API
   bool _HasField(const TfToken &name, SdfAbstractDataValue *value) const;
 
  protected:
+
   bool _MoveSpec(const SdfPath &oldPath, const SdfPath &newPath) const;
   bool _DeleteSpec(const SdfPath &path);
 
  private:
+
   Sdf_IdentityRefPtr _id;
 };
 

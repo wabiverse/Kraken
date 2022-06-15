@@ -28,6 +28,7 @@ struct RprUsdContextMetadata;
 class HdRprApiAov
 {
  public:
+
   HdRprApiAov(rpr_aov rprAovType,
               int width,
               int height,
@@ -67,6 +68,7 @@ class HdRprApiAov
   HdRprApiFramebuffer *GetResolvedFb();
 
  protected:
+
   HdRprApiAov(HdRprAovDescriptor const &aovDescriptor, HdFormat format)
     : m_aovDescriptor(aovDescriptor),
       m_format(format){};
@@ -75,6 +77,7 @@ class HdRprApiAov
   virtual void OnSizeChange(rif::Context *rifContext);
 
  protected:
+
   HdRprAovDescriptor const &m_aovDescriptor;
   HdFormat m_format;
 
@@ -92,12 +95,14 @@ class HdRprApiAov
   uint32_t m_dirtyBits = AllDirty;
 
  private:
+
   bool GetDataImpl(void *dstBuffer, size_t dstBufferSize);
 };
 
 class HdRprApiColorAov : public HdRprApiAov
 {
  public:
+
   HdRprApiColorAov(HdFormat format,
                    std::shared_ptr<HdRprApiAov> rawColorAov,
                    rpr::Context *rprContext,
@@ -132,8 +137,8 @@ class HdRprApiColorAov : public HdRprApiAov
 
     bool operator==(TonemapParams const &lhs)
     {
-      return exposureTime == lhs.exposureTime && sensitivity == lhs.sensitivity && fstop == lhs.fstop &&
-             gamma == lhs.gamma;
+      return exposureTime == lhs.exposureTime && sensitivity == lhs.sensitivity &&
+             fstop == lhs.fstop && gamma == lhs.gamma;
     }
     bool operator!=(TonemapParams const &lhs)
     {
@@ -143,10 +148,12 @@ class HdRprApiColorAov : public HdRprApiAov
   void SetTonemap(TonemapParams const &params);
 
  protected:
+
   void OnFormatChange(rif::Context *rifContext) override;
   void OnSizeChange(rif::Context *rifContext) override;
 
  private:
+
   enum Filter
   {
     kFilterNone = 0,
@@ -166,6 +173,7 @@ class HdRprApiColorAov : public HdRprApiAov
   bool CanComposeAlpha();
 
  private:
+
   std::shared_ptr<HdRprApiAov> m_retainedRawColor;
   std::shared_ptr<HdRprApiAov> m_retainedOpacity;
   std::shared_ptr<HdRprApiAov> m_retainedDenoiseInputs[rif::MaxInput];
@@ -186,6 +194,7 @@ class HdRprApiColorAov : public HdRprApiAov
 class HdRprApiNormalAov : public HdRprApiAov
 {
  public:
+
   HdRprApiNormalAov(int width,
                     int height,
                     HdFormat format,
@@ -195,6 +204,7 @@ class HdRprApiNormalAov : public HdRprApiAov
   ~HdRprApiNormalAov() override = default;
 
  protected:
+
   void OnFormatChange(rif::Context *rifContext) override;
   void OnSizeChange(rif::Context *rifContext) override;
 };
@@ -202,7 +212,11 @@ class HdRprApiNormalAov : public HdRprApiAov
 class HdRprApiComputedAov : public HdRprApiAov
 {
  public:
-  HdRprApiComputedAov(HdRprAovDescriptor const &aovDescriptor, int width, int height, HdFormat format)
+
+  HdRprApiComputedAov(HdRprAovDescriptor const &aovDescriptor,
+                      int width,
+                      int height,
+                      HdFormat format)
     : HdRprApiAov(aovDescriptor, format),
       m_width(width),
       m_height(height)
@@ -212,6 +226,7 @@ class HdRprApiComputedAov : public HdRprApiAov
   void Resize(int width, int height, HdFormat format) override final;
 
  protected:
+
   int m_width = -1;
   int m_height = -1;
 };
@@ -219,6 +234,7 @@ class HdRprApiComputedAov : public HdRprApiAov
 class HdRprApiDepthAov : public HdRprApiComputedAov
 {
  public:
+
   HdRprApiDepthAov(int width,
                    int height,
                    HdFormat format,
@@ -232,6 +248,7 @@ class HdRprApiDepthAov : public HdRprApiComputedAov
   void Resolve() override;
 
  private:
+
   std::unique_ptr<rif::Filter> m_retainedFilter;
 
   rif::Filter *m_ndcFilter;
@@ -243,6 +260,7 @@ class HdRprApiDepthAov : public HdRprApiComputedAov
 class HdRprApiIdMaskAov : public HdRprApiComputedAov
 {
  public:
+
   HdRprApiIdMaskAov(HdRprAovDescriptor const &aovDescriptor,
                     std::shared_ptr<HdRprApiAov> const &baseIdAov,
                     int width,
@@ -256,6 +274,7 @@ class HdRprApiIdMaskAov : public HdRprApiComputedAov
   void Update(HdRprApi const *rprApi, rif::Context *rifContext) override;
 
  private:
+
   std::shared_ptr<HdRprApiAov> m_baseIdAov;
 };
 

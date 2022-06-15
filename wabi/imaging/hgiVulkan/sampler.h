@@ -47,6 +47,7 @@ class HgiVulkanDevice;
 class HgiVulkanSampler final : public HgiSampler
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanSampler() override;
 
@@ -66,12 +67,14 @@ class HgiVulkanSampler final : public HgiSampler
   uint64_t &GetInflightBits();
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
   HgiVulkanSampler(HgiVulkanDevice *device, HgiSamplerDesc const &desc);
 
  private:
+
   HgiVulkanSampler() = delete;
   HgiVulkanSampler &operator=(const HgiVulkanSampler &) = delete;
   HgiVulkanSampler(const HgiVulkanSampler &) = delete;

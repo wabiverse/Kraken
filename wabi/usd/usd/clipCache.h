@@ -52,6 +52,7 @@ class Usd_ClipCache
   Usd_ClipCache &operator=(Usd_ClipCache const &) = delete;
 
  public:
+
   Usd_ClipCache();
   ~Usd_ClipCache();
 
@@ -122,6 +123,7 @@ class Usd_ClipCache
   void InvalidateClipsForPrim(const SdfPath &path);
 
  private:
+
   void _ComputeClipsFromPrimIndex(const SdfPath &usdPrimPath,
                                   const PcpPrimIndex &primIndex,
                                   std::vector<Usd_ClipSetRefPtr> *clips) const;

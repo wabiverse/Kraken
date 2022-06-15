@@ -41,8 +41,7 @@
 WABI_NAMESPACE_BEGIN
 
 class TfRefBase;
-template<class T>
-class TfRefPtr;
+template<class T> class TfRefPtr;
 
 /// \class TfRefPtrTracker
 ///
@@ -98,6 +97,7 @@ class TfRefPtr;
 class TfRefPtrTracker : public TfWeakBase, boost::noncopyable
 {
  public:
+
   enum TraceType
   {
     Add,
@@ -178,6 +178,7 @@ class TfRefPtrTracker : public TfWeakBase, boost::noncopyable
   }
 
  private:
+
   TfRefPtrTracker();
   ~TfRefPtrTracker();
 
@@ -195,6 +196,7 @@ class TfRefPtrTracker : public TfWeakBase, boost::noncopyable
   void _RemoveTraces(const void *owner);
 
  private:
+
   typedef std::mutex _Mutex;
   typedef std::lock_guard<std::mutex> _Lock;
   mutable _Mutex _mutex;
@@ -212,6 +214,7 @@ TF_API_TEMPLATE_CLASS(TfSingleton<TfRefPtrTracker>);
 class Tf_RefPtrTrackerUtil
 {
  public:
+
   /// Start watching \p obj.  Only watched objects are traced.
   static void Watch(const TfRefBase *obj)
   {
@@ -267,8 +270,7 @@ class Tf_RefPtrTrackerUtil
   }                                                                         \
   inline void Tf_RefPtrTracker_Assign(const void *owner, T *obj, T *oldObj) \
   {                                                                         \
-    if (oldObj != obj)                                                      \
-    {                                                                       \
+    if (oldObj != obj) {                                                    \
       Tf_RefPtrTrackerUtil::AddTrace(owner, obj, TfRefPtrTracker::Assign);  \
     }                                                                       \
   }

@@ -56,12 +56,12 @@ WABI_NAMESPACE_BEGIN
 class Sdf_TextParserContext
 {
  public:
+
   // Constructor.
   Sdf_TextParserContext();
 
   // Destructor.
-  ~Sdf_TextParserContext()
-  {}
+  ~Sdf_TextParserContext() {}
 
   std::string magicIdentifierToken;
   std::string versionString;

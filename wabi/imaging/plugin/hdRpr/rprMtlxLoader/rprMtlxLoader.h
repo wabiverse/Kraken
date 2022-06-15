@@ -9,9 +9,11 @@
 class RPRMtlxLoader
 {
  public:
+
   RPRMtlxLoader();
 
-  void SetupStdlib(MaterialX::FilePathVec const &libraryNames, MaterialX::FileSearchPath const &searchPath);
+  void SetupStdlib(MaterialX::FilePathVec const &libraryNames,
+                   MaterialX::FileSearchPath const &searchPath);
   MaterialX::ConstDocumentPtr GetStdlib() const
   {
     return _stdlib;
@@ -118,21 +120,17 @@ class RPRMtlxLoader
   /// Reference function on how properly to release RPRMtlxLoader::Result
   static void Release(Result *result)
   {
-    if (!result || !result->nodes)
-    {
+    if (!result || !result->nodes) {
       return;
     }
 
-    for (size_t i = 0; i < result->numNodes; ++i)
-    {
-      if (result->nodes[i])
-      {
+    for (size_t i = 0; i < result->numNodes; ++i) {
+      if (result->nodes[i]) {
         rprObjectDelete(result->nodes[i]);
       }
     }
     delete[] result->nodes;
-    if (result->imageNodes)
-    {
+    if (result->imageNodes) {
       delete[] result->imageNodes;
     }
 
@@ -140,6 +138,7 @@ class RPRMtlxLoader
   }
 
  private:
+
   MaterialX::DocumentPtr _stdlib;
   MaterialX::FileSearchPath _stdSearchPath;
   LogLevel _logLevel = LogLevel::Error;

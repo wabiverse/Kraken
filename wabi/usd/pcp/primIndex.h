@@ -75,6 +75,7 @@ class SdfPath;
 class PcpPrimIndex
 {
  public:
+
   /// Default construct an empty, invalid prim index.
   PCP_API
   PcpPrimIndex();
@@ -250,6 +251,7 @@ class PcpPrimIndex
   /// @}
 
  private:
+
   friend class PcpPrimIterator;
   friend struct Pcp_PrimIndexer;
   friend void Pcp_RescanForSpecs(PcpPrimIndex *, bool usd, bool updateHasSpecs);
@@ -279,6 +281,7 @@ inline void swap(PcpPrimIndex &l, PcpPrimIndex &r)
 class PcpPrimIndexOutputs
 {
  public:
+
   /// Enumerator whose enumerants describe the payload state of this prim
   /// index.  NoPayload if the index has no payload arcs, otherwise whether
   /// payloads were included or excluded, and if done so by consulting either
@@ -324,7 +327,9 @@ class PcpPrimIndexOutputs
   ///
   /// Returns the node in this object's prim index corresponding to the root
   /// node of \p childOutputs' prim index.
-  PcpNodeRef Append(PcpPrimIndexOutputs &&childOutputs, const PcpArc &arcToParent, PcpErrorBasePtr *error);
+  PcpNodeRef Append(PcpPrimIndexOutputs &&childOutputs,
+                    const PcpArc &arcToParent,
+                    PcpErrorBasePtr *error);
 };
 
 /// Free function version for generic code and ADL.
@@ -340,6 +345,7 @@ inline void swap(PcpPrimIndexOutputs &l, PcpPrimIndexOutputs &r)
 class PcpPrimIndexInputs
 {
  public:
+
   PcpPrimIndexInputs()
     : cache(nullptr),
       variantFallbacks(nullptr),

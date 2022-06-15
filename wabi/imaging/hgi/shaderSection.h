@@ -61,6 +61,7 @@ using HgiShaderSectionAttributeVector = std::vector<HgiShaderSectionAttribute>;
 class HgiShaderSection
 {
  public:
+
   HGI_API
   virtual ~HgiShaderSection();
 
@@ -86,6 +87,7 @@ class HgiShaderSection
   const HgiShaderSectionAttributeVector &GetAttributes() const;
 
  protected:
+
   HGI_API
   explicit HgiShaderSection(const std::string &identifier,
                             const HgiShaderSectionAttributeVector &attributes = {},
@@ -95,6 +97,7 @@ class HgiShaderSection
   const std::string &_GetDefaultValue() const;
 
  private:
+
   const std::string _identifierVar;
   const HgiShaderSectionAttributeVector _attributes;
   const std::string _defaultValue;

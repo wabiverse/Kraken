@@ -49,13 +49,11 @@ namespace Vt_HashDetail
   {
     return true;
   }
-  template<class T, class = decltype(TfHash()(std::declval<T>()))>
-  constexpr bool _IsHashable(long)
+  template<class T, class = decltype(TfHash()(std::declval<T>()))> constexpr bool _IsHashable(long)
   {
     return true;
   }
-  template<class T>
-  constexpr bool _IsHashable(...)
+  template<class T> constexpr bool _IsHashable(...)
   {
     return false;
   }
@@ -75,8 +73,7 @@ namespace Vt_HashDetail
     return TfHash()(val);
   }
 
-  template<class T>
-  inline size_t _HashValueImpl(T const &val, ...)
+  template<class T> inline size_t _HashValueImpl(T const &val, ...)
   {
     Vt_HashDetail::_IssueUnimplementedHashError(typeid(T));
     return 0;
@@ -87,8 +84,7 @@ namespace Vt_HashDetail
 /// A constexpr function that returns true if T is hashable via VtHashValue,
 /// false otherwise.  This is true if we can either invoke
 /// (boost::)hash_value() or TfHash()() on a T instance.
-template<class T>
-constexpr bool VtIsHashable()
+template<class T> constexpr bool VtIsHashable()
 {
   return Vt_HashDetail::_IsHashable<T>(0);
 }
@@ -96,8 +92,7 @@ constexpr bool VtIsHashable()
 /// Compute a hash code for \p val by invoking (boost::)hash_value(val) if
 /// possible, otherwise by invoking TfHash()(val), or if neither are possible
 /// issue a coding error and return 0.
-template<class T>
-size_t VtHashValue(T const &val)
+template<class T> size_t VtHashValue(T const &val)
 {
   return Vt_HashDetail::_HashValueImpl(val, 0);
 }

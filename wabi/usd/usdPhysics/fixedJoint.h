@@ -57,6 +57,7 @@ class SdfAssetPath;
 class UsdPhysicsFixedJoint : public UsdPhysicsJoint
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -66,16 +67,12 @@ class UsdPhysicsFixedJoint : public UsdPhysicsJoint
   /// Equivalent to UsdPhysicsFixedJoint::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsFixedJoint(const UsdPrim &prim = UsdPrim())
-    : UsdPhysicsJoint(prim)
-  {}
+  explicit UsdPhysicsFixedJoint(const UsdPrim &prim = UsdPrim()) : UsdPhysicsJoint(prim) {}
 
   /// Construct a UsdPhysicsFixedJoint on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsFixedJoint(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsFixedJoint(const UsdSchemaBase &schemaObj)
-    : UsdPhysicsJoint(schemaObj)
-  {}
+  explicit UsdPhysicsFixedJoint(const UsdSchemaBase &schemaObj) : UsdPhysicsJoint(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -125,6 +122,7 @@ class UsdPhysicsFixedJoint : public UsdPhysicsJoint
   static UsdPhysicsFixedJoint Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -132,6 +130,7 @@ class UsdPhysicsFixedJoint : public UsdPhysicsJoint
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -141,9 +140,11 @@ class UsdPhysicsFixedJoint : public UsdPhysicsJoint
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

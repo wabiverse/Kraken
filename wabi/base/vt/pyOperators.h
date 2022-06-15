@@ -44,24 +44,21 @@ WABI_NAMESPACE_BEGIN
 
 // base macro called by wrapping layers below for various operators, python
 // types (lists and tuples), and special methods
-#define VTOPERATOR_WRAP_PYTYPE_BASE(op, method, pytype, rettype, expr) \
-  template<typename T>                                                 \
-  static VtArray<rettype> method##pytype(VtArray<T> vec, pytype obj)   \
-  {                                                                    \
-    size_t length = len(obj);                                          \
-    if (length != vec.size())                                          \
-    {                                                                  \
-      TfPyThrowValueError("Non-conforming inputs for operator " #op);  \
-      return VtArray<T>();                                             \
-    }                                                                  \
-    VtArray<rettype> ret(vec.size());                                  \
-    for (size_t i = 0; i < length; ++i)                                \
-    {                                                                  \
-      if (!extract<T>(obj[i]).check())                                 \
-        TfPyThrowValueError("Element is of incorrect type.");          \
-      ret[i] = expr;                                                   \
-    }                                                                  \
-    return ret;                                                        \
+#define VTOPERATOR_WRAP_PYTYPE_BASE(op, method, pytype, rettype, expr)                    \
+  template<typename T> static VtArray<rettype> method##pytype(VtArray<T> vec, pytype obj) \
+  {                                                                                       \
+    size_t length = len(obj);                                                             \
+    if (length != vec.size()) {                                                           \
+      TfPyThrowValueError("Non-conforming inputs for operator " #op);                     \
+      return VtArray<T>();                                                                \
+    }                                                                                     \
+    VtArray<rettype> ret(vec.size());                                                     \
+    for (size_t i = 0; i < length; ++i) {                                                 \
+      if (!extract<T>(obj[i]).check())                                                    \
+        TfPyThrowValueError("Element is of incorrect type.");                             \
+      ret[i] = expr;                                                                      \
+    }                                                                                     \
+    return ret;                                                                           \
   }
 
 // wrap Array op pytype
@@ -103,18 +100,15 @@ WABI_NAMESPACE_BEGIN
 // to be used for wrapping conditional functions that return bool arrays
 // (i.e. Equal, etc)
 #define VTOPERATOR_WRAP_PYTYPE_BOOL_BASE(func, arg1, arg2, expr) \
-  template<typename T>                                           \
-  static VtArray<bool> Vt##func(arg1, arg2)                      \
+  template<typename T> static VtArray<bool> Vt##func(arg1, arg2) \
   {                                                              \
     size_t length = len(obj);                                    \
-    if (length != vec.size())                                    \
-    {                                                            \
+    if (length != vec.size()) {                                  \
       TfPyThrowValueError("Non-conforming inputs for " #func);   \
       return VtArray<bool>();                                    \
     }                                                            \
     VtArray<bool> ret(vec.size());                               \
-    for (size_t i = 0; i < length; ++i)                          \
-    {                                                            \
+    for (size_t i = 0; i < length; ++i) {                        \
       if (!extract<T>(obj[i]).check())                           \
         TfPyThrowValueError("Element is of incorrect type.");    \
       ret[i] = expr;                                             \

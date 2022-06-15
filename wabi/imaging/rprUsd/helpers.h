@@ -20,16 +20,15 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T, typename U, typename R>
-T RprUsdGetInfo(U *object, R info)
+template<typename T, typename U, typename R> T RprUsdGetInfo(U *object, R info)
 {
   T value = {};
-  RPR_ERROR_CHECK_THROW(object->GetInfo(info, sizeof(value), &value, nullptr), "Failed to get object info");
+  RPR_ERROR_CHECK_THROW(object->GetInfo(info, sizeof(value), &value, nullptr),
+                        "Failed to get object info");
   return value;
 }
 
-template<typename T>
-struct Buffer
+template<typename T> struct Buffer
 {
   std::unique_ptr<T[]> data;
   size_t size;
@@ -40,14 +39,12 @@ struct Buffer
   }
 };
 
-template<typename T, typename GetInfoFunc>
-Buffer<T> RprUsdGetListInfo(GetInfoFunc &&getInfoFunc)
+template<typename T, typename GetInfoFunc> Buffer<T> RprUsdGetListInfo(GetInfoFunc &&getInfoFunc)
 {
   size_t size = 0;
   RPR_ERROR_CHECK_THROW(getInfoFunc(sizeof(size), nullptr, &size), "Failed to get object info");
 
-  if (size <= 1)
-  {
+  if (size <= 1) {
     return {};
   }
 
@@ -58,19 +55,16 @@ Buffer<T> RprUsdGetListInfo(GetInfoFunc &&getInfoFunc)
   return {std::move(buffer), numElements};
 }
 
-template<typename T, typename U, typename R>
-Buffer<T> RprUsdGetListInfo(U *object, R info)
+template<typename T, typename U, typename R> Buffer<T> RprUsdGetListInfo(U *object, R info)
 {
   return RprUsdGetListInfo<T>([object, info](size_t size, void *data, size_t *size_ret) {
     return object->GetInfo(info, size, data, size_ret);
   });
 }
 
-template<typename U, typename R>
-std::string RprUsdGetStringInfo(U *object, R info)
+template<typename U, typename R> std::string RprUsdGetStringInfo(U *object, R info)
 {
-  if (auto strBuffer = RprUsdGetListInfo<char>(object, info))
-  {
+  if (auto strBuffer = RprUsdGetListInfo<char>(object, info)) {
     // discard null-terminator
     --strBuffer.size;
 
@@ -83,8 +77,7 @@ template<typename Wrapper>
 Wrapper *RprUsdGetRprObject(typename rpr::RprApiTypeOf<Wrapper>::value rprApiObject)
 {
   const void *customPtr = nullptr;
-  if (rprObjectGetCustomPointer(rprApiObject, &customPtr) != RPR_SUCCESS)
-  {
+  if (rprObjectGetCustomPointer(rprApiObject, &customPtr) != RPR_SUCCESS) {
     return nullptr;
   }
   assert(dynamic_cast<Wrapper const *>(static_cast<rpr::ContextObject const *>(customPtr)));

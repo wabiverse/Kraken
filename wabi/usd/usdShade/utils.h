@@ -48,6 +48,7 @@ class UsdShadeOutput;
 class UsdShadeUtils
 {
  public:
+
   /// Returns the namespace prefix of the USD attribute associated with the
   /// given shading attribute type.
   USDSHADE_API

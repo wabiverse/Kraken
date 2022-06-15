@@ -62,6 +62,7 @@ using HgiVulkanComputePipelineVector = std::vector<class HgiVulkanComputePipelin
 class HgiVulkanGarbageCollector final
 {
  public:
+
   HGIVULKAN_API
   HgiVulkanGarbageCollector(HgiVulkan *hgi);
 
@@ -102,14 +103,14 @@ class HgiVulkanGarbageCollector final
   HgiVulkanComputePipelineVector *GetComputePipelineList();
 
  private:
+
   HgiVulkanGarbageCollector &operator=(const HgiVulkanGarbageCollector &) = delete;
   HgiVulkanGarbageCollector(const HgiVulkanGarbageCollector &) = delete;
 
   /// Returns a thread_local vector in which to store a object handle.
   /// Thread safety: The returned vector is a thread_local vector so this call
   /// is thread safe as long as the vector is only used by the calling thread.
-  template<class T>
-  T *_GetThreadLocalStorageList(std::vector<T *> *collector);
+  template<class T> T *_GetThreadLocalStorageList(std::vector<T *> *collector);
 
   HgiVulkan *_hgi;
 

@@ -47,6 +47,7 @@ class AnchorWindowSDL;
 class AnchorSystemSDL : public AnchorSystem
 {
  public:
+
   AnchorSystemSDL();
   ~AnchorSystemSDL();
 
@@ -69,6 +70,7 @@ class AnchorSystemSDL : public AnchorSystem
   static bool ANCHOR_ImplSDL2_ProcessEvent(const SDL_Event *event);
 
  private:
+
   eAnchorStatus init();
 
   AnchorISystemWindow *createWindow(const char *title,
@@ -100,13 +102,16 @@ class AnchorSystemSDL : public AnchorSystem
 class AnchorDisplayManagerSDL : public AnchorDisplayManager
 {
  public:
+
   AnchorDisplayManagerSDL(AnchorSystemSDL *system);
 
   eAnchorStatus getNumDisplays(AnchorU8 &numDisplays) const;
 
   eAnchorStatus getNumDisplaySettings(AnchorU8 display, AnchorS32 &numSettings) const;
 
-  eAnchorStatus getDisplaySetting(AnchorU8 display, AnchorS32 index, ANCHOR_DisplaySetting &setting) const;
+  eAnchorStatus getDisplaySetting(AnchorU8 display,
+                                  AnchorS32 index,
+                                  ANCHOR_DisplaySetting &setting) const;
 
   eAnchorStatus getCurrentDisplaySetting(AnchorU8 display, ANCHOR_DisplaySetting &setting) const;
 
@@ -115,6 +120,7 @@ class AnchorDisplayManagerSDL : public AnchorDisplayManager
   eAnchorStatus setCurrentDisplaySetting(AnchorU8 display, const ANCHOR_DisplaySetting &setting);
 
  private:
+
   AnchorSystemSDL *m_system;
   SDL_DisplayMode m_mode;
 };
@@ -122,6 +128,7 @@ class AnchorDisplayManagerSDL : public AnchorDisplayManager
 class AnchorWindowSDL : public AnchorSystemWindow
 {
  private:
+
   AnchorSystemSDL *m_system;
   bool m_valid_setup;
   bool m_invalid_window;
@@ -132,6 +139,7 @@ class AnchorWindowSDL : public AnchorSystemWindow
   ANCHOR_VulkanGPU_Surface *m_vulkan_context;
 
  public:
+
   AnchorWindowSDL(AnchorSystemSDL *system,
                   const char *title,
                   const char *icon,
@@ -170,6 +178,7 @@ class AnchorWindowSDL : public AnchorSystemWindow
   void getClientBounds(AnchorRect &bounds) const;
 
  protected:
+
   /**
    * @param type: The type of rendering context create.
    * @return Indication of success. */

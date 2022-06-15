@@ -49,6 +49,7 @@ class UsdStage;
 class UsdviewqUtils
 {
  public:
+
   struct PrimInfo
   {
     PrimInfo(const UsdPrim &prim, const UsdTimeCode time);
@@ -74,7 +75,8 @@ class UsdviewqUtils
   //      ultimately Usd will have better core support for fast prim
   //      filtering by typeName.
   USDVIEWQ_API
-  static std::vector<UsdPrim> _GetAllPrimsOfType(UsdStagePtr const &stage, TfType const &schemaType);
+  static std::vector<UsdPrim> _GetAllPrimsOfType(UsdStagePtr const &stage,
+                                                 TfType const &schemaType);
 
   /// Fetch prim-related data in batch to to speed up Qt treeview item
   /// population.  Takes a time argument so that we can evaluate the prim's

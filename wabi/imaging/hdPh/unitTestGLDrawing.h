@@ -43,6 +43,7 @@ class HdPh_UnitTestWindow;
 class HdPh_UnitTestGLDrawing
 {
  public:
+
   HDPH_API
   HdPh_UnitTestGLDrawing();
   HDPH_API
@@ -78,6 +79,7 @@ class HdPh_UnitTestGLDrawing
   bool WriteToFile(std::string const &attachment, std::string const &filename) const;
 
  protected:
+
   HDPH_API
   virtual void ParseArgs(int argc, char *argv[]);
 
@@ -107,6 +109,7 @@ class HdPh_UnitTestGLDrawing
   }
 
  private:
+
   HdPh_UnitTestWindow *_widget;
   float _rotate[2];
   GfVec3f _translate;

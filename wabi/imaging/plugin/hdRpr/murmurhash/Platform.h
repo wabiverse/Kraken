@@ -23,7 +23,8 @@ void SetAffinity(int cpu);
 #  define ROTR32(x, y) _rotr(x, y)
 #  define ROTR64(x, y) _rotr64(x, y)
 
-#  pragma warning(disable : 4127)  // "conditional expression is constant" in the if()s for avalanchetest
+#  pragma warning( \
+    disable : 4127)  // "conditional expression is constant" in the if()s for avalanchetest
 #  pragma warning(disable : 4100)
 #  pragma warning(disable : 4702)
 
@@ -74,13 +75,11 @@ __inline__ unsigned long long int rdtsc()
 {
 #  ifdef __x86_64__
   unsigned int a, d;
-  __asm__ volatile("rdtsc"
-                   : "=a"(a), "=d"(d));
+  __asm__ volatile("rdtsc" : "=a"(a), "=d"(d));
   return (unsigned long)a | ((unsigned long)d << 32);
 #  elif defined(__i386__)
   unsigned long long int x;
-  __asm__ volatile("rdtsc"
-                   : "=A"(x));
+  __asm__ volatile("rdtsc" : "=A"(x));
   return x;
 #  else
 #    define NO_CYCLE_COUNTER

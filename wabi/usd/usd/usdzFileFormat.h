@@ -45,6 +45,7 @@ TF_DECLARE_PUBLIC_TOKENS(UsdUsdzFileFormatTokens, USD_API, USD_USDZ_FILE_FORMAT_
 class UsdUsdzFileFormat : public SdfFileFormat
 {
  public:
+
   using SdfFileFormat::FileFormatArguments;
 
   USD_API
@@ -60,7 +61,9 @@ class UsdUsdzFileFormat : public SdfFileFormat
   virtual bool CanRead(const std::string &file) const override;
 
   USD_API
-  virtual bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const override;
+  virtual bool Read(SdfLayer *layer,
+                    const std::string &resolvedPath,
+                    bool metadataOnly) const override;
 
   USD_API
   virtual bool WriteToFile(const SdfLayer &layer,
@@ -77,12 +80,16 @@ class UsdUsdzFileFormat : public SdfFileFormat
                              const std::string &comment = std::string()) const override;
 
   USD_API
-  virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
+  virtual bool WriteToStream(const SdfSpecHandle &spec,
+                             std::ostream &out,
+                             size_t indent) const override;
 
  protected:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
  private:
+
   UsdUsdzFileFormat();
   virtual ~UsdUsdzFileFormat();
 };

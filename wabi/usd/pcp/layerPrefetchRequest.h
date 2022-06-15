@@ -46,17 +46,20 @@ class Pcp_MutedLayers;
 class PcpLayerPrefetchRequest
 {
  public:
+
   /// Enqueue a request to pre-fetch of the sublayers of \a layer.
   /// This recursively includes any nested sublayers. Arguments in \a args
   /// will be passed to Sdf when finding or opening sublayers.
   PCP_API
-  void RequestSublayerStack(const SdfLayerRefPtr &layer, const SdfLayer::FileFormatArguments &args);
+  void RequestSublayerStack(const SdfLayerRefPtr &layer,
+                            const SdfLayer::FileFormatArguments &args);
 
   /// Run the queued requests, returning when complete.
   PCP_API
   void Run(const Pcp_MutedLayers &mutedLayers);
 
  private:
+
   // The request object retains both the layer requests and
   // the pre-fetched sublayers.
   typedef std::pair<SdfLayerRefPtr, SdfLayer::FileFormatArguments> _Request;

@@ -24,15 +24,15 @@
 #ifndef WABI_IMAGING_HD_PRIM_TYPE_INDEX_H
 #define WABI_IMAGING_HD_PRIM_TYPE_INDEX_H
 
-#include "wabi/base/tf/token.h"
-#include "wabi/imaging/hd/sortedIds.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/usd/sdf/path.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/types.h"
+#include "wabi/imaging/hd/sortedIds.h"
+#include "wabi/base/tf/token.h"
+#include "wabi/usd/sdf/path.h"
 
 #include <set>
-#include <unordered_map>
 #include <vector>
+#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
 
@@ -46,10 +46,10 @@ using HdSceneDelegatePtrVector = std::vector<HdSceneDelegate *>;
 /// This class is only used by the render index.
 /// It provides functionality to manage and store one class of prim
 /// such as a Sprim or Bprim.
-template<class PrimType>
-class Hd_PrimTypeIndex
+template<class PrimType> class Hd_PrimTypeIndex
 {
  public:
+
   Hd_PrimTypeIndex();
   ~Hd_PrimTypeIndex();
 
@@ -159,6 +159,7 @@ class Hd_PrimTypeIndex
   const HdSceneDelegatePtrVector &GetSceneDelegatesForDirtyPrims();
 
  private:
+
   struct _PrimInfo
   {
     HdSceneDelegate *sceneDelegate;
@@ -173,11 +174,7 @@ class Hd_PrimTypeIndex
     Hd_SortedIds primIds;  // Primarily for sub-tree searching
     PrimType *fallbackPrim;
 
-    _PrimTypeEntry()
-      : primMap(),
-        primIds(),
-        fallbackPrim(nullptr)
-    {}
+    _PrimTypeEntry() : primMap(), primIds(), fallbackPrim(nullptr) {}
   };
 
   typedef std::unordered_map<TfToken, size_t, TfToken::HashFunctor> _TypeIndex;
@@ -187,6 +184,7 @@ class Hd_PrimTypeIndex
   _PrimTypeList _entries;
   _TypeIndex _index;
   HdSceneDelegatePtrVector _dirtyPrimDelegates;
+
 
   // Template methods that are expected to be specialized on PrimType.
   // These are to handle prim type specific function names on called objects.
@@ -198,7 +196,9 @@ class Hd_PrimTypeIndex
 
   static HdDirtyBits _TrackerGetPrimDirtyBits(HdChangeTracker &tracker, const SdfPath &path);
 
-  static void _TrackerMarkPrimClean(HdChangeTracker &tracker, const SdfPath &path, HdDirtyBits dirtyBits);
+  static void _TrackerMarkPrimClean(HdChangeTracker &tracker,
+                                    const SdfPath &path,
+                                    HdDirtyBits dirtyBits);
 
   static PrimType *_RenderDelegateCreatePrim(HdRenderDelegate *renderDelegate,
                                              const TfToken &typeId,

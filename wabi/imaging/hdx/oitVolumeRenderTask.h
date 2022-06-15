@@ -41,6 +41,7 @@ WABI_NAMESPACE_BEGIN
 class HdxOitVolumeRenderTask : public HdxRenderTask
 {
  public:
+
   HDX_API
   HdxOitVolumeRenderTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -56,11 +57,13 @@ class HdxOitVolumeRenderTask : public HdxRenderTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   HdxOitVolumeRenderTask() = delete;
   HdxOitVolumeRenderTask(const HdxOitVolumeRenderTask &) = delete;
   HdxOitVolumeRenderTask &operator=(const HdxOitVolumeRenderTask &) = delete;

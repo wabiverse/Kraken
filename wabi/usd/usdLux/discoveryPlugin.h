@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class UsdLux_DiscoveryPlugin : public NdrDiscoveryPlugin
 {
  public:
+
   USDLUX_API
   UsdLux_DiscoveryPlugin() = default;
 

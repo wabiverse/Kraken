@@ -51,10 +51,12 @@ namespace Zep
   class ZepSyntax : public ZepComponent
   {
    public:
-    ZepSyntax(ZepBuffer &buffer,
-              const std::unordered_set<std::string> &keywords = std::unordered_set<std::string>{},
-              const std::unordered_set<std::string> &identifiers = std::unordered_set<std::string>{},
-              uint32_t flags = 0);
+
+    ZepSyntax(
+      ZepBuffer &buffer,
+      const std::unordered_set<std::string> &keywords = std::unordered_set<std::string>{},
+      const std::unordered_set<std::string> &identifiers = std::unordered_set<std::string>{},
+      uint32_t flags = 0);
     virtual ~ZepSyntax();
 
     virtual SyntaxResult GetSyntaxAt(const GlyphIterator &index) const;
@@ -77,9 +79,11 @@ namespace Zep
     }
 
    private:
+
     virtual void QueueUpdateSyntax(GlyphIterator startLocation, GlyphIterator endLocation);
 
    protected:
+
     ZepBuffer &m_buffer;
     std::vector<CommentEntry> m_commentEntries;
     std::vector<SyntaxData> m_syntax;
@@ -100,6 +104,7 @@ namespace Zep
   class ZepSyntaxAdorn : public ZepComponent
   {
    public:
+
     ZepSyntaxAdorn(ZepSyntax &syntax, ZepBuffer &buffer)
       : ZepComponent(syntax.GetEditor()),
         m_buffer(buffer),
@@ -109,6 +114,7 @@ namespace Zep
     virtual SyntaxResult GetSyntaxAt(const GlyphIterator &offset, bool &found) const = 0;
 
    protected:
+
     ZepBuffer &m_buffer;
     ZepSyntax &m_syntax;
   };

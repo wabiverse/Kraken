@@ -8,6 +8,7 @@ namespace Zep
   class ZepMode_Standard : public ZepMode
   {
    public:
+
     ZepMode_Standard(ZepEditor &editor);
     ~ZepMode_Standard();
 
@@ -28,6 +29,7 @@ namespace Zep
     }
 
    private:
+
     std::string keyCache;
   };
 

@@ -71,6 +71,7 @@ WABI_NAMESPACE_BEGIN
 class Tf_NoticeRegistry : boost::noncopyable
 {
  public:
+
   TF_API
   void _BeginDelivery(const TfNotice &notice,
                       const TfWeakBase *sender,
@@ -103,7 +104,9 @@ class Tf_NoticeRegistry : boost::noncopyable
   // Abort if casting of a notice failed; warn if it succeeded but
   // TfSafeDynamic_cast was required.
   TF_API
-  void _VerifyFailedCast(const std::type_info &toType, const TfNotice &notice, const TfNotice *castNotice);
+  void _VerifyFailedCast(const std::type_info &toType,
+                         const TfNotice &notice,
+                         const TfNotice *castNotice);
 
   // Return reference to singleton object.
   TF_API
@@ -123,6 +126,7 @@ class Tf_NoticeRegistry : boost::noncopyable
   void _DecrementBlockCount();
 
  private:
+
   Tf_NoticeRegistry();
   friend class TfSingleton<Tf_NoticeRegistry>;
 
@@ -152,6 +156,7 @@ class Tf_NoticeRegistry : boost::noncopyable
   class _DelivererContainer
   {
    public:
+
     typedef TfHashMap<const TfWeakBase *, _DelivererList, TfHash> _PerSenderTable;
 
     _Mutex _mutex;
@@ -159,9 +164,7 @@ class Tf_NoticeRegistry : boost::noncopyable
     _PerSenderTable _perSenderTable;
 
     // Initialize _perSenderTable with zero buckets
-    _DelivererContainer()
-      : _perSenderTable(0)
-    {}
+    _DelivererContainer() : _perSenderTable(0) {}
   };
 
   typedef TfHashMap<TfType, _DelivererContainer *, TfHash> _DelivererTable;
@@ -195,11 +198,9 @@ class Tf_NoticeRegistry : boost::noncopyable
   {
     _Lock lock(c->_mutex);
     _DelivererContainer::_PerSenderTable::iterator i = c->_perSenderTable.find(s);
-    if (i != c->_perSenderTable.end())
-    {
+    if (i != c->_perSenderTable.end()) {
       return _DelivererListEntry(&(i->second), i->second.begin());
-    } else
-    {
+    } else {
       return _DelivererListEntry((_DelivererList *)0, _DelivererList::iterator());
     }
   }

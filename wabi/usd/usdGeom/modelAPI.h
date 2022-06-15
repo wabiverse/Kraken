@@ -148,6 +148,7 @@ class SdfAssetPath;
 class UsdGeomModelAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -158,16 +159,12 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
   /// Equivalent to UsdGeomModelAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomModelAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdGeomModelAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdGeomModelAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomModelAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomModelAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdGeomModelAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -209,6 +206,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
   static UsdGeomModelAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -217,6 +215,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -226,9 +225,11 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELDRAWMODE
   // --------------------------------------------------------------------- //
@@ -257,6 +258,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELAPPLYDRAWMODE
   // --------------------------------------------------------------------- //
@@ -283,6 +285,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELDRAWMODECOLOR
   // --------------------------------------------------------------------- //
@@ -310,6 +313,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDGEOMETRY
   // --------------------------------------------------------------------- //
@@ -337,6 +341,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDTEXTUREXPOS
   // --------------------------------------------------------------------- //
@@ -361,6 +366,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDTEXTUREYPOS
   // --------------------------------------------------------------------- //
@@ -385,6 +391,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDTEXTUREZPOS
   // --------------------------------------------------------------------- //
@@ -409,6 +416,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDTEXTUREXNEG
   // --------------------------------------------------------------------- //
@@ -433,6 +441,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDTEXTUREYNEG
   // --------------------------------------------------------------------- //
@@ -457,6 +466,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MODELCARDTEXTUREZNEG
   // --------------------------------------------------------------------- //
@@ -481,6 +491,7 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -541,14 +552,16 @@ class UsdGeomModelAPI : public UsdAPISchemaBase
   ///     UsdGeomImageable::GetOrderedPurposeTokens()
   ///
   USDGEOM_API
-  bool GetExtentsHint(VtVec3fArray *extents, const UsdTimeCode &time = UsdTimeCode::Default()) const;
+  bool GetExtentsHint(VtVec3fArray *extents,
+                      const UsdTimeCode &time = UsdTimeCode::Default()) const;
 
   /// Authors the extentsHint array for this model at the given time.
   ///
   /// \sa GetExtentsHint()
   ///
   USDGEOM_API
-  bool SetExtentsHint(VtVec3fArray const &extents, const UsdTimeCode &time = UsdTimeCode::Default()) const;
+  bool SetExtentsHint(VtVec3fArray const &extents,
+                      const UsdTimeCode &time = UsdTimeCode::Default()) const;
 
   /// Returns the custom 'extentsHint' attribute if it exits.
   USDGEOM_API

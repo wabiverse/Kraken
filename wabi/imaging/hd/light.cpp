@@ -22,11 +22,6 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/hd/light.h"
-#include "wabi/imaging/hd/perfLog.h"
-#include "wabi/imaging/hd/rprimCollection.h"
-#include "wabi/imaging/hd/sceneDelegate.h"
-
-#include "wabi/base/gf/matrix4d.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -34,6 +29,6 @@ TF_DEFINE_PUBLIC_TOKENS(HdLightTokens, HD_LIGHT_TOKENS);
 
 HdLight::HdLight(SdfPath const &id) : HdSprim(id) {}
 
-HdLight::~HdLight() {}
+HdLight::~HdLight() = default;
 
 WABI_NAMESPACE_END

@@ -67,14 +67,12 @@ TF_DECLARE_WEAK_PTRS(PcpPrimIndex_Graph);
 class PcpNodeRef : public boost::totally_ordered<PcpNodeRef>
 {
  public:
+
   typedef PcpNodeRef_ChildrenIterator child_const_iterator;
   typedef PcpNodeRef_ChildrenReverseIterator child_const_reverse_iterator;
   typedef std::pair<child_const_iterator, child_const_iterator> child_const_range;
 
-  PcpNodeRef()
-    : _graph(0),
-      _nodeIdx(PCP_INVALID_INDEX)
-  {}
+  PcpNodeRef() : _graph(0), _nodeIdx(PCP_INVALID_INDEX) {}
 
   /// \name Operators / Miscellaneous
   /// @{
@@ -288,6 +286,7 @@ class PcpNodeRef : public boost::totally_ordered<PcpNodeRef>
   }
 
  private:
+
   friend class PcpPrimIndex_Graph;
   friend class PcpNodeIterator;
   friend class PcpNodeRef_ChildrenIterator;
@@ -296,10 +295,7 @@ class PcpNodeRef : public boost::totally_ordered<PcpNodeRef>
   friend class PcpNodeRef_PrivateChildrenConstReverseIterator;
 
   // Private constructor for internal use.
-  PcpNodeRef(PcpPrimIndex_Graph *graph, size_t idx)
-    : _graph(graph),
-      _nodeIdx(idx)
-  {}
+  PcpNodeRef(PcpPrimIndex_Graph *graph, size_t idx) : _graph(graph), _nodeIdx(idx) {}
 
   size_t _GetNodeIndex() const
   {
@@ -310,6 +306,7 @@ class PcpNodeRef : public boost::totally_ordered<PcpNodeRef>
   size_t _GetOriginIndex() const;
 
  private:  // Data
+
   PcpPrimIndex_Graph *_graph;
   size_t _nodeIdx;
 };
@@ -335,6 +332,7 @@ class PcpNodeRef_ChildrenIterator : public boost::iterator_facade<
                                       /* RefType =   */ PcpNodeRef>
 {
  public:
+
   /// Constructs an invalid iterator.
   PCP_API
   PcpNodeRef_ChildrenIterator();
@@ -345,6 +343,7 @@ class PcpNodeRef_ChildrenIterator : public boost::iterator_facade<
   PcpNodeRef_ChildrenIterator(const PcpNodeRef &node, bool end = false);
 
  private:
+
   friend class boost::iterator_core_access;
   PCP_API
   void increment();
@@ -360,6 +359,7 @@ class PcpNodeRef_ChildrenIterator : public boost::iterator_facade<
   }
 
  private:
+
   // Current graph node this iterator is pointing at.
   PcpNodeRef _node;
 
@@ -381,6 +381,7 @@ class PcpNodeRef_ChildrenReverseIterator : public boost::iterator_facade<
                                              /* RefType =   */ PcpNodeRef>
 {
  public:
+
   /// Constructs an invalid iterator.
   PCP_API
   PcpNodeRef_ChildrenReverseIterator();
@@ -395,6 +396,7 @@ class PcpNodeRef_ChildrenReverseIterator : public boost::iterator_facade<
   PcpNodeRef_ChildrenReverseIterator(const PcpNodeRef &node, bool end = false);
 
  private:
+
   friend class boost::iterator_core_access;
   PCP_API
   void increment();
@@ -410,6 +412,7 @@ class PcpNodeRef_ChildrenReverseIterator : public boost::iterator_facade<
   }
 
  private:
+
   // Current graph node this iterator is pointing at.
   PcpNodeRef _node;
 
@@ -417,8 +420,7 @@ class PcpNodeRef_ChildrenReverseIterator : public boost::iterator_facade<
   size_t _index;
 };
 
-template<>
-struct Tf_IteratorInterface<PcpNodeRef::child_const_range, false>
+template<> struct Tf_IteratorInterface<PcpNodeRef::child_const_range, false>
 {
   typedef PcpNodeRef::child_const_iterator IteratorType;
   static IteratorType Begin(PcpNodeRef::child_const_range const &c)
@@ -431,8 +433,7 @@ struct Tf_IteratorInterface<PcpNodeRef::child_const_range, false>
   }
 };
 
-template<>
-struct Tf_IteratorInterface<PcpNodeRef::child_const_range, true>
+template<> struct Tf_IteratorInterface<PcpNodeRef::child_const_range, true>
 {
   typedef PcpNodeRef::child_const_reverse_iterator IteratorType;
   static IteratorType Begin(PcpNodeRef::child_const_range const &c)
@@ -445,10 +446,8 @@ struct Tf_IteratorInterface<PcpNodeRef::child_const_range, true>
   }
 };
 
-template<>
-struct Tf_ShouldIterateOverCopy<PcpNodeRef::child_const_range> : boost::true_type
-{
-};
+template<> struct Tf_ShouldIterateOverCopy<PcpNodeRef::child_const_range> : boost::true_type
+{};
 
 // Helper to count the non-variant path components of a path; equivalent
 // to path.StripAllVariantSelections().GetPathElementCount() except

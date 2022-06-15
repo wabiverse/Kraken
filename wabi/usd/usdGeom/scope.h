@@ -59,6 +59,7 @@ class SdfAssetPath;
 class UsdGeomScope : public UsdGeomImageable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -69,16 +70,12 @@ class UsdGeomScope : public UsdGeomImageable
   /// Equivalent to UsdGeomScope::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomScope(const UsdPrim &prim = UsdPrim())
-    : UsdGeomImageable(prim)
-  {}
+  explicit UsdGeomScope(const UsdPrim &prim = UsdPrim()) : UsdGeomImageable(prim) {}
 
   /// Construct a UsdGeomScope on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomScope(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomScope(const UsdSchemaBase &schemaObj)
-    : UsdGeomImageable(schemaObj)
-  {}
+  explicit UsdGeomScope(const UsdSchemaBase &schemaObj) : UsdGeomImageable(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -128,6 +125,7 @@ class UsdGeomScope : public UsdGeomImageable
   static UsdGeomScope Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -136,6 +134,7 @@ class UsdGeomScope : public UsdGeomImageable
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -145,9 +144,11 @@ class UsdGeomScope : public UsdGeomImageable
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

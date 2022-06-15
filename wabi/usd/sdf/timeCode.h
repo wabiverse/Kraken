@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class SdfTimeCode
 {
  public:
+
   /// \name Constructors
   /// @{
   ///
@@ -51,8 +52,7 @@ class SdfTimeCode
   /// Construct a time code with the given time.
   /// A default constructed SdfTimeCode has a time of 0.0.
   /// A double value can implicitly cast to SdfTimeCode.
-  constexpr SdfTimeCode(double time = 0.0) noexcept
-    : _time(time){};
+  constexpr SdfTimeCode(double time = 0.0) noexcept : _time(time){};
 
   /// @}
 
@@ -141,6 +141,7 @@ class SdfTimeCode
   /// @}
 
  private:
+
   friend inline void swap(SdfTimeCode &lhs, SdfTimeCode &rhs)
   {
     std::swap(lhs._time, rhs._time);

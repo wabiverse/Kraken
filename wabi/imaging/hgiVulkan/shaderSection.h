@@ -48,6 +48,7 @@ WABI_NAMESPACE_BEGIN
 class HgiVulkanShaderSection : public HgiShaderSection
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanShaderSection(const std::string &identifier,
                                   const HgiShaderSectionAttributeVector &attributes = {},
@@ -74,9 +75,11 @@ class HgiVulkanShaderSection : public HgiShaderSection
   virtual bool VisitGlobalFunctionDefinitions(std::ostream &ss);
 
  protected:
+
   const std::string _storageQualifier;
 
  private:
+
   HgiVulkanShaderSection() = delete;
   HgiVulkanShaderSection &operator=(const HgiVulkanShaderSection &) = delete;
   HgiVulkanShaderSection(const HgiVulkanShaderSection &) = delete;
@@ -90,8 +93,10 @@ class HgiVulkanShaderSection : public HgiShaderSection
 class HgiVulkanMacroShaderSection final : public HgiVulkanShaderSection
 {
  public:
+
   HGIVULKAN_API
-  explicit HgiVulkanMacroShaderSection(const std::string &macroDeclaration, const std::string &macroComment);
+  explicit HgiVulkanMacroShaderSection(const std::string &macroDeclaration,
+                                       const std::string &macroComment);
 
   HGIVULKAN_API
   ~HgiVulkanMacroShaderSection() override;
@@ -100,6 +105,7 @@ class HgiVulkanMacroShaderSection final : public HgiVulkanShaderSection
   bool VisitGlobalMacros(std::ostream &ss) override;
 
  private:
+
   HgiVulkanMacroShaderSection() = delete;
   HgiVulkanMacroShaderSection &operator=(const HgiVulkanMacroShaderSection &) = delete;
   HgiVulkanMacroShaderSection(const HgiVulkanMacroShaderSection &) = delete;
@@ -115,6 +121,7 @@ class HgiVulkanMacroShaderSection final : public HgiVulkanShaderSection
 class HgiVulkanMemberShaderSection final : public HgiVulkanShaderSection
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanMemberShaderSection(const std::string &identifier,
                                         const std::string &typeName,
@@ -132,6 +139,7 @@ class HgiVulkanMemberShaderSection final : public HgiVulkanShaderSection
   void WriteType(std::ostream &ss) const override;
 
  private:
+
   HgiVulkanMemberShaderSection() = delete;
   HgiVulkanMemberShaderSection &operator=(const HgiVulkanMemberShaderSection &) = delete;
   HgiVulkanMemberShaderSection(const HgiVulkanMemberShaderSection &) = delete;
@@ -146,6 +154,7 @@ class HgiVulkanMemberShaderSection final : public HgiVulkanShaderSection
 class HgiVulkanBlockShaderSection final : public HgiVulkanShaderSection
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanBlockShaderSection(const std::string &identifier,
                                        const HgiShaderFunctionParamDescVector &parameters);
@@ -157,6 +166,7 @@ class HgiVulkanBlockShaderSection final : public HgiVulkanShaderSection
   bool VisitGlobalMemberDeclarations(std::ostream &ss) override;
 
  private:
+
   const HgiShaderFunctionParamDescVector _parameters;
 };
 
@@ -167,6 +177,7 @@ class HgiVulkanBlockShaderSection final : public HgiVulkanShaderSection
 class HgiVulkanTextureShaderSection final : public HgiVulkanShaderSection
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanTextureShaderSection(const std::string &identifier,
                                          const uint32_t layoutIndex,
@@ -186,6 +197,7 @@ class HgiVulkanTextureShaderSection final : public HgiVulkanShaderSection
   bool VisitGlobalFunctionDefinitions(std::ostream &ss) override;
 
  private:
+
   HgiVulkanTextureShaderSection() = delete;
   HgiVulkanTextureShaderSection &operator=(const HgiVulkanTextureShaderSection &) = delete;
   HgiVulkanTextureShaderSection(const HgiVulkanTextureShaderSection &) = delete;
@@ -200,6 +212,7 @@ class HgiVulkanTextureShaderSection final : public HgiVulkanShaderSection
 class HgiVulkanBufferShaderSection final : public HgiVulkanShaderSection
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanBufferShaderSection(const std::string &identifier,
                                         const uint32_t layoutIndex,
@@ -216,6 +229,7 @@ class HgiVulkanBufferShaderSection final : public HgiVulkanShaderSection
   bool VisitGlobalMemberDeclarations(std::ostream &ss) override;
 
  private:
+
   HgiVulkanBufferShaderSection() = delete;
   HgiVulkanBufferShaderSection &operator=(const HgiVulkanBufferShaderSection &) = delete;
   HgiVulkanBufferShaderSection(const HgiVulkanBufferShaderSection &) = delete;
@@ -230,6 +244,7 @@ class HgiVulkanBufferShaderSection final : public HgiVulkanShaderSection
 class HgiVulkanKeywordShaderSection final : public HgiVulkanShaderSection
 {
  public:
+
   HGIVULKAN_API
   explicit HgiVulkanKeywordShaderSection(const std::string &identifier,
                                          const std::string &type,
@@ -245,6 +260,7 @@ class HgiVulkanKeywordShaderSection final : public HgiVulkanShaderSection
   bool VisitGlobalMemberDeclarations(std::ostream &ss) override;
 
  private:
+
   HgiVulkanKeywordShaderSection() = delete;
   HgiVulkanKeywordShaderSection &operator=(const HgiVulkanKeywordShaderSection &) = delete;
   HgiVulkanKeywordShaderSection(const HgiVulkanKeywordShaderSection &) = delete;

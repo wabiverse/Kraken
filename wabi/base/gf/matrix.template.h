@@ -49,9 +49,7 @@
 #include "wabi/base/gf/traits.h"
 #include "wabi/base/gf/vec{{ SUFFIX }}.h"
 #include "wabi/wabi.h"
-  { % block includes % } {
-    % endblock %
-  }
+  { % block includes % } { % endblock % }
 
 #include <boost/functional/hash.hpp>
 
@@ -60,8 +58,8 @@
 
   WABI_NAMESPACE_BEGIN
 
-  template<>
-  struct GfIsGfMatrix<class {{MAT}}>
+    template<>
+    struct GfIsGfMatrix<class {{MAT}}>
   {
     static const bool value = true;
   };
@@ -95,6 +93,7 @@
   }
   {
    public:
+
     typedef
     {
       {
@@ -609,6 +608,7 @@
     }
 
    private:
+
     /// Matrix storage, in row-major order.
     GfMatrixData<{{SCL}}, {{DIM}}, {{DIM}}> _mtx;
 

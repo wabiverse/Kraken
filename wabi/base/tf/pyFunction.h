@@ -44,11 +44,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T>
-struct TfPyFunctionFromPython;
+template<typename T> struct TfPyFunctionFromPython;
 
-template<typename Ret, typename... Args>
-struct TfPyFunctionFromPython<Ret(Args...)>
+template<typename Ret, typename... Args> struct TfPyFunctionFromPython<Ret(Args...)>
 {
   struct Call
   {
@@ -71,8 +69,7 @@ struct TfPyFunctionFromPython<Ret(Args...)>
       // Attempt to get the referenced callable object.
       TfPyLock lock;
       object callable(handle<>(borrowed(PyWeakref_GetObject(weak.ptr()))));
-      if (TfPyIsNone(callable))
-      {
+      if (TfPyIsNone(callable)) {
         TF_WARN("Tried to call an expired python callback");
         return Ret();
       }
@@ -95,8 +92,7 @@ struct TfPyFunctionFromPython<Ret(Args...)>
       // instance method and call it.
       TfPyLock lock;
       PyObject *self = PyWeakref_GetObject(weakSelf.ptr());
-      if (self == Py_None)
-      {
+      if (self == Py_None) {
         TF_WARN("Tried to call a method on an expired python instance");
         return Ret();
       }
@@ -115,8 +111,7 @@ struct TfPyFunctionFromPython<Ret(Args...)>
     RegisterFunctionType<std::function<Ret(Args...)>>();
   }
 
-  template<typename FuncType>
-  static void RegisterFunctionType()
+  template<typename FuncType> static void RegisterFunctionType()
   {
     using namespace boost::python;
     converter::registry::insert(&convertible, &construct<FuncType>, type_id<FuncType>());
@@ -128,18 +123,17 @@ struct TfPyFunctionFromPython<Ret(Args...)>
   }
 
   template<typename FuncType>
-  static void construct(PyObject *src, boost::python::converter::rvalue_from_python_stage1_data *data)
+  static void construct(PyObject *src,
+                        boost::python::converter::rvalue_from_python_stage1_data *data)
   {
     using std::string;
     using namespace boost::python;
 
     void *storage = ((converter::rvalue_from_python_storage<FuncType> *)data)->storage.bytes;
 
-    if (src == Py_None)
-    {
+    if (src == Py_None) {
       new (storage) FuncType();
-    } else
-    {
+    } else {
 
       // In the case of instance methods, holding a strong reference will
       // keep the bound 'self' argument alive indefinitely, which is
@@ -164,8 +158,7 @@ struct TfPyFunctionFromPython<Ret(Args...)>
       PyObject *pyCallable = callable.ptr();
       PyObject *self = PyMethod_Check(pyCallable) ? PyMethod_GET_SELF(pyCallable) : NULL;
 
-      if (self)
-      {
+      if (self) {
         // Deconstruct the method and attempt to get a weak reference to
         // the self instance.
 #if PY_MAJOR_VERSION == 2
@@ -181,18 +174,14 @@ struct TfPyFunctionFromPython<Ret(Args...)>
 #endif
         });
       } else if (PyObject_HasAttrString(pyCallable, "__name__") &&
-                 extract<string>(callable.attr("__name__"))() == "<lambda>")
-      {
+                 extract<string>(callable.attr("__name__"))() == "<lambda>") {
         // Explicitly hold on to strong references to lambdas.
         new (storage) FuncType(Call{TfPyObjWrapper(callable)});
-      } else
-      {
+      } else {
         // Attempt to get a weak reference to the callable.
-        if (PyObject *weakCallable = PyWeakref_NewRef(pyCallable, NULL))
-        {
+        if (PyObject *weakCallable = PyWeakref_NewRef(pyCallable, NULL)) {
           new (storage) FuncType(CallWeak{TfPyObjWrapper(object(handle<>(weakCallable)))});
-        } else
-        {
+        } else {
           // Fall back to taking a strong reference.
           PyErr_Clear();
           new (storage) FuncType(Call{TfPyObjWrapper(callable)});

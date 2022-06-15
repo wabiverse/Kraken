@@ -1,39 +1,34 @@
-/*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+//
+// Copyright 2017 Pixar
+//
+// Licensed under the Apache License, Version 2.0 (the "Apache License")
+// with the following modification; you may not use this file except in
+// compliance with the Apache License and the following modification to it:
+// Section 6. Trademarks. is deleted and replaced with:
+//
+// 6. Trademarks. This License does not grant permission to use the trade
+//    names, trademarks, service marks, or product names of the Licensor
+//    and its affiliates, except as required to comply with Section 4(c) of
+//    the License and to reproduce the content of the NOTICE file.
+//
+// You may obtain a copy of the Apache License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the Apache License with the above modification is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied. See the Apache License for the specific
+// language governing permissions and limitations under the Apache License.
+//
 #ifndef WABI_IMAGING_HD_EXT_COMPUTATION_CONTEXT_INTERNAL_H
 #define WABI_IMAGING_HD_EXT_COMPUTATION_CONTEXT_INTERNAL_H
 
 #include "wabi/wabi.h"
 
 #include "wabi/imaging/hd/extComputationContext.h"
+
+#include <map>
 
 WABI_NAMESPACE_BEGIN
 
@@ -44,6 +39,7 @@ WABI_NAMESPACE_BEGIN
 class Hd_ExtComputationContextInternal final : public HdExtComputationContext
 {
  public:
+
   Hd_ExtComputationContextInternal();
   virtual ~Hd_ExtComputationContextInternal();
 
@@ -66,6 +62,7 @@ class Hd_ExtComputationContextInternal final : public HdExtComputationContext
   ///
   virtual void SetOutputValue(const TfToken &name, const VtValue &output) override;
 
+
   /// Adds the named input to the execution environment.
   /// If the input already exists, the value is not replaced.
   void SetInputValue(const TfToken &name, const VtValue &input);
@@ -85,11 +82,13 @@ class Hd_ExtComputationContextInternal final : public HdExtComputationContext
   virtual void RaiseComputationError() override;
 
  private:
+
   typedef std::map<TfToken, VtValue> ValueMap;
 
   ValueMap m_inputs;
   ValueMap m_outputs;
   bool m_compuationError;
+
 
   Hd_ExtComputationContextInternal(const Hd_ExtComputationContextInternal &) = delete;
   Hd_ExtComputationContextInternal &operator=(const Hd_ExtComputationContextInternal &) = delete;

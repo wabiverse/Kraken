@@ -36,10 +36,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T>
-class SdfPyWrapMapEditProxy
+template<class T> class SdfPyWrapMapEditProxy
 {
  public:
+
   typedef T Type;
   typedef typename Type::key_type key_type;
   typedef typename Type::mapped_type mapped_type;
@@ -54,6 +54,7 @@ class SdfPyWrapMapEditProxy
   }
 
  private:
+
   typedef std::pair<key_type, mapped_type> pair_type;
 
   struct _ExtractItem
@@ -80,10 +81,10 @@ class SdfPyWrapMapEditProxy
     }
   };
 
-  template<class E>
-  class _Iterator
+  template<class E> class _Iterator
   {
    public:
+
     _Iterator(const boost::python::object &object)
       : _object(object),
         _owner(boost::python::extract<const Type &>(object)),
@@ -100,8 +101,7 @@ class SdfPyWrapMapEditProxy
 
     boost::python::object GetNext()
     {
-      if (_cur == _end)
-      {
+      if (_cur == _end) {
         TfPyThrowStopIteration("End of MapEditProxy iteration");
       }
       boost::python::object result = E::Get(_cur);
@@ -110,6 +110,7 @@ class SdfPyWrapMapEditProxy
     }
 
    private:
+
     boost::python::object _object;
     const Type &_owner;
     const_iterator _cur;
@@ -185,11 +186,9 @@ class SdfPyWrapMapEditProxy
   static std::string _GetRepr(const Type &x)
   {
     std::string arg;
-    if (x)
-    {
+    if (x) {
       arg = TfStringPrintf("<%s>", x._Location().c_str());
-    } else
-    {
+    } else {
       arg = "<invalid>";
     }
     return TF_PY_REPR_PREFIX + _GetName() + "(" + arg + ")";
@@ -198,12 +197,10 @@ class SdfPyWrapMapEditProxy
   static std::string _GetStr(const Type &x)
   {
     std::string result("{");
-    if (x && !x.empty())
-    {
+    if (x && !x.empty()) {
       const_iterator i = x.begin(), n = x.end();
       result += TfPyRepr(i->first) + ": " + TfPyRepr(i->second);
-      while (++i != n)
-      {
+      while (++i != n) {
         result += ", " + TfPyRepr(i->first) + ": " + TfPyRepr(i->second);
       }
     }
@@ -214,12 +211,10 @@ class SdfPyWrapMapEditProxy
   static mapped_type _GetItem(const Type &x, const key_type &key)
   {
     const_iterator i = x.find(key);
-    if (i == x.end())
-    {
+    if (i == x.end()) {
       TfPyThrowKeyError(TfPyRepr(key));
       return mapped_type();
-    } else
-    {
+    } else {
       return i->second;
     }
   }
@@ -227,8 +222,7 @@ class SdfPyWrapMapEditProxy
   static void _SetItem(Type &x, const key_type &key, const mapped_type &value)
   {
     std::pair<typename Type::iterator, bool> i = x.insert(value_type(key, value));
-    if (!i.second && i.first != typename Type::iterator())
-    {
+    if (!i.second && i.first != typename Type::iterator()) {
       i.first->second = value;
     }
   }
@@ -270,12 +264,10 @@ class SdfPyWrapMapEditProxy
     return i == x.end() ? def : i->second;
   }
 
-  template<class E>
-  static boost::python::list _Get(const Type &x)
+  template<class E> static boost::python::list _Get(const Type &x)
   {
     boost::python::list result;
-    for (const_iterator i = x.begin(), n = x.end(); i != n; ++i)
-    {
+    for (const_iterator i = x.begin(), n = x.end(); i != n; ++i) {
       result.append(E::Get(i));
     }
     return result;
@@ -301,12 +293,10 @@ class SdfPyWrapMapEditProxy
   static mapped_type _Pop(Type &x, const key_type &key)
   {
     iterator i = x.find(key);
-    if (i == x.end())
-    {
+    if (i == x.end()) {
       TfPyThrowKeyError(TfPyRepr(key));
       return mapped_type();
-    } else
-    {
+    } else {
       mapped_type result = i->second;
       x.erase(i);
       return result;
@@ -315,12 +305,10 @@ class SdfPyWrapMapEditProxy
 
   static boost::python::tuple _PopItem(Type &x)
   {
-    if (x.empty())
-    {
+    if (x.empty()) {
       TfPyThrowKeyError("MapEditProxy is empty");
       return boost::python::tuple();
-    } else
-    {
+    } else {
       iterator i = x.begin();
       value_type result = *i;
       x.erase(i);
@@ -331,11 +319,9 @@ class SdfPyWrapMapEditProxy
   static mapped_type _SetDefault(Type &x, const key_type &key, const mapped_type &def)
   {
     const_iterator i = x.find(key);
-    if (i != x.end())
-    {
+    if (i != x.end()) {
       return i->second;
-    } else
-    {
+    } else {
       return x[key] = def;
     }
   }
@@ -343,8 +329,7 @@ class SdfPyWrapMapEditProxy
   static void _Update(Type &x, const std::vector<pair_type> &values)
   {
     SdfChangeBlock block;
-    TF_FOR_ALL (i, values)
-    {
+    TF_FOR_ALL (i, values) {
       x[i->first] = i->second;
     }
   }
@@ -359,9 +344,9 @@ class SdfPyWrapMapEditProxy
     using namespace boost::python;
 
     std::vector<pair_type> values;
-    for (int i = 0, n = len(pairs); i != n; ++i)
-    {
-      values.push_back(pair_type(extract<key_type>(pairs[i][0])(), extract<mapped_type>(pairs[i][1])()));
+    for (int i = 0, n = len(pairs); i != n; ++i) {
+      values.push_back(
+        pair_type(extract<key_type>(pairs[i][0])(), extract<mapped_type>(pairs[i][1])()));
     }
     _Update(x, values);
   }

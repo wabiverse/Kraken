@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class UsdHydraDiscoveryPlugin : public NdrDiscoveryPlugin
 {
  public:
+
   UsdHydraDiscoveryPlugin() = default;
 
   ~UsdHydraDiscoveryPlugin() override = default;

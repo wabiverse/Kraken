@@ -82,6 +82,7 @@ enum class UsdApolloCullStyle
 class UsdApolloRenderParams
 {
  public:
+
   typedef std::vector<GfVec4d> ClipPlanesVector;
 
   UsdTimeCode frame;
@@ -149,18 +150,19 @@ UsdApolloRenderParams::UsdApolloRenderParams()
 bool UsdApolloRenderParams::operator==(const UsdApolloRenderParams &other) const
 {
   return frame == other.frame && complexity == other.complexity && drawMode == other.drawMode &&
-         showGuides == other.showGuides && showProxy == other.showProxy && showRender == other.showRender &&
-         forceRefresh == other.forceRefresh && flipFrontFacing == other.flipFrontFacing &&
-         cullStyle == other.cullStyle && enableIdRender == other.enableIdRender &&
-         enableLighting == other.enableLighting &&
+         showGuides == other.showGuides && showProxy == other.showProxy &&
+         showRender == other.showRender && forceRefresh == other.forceRefresh &&
+         flipFrontFacing == other.flipFrontFacing && cullStyle == other.cullStyle &&
+         enableIdRender == other.enableIdRender && enableLighting == other.enableLighting &&
          enableSampleAlphaToCoverage == other.enableSampleAlphaToCoverage &&
-         applyRenderState == other.applyRenderState && gammaCorrectColors == other.gammaCorrectColors &&
-         highlight == other.highlight && overrideColor == other.overrideColor &&
-         wireframeColor == other.wireframeColor && alphaThreshold == other.alphaThreshold &&
-         clipPlanes == other.clipPlanes && enableSceneMaterials == other.enableSceneMaterials &&
-         enableSceneLights == other.enableSceneLights && enableUsdDrawModes == other.enableUsdDrawModes &&
-         clearColor == other.clearColor && colorCorrectionMode == other.colorCorrectionMode &&
-         lut3dSizeOCIO == other.lut3dSizeOCIO;
+         applyRenderState == other.applyRenderState &&
+         gammaCorrectColors == other.gammaCorrectColors && highlight == other.highlight &&
+         overrideColor == other.overrideColor && wireframeColor == other.wireframeColor &&
+         alphaThreshold == other.alphaThreshold && clipPlanes == other.clipPlanes &&
+         enableSceneMaterials == other.enableSceneMaterials &&
+         enableSceneLights == other.enableSceneLights &&
+         enableUsdDrawModes == other.enableUsdDrawModes && clearColor == other.clearColor &&
+         colorCorrectionMode == other.colorCorrectionMode && lut3dSizeOCIO == other.lut3dSizeOCIO;
 }
 
 WABI_NAMESPACE_END

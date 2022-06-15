@@ -157,6 +157,7 @@ bool operator!=(const HgiTextureDesc &lhs, const HgiTextureDesc &rhs);
 class HgiTexture
 {
  public:
+
   HGI_API
   virtual ~HgiTexture();
 
@@ -184,6 +185,7 @@ class HgiTexture
   virtual uint64_t GetRawResource() const = 0;
 
  protected:
+
   HGI_API
   static size_t _GetByteSizeOfResource(const HgiTextureDesc &descriptor);
 
@@ -193,6 +195,7 @@ class HgiTexture
   HgiTextureDesc _descriptor;
 
  private:
+
   HgiTexture() = delete;
   HgiTexture &operator=(const HgiTexture &) = delete;
   HgiTexture(const HgiTexture &) = delete;
@@ -276,6 +279,7 @@ bool operator!=(const HgiTextureViewDesc &lhs, const HgiTextureViewDesc &rhs);
 class HgiTextureView
 {
  public:
+
   HGI_API
   HgiTextureView(HgiTextureViewDesc const &desc);
 
@@ -291,9 +295,11 @@ class HgiTextureView
   HgiTextureHandle const &GetViewTexture() const;
 
  protected:
+
   HgiTextureHandle _viewTexture;
 
  private:
+
   HgiTextureView() = delete;
   HgiTextureView &operator=(const HgiTextureView &) = delete;
   HgiTextureView(const HgiTextureView &) = delete;

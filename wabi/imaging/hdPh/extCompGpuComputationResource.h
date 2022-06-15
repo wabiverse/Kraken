@@ -42,7 +42,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-using HdPhExtCompGpuComputationResourceSharedPtr = std::shared_ptr<class HdPhExtCompGpuComputationResource>;
+using HdPhExtCompGpuComputationResourceSharedPtr =
+  std::shared_ptr<class HdPhExtCompGpuComputationResource>;
 using HdPhGLSLProgramSharedPtr = std::shared_ptr<class HdPhGLSLProgram>;
 using HdBufferArrayRangeSharedPtrVector = std::vector<HdBufferArrayRangeSharedPtr>;
 
@@ -65,6 +66,7 @@ using HdBufferArrayRangeSharedPtrVector = std::vector<HdBufferArrayRangeSharedPt
 class HdPhExtCompGpuComputationResource final
 {
  public:
+
   /// Creates a GPU computation resource that can bind resources matching
   /// the layout of the compute kernel.
   /// The registry passed is the registry that the kernel program will
@@ -121,6 +123,7 @@ class HdPhExtCompGpuComputationResource final
   bool Resolve();
 
  private:
+
   HdBufferSpecVector _outputBufferSpecs;
   HdPh_ExtCompComputeShaderSharedPtr _kernel;
   HdPhResourceRegistrySharedPtr _registry;

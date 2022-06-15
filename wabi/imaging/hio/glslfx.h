@@ -145,6 +145,7 @@ TF_DECLARE_PUBLIC_TOKENS(HioGlslfxTokens, HIO_API, HIO_GLSLFX_TOKENS);
 class HioGlslfx
 {
  public:
+
   /// Create an invalid glslfx object
   HIO_API
   HioGlslfx();
@@ -227,17 +228,14 @@ class HioGlslfx
   static std::vector<std::string> ExtractImports(const std::string &filename);
 
  private:
+
   class _ParseContext
   {
    public:
-    _ParseContext()
-    {}
 
-    _ParseContext(std::string const &filePath)
-      : filename(filePath),
-        lineNo(0),
-        version(-1.0)
-    {}
+    _ParseContext() {}
+
+    _ParseContext(std::string const &filePath) : filename(filePath), lineNo(0), version(-1.0) {}
 
     std::string filename;
     int lineNo;
@@ -249,6 +247,7 @@ class HioGlslfx
   };
 
  private:
+
   bool _ProcessFile(std::string const &filePath, _ParseContext &context);
   bool _ProcessInput(std::istream *input, _ParseContext &context);
   bool _ProcessImport(_ParseContext &context);
@@ -260,6 +259,7 @@ class HioGlslfx
   std::string _GetSource(const TfToken &shaderStageKey) const;
 
  private:
+
   _ParseContext _globalContext;
 
   typedef std::map<std::string, std::string> _SourceMap;

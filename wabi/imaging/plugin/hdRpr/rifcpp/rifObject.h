@@ -28,9 +28,8 @@ namespace rif
   class Object
   {
    public:
-    Object(void *objectHandle)
-      : m_rifObjectHandle(objectHandle)
-    {}
+
+    Object(void *objectHandle) : m_rifObjectHandle(objectHandle) {}
 
     Object() = default;
     Object(Object const &) = delete;
@@ -38,8 +37,7 @@ namespace rif
 
     void Delete()
     {
-      if (m_rifObjectHandle)
-      {
+      if (m_rifObjectHandle) {
         rifObjectDelete(m_rifObjectHandle);
       }
       m_rifObjectHandle = nullptr;
@@ -51,6 +49,7 @@ namespace rif
     }
 
    protected:
+
     void *m_rifObjectHandle = nullptr;
   };
 

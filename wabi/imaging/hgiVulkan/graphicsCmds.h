@@ -56,6 +56,7 @@ using HgiVulkanGfxFunctionVector = std::vector<HgiVulkanGfxFunction>;
 class HgiVulkanGraphicsCmds final : public HgiGraphicsCmds
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanGraphicsCmds() override;
 
@@ -120,6 +121,7 @@ class HgiVulkanGraphicsCmds final : public HgiGraphicsCmds
   HgiVulkanCommandBuffer *GetCommandBuffer();
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
@@ -129,6 +131,7 @@ class HgiVulkanGraphicsCmds final : public HgiGraphicsCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiVulkanGraphicsCmds() = delete;
   HgiVulkanGraphicsCmds &operator=(const HgiVulkanGraphicsCmds &) = delete;
   HgiVulkanGraphicsCmds(const HgiVulkanGraphicsCmds &) = delete;

@@ -45,10 +45,12 @@ TF_DECLARE_WEAK_PTRS(PlugPlugin);
 class PlugNotice
 {
  public:
+
   /// Base class for all Plug notices.
   class Base : public TfNotice
   {
    public:
+
     PLUG_API virtual ~Base();
   };
 
@@ -57,6 +59,7 @@ class PlugNotice
   class DidRegisterPlugins : public Base
   {
    public:
+
     explicit DidRegisterPlugins(const PlugPluginPtrVector &newPlugins);
     PLUG_API virtual ~DidRegisterPlugins();
 
@@ -66,10 +69,12 @@ class PlugNotice
     }
 
    private:
+
     PlugPluginPtrVector _plugins;
   };
 
  private:
+
   PlugNotice();
 };
 

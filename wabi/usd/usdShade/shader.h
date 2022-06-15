@@ -85,6 +85,7 @@ class SdfAssetPath;
 class UsdShadeShader : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -95,16 +96,12 @@ class UsdShadeShader : public UsdTyped
   /// Equivalent to UsdShadeShader::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeShader(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdShadeShader(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdShadeShader on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeShader(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeShader(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdShadeShader(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDSHADE_API
@@ -154,6 +151,7 @@ class UsdShadeShader : public UsdTyped
   static UsdShadeShader Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -161,6 +159,7 @@ class UsdShadeShader : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
@@ -170,9 +169,11 @@ class UsdShadeShader : public UsdTyped
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -294,7 +295,8 @@ class UsdShadeShader : public UsdTyped
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
-  UsdAttribute CreateIdAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateIdAttr(VtValue const &defaultValue = VtValue(),
+                            bool writeSparsely = false) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
@@ -320,13 +322,15 @@ class UsdShadeShader : public UsdTyped
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
-  bool SetSourceAssetSubIdentifier(const TfToken &subIdentifier,
-                                   const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
+  bool SetSourceAssetSubIdentifier(
+    const TfToken &subIdentifier,
+    const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API
-  bool GetSourceAssetSubIdentifier(TfToken *subIdentifier,
-                                   const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
+  bool GetSourceAssetSubIdentifier(
+    TfToken *subIdentifier,
+    const TfToken &sourceType = UsdShadeTokens->universalSourceType) const;
 
   /// Forwards to UsdShadeNodeDefAPI(prim).
   USDSHADE_API

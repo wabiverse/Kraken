@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class TfWarning : public TfDiagnosticBase
 {
  private:
+
   TfWarning(TfEnum warningCode,
             char const *warningCodeString,
             TfCallContext const &context,

@@ -51,6 +51,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GarchGLPlatformDebugContext);
 class GarchGLPlatformDebugContext : public TfRefBase, public TfWeakBase
 {
  public:
+
   static GarchGLPlatformDebugContextRefPtr New(int majorVersion,
                                                int minorVersion,
                                                bool coreProfile,
@@ -75,12 +76,17 @@ class GarchGLPlatformDebugContext : public TfRefBase, public TfWeakBase
   void *chooseMacVisual();
 
  public:
+
   std::unique_ptr<GarchGLPlatformDebugContextPrivate> _private;
   bool _coreProfile;
 
  protected:
+
   GARCH_API
-  GarchGLPlatformDebugContext(int majorVersion, int minorVersion, bool coreProfile, bool directRenderering);
+  GarchGLPlatformDebugContext(int majorVersion,
+                              int minorVersion,
+                              bool coreProfile,
+                              bool directRenderering);
 };
 
 WABI_NAMESPACE_END

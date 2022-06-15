@@ -41,6 +41,7 @@ struct HdPrman_Context;
 class HdPrmanMaterial final : public HdMaterial
 {
  public:
+
   HdPrmanMaterial(SdfPath const &id);
   virtual ~HdPrmanMaterial();
 
@@ -78,6 +79,7 @@ class HdPrmanMaterial final : public HdMaterial
   static void SetFilterChain(MatfiltFilterChain const &chain);
 
  private:
+
   void _ResetMaterial(HdPrman_Context *context);
 
   riley::MaterialId _materialId;

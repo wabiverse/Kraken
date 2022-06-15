@@ -90,9 +90,11 @@ enum class HdArnoldRenderContext
 class HdArnoldRenderDelegate final : public HdRenderDelegate
 {
  public:
+
   HDARNOLD_API
   HdArnoldRenderDelegate(
-    HdArnoldRenderContext context = HdArnoldRenderContext::Hydra);  ///< Constructor for the Render Delegate.
+    HdArnoldRenderContext context =
+      HdArnoldRenderContext::Hydra);  ///< Constructor for the Render Delegate.
   HDARNOLD_API
   ~HdArnoldRenderDelegate() override;  ///< Destuctor for the Render Delegate.
   /// Returns an instance of HdArnoldRenderParam.
@@ -159,7 +161,8 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate
   ///  Pass.
   /// @return A shared pointer to the new Render Pass or nullptr on error.
   HDARNOLD_API
-  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index, HdRprimCollection const &collection) override;
+  HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
+                                         HdRprimCollection const &collection) override;
   /// Request to create a new instancer.
   ///
   /// @param id The unique identifier of this instancer.
@@ -342,7 +345,8 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate
   HDARNOLD_API
   bool Resume() override;
 
-  using NativeRprimParamList = std::unordered_map<TfToken, const AtParamEntry *, TfToken::HashFunctor>;
+  using NativeRprimParamList =
+    std::unordered_map<TfToken, const AtParamEntry *, TfToken::HashFunctor>;
 
   /// Returns a list of parameters for each native rprim.
   ///
@@ -380,6 +384,7 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate
   void UntrackShapeMaterials(const SdfPath &shape, const VtArray<SdfPath> &materials);
 
  private:
+
   HdArnoldRenderDelegate(const HdArnoldRenderDelegate &) = delete;
   HdArnoldRenderDelegate &operator=(const HdArnoldRenderDelegate &) = delete;
 
@@ -394,7 +399,8 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate
   /// Pointer to the shared Resource Registry.
   static HdResourceRegistrySharedPtr _resourceRegistry;
 
-  using LightLinkingMap = std::unordered_map<TfToken, std::vector<HdLight *>, TfToken::HashFunctor>;
+  using LightLinkingMap =
+    std::unordered_map<TfToken, std::vector<HdLight *>, TfToken::HashFunctor>;
   using NativeRprimTypeMap = std::unordered_map<TfToken, AtString, TfToken::HashFunctor>;
   using NativeRprimParams = std::unordered_map<AtString, NativeRprimParamList, AtStringHash>;
   // Should we use a std::vector here instead?
@@ -416,21 +422,25 @@ class HdArnoldRenderDelegate final : public HdRenderDelegate
   };
   using ShapeMaterialChangesQueue = tbb::concurrent_queue<ShapeMaterialChange>;
 
-  MaterialChangesQueue _materialDirtyQueue;            ///< Queue to track material terminal dirty events.
-  MaterialChangesQueue _materialRemovalQueue;          ///< Queue to track material removal events.
-  ShapeMaterialChangesQueue _shapeMaterialTrackQueue;  ///< Queue to track shape material assignment changes.
+  MaterialChangesQueue _materialDirtyQueue;    ///< Queue to track material terminal dirty events.
+  MaterialChangesQueue _materialRemovalQueue;  ///< Queue to track material removal events.
   ShapeMaterialChangesQueue
-    _shapeMaterialUntrackQueue;            ///< Queue to untrack shape material assignment changes.
-  MaterialToShapeMap _materialToShapeMap;  ///< Map to track dependencies between materials and shapes.
+    _shapeMaterialTrackQueue;  ///< Queue to track shape material assignment changes.
+  ShapeMaterialChangesQueue
+    _shapeMaterialUntrackQueue;  ///< Queue to untrack shape material assignment changes.
+  MaterialToShapeMap
+    _materialToShapeMap;  ///< Map to track dependencies between materials and shapes.
 
-  std::mutex _lightLinkingMutex;                   ///< Mutex to lock all light linking operations.
-  LightLinkingMap _lightLinks;                     ///< Light Link categories.
-  LightLinkingMap _shadowLinks;                    ///< Shadow Link categories.
-  std::atomic<bool> _lightLinkingChanged;          ///< Whether or not Light Linking have changed.
-  DelegateRenderProducts _delegateRenderProducts;  ///< Delegate Render Products for batch renders via husk.
-  TfTokenVector _supportedRprimTypes;              ///< List of supported rprim types.
-  NativeRprimTypeMap _nativeRprimTypes;            ///< Remapping between the native rprim type names and arnold types.
-  NativeRprimParams _nativeRprimParams;            ///< List of parameters for native rprims.
+  std::mutex _lightLinkingMutex;           ///< Mutex to lock all light linking operations.
+  LightLinkingMap _lightLinks;             ///< Light Link categories.
+  LightLinkingMap _shadowLinks;            ///< Shadow Link categories.
+  std::atomic<bool> _lightLinkingChanged;  ///< Whether or not Light Linking have changed.
+  DelegateRenderProducts
+    _delegateRenderProducts;           ///< Delegate Render Products for batch renders via husk.
+  TfTokenVector _supportedRprimTypes;  ///< List of supported rprim types.
+  NativeRprimTypeMap
+    _nativeRprimTypes;  ///< Remapping between the native rprim type names and arnold types.
+  NativeRprimParams _nativeRprimParams;  ///< List of parameters for native rprims.
   /// Pointer to an instance of HdArnoldRenderParam.
   ///
   /// This is shared with all the primitives, so they can control the flow of

@@ -30,15 +30,12 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class DERIVED, class BASE>
-inline void *Tf_CastToParent(void *addr, bool derivedToBase);
+template<class DERIVED, class BASE> inline void *Tf_CastToParent(void *addr, bool derivedToBase);
 
 // Declare and register casts for all the C++ bases in the given TypeVector.
-template<typename TypeVector>
-struct Tf_AddBases;
+template<typename TypeVector> struct Tf_AddBases;
 
-template<typename... Bases>
-struct Tf_AddBases<TfType::Bases<Bases...>>
+template<typename... Bases> struct Tf_AddBases<TfType::Bases<Bases...>>
 {
   // Declare types in Bases as TfTypes and accumulate them into a runtime
   // vector.
@@ -48,8 +45,7 @@ struct Tf_AddBases<TfType::Bases<Bases...>>
   }
 
   // Register casts to and from Derived and each base type in Bases.
-  template<typename Derived>
-  static void RegisterCasts(TfType const *type)
+  template<typename Derived> static void RegisterCasts(TfType const *type)
   {
     struct Cast
     {
@@ -62,15 +58,13 @@ struct Tf_AddBases<TfType::Bases<Bases...>>
       ...
     };
 
-    for (const Cast &cast : baseCasts)
-    {
+    for (const Cast &cast : baseCasts) {
       type->_AddCppCastFunc(*cast.typeInfo, cast.func);
     }
   }
 };
 
-template<class T, class BaseTypes>
-TfType const &TfType::Declare()
+template<class T, class BaseTypes> TfType const &TfType::Declare()
 {
   // Declare each of the base types.
   std::vector<TfType> baseTfTypes = Tf_AddBases<BaseTypes>::Declare();
@@ -80,8 +74,7 @@ TfType const &TfType::Declare()
   return TfType::Declare(typeName, baseTfTypes);
 }
 
-template<typename T, typename BaseTypes>
-TfType const &TfType::Define()
+template<typename T, typename BaseTypes> TfType const &TfType::Define()
 {
   TfAutoMallocTag2 tag2("Tf", "TfType::Define");
 
@@ -104,25 +97,21 @@ TfType const &TfType::Define()
   return newType;
 }
 
-template<typename T>
-TfType const &TfType::Define()
+template<typename T> TfType const &TfType::Define()
 {
   return Define<T, Bases<>>();
 }
 
 // Helper function to implement up/down casts between TfType types.
 // This was taken from the previous TfType implementation.
-template<class DERIVED, class BASE>
-inline void *Tf_CastToParent(void *addr, bool derivedToBase)
+template<class DERIVED, class BASE> inline void *Tf_CastToParent(void *addr, bool derivedToBase)
 {
-  if (derivedToBase)
-  {
+  if (derivedToBase) {
     // Upcast -- can be done implicitly.
     DERIVED *derived = reinterpret_cast<DERIVED *>(addr);
     BASE *base = derived;
     return base;
-  } else
-  {
+  } else {
     // Downcast -- use static_cast.
     BASE *base = reinterpret_cast<BASE *>(addr);
     DERIVED *derived = static_cast<DERIVED *>(base);

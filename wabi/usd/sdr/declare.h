@@ -56,7 +56,8 @@ typedef std::vector<SdrShaderNodeConstPtr> SdrShaderNodePtrVec;
 typedef SdrShaderProperty *SdrShaderPropertyPtr;
 typedef SdrShaderProperty const *SdrShaderPropertyConstPtr;
 typedef std::unique_ptr<SdrShaderProperty> SdrShaderPropertyUniquePtr;
-typedef std::unordered_map<TfToken, SdrShaderPropertyConstPtr, TfToken::HashFunctor> SdrPropertyMap;
+typedef std::unordered_map<TfToken, SdrShaderPropertyConstPtr, TfToken::HashFunctor>
+  SdrPropertyMap;
 
 WABI_NAMESPACE_END
 

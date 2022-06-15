@@ -41,6 +41,7 @@ using HdPhDynamicUvTextureObjectSharedPtr = std::shared_ptr<class HdPhDynamicUvT
 class HdPhRenderBuffer : public HdRenderBuffer
 {
  public:
+
   HDPH_API
   HdPhRenderBuffer(HdPhResourceRegistry *resourceRegistry, SdfPath const &id);
 
@@ -48,7 +49,9 @@ class HdPhRenderBuffer : public HdRenderBuffer
   ~HdPhRenderBuffer() override;
 
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HDPH_API
   bool Allocate(GfVec3i const &dimensions, HdFormat format, bool multiSampled) override;
@@ -114,9 +117,11 @@ class HdPhRenderBuffer : public HdRenderBuffer
   HdPhTextureIdentifier GetTextureIdentifier(bool multiSampled);
 
  protected:
+
   void _Deallocate() override;
 
  private:
+
   // HdRenderBuffer::Allocate should take a scene delegate or
   // resource registry so that we do not need to save it here.
   HdPhResourceRegistry *_resourceRegistry;

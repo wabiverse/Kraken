@@ -11,10 +11,7 @@ namespace Zep
   using ByteIndex = long;
   struct ByteRange
   {
-    ByteRange(ByteIndex a = 0, ByteIndex b = 0)
-      : first(a),
-        second(b)
-    {}
+    ByteRange(ByteIndex a = 0, ByteIndex b = 0) : first(a), second(b) {}
     ByteIndex first;
     ByteIndex second;
     bool ContainsLocation(ByteIndex loc) const
@@ -41,6 +38,7 @@ namespace Zep
   class GlyphIterator
   {
    public:
+
     explicit GlyphIterator(const ZepBuffer *buffer = nullptr, unsigned long offset = 0);
     GlyphIterator(const GlyphIterator &itr);
 
@@ -69,11 +67,13 @@ namespace Zep
     GlyphIterator &Clamp();
 
     GlyphIterator Peek(long count) const;
-    GlyphIterator PeekLineClamped(long count, LineLocation clamp = LineLocation::LineLastNonCR) const;
+    GlyphIterator PeekLineClamped(long count,
+                                  LineLocation clamp = LineLocation::LineLastNonCR) const;
     GlyphIterator PeekByteOffset(long count) const;
     GlyphIterator Clamped() const;
 
    private:
+
     const ZepBuffer *m_pBuffer = nullptr;
     long m_index = -1;
   };
@@ -82,8 +82,7 @@ namespace Zep
   {
     long count = 0;
     auto start = itr1;
-    while (start != itr2)
-    {
+    while (start != itr2) {
       count++;
       start++;
     }

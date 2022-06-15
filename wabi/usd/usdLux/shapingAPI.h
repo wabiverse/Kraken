@@ -67,6 +67,7 @@ class SdfAssetPath;
 class UsdLuxShapingAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -77,16 +78,12 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
   /// Equivalent to UsdLuxShapingAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxShapingAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdLuxShapingAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdLuxShapingAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxShapingAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxShapingAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdLuxShapingAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -128,6 +125,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
   static UsdLuxShapingAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -135,6 +133,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -144,9 +143,11 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:FOCUS
   // --------------------------------------------------------------------- //
@@ -173,6 +174,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:FOCUSTINT
   // --------------------------------------------------------------------- //
@@ -198,6 +200,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:CONE:ANGLE
   // --------------------------------------------------------------------- //
@@ -222,6 +225,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:CONE:SOFTNESS
   // --------------------------------------------------------------------- //
@@ -246,6 +250,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:IES:FILE
   // --------------------------------------------------------------------- //
@@ -270,6 +275,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:IES:ANGLESCALE
   // --------------------------------------------------------------------- //
@@ -294,6 +300,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHAPING:IES:NORMALIZE
   // --------------------------------------------------------------------- //
@@ -318,6 +325,7 @@ class UsdLuxShapingAPI : public UsdAPISchemaBase
                                              bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

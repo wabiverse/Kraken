@@ -23,14 +23,12 @@
 //
 #include "wabi/imaging/hd/sprim.h"
 
-#include "wabi/imaging/hd/perfLog.h"
-#include "wabi/imaging/hd/sceneDelegate.h"
-
 WABI_NAMESPACE_BEGIN
+
 
 HdSprim::HdSprim(SdfPath const &id) : _id(id) {}
 
-HdSprim::~HdSprim() {}
+HdSprim::~HdSprim() = default;
 
 void HdSprim::Finalize(HdRenderParam *renderParam) {}
 

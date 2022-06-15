@@ -57,6 +57,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeRenderPass final : public HdRenderPass
 {
  public:
+
   /// Renderpass constructor.
   ///   \param index The render index containing scene data to render.
   ///   \param collection The initial rprim collection for this renderpass.
@@ -79,6 +80,7 @@ class HdEmbreeRenderPass final : public HdRenderPass
   bool IsConverged() const override;
 
  protected:
+
   // -----------------------------------------------------------------------
   // HdRenderPass API
 
@@ -86,13 +88,14 @@ class HdEmbreeRenderPass final : public HdRenderPass
   ///   \param renderPassState Input parameters (including viewer parameters)
   ///                          for this renderpass.
   ///   \param renderTags Which rendertags should be drawn this pass.
-  void _Execute(HdRenderPassStateSharedPtr const &renderPassState, TfTokenVector const &renderTags) override;
+  void _Execute(HdRenderPassStateSharedPtr const &renderPassState,
+                TfTokenVector const &renderTags) override;
 
   /// Update internal tracking to reflect a dirty collection.
-  void _MarkCollectionDirty() override
-  {}
+  void _MarkCollectionDirty() override {}
 
  private:
+
   // A handle to the render thread.
   HdRenderThread *_renderThread;
 

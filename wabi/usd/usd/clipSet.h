@@ -53,6 +53,7 @@ using Usd_ClipSetRefPtr = std::shared_ptr<Usd_ClipSet>;
 class Usd_ClipSet
 {
  public:
+
   /// Create a new clip set based on the given definition. If clip
   /// set creation fails, returns a null pointer and populates
   /// \p status with an error message. Otherwise \p status may be
@@ -73,7 +74,10 @@ class Usd_ClipSet
 
   /// Return bracketing time samples for the attribute at \p path
   /// at \p time.
-  bool GetBracketingTimeSamplesForPath(const SdfPath &path, double time, double *lower, double *upper) const;
+  bool GetBracketingTimeSamplesForPath(const SdfPath &path,
+                                       double time,
+                                       double *lower,
+                                       double *upper) const;
 
   /// Return set of time samples for attribute at \p path.
   std::set<double> ListTimeSamplesForPath(const SdfPath &path) const;
@@ -87,7 +91,10 @@ class Usd_ClipSet
   /// default value is declared, use the fallback value for
   /// the attribute's value type.
   template<class T>
-  bool QueryTimeSample(const SdfPath &path, double time, Usd_InterpolatorBase *interpolator, T *value) const;
+  bool QueryTimeSample(const SdfPath &path,
+                       double time,
+                       Usd_InterpolatorBase *interpolator,
+                       T *value) const;
 
   std::string name;
   PcpLayerStackPtr sourceLayerStack;
@@ -99,6 +106,7 @@ class Usd_ClipSet
   bool interpolateMissingClipValues;
 
  private:
+
   Usd_ClipSet(const std::string &name, const Usd_ClipSetDefinition &definition);
 
   // Return the index of the clip that is active at the given \p time.
@@ -121,8 +129,7 @@ inline bool Usd_ClipSet::QueryTimeSample(const SdfPath &path,
   const Usd_ClipRefPtr &clip = GetActiveClip(time);
 
   // First query the clip for time samples at the specified time.
-  if (clip->QueryTimeSample(path, time, interpolator, value))
-  {
+  if (clip->QueryTimeSample(path, time, interpolator, value)) {
     return true;
   }
 

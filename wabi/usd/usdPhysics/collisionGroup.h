@@ -66,6 +66,7 @@ class SdfAssetPath;
 class UsdPhysicsCollisionGroup : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -75,16 +76,12 @@ class UsdPhysicsCollisionGroup : public UsdTyped
   /// Equivalent to UsdPhysicsCollisionGroup::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsCollisionGroup(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdPhysicsCollisionGroup(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdPhysicsCollisionGroup on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsCollisionGroup(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsCollisionGroup(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdPhysicsCollisionGroup(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -134,6 +131,7 @@ class UsdPhysicsCollisionGroup : public UsdTyped
   static UsdPhysicsCollisionGroup Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -141,6 +139,7 @@ class UsdPhysicsCollisionGroup : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -150,9 +149,11 @@ class UsdPhysicsCollisionGroup : public UsdTyped
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FILTEREDGROUPS
   // --------------------------------------------------------------------- //
@@ -168,6 +169,7 @@ class UsdPhysicsCollisionGroup : public UsdTyped
   UsdRelationship CreateFilteredGroupsRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

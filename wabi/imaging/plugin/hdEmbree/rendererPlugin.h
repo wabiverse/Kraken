@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeRendererPlugin final : public HdRendererPlugin
 {
  public:
+
   HdEmbreeRendererPlugin() = default;
   virtual ~HdEmbreeRendererPlugin() = default;
 
@@ -75,6 +76,7 @@ class HdEmbreeRendererPlugin final : public HdRendererPlugin
   virtual bool IsSupported() const override;
 
  private:
+
   // This class does not support copying.
   HdEmbreeRendererPlugin(const HdEmbreeRendererPlugin &) = delete;
   HdEmbreeRendererPlugin &operator=(const HdEmbreeRendererPlugin &) = delete;

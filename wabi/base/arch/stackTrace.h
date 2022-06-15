@@ -68,7 +68,9 @@ WABI_NAMESPACE_BEGIN
 /// because we are trying to use only async-safe function from here on and
 /// malloc() is not async-safe.
 ARCH_API
-void ArchLogPostMortem(const char *reason, const char *message = nullptr, const char *extraLogMsg = nullptr);
+void ArchLogPostMortem(const char *reason,
+                       const char *message = nullptr,
+                       const char *extraLogMsg = nullptr);
 
 /// Sets the command line that gathers call-stack info.
 ///
@@ -121,7 +123,9 @@ void ArchLogSessionInfo(const char *crashStackTrace = NULL);
 ///
 /// \sa ArchLogSessionInfo
 ARCH_API
-void ArchSetLogSession(const char *command, const char *const argv[], const char *const crashArgv[]);
+void ArchSetLogSession(const char *command,
+                       const char *const argv[],
+                       const char *const crashArgv[]);
 
 /// Register the callback to invoke logging at end of a successful session.
 ///
@@ -143,7 +147,9 @@ void ArchPrintStackTrace(FILE *fout, const std::string &reason);
 /// Print a stack trace to the given ostream.
 /// \overload
 ARCH_API
-void ArchPrintStackTrace(std::ostream &out, const std::string &programName, const std::string &reason);
+void ArchPrintStackTrace(std::ostream &out,
+                         const std::string &programName,
+                         const std::string &reason);
 
 /// Print a stack trace to the given ostream.
 /// This function uses ArchGetProgramInfoForErrors as the \c programName.
@@ -244,7 +250,9 @@ void ArchLogStackTrace(const std::string &progName,
 /// written to.  And if \c fatal is true, then the stack trace will  be added
 /// to the stack_trace database table.
 ARCH_API
-void ArchLogStackTrace(const std::string &reason, bool fatal = false, const std::string &sessionLog = "");
+void ArchLogStackTrace(const std::string &reason,
+                       bool fatal = false,
+                       const std::string &sessionLog = "");
 
 /// Return stack trace.
 ///
@@ -267,7 +275,9 @@ void ArchGetStackFrames(size_t maxDepth, std::vector<uintptr_t> *frames);
 /// frames.  The first frame will be at depth \p numFramesToSkipAtTop and the
 /// last at depth \p numFramesToSkipAtTop + \p maxDepth - 1.
 ARCH_API
-void ArchGetStackFrames(size_t maxDepth, size_t numFramesToSkipAtTop, std::vector<uintptr_t> *frames);
+void ArchGetStackFrames(size_t maxDepth,
+                        size_t numFramesToSkipAtTop,
+                        std::vector<uintptr_t> *frames);
 
 /// Print stack frames to the given ostream.
 ARCH_API

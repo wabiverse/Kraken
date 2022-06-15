@@ -47,6 +47,7 @@ TF_DECLARE_REF_PTRS(GlfSimpleLightingContext);
 class HdxDrawTargetTask : public HdTask
 {
  public:
+
   HDX_API
   HdxDrawTargetTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -70,13 +71,15 @@ class HdxDrawTargetTask : public HdTask
   const TfTokenVector &GetRenderTags() const override;
 
  private:
+
   struct _RenderPassInfo;
   struct _CameraInfo;
   using _RenderPassInfoVector = std::vector<_RenderPassInfo>;
 
   static _RenderPassInfoVector _ComputeRenderPassInfos(HdRenderIndex *renderIndex);
 
-  static _CameraInfo _ComputeCameraInfo(const HdRenderIndex &renderIndex, const HdPhDrawTarget *drawTarget);
+  static _CameraInfo _ComputeCameraInfo(const HdRenderIndex &renderIndex,
+                                        const HdPhDrawTarget *drawTarget);
   static void _UpdateLightingContext(const _CameraInfo &cameraInfo,
                                      GlfSimpleLightingContextConstRefPtr const &srcContext,
                                      GlfSimpleLightingContextRefPtr const &ctx);

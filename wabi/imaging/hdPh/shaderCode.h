@@ -66,6 +66,7 @@ class HdPhResourceRegistry;
 class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode>
 {
  public:
+
   typedef size_t ID;
 
   HDPH_API
@@ -188,11 +189,14 @@ class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode>
   class ResourceContext
   {
    public:
-    HDPH_API
-    void AddSource(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtr const &source);
 
     HDPH_API
-    void AddSources(HdBufferArrayRangeSharedPtr const &range, HdBufferSourceSharedPtrVector &&sources);
+    void AddSource(HdBufferArrayRangeSharedPtr const &range,
+                   HdBufferSourceSharedPtr const &source);
+
+    HDPH_API
+    void AddSources(HdBufferArrayRangeSharedPtr const &range,
+                    HdBufferSourceSharedPtrVector &&sources);
 
     HDPH_API
     void AddComputation(HdBufferArrayRangeSharedPtr const &range,
@@ -200,6 +204,7 @@ class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode>
                         HdPhComputeQueue const queue);
 
    private:
+
     friend class HdPhResourceRegistry;
     ResourceContext(HdPhResourceRegistry *);
     HdPhResourceRegistry *_registry;
@@ -216,6 +221,7 @@ class HdPhShaderCode : public std::enable_shared_from_this<HdPhShaderCode>
   virtual void AddResourcesFromTextures(ResourceContext &ctx) const;
 
  private:
+
   // No copying
   HdPhShaderCode(const HdPhShaderCode &) = delete;
   HdPhShaderCode &operator=(const HdPhShaderCode &) = delete;

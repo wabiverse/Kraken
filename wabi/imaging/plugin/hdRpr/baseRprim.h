@@ -23,19 +23,17 @@ limitations under the License.
 
 WABI_NAMESPACE_BEGIN
 
-template<typename Base>
-class HdRprBaseRprim : public Base
+template<typename Base> class HdRprBaseRprim : public Base
 {
  public:
-  HdRprBaseRprim(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL)
-    : Base(id HDRPR_INSTANCER_ID_ARG)
+
+  HdRprBaseRprim(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL) : Base(id HDRPR_INSTANCER_ID_ARG)
   {}
   ~HdRprBaseRprim() override = default;
 
   void Finalize(HdRenderParam *renderParam) override
   {
-    if (!m_materialId.IsEmpty())
-    {
+    if (!m_materialId.IsEmpty()) {
       auto rprRenderParam = static_cast<HdRprRenderParam *>(renderParam);
       rprRenderParam->UnsubscribeFromMaterialUpdates(m_materialId, Base::GetId());
     }
@@ -44,13 +42,12 @@ class HdRprBaseRprim : public Base
   }
 
  protected:
+
   void UpdateMaterialId(HdSceneDelegate *sceneDelegate, HdRprRenderParam *renderParam)
   {
     auto newMaterialId = sceneDelegate->GetMaterialId(Base::GetId());
-    if (m_materialId != newMaterialId)
-    {
-      if (!m_materialId.IsEmpty())
-      {
+    if (m_materialId != newMaterialId) {
+      if (!m_materialId.IsEmpty()) {
         renderParam->UnsubscribeFromMaterialUpdates(m_materialId, Base::GetId());
       }
       renderParam->SubscribeForMaterialUpdates(newMaterialId, Base::GetId());
@@ -76,8 +73,7 @@ class HdRprBaseRprim : public Base
 
   uint32_t GetVisibilityMask() const
   {
-    if (!m_isVisible)
-    {
+    if (!m_isVisible) {
       // If Rprim is explicitly made invisible, ignore custom visibility mask
       return kInvisible;
     }
@@ -86,6 +82,7 @@ class HdRprBaseRprim : public Base
   }
 
  protected:
+
   SdfPath m_materialId;
   bool m_isVisible = false;
   uint32_t m_visibilityMask = 0;

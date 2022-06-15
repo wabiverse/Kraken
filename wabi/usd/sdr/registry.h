@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class SdrRegistry : public NdrRegistry
 {
  public:
+
   /// Get the single `SdrRegistry` instance.
   SDR_API
   static SdrRegistry &GetInstance();
@@ -76,9 +77,10 @@ class SdrRegistry : public NdrRegistry
   /// Exactly like `NdrRegistry::GetNodeByNameAndType()`, but returns a
   /// `SdrShaderNode` pointer instead of a `NdrNode` pointer.
   SDR_API
-  SdrShaderNodeConstPtr GetShaderNodeByNameAndType(const std::string &name,
-                                                   const TfToken &nodeType,
-                                                   NdrVersionFilter filter = NdrVersionFilterDefaultOnly);
+  SdrShaderNodeConstPtr GetShaderNodeByNameAndType(
+    const std::string &name,
+    const TfToken &nodeType,
+    NdrVersionFilter filter = NdrVersionFilterDefaultOnly);
 
   /// Wrapper method for NdrRegistry::GetNodeFromAsset().
   /// Returns a valid SdrShaderNode pointer upon success.
@@ -109,10 +111,12 @@ class SdrRegistry : public NdrRegistry
   /// Exactly like `NdrRegistry::GetNodesByFamily()`, but returns a vector of
   /// `SdrShaderNode` pointers instead of a vector of `NdrNode` pointers.
   SDR_API
-  SdrShaderNodePtrVec GetShaderNodesByFamily(const TfToken &family = TfToken(),
-                                             NdrVersionFilter filter = NdrVersionFilterDefaultOnly);
+  SdrShaderNodePtrVec GetShaderNodesByFamily(
+    const TfToken &family = TfToken(),
+    NdrVersionFilter filter = NdrVersionFilterDefaultOnly);
 
  protected:
+
   // Allow TF to construct the class
   friend class TfSingleton<SdrRegistry>;
 

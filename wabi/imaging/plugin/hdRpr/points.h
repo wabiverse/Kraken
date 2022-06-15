@@ -32,6 +32,7 @@ class RprUsdMaterial;
 class HdRprPoints : public HdPoints
 {
  public:
+
   HdRprPoints(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL);
 
   ~HdRprPoints() override = default;
@@ -46,11 +47,13 @@ class HdRprPoints : public HdPoints
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
   void _InitRepr(TfToken const &reprName, HdDirtyBits *dirtyBits) override;
 
  private:
+
   rpr::Shape *m_prototypeMesh = nullptr;
   std::vector<rpr::Shape *> m_instances;
   RprUsdMaterial *m_material = nullptr;

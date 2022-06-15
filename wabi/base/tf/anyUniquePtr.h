@@ -43,23 +43,20 @@ WABI_NAMESPACE_BEGIN
 class TfAnyUniquePtr
 {
  public:
-  template<typename T>
-  static TfAnyUniquePtr New()
+
+  template<typename T> static TfAnyUniquePtr New()
   {
     static_assert(!std::is_array<T>::value, "Array types not supported");
     return TfAnyUniquePtr(new T());
   }
 
-  template<typename T>
-  static TfAnyUniquePtr New(T const &v)
+  template<typename T> static TfAnyUniquePtr New(T const &v)
   {
     static_assert(!std::is_array<T>::value, "Array types not supported");
     return TfAnyUniquePtr(new T(v));
   }
 
-  TfAnyUniquePtr(TfAnyUniquePtr &&other)
-    : _ptr(other._ptr),
-      _delete(other._delete)
+  TfAnyUniquePtr(TfAnyUniquePtr &&other) : _ptr(other._ptr), _delete(other._delete)
   {
     other._ptr = nullptr;
     // We don't set other._delete to nullptr here on purpose.  Invoking
@@ -69,8 +66,7 @@ class TfAnyUniquePtr
 
   TfAnyUniquePtr &operator=(TfAnyUniquePtr &&other)
   {
-    if (this != &other)
-    {
+    if (this != &other) {
       _delete(_ptr);
       _ptr = other._ptr;
       _delete = other._delete;
@@ -94,19 +90,16 @@ class TfAnyUniquePtr
   }
 
  private:
-  template<typename T>
-  explicit TfAnyUniquePtr(T const *ptr)
-    : _ptr(ptr),
-      _delete(&_Delete<T>)
-  {}
 
-  template<typename T>
-  static void _Delete(void const *ptr)
+  template<typename T> explicit TfAnyUniquePtr(T const *ptr) : _ptr(ptr), _delete(&_Delete<T>) {}
+
+  template<typename T> static void _Delete(void const *ptr)
   {
     delete static_cast<T const *>(ptr);
   }
 
  private:
+
   void const *_ptr;
   void (*_delete)(void const *);
 };

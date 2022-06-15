@@ -78,10 +78,10 @@
 
 /**
  * Pixar messed up versioning here a bit, so therefore:
- * 
+ *
  *  x WABI_VERSION_MAJOR
  *  x WABI_VERSION_MINOR
- * 
+ *
  * will always be the same, this allows us the added
  * benefit of distinguishing kraken universal scene
  * description vs pixar universal scene description
@@ -91,7 +91,8 @@
 #define WABI_VERSION_MINOR 21
 #define WABI_VERSION_PATCH 11
 
-#define WABI_VERSION_DECIMAL (WABI_VERSION_MAJOR * 10000 + WABI_VERSION_MINOR * 100 + WABI_VERSION_PATCH)
+#define WABI_VERSION_DECIMAL \
+  (WABI_VERSION_MAJOR * 10000 + WABI_VERSION_MINOR * 100 + WABI_VERSION_PATCH)
 #define WABI_VERSION 2111
 
 #define WABI_USE_NAMESPACES 1
@@ -103,8 +104,7 @@
 #  define WABI_NS_GLOBAL ::WABI_NS
 
 namespace WABI_INTERNAL_NS
-{
-}
+{}
 
 // The root level namespace for all source in the USD distribution.
 namespace WABI_NS

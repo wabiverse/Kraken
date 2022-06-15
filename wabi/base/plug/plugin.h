@@ -65,6 +65,7 @@ class TfType;
 class PlugPlugin : public TfRefBase, public TfWeakBase
 {
  public:
+
   PLUG_API virtual ~PlugPlugin();
 
   /// Loads the plugin.
@@ -126,6 +127,7 @@ class PlugPlugin : public TfRefBase, public TfWeakBase
   PLUG_API std::string FindPluginResource(const std::string &path, bool verify = true) const;
 
  private:
+
   enum _Type
   {
     LibraryType,
@@ -154,21 +156,25 @@ class PlugPlugin : public TfRefBase, public TfWeakBase
   static PlugPluginPtrVector _GetAllPlugins();
 
   template<class PluginMap>
-  PLUG_LOCAL static std::pair<PlugPluginPtr, bool> _NewPlugin(const Plug_RegistrationMetadata &metadata,
-                                                              _Type pluginType,
-                                                              const std::string &pluginCreationPath,
-                                                              PluginMap *allPluginsByNamePtr);
+  PLUG_LOCAL static std::pair<PlugPluginPtr, bool> _NewPlugin(
+    const Plug_RegistrationMetadata &metadata,
+    _Type pluginType,
+    const std::string &pluginCreationPath,
+    PluginMap *allPluginsByNamePtr);
 
   PLUG_LOCAL
-  static std::pair<PlugPluginPtr, bool> _NewDynamicLibraryPlugin(const Plug_RegistrationMetadata &metadata);
+  static std::pair<PlugPluginPtr, bool> _NewDynamicLibraryPlugin(
+    const Plug_RegistrationMetadata &metadata);
 
 #ifdef WITH_PYTHON
   PLUG_LOCAL
-  static std::pair<PlugPluginPtr, bool> _NewPythonModulePlugin(const Plug_RegistrationMetadata &metadata);
+  static std::pair<PlugPluginPtr, bool> _NewPythonModulePlugin(
+    const Plug_RegistrationMetadata &metadata);
 #endif  // WITH_PYTHON
 
   PLUG_LOCAL
-  static std::pair<PlugPluginPtr, bool> _NewResourcePlugin(const Plug_RegistrationMetadata &metadata);
+  static std::pair<PlugPluginPtr, bool> _NewResourcePlugin(
+    const Plug_RegistrationMetadata &metadata);
 
   PLUG_LOCAL
   bool _Load();
@@ -193,6 +199,7 @@ class PlugPlugin : public TfRefBase, public TfWeakBase
   static constexpr char const *_GetPluginTypeDisplayName(_Type type);
 
  private:
+
   std::string _name;
   std::string _path;
   std::string _resourcePath;
@@ -209,7 +216,9 @@ class PlugPlugin : public TfRefBase, public TfWeakBase
 /// fails an empty path is returned.  Relative paths are relative to the
 /// plugin's resource path.
 PLUG_API
-std::string PlugFindPluginResource(const PlugPluginPtr &plugin, const std::string &path, bool verify = true);
+std::string PlugFindPluginResource(const PlugPluginPtr &plugin,
+                                   const std::string &path,
+                                   bool verify = true);
 
 WABI_NAMESPACE_END
 

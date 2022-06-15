@@ -51,13 +51,14 @@
 namespace std
 {
 
-  template<>
-  class numeric_limits<WABI_NS::wabi_half::half>
+  template<> class numeric_limits<WABI_NS::wabi_half::half>
   {
    private:
+
     using half = WABI_NS::wabi_half::half;
 
    public:
+
     static const bool is_specialized = true;
 
     static half min() throw()

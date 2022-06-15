@@ -102,6 +102,7 @@ class VtValue;
 class ArPackageResolver
 {
  public:
+
   ArPackageResolver(const ArPackageResolver &) = delete;
   ArPackageResolver &operator=(const ArPackageResolver &) = delete;
 
@@ -129,7 +130,8 @@ class ArPackageResolver
   ///
   /// \see ArResolver::Resolve
   AR_API
-  virtual std::string Resolve(const std::string &resolvedPackagePath, const std::string &packagedPath) = 0;
+  virtual std::string Resolve(const std::string &resolvedPackagePath,
+                              const std::string &packagedPath) = 0;
 
   /// @}
 
@@ -171,6 +173,7 @@ class ArPackageResolver
   virtual void EndCacheScope(VtValue *cacheScopeData) = 0;
 
  protected:
+
   AR_API
   ArPackageResolver();
 };

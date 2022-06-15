@@ -35,6 +35,7 @@ class RprUsdMaterial;
 class HdRprMesh final : public HdRprBaseRprim<HdMesh>
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdRprMesh");
 
   HdRprMesh(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL);
@@ -50,11 +51,13 @@ class HdRprMesh final : public HdRprBaseRprim<HdMesh>
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
   void _InitRepr(TfToken const &reprName, HdDirtyBits *dirtyBits) override;
 
  private:
+
   RprUsdMaterial const *GetFallbackMaterial(
     HdSceneDelegate *sceneDelegate,
     HdRprApi *rprApi,
@@ -62,6 +65,7 @@ class HdRprMesh final : public HdRprBaseRprim<HdMesh>
     std::map<HdInterpolation, HdPrimvarDescriptorVector> const &primvarDescsPerInterpolation);
 
  private:
+
   std::vector<rpr::Shape *> m_rprMeshes;
   std::vector<std::vector<rpr::Shape *>> m_rprMeshInstances;
   RprUsdMaterial *m_fallbackMaterial = nullptr;

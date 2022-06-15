@@ -24,8 +24,7 @@ namespace Zep
   }  // namespace detail
 
   /// Base template for the signal class
-  template<class P, class T>
-  class signal_type;
+  template<class P, class T> class signal_type;
 
   /// Connection class.
   ///
@@ -39,10 +38,9 @@ namespace Zep
   class connection
   {
    public:
+
     /// Default constructor
-    connection()
-      : _index()
-    {}
+    connection() : _index() {}
 
     // Connection are not copy constructible or copy assignable
     connection(connection const &) = delete;
@@ -79,10 +77,10 @@ namespace Zep
     void disconnect();
 
    private:
+
     /// The signal template is a friend of the connection, since it is the
     /// only one allowed to create instances using the meaningful constructor.
-    template<class P, class T>
-    friend class signal_type;
+    template<class P, class T> friend class signal_type;
 
     /// Create a connection.
     /// @param shared_disconnector   Disconnector instance that will be used to disconnect
@@ -109,6 +107,7 @@ namespace Zep
   class scoped_connection
   {
    public:
+
     /// Scoped are default constructible
     scoped_connection() = default;
     /// Scoped connections are not copy constructible
@@ -117,9 +116,7 @@ namespace Zep
     scoped_connection &operator=(scoped_connection const &) = delete;
 
     /// Move constructor
-    scoped_connection(scoped_connection &&other)
-      : _connection(std::move(other._connection))
-    {}
+    scoped_connection(scoped_connection &&other) : _connection(std::move(other._connection)) {}
 
     /// Move assign operator.
     /// @param other   The instance to move from.
@@ -131,9 +128,7 @@ namespace Zep
 
     /// Construct a scoped connection from a connection object
     /// @param connection   The connection object to manage
-    scoped_connection(connection &&c)
-      : _connection(std::forward<connection>(c))
-    {}
+    scoped_connection(connection &&c) : _connection(std::forward<connection>(c)) {}
 
     /// destructor
     ~scoped_connection()
@@ -190,6 +185,7 @@ namespace Zep
     }
 
    private:
+
     /// Underlying connection object
     connection _connection;
   };
@@ -236,20 +232,17 @@ namespace Zep
   {
     /// Dummy mutex type that doesn't do anything
     struct mutex_type
-    {
-    };
+    {};
     /// Dummy lock type, that doesn't do any locking.
     struct mutex_lock_type
     {
       /// A lock type must be constructible from a
       /// mutex type from the same thread policy.
-      explicit mutex_lock_type(mutex_type const &)
-      {}
+      explicit mutex_lock_type(mutex_type const &) {}
     };
     /// Dummy implementation of thread yielding, that
     /// doesn't do any actual yielding.
-    static void yield_thread()
-    {}
+    static void yield_thread() {}
     /// Dummy implemention of defer_lock that doesn't
     /// do anything
     static mutex_lock_type defer_lock(mutex_type &m)
@@ -258,8 +251,7 @@ namespace Zep
     }
     /// Dummy implemention of lock that doesn't
     /// do anything
-    static void lock(mutex_lock_type &, mutex_lock_type &)
-    {}
+    static void lock(mutex_lock_type &, mutex_lock_type &) {}
   };
 
   /// Signal accumulator class template.
@@ -280,10 +272,10 @@ namespace Zep
   /// @tparam F      Type of accumulation function.
   /// @tparam A...   Argument types of the underlying signal type.
   ///
-  template<class S, class T, class F, class... A>
-  class signal_accumulator
+  template<class S, class T, class F, class... A> class signal_accumulator
   {
    public:
+
     /// Result type when calling the accumulating function operator.
     using result_type = typename std::result_of<F(T, typename S::slot_type::result_type)>::type;
 
@@ -305,10 +297,7 @@ namespace Zep
     ///                  - The type `S::slot_type::result_type` (return type of
     ///                    the signals slots) must be implicitly convertible to
     ///                    type `T2`.
-    signal_accumulator(S const &signal, T init, F func)
-      : _signal(signal),
-        _init(init),
-        _func(func)
+    signal_accumulator(S const &signal, T init, F func) : _signal(signal), _init(init), _func(func)
     {}
 
     /// Function call operator.
@@ -329,6 +318,7 @@ namespace Zep
     }
 
    private:
+
     /// Reference to the underlying signal to proxy.
     S const &_signal;
     /// Initial value of the accumulate algorithm.
@@ -359,10 +349,10 @@ namespace Zep
   ///
   /// @tparam R      Return value type of the slots connected to the signal.
   /// @tparam A...   Argument types of the slots connected to the signal.
-  template<class P, class R, class... A>
-  class signal_type<P, R(A...)>
+  template<class P, class R, class... A> class signal_type<P, R(A...)>
   {
    public:
+
     /// signals are not copy constructible
     signal_type(signal_type const &) = delete;
     /// signals are not copy assignable
@@ -373,8 +363,7 @@ namespace Zep
       mutex_lock_type lock{other._mutex};
       _slot_count = std::move(other._slot_count);
       _slots = std::move(other._slots);
-      if (other._shared_disconnector != nullptr)
-      {
+      if (other._shared_disconnector != nullptr) {
         _disconnector = disconnector{this};
         _shared_disconnector = std::move(other._shared_disconnector);
         // replace the disconnector with our own disconnector
@@ -390,8 +379,7 @@ namespace Zep
 
       _slot_count = std::move(other._slot_count);
       _slots = std::move(other._slots);
-      if (other._shared_disconnector != nullptr)
-      {
+      if (other._shared_disconnector != nullptr) {
         _disconnector = disconnector{this};
         _shared_disconnector = std::move(other._shared_disconnector);
         // replace the disconnector with our own disconnector
@@ -401,9 +389,7 @@ namespace Zep
     }
 
     /// signals are default constructible
-    signal_type()
-      : _slot_count(0)
-    {}
+    signal_type() : _slot_count(0) {}
 
     // Destruct the signal object.
     ~signal_type()
@@ -424,16 +410,15 @@ namespace Zep
     ///               the same signature as the signal itself.
     /// @return       A connection object is returned, and can be used to
     ///               disconnect the slot.
-    template<class T>
-    connection connect(T &&slot)
+    template<class T> connection connect(T &&slot)
     {
       mutex_lock_type lock{_mutex};
       _slots.push_back(std::forward<T>(slot));
       std::size_t index = _slots.size() - 1;
-      if (_shared_disconnector == nullptr)
-      {
+      if (_shared_disconnector == nullptr) {
         _disconnector = disconnector{this};
-        _shared_disconnector = std::shared_ptr<detail::disconnector>{&_disconnector, detail::no_delete};
+        _shared_disconnector = std::shared_ptr<detail::disconnector>{&_disconnector,
+                                                                     detail::no_delete};
       }
       ++_slot_count;
       return connection{_shared_disconnector, index};
@@ -451,10 +436,8 @@ namespace Zep
     ///               connected slots when they are called.
     void operator()(A const &...args) const
     {
-      for (auto const &slot : copy_slots())
-      {
-        if (slot)
-        {
+      for (auto const &slot : copy_slots()) {
+        if (slot) {
           slot(args...);
         }
       }
@@ -509,17 +492,14 @@ namespace Zep
     ///               `std::back_insert_iterator`. Additionally it
     ///               must be either copyable or moveable.
     /// @param args   The arguments to propagate to the slots.
-    template<class C>
-    C aggregate(A const &...args) const
+    template<class C> C aggregate(A const &...args) const
     {
       static_assert(std::is_same<R, void>::value == false,
                     "Unable to aggregate slot return values with 'void' as return type.");
       C container;
       auto iterator = std::back_inserter(container);
-      for (auto const &slot : copy_slots())
-      {
-        if (slot)
-        {
+      for (auto const &slot : copy_slots()) {
+        if (slot) {
           (*iterator) = slot(args...);
         }
       }
@@ -553,8 +533,8 @@ namespace Zep
     }
 
    private:
-    template<class, class, class, class...>
-    friend class signal_accumulator;
+
+    template<class, class, class, class...> friend class signal_accumulator;
     /// Thread policy currently in use
     using thread_policy = P;
     /// Type of mutex, provided by threading policy
@@ -582,8 +562,7 @@ namespace Zep
       // we will get a nullptr when locking our weak pointer).
       std::weak_ptr<detail::disconnector> weak{_shared_disconnector};
       _shared_disconnector.reset();
-      while (weak.lock() != nullptr)
-      {
+      while (weak.lock() != nullptr) {
         // we just yield here, allowing the OS to reschedule. We do
         // this until all threads has released the disconnector object.
         thread_policy::yield_thread();
@@ -610,10 +589,8 @@ namespace Zep
       F &func,
       A const &...args) const
     {
-      for (auto const &slot : copy_slots())
-      {
-        if (slot)
-        {
+      for (auto const &slot : copy_slots()) {
+        if (slot) {
           value = func(value, slot(args...));
         }
       }
@@ -630,13 +607,11 @@ namespace Zep
     {
       mutex_lock_type lock(_mutex);
       assert(_slots.size() > index);
-      if (_slots[index] != nullptr)
-      {
+      if (_slots[index] != nullptr) {
         --_slot_count;
       }
       _slots[index] = slot_type{};
-      while (_slots.size() > 0 && !_slots.back())
-      {
+      while (_slots.size() > 0 && !_slots.back()) {
         _slots.pop_back();
       }
     }
@@ -649,16 +624,12 @@ namespace Zep
     struct disconnector : detail::disconnector
     {
       /// Default constructor, resulting in a no-op disconnector.
-      disconnector()
-        : _ptr(nullptr)
-      {}
+      disconnector() : _ptr(nullptr) {}
 
       /// Create a disconnector that works with a given signal instance.
       /// @param ptr   Pointer to the signal instance that the disconnector
       ///              should work with.
-      disconnector(signal_type<P, R(A...)> *ptr)
-        : _ptr(ptr)
-      {}
+      disconnector(signal_type<P, R(A...)> *ptr) : _ptr(ptr) {}
 
       /// Disconnect a given slot on the current signal instance.
       /// @note If the instance is default constructed, or created
@@ -667,8 +638,7 @@ namespace Zep
       /// @param index   The index of the slot to disconnect.
       void operator()(std::size_t index) const override
       {
-        if (_ptr)
-        {
+        if (_ptr) {
           _ptr->disconnect(index);
         }
       }
@@ -695,8 +665,7 @@ namespace Zep
   inline void connection::disconnect()
   {
     auto ptr = _weak_disconnector.lock();
-    if (ptr)
-    {
+    if (ptr) {
       (*ptr)(_index);
     }
     _weak_disconnector.reset();
@@ -709,8 +678,7 @@ namespace Zep
   ///
   /// This is the recommended signal type, even for single threaded
   /// environments.
-  template<class T>
-  using signal = signal_type<multithread_policy, T>;
+  template<class T> using signal = signal_type<multithread_policy, T>;
 
   /// Signal type that is unsafe in multithreaded environments.
   /// No synchronizations are provided to the signal_type for accessing
@@ -718,6 +686,5 @@ namespace Zep
   ///
   /// Only use this signal type if you are sure that your environment is
   /// single threaded and performance is of importance.
-  template<class T>
-  using unsafe_signal = signal_type<singlethread_policy, T>;
+  template<class T> using unsafe_signal = signal_type<singlethread_policy, T>;
 }  // namespace Zep

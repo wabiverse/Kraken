@@ -46,6 +46,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdDracoFileFormat);
 class UsdDracoFileFormat : public SdfFileFormat
 {
  public:
+
   virtual bool CanRead(const std::string &file) const;
   virtual bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const;
   virtual bool ReadFromString(SdfLayer *layer, const std::string &str) const;
@@ -59,12 +60,14 @@ class UsdDracoFileFormat : public SdfFileFormat
   virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const;
 
  protected:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
   virtual ~UsdDracoFileFormat();
   UsdDracoFileFormat();
 
  private:
+
   bool _ReadFromChars(SdfLayer *layer,
                       const char *str,
                       size_t size,

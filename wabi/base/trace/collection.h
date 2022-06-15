@@ -56,6 +56,7 @@ WABI_NAMESPACE_BEGIN
 class TraceCollection
 {
  public:
+
   TF_MALLOC_TAG_NEW("Trace", "TraceCollection");
 
   using This = TraceCollection;
@@ -90,6 +91,7 @@ class TraceCollection
   class Visitor
   {
    public:
+
     /// Destructor
     TRACE_API virtual ~Visitor();
 
@@ -113,7 +115,9 @@ class TraceCollection
 
     /// Called for every event \p event with \p key on thread
     /// \p threadId if AcceptsCategory returns true.
-    virtual void OnEvent(const TraceThreadId &threadId, const TfToken &key, const TraceEvent &event) = 0;
+    virtual void OnEvent(const TraceThreadId &threadId,
+                         const TfToken &key,
+                         const TraceEvent &event) = 0;
   };
 
   /// Forward iterates over the events of the collection and calls the
@@ -125,6 +129,7 @@ class TraceCollection
   TRACE_API void ReverseIterate(Visitor &visitor) const;
 
  private:
+
   using KeyTokenCache = std::unordered_map<TraceKey, TfToken, TraceKey::HashFunctor>;
 
   /// Iterate through threads, then choose either forward or reverse

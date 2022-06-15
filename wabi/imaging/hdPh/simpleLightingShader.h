@@ -49,6 +49,7 @@ TF_DECLARE_REF_PTRS(GlfBindingMap);
 class HdPhSimpleLightingShader : public HdPhLightingShader
 {
  public:
+
   HDPH_API
   HdPhSimpleLightingShader();
   HDPH_API
@@ -118,6 +119,7 @@ class HdPhSimpleLightingShader : public HdPhLightingShader
   const HdPhTextureHandleSharedPtr &GetTextureHandle(const TfToken &name) const;
 
  private:
+
   GlfSimpleLightingContextRefPtr _lightingContext;
   GlfBindingMapRefPtr _bindingMap;
   bool _useLighting;

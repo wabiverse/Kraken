@@ -46,15 +46,18 @@ WABI_NAMESPACE_BEGIN
 class HfPluginBase
 {
  public:
+
   HF_API
   virtual ~HfPluginBase();  // = default: See workaround in cpp file
 
  protected:
+
   // Pure virtual class, must be derived
   HF_API
   HfPluginBase() = default;
 
  private:
+
   ///
   /// This class is not intended to be copied.
   ///

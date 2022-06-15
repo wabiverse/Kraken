@@ -60,6 +60,7 @@ using HgiBlitCmdsUniquePtr = std::unique_ptr<class HgiBlitCmds>;
 class HgiBlitCmds : public HgiCmds
 {
  public:
+
   HGI_API
   ~HgiBlitCmds() override;
 
@@ -114,10 +115,12 @@ class HgiBlitCmds : public HgiCmds
   virtual void MemoryBarrier(HgiMemoryBarrier barrier) = 0;
 
  protected:
+
   HGI_API
   HgiBlitCmds();
 
  private:
+
   HgiBlitCmds &operator=(const HgiBlitCmds &) = delete;
   HgiBlitCmds(const HgiBlitCmds &) = delete;
 };

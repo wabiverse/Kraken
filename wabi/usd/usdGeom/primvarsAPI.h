@@ -82,6 +82,7 @@ class SdfAssetPath;
 class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -91,16 +92,12 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
   /// Equivalent to UsdGeomPrimvarsAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPrimvarsAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdGeomPrimvarsAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdGeomPrimvarsAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPrimvarsAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPrimvarsAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdGeomPrimvarsAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -125,6 +122,7 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
   static UsdGeomPrimvarsAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -133,6 +131,7 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -142,9 +141,11 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -397,8 +398,9 @@ class UsdGeomPrimvarsAPI : public UsdAPISchemaBase
   ///
   /// \sa \ref usdGeom_PrimvarFetchingAPI
   USDGEOM_API
-  UsdGeomPrimvar FindPrimvarWithInheritance(const TfToken &name,
-                                            const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
+  UsdGeomPrimvar FindPrimvarWithInheritance(
+    const TfToken &name,
+    const std::vector<UsdGeomPrimvar> &inheritedFromAncestors) const;
 
   /// Find all of the value-producing primvars either defined on this prim,
   /// or inherited from ancestor prims.

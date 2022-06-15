@@ -42,6 +42,7 @@ using HdBufferSourceSharedPtr = std::shared_ptr<class HdBufferSource>;
 class HdPh_BasisCurvesTopology final : public HdBasisCurvesTopology
 {
  public:
+
   static HdPh_BasisCurvesTopologySharedPtr New(const HdBasisCurvesTopology &src);
 
   virtual ~HdPh_BasisCurvesTopology();
@@ -50,6 +51,7 @@ class HdPh_BasisCurvesTopology final : public HdBasisCurvesTopology
   HdBufferSourceSharedPtr GetIndexBuilderComputation(bool forceLines);
 
  private:
+
   // Must be created through factory
   explicit HdPh_BasisCurvesTopology(const HdBasisCurvesTopology &src);
 

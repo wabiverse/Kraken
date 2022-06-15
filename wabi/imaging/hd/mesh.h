@@ -24,14 +24,14 @@
 #ifndef WABI_IMAGING_HD_MESH_H
 #define WABI_IMAGING_HD_MESH_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/enums.h"
 #include "wabi/imaging/hd/meshTopology.h"
 #include "wabi/imaging/hd/rprim.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/pxOsd/subdivTags.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -101,8 +101,9 @@ struct HdMeshReprDesc
 class HdMesh : public HdRprim
 {
  public:
+
   HD_API
-  virtual ~HdMesh();
+  ~HdMesh() override;
 
   ///
   /// Render State
@@ -140,18 +141,20 @@ class HdMesh : public HdRprim
                             HdMeshReprDesc desc2 = HdMeshReprDesc());
 
  protected:
+
   /// Constructor. instancerId, if specified, is the instancer which uses
   /// this mesh as a prototype.
   HD_API
   HdMesh(SdfPath const &id);
 
   // We allow up to 2 repr descs per repr for meshes (see ConfigureRepr above)
-  typedef _ReprDescConfigs<HdMeshReprDesc, 2> _MeshReprConfig;
+  using _MeshReprConfig = _ReprDescConfigs<HdMeshReprDesc, 2>;
 
   HD_API
   static _MeshReprConfig::DescArray _GetReprDesc(TfToken const &reprName);
 
  private:
+
   // Class can not be default constructed or copied.
   HdMesh() = delete;
   HdMesh(const HdMesh &) = delete;
@@ -204,6 +207,7 @@ inline VtValue HdMesh::GetNormals(HdSceneDelegate *delegate) const
 {
   return GetPrimvar(delegate, HdTokens->normals);
 }
+
 
 WABI_NAMESPACE_END
 

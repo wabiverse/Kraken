@@ -45,6 +45,7 @@ using HdPh_MaterialParamVector = std::vector<class HdPh_MaterialParam>;
 class HdPh_MaterialParam final
 {
  public:
+
   typedef size_t ID;
 
   // Indicates the kind of material parameter.

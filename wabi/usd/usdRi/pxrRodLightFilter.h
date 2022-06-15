@@ -74,6 +74,7 @@ class SdfAssetPath;
 class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -84,16 +85,12 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   /// Equivalent to UsdRiPxrRodLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrRodLightFilter(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLightFilter(prim)
-  {}
+  explicit UsdRiPxrRodLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim) {}
 
   /// Construct a UsdRiPxrRodLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrRodLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrRodLightFilter(const UsdSchemaBase &schemaObj)
-    : UsdLuxLightFilter(schemaObj)
-  {}
+  explicit UsdRiPxrRodLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -143,6 +140,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   static UsdRiPxrRodLightFilter Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -150,6 +148,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -159,9 +158,11 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // WIDTH
   // --------------------------------------------------------------------- //
@@ -181,9 +182,11 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HEIGHT
   // --------------------------------------------------------------------- //
@@ -203,9 +206,11 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DEPTH
   // --------------------------------------------------------------------- //
@@ -225,9 +230,11 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateDepthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateDepthAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RADIUS
   // --------------------------------------------------------------------- //
@@ -247,9 +254,11 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGETHICKNESS
   // --------------------------------------------------------------------- //
@@ -274,6 +283,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SCALEWIDTH
   // --------------------------------------------------------------------- //
@@ -297,6 +307,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SCALEHEIGHT
   // --------------------------------------------------------------------- //
@@ -320,6 +331,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SCALEDEPTH
   // --------------------------------------------------------------------- //
@@ -343,6 +355,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // REFINETOP
   // --------------------------------------------------------------------- //
@@ -366,6 +379,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // REFINEBOTTOM
   // --------------------------------------------------------------------- //
@@ -389,6 +403,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // REFINELEFT
   // --------------------------------------------------------------------- //
@@ -412,6 +427,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // REFINERIGHT
   // --------------------------------------------------------------------- //
@@ -435,6 +451,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // REFINEFRONT
   // --------------------------------------------------------------------- //
@@ -458,6 +475,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // REFINEBACK
   // --------------------------------------------------------------------- //
@@ -481,6 +499,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGESCALETOP
   // --------------------------------------------------------------------- //
@@ -504,6 +523,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGESCALEBOTTOM
   // --------------------------------------------------------------------- //
@@ -527,6 +547,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGESCALELEFT
   // --------------------------------------------------------------------- //
@@ -550,6 +571,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGESCALERIGHT
   // --------------------------------------------------------------------- //
@@ -573,6 +595,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGESCALEFRONT
   // --------------------------------------------------------------------- //
@@ -596,6 +619,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EDGESCALEBACK
   // --------------------------------------------------------------------- //
@@ -619,6 +643,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORSATURATION
   // --------------------------------------------------------------------- //
@@ -643,6 +668,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFF
   // --------------------------------------------------------------------- //
@@ -662,9 +688,11 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateFalloffAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateFalloffAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFFKNOTS
   // --------------------------------------------------------------------- //
@@ -688,6 +716,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFFFLOATS
   // --------------------------------------------------------------------- //
@@ -711,6 +740,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFFINTERPOLATION
   // --------------------------------------------------------------------- //
@@ -735,6 +765,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMP
   // --------------------------------------------------------------------- //
@@ -758,6 +789,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMPKNOTS
   // --------------------------------------------------------------------- //
@@ -781,6 +813,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMPCOLORS
   // --------------------------------------------------------------------- //
@@ -804,6 +837,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMPINTERPOLATION
   // --------------------------------------------------------------------- //
@@ -828,6 +862,7 @@ class UsdRiPxrRodLightFilter : public UsdLuxLightFilter
                                                 bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

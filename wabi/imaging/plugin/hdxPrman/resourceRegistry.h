@@ -37,6 +37,7 @@ WABI_NAMESPACE_BEGIN
 class HdxPrman_ResourceRegistry final : public HdResourceRegistry
 {
  public:
+
   HDPRMAN_API
   HdxPrman_ResourceRegistry(std::shared_ptr<HdxPrman_InteractiveContext> const &context);
 
@@ -47,6 +48,7 @@ class HdxPrman_ResourceRegistry final : public HdResourceRegistry
   void ReloadResource(TfToken const &resourceType, std::string const &path) override;
 
  private:
+
   std::shared_ptr<HdxPrman_InteractiveContext> _context;
 };
 

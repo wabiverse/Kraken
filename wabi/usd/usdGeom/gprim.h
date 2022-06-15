@@ -66,6 +66,7 @@ class SdfAssetPath;
 class UsdGeomGprim : public UsdGeomBoundable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -76,16 +77,12 @@ class UsdGeomGprim : public UsdGeomBoundable
   /// Equivalent to UsdGeomGprim::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomGprim(const UsdPrim &prim = UsdPrim())
-    : UsdGeomBoundable(prim)
-  {}
+  explicit UsdGeomGprim(const UsdPrim &prim = UsdPrim()) : UsdGeomBoundable(prim) {}
 
   /// Construct a UsdGeomGprim on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomGprim(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomGprim(const UsdSchemaBase &schemaObj)
-    : UsdGeomBoundable(schemaObj)
-  {}
+  explicit UsdGeomGprim(const UsdSchemaBase &schemaObj) : UsdGeomBoundable(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -110,6 +107,7 @@ class UsdGeomGprim : public UsdGeomBoundable
   static UsdGeomGprim Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -118,6 +116,7 @@ class UsdGeomGprim : public UsdGeomBoundable
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -127,9 +126,11 @@ class UsdGeomGprim : public UsdGeomBoundable
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DISPLAYCOLOR
   // --------------------------------------------------------------------- //
@@ -157,6 +158,7 @@ class UsdGeomGprim : public UsdGeomBoundable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DISPLAYOPACITY
   // --------------------------------------------------------------------- //
@@ -183,6 +185,7 @@ class UsdGeomGprim : public UsdGeomBoundable
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DOUBLESIDED
   // --------------------------------------------------------------------- //
@@ -223,6 +226,7 @@ class UsdGeomGprim : public UsdGeomBoundable
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ORIENTATION
   // --------------------------------------------------------------------- //
@@ -252,6 +256,7 @@ class UsdGeomGprim : public UsdGeomBoundable
                                      bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

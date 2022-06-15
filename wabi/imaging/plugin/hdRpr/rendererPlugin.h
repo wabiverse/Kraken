@@ -21,6 +21,7 @@ WABI_NAMESPACE_BEGIN
 class HdRprPlugin final : public HdRendererPlugin
 {
  public:
+
   HdRprPlugin() = default;
   ~HdRprPlugin() override = default;
 

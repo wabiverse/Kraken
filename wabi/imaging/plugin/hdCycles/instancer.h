@@ -43,9 +43,8 @@ class HdSceneDelegate;
 class HdCyclesInstancer : public HdInstancer
 {
  public:
-  HdCyclesInstancer(HdSceneDelegate *delegate, SdfPath const &id)
-    : HdInstancer(delegate, id)
-  {}
+
+  HdCyclesInstancer(HdSceneDelegate *delegate, SdfPath const &id) : HdInstancer(delegate, id) {}
 
   VtMatrix4dArray ComputeTransforms(SdfPath const &prototypeId);
 
@@ -53,6 +52,7 @@ class HdCyclesInstancer : public HdInstancer
     SdfPath const &prototypeId);
 
  private:
+
   void Sync();
 
   VtMatrix4dArray m_transform;

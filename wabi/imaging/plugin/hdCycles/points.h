@@ -51,6 +51,7 @@ class HdCyclesRenderDelegate;
 class HdCyclesPoints final : public HdPoints
 {
  public:
+
   /**
    * @brief Construct a new HdCycles Point object
    *
@@ -98,6 +99,7 @@ class HdCyclesPoints final : public HdPoints
   void Finalize(HdRenderParam *renderParam) override;
 
  protected:
+
   /**
    * @brief Initialize the cycles objects and adds them to the scene
    */
@@ -200,6 +202,7 @@ class HdCyclesPoints final : public HdPoints
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
  private:
+
   /**
    * @brief Check that the combination of object attributes matches
    * the Cycles specification. If it doesn't, it notifies the user

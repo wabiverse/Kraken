@@ -39,16 +39,17 @@ WABI_NAMESPACE_BEGIN
 /// List editor implementation for list editing operations stored in an
 /// SdfListOp object.
 ///
-template<class TypePolicy>
-class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
+template<class TypePolicy> class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
 {
  private:
+
   typedef Sdf_ListOpListEditor<TypePolicy> This;
   typedef Sdf_ListEditor<TypePolicy> Parent;
 
   typedef SdfListOp<typename Parent::value_type> ListOpType;
 
  public:
+
   typedef typename Parent::value_type value_type;
   typedef typename Parent::value_vector_type value_vector_type;
 
@@ -71,11 +72,15 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
   typedef typename Parent::ApplyCallback ApplyCallback;
   virtual void ApplyEditsToList(value_vector_type *vec, const ApplyCallback &cb);
 
-  virtual bool ReplaceEdits(SdfListOpType op, size_t index, size_t n, const value_vector_type &elems);
+  virtual bool ReplaceEdits(SdfListOpType op,
+                            size_t index,
+                            size_t n,
+                            const value_vector_type &elems);
 
   virtual void ApplyList(SdfListOpType opType, const Sdf_ListEditor<TypePolicy> &rhs);
 
  protected:
+
   // Pull in protected functions from base class; this is needed because
   // these are non-dependent names and the compiler won't look in
   // dependent base-classes for these.
@@ -87,6 +92,7 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
   virtual const value_vector_type &_GetOperations(SdfListOpType op) const;
 
  private:
+
   static boost::optional<value_type> _ModifyCallbackHelper(const ModifyCallback &cb,
                                                            const TypePolicy &typePolicy,
                                                            const value_type &v)
@@ -102,14 +108,12 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
 
   void _UpdateListOp(const ListOpType &newListOp, const SdfListOpType *updatedListOpType = NULL)
   {
-    if (!_GetOwner())
-    {
+    if (!_GetOwner()) {
       TF_CODING_ERROR("Invalid owner.");
       return;
     }
 
-    if (!_GetOwner()->GetLayer()->PermissionToEdit())
-    {
+    if (!_GetOwner()->GetLayer()->PermissionToEdit()) {
       TF_CODING_ERROR("Layer is not editable.");
       return;
     }
@@ -126,30 +130,25 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
     };
     bool anyChanged = false;
 
-    for (auto &opTypeAndChanged : opTypesAndChanged)
-    {
+    for (auto &opTypeAndChanged : opTypesAndChanged) {
       // If the consumer has specified that only a single op type has
       // changed, ignore all others.
-      if (updatedListOpType && *updatedListOpType != opTypeAndChanged.first)
-      {
+      if (updatedListOpType && *updatedListOpType != opTypeAndChanged.first) {
         continue;
       }
 
       opTypeAndChanged.second = _ListDiffers(opTypeAndChanged.first, newListOp, _listOp);
-      if (opTypeAndChanged.second)
-      {
+      if (opTypeAndChanged.second) {
         if (!_ValidateEdit(opTypeAndChanged.first,
                            _listOp.GetItems(opTypeAndChanged.first),
-                           newListOp.GetItems(opTypeAndChanged.first)))
-        {
+                           newListOp.GetItems(opTypeAndChanged.first))) {
           return;
         }
         anyChanged = true;
       }
     }
 
-    if (!anyChanged && (newListOp.IsExplicit() == _listOp.IsExplicit()))
-    {
+    if (!anyChanged && (newListOp.IsExplicit() == _listOp.IsExplicit())) {
       return;
     }
 
@@ -159,20 +158,16 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
     ListOpType oldListOp = newListOp;
     _listOp.Swap(oldListOp);
 
-    if (newListOp.HasKeys())
-    {
+    if (newListOp.HasKeys()) {
       _GetOwner()->SetField(_GetField(), VtValue(newListOp));
-    } else
-    {
+    } else {
       _GetOwner()->ClearField(_GetField());
     }
 
     // For each operation list that changed, call helper function to allow
     // subclasses to execute additional behavior in response to changes.
-    for (auto &opTypeAndChanged : opTypesAndChanged)
-    {
-      if (opTypeAndChanged.second)
-      {
+    for (auto &opTypeAndChanged : opTypesAndChanged) {
+      if (opTypeAndChanged.second) {
         this->_OnEdit(opTypeAndChanged.first,
                       oldListOp.GetItems(opTypeAndChanged.first),
                       newListOp.GetItems(opTypeAndChanged.first));
@@ -181,6 +176,7 @@ class Sdf_ListOpListEditor : public Sdf_ListEditor<TypePolicy>
   }
 
  private:
+
   ListOpType _listOp;
 };
 
@@ -192,30 +188,25 @@ Sdf_ListOpListEditor<TP>::Sdf_ListOpListEditor(const SdfSpecHandle &owner,
                                                const TP &typePolicy)
   : Parent(owner, listField, typePolicy)
 {
-  if (owner)
-  {
+  if (owner) {
     _listOp = owner->GetFieldAs<ListOpType>(_GetField());
   }
 }
 
-template<class TP>
-bool Sdf_ListOpListEditor<TP>::IsExplicit() const
+template<class TP> bool Sdf_ListOpListEditor<TP>::IsExplicit() const
 {
   return _listOp.IsExplicit();
 }
 
-template<class TP>
-bool Sdf_ListOpListEditor<TP>::IsOrderedOnly() const
+template<class TP> bool Sdf_ListOpListEditor<TP>::IsOrderedOnly() const
 {
   return false;
 }
 
-template<class TP>
-bool Sdf_ListOpListEditor<TP>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
+template<class TP> bool Sdf_ListOpListEditor<TP>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
-  if (!rhsEdit)
-  {
+  if (!rhsEdit) {
     TF_CODING_ERROR("Could not copy from list editor of different type");
     return false;
   }
@@ -224,8 +215,7 @@ bool Sdf_ListOpListEditor<TP>::CopyEdits(const Sdf_ListEditor<TP> &rhs)
   return true;
 }
 
-template<class TP>
-bool Sdf_ListOpListEditor<TP>::ClearEdits()
+template<class TP> bool Sdf_ListOpListEditor<TP>::ClearEdits()
 {
   ListOpType emptyAndNotExplicit;
 
@@ -233,8 +223,7 @@ bool Sdf_ListOpListEditor<TP>::ClearEdits()
   return true;
 }
 
-template<class TP>
-bool Sdf_ListOpListEditor<TP>::ClearEditsAndMakeExplicit()
+template<class TP> bool Sdf_ListOpListEditor<TP>::ClearEditsAndMakeExplicit()
 {
   ListOpType emptyAndExplicit;
   emptyAndExplicit.ClearAndMakeExplicit();
@@ -243,12 +232,12 @@ bool Sdf_ListOpListEditor<TP>::ClearEditsAndMakeExplicit()
   return true;
 }
 
-template<class TP>
-void Sdf_ListOpListEditor<TP>::ModifyItemEdits(const ModifyCallback &cb)
+template<class TP> void Sdf_ListOpListEditor<TP>::ModifyItemEdits(const ModifyCallback &cb)
 {
   ListOpType modifiedListOp = _listOp;
-  modifiedListOp.ModifyOperations(
-    [this, &cb](const value_type &t) { return _ModifyCallbackHelper(cb, _GetTypePolicy(), t); });
+  modifiedListOp.ModifyOperations([this, &cb](const value_type &t) {
+    return _ModifyCallbackHelper(cb, _GetTypePolicy(), t);
+  });
 
   _UpdateListOp(modifiedListOp);
 }
@@ -266,8 +255,7 @@ bool Sdf_ListOpListEditor<TP>::ReplaceEdits(SdfListOpType opType,
                                             const value_vector_type &newItems)
 {
   ListOpType editedListOp = _listOp;
-  if (!editedListOp.ReplaceOperations(opType, index, n, _GetTypePolicy().Canonicalize(newItems)))
-  {
+  if (!editedListOp.ReplaceOperations(opType, index, n, _GetTypePolicy().Canonicalize(newItems))) {
     return false;
   }
 
@@ -280,8 +268,7 @@ void Sdf_ListOpListEditor<TP>::ApplyList(SdfListOpType opType, const Sdf_ListEdi
 
 {
   const This *rhsEdit = dynamic_cast<const This *>(&rhs);
-  if (!rhsEdit)
-  {
+  if (!rhsEdit) {
     TF_CODING_ERROR("Cannot apply from list editor of different type");
     return;
   }
@@ -293,8 +280,8 @@ void Sdf_ListOpListEditor<TP>::ApplyList(SdfListOpType opType, const Sdf_ListEdi
 }
 
 template<class TP>
-const typename Sdf_ListOpListEditor<TP>::value_vector_type &Sdf_ListOpListEditor<TP>::_GetOperations(
-  SdfListOpType op) const
+const typename Sdf_ListOpListEditor<TP>::value_vector_type &Sdf_ListOpListEditor<
+  TP>::_GetOperations(SdfListOpType op) const
 {
   return _listOp.GetItems(op);
 }

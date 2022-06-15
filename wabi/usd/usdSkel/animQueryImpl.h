@@ -58,11 +58,11 @@ TF_DECLARE_REF_PTRS(UsdSkel_AnimQueryImpl);
 class UsdSkel_AnimQueryImpl : public TfRefBase
 {
  public:
+
   /// Create an anim query for \p prim, if the prim is a valid type.
   static UsdSkel_AnimQueryImplRefPtr New(const UsdPrim &prim);
 
-  virtual ~UsdSkel_AnimQueryImpl()
-  {}
+  virtual ~UsdSkel_AnimQueryImpl() {}
 
   virtual UsdPrim GetPrim() const = 0;
 
@@ -103,6 +103,7 @@ class UsdSkel_AnimQueryImpl : public TfRefBase
   }
 
  protected:
+
   VtTokenArray _jointOrder, _blendShapeOrder;
 };
 

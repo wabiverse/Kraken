@@ -38,7 +38,8 @@ WABI_NAMESPACE_BEGIN
   (constantLighting)(packedSmoothNormals)(                                                          \
     smoothNormals)(packedFlatNormals)(flatNormals)(scale)(bias)(rotation)(translation)(sRGB)(raw)(( \
     _double,                                                                                        \
-    "double"))((_float, "float"))((_int, "int"))((colorSpaceAuto, "auto"))(fvarIndices)(fvarPatchParam)
+    "double"))((_float, "float"))((_int, "int"))((colorSpaceAuto, "auto"))(                         \
+    fvarIndices)(fvarPatchParam)
 
 #define HDPH_LIGHT_TOKENS (color)
 

@@ -59,6 +59,7 @@ class SdfAssetPath;
 class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -68,16 +69,12 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
   /// Equivalent to UsdPhysicsMaterialAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsMaterialAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdPhysicsMaterialAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdPhysicsMaterialAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsMaterialAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsMaterialAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdPhysicsMaterialAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -140,6 +137,7 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
   static UsdPhysicsMaterialAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -147,6 +145,7 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -156,9 +155,11 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DYNAMICFRICTION
   // --------------------------------------------------------------------- //
@@ -182,6 +183,7 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // STATICFRICTION
   // --------------------------------------------------------------------- //
@@ -205,6 +207,7 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RESTITUTION
   // --------------------------------------------------------------------- //
@@ -228,6 +231,7 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DENSITY
   // --------------------------------------------------------------------- //
@@ -250,9 +254,11 @@ class UsdPhysicsMaterialAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateDensityAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateDensityAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

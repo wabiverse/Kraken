@@ -77,8 +77,7 @@ struct Rand
   {
     uint32_t *blocks = reinterpret_cast<uint32_t *>(blob);
 
-    while (bytes >= 4)
-    {
+    while (bytes >= 4) {
       blocks[0] = rand_u32();
       blocks++;
       bytes -= 4;
@@ -86,8 +85,7 @@ struct Rand
 
     uint8_t *tail = reinterpret_cast<uint8_t *>(blocks);
 
-    for (int i = 0; i < bytes; i++)
-    {
+    for (int i = 0; i < bytes; i++) {
       tail[i] = (uint8_t)rand_u32();
     }
   }
@@ -110,16 +108,14 @@ inline void rand_p(void *blob, int bytes)
 {
   uint32_t *blocks = (uint32_t *)blob;
 
-  while (bytes >= 4)
-  {
+  while (bytes >= 4) {
     *blocks++ = rand_u32();
     bytes -= 4;
   }
 
   uint8_t *tail = (uint8_t *)blocks;
 
-  for (int i = 0; i < bytes; i++)
-  {
+  for (int i = 0; i < bytes; i++) {
     tail[i] = (uint8_t)rand_u32();
   }
 }

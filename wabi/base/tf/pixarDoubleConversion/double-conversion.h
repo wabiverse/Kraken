@@ -44,6 +44,7 @@ namespace wabi_double_conversion
   class DoubleToStringConverter
   {
    public:
+
     // When calling ToFixed with a double > 10^kMaxFixedDigitsBeforePoint
     // or a requested_digits parameter > kMaxFixedDigitsAfterPoint then the
     // function returns false.
@@ -129,8 +130,10 @@ namespace wabi_double_conversion
         exponent_character_(exponent_character),
         decimal_in_shortest_low_(decimal_in_shortest_low),
         decimal_in_shortest_high_(decimal_in_shortest_high),
-        max_leading_padding_zeroes_in_precision_mode_(max_leading_padding_zeroes_in_precision_mode),
-        max_trailing_padding_zeroes_in_precision_mode_(max_trailing_padding_zeroes_in_precision_mode)
+        max_leading_padding_zeroes_in_precision_mode_(
+          max_leading_padding_zeroes_in_precision_mode),
+        max_trailing_padding_zeroes_in_precision_mode_(
+          max_trailing_padding_zeroes_in_precision_mode)
     {
       // When 'trailing zero after the point' is set, then 'trailing point'
       // must be set too.
@@ -348,6 +351,7 @@ namespace wabi_double_conversion
                               int *point);
 
    private:
+
     // Implementation for ToShortest and ToShortestSingle.
     bool ToShortestIeeeNumber(double value, StringBuilder *result_builder, DtoaMode mode) const;
 
@@ -384,6 +388,7 @@ namespace wabi_double_conversion
   class StringToDoubleConverter
   {
    public:
+
     // Enumeration for allowing octals and ignoring junk when converting
     // strings to numbers.
     enum Flags
@@ -520,6 +525,7 @@ namespace wabi_double_conversion
     float StringToFloat(const uc16 *buffer, int length, int *processed_characters_count) const;
 
    private:
+
     const int flags_;
     const double empty_string_value_;
     const double junk_string_value_;

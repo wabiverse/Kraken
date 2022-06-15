@@ -49,6 +49,7 @@ class PcpPrimIndex;
 class Usd_InstanceKey
 {
  public:
+
   Usd_InstanceKey();
 
   /// Create an instance key for the given instanceable prim index.
@@ -64,6 +65,7 @@ class Usd_InstanceKey
   }
 
  private:
+
   friend size_t hash_value(const Usd_InstanceKey &key);
 
   friend std::ostream &operator<<(std::ostream &os, const Usd_InstanceKey &key);

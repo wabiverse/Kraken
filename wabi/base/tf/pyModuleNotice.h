@@ -43,9 +43,8 @@ WABI_NAMESPACE_BEGIN
 class TfPyModuleWasLoaded : public TfNotice
 {
  public:
-  explicit TfPyModuleWasLoaded(std::string const &name)
-    : _name(name)
-  {}
+
+  explicit TfPyModuleWasLoaded(std::string const &name) : _name(name) {}
 
   TF_API
   virtual ~TfPyModuleWasLoaded();
@@ -57,6 +56,7 @@ class TfPyModuleWasLoaded : public TfNotice
   }
 
  private:
+
   std::string _name;
 };
 

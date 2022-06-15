@@ -96,6 +96,7 @@ WABI_NAMESPACE_BEGIN
 class GfFrustum
 {
  public:
+
   /// This enum is used to determine the type of projection represented by a
   /// frustum.
   enum ProjectionType
@@ -124,8 +125,7 @@ class GfFrustum
       _projectionType(o._projectionType),
       _planes(nullptr)
   {
-    if (auto *planes = o._planes.load())
-    {
+    if (auto *planes = o._planes.load()) {
       _planes = new std::array<GfPlane, 6>(*planes);
     }
   }
@@ -140,8 +140,7 @@ class GfFrustum
       _projectionType(o._projectionType),
       _planes(nullptr)
   {
-    if (auto *planes = o._planes.exchange(nullptr, std::memory_order_relaxed))
-    {
+    if (auto *planes = o._planes.exchange(nullptr, std::memory_order_relaxed)) {
       _planes = planes;
     }
   }
@@ -167,8 +166,7 @@ class GfFrustum
   /// Copy assignment.
   GfFrustum &operator=(GfFrustum const &o) noexcept
   {
-    if (this == &o)
-    {
+    if (this == &o) {
       return *this;
     }
     _position = o._position;
@@ -178,11 +176,9 @@ class GfFrustum
     _viewDistance = o._viewDistance;
     _projectionType = o._projectionType;
     delete _planes.load(std::memory_order_relaxed);
-    if (auto *planes = o._planes.load(std::memory_order_relaxed))
-    {
+    if (auto *planes = o._planes.load(std::memory_order_relaxed)) {
       _planes.store(new std::array<GfPlane, 6>(*planes), std::memory_order_relaxed);
-    } else
-    {
+    } else {
       _planes.store(nullptr, std::memory_order_relaxed);
     }
     return *this;
@@ -191,8 +187,7 @@ class GfFrustum
   /// Move assignment.
   GfFrustum &operator=(GfFrustum &&o) noexcept
   {
-    if (this == &o)
-    {
+    if (this == &o) {
       return *this;
     }
     _position = o._position;
@@ -584,7 +579,8 @@ class GfFrustum
   ///
   /// This method is useful for computing a volume to use for interactive
   /// picking.
-  GF_API GfFrustum ComputeNarrowedFrustum(const GfVec3d &worldPoint, const GfVec2d &halfSize) const;
+  GF_API GfFrustum ComputeNarrowedFrustum(const GfVec3d &worldPoint,
+                                          const GfVec2d &halfSize) const;
 
   /// Builds and returns a \c GfRay that starts at the viewpoint and extends
   /// through the given \a windowPos given in normalized coords (-1 to +1 in
@@ -657,6 +653,7 @@ class GfFrustum
   ///@}
 
  private:
+
   // Dirty the result of _CalculateFrustumPlanes.
   GF_API void _DirtyFrustumPlanes();
 
@@ -684,7 +681,10 @@ class GfFrustum
   // picking.
   GfFrustum _ComputeNarrowedFrustumSub(const GfVec2d windowPoint, const GfVec2d &halfSize) const;
 
-  bool _SegmentIntersects(GfVec3d const &p0, uint32_t p0Mask, GfVec3d const &p1, uint32_t p1Mask) const;
+  bool _SegmentIntersects(GfVec3d const &p0,
+                          uint32_t p0Mask,
+                          GfVec3d const &p1,
+                          uint32_t p1Mask) const;
 
   // Position of the frustum in world space.
   GfVec3d _position;

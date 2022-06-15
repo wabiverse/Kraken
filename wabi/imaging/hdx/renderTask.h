@@ -63,6 +63,7 @@ using HdxRenderSetupTaskSharedPtr = std::shared_ptr<class HdxRenderSetupTask>;
 class HdxRenderTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxRenderTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -86,6 +87,7 @@ class HdxRenderTask : public HdxTask
   const TfTokenVector &GetRenderTags() const override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
@@ -106,6 +108,7 @@ class HdxRenderTask : public HdxTask
   bool _HasDrawItems() const;
 
  private:
+
   HdRenderPassSharedPtr _pass;
   TfTokenVector _renderTags;
 

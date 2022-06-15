@@ -26,12 +26,12 @@
 
 #include "wabi/wabi.h"
 
-#include "wabi/base/gf/vec3i.h"
-#include "wabi/base/tf/hashmap.h"
-#include "wabi/base/vt/value.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/types.h"
 #include "wabi/usd/sdf/path.h"
+#include "wabi/base/gf/vec3i.h"
+#include "wabi/base/tf/hashmap.h"
+#include "wabi/base/vt/value.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -45,12 +45,7 @@ typedef TfHashMap<TfToken, VtValue, TfToken::HashFunctor> HdAovSettingsMap;
 /// provided for use in higher level application-facing API.
 struct HdAovDescriptor
 {
-  HdAovDescriptor()
-    : format(HdFormatInvalid),
-      multiSampled(false),
-      clearValue(),
-      aovSettings()
-  {}
+  HdAovDescriptor() : format(HdFormatInvalid), multiSampled(false), clearValue(), aovSettings() {}
   HdAovDescriptor(HdFormat f, bool ms, VtValue const &c)
     : format(f),
       multiSampled(ms),
@@ -90,6 +85,14 @@ typedef std::vector<HdAovDescriptor> HdAovDescriptorList;
 /// Describes the allocation structure of a render buffer bprim.
 struct HdRenderBufferDescriptor
 {
+
+  HdRenderBufferDescriptor() : dimensions(0), format(HdFormatInvalid), multiSampled(false) {}
+  HdRenderBufferDescriptor(GfVec3i const &_d, HdFormat _f, bool _ms)
+    : dimensions(_d),
+      format(_f),
+      multiSampled(_ms)
+  {}
+
   /// The width, height, and depth of the allocated render buffer.
   GfVec3i dimensions;
 
@@ -102,7 +105,8 @@ struct HdRenderBufferDescriptor
 
   bool operator==(HdRenderBufferDescriptor const &rhs) const
   {
-    return dimensions == rhs.dimensions && format == rhs.format && multiSampled == rhs.multiSampled;
+    return dimensions == rhs.dimensions && format == rhs.format &&
+           multiSampled == rhs.multiSampled;
   }
   bool operator!=(HdRenderBufferDescriptor const &rhs) const
   {
@@ -120,14 +124,13 @@ class HdRenderBuffer;
 struct HdRenderPassAovBinding
 {
 
-  HdRenderPassAovBinding()
-    : renderBuffer(nullptr)
-  {}
+  HdRenderPassAovBinding() : renderBuffer(nullptr) {}
 
   /// The identifier of the renderer output to be consumed. This should take
   /// a value from HdAovTokens.
-  /// XXX: Depth aov bindings are identified by the "depth" suffix.
-  /// See HdAovHasDepthSemantic().
+  /// Bindings for depth and depthStencil are identified by the "depth"
+  /// or "depthStencil" suffix, respectively.
+  /// See HdAovHasDepthSemantic() and HdAovHadDepthStencilSemantic().
   TfToken aovName;
 
   /// The render buffer to be bound to the above terminal output.
@@ -168,9 +171,13 @@ bool operator!=(const HdRenderPassAovBinding &lhs, const HdRenderPassAovBinding 
 HD_API
 size_t hash_value(const HdRenderPassAovBinding &b);
 
-/// Returns true if the aov is used as a depth binding based on its name.
+/// Returns true if the AOV is used as a depth binding based on its name.
 HD_API
 bool HdAovHasDepthSemantic(TfToken const &aovName);
+
+/// Returns true if the AOV is used as a depthStencil binding based on its name.
+HD_API
+bool HdAovHasDepthStencilSemantic(TfToken const &aovName);
 
 /// \class HdParsedAovToken
 ///

@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class ArWritableAsset
 {
  public:
+
   AR_API
   virtual ~ArWritableAsset();
 
@@ -70,6 +71,7 @@ class ArWritableAsset
   virtual size_t Write(const void *buffer, size_t count, size_t offset) = 0;
 
  protected:
+
   AR_API
   ArWritableAsset();
 };

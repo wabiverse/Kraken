@@ -174,9 +174,11 @@ struct HdPrman_Context
   riley::MaterialId fallbackVolumeMaterial;
 
  protected:
+
   void _InitializePrman();
 
  private:
+
   // Refcounts for each category mentioned by a light link.
   // This is used to convey information from lights back to the
   // geometry -- in Renderman, geometry must subscribe

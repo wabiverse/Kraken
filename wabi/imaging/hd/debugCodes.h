@@ -24,11 +24,12 @@
 #ifndef WABI_IMAGING_HD_DEBUG_CODES_H
 #define WABI_IMAGING_HD_DEBUG_CODES_H
 
-#include "wabi/base/tf/debug.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/base/tf/debug.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 TF_DEBUG_CODES(HD_BPRIM_ADDED,
                HD_BPRIM_REMOVED,
@@ -51,7 +52,6 @@ TF_DEBUG_CODES(HD_BPRIM_ADDED,
                HD_INSTANCER_CLEANED,
                HD_INSTANCER_REMOVED,
                HD_INSTANCER_UPDATED,
-               HD_MDI,
                HD_RENDER_SETTINGS,
                HD_RPRIM_ADDED,
                HD_RPRIM_CLEANED,
@@ -62,9 +62,11 @@ TF_DEBUG_CODES(HD_BPRIM_ADDED,
                HD_SHARED_EXT_COMPUTATION_DATA,
                HD_SPRIM_ADDED,
                HD_SPRIM_REMOVED,
+               HD_SYNC_ALL,
                HD_TASK_ADDED,
                HD_TASK_REMOVED,
                HD_VARYING_STATE);
+
 
 WABI_NAMESPACE_END
 

@@ -47,6 +47,7 @@ using HdPh_DrawBatchSharedPtr = std::shared_ptr<class HdPh_DrawBatch>;
 class HdPhDrawItemInstance
 {
  public:
+
   HDPH_API
   HdPhDrawItemInstance(HdPhDrawItem const *drawItem);
   HDPH_API
@@ -86,6 +87,7 @@ class HdPhDrawItemInstance
   }
 
  private:
+
   HdPhDrawItemInstance();
 
   HdPh_DrawBatch *_batch;

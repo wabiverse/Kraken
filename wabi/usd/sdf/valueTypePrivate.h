@@ -38,15 +38,14 @@ class Sdf_ValueTypeImpl;
 struct Sdf_ValueTypePrivate
 {
  public:
+
   struct Empty
-  {
-  };
+  {};
 
   // Represents a type/role pair.
   struct CoreType
   {
-    CoreType()
-    {}
+    CoreType() {}
     CoreType(Empty);
 
     TfType type;
@@ -72,6 +71,7 @@ struct Sdf_ValueTypePrivate
 class Sdf_ValueTypeImpl
 {
  public:
+
   Sdf_ValueTypeImpl();
 
   const Sdf_ValueTypePrivate::CoreType *type;

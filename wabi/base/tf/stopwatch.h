@@ -55,6 +55,7 @@ WABI_NAMESPACE_BEGIN
 class TfStopwatch
 {
  public:
+
   /// Record the current time for use by the next \c Stop() call.
   ///
   /// The \c Start() function records the current time.  A subsequent call
@@ -144,6 +145,7 @@ class TfStopwatch
   }
 
  private:
+
   uint64_t _nTicks = 0;
   uint64_t _startTick = 0;
   size_t _sampleCount = 0;

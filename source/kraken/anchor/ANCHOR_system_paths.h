@@ -31,6 +31,7 @@
 class AnchorISystemPaths
 {
  public:
+
   /**
    * Creates the one and only system.
    * @return An indication of success. */
@@ -47,21 +48,21 @@ class AnchorISystemPaths
   static AnchorISystemPaths *get();
 
  protected:
+
   /**
    * Constructor.
    * Protected default constructor to force use of static createSystem member.
    */
-  AnchorISystemPaths()
-  {}
+  AnchorISystemPaths() {}
 
   /**
    * Destructor.
    * Protected default constructor to force use of static dispose member.
    */
-  virtual ~AnchorISystemPaths()
-  {}
+  virtual ~AnchorISystemPaths() {}
 
  public:
+
   /**
    * Determine the base dir in which shared resources are located. It will first try to use
    * "unpack and run" path, then look for properly installed path, including versioning.
@@ -89,6 +90,7 @@ class AnchorISystemPaths
   virtual void addToSystemRecentFiles(const char *filename) const = 0;
 
  private:
+
   /**
    * The one and only system paths */
   static AnchorISystemPaths *m_systemPaths;
@@ -97,21 +99,21 @@ class AnchorISystemPaths
 class AnchorSystemPaths : public AnchorISystemPaths
 {
  protected:
+
   /**
    * Constructor.
    * Protected default constructor to force use of static createSystem member.
    */
-  AnchorSystemPaths()
-  {}
+  AnchorSystemPaths() {}
 
   /**
    * Destructor.
    * Protected default constructor to force use of static dispose member.
    */
-  virtual ~AnchorSystemPaths()
-  {}
+  virtual ~AnchorSystemPaths() {}
 
  public:
+
   /**
    * Determine the base dir in which shared resources are located. It will first try to use
    * "unpack and run" path, then look for properly installed path, including versioning.
@@ -142,6 +144,7 @@ class AnchorSystemPaths : public AnchorISystemPaths
 class AnchorSystemPathsUnix : public AnchorSystemPaths
 {
  public:
+
   /**
    * Constructor
    * this class should only be instantiated by AnchorISystem. */
@@ -191,6 +194,7 @@ class AnchorSystemPathsUnix : public AnchorSystemPaths
 class AnchorSystemPathsWin32 : public AnchorSystemPaths
 {
  public:
+
   /**
    * Constructor.
    */
@@ -236,6 +240,7 @@ class AnchorSystemPathsWin32 : public AnchorSystemPaths
 class AnchorSystemPathsCocoa : public AnchorSystemPaths
 {
  public:
+
   /**
    * Constructor.
    */

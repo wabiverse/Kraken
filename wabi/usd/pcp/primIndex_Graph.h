@@ -57,6 +57,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(PcpPrimIndex_Graph);
 class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
 {
  public:
+
   /// Creates a new graph with a root node for site \p rootSite.
   static PcpPrimIndex_GraphRefPtr New(const PcpLayerStackSite &rootSite, bool usd);
 
@@ -149,6 +150,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
   }
 
  private:
+
   // Forward declarations for internal data structures.
   struct _Arc;
   struct _ArcStrengthOrder;
@@ -181,9 +183,10 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
   //
   // nodeIndexToStrengthOrder[i] => strength order of node at index i.
   bool _ComputeStrengthOrderIndexMapping(std::vector<size_t> *nodeIndexToStrengthOrder) const;
-  bool _ComputeStrengthOrderIndexMappingRecursively(size_t nodeIdx,
-                                                    size_t *strengthIdx,
-                                                    std::vector<size_t> *nodeIndexToStrengthOrder) const;
+  bool _ComputeStrengthOrderIndexMappingRecursively(
+    size_t nodeIdx,
+    size_t *strengthIdx,
+    std::vector<size_t> *nodeIndexToStrengthOrder) const;
 
   // Helper function to compute a node index mapping that erases nodes
   // that have been marked for culling.
@@ -202,6 +205,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
   void _ApplyNodeIndexMapping(const std::vector<size_t> &nodeIndexMap);
 
  private:
+
   // PcpNodeRef is allowed to reach directly into the node pool to get/set
   // data.
   friend class PcpNodeRef;
@@ -231,6 +235,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
   }
 
  private:
+
   // Allow Pcp_Statistics access to internal data for diagnostics.
   friend class Pcp_Statistics;
 
@@ -371,11 +376,7 @@ class PcpPrimIndex_Graph : public TfSimpleRefBase, public TfWeakBase
 
   struct _SharedData
   {
-    _SharedData(bool usd_)
-      : finalized(false),
-        usd(usd_),
-        hasPayloads(false),
-        instanceable(false)
+    _SharedData(bool usd_) : finalized(false), usd(usd_), hasPayloads(false), instanceable(false)
     {}
 
     // Pool of nodes for this graph.

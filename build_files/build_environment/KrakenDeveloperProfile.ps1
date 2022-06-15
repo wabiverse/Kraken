@@ -204,7 +204,7 @@ function WabiAnimationPreCommitHook
     # clang format.
     # match hybrid CXX style between Google, Pixar, and Blender
     & git diff --cached --name-only | Where-Object {
-      $_ -match '(\.cpp)|(\.json)'
+      $_ -match '(\.cpp)|(\.h)|(\.json)'
     } | ForEach-Object {
       Write-Color -Text "Formatting", ": ", "$_" -Color Yellow, DarkGray, Cyan
       & clang-format -i -verbose -style=file $_ 2>&1>$null
@@ -228,7 +228,7 @@ function WabiFormatAll
 
     # # clang-format (*.cpp) (*.json)
     Get-ChildItem -Path . -Recurse | Where-Object {
-      $_ -match '(\.cpp)|(\.json)'
+      $_ -match '(\.cpp)|(\.h)|(\.json)'
     } | ForEach-Object {
       $relativePath = Get-Item $_.FullName | Resolve-Path -Relative
       Write-Color -Text "Formatting", ": ", "$relativePath" -Color Yellow, DarkGray, Cyan

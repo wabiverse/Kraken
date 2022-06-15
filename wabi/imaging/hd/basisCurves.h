@@ -24,14 +24,14 @@
 #ifndef WABI_IMAGING_HD_BASIS_CURVES_H
 #define WABI_IMAGING_HD_BASIS_CURVES_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/rprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/rprim.h"
 
 WABI_NAMESPACE_BEGIN
 
-#define HD_BASISCURVES_REPR_DESC_TOKENS (surfaceShader)(hullColor)(pointColor)
+#define HD_BASISCURVES_REPR_DESC_TOKENS (surfaceShader)(surfaceShaderUnlit)(hullColor)(pointColor)
 
 TF_DECLARE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens, HD_API, HD_BASISCURVES_REPR_DESC_TOKENS);
 
@@ -63,8 +63,9 @@ struct HdBasisCurvesReprDesc
 class HdBasisCurves : public HdRprim
 {
  public:
+
   HD_API
-  virtual ~HdBasisCurves();
+  ~HdBasisCurves() override;
 
   ///
   /// Topology
@@ -84,15 +85,17 @@ class HdBasisCurves : public HdRprim
   static bool IsEnabledForceRefinedCurves();
 
  protected:
+
   HD_API
   HdBasisCurves(SdfPath const &id);
 
-  typedef _ReprDescConfigs<HdBasisCurvesReprDesc> _BasisCurvesReprConfig;
+  using _BasisCurvesReprConfig = _ReprDescConfigs<HdBasisCurvesReprDesc>;
 
   HD_API
   static _BasisCurvesReprConfig::DescArray _GetReprDesc(TfToken const &reprName);
 
  private:
+
   // Class can not be default constructed or copied.
   HdBasisCurves() = delete;
   HdBasisCurves(const HdBasisCurves &) = delete;
@@ -110,6 +113,7 @@ inline HdDisplayStyle HdBasisCurves::GetDisplayStyle(HdSceneDelegate *delegate) 
 {
   return delegate->GetDisplayStyle(GetId());
 }
+
 
 WABI_NAMESPACE_END
 

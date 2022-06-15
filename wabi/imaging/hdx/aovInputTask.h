@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class HdxAovInputTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxAovInputTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -61,10 +62,12 @@ class HdxAovInputTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   void _UpdateTexture(HdTaskContext *ctx, HgiTextureHandle &texture, HdRenderBuffer *buffer);
 
   void _UpdateIntermediateTexture(HgiTextureHandle &texture, HdRenderBuffer *buffer);
@@ -92,10 +95,7 @@ class HdxAovInputTask : public HdxTask
 ///
 struct HdxAovInputTaskParams
 {
-  HdxAovInputTaskParams()
-    : aovBufferPath(),
-      depthBufferPath()
-  {}
+  HdxAovInputTaskParams() : aovBufferPath(), depthBufferPath() {}
 
   SdfPath aovBufferPath;
   SdfPath depthBufferPath;

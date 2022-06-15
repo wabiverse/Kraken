@@ -27,8 +27,8 @@
 
 #include "wabi/imaging/pxOsd/subdivTags.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/range3d.h"
+#include "wabi/base/gf/matrix4d.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -38,6 +38,7 @@ HdSceneDelegate::HdSceneDelegate(HdRenderIndex *parentIndex, SdfPath const &dele
 {
   if (!_delegateID.IsAbsolutePath()) {
     TF_CODING_ERROR("Scene Delegate Id must be an absolute path: %s", delegateID.GetText());
+
 
     _delegateID = _delegateID.MakeAbsolutePath(SdfPath::AbsoluteRootPath());
   }
@@ -266,6 +267,17 @@ SdfPath HdSceneDelegate::GetScenePrimPath(SdfPath const &rprimId,
   return rprimId.ReplacePrefix(_delegateID, SdfPath::AbsoluteRootPath());
 }
 
+/*virtual*/
+SdfPathVector HdSceneDelegate::GetScenePrimPaths(
+  SdfPath const &rprimId,
+  std::vector<int> instanceIndices,
+  std::vector<HdInstancerContext> *instancerContexts)
+{
+  return SdfPathVector(instanceIndices.size(),
+                       rprimId.ReplacePrefix(_delegateID, SdfPath::AbsoluteRootPath()));
+}
+
+
 // -----------------------------------------------------------------------//
 /// \name Material Aspects
 // -----------------------------------------------------------------------//
@@ -351,6 +363,7 @@ HdExtComputationOutputDescriptorVector HdSceneDelegate::GetExtComputationOutputD
   return HdExtComputationOutputDescriptorVector();
 }
 
+
 // -----------------------------------------------------------------------//
 /// \name Primitive Variables
 // -----------------------------------------------------------------------//
@@ -397,6 +410,7 @@ std::string HdSceneDelegate::GetExtComputationKernel(SdfPath const &id)
   return std::string();
 }
 
+
 // -----------------------------------------------------------------------//
 /// \name Task Aspects
 // -----------------------------------------------------------------------//
@@ -410,5 +424,6 @@ TfTokenVector HdSceneDelegate::GetTaskRenderTags(SdfPath const &taskId)
   // to tests.
   return TfTokenVector();
 }
+
 
 WABI_NAMESPACE_END

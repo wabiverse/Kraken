@@ -38,6 +38,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhCopyComputationGPU : public HdComputation
 {
  public:
+
   HDPH_API
   HdPhCopyComputationGPU(HdBufferArrayRangeSharedPtr const &src, TfToken const &name);
 
@@ -52,6 +53,7 @@ class HdPhCopyComputationGPU : public HdComputation
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
 
  private:
+
   HdBufferArrayRangeSharedPtr _src;
   TfToken _name;
 };

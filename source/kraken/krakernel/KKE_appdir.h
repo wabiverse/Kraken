@@ -39,12 +39,17 @@ const char *KKE_appdir_program_dir(void);
 const char *KKE_appdir_folder_id(const int folder_id, const char *subfolder);
 const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *subfolder);
 const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfolder);
-const char *KKE_appdir_folder_id_version(const int folder_id, const int version, const bool check_is_dir);
+const char *KKE_appdir_folder_id_version(const int folder_id,
+                                         const int version,
+                                         const bool check_is_dir);
 
 bool KKE_appdir_folder_documents(char *dir);
 bool KKE_appdir_font_folder_default(char *dir);
 bool KKE_appdir_app_is_portable_install(void);
-bool KKE_appdir_folder_id_ex(const int folder_id, const char *subfolder, char *path, size_t path_len);
+bool KKE_appdir_folder_id_ex(const int folder_id,
+                             const char *subfolder,
+                             char *path,
+                             size_t path_len);
 bool KKE_appdir_program_python_search(char *fullpath,
                                       const size_t fullpath_len,
                                       const int version_major,

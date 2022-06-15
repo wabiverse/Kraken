@@ -46,22 +46,18 @@ class Sdf_ValueTypeImpl;
 struct SdfTupleDimensions
 {
  public:
-  SdfTupleDimensions()
-    : size(0)
-  {}
-  SdfTupleDimensions(size_t m)
-    : size(1)
+
+  SdfTupleDimensions() : size(0) {}
+  SdfTupleDimensions(size_t m) : size(1)
   {
     d[0] = m;
   }
-  SdfTupleDimensions(size_t m, size_t n)
-    : size(2)
+  SdfTupleDimensions(size_t m, size_t n) : size(2)
   {
     d[0] = m;
     d[1] = n;
   }
-  SdfTupleDimensions(const size_t (&s)[2])
-    : size(2)
+  SdfTupleDimensions(const size_t (&s)[2]) : size(2)
   {
     d[0] = s[0];
     d[1] = s[1];
@@ -75,6 +71,7 @@ struct SdfTupleDimensions
   }
 
  public:
+
   size_t d[2];
   size_t size;
 };
@@ -103,6 +100,7 @@ struct SdfTupleDimensions
 class SdfValueTypeName
 {
  public:
+
   /// Constructs an invalid type name.
   SDF_API
   SdfValueTypeName();
@@ -223,6 +221,7 @@ class SdfValueTypeName
   std::vector<TfToken> GetAliasesAsTokens() const;
 
  private:
+
   friend class Sdf_ValueTypeRegistry;
   friend struct Sdf_ValueTypePrivate;
 
@@ -233,6 +232,7 @@ class SdfValueTypeName
   bool _IsEmpty() const;
 
  private:
+
   const Sdf_ValueTypeImpl *_impl;
 };
 

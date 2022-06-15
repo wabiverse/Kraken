@@ -24,16 +24,17 @@
 #ifndef WABI_IMAGING_HD_COMPUTATION_H
 #define WABI_IMAGING_HD_COMPUTATION_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/bufferSpec.h"
 #include "wabi/imaging/hd/perfLog.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include <memory>
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 
@@ -51,11 +52,13 @@ using HdComputationSharedPtrVector = std::vector<HdComputationSharedPtr>;
 class HdComputation
 {
  public:
+
   HD_API
   virtual ~HdComputation();
 
   /// Execute computation.
-  virtual void Execute(HdBufferArrayRangeSharedPtr const &range, HdResourceRegistry *resourceRegistry) = 0;
+  virtual void Execute(HdBufferArrayRangeSharedPtr const &range,
+                       HdResourceRegistry *resourceRegistry) = 0;
 
   /// Returns the size of its destination buffer (located by range argument
   /// of Execute()). This function will be called after all HdBufferSources
@@ -78,6 +81,7 @@ class HdComputation
     return true;
   }
 };
+
 
 WABI_NAMESPACE_END
 

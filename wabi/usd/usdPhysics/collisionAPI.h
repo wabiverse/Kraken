@@ -61,6 +61,7 @@ class SdfAssetPath;
 class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -70,16 +71,12 @@ class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
   /// Equivalent to UsdPhysicsCollisionAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdPhysicsCollisionAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdPhysicsCollisionAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdPhysicsCollisionAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdPhysicsCollisionAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdPhysicsCollisionAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdPhysicsCollisionAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDPHYSICS_API
@@ -142,6 +139,7 @@ class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
   static UsdPhysicsCollisionAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -149,6 +147,7 @@ class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -158,9 +157,11 @@ class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLLISIONENABLED
   // --------------------------------------------------------------------- //
@@ -184,6 +185,7 @@ class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SIMULATIONOWNER
   // --------------------------------------------------------------------- //
@@ -201,6 +203,7 @@ class UsdPhysicsCollisionAPI : public UsdAPISchemaBase
   UsdRelationship CreateSimulationOwnerRel() const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

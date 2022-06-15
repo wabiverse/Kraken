@@ -58,6 +58,7 @@ using HdPhBufferResourceNamedList = std::vector<HdPhBufferResourceNamedPair>;
 class HdPhBufferResource final : public HdBufferResource
 {
  public:
+
   HDPH_API
   HdPhBufferResource(TfToken const &role, HdTupleType tupleType, int offset, int stride);
   HDPH_API
@@ -81,6 +82,7 @@ class HdPhBufferResource final : public HdBufferResource
   }
 
  private:
+
   uint64_t _gpuAddr;
   HgiBufferHandle _handle;
 };

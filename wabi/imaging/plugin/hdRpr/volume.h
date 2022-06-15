@@ -24,6 +24,7 @@ struct HdRprApiVolume;
 class HdRprVolume : public HdVolume
 {
  public:
+
   HdRprVolume(SdfPath const &id);
   ~HdRprVolume() override = default;
 
@@ -37,11 +38,13 @@ class HdRprVolume : public HdVolume
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
   void _InitRepr(TfToken const &reprName, HdDirtyBits *dirtyBits) override;
 
  private:
+
   HdRprApiVolume *m_rprVolume = nullptr;
   GfMatrix4f m_transform;
 

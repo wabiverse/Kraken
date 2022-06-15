@@ -24,6 +24,7 @@ WABI_NAMESPACE_BEGIN
 class HdRprCamera : public HdCamera
 {
  public:
+
   enum Projection
   {
     Perspective = 0,
@@ -33,7 +34,9 @@ class HdRprCamera : public HdCamera
   HdRprCamera(SdfPath const &id);
   ~HdRprCamera() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
@@ -67,6 +70,7 @@ class HdRprCamera : public HdCamera
   }
 
  private:
+
   float m_horizontalAperture;
   float m_verticalAperture;
   float m_horizontalApertureOffset;

@@ -50,6 +50,7 @@ class Hgi;
 class HdxFullscreenShader
 {
  public:
+
   /// Create a new fullscreen shader object.
   /// 'debugName' is assigned to the fullscreen pass as gpu debug group that
   /// is helpful when inspecting the frame on a gpu debugger.
@@ -122,6 +123,7 @@ class HdxFullscreenShader
   void Draw(HgiTextureHandle const &colorDst, HgiTextureHandle const &depthDst);
 
  private:
+
   HdxFullscreenShader() = delete;
 
   using TextureMap = std::map<TfToken, HgiTextureHandle>;
@@ -140,7 +142,9 @@ class HdxFullscreenShader
   void _CreateVertexBufferDescriptor();
 
   // Utility to create a pipeline
-  bool _CreatePipeline(HgiTextureHandle const &colorDst, HgiTextureHandle const &depthDst, bool depthWrite);
+  bool _CreatePipeline(HgiTextureHandle const &colorDst,
+                       HgiTextureHandle const &depthDst,
+                       bool depthWrite);
 
   // Utility to create a texture sampler
   bool _CreateSampler();

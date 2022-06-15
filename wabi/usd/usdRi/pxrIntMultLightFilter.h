@@ -67,6 +67,7 @@ class SdfAssetPath;
 class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -77,9 +78,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
   /// Equivalent to UsdRiPxrIntMultLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrIntMultLightFilter(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLightFilter(prim)
-  {}
+  explicit UsdRiPxrIntMultLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim) {}
 
   /// Construct a UsdRiPxrIntMultLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrIntMultLightFilter(schemaObj.GetPrim()),
@@ -136,6 +135,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
   static UsdRiPxrIntMultLightFilter Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -143,6 +143,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -152,9 +153,11 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIINTENSITY
   // --------------------------------------------------------------------- //
@@ -179,6 +182,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORSATURATION
   // --------------------------------------------------------------------- //
@@ -203,6 +207,7 @@ class UsdRiPxrIntMultLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

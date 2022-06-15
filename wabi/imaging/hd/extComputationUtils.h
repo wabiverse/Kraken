@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_EXT_COMPUTATION_UTILS_H
 #define WABI_IMAGING_HD_EXT_COMPUTATION_UTILS_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/extComputation.h"
 #include "wabi/imaging/hd/sceneDelegate.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/tf/span.h"
 #include "wabi/base/tf/token.h"
@@ -50,6 +50,7 @@ using HdExtComputationConstPtrVector = std::vector<HdExtComputationConstPtr>;
 class HdExtComputationUtils
 {
  public:
+
   using ValueStore = std::unordered_map<TfToken, VtValue, TfToken::HashFunctor>;
 
   // Returns a map containing the (token, value) pairs for each "computation
@@ -57,8 +58,9 @@ class HdExtComputationUtils
   // The participating computations are ordered based on their dependency
   // and then, the CPU kernel is executed for each computation.
   HD_API
-  static ValueStore GetComputedPrimvarValues(HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-                                             HdSceneDelegate *sceneDelegate);
+  static ValueStore GetComputedPrimvarValues(
+    HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+    HdSceneDelegate *sceneDelegate);
 
   template<unsigned int CAPACITY>
   using SampledValueStore =
@@ -69,10 +71,11 @@ class HdExtComputationUtils
   /// The participating computations are ordered based on their dependency
   /// and then, the CPU kernel is executed for each computation.
   template<unsigned int CAPACITY>
-  static void SampleComputedPrimvarValues(HdExtComputationPrimvarDescriptorVector const &compPrimvars,
-                                          HdSceneDelegate *sceneDelegate,
-                                          size_t maxSampleCount,
-                                          SampledValueStore<CAPACITY> *computedPrimvarValueStore);
+  static void SampleComputedPrimvarValues(
+    HdExtComputationPrimvarDescriptorVector const &compPrimvars,
+    HdSceneDelegate *sceneDelegate,
+    size_t maxSampleCount,
+    SampledValueStore<CAPACITY> *computedPrimvarValueStore);
 
   // Helper methods (these are public for testing purposes)
   using ComputationDependencyMap =
@@ -84,12 +87,14 @@ class HdExtComputationUtils
   // The directed graph of a computation (vertex) and its dependencies (edges)
   // is represented via the ComputationDependencyMap.
   HD_API
-  static bool DependencySort(ComputationDependencyMap cdm, HdExtComputationConstPtrVector *sortedComps);
+  static bool DependencySort(ComputationDependencyMap cdm,
+                             HdExtComputationConstPtrVector *sortedComps);
 
   HD_API
   static void PrintDependencyMap(ComputationDependencyMap const &cdm);
 
  private:
+
   HD_API
   static ComputationDependencyMap _GenerateDependencyMap(
     HdExtComputationPrimvarDescriptorVector const &compPrimvars,
@@ -134,18 +139,19 @@ template<unsigned int CAPACITY>
   // Topological ordering of the computations
   HdExtComputationConstPtrVector sortedComputations;
   bool success = DependencySort(cdm, &sortedComputations);
-  if (!success)
-  {
+  if (!success) {
     return;
   }
 
   // Execution
   SampledValueStore<CAPACITY> valueStore;
-  _ExecuteSampledComputations<CAPACITY>(sortedComputations, sceneDelegate, maxSampleCount, &valueStore);
+  _ExecuteSampledComputations<CAPACITY>(sortedComputations,
+                                        sceneDelegate,
+                                        maxSampleCount,
+                                        &valueStore);
 
   // Output extraction
-  for (auto const &pv : compPrimvars)
-  {
+  for (auto const &pv : compPrimvars) {
     TfToken const &compOutputName = pv.sourceComputationOutputName;
     (*computedPrimvarValueStore)[pv.name] = valueStore[compOutputName];
   }
@@ -160,8 +166,7 @@ template<unsigned int CAPACITY>
 {
   HD_TRACE_FUNCTION();
 
-  for (auto const &comp : computations)
-  {
+  for (auto const &comp : computations) {
     SdfPath const &compId = comp->GetId();
 
     TfTokenVector const &sceneInputNames = comp->GetSceneInputNames();
@@ -170,8 +175,7 @@ template<unsigned int CAPACITY>
 
     // Add all the scene inputs to the value store
     std::vector<double> times;
-    for (TfToken const &input : sceneInputNames)
-    {
+    for (TfToken const &input : sceneInputNames) {
       auto &samples = (*valueStore)[input];
       sceneDelegate->SampleExtComputationInput(compId, input, &samples);
 
@@ -179,19 +183,16 @@ template<unsigned int CAPACITY>
         times.push_back(samples.times[i]);
     }
 
-    if (comp->IsInputAggregation())
-    {
+    if (comp->IsInputAggregation()) {
       // An aggregator computation produces no output, and thus
       // doesn't need to be executed.
       continue;
     }
 
     // Also find all the time samples from the computed inputs.
-    for (auto const &computedInput : compInputs)
-    {
+    for (auto const &computedInput : compInputs) {
       auto const &samples = valueStore->at(computedInput.sourceComputationOutputName);
-      for (size_t i = 0; i < samples.count; ++i)
-      {
+      for (size_t i = 0; i < samples.count; ++i) {
         times.push_back(samples.times[i]);
       }
     }
@@ -200,8 +201,7 @@ template<unsigned int CAPACITY>
     _LimitTimeSamples(maxSampleCount, &times);
 
     // Allocate enough space for the evaluated outputs.
-    for (const TfToken &name : comp->GetOutputNames())
-    {
+    for (const TfToken &name : comp->GetOutputNames()) {
       auto &output_samples = (*valueStore)[name];
       output_samples.Resize(times.size());
       output_samples.count = 0;
@@ -216,21 +216,18 @@ template<unsigned int CAPACITY>
     TfSmallVector<VtValue, CAPACITY> compOutputValues;
 
     // Evaluate the computation for each time sample.
-    for (double t : times)
-    {
+    for (double t : times) {
 
       // Retrieve all the inputs (scene, computed) from the value store,
       // resampled to the required time.
       sceneInputValues.clear();
-      for (auto const &sceneInput : comp->GetSceneInputNames())
-      {
+      for (auto const &sceneInput : comp->GetSceneInputNames()) {
         auto const &samples = valueStore->at(sceneInput);
         sceneInputValues.push_back(samples.Resample(t));
       }
 
       compInputValues.clear();
-      for (auto const &computedInput : compInputs)
-      {
+      for (auto const &computedInput : compInputs) {
         auto const &samples = valueStore->at(computedInput.sourceComputationOutputName);
         compInputValues.push_back(samples.Resample(t));
       }
@@ -240,8 +237,7 @@ template<unsigned int CAPACITY>
                               *comp,
                               TfMakeSpan(sceneInputValues),
                               TfMakeSpan(compInputValues),
-                              TfMakeSpan(compOutputValues)))
-      {
+                              TfMakeSpan(compOutputValues))) {
         // We could bail here, or choose to execute other computations.
         // Choose the latter.
         continue;
@@ -249,8 +245,7 @@ template<unsigned int CAPACITY>
 
       // Add outputs to the value store (subsequent computations may need
       // them as computation inputs)
-      for (size_t i = 0; i < compOutputValues.size(); ++i)
-      {
+      for (size_t i = 0; i < compOutputValues.size(); ++i) {
         auto &output_samples = (*valueStore)[compOutputs[i].name];
 
         output_samples.times[output_samples.count] = t;

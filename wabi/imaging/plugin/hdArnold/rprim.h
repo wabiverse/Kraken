@@ -31,17 +31,19 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename HydraType>
-class HdArnoldRprim : public HydraType
+template<typename HydraType> class HdArnoldRprim : public HydraType
 {
  public:
+
   /// Constructor for HdArnoldRprim.
   ///
   /// @param shapeType AtString storing the type of the Arnold Shape node.
   /// @param renderDelegate Pointer to the Render Delegate.
   /// @param id Path to the primitive.
   HDARNOLD_API
-  HdArnoldRprim(const AtString &shapeType, HdArnoldRenderDelegate *renderDelegate, const SdfPath &id)
+  HdArnoldRprim(const AtString &shapeType,
+                HdArnoldRenderDelegate *renderDelegate,
+                const SdfPath &id)
     : HydraType(id),
       _renderDelegate(renderDelegate),
       _shape(shapeType, renderDelegate, id, HydraType::GetPrimId())
@@ -99,7 +101,8 @@ class HdArnoldRprim : public HydraType
     // Newer USD versions need to update the instancer before accessing the instancer id.
     HydraType::_UpdateInstancer(sceneDelegate, &dirtyBits);
     // We also force syncing of the parent instancers.
-    HdInstancer::_SyncInstancerAndParents(sceneDelegate->GetRenderIndex(), HydraType::GetInstancerId());
+    HdInstancer::_SyncInstancerAndParents(sceneDelegate->GetRenderIndex(),
+                                          HydraType::GetInstancerId());
 
     _shape.Sync(this, dirtyBits, _renderDelegate, sceneDelegate, param, force);
   }
@@ -141,7 +144,8 @@ class HdArnoldRprim : public HydraType
   }
 
  protected:
-  HdArnoldShape _shape;                      ///< HdArnoldShape to handle instances and shape creation.
+
+  HdArnoldShape _shape;  ///< HdArnoldShape to handle instances and shape creation.
   HdArnoldRenderDelegate *_renderDelegate;   ///< Pointer to the Arnold Render Delegate.
   HdArnoldMaterialTracker _materialTracker;  ///< Utility to track material assignments ot shapes.
 };

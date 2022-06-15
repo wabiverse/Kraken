@@ -58,6 +58,7 @@ using HdPh_DrawBatchSharedPtrVector = std::vector<HdPh_DrawBatchSharedPtr>;
 class HdPhCommandBuffer
 {
  public:
+
   HDPH_API
   HdPhCommandBuffer();
   HDPH_API
@@ -112,6 +113,7 @@ class HdPhCommandBuffer
   void SetEnableTinyPrimCulling(bool tinyPrimCulling);
 
  private:
+
   void _RebuildDrawBatches();
 
   std::vector<HdPhDrawItem const *> _drawItems;

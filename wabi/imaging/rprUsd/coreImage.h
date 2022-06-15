@@ -26,6 +26,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsdCoreImage
 {
  public:
+
   RPRUSD_API
   static RprUsdCoreImage *Create(rpr::Context *context,
                                  std::string const &path,
@@ -36,10 +37,7 @@ class RprUsdCoreImage
     uint32_t id;
     RprUsdTextureData *textureData;
 
-    UDIMTile(uint32_t id, RprUsdTextureData *textureData)
-      : id(id),
-        textureData(textureData)
-    {}
+    UDIMTile(uint32_t id, RprUsdTextureData *textureData) : id(id), textureData(textureData) {}
   };
   RPRUSD_API
   static RprUsdCoreImage *Create(rpr::Context *context,
@@ -91,14 +89,14 @@ class RprUsdCoreImage
   rpr::Status SetName(const char *name);
 
  private:
-  RprUsdCoreImage(rpr::Image *rootImage = nullptr)
-    : m_rootImage(rootImage){};
+
+  RprUsdCoreImage(rpr::Image *rootImage = nullptr) : m_rootImage(rootImage){};
   rpr::Image *GetBaseImage();
 
-  template<typename F>
-  rpr::Status ForEachImage(F f);
+  template<typename F> rpr::Status ForEachImage(F f);
 
  private:
+
   rpr::Image *m_rootImage = nullptr;
   std::vector<rpr::Image *> m_subImages;
 };

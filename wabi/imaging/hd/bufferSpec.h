@@ -24,15 +24,16 @@
 #ifndef WABI_IMAGING_HD_BUFFER_SPEC_H
 #define WABI_IMAGING_HD_BUFFER_SPEC_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/types.h"
 #include "wabi/base/tf/stl.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 typedef std::vector<struct HdBufferSpec> HdBufferSpecVector;
 
@@ -52,19 +53,14 @@ typedef std::vector<struct HdBufferSpec> HdBufferSpecVector;
 struct HdBufferSpec final
 {
   /// Constructor.
-  HdBufferSpec(TfToken const &name, HdTupleType tupleType)
-    : name(name),
-      tupleType(tupleType)
-  {}
+  HdBufferSpec(TfToken const &name, HdTupleType tupleType) : name(name), tupleType(tupleType) {}
 
   /// Util function for adding buffer specs of sources into bufferspecs.
   template<typename T>
   static void GetBufferSpecs(T const &sources, HdBufferSpecVector *bufferSpecs)
   {
-    for (auto const &src : sources)
-    {
-      if (src->IsValid())
-      {
+    for (auto const &src : sources) {
+      if (src->IsValid()) {
         src->GetBufferSpecs(bufferSpecs);
       }
     }
@@ -78,7 +74,8 @@ struct HdBufferSpec final
   /// Returns union set of \p spec1 and \p spec2.
   /// Duplicated entries are uniquified.
   HD_API
-  static HdBufferSpecVector ComputeUnion(HdBufferSpecVector const &spec1, HdBufferSpecVector const &spec2);
+  static HdBufferSpecVector ComputeUnion(HdBufferSpecVector const &spec1,
+                                         HdBufferSpecVector const &spec2);
 
   /// Returns difference set of \p spec1 and \p spec2, i.e., entries in spec1
   /// that are not in spec2.
@@ -124,8 +121,7 @@ struct HdBufferSpec final
 };
 
 // Support TfHash.
-template<class HashState>
-void TfHashAppend(HashState &h, HdBufferSpec const &bs)
+template<class HashState> void TfHashAppend(HashState &h, HdBufferSpec const &bs)
 {
   h.Append(bs.name, bs.tupleType);
 }

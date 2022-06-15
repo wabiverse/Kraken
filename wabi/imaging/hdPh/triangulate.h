@@ -56,6 +56,7 @@ class HdPh_MeshTopology;
 class HdPh_TriangleIndexBuilderComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_TriangleIndexBuilderComputation(HdPh_MeshTopology *topology, SdfPath const &id);
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
   virtual bool Resolve() override;
@@ -64,9 +65,11 @@ class HdPh_TriangleIndexBuilderComputation : public HdComputedBufferSource
   virtual HdBufferSourceSharedPtrVector GetChainedBuffers() const override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   HdBufferSourceSharedPtr _primitiveParam;
@@ -82,6 +85,7 @@ class HdPh_TriangleIndexBuilderComputation : public HdComputedBufferSource
 class HdPh_TriangulateFaceVaryingComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_TriangulateFaceVaryingComputation(HdPh_MeshTopology *topolgoy,
                                          HdBufferSourceSharedPtr const &source,
                                          SdfPath const &id);
@@ -90,9 +94,11 @@ class HdPh_TriangulateFaceVaryingComputation : public HdComputedBufferSource
   virtual bool Resolve() override;
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   SdfPath const _id;
   HdPh_MeshTopology *_topology;
   HdBufferSourceSharedPtr _source;

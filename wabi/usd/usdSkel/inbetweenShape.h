@@ -56,9 +56,9 @@ WABI_NAMESPACE_BEGIN
 class UsdSkelInbetweenShape
 {
  public:
+
   /// Default constructor returns an invalid inbetween shape.
-  UsdSkelInbetweenShape()
-  {}
+  UsdSkelInbetweenShape() {}
 
   /// Speculative constructor that will produce a valid UsdSkelInbetweenShape
   /// when \p attr already represents an attribute that is an Inbetween, and
@@ -168,6 +168,7 @@ class UsdSkelInbetweenShape
   /// @}
 
  private:
+
   friend class UsdSkelBlendShape;
 
   /// Validate that the given \p name is a valid attribute name for

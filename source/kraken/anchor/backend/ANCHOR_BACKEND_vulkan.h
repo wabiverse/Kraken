@@ -52,7 +52,8 @@ struct ANCHOR_ImplVulkan_InitInfo
 };
 
 // Called by user code
-ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_Init(ANCHOR_ImplVulkan_InitInfo *info, VkRenderPass render_pass);
+ANCHOR_BACKEND_API bool ANCHOR_ImplVulkan_Init(ANCHOR_ImplVulkan_InitInfo *info,
+                                               VkRenderPass render_pass);
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_Shutdown();
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_NewFrame();
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkan_RenderDrawData(AnchorDrawData *draw_data,
@@ -77,15 +78,16 @@ struct ANCHOR_VulkanGPU_Frame;
 struct ANCHOR_VulkanGPU_Surface;
 
 // Helpers
-ANCHOR_BACKEND_API void ANCHOR_ImplVulkanH_CreateOrResizeWindow(VkInstance instance,
-                                                                VkPhysicalDevice physical_device,
-                                                                VkDevice device,
-                                                                ANCHOR_VulkanGPU_Surface *wnd,
-                                                                uint32_t queue_family,
-                                                                const VkAllocationCallbacks *allocator,
-                                                                int w,
-                                                                int h,
-                                                                uint32_t min_image_count);
+ANCHOR_BACKEND_API void ANCHOR_ImplVulkanH_CreateOrResizeWindow(
+  VkInstance instance,
+  VkPhysicalDevice physical_device,
+  VkDevice device,
+  ANCHOR_VulkanGPU_Surface *wnd,
+  uint32_t queue_family,
+  const VkAllocationCallbacks *allocator,
+  int w,
+  int h,
+  uint32_t min_image_count);
 ANCHOR_BACKEND_API void ANCHOR_ImplVulkanH_DestroyWindow(VkInstance instance,
                                                          VkDevice device,
                                                          ANCHOR_VulkanGPU_Surface *wnd,
@@ -101,7 +103,8 @@ ANCHOR_ImplVulkanH_SelectPresentMode(VkPhysicalDevice physical_device,
                                      VkSurfaceKHR surface,
                                      const VkPresentModeKHR *request_modes,
                                      int request_modes_count);
-ANCHOR_BACKEND_API int ANCHOR_ImplVulkanH_GetMinImageCountFromPresentMode(VkPresentModeKHR present_mode);
+ANCHOR_BACKEND_API int ANCHOR_ImplVulkanH_GetMinImageCountFromPresentMode(
+  VkPresentModeKHR present_mode);
 
 // Helper structure to hold the data needed by one rendering frame
 // (Used by example's main.cpp. Used by multi-viewport features. Probably NOT used by your own
@@ -138,9 +141,9 @@ struct ANCHOR_VulkanGPU_Surface
                         // passed in ANCHOR_ImplVulkan_InitInfo
   bool ClearEnable;
   VkClearValue ClearValue;
-  uint32_t FrameIndex;      // Current frame being rendered to (0 <= FrameIndex < FrameInFlightCount)
-  uint32_t ImageCount;      // Number of simultaneous in-flight frames (returned by
-                            // vkGetSwapchainImagesKHR, usually derived from min_image_count)
+  uint32_t FrameIndex;  // Current frame being rendered to (0 <= FrameIndex < FrameInFlightCount)
+  uint32_t ImageCount;  // Number of simultaneous in-flight frames (returned by
+                        // vkGetSwapchainImagesKHR, usually derived from min_image_count)
   uint32_t SemaphoreIndex;  // Current set of swapchain wait semaphores we're using (needs to be
                             // distinct from per frame data)
   ANCHOR_VulkanGPU_Frame *Frames;

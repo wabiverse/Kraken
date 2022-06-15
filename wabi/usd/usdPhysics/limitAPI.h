@@ -63,6 +63,7 @@ class SdfAssetPath;
 class UsdPhysicsLimitAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -183,6 +184,7 @@ class UsdPhysicsLimitAPI : public UsdAPISchemaBase
   static UsdPhysicsLimitAPI Apply(const UsdPrim &prim, const TfToken &name);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -190,6 +192,7 @@ class UsdPhysicsLimitAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDPHYSICS_API
@@ -199,9 +202,11 @@ class UsdPhysicsLimitAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDPHYSICS_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // LOW
   // --------------------------------------------------------------------- //
@@ -222,9 +227,11 @@ class UsdPhysicsLimitAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateLowAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateLowAttr(VtValue const &defaultValue = VtValue(),
+                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HIGH
   // --------------------------------------------------------------------- //
@@ -245,9 +252,11 @@ class UsdPhysicsLimitAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDPHYSICS_API
-  UsdAttribute CreateHighAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateHighAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

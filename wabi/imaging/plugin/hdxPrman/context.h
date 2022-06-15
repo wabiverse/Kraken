@@ -107,6 +107,7 @@ struct HdxPrman_InteractiveContext : public HdPrman_Context
   int32_t resolution[2];
 
  private:
+
   // Initialize things, like riley, that need to succeed
   // in order for Begin to be called.
   void _Initialize();

@@ -343,7 +343,9 @@ std::string TfGetPathName(const std::string &fileName);
 /// every occurrence of \p from with \p to. Correctly handles the case in which
 /// \p to contains \p from.
 TF_API
-std::string TfStringReplace(const std::string &source, const std::string &from, const std::string &to);
+std::string TfStringReplace(const std::string &source,
+                            const std::string &from,
+                            const std::string &to);
 
 /// Concatenates the strings (\p begin, \p end), with default separator.
 ///
@@ -370,8 +372,7 @@ std::string TfStringJoin(ForwardIterator begin, ForwardIterator end, const char 
 
   i = begin;
   retVal.append(*i);
-  while (++i != end)
-  {
+  while (++i != end) {
     retVal.append(separator);
     retVal.append(*i);
   }
@@ -411,13 +412,15 @@ std::vector<std::string> TfStringSplit(std::string const &src, std::string const
 /// consecutive delimiters are treated as though they were one, and an empty
 /// input will result in an empty return vector.
 TF_API
-std::vector<std::string> TfStringTokenize(const std::string &source, const char *delimiters = " \t\n");
+std::vector<std::string> TfStringTokenize(const std::string &source,
+                                          const char *delimiters = " \t\n");
 
 /// Breaks the given string apart, returning a set of strings.
 ///
 /// Same as TfStringTokenize, except this one returns a set.
 TF_API
-std::set<std::string> TfStringTokenizeToSet(const std::string &source, const char *delimiters = " \t\n");
+std::set<std::string> TfStringTokenizeToSet(const std::string &source,
+                                            const char *delimiters = " \t\n");
 
 /// Breaks the given quoted string apart, returning a vector of strings.
 ///
@@ -540,9 +543,7 @@ TF_API bool TfDoubleToString(double d, char *buffer, int len, bool emitTrailingZ
 /// format that can safely roundtrip with the minimal number of digits.
 struct TfStreamFloat
 {
-  explicit TfStreamFloat(float f)
-    : value(f)
-  {}
+  explicit TfStreamFloat(float f) : value(f) {}
   float value;
 };
 
@@ -554,9 +555,7 @@ TF_API std::ostream &operator<<(std::ostream &o, TfStreamFloat t);
 /// format that can safely roundtrip with the minimal number of digits.
 struct TfStreamDouble
 {
-  explicit TfStreamDouble(double d)
-    : value(d)
-  {}
+  explicit TfStreamDouble(double d) : value(d) {}
   double value;
 };
 
@@ -567,8 +566,7 @@ TF_API std::ostream &operator<<(std::ostream &o, TfStreamDouble t);
 /// Use the type's stream input operator to get it from a string. If \p status
 /// is non-NULL and \p instring cannot be converted to a \c T, \p *status is
 /// set to \c false; otherwise, \p *status is not modified.
-template<typename T>
-T TfUnstringify(const std::string &instring, bool *status = NULL)
+template<typename T> T TfUnstringify(const std::string &instring, bool *status = NULL)
 {
   T v = T();
   std::istringstream stream(instring);
@@ -579,11 +577,9 @@ T TfUnstringify(const std::string &instring, bool *status = NULL)
 }
 
 /// \overload
-template<>
-TF_API bool TfUnstringify(const std::string &instring, bool *status);
+template<> TF_API bool TfUnstringify(const std::string &instring, bool *status);
 /// \overload
-template<>
-TF_API std::string TfUnstringify(const std::string &instring, bool *status);
+template<> TF_API std::string TfUnstringify(const std::string &instring, bool *status);
 
 /// Returns a string with glob characters converted to their regular
 /// expression equivalents.
@@ -648,16 +644,20 @@ std::string TfStringCatPaths(const std::string &prefix, const std::string &suffi
 inline bool TfIsValidIdentifier(std::string const &identifier)
 {
   char const *p = identifier.c_str();
-  auto letter = [](unsigned c) { return ((c - 'A') < 26) || ((c - 'a') < 26); };
-  auto number = [](unsigned c) { return (c - '0') < 10; };
-  auto under = [](unsigned c) { return c == '_'; };
+  auto letter = [](unsigned c) {
+    return ((c - 'A') < 26) || ((c - 'a') < 26);
+  };
+  auto number = [](unsigned c) {
+    return (c - '0') < 10;
+  };
+  auto under = [](unsigned c) {
+    return c == '_';
+  };
   unsigned x = *p;
-  if (!x || number(x))
-  {
+  if (!x || number(x)) {
     return false;
   }
-  while (letter(x) || number(x) || under(x))
-  {
+  while (letter(x) || number(x) || under(x)) {
     x = *p++;
   };
   return x == 0;

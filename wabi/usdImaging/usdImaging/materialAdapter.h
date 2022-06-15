@@ -38,11 +38,10 @@ struct HdMaterialNetworkMap;
 class UsdImagingMaterialAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingMaterialAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingMaterialAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingMaterialAdapter() override;
@@ -109,6 +108,7 @@ class UsdImagingMaterialAdapter : public UsdImagingPrimAdapter
                               UsdTimeCode time) const override;
 
  protected:
+
   USDIMAGING_API
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) final;
 };

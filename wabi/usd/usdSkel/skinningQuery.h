@@ -54,6 +54,7 @@ class UsdGeomBoundable;
 class UsdSkelSkinningQuery
 {
  public:
+
   USDSKEL_API
   UsdSkelSkinningQuery();
 
@@ -269,7 +270,9 @@ class UsdSkelSkinningQuery
   std::string GetDescription() const;
 
  private:
-  void _InitializeJointInfluenceBindings(const UsdAttribute &jointIndices, const UsdAttribute &jointWeights);
+
+  void _InitializeJointInfluenceBindings(const UsdAttribute &jointIndices,
+                                         const UsdAttribute &jointWeights);
 
   void _InitializeBlendShapeBindings(const UsdAttribute &blendShapes,
                                      const UsdRelationship &blendShapeTargets);

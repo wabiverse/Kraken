@@ -83,16 +83,14 @@ enum UsdInterpolationType
 ///
 /// UsdLinearInterpolationTraits<T>::isSupported will be true for all
 /// types listed in the USD_LINEAR_INTERPOLATION_TYPES sequence.
-template<class T>
-struct UsdLinearInterpolationTraits
+template<class T> struct UsdLinearInterpolationTraits
 {
   static const bool isSupported = false;
 };
 
 /// \cond INTERNAL
 #define _USD_DECLARE_INTERPOLATION_TRAITS(r, unused, type) \
-  template<>                                               \
-  struct UsdLinearInterpolationTraits<type>                \
+  template<> struct UsdLinearInterpolationTraits<type>     \
   {                                                        \
     static const bool isSupported = true;                  \
   };

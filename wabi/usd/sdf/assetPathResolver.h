@@ -87,7 +87,8 @@ Sdf_AssetInfo *Sdf_ComputeAssetInfoFromIdentifier(const std::string &identifier,
 
 /// Returns the identifierTemplate, placeholders replaced with information
 /// from the specified \p layer.
-std::string Sdf_ComputeAnonLayerIdentifier(const std::string &identifierTemplate, const SdfLayer *layer);
+std::string Sdf_ComputeAnonLayerIdentifier(const std::string &identifierTemplate,
+                                           const SdfLayer *layer);
 
 /// Returns true if \p identifier is an anonymous layer identifier.
 bool Sdf_IsAnonLayerIdentifier(const std::string &identifier);
@@ -104,7 +105,9 @@ std::string Sdf_GetAnonLayerIdentifierTemplate(const std::string &tag);
 /// Splits the given \p identifier into two portions: the layer path
 /// and the arguments. For example, given the identifier foo.menva?a=b,
 /// this function returns ("foo.menva", "?a=b")
-bool Sdf_SplitIdentifier(const std::string &identifier, std::string *layerPath, std::string *arguments);
+bool Sdf_SplitIdentifier(const std::string &identifier,
+                         std::string *layerPath,
+                         std::string *arguments);
 
 /// Splits the given \p identifier into the layer path and the arguments.
 bool Sdf_SplitIdentifier(const std::string &identifier,
@@ -139,7 +142,8 @@ bool Sdf_IsPackageOrPackagedLayer(const SdfLayerHandle &layer);
 
 /// Returns true if \p fileFormat is a package file format or \p identifier
 /// is a package-relative path. This is just a convenience function.
-bool Sdf_IsPackageOrPackagedLayer(const SdfFileFormatConstPtr &fileFormat, const std::string &identifier);
+bool Sdf_IsPackageOrPackagedLayer(const SdfFileFormatConstPtr &fileFormat,
+                                  const std::string &identifier);
 
 /// Returns the canonicalized form of the given \p realPath.
 std::string Sdf_CanonicalizeRealPath(const std::string &realPath);

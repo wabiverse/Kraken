@@ -46,6 +46,7 @@ WABI_NAMESPACE_BEGIN
 class UsdDracoAttributeFactory
 {
  public:
+
   // Creates an attribute according to attribute interface type and a given
   // descriptor. A given creator object must have a CreateAttribute<T> method
   // with matching return type that creates an attribute with values
@@ -93,30 +94,25 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
   const CreatorT &creator)
 {
   // Create attribute from attribute descriptor.
-  switch (descriptor.GetShape())
-  {
+  switch (descriptor.GetShape()) {
     case UsdDracoAttributeDescriptor::MATRIX:
-      switch (descriptor.GetNumComponents())
-      {
+      switch (descriptor.GetNumComponents()) {
         case 4:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_FLOAT64, GfMatrix2d);
             default:
               break;
           }
           break;
         case 9:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_FLOAT64, GfMatrix3d);
             default:
               break;
           }
           break;
         case 16:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_FLOAT64, GfMatrix4d);
             default:
               break;
@@ -129,8 +125,7 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
     case UsdDracoAttributeDescriptor::QUATERNION:
       if (descriptor.GetNumComponents() != 4)
         break;
-      switch (descriptor.GetDataType())
-      {
+      switch (descriptor.GetDataType()) {
         // USD halfs are stored as Draco 16-bit ints.
         CASE_FOR_ATTRIBUTE_HALF(draco::DT_INT16, GfQuath);
         CASE_FOR_ATTRIBUTE_TYPE(draco::DT_FLOAT32, GfQuatf);
@@ -140,11 +135,9 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
       }
       break;
     case UsdDracoAttributeDescriptor::VECTOR:
-      switch (descriptor.GetNumComponents())
-      {
+      switch (descriptor.GetNumComponents()) {
         case 1:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_UINT8, uint8_t);
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_INT32, int32_t);
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_UINT32, uint32_t);
@@ -159,8 +152,7 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
               break;
           }
         case 2:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_INT32, GfVec2i);
             // USD halfs are stored as Draco 16-bit ints.
             CASE_FOR_ATTRIBUTE_HALF(draco::DT_INT16, GfVec2h);
@@ -170,8 +162,7 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
               break;
           }
         case 3:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_INT32, GfVec3i);
             // USD halfs are stored as Draco 16-bit ints.
             CASE_FOR_ATTRIBUTE_HALF(draco::DT_INT16, GfVec3h);
@@ -181,8 +172,7 @@ std::unique_ptr<InterfaceT> UsdDracoAttributeFactory::CreateAttribute(
               break;
           }
         case 4:
-          switch (descriptor.GetDataType())
-          {
+          switch (descriptor.GetDataType()) {
             CASE_FOR_ATTRIBUTE_TYPE(draco::DT_INT32, GfVec4i);
             // USD halfs are stored as Draco 16-bit ints.
             CASE_FOR_ATTRIBUTE_HALF(draco::DT_INT16, GfVec4h);

@@ -38,6 +38,7 @@ WABI_NAMESPACE_BEGIN
 class HdBbAttributeSource : public HdBufferSource
 {
  public:
+
   // unfortunately AttributeSet has to be passed to support Geometry::attributes and
   // Mesh::subd_attributes
   HdBbAttributeSource(TfToken name,
@@ -47,7 +48,9 @@ class HdBbAttributeSource : public HdBufferSource
                       ccl::AttributeElement element,
                       const ccl::TypeDesc &type_desc);
 
-  HdBbAttributeSource(const VtValue &value, ccl::AttributeSet *attribs, ccl::AttributeStandard std);
+  HdBbAttributeSource(const VtValue &value,
+                      ccl::AttributeSet *attribs,
+                      ccl::AttributeStandard std);
 
   // immutable data accessors
   const TfToken &GetName() const override
@@ -98,6 +101,7 @@ class HdBbAttributeSource : public HdBufferSource
   static VtValue UncheckedCastToFloat(const VtValue &value);
 
  protected:
+
   TfToken m_name;   // attribute name
   VtValue m_value;  // source data to be committed
 
@@ -129,6 +133,7 @@ using HdBbAttributeSourceSharedPtr = std::shared_ptr<HdBbAttributeSource>;
 class HdCyclesPointCloudAttributeSource : public HdBbAttributeSource
 {
  public:
+
   HdCyclesPointCloudAttributeSource(TfToken name,
                                     const TfToken &role,
                                     const VtValue &value,

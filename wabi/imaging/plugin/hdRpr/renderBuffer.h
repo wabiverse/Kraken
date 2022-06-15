@@ -25,10 +25,13 @@ class HdRprApi;
 class HdRprRenderBuffer final : public HdRenderBuffer
 {
  public:
+
   HdRprRenderBuffer(SdfPath const &id, HdRprApi *api = nullptr);
   ~HdRprRenderBuffer() override = default;
 
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   void Finalize(HdRenderParam *renderParam) override;
 
@@ -81,9 +84,11 @@ class HdRprRenderBuffer final : public HdRenderBuffer
   VtValue GetResource(bool multiSampled) const;
 
  protected:
+
   void _Deallocate() override;
 
  private:
+
   std::vector<uint8_t> m_mappedBuffer;
   uint32_t m_width = 0u;
   uint32_t m_height = 0u;

@@ -45,6 +45,7 @@ WABI_NAMESPACE_BEGIN
 class HdxPrmanFramebuffer
 {
  public:
+
   struct HdPrmanAov
   {
     TfToken name;

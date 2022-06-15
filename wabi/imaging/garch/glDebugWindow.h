@@ -46,6 +46,7 @@ class Garch_GLPlatformDebugWindow;
 class GarchGLDebugWindow
 {
  public:
+
   GARCH_API
   GarchGLDebugWindow(const char *title, int width, int height);
   GARCH_API
@@ -101,6 +102,7 @@ class GarchGLDebugWindow
   virtual void OnMouseMove(int x, int y, int modKeys);
 
  private:
+
   Garch_GLPlatformDebugWindow *_private;
   std::string _title;
   int _width, _height;

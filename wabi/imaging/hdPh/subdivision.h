@@ -46,6 +46,7 @@ WABI_NAMESPACE_BEGIN
 class HdPh_Subdivision
 {
  public:
+
   virtual ~HdPh_Subdivision();
 
   virtual int GetNumVertices() const = 0;
@@ -70,24 +71,28 @@ class HdPh_Subdivision
                                                             int level,
                                                             SdfPath const &id) = 0;
 
-  virtual HdBufferSourceSharedPtr CreateIndexComputation(HdPh_MeshTopology *topology,
-                                                         HdBufferSourceSharedPtr const &osdTopology) = 0;
+  virtual HdBufferSourceSharedPtr CreateIndexComputation(
+    HdPh_MeshTopology *topology,
+    HdBufferSourceSharedPtr const &osdTopology) = 0;
 
-  virtual HdBufferSourceSharedPtr CreateFvarIndexComputation(HdPh_MeshTopology *topology,
-                                                             HdBufferSourceSharedPtr const &osdTopology,
-                                                             int channel) = 0;
+  virtual HdBufferSourceSharedPtr CreateFvarIndexComputation(
+    HdPh_MeshTopology *topology,
+    HdBufferSourceSharedPtr const &osdTopology,
+    int channel) = 0;
 
-  virtual HdBufferSourceSharedPtr CreateRefineComputation(HdPh_MeshTopology *topology,
-                                                          HdBufferSourceSharedPtr const &source,
-                                                          HdBufferSourceSharedPtr const &osdTopology,
-                                                          HdPh_MeshTopology::Interpolation interpolation,
-                                                          int fvarChannel = 0) = 0;
+  virtual HdBufferSourceSharedPtr CreateRefineComputation(
+    HdPh_MeshTopology *topology,
+    HdBufferSourceSharedPtr const &source,
+    HdBufferSourceSharedPtr const &osdTopology,
+    HdPh_MeshTopology::Interpolation interpolation,
+    int fvarChannel = 0) = 0;
 
-  virtual HdComputationSharedPtr CreateRefineComputationGPU(HdPh_MeshTopology *topology,
-                                                            TfToken const &name,
-                                                            HdType type,
-                                                            HdPh_MeshTopology::Interpolation interpolation,
-                                                            int fvarChannel = 0) = 0;
+  virtual HdComputationSharedPtr CreateRefineComputationGPU(
+    HdPh_MeshTopology *topology,
+    TfToken const &name,
+    HdType type,
+    HdPh_MeshTopology::Interpolation interpolation,
+    int fvarChannel = 0) = 0;
 
   /// Returns true if the subdivision for \a scheme generates triangles,
   /// instead of quads.
@@ -110,12 +115,14 @@ class HdPh_Subdivision
 class HdPh_OsdTopologyComputation : public HdComputedBufferSource
 {
  public:
+
   HdPh_OsdTopologyComputation(HdPh_MeshTopology *topology, int level, SdfPath const &id);
 
   /// overrides
   void GetBufferSpecs(HdBufferSpecVector *specs) const override;
 
  protected:
+
   HdPh_MeshTopology *_topology;
   int _level;
   SdfPath const _id;
@@ -141,13 +148,16 @@ class HdPh_OsdTopologyComputation : public HdComputedBufferSource
 class HdPh_OsdIndexComputation : public HdComputedBufferSource
 {
  public:
+
   /// overrides
   bool HasChainedBuffer() const override;
   void GetBufferSpecs(HdBufferSpecVector *specs) const override;
   HdBufferSourceSharedPtrVector GetChainedBuffers() const override;
 
  protected:
-  HdPh_OsdIndexComputation(HdPh_MeshTopology *topology, HdBufferSourceSharedPtr const &osdTopology);
+
+  HdPh_OsdIndexComputation(HdPh_MeshTopology *topology,
+                           HdBufferSourceSharedPtr const &osdTopology);
 
   bool _CheckValid() const override;
 
@@ -165,10 +175,10 @@ class HdPh_OsdIndexComputation : public HdComputedBufferSource
 /// GetData() returns the internal buffer of Hd_OsdCpuVertexBuffer,
 /// so that reducing data copy between osd buffer and HdBufferSource.
 ///
-template<typename VERTEX_BUFFER>
-class HdPh_OsdRefineComputation final : public HdBufferSource
+template<typename VERTEX_BUFFER> class HdPh_OsdRefineComputation final : public HdBufferSource
 {
  public:
+
   HdPh_OsdRefineComputation(HdPh_MeshTopology *topology,
                             HdBufferSourceSharedPtr const &source,
                             HdBufferSourceSharedPtr const &osdTopology,
@@ -187,9 +197,11 @@ class HdPh_OsdRefineComputation final : public HdBufferSource
   HdPh_MeshTopology::Interpolation GetInterpolation() const;
 
  protected:
+
   bool _CheckValid() const override;
 
  private:
+
   HdPh_MeshTopology *_topology;
   HdBufferSourceSharedPtr _source;
   HdBufferSourceSharedPtr _osdTopology;
@@ -206,13 +218,15 @@ class HdPh_OsdRefineComputation final : public HdBufferSource
 class HdPh_OsdRefineComputationGPU : public HdComputation
 {
  public:
+
   HdPh_OsdRefineComputationGPU(HdPh_MeshTopology *topology,
                                TfToken const &name,
                                HdType type,
                                HdPh_MeshTopology::Interpolation interpolation,
                                int fvarChannel = 0);
 
-  void Execute(HdBufferArrayRangeSharedPtr const &range, HdResourceRegistry *resourceRegistry) override;
+  void Execute(HdBufferArrayRangeSharedPtr const &range,
+               HdResourceRegistry *resourceRegistry) override;
   void GetBufferSpecs(HdBufferSpecVector *specs) const override;
   int GetNumOutputElements() const override;
   HdPh_MeshTopology::Interpolation GetInterpolation() const;
@@ -223,6 +237,7 @@ class HdPh_OsdRefineComputationGPU : public HdComputation
   class VertexBuffer
   {
    public:
+
     VertexBuffer(HdBufferResourceSharedPtr const &resource)
     {
       _resource = std::static_pointer_cast<HdPhBufferResource>(resource);
@@ -242,6 +257,7 @@ class HdPh_OsdRefineComputationGPU : public HdComputation
   };
 
  private:
+
   HdPh_MeshTopology *_topology;
   TfToken _name;
   HdPh_MeshTopology::Interpolation _interpolation;
@@ -313,8 +329,7 @@ HdPh_MeshTopology::Interpolation HdPh_OsdRefineComputation<VERTEX_BUFFER>::GetIn
   return _interpolation;
 }
 
-template<typename VERTEX_BUFFER>
-bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
+template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
 {
   if (_source && !_source->IsResolved())
     return false;
@@ -328,8 +343,7 @@ bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
   HF_MALLOC_TAG_FUNCTION();
 
   HdPh_Subdivision *subdivision = _topology->GetSubdivision();
-  if (!TF_VERIFY(subdivision))
-  {
+  if (!TF_VERIFY(subdivision)) {
     _SetResolved();
     return true;
   }
@@ -338,9 +352,10 @@ bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
   TF_VERIFY(!_cpuVertexBuffer);
   _cpuVertexBuffer = VERTEX_BUFFER::Create(
     HdGetComponentCount(_source->GetTupleType().type),
-    _interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX  ? subdivision->GetNumVertices() :
-    _interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING ? subdivision->GetNumVarying() :
-                                                               subdivision->GetMaxNumFaceVarying());
+    _interpolation == HdPh_MeshTopology::INTERPOLATE_VERTEX ? subdivision->GetNumVertices() :
+    _interpolation == HdPh_MeshTopology::INTERPOLATE_VARYING ?
+                                                              subdivision->GetNumVarying() :
+                                                              subdivision->GetMaxNumFaceVarying());
 
   subdivision->RefineCPU(_source, _cpuVertexBuffer, _interpolation, _fvarChannel);
 
@@ -350,8 +365,7 @@ bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::Resolve()
   return true;
 }
 
-template<typename VERTEX_BUFFER>
-bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::_CheckValid() const
+template<typename VERTEX_BUFFER> bool HdPh_OsdRefineComputation<VERTEX_BUFFER>::_CheckValid() const
 {
   bool valid = _source->IsValid();
 

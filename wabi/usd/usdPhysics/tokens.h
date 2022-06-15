@@ -81,8 +81,8 @@ struct UsdPhysicsTokensType
   const TfToken boundingSphere;
   /// \brief "colliders"
   ///
-  ///  This token represents the collection name to use with UsdCollectionAPI to represent colliders of a
-  ///  CollisionGroup prim.
+  ///  This token represents the collection name to use with UsdCollectionAPI to represent
+  ///  colliders of a CollisionGroup prim.
   const TfToken colliders;
   /// \brief "convexDecomposition"
   ///
@@ -107,7 +107,8 @@ struct UsdPhysicsTokensType
   const TfToken force;
   /// \brief "kilogramsPerUnit"
   ///
-  /// Stage-level metadata that encodes a scene's linear unit of measure as kilograms per encoded unit.
+  /// Stage-level metadata that encodes a scene's linear unit of measure as kilograms per encoded
+  /// unit.
   const TfToken kilogramsPerUnit;
   /// \brief "limit"
   ///
@@ -308,44 +309,54 @@ struct UsdPhysicsTokensType
   const TfToken physicsVelocity;
   /// \brief "rotX"
   ///
-  ///  This token represents the rotate around X axis degree of freedom used in Joint Limits and Drives.
+  ///  This token represents the rotate around X axis degree of freedom used in Joint Limits and
+  ///  Drives.
   const TfToken rotX;
   /// \brief "rotY"
   ///
-  ///  This token represents the rotate around Y axis degree of freedom used in Joint Limits and Drives.
+  ///  This token represents the rotate around Y axis degree of freedom used in Joint Limits and
+  ///  Drives.
   const TfToken rotY;
   /// \brief "rotZ"
   ///
-  ///  This token represents the rotate around Z axis degree of freedom used in Joint Limits and Drives.
+  ///  This token represents the rotate around Z axis degree of freedom used in Joint Limits and
+  ///  Drives.
   const TfToken rotZ;
   /// \brief "transX"
   ///
-  ///  This token represents the translate around X axis degree of freedom used in Joint Limits and Drives.
+  ///  This token represents the translate around X axis degree of freedom used in Joint Limits and
+  ///  Drives.
   const TfToken transX;
   /// \brief "transY"
   ///
-  ///  This token represents the translate around Y axis degree of freedom used in Joint Limits and Drives.
+  ///  This token represents the translate around Y axis degree of freedom used in Joint Limits and
+  ///  Drives.
   const TfToken transY;
   /// \brief "transZ"
   ///
-  ///  This token represents the translate around Z axis degree of freedom used in Joint Limits and Drives.
+  ///  This token represents the translate around Z axis degree of freedom used in Joint Limits and
+  ///  Drives.
   const TfToken transZ;
   /// \brief "X"
   ///
   /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Default value for
-  /// UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for UsdPhysicsPrismaticJoint::GetAxisAttr(),
-  /// Default value for UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for
-  /// UsdPhysicsRevoluteJoint::GetAxisAttr(), Default value for UsdPhysicsRevoluteJoint::GetAxisAttr()
+  /// UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Default value for
+  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsRevoluteJoint::GetAxisAttr(), Default value for
+  /// UsdPhysicsRevoluteJoint::GetAxisAttr()
   const TfToken x;
   /// \brief "Y"
   ///
   /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for
-  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr()
+  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsRevoluteJoint::GetAxisAttr()
   const TfToken y;
   /// \brief "Z"
   ///
   /// Possible value for UsdPhysicsSphericalJoint::GetAxisAttr(), Possible value for
-  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for UsdPhysicsRevoluteJoint::GetAxisAttr()
+  /// UsdPhysicsPrismaticJoint::GetAxisAttr(), Possible value for
+  /// UsdPhysicsRevoluteJoint::GetAxisAttr()
   const TfToken z;
   /// A vector of all of the tokens listed above.
   const std::vector<TfToken> allTokens;

@@ -54,9 +54,9 @@ class GfLineSeg2d
 {
 
  public:
+
   /// The default constructor leaves line parameters undefined.
-  GfLineSeg2d()
-  {}
+  GfLineSeg2d() {}
 
   /// Construct a line segment that spans two points.
   GfLineSeg2d(const GfVec2d &p0, const GfVec2d &p1)
@@ -105,6 +105,7 @@ class GfLineSeg2d
   }
 
  private:
+
   GF_API
   friend bool GfFindClosestPoints(const GfLine2d &,
                                   const GfLineSeg2d &,

@@ -56,6 +56,7 @@ class SdfAssetPath;
 class UsdGeomXform : public UsdGeomXformable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -66,16 +67,12 @@ class UsdGeomXform : public UsdGeomXformable
   /// Equivalent to UsdGeomXform::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomXform(const UsdPrim &prim = UsdPrim())
-    : UsdGeomXformable(prim)
-  {}
+  explicit UsdGeomXform(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim) {}
 
   /// Construct a UsdGeomXform on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomXform(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomXform(const UsdSchemaBase &schemaObj)
-    : UsdGeomXformable(schemaObj)
-  {}
+  explicit UsdGeomXform(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -125,6 +122,7 @@ class UsdGeomXform : public UsdGeomXformable
   static UsdGeomXform Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -133,6 +131,7 @@ class UsdGeomXform : public UsdGeomXformable
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -142,9 +141,11 @@ class UsdGeomXform : public UsdGeomXformable
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

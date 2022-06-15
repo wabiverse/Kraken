@@ -46,6 +46,7 @@ SDF_DECLARE_HANDLES(SdfSpec);
 class Sdf_CleanupTracker : public TfWeakBase
 {
  public:
+
   /// Retrieves singleton instance.
   static Sdf_CleanupTracker &GetInstance();
 
@@ -57,6 +58,7 @@ class Sdf_CleanupTracker : public TfWeakBase
   void CleanupSpecs();
 
  private:
+
   Sdf_CleanupTracker();
   ~Sdf_CleanupTracker();
 

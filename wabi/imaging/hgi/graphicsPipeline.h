@@ -221,10 +221,12 @@ struct HgiGraphicsShaderConstantsDesc
 };
 
 HGI_API
-bool operator==(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs);
+bool operator==(const HgiGraphicsShaderConstantsDesc &lhs,
+                const HgiGraphicsShaderConstantsDesc &rhs);
 
 HGI_API
-bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs, const HgiGraphicsShaderConstantsDesc &rhs);
+bool operator!=(const HgiGraphicsShaderConstantsDesc &lhs,
+                const HgiGraphicsShaderConstantsDesc &rhs);
 
 /// \struct HgiGraphicsPipelineDesc
 ///
@@ -296,6 +298,7 @@ bool operator!=(const HgiGraphicsPipelineDesc &lhs, const HgiGraphicsPipelineDes
 class HgiGraphicsPipeline
 {
  public:
+
   HGI_API
   virtual ~HgiGraphicsPipeline();
 
@@ -304,12 +307,14 @@ class HgiGraphicsPipeline
   HgiGraphicsPipelineDesc const &GetDescriptor() const;
 
  protected:
+
   HGI_API
   HgiGraphicsPipeline(HgiGraphicsPipelineDesc const &desc);
 
   HgiGraphicsPipelineDesc _descriptor;
 
  private:
+
   HgiGraphicsPipeline() = delete;
   HgiGraphicsPipeline &operator=(const HgiGraphicsPipeline &) = delete;
   HgiGraphicsPipeline(const HgiGraphicsPipeline &) = delete;

@@ -36,6 +36,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhGLConversions
 {
  public:
+
   /// Returns the size of glDataType.
   /// For example: sizeof(GLuint)
   HDPH_API

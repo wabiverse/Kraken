@@ -43,6 +43,7 @@ class Hgi;
 class HdxTask : public HdTask
 {
  public:
+
   HDX_API
   HdxTask(SdfPath const &id);
 
@@ -68,6 +69,7 @@ class HdxTask : public HdTask
   void Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) final;
 
  protected:
+
   // This is called during the hydra Sync Phase via HdxTask::Sync.
   // Please see HdTask::Sync for Sync Phase documentation.
   virtual void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) = 0;

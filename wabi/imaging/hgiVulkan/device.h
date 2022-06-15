@@ -52,6 +52,7 @@ class HgiVulkanPipelineCache;
 class HgiVulkanDevice final
 {
  public:
+
   HGIVULKAN_API
   HgiVulkanDevice(HgiVulkanInstance *instance);
 
@@ -102,6 +103,7 @@ class HgiVulkanDevice final
   PFN_vkQueueEndDebugUtilsLabelEXT vkQueueEndDebugUtilsLabelEXT = 0;
 
  private:
+
   HgiVulkanDevice() = delete;
   HgiVulkanDevice &operator=(const HgiVulkanDevice &) = delete;
   HgiVulkanDevice(const HgiVulkanDevice &) = delete;

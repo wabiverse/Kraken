@@ -54,6 +54,7 @@ class HdRenderIndex;
 class HdPhRenderPassState : public HdRenderPassState
 {
  public:
+
   HDPH_API
   HdPhRenderPassState();
   HDPH_API
@@ -146,6 +147,7 @@ class HdPhRenderPassState : public HdRenderPassState
   HgiGraphicsCmdsDesc MakeGraphicsCmdsDesc(const HdRenderIndex *) const;
 
  private:
+
   bool _UseAlphaMask() const;
 
   // ---------------------------------------------------------------------- //

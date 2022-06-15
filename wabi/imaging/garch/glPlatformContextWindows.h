@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class GarchWGLContextState
 {
  public:
+
   /// Construct with the current state.
   GARCH_API
   GarchWGLContextState();
@@ -76,6 +77,7 @@ class GarchWGLContextState
   static void DoneCurrent();
 
  private:
+
   class _Detail;
   std::shared_ptr<_Detail> _detail;
 };
@@ -85,10 +87,9 @@ class GarchWGLContextState
 class GarchWGLContextState
 {
  public:
+
   /// Construct with the current state.
-  GarchWGLContextState()
-  {
-  }
+  GarchWGLContextState() {}
 
   enum class NullState
   {
@@ -96,9 +97,7 @@ class GarchWGLContextState
   };
 
   /// Construct with the null state.
-  GarchWGLContextState(NullState)
-  {
-  }
+  GarchWGLContextState(NullState) {}
 
   /// Compare for equality.
   bool operator==(const GarchWGLContextState &rhs) const
@@ -119,16 +118,13 @@ class GarchWGLContextState
   }
 
   /// Make the context current.
-  void MakeCurrent()
-  {
-  }
+  void MakeCurrent() {}
 
   /// Make no context current.
-  static void DoneCurrent()
-  {
-  }
+  static void DoneCurrent() {}
 
  private:
+
   class _Detail;
   std::shared_ptr<_Detail> _detail;
 };

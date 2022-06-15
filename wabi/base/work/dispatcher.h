@@ -58,12 +58,10 @@ class WorkDispatcher
 {
  public:
 
-  /**
-   * Construct a new dispatcher. */
+  /// Construct a new dispatcher.
   WORK_API WorkDispatcher();
 
-  /**
-   * Wait() for any pending tasks to complete, then destroy the dispatcher. */
+  /// Wait() for any pending tasks to complete, then destroy the dispatcher.
   WORK_API ~WorkDispatcher();
 
   WorkDispatcher(WorkDispatcher const &) = delete;
@@ -71,17 +69,16 @@ class WorkDispatcher
 
 #  ifdef doxygen
 
-  /**
-   * Add work for the dispatcher to run.
-   *
-   * Before a call to Wait() is made it is safe for any client to invoke
-   * Run().  Once Wait() is invoked, it is \b only safe to invoke Run() from
-   * within the execution of tasks already added via Run().
-   *
-   * This function does not block, in general.  It may block if concurrency
-   * is limited to 1.  The added work may be not yet started, may be started
-   * but not completed, or may be completed upon return.  No guarantee is
-   * made. */
+  /// Add work for the dispatcher to run.
+  ///
+  /// Before a call to Wait() is made it is safe for any client to invoke
+  /// Run().  Once Wait() is invoked, it is \b only safe to invoke Run() from
+  /// within the execution of tasks already added via Run().
+  ///
+  /// This function does not block, in general.  It may block if concurrency
+  /// is limited to 1.  The added work may be not yet started, may be started
+  /// but not completed, or may be completed upon return.  No guarantee is
+  /// made.
   template<class Callable, class A1, class A2, ... class AN>
   void Run(Callable &&c, A1 &&a1, A2 &&a2, ... AN &&aN);
 
@@ -89,14 +86,14 @@ class WorkDispatcher
 
   template<class Callable> inline void Run(Callable &&c)
   {
-    _tg.run(_InvokerTask<typename std::remove_reference<Callable>::type>(std::forward<Callable>(c)(),
+    _tg.run(_InvokerTask<typename std::remove_reference<Callable>::type>(std::forward<Callable>(c),
                                                                          &_errors));
   }
 
   template<class Callable, class A0, class... Args>
   inline void Run(Callable &&c, A0 &&a0, Args &&...args)
   {
-    Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0)(), std::forward<Args>(args)...));
+    Run(std::bind(std::forward<Callable>(c), std::forward<A0>(a0), std::forward<Args>(args)...));
   }
 
 #  endif  // doxygen
@@ -132,7 +129,9 @@ class WorkDispatcher
     void operator()() const
     {
       TfErrorMark m;
+#  if FIX_ME
       _fn();
+#  endif /* FIX_ME */
       if (!m.IsClean())
         WorkDispatcher::_TransportErrors(m, _errors);
     }
@@ -157,7 +156,7 @@ class WorkDispatcher
   // Concurrent calls to Wait() have to serialize certain cleanup operations.
   std::atomic_flag _waitCleanupFlag;
 };
-#else /* !WITH_TBB_LEGACY */
+#else /* WITH_TBB_LEGACY */
 
 /// \class WorkDispatcher
 ///

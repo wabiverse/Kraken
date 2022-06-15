@@ -36,6 +36,7 @@ class HdRprBasisCurves : public HdRprBaseRprim<HdBasisCurves>
 {
 
  public:
+
   HdRprBasisCurves(SdfPath const &id HDRPR_INSTANCER_ID_ARG_DECL);
 
   ~HdRprBasisCurves() override = default;
@@ -50,15 +51,18 @@ class HdRprBasisCurves : public HdRprBaseRprim<HdBasisCurves>
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
   void _InitRepr(TfToken const &reprName, HdDirtyBits *dirtyBits) override;
 
  private:
+
   rpr::Curve *CreateLinearRprCurve(HdRprApi *rprApi);
   rpr::Curve *CreateBezierRprCurve(HdRprApi *rprApi);
 
  private:
+
   rpr::Curve *m_rprCurve = nullptr;
   RprUsdMaterial *m_fallbackMaterial = nullptr;
 

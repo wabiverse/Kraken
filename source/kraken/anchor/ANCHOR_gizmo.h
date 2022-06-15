@@ -119,8 +119,8 @@ namespace AnchorGizmo
   // example:
   // float matrixTranslation[3], matrixRotation[3], matrixScale[3];
   // AnchorGizmo::DecomposeMatrixToComponents(gizmoMatrix.m16, matrixTranslation, matrixRotation,
-  // matrixScale); ANCHOR::InputFloat3("Tr", matrixTranslation, 3); ANCHOR::InputFloat3("Rt", matrixRotation,
-  // 3); ANCHOR::InputFloat3("Sc", matrixScale, 3);
+  // matrixScale); ANCHOR::InputFloat3("Tr", matrixTranslation, 3); ANCHOR::InputFloat3("Rt",
+  // matrixRotation, 3); ANCHOR::InputFloat3("Sc", matrixScale, 3);
   // AnchorGizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale,
   // gizmoMatrix.m16);
   //
@@ -150,8 +150,8 @@ namespace AnchorGizmo
 
   // call it when you want a gizmo
   // Needs view and projection matrices.
-  // matrix parameter is the source matrix (where will be gizmo be drawn) and might be transformed by the
-  // function. Return deltaMatrix is optional translation is applied in world space
+  // matrix parameter is the source matrix (where will be gizmo be drawn) and might be transformed
+  // by the function. Return deltaMatrix is optional translation is applied in world space
   enum OPERATION
   {
     TRANSLATE_X = (1u << 0),
@@ -192,9 +192,9 @@ namespace AnchorGizmo
                              const float *boundsSnap = NULL);
   //
   // Please note that this cubeview is patented by Autodesk :
-  // https://patents.google.com/patent/US7782319B2/en It seems to be a defensive patent in the US. I don't
-  // think it will bring troubles using it as other software are using the same mechanics. But just in case,
-  // you are now warned!
+  // https://patents.google.com/patent/US7782319B2/en It seems to be a defensive patent in the US.
+  // I don't think it will bring troubles using it as other software are using the same mechanics.
+  // But just in case, you are now warned!
   //
   ANCHOR_API void ViewManipulate(float *view,
                                  float length,

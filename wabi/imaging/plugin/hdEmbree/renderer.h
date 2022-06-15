@@ -61,6 +61,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeRenderer final
 {
  public:
+
   /// Renderer constructor.
   HdEmbreeRenderer();
 
@@ -123,6 +124,7 @@ class HdEmbreeRenderer final
   int GetCompletedSamples() const;
 
  private:
+
   // Validate the internal consistency of aov bindings provided to
   // SetAovBindings. If the aov bindings are invalid, this will issue
   // appropriate warnings. If the function returns false, Render() will fail

@@ -62,6 +62,7 @@ using HdPhBufferResourceNamedList = std::vector<std::pair<TfToken, HdPhBufferRes
 class HdPhBufferArrayRange : public HdBufferArrayRange
 {
  public:
+
   HdPhBufferArrayRange(HdPhResourceRegistry *resourceRegistry);
 
   /// Destructor (do nothing).
@@ -87,9 +88,11 @@ class HdPhBufferArrayRange : public HdBufferArrayRange
   virtual void GetBufferSpecs(HdBufferSpecVector *bufferSpecs) const override;
 
  protected:
+
   HdPhResourceRegistry *GetResourceRegistry();
 
  private:
+
   HdPhResourceRegistry *_resourceRegistry;
 };
 
@@ -103,10 +106,9 @@ std::ostream &operator<<(std::ostream &out, const HdPhBufferArrayRange &self);
 class HdPhBufferArrayRangeContainer
 {
  public:
+
   /// Constructor
-  HdPhBufferArrayRangeContainer(int size)
-    : _ranges(size)
-  {}
+  HdPhBufferArrayRangeContainer(int size) : _ranges(size) {}
 
   /// Set \p range into the container at \p index.
   /// If the size of container is smaller than index, resize it.
@@ -119,6 +121,7 @@ class HdPhBufferArrayRangeContainer
   HdPhBufferArrayRangeSharedPtr const &Get(int index) const;
 
  private:
+
   std::vector<HdPhBufferArrayRangeSharedPtr> _ranges;
 };
 

@@ -24,16 +24,17 @@
 #ifndef WABI_IMAGING_HD_BUFFER_SOURCE_H
 #define WABI_IMAGING_HD_BUFFER_SOURCE_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/bufferSpec.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/bufferSpec.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include <atomic>
 #include <memory>
 #include <vector>
+
 
 WABI_NAMESPACE_BEGIN
 
@@ -54,9 +55,8 @@ using HdBufferSourceWeakPtr = std::weak_ptr<HdBufferSource>;
 class HdBufferSource
 {
  public:
-  HdBufferSource()
-    : _state(UNRESOLVED)
-  {}
+
+  HdBufferSource() : _state(UNRESOLVED) {}
 
   HD_API
   virtual ~HdBufferSource();
@@ -147,6 +147,7 @@ class HdBufferSource
   bool IsValid() const;
 
  protected:
+
   /// Marks this buffer source as resolved. It has to be called
   /// at the end of Resolve on concrete implementations.
   void _SetResolved()
@@ -200,6 +201,7 @@ class HdBufferSource
   virtual bool _CheckValid() const = 0;
 
  private:
+
   // Don't allow copies
   HdBufferSource(const HdBufferSource &) = delete;
   HdBufferSource &operator=(const HdBufferSource &) = delete;
@@ -225,6 +227,7 @@ class HdBufferSource
 class HdComputedBufferSource : public HdBufferSource
 {
  public:
+
   HD_API
   virtual TfToken const &GetName() const override;
   HD_API
@@ -237,12 +240,14 @@ class HdComputedBufferSource : public HdBufferSource
   virtual size_t GetNumElements() const override;
 
  protected:
+
   void _SetResult(HdBufferSourceSharedPtr const &result)
   {
     _result = result;
   }
 
  private:
+
   HdBufferSourceSharedPtr _result;
 };
 
@@ -252,6 +257,7 @@ class HdComputedBufferSource : public HdBufferSource
 class HdNullBufferSource : public HdBufferSource
 {
  public:
+
   HD_API
   virtual TfToken const &GetName() const override;
   HD_API
@@ -265,6 +271,7 @@ class HdNullBufferSource : public HdBufferSource
   HD_API
   virtual void GetBufferSpecs(HdBufferSpecVector *specs) const override;
 };
+
 
 WABI_NAMESPACE_END
 

@@ -60,6 +60,7 @@ WABI_NAMESPACE_BEGIN
 class HdxVisualizeAovTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxVisualizeAovTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -73,10 +74,12 @@ class HdxVisualizeAovTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   // Enumeration of visualization kernels
   enum VizKernel
   {

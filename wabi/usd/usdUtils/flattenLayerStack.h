@@ -70,7 +70,8 @@ SDF_DECLARE_HANDLES(SdfLayer);
 /// will be discarded.
 ///
 USDUTILS_API
-SdfLayerRefPtr UsdUtilsFlattenLayerStack(const UsdStagePtr &stage, const std::string &tag = std::string());
+SdfLayerRefPtr UsdUtilsFlattenLayerStack(const UsdStagePtr &stage,
+                                         const std::string &tag = std::string());
 
 /// Callback function for overloaded version of \c UsdUtilsFlattenLayerStack.
 ///

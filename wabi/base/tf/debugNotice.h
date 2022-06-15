@@ -37,8 +37,8 @@ WABI_NAMESPACE_BEGIN
 class TfDebugSymbolsChangedNotice : public TfNotice
 {
  public:
-  TfDebugSymbolsChangedNotice()
-  {}
+
+  TfDebugSymbolsChangedNotice() {}
   virtual ~TfDebugSymbolsChangedNotice();
 };
 
@@ -48,8 +48,8 @@ class TfDebugSymbolsChangedNotice : public TfNotice
 class TfDebugSymbolEnableChangedNotice : public TfNotice
 {
  public:
-  TfDebugSymbolEnableChangedNotice()
-  {}
+
+  TfDebugSymbolEnableChangedNotice() {}
   virtual ~TfDebugSymbolEnableChangedNotice();
 };
 

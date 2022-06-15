@@ -35,6 +35,7 @@ namespace rif
   class Context
   {
    public:
+
     static std::unique_ptr<Context> Create(rpr::Context *rprContext,
                                            RprUsdContextMetadata const &rprContextMetadata,
                                            std::string const &modelPath);
@@ -59,13 +60,16 @@ namespace rif
     };
 
    protected:
+
     Context(std::string const &modelPath);
 
    protected:
+
     rif_context m_context = nullptr;
     rif_command_queue m_commandQueue = nullptr;
 
    private:
+
     int m_numAttachedFilters = 0;
     std::string m_modelPath;
   };

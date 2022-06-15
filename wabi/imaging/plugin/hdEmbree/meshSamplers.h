@@ -48,10 +48,9 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeRTCBufferAllocator
 {
  public:
+
   /// Constructor. By default, set everything to unallocated.
-  HdEmbreeRTCBufferAllocator()
-    : _bitset(0)
-  {}
+  HdEmbreeRTCBufferAllocator() : _bitset(0) {}
 
   /// Allocate a buffer by finding the first clear bit, using that as
   /// the buffer number, and setting the bit to mark it as used.
@@ -71,6 +70,7 @@ class HdEmbreeRTCBufferAllocator
   static constexpr int WABI_MAX_USER_VERTEX_BUFFERS = 16;
 
  private:
+
   std::bitset<WABI_MAX_USER_VERTEX_BUFFERS> _bitset;
 };
 
@@ -88,6 +88,7 @@ class HdEmbreeRTCBufferAllocator
 class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler
 {
  public:
+
   /// Constructor.
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
@@ -105,9 +106,14 @@ class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element,
+                      float u,
+                      float v,
+                      void *value,
+                      HdTupleType dataType) const;
 
  private:
+
   HdVtBufferSource const _buffer;
   HdEmbreeBufferSampler const _sampler;
 };
@@ -124,12 +130,15 @@ class HdEmbreeConstantSampler : public HdEmbreePrimvarSampler
 class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler
 {
  public:
+
   /// Constructor.
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
   /// \param primitiveParams A mapping from geometry face index to authored
   ///                        face index.
-  HdEmbreeUniformSampler(TfToken const &name, VtValue const &value, VtIntArray const &primitiveParams)
+  HdEmbreeUniformSampler(TfToken const &name,
+                         VtValue const &value,
+                         VtIntArray const &primitiveParams)
     : _buffer(name, value),
       _sampler(_buffer),
       _primitiveParams(primitiveParams)
@@ -154,9 +163,14 @@ class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element,
+                      float u,
+                      float v,
+                      void *value,
+                      HdTupleType dataType) const;
 
  private:
+
   HdVtBufferSource const _buffer;
   HdEmbreeBufferSampler const _sampler;
   VtIntArray const _primitiveParams;
@@ -173,12 +187,15 @@ class HdEmbreeUniformSampler : public HdEmbreePrimvarSampler
 class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler
 {
  public:
+
   /// Constructor.
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
   /// \param indices A map from triangle index to vertex indices in the
   ///                triangulated geometry.
-  HdEmbreeTriangleVertexSampler(TfToken const &name, VtValue const &value, VtVec3iArray const &indices)
+  HdEmbreeTriangleVertexSampler(TfToken const &name,
+                                VtValue const &value,
+                                VtVec3iArray const &indices)
     : _buffer(name, value),
       _sampler(_buffer),
       _indices(indices)
@@ -196,9 +213,14 @@ class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element,
+                      float u,
+                      float v,
+                      void *value,
+                      HdTupleType dataType) const;
 
  private:
+
   HdVtBufferSource const _buffer;
   HdEmbreeBufferSampler const _sampler;
   VtVec3iArray const _indices;
@@ -223,12 +245,15 @@ class HdEmbreeTriangleVertexSampler : public HdEmbreePrimvarSampler
 class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler
 {
  public:
+
   /// Constructor. Triangulates the provided buffer data.
   /// \param name The name of the primvar.
   /// \param value The buffer data for the primvar.
   /// \param meshUtil An HdMeshUtil instance that knows how to triangulate
   ///                 the input buffer data.
-  HdEmbreeTriangleFaceVaryingSampler(TfToken const &name, VtValue const &value, HdMeshUtil &meshUtil)
+  HdEmbreeTriangleFaceVaryingSampler(TfToken const &name,
+                                     VtValue const &value,
+                                     HdMeshUtil &meshUtil)
     : _buffer(name, _Triangulate(name, value, meshUtil)),
       _sampler(_buffer)
   {}
@@ -246,9 +271,14 @@ class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element,
+                      float u,
+                      float v,
+                      void *value,
+                      HdTupleType dataType) const;
 
  private:
+
   HdVtBufferSource const _buffer;
   HdEmbreeBufferSampler const _sampler;
 
@@ -270,6 +300,7 @@ class HdEmbreeTriangleFaceVaryingSampler : public HdEmbreePrimvarSampler
 class HdEmbreeSubdivVertexSampler : public HdEmbreePrimvarSampler
 {
  public:
+
   /// Constructor. Allocates an embree user vertex buffer, and uploads
   /// the primvar data. Only float-based types (float, GfVec3f, GfMatrix4f)
   /// are allowed, and embree has an exhaustible number of user vertex
@@ -299,9 +330,14 @@ class HdEmbreeSubdivVertexSampler : public HdEmbreePrimvarSampler
   /// \param value The memory to write the value to (only written on success).
   /// \param dataType The HdTupleType describing element values.
   /// \return True if the value was successfully sampled.
-  virtual bool Sample(unsigned int element, float u, float v, void *value, HdTupleType dataType) const;
+  virtual bool Sample(unsigned int element,
+                      float u,
+                      float v,
+                      void *value,
+                      HdTupleType dataType) const;
 
  private:
+
   int _embreeBufferId;
   HdVtBufferSource const _buffer;
   RTCScene _meshScene;

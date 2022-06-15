@@ -24,19 +24,21 @@
 #ifndef WABI_IMAGING_HD_UNIT_TEST_HELPER_H
 #define WABI_IMAGING_HD_UNIT_TEST_HELPER_H
 
+#include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/engine.h"
 #include "wabi/imaging/hd/renderPass.h"
 #include "wabi/imaging/hd/renderPassState.h"
 #include "wabi/imaging/hd/unitTestDelegate.h"
 #include "wabi/imaging/hd/unitTestNullRenderDelegate.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/gf/matrix4d.h"
 #include "wabi/base/gf/vec4d.h"
+#include "wabi/base/gf/matrix4d.h"
 
 #include <vector>
 
 WABI_NAMESPACE_BEGIN
+
 
 /// \class Hd_TestDriver
 ///
@@ -49,25 +51,34 @@ WABI_NAMESPACE_BEGIN
 class Hd_TestDriver final
 {
  public:
+
+  HD_API
   Hd_TestDriver();
+  HD_API
   Hd_TestDriver(HdReprSelector const &reprToken);
+  HD_API
   ~Hd_TestDriver();
 
   /// Draw
+  HD_API
   void Draw(bool withGuides = false);
 
   /// Draw with external renderPass
+  HD_API
   void Draw(HdRenderPassSharedPtr const &renderPass, bool withGuides);
 
   /// Set camera to renderpass
-  void SetCamera(GfMatrix4d const &modelViewMatrix,
+  HD_API
+  void SetCamera(GfMatrix4d const &viewMatrix,
                  GfMatrix4d const &projectionMatrix,
-                 GfVec4d const &viewport);
+                 CameraUtilFraming const &framing);
 
   /// Set cull style
+  HD_API
   void SetCullStyle(HdCullStyle cullStyle);
 
   /// Returns the renderpass
+  HD_API
   HdRenderPassSharedPtr const &GetRenderPass();
 
   /// Returns the renderPassState
@@ -83,9 +94,11 @@ class Hd_TestDriver final
   }
 
   /// Switch repr
+  HD_API
   void SetRepr(HdReprSelector const &reprSelector);
 
  private:
+
   void _Init(HdReprSelector const &reprSelector);
 
   HdEngine _engine;

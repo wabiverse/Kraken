@@ -78,6 +78,7 @@ class SdfAssetPath;
 class UsdRiMaterialAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -88,16 +89,12 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
   /// Equivalent to UsdRiMaterialAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiMaterialAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdRiMaterialAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdRiMaterialAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiMaterialAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiMaterialAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdRiMaterialAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -139,6 +136,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
   static UsdRiMaterialAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -146,6 +144,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -155,9 +154,11 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SURFACE
   // --------------------------------------------------------------------- //
@@ -177,9 +178,11 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateSurfaceAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DISPLACEMENT
   // --------------------------------------------------------------------- //
@@ -203,6 +206,7 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VOLUME
   // --------------------------------------------------------------------- //
@@ -222,9 +226,11 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateVolumeAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -321,7 +327,9 @@ class UsdRiMaterialAPI : public UsdAPISchemaBase
   /// @}
 
  private:
-  UsdShadeShader _GetSourceShaderObject(const UsdShadeOutput &output, bool ignoreBaseMaterial) const;
+
+  UsdShadeShader _GetSourceShaderObject(const UsdShadeOutput &output,
+                                        bool ignoreBaseMaterial) const;
 
   // Helper method to get the deprecated 'bxdf' output.
   UsdShadeOutput _GetBxdfOutput(const UsdPrim &materialPrim) const;

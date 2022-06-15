@@ -31,17 +31,19 @@ class HdRprDistantLight : public HdSprim
 {
 
  public:
-  HdRprDistantLight(SdfPath const &id)
-    : HdSprim(id)
-  {}
 
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  HdRprDistantLight(SdfPath const &id) : HdSprim(id) {}
+
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
   void Finalize(HdRenderParam *renderParam) override;
 
  protected:
+
   rpr::DirectionalLight *m_rprLight = nullptr;
   GfMatrix4f m_transform;
 };

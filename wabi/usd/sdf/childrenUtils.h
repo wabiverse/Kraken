@@ -39,10 +39,10 @@ WABI_NAMESPACE_BEGIN
 /// of a spec. A ChildPolicy must be provided that specifies which type
 /// of children to edit. (See childrenPolicies.h for details).
 ///
-template<class ChildPolicy>
-class Sdf_ChildrenUtils
+template<class ChildPolicy> class Sdf_ChildrenUtils
 {
  public:
+
   /// The type of the key that identifies a child. This is usually
   /// a std::string or an SdfPath.
   typedef typename ChildPolicy::KeyType KeyType;
@@ -64,7 +64,10 @@ class Sdf_ChildrenUtils
 
   // This overload is intended primarily for internal use.
   SDF_API
-  static bool CreateSpec(SdfLayer *layer, const SdfPath &childPath, SdfSpecType specType, bool inert = true);
+  static bool CreateSpec(SdfLayer *layer,
+                         const SdfPath &childPath,
+                         SdfSpecType specType,
+                         bool inert = true);
 
   /// \name Rename API
   /// @{

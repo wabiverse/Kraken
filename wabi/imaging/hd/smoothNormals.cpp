@@ -27,11 +27,12 @@
 #include "wabi/imaging/hd/vertexAdjacency.h"
 #include "wabi/imaging/hd/vtBufferSource.h"
 
+#include "wabi/imaging/hf/perfLog.h"
 #include "wabi/base/vt/array.h"
 #include "wabi/base/work/loops.h"
-#include "wabi/imaging/hf/perfLog.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 template<typename SrcVec3Type, typename DstType> class _SmoothNormalsWorker
 {

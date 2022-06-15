@@ -89,6 +89,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(GlfSimpleLightingContext);
 class UsdImagingGLEngine
 {
  public:
+
   // ---------------------------------------------------------------------
   /// \name Global State
   /// @{
@@ -408,7 +409,8 @@ class UsdImagingGLEngine
   /// GetRendererCommandDescriptors() for the same active render delegate.
   ///
   USDIMAGINGGL_API
-  bool InvokeRendererCommand(const TfToken &command, const HdCommandArgs &args = HdCommandArgs()) const;
+  bool InvokeRendererCommand(const TfToken &command,
+                             const HdCommandArgs &args = HdCommandArgs()) const;
 
   // ---------------------------------------------------------------------
   /// \name Control of background rendering threads.
@@ -492,6 +494,7 @@ class UsdImagingGLEngine
   /// @}
 
  protected:
+
   /// Open some protected methods for whitebox testing.
   friend class UsdImagingGL_UnitTestGLDrawing;
 
@@ -520,9 +523,11 @@ class UsdImagingGLEngine
                                      SdfPathVector const &roots,
                                      UsdImagingGLRenderParams const &params);
   USDIMAGINGGL_API
-  static HdxRenderTaskParams _MakeHydraUsdImagingGLRenderParams(UsdImagingGLRenderParams const &params);
+  static HdxRenderTaskParams _MakeHydraUsdImagingGLRenderParams(
+    UsdImagingGLRenderParams const &params);
   USDIMAGINGGL_API
-  static void _ComputeRenderTags(UsdImagingGLRenderParams const &params, TfTokenVector *renderTags);
+  static void _ComputeRenderTags(UsdImagingGLRenderParams const &params,
+                                 TfTokenVector *renderTags);
 
   USDIMAGINGGL_API
   void _InitializeHgiIfNecessary();
@@ -555,6 +560,7 @@ class UsdImagingGLEngine
   HdSelectionSharedPtr _GetSelection() const;
 
  protected:
+
   // private:
   // Note that any of the fields below might become private
   // in the future and subclasses should use the above getters
@@ -567,6 +573,7 @@ class UsdImagingGLEngine
   VtValue _userFramebuffer;
 
  protected:
+
   HdPluginRenderDelegateUniqueHandle _renderDelegate;
   std::unique_ptr<HdRenderIndex> _renderIndex;
 
@@ -596,6 +603,7 @@ class UsdImagingGLEngine
   std::unique_ptr<UsdImagingGLLegacyEngine> _legacyImpl;
 
  private:
+
   void _DestroyHydraObjects();
 
   std::unique_ptr<UsdImagingDelegate> _sceneDelegate;

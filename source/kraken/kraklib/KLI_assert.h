@@ -56,10 +56,12 @@ void KLI_system_backtrace(FILE *fp);
 #  else
 #    define _KLI_ASSERT_ABORT() (void)0
 #  endif
-#  define KLI_assert(a)                                                                               \
-    (void)((!(a)) ?                                                                                   \
-             ((_KLI_assert_print_backtrace(), _KLI_ASSERT_PRINT_POS(a), _KLI_ASSERT_ABORT(), NULL)) : \
-             NULL)
+#  define KLI_assert(a)                              \
+    (void)((!(a)) ? ((_KLI_assert_print_backtrace(), \
+                      _KLI_ASSERT_PRINT_POS(a),      \
+                      _KLI_ASSERT_ABORT(),           \
+                      NULL)) :                       \
+                    NULL)
 #else
 #  define KLI_assert(a) ((void)0)
 #endif

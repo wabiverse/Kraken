@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhLight final : public HdLight
 {
  public:
+
   HDPH_API
   HdPhLight(SdfPath const &id, TfToken const &lightType);
   HDPH_API
@@ -51,7 +52,9 @@ class HdPhLight final : public HdLight
 
   /// Synchronizes state from the delegate to this object.
   HDPH_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Finalizes object resources. This function might not delete resources,
   /// but it should deal with resource ownership so that the sprim is
@@ -70,6 +73,7 @@ class HdPhLight final : public HdLight
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  private:
+
   // Converts area lights (sphere lights and distant lights) into
   // glfSimpleLights and inserts them in the dictionary so
   // SimpleLightTask can use them later on as if they were regular lights.
@@ -81,6 +85,7 @@ class HdPhLight final : public HdLight
   GlfSimpleLight _PrepareDomeLight(SdfPath const &id, HdSceneDelegate *sceneDelegate);
 
  private:
+
   // Stores the internal light type of this light.
   TfToken _lightType;
 

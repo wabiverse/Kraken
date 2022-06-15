@@ -69,6 +69,7 @@ class TraceCollectionAvailable;
 class TraceReporter : public TraceReporterBase
 {
  public:
+
   TF_MALLOC_TAG_NEW("Trace", "TraceReporter");
 
   using This = TraceReporter;
@@ -189,14 +190,17 @@ class TraceReporter : public TraceReporterBase
   TRACE_API static TraceAggregateNode::Id CreateValidEventId();
 
  protected:
+
   TRACE_API TraceReporter(const std::string &label, DataSourcePtr dataSource);
 
  private:
+
   void _ProcessCollection(const TraceReporterBase::CollectionPtr &) override;
   void _RebuildEventAndAggregateTrees();
   void _PrintTimes(std::ostream &s);
 
  private:
+
   std::string _label;
 
   bool _groupByFunction;

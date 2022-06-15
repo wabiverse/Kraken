@@ -26,6 +26,7 @@ WABI_NAMESPACE_BEGIN
 class RPRUSD_API RprUsdTextureData
 {
  public:
+
   static std::shared_ptr<RprUsdTextureData> New(std::string const &filepath);
 
   uint8_t *GetData() const;
@@ -41,6 +42,7 @@ class RPRUSD_API RprUsdTextureData
   GLMetadata GetGLMetadata() const;
 
  private:
+
   HioImage::StorageSpec _hioStorageSpec;
   std::unique_ptr<uint8_t[]> _data;
 };

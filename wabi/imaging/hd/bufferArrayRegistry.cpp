@@ -24,9 +24,13 @@
 #include "wabi/imaging/hd/bufferArrayRegistry.h"
 #include "wabi/imaging/hd/bufferArray.h"
 
+#include <tuple>
+
 WABI_NAMESPACE_BEGIN
 
+
 HdBufferArrayRegistry::HdBufferArrayRegistry() : _entries() {}
+
 
 HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
   HdAggregationStrategy *strategy,
@@ -52,12 +56,17 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
                                                                                usageHint);
 
   // We use insert to do a find and insert operation
-  std::pair<_BufferArrayIndex::iterator, bool> result = _entries.insert(
-    std::make_pair(aggrId, _Entry()));
+  auto iter = _entries.find(aggrId);
+  bool inserted = false;
+  if (iter == _entries.end()) {
+    // _Entry()'s dtor is very expensive due to std::list member, so avoid
+    // constructing one unless we didn't find one.
+    std::tie(iter, inserted) = _entries.emplace(aggrId, _Entry());
+  }
 
-  _Entry &entry = (result.first)->second;
+  _Entry &entry = iter->second;
 
-  if (result.second) {
+  if (inserted) {
     // We just created a new entry so make sure it has a buffer in it.
     _InsertNewBufferArray(entry, HdBufferArraySharedPtr(), strategy, role, bufferSpecs, usageHint);
   } else {
@@ -70,6 +79,7 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
     std::unique_lock<std::mutex> lock(entry.lock);
     entry.emptyCondition.wait(lock, pred);
   }
+
 
   HdBufferArrayRangeSharedPtr range = strategy->CreateBufferArrayRange();
 
@@ -104,6 +114,7 @@ HdBufferArrayRangeSharedPtr HdBufferArrayRegistry::AllocateRange(
 
   return range;
 }
+
 
 void HdBufferArrayRegistry::ReallocateAll(HdAggregationStrategy *strategy)
 {
@@ -242,6 +253,7 @@ void HdBufferArrayRegistry::_InsertNewBufferArray(_Entry &entry,
   entry.emptyCondition.notify_all();
 }
 
+
 HD_API
 std::ostream &operator<<(std::ostream &out, const HdBufferArrayRegistry &self)
 {
@@ -256,7 +268,9 @@ std::ostream &operator<<(std::ostream &out, const HdBufferArrayRegistry &self)
     }
   }
 
+
   return out;
 }
+
 
 WABI_NAMESPACE_END

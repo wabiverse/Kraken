@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class ArAssetInfo
 {
  public:
+
   /// Version of the resolved asset, if any.
   std::string version;
 

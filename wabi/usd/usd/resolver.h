@@ -46,6 +46,7 @@ class PcpPrimIndex;
 class Usd_Resolver
 {
  public:
+
   /// Constructs a resolver with the given \p index. The index is
   /// held for the duration of the resolver's lifetime. If \p skipEmptyNodes
   /// is \c true, the resolver will skip over nodes that provide no opinions
@@ -111,8 +112,7 @@ class Usd_Resolver
   /// unnecessary copies and ref-count bumps.
   struct Position
   {
-    Position()
-    {}
+    Position() {}
 
     PcpNodeRef GetNode() const
     {
@@ -132,6 +132,7 @@ class Usd_Resolver
     }
 
    private:
+
     friend class Usd_Resolver;
 
     Position(const PcpNodeIterator &curNode, const SdfLayerRefPtrVector::const_iterator &curLayer)
@@ -149,6 +150,7 @@ class Usd_Resolver
   Position GetPosition() const;
 
  private:
+
   void _Init();
   void _SkipEmptyNodes();
 

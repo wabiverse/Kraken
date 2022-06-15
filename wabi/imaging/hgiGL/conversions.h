@@ -49,6 +49,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLConversions final
 {
  public:
+
   HGIGL_API
   static void GetFormat(HgiFormat inFormat,
                         GLenum *outFormat,

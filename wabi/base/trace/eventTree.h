@@ -65,6 +65,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(TraceEventTree);
 class TraceEventTree : public TfRefBase, public TfWeakBase
 {
  public:
+
   using CounterValues = std::vector<std::pair<TraceEvent::TimeStamp, double>>;
   using CounterValuesMap = std::unordered_map<TfToken, CounterValues, TfToken::HashFunctor>;
   using CounterMap = std::unordered_map<TfToken, double, TfToken::HashFunctor>;
@@ -113,7 +114,8 @@ class TraceEventTree : public TfRefBase, public TfWeakBase
   /// Writes a JSON object representing the data in the call tree that
   /// conforms to the Chrome Trace format.
   using ExtraFieldFn = std::function<void(JsWriter &)>;
-  TRACE_API void WriteChromeTraceObject(JsWriter &writer, ExtraFieldFn extraFields = ExtraFieldFn()) const;
+  TRACE_API void WriteChromeTraceObject(JsWriter &writer,
+                                        ExtraFieldFn extraFields = ExtraFieldFn()) const;
 
   /// Adds the contexts of \p tree to this tree.
   TRACE_API void Merge(const TraceEventTreeRefPtr &tree);
@@ -122,9 +124,8 @@ class TraceEventTree : public TfRefBase, public TfWeakBase
   TRACE_API TraceEventTreeRefPtr Add(const TraceCollection &collection);
 
  private:
-  TraceEventTree(TraceEventNodeRefPtr root)
-    : _root(root)
-  {}
+
+  TraceEventTree(TraceEventNodeRefPtr root) : _root(root) {}
 
   TraceEventTree(TraceEventNodeRefPtr root, CounterValuesMap counters, MarkerValuesMap markers)
     : _root(root),

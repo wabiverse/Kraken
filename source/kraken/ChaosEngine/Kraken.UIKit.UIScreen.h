@@ -36,6 +36,7 @@ namespace winrt::Kraken::UIKit::implementation
     winrt::AppWindow AppWindow();
 
    private:
+
     winrt::AppWindow GetAppWindowForCurrentWindow();
 
     winrt::AppWindow m_mainAppWindow{nullptr};
@@ -50,6 +51,6 @@ namespace winrt::Kraken::factory_implementation
 {
   struct UIScreen : UIScreenT<UIScreen, implementation::UIScreen>
   {};
-}  // namespace winrt::Kraken::UIKit::factory_implementation
+}  // namespace winrt::Kraken::factory_implementation
 
 #endif /* WITH_WINUI3 */

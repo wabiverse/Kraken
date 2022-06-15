@@ -38,6 +38,7 @@ class HdPhDrawItem;
 class HdPhVolume final : public HdVolume
 {
  public:
+
   HDPH_API
   HdPhVolume(SdfPath const &id);
   HDPH_API
@@ -66,6 +67,7 @@ class HdPhVolume final : public HdVolume
   static const float defaultMaxTextureMemoryPerField;
 
  protected:
+
   void _InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) override;
 
   HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
@@ -76,6 +78,7 @@ class HdPhVolume final : public HdVolume
                    HdDirtyBits *dirtyBitsState);
 
  private:
+
   void _UpdateDrawItem(HdSceneDelegate *sceneDelegate,
                        HdRenderParam *renderParam,
                        HdPhDrawItem *drawItem,

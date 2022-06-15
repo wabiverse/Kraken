@@ -38,15 +38,10 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class Fn>
-struct Work_DetachedTask
+template<class Fn> struct Work_DetachedTask
 {
-  explicit Work_DetachedTask(Fn &&fn)
-    : _fn(std::move(fn))
-  {}
-  explicit Work_DetachedTask(Fn const &fn)
-    : _fn(fn)
-  {}
+  explicit Work_DetachedTask(Fn &&fn) : _fn(std::move(fn)) {}
+  explicit Work_DetachedTask(Fn const &fn) : _fn(fn) {}
   void operator()()
   {
     TfErrorMark m;
@@ -55,6 +50,7 @@ struct Work_DetachedTask
   }
 
  private:
+
   Fn _fn;
 };
 
@@ -66,17 +62,14 @@ void Work_EnsureDetachedTaskProgress();
 
 /// Invoke \p fn asynchronously, discard any errors it produces, and provide
 /// no way to wait for it to complete.
-template<class Fn>
-void WorkRunDetachedTask(Fn &&fn)
+template<class Fn> void WorkRunDetachedTask(Fn &&fn)
 {
   using FnType = typename std::remove_reference<Fn>::type;
   Work_DetachedTask<FnType> task(std::forward<Fn>(fn));
-  if (WorkHasConcurrency())
-  {
+  if (WorkHasConcurrency()) {
     Work_GetDetachedDispatcher().Run(std::move(task));
     Work_EnsureDetachedTaskProgress();
-  } else
-  {
+  } else {
     task();
   }
 }

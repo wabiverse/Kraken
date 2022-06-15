@@ -112,6 +112,7 @@ using HgiUniquePtr = std::unique_ptr<class Hgi>;
 class Hgi
 {
  public:
+
   HGI_API
   Hgi();
 
@@ -238,7 +239,8 @@ class Hgi
   /// Create a new resource binding object.
   /// Thread safety: Creation must happen on main thread. See notes above.
   HGI_API
-  virtual HgiResourceBindingsHandle CreateResourceBindings(HgiResourceBindingsDesc const &desc) = 0;
+  virtual HgiResourceBindingsHandle CreateResourceBindings(
+    HgiResourceBindingsDesc const &desc) = 0;
 
   /// Destroy a resource binding object.
   /// Thread safety: Destruction must happen on main thread. See notes above.
@@ -248,7 +250,8 @@ class Hgi
   /// Create a new graphics pipeline state object.
   /// Thread safety: Creation must happen on main thread. See notes above.
   HGI_API
-  virtual HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) = 0;
+  virtual HgiGraphicsPipelineHandle CreateGraphicsPipeline(
+    HgiGraphicsPipelineDesc const &pipeDesc) = 0;
 
   /// Destroy a graphics pipeline state object.
   /// Thread safety: Destruction must happen on main thread. See notes above.
@@ -258,7 +261,8 @@ class Hgi
   /// Create a new compute pipeline state object.
   /// Thread safety: Creation must happen on main thread. See notes above.
   HGI_API
-  virtual HgiComputePipelineHandle CreateComputePipeline(HgiComputePipelineDesc const &pipeDesc) = 0;
+  virtual HgiComputePipelineHandle CreateComputePipeline(
+    HgiComputePipelineDesc const &pipeDesc) = 0;
 
   /// Destroy a compute pipeline state object.
   /// Thread safety: Destruction must happen on main thread. See notes above.
@@ -286,6 +290,7 @@ class Hgi
   virtual void EndFrame() = 0;
 
  protected:
+
   // Returns a unique id for handle creation.
   // Thread safety: Thread-safe atomic increment.
   HGI_API
@@ -298,6 +303,7 @@ class Hgi
   virtual bool _SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait);
 
  private:
+
   Hgi &operator=(const Hgi &) = delete;
   Hgi(const Hgi &) = delete;
 
@@ -310,13 +316,14 @@ class Hgi
 class HgiFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual Hgi *New() const = 0;
 };
 
-template<class T>
-class HgiFactory : public HgiFactoryBase
+template<class T> class HgiFactory : public HgiFactoryBase
 {
  public:
+
   Hgi *New() const
   {
     return new T;

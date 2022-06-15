@@ -47,6 +47,7 @@ using HgiGLShaderSectionUniquePtrVector = std::vector<std::unique_ptr<HgiGLShade
 class HgiGLShaderGenerator final : public HgiShaderGenerator
 {
  public:
+
   HGIGL_API
   explicit HgiGLShaderGenerator(const HgiShaderFunctionDesc &descriptor);
 
@@ -55,10 +56,12 @@ class HgiGLShaderGenerator final : public HgiShaderGenerator
   HgiGLShaderSectionUniquePtrVector *GetShaderSections();
 
  protected:
+
   HGIGL_API
   void _Execute(std::ostream &ss, const std::string &originalShaderShader) override;
 
  private:
+
   HgiGLShaderGenerator() = delete;
   HgiGLShaderGenerator &operator=(const HgiGLShaderGenerator &) = delete;
   HgiGLShaderGenerator(const HgiGLShaderGenerator &) = delete;
@@ -70,7 +73,8 @@ class HgiGLShaderGenerator final : public HgiShaderGenerator
   void _WriteConstantParams(const HgiShaderFunctionParamDescVector &parameters);
 
   // For writing shader inputs and outputs who are very similarly written
-  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters, const std::string &qualifier);
+  void _WriteInOuts(const HgiShaderFunctionParamDescVector &parameters,
+                    const std::string &qualifier);
 
   HgiGLShaderSectionUniquePtrVector _shaderSections;
 };

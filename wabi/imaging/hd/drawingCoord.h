@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_DRAWING_COORD_H
 #define WABI_IMAGING_HD_DRAWING_COORD_H
 
-#include "wabi/base/tf/diagnostic.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
+#include "wabi/base/tf/diagnostic.h"
 #include <stdint.h>
 
 WABI_NAMESPACE_BEGIN
@@ -83,6 +83,7 @@ WABI_NAMESPACE_BEGIN
 class HdDrawingCoord
 {
  public:
+
   static const int CustomSlotsBegin = 8;
   static const int DefaultNumSlots = 3; /* Constant, Vertex, Topology */
   static const int Unassigned = -1;
@@ -177,6 +178,7 @@ class HdDrawingCoord
   }
 
  private:
+
   int8_t _constantPrimvar;
   int8_t _vertexPrimvar;
   int8_t _topology;
@@ -187,6 +189,7 @@ class HdDrawingCoord
   int8_t _varyingPrimvar;
   int8_t _instancePrimvar;
 };
+
 
 WABI_NAMESPACE_END
 

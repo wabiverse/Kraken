@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLBuffer final : public HgiBuffer
 {
  public:
+
   HGIGL_API
   ~HgiGLBuffer() override;
 
@@ -62,12 +63,14 @@ class HgiGLBuffer final : public HgiBuffer
   }
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
   HgiGLBuffer(HgiBufferDesc const &desc);
 
  private:
+
   HgiGLBuffer() = delete;
   HgiGLBuffer &operator=(const HgiGLBuffer &) = delete;
   HgiGLBuffer(const HgiGLBuffer &) = delete;

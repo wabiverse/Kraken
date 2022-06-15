@@ -47,41 +47,31 @@ WABI_NAMESPACE_BEGIN
 class SdfAllowed : private boost::equality_comparable<SdfAllowed>
 {
  private:
+
   typedef boost::optional<std::string> _State;
 
  public:
+
   typedef std::pair<bool, std::string> Pair;
 
   /// Construct \c true.
-  SdfAllowed()
-  {}
+  SdfAllowed() {}
   /// Construct \c true.
   SdfAllowed(bool x)
   {
     TF_AXIOM(x);
   }
   /// Construct \c false with annotation \p whyNot.
-  SdfAllowed(const char *whyNot)
-    : _state(std::string(whyNot))
-  {}
+  SdfAllowed(const char *whyNot) : _state(std::string(whyNot)) {}
   /// Construct \c false with annotation \p whyNot.
-  SdfAllowed(const std::string &whyNot)
-    : _state(whyNot)
-  {}
+  SdfAllowed(const std::string &whyNot) : _state(whyNot) {}
   /// Construct in \p condition with annotation \p whyNot if \c false.
-  SdfAllowed(bool condition, const char *whyNot)
-    : _state(!condition, std::string(whyNot))
-  {}
+  SdfAllowed(bool condition, const char *whyNot) : _state(!condition, std::string(whyNot)) {}
   /// Construct in \p condition with annotation \p whyNot if \c false.
-  SdfAllowed(bool condition, const std::string &whyNot)
-    : _state(!condition, whyNot)
-  {}
+  SdfAllowed(bool condition, const std::string &whyNot) : _state(!condition, whyNot) {}
   /// Construct from bool,string pair \p x.
-  SdfAllowed(const Pair &x)
-    : _state(!x.first, x.second)
-  {}
-  ~SdfAllowed()
-  {}
+  SdfAllowed(const Pair &x) : _state(!x.first, x.second) {}
+  ~SdfAllowed() {}
 
 #if !defined(doxygen)
   typedef _State SdfAllowed::*UnspecifiedBoolType;
@@ -114,8 +104,7 @@ class SdfAllowed : private boost::equality_comparable<SdfAllowed>
   /// and returns \c false.
   bool IsAllowed(std::string *whyNot) const
   {
-    if (whyNot && _state)
-    {
+    if (whyNot && _state) {
       *whyNot = *_state;
     }
     return !_state;
@@ -129,6 +118,7 @@ class SdfAllowed : private boost::equality_comparable<SdfAllowed>
   }
 
  private:
+
   _State _state;
 };
 

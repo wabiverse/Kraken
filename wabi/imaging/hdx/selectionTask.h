@@ -60,6 +60,7 @@ using HdBufferArrayRangeSharedPtr = std::shared_ptr<class HdBufferArrayRange>;
 class HdxSelectionTask : public HdTask
 {
  public:
+
   HDX_API
   HdxSelectionTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -79,6 +80,7 @@ class HdxSelectionTask : public HdTask
   void Execute(HdTaskContext *ctx) override;
 
  private:
+
   int _lastVersion;
   bool _hasSelection;
   HdxSelectionTaskParams _params;

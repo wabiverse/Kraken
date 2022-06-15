@@ -59,16 +59,13 @@ WABI_NAMESPACE_BEGIN
 /// Additionally, the table lets one create additional string aliases for a
 /// given entry.
 ///
-template<class VALUE>
-class TfTypeInfoMap : public boost::noncopyable
+template<class VALUE> class TfTypeInfoMap : public boost::noncopyable
 {
  public:
+
   // Default constructor passes 0 to TfHashMap constructors to keep size
   // small. This is good since each defined TfType has one of these maps in it.
-  TfTypeInfoMap()
-    : _nameMap(0),
-      _stringCache(0)
-  {}
+  TfTypeInfoMap() : _nameMap(0), _stringCache(0) {}
 
   /// Return true if the given key is present in the map.
   bool Exists(const std::type_info &key) const
@@ -91,8 +88,7 @@ class TfTypeInfoMap : public boost::noncopyable
     typename _TypeInfoCache::const_iterator i = _typeInfoCache.find(&key);
     if (i != _typeInfoCache.end())
       return &i->second->value;
-    else if (VALUE *v = Find(key.name()))
-    {
+    else if (VALUE *v = Find(key.name())) {
       return v;
     }
     return NULL;
@@ -103,14 +99,12 @@ class TfTypeInfoMap : public boost::noncopyable
   /// cache the result if it falls back to a string based lookup.  In that
   /// case before updating the cache it will call the functor \p upgrader
   /// to allow the client to upgrade any lock to exclusive access.
-  template<class Upgrader>
-  VALUE *Find(const std::type_info &key, Upgrader &upgrader)
+  template<class Upgrader> VALUE *Find(const std::type_info &key, Upgrader &upgrader)
   {
     typename _TypeInfoCache::const_iterator i = _typeInfoCache.find(&key);
     if (i != _typeInfoCache.end())
       return &i->second->value;
-    else if (VALUE *v = Find(key.name()))
-    {
+    else if (VALUE *v = Find(key.name())) {
       upgrader();
       _CreateAlias(key, key.name());
       return v;
@@ -138,8 +132,7 @@ class TfTypeInfoMap : public boost::noncopyable
   {
     if (VALUE *v = Find(key))
       *v = value;
-    else
-    {
+    else {
       Set(key.name(), value);
       _CreateAlias(key, key.name());
     }
@@ -156,8 +149,7 @@ class TfTypeInfoMap : public boost::noncopyable
 
     if (i != _stringCache.end())
       i->second->value = value;
-    else
-    {
+    else {
       _Entry *e = &_nameMap[key];
       e->primaryKey = key;
       e->value = value;
@@ -208,13 +200,11 @@ class TfTypeInfoMap : public boost::noncopyable
 
     _Entry *e = i->second;
 
-    for (TfIterator<_TypeInfoList> j = e->typeInfoAliases; j; ++j)
-    {
+    for (TfIterator<_TypeInfoList> j = e->typeInfoAliases; j; ++j) {
       _typeInfoCache.erase(*j);
     }
 
-    for (TfIterator<std::list<std::string>> j = e->stringAliases; j; ++j)
-    {
+    for (TfIterator<std::list<std::string>> j = e->stringAliases; j; ++j) {
       _stringCache.erase(*j);
     }
 
@@ -222,6 +212,7 @@ class TfTypeInfoMap : public boost::noncopyable
   }
 
  private:
+
   typedef std::list<const std::type_info *> _TypeInfoList;
 
   struct _Entry
@@ -241,8 +232,7 @@ class TfTypeInfoMap : public boost::noncopyable
 
   void _CreateAlias(const std::type_info &alias, _Entry *e)
   {
-    if (_typeInfoCache.find(&alias) == _typeInfoCache.end())
-    {
+    if (_typeInfoCache.find(&alias) == _typeInfoCache.end()) {
       _typeInfoCache[&alias] = e;
       e->typeInfoAliases.push_back(&alias);
     }
@@ -250,8 +240,7 @@ class TfTypeInfoMap : public boost::noncopyable
 
   void _CreateAlias(const std::string &alias, _Entry *e)
   {
-    if (_stringCache.find(alias) == _stringCache.end())
-    {
+    if (_stringCache.find(alias) == _stringCache.end()) {
       _stringCache[alias] = e;
       e->stringAliases.push_back(alias);
     }

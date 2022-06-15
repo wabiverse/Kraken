@@ -24,9 +24,9 @@
 
 #include "wabi/imaging/hd/rendererPluginHandle.h"
 
-#include "wabi/imaging/hd/pluginRenderDelegateUniqueHandle.h"
 #include "wabi/imaging/hd/rendererPlugin.h"
 #include "wabi/imaging/hd/rendererPluginRegistry.h"
+#include "wabi/imaging/hd/pluginRenderDelegateUniqueHandle.h"
 
 WABI_NAMESPACE_BEGIN
 

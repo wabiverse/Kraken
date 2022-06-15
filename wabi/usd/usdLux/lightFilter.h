@@ -80,6 +80,7 @@ class SdfAssetPath;
 class UsdLuxLightFilter : public UsdGeomXformable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -90,16 +91,12 @@ class UsdLuxLightFilter : public UsdGeomXformable
   /// Equivalent to UsdLuxLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxLightFilter(const UsdPrim &prim = UsdPrim())
-    : UsdGeomXformable(prim)
-  {}
+  explicit UsdLuxLightFilter(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim) {}
 
   /// Construct a UsdLuxLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxLightFilter(const UsdSchemaBase &schemaObj)
-    : UsdGeomXformable(schemaObj)
-  {}
+  explicit UsdLuxLightFilter(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -149,6 +146,7 @@ class UsdLuxLightFilter : public UsdGeomXformable
   static UsdLuxLightFilter Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -156,6 +154,7 @@ class UsdLuxLightFilter : public UsdGeomXformable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -165,9 +164,11 @@ class UsdLuxLightFilter : public UsdGeomXformable
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

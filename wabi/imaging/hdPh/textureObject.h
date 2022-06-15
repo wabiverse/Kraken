@@ -58,6 +58,7 @@ using HdPhTextureObjectSharedPtr = std::shared_ptr<class HdPhTextureObject>;
 class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
 {
  public:
+
   /// Get texture identifier
   ///
   const HdPhTextureIdentifier &GetTextureIdentifier() const
@@ -97,6 +98,7 @@ class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
   virtual ~HdPhTextureObject();
 
  protected:
+
   HdPhTextureObject(const HdPhTextureIdentifier &textureId,
                     HdPh_TextureObjectRegistry *textureObjectRegistry);
 
@@ -113,7 +115,8 @@ class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
   bool _GetPremultiplyAlpha(const HdPhSubtextureIdentifier *const subId) const;
 
   HDPH_API
-  HioImage::SourceColorSpace _GetSourceColorSpace(const HdPhSubtextureIdentifier *const subId) const;
+  HioImage::SourceColorSpace _GetSourceColorSpace(
+    const HdPhSubtextureIdentifier *const subId) const;
 
   /// Load texture to CPU (thread-safe)
   ///
@@ -142,6 +145,7 @@ class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
   void _SubtractFromTotalTextureMemory(const HgiTextureHandle &texture);
 
  private:
+
   friend class HdPh_TextureObjectRegistry;
 
   HdPh_TextureObjectRegistry *const _textureObjectRegistry;
@@ -156,6 +160,7 @@ class HdPhTextureObject : public std::enable_shared_from_this<HdPhTextureObject>
 class HdPhUvTextureObject : public HdPhTextureObject
 {
  public:
+
   ~HdPhUvTextureObject() override;
 
   /// Get the handle to the actual GPU resource.
@@ -179,6 +184,7 @@ class HdPhUvTextureObject : public HdPhTextureObject
   HdTextureType GetTextureType() const override final;
 
  protected:
+
   HdPhUvTextureObject(const HdPhTextureIdentifier &textureId,
                       HdPh_TextureObjectRegistry *textureObjectRegistry);
 
@@ -192,6 +198,7 @@ class HdPhUvTextureObject : public HdPhTextureObject
   void _DestroyTexture();
 
  private:
+
   std::pair<HdWrap, HdWrap> _wrapParameters;
   std::unique_ptr<HdPhTextureCpuData> _cpuData;
   HgiTextureHandle _gpuTexture;
@@ -204,6 +211,7 @@ class HdPhUvTextureObject : public HdPhTextureObject
 class HdPhAssetUvTextureObject final : public HdPhUvTextureObject
 {
  public:
+
   HDPH_API
   HdPhAssetUvTextureObject(const HdPhTextureIdentifier &textureId,
                            HdPh_TextureObjectRegistry *textureObjectRegistry);
@@ -215,6 +223,7 @@ class HdPhAssetUvTextureObject final : public HdPhUvTextureObject
   bool IsValid() const override;
 
  protected:
+
   HDPH_API
   void _Load() override;
 
@@ -229,6 +238,7 @@ class HdPhAssetUvTextureObject final : public HdPhUvTextureObject
 class HdPhFieldTextureObject final : public HdPhTextureObject
 {
  public:
+
   HDPH_API
   HdPhFieldTextureObject(const HdPhTextureIdentifier &textureId,
                          HdPh_TextureObjectRegistry *textureObjectRegistry);
@@ -270,6 +280,7 @@ class HdPhFieldTextureObject final : public HdPhTextureObject
   HdTextureType GetTextureType() const override;
 
  protected:
+
   HDPH_API
   void _Load() override;
 
@@ -277,14 +288,14 @@ class HdPhFieldTextureObject final : public HdPhTextureObject
   void _Commit() override;
 
  private:
+
   std::unique_ptr<HdPhTextureCpuData> _cpuData;
   GfBBox3d _bbox;
   GfMatrix4d _samplingTransform;
   HgiTextureHandle _gpuTexture;
 };
 
-template<HdTextureType textureType>
-struct HdPh_TypedTextureObjectHelper;
+template<HdTextureType textureType> struct HdPh_TypedTextureObjectHelper;
 
 /// \class HdPhTypedTextureObject
 ///
@@ -294,14 +305,12 @@ struct HdPh_TypedTextureObjectHelper;
 template<HdTextureType textureType>
 using HdPhTypedTextureObject = typename HdPh_TypedTextureObjectHelper<textureType>::type;
 
-template<>
-struct HdPh_TypedTextureObjectHelper<HdTextureType::Uv>
+template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Uv>
 {
   using type = HdPhUvTextureObject;
 };
 
-template<>
-struct HdPh_TypedTextureObjectHelper<HdTextureType::Field>
+template<> struct HdPh_TypedTextureObjectHelper<HdTextureType::Field>
 {
   using type = HdPhFieldTextureObject;
 };

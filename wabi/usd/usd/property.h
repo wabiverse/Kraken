@@ -54,10 +54,9 @@ class UsdProperty;
 class UsdProperty : public UsdObject
 {
  public:
+
   /// Construct an invalid property.
-  UsdProperty()
-    : UsdObject(_Null<UsdProperty>())
-  {}
+  UsdProperty() : UsdObject(_Null<UsdProperty>()) {}
 
   // --------------------------------------------------------------------- //
   /// \name Object and Namespace Accessors
@@ -277,10 +276,8 @@ class UsdProperty : public UsdObject
   UsdProperty FlattenTo(const UsdProperty &property) const;
 
  protected:
-  template<class Derived>
-  UsdProperty(_Null<Derived>)
-    : UsdObject(_Null<Derived>())
-  {}
+
+  template<class Derived> UsdProperty(_Null<Derived>) : UsdObject(_Null<Derived>()) {}
 
   // Gets the targets of the given spec type. Returns true if an authored
   // opinion is found and no composition errors occured. If foundErrors is
@@ -288,6 +285,7 @@ class UsdProperty : public UsdObject
   bool _GetTargets(SdfSpecType specType, SdfPathVector *out, bool *foundErrors = nullptr) const;
 
  private:
+
   friend class UsdAttribute;
   friend class UsdObject;
   friend class UsdPrim;

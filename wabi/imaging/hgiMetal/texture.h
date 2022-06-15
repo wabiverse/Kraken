@@ -48,6 +48,7 @@ class HgiMetal;
 class HgiMetalTexture final : public HgiTexture
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalTexture() override;
 
@@ -64,6 +65,7 @@ class HgiMetalTexture final : public HgiTexture
   id<MTLTexture> GetTextureId() const;
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API
@@ -73,6 +75,7 @@ class HgiMetalTexture final : public HgiTexture
   HgiMetalTexture(HgiMetal *hgi, HgiTextureViewDesc const &desc);
 
  private:
+
   HgiMetalTexture() = delete;
   HgiMetalTexture &operator=(const HgiMetalTexture &) = delete;
   HgiMetalTexture(const HgiMetalTexture &) = delete;

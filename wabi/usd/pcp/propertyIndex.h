@@ -48,8 +48,7 @@ class PcpCache;
 ///
 struct Pcp_PropertyInfo
 {
-  Pcp_PropertyInfo()
-  {}
+  Pcp_PropertyInfo() {}
   Pcp_PropertyInfo(const SdfPropertySpecHandle &prop, const PcpNodeRef &node)
     : propertySpec(prop),
       originatingNode(node)
@@ -68,6 +67,7 @@ struct Pcp_PropertyInfo
 class PcpPropertyIndex
 {
  public:
+
   /// Construct an empty property index.
   PCP_API
   PcpPropertyIndex();
@@ -105,6 +105,7 @@ class PcpPropertyIndex
   size_t GetNumLocalSpecs() const;
 
  private:
+
   friend class PcpPropertyIterator;
   friend class Pcp_PropertyIndexer;
 

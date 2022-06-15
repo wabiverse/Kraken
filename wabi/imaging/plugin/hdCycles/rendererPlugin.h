@@ -36,6 +36,7 @@ WABI_NAMESPACE_BEGIN
 class HdCyclesRendererPlugin final : public HdRendererPlugin
 {
  public:
+
   /**
    * @brief Use default constructor
    *
@@ -72,6 +73,7 @@ class HdCyclesRendererPlugin final : public HdRendererPlugin
   bool IsSupported() const override;
 
  private:
+
   /**
    * @brief This class does not support copying
    *

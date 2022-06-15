@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class HdArnoldMaterial : public HdMaterial
 {
  public:
+
   /// Constructor for HdArnoldMaterial.
   ///
   /// @param renderDelegate Pointer to the Render Delegate.
@@ -65,7 +66,9 @@ class HdArnoldMaterial : public HdMaterial
   /// @param renderPaaram Pointer to a HdArnoldRenderParam instance.
   /// @param dirtyBits Dirty Bits to sync.
   HDARNOLD_API
-  void Sync(HdSceneDelegate *sceneDelegate, HdRenderParam *renderParam, HdDirtyBits *dirtyBits) override;
+  void Sync(HdSceneDelegate *sceneDelegate,
+            HdRenderParam *renderParam,
+            HdDirtyBits *dirtyBits) override;
 
   /// Returns the initial Dirty Bits for the Primitive.
   HDARNOLD_API
@@ -90,14 +93,12 @@ class HdArnoldMaterial : public HdMaterial
   AtNode *GetVolumeShader() const;
 
  protected:
+
   /// Utility struct to store Translated Materials.
   struct MaterialData
   {
     /// Constructor for emplace functions.
-    MaterialData(AtNode *_node, bool _updated)
-      : node(_node),
-        updated(_updated)
-    {}
+    MaterialData(AtNode *_node, bool _updated) : node(_node), updated(_updated) {}
     /// Pointer to the Arnold Node.
     AtNode *node = nullptr;
     /// Boolean to store if the material has been updated or not.

@@ -37,6 +37,7 @@ using HioGlslfxSharedPtr = std::shared_ptr<class HioGlslfx>;
 class HdPhGLSLFXShader final : public HdPhSurfaceShader
 {
  public:
+
   HDPH_API
   HdPhGLSLFXShader(HioGlslfxSharedPtr const &glslfx);
   HDPH_API
@@ -47,6 +48,7 @@ class HdPhGLSLFXShader final : public HdPhSurfaceShader
   void Reload() override;
 
  private:
+
   HioGlslfxSharedPtr _glslfx;
 };
 

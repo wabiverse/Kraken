@@ -69,6 +69,7 @@ class SdfAssetPath;
 class UsdVolFieldAsset : public UsdVolFieldBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -78,16 +79,12 @@ class UsdVolFieldAsset : public UsdVolFieldBase
   /// Equivalent to UsdVolFieldAsset::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdVolFieldAsset(const UsdPrim &prim = UsdPrim())
-    : UsdVolFieldBase(prim)
-  {}
+  explicit UsdVolFieldAsset(const UsdPrim &prim = UsdPrim()) : UsdVolFieldBase(prim) {}
 
   /// Construct a UsdVolFieldAsset on the prim held by \p schemaObj .
   /// Should be preferred over UsdVolFieldAsset(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdVolFieldAsset(const UsdSchemaBase &schemaObj)
-    : UsdVolFieldBase(schemaObj)
-  {}
+  explicit UsdVolFieldAsset(const UsdSchemaBase &schemaObj) : UsdVolFieldBase(schemaObj) {}
 
   /// Destructor.
   USDVOL_API
@@ -112,6 +109,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase
   static UsdVolFieldAsset Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -119,6 +117,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDVOL_API
@@ -128,9 +127,11 @@ class UsdVolFieldAsset : public UsdVolFieldBase
 
   // override SchemaBase virtuals.
   USDVOL_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FILEPATH
   // --------------------------------------------------------------------- //
@@ -157,9 +158,11 @@ class UsdVolFieldAsset : public UsdVolFieldBase
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDVOL_API
-  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FIELDNAME
   // --------------------------------------------------------------------- //
@@ -184,6 +187,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FIELDINDEX
   // --------------------------------------------------------------------- //
@@ -210,6 +214,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FIELDDATATYPE
   // --------------------------------------------------------------------- //
@@ -237,6 +242,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VECTORDATAROLEHINT
   // --------------------------------------------------------------------- //
@@ -264,6 +270,7 @@ class UsdVolFieldAsset : public UsdVolFieldBase
                                             bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

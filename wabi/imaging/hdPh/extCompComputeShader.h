@@ -60,6 +60,7 @@ class HdExtComputation;
 class HdPh_ExtCompComputeShader final : public HdPhShaderCode
 {
  public:
+
   HDPH_API
   HdPh_ExtCompComputeShader(HdExtComputation const *extComp);
 
@@ -95,6 +96,7 @@ class HdPh_ExtCompComputeShader final : public HdPhShaderCode
   SdfPath const &GetExtComputationId() const;
 
  private:
+
   // No copying
   HdPh_ExtCompComputeShader(const HdPh_ExtCompComputeShader &) = delete;
   HdPh_ExtCompComputeShader &operator=(const HdPh_ExtCompComputeShader &) = delete;

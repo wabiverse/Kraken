@@ -43,6 +43,7 @@ WABI_NAMESPACE_BEGIN
 class UsdDracoExportTranslator
 {
  public:
+
   /// Translates USD mesh to Draco mesh and returns true on success.
   static bool Translate(const UsdGeomMesh &usdMesh,
                         draco::Mesh *dracoMesh,
@@ -58,6 +59,7 @@ class UsdDracoExportTranslator
     const UsdGeomPrimvar &primvar);
 
  private:
+
   UsdDracoExportTranslator(const UsdGeomMesh &usdMesh, draco::Mesh *dracoMesh);
   bool _Translate(UsdDracoFlag<bool> preservePolygons,
                   UsdDracoFlag<bool> preservePositionOrder,
@@ -82,6 +84,7 @@ class UsdDracoExportTranslator
   static bool _IsNewEdge(size_t triCount, size_t triIndex, size_t triCorner);
 
  private:
+
   const UsdGeomMesh &_usdMesh;
   draco::Mesh *_dracoMesh;
 

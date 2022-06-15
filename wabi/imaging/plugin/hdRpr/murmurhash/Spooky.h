@@ -45,6 +45,7 @@ typedef uint8_t uint8;
 class SpookyHash
 {
  public:
+
   //
   // SpookyHash: hash a single message in one call, produce 128-bit output
   //
@@ -387,6 +388,7 @@ class SpookyHash
   }
 
  private:
+
   //
   // Short is used for messages under 192 bytes in length
   // Short has a low startup cost, the normal mode is good for long

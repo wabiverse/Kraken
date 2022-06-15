@@ -47,11 +47,10 @@ class UsdGeomGprim;
 class UsdImagingGprimAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingGprimAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingGprimAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingGprimAdapter() override;
@@ -62,10 +61,11 @@ class UsdImagingGprimAdapter : public UsdImagingPrimAdapter
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDIMAGING_API
@@ -175,14 +175,20 @@ class UsdImagingGprimAdapter : public UsdImagingPrimAdapter
   /// Reads the extent from the given prim. If the extent is not authored,
   /// an empty GfRange3d is returned, the extent will not be computed.
   USDIMAGING_API
-  GfRange3d GetExtent(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  GfRange3d GetExtent(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   /// Reads double-sided from the given prim. If not authored, returns false
   USDIMAGING_API
-  bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  bool GetDoubleSided(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
   USDIMAGING_API
-  SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  SdfPath GetMaterialId(UsdPrim const &prim,
+                        SdfPath const &cachePath,
+                        UsdTimeCode time) const override;
   /// Gets the value of the parameter named key for the given prim (which
   /// has the given cache path) and given time. If outIndices is not nullptr
   /// and the value has indices, it will return the unflattened value and set
@@ -195,6 +201,7 @@ class UsdImagingGprimAdapter : public UsdImagingPrimAdapter
               VtIntArray *outIndices) const override;
 
  protected:
+
   USDIMAGING_API
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 

@@ -59,11 +59,7 @@ struct ScrVert
   /* first one used internally, second one for tools */
   short flag, editflag;
 
-  ScrVert()
-    : vec(VALUE_ZERO),
-      flag(VALUE_ZERO),
-      editflag(VALUE_ZERO)
-  {}
+  ScrVert() : vec(VALUE_ZERO), flag(VALUE_ZERO), editflag(VALUE_ZERO) {}
 };
 
 struct ScrEdge
@@ -73,12 +69,7 @@ struct ScrEdge
   short border;
   short flag;
 
-  ScrEdge()
-    : v1(POINTER_ZERO),
-      v2(POINTER_ZERO),
-      border(VALUE_ZERO),
-      flag(VALUE_ZERO)
-  {}
+  ScrEdge() : v1(POINTER_ZERO), v2(POINTER_ZERO), border(VALUE_ZERO), flag(VALUE_ZERO) {}
 };
 
 struct kScreen : public UsdUIScreen, KrakenPrim

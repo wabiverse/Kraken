@@ -165,6 +165,7 @@ bool operator!=(const HgiResourceBindingsDesc &lhs, const HgiResourceBindingsDes
 class HgiResourceBindings
 {
  public:
+
   HGI_API
   virtual ~HgiResourceBindings();
 
@@ -173,12 +174,14 @@ class HgiResourceBindings
   HgiResourceBindingsDesc const &GetDescriptor() const;
 
  protected:
+
   HGI_API
   HgiResourceBindings(HgiResourceBindingsDesc const &desc);
 
   HgiResourceBindingsDesc _descriptor;
 
  private:
+
   HgiResourceBindings() = delete;
   HgiResourceBindings &operator=(const HgiResourceBindings &) = delete;
   HgiResourceBindings(const HgiResourceBindings &) = delete;

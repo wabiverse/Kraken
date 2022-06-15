@@ -56,6 +56,7 @@ class SdfSpec;
 class Sdf_ChangeManager : boost::noncopyable
 {
  public:
+
   SDF_API
   static Sdf_ChangeManager &Get()
   {
@@ -88,6 +89,7 @@ class Sdf_ChangeManager : boost::noncopyable
   void CloseChangeBlock();
 
  private:
+
   Sdf_ChangeManager();
   ~Sdf_ChangeManager();
 
@@ -99,6 +101,7 @@ class Sdf_ChangeManager : boost::noncopyable
   SdfChangeList &_GetListFor(SdfLayerChangeListVec &changeList, SdfLayerHandle const &layer);
 
  private:
+
   struct _Data
   {
     _Data();

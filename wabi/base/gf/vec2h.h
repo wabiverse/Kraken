@@ -57,8 +57,7 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec2h;
 
-template<>
-struct GfIsGfVec<class GfVec2h>
+template<> struct GfIsGfVec<class GfVec2h>
 {
   static const bool value = true;
 };
@@ -74,6 +73,7 @@ struct GfIsGfVec<class GfVec2h>
 class GfVec2h
 {
  public:
+
   /// Scalar element type and dimension.
   typedef GfHalf ScalarType;
   static const size_t dimension = 2;
@@ -82,20 +82,13 @@ class GfVec2h
   GfVec2h() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec2h(GfHalf value)
-    : _data{value, value}
-  {}
+  constexpr explicit GfVec2h(GfHalf value) : _data{value, value} {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec2h(GfHalf s0, GfHalf s1)
-    : _data{s0, s1}
-  {}
+  constexpr GfVec2h(GfHalf s0, GfHalf s1) : _data{s0, s1} {}
 
   /// Construct with pointer to values.
-  template<class Scl>
-  constexpr explicit GfVec2h(Scl const *p)
-    : _data{p[0], p[1]}
-  {}
+  template<class Scl> constexpr explicit GfVec2h(Scl const *p) : _data{p[0], p[1]} {}
 
   /// Construct from GfVec2d.
   explicit GfVec2h(class GfVec2d const &other);
@@ -322,6 +315,7 @@ class GfVec2h
   }
 
  private:
+
   GfHalf _data[2];
 };
 

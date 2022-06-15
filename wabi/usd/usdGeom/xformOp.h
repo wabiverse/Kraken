@@ -100,6 +100,7 @@ TF_DECLARE_PUBLIC_TOKENS(UsdGeomXformOpTypes, USDGEOM_API, USDGEOM_XFORM_OP_TYPE
 class UsdGeomXformOp
 {
  public:
+
   /// Enumerates the set of all transformation operation types.
   enum Type
   {
@@ -199,7 +200,9 @@ class UsdGeomXformOp
   /// the opType, the (optional) suffix and whether it is an inverse
   /// operation.
   USDGEOM_API
-  static TfToken GetOpName(const Type opType, const TfToken &opSuffix = TfToken(), bool inverse = false);
+  static TfToken GetOpName(const Type opType,
+                           const TfToken &opSuffix = TfToken(),
+                           bool inverse = false);
 
   // -------------------------------------------------------
   /// \name Data Encoding Queries
@@ -252,17 +255,14 @@ class UsdGeomXformOp
   /// an error to be emitted.
   ///
   /// \note the requested type \p T must be constructable by assignment
-  template<typename T>
-  bool GetAs(T *value, UsdTimeCode time) const
+  template<typename T> bool GetAs(T *value, UsdTimeCode time) const
   {
     VtValue v;
-    if (!Get(&v, time))
-    {
+    if (!Get(&v, time)) {
       return false;
     }
     v.Cast<T>();
-    if (v.IsEmpty())
-    {
+    if (v.IsEmpty()) {
       TfType thisType = GetTypeName().GetType();
       TF_CODING_ERROR(
         "Unable to convert xformOp %s's value from %s to "
@@ -286,7 +286,9 @@ class UsdGeomXformOp
   /// \ref UsdGeomXformOp::Type or if \p opVal cannot be converted
   /// to a suitable input to \p opType
   USDGEOM_API
-  static GfMatrix4d GetOpTransform(Type const opType, VtValue const &opVal, bool isInverseOp = false);
+  static GfMatrix4d GetOpTransform(Type const opType,
+                                   VtValue const &opVal,
+                                   bool isInverseOp = false);
 
   /// Return the 4x4 matrix that applies the transformation encoded
   /// in this op at \p time.
@@ -336,6 +338,7 @@ class UsdGeomXformOp
   }
 
  public:
+
   /// \anchor UsdGeomXformOp_explicit_bool
   /// Explicit bool conversion operator. An XformOp object converts to
   /// \c true iff it is valid for querying and authoring values and metadata,
@@ -394,8 +397,7 @@ class UsdGeomXformOp
   ///
   /// \note For inverted ops, this returns the raw, uninverted value.
   ///
-  template<typename T>
-  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     return boost::apply_visitor(_Get<T>(value, time), _attr);
   }
@@ -406,13 +408,11 @@ class UsdGeomXformOp
   /// an inverse xform operation, a coding error is issued and no value is
   /// authored.
   ///
-  template<typename T>
-  bool Set(T const &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Set(T const &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     // Issue a coding error and return without setting value,
     // if this is an inverse op.
-    if (_isInverseOp)
-    {
+    if (_isInverseOp) {
       TF_CODING_ERROR(
         "Cannot set a value on the inverse xformOp '%s'. "
         "Please set value on the paired non-inverse xformOp instead.",
@@ -444,11 +444,12 @@ class UsdGeomXformOp
   }
 
  private:
+
   struct _ValidAttributeTagType
-  {
-  };
+  {};
 
  public:
+
   // Allow clients that guarantee \p attr is valid avoid having
   // UsdGeomXformOp's ctor check again.
   USDGEOM_API
@@ -457,6 +458,7 @@ class UsdGeomXformOp
   UsdGeomXformOp(UsdAttributeQuery &&query, bool isInverseOp, _ValidAttributeTagType);
 
  private:
+
   friend class UsdGeomXformable;
 
   // Shared initialization function.
@@ -472,7 +474,9 @@ class UsdGeomXformOp
   // The attribute that's returned will be invalid if the
   // corresponding xformOp attribute doesn't exist on the prim.
   //
-  static UsdAttribute _GetXformOpAttr(UsdPrim const &prim, const TfToken &opName, bool *isInverseOp);
+  static UsdAttribute _GetXformOpAttr(UsdPrim const &prim,
+                                      const TfToken &opName,
+                                      bool *isInverseOp);
 
   // Private method for creating and using an attribute query interally for
   // this xformOp.
@@ -517,13 +521,9 @@ class UsdGeomXformOp
   bool _isInverseOp;
 
   // Visitor for getting xformOp value.
-  template<class T>
-  struct _Get : public boost::static_visitor<bool>
+  template<class T> struct _Get : public boost::static_visitor<bool>
   {
-    _Get(T *value_, UsdTimeCode time_ = UsdTimeCode::Default())
-      : value(value_),
-        time(time_)
-    {}
+    _Get(T *value_, UsdTimeCode time_ = UsdTimeCode::Default()) : value(value_), time(time_) {}
 
     bool operator()(const UsdAttribute &attr) const
     {
@@ -543,8 +543,7 @@ class UsdGeomXformOp
   struct _GetAttr : public boost::static_visitor<const UsdAttribute &>
   {
 
-    _GetAttr()
-    {}
+    _GetAttr() {}
 
     const UsdAttribute &operator()(const UsdAttribute &attr) const
     {
@@ -561,9 +560,7 @@ class UsdGeomXformOp
   struct _GetTimeSamples : public boost::static_visitor<bool>
   {
 
-    _GetTimeSamples(std::vector<double> *times_)
-      : times(times_)
-    {}
+    _GetTimeSamples(std::vector<double> *times_) : times(times_) {}
 
     bool operator()(const UsdAttribute &attr) const
     {
@@ -605,8 +602,7 @@ class UsdGeomXformOp
   struct _GetNumTimeSamples : public boost::static_visitor<size_t>
   {
 
-    _GetNumTimeSamples()
-    {}
+    _GetNumTimeSamples() {}
 
     size_t operator()(const UsdAttribute &attr) const
     {
@@ -623,8 +619,7 @@ class UsdGeomXformOp
   struct _GetMightBeTimeVarying : public boost::static_visitor<bool>
   {
 
-    _GetMightBeTimeVarying()
-    {}
+    _GetMightBeTimeVarying() {}
 
     bool operator()(const UsdAttribute &attr) const
     {

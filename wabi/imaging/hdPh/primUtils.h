@@ -131,10 +131,11 @@ HdBufferSpecVector HdPhGetRemovedPrimvarBufferSpecs(
   SdfPath const &rprimId);
 
 HDPH_API
-HdBufferSpecVector HdPhGetRemovedPrimvarBufferSpecs(HdBufferArrayRangeSharedPtr const &curRange,
-                                                    HdPrimvarDescriptorVector const &newPrimvarDescs,
-                                                    TfTokenVector const &internallyGeneratedPrimvarNames,
-                                                    SdfPath const &rprimId);
+HdBufferSpecVector HdPhGetRemovedPrimvarBufferSpecs(
+  HdBufferArrayRangeSharedPtr const &curRange,
+  HdPrimvarDescriptorVector const &newPrimvarDescs,
+  TfTokenVector const &internallyGeneratedPrimvarNames,
+  SdfPath const &rprimId);
 
 // Updates the existing range at drawCoordIndex with newRange and flags garbage
 // collection (for the existing range) and rebuild of all draw batches when

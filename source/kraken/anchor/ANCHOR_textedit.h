@@ -70,8 +70,11 @@ namespace AnchorStb
   {
     const AnchorWChar *text = obj->TextW.Data;
     const AnchorWChar *text_remaining = NULL;
-    const wabi::GfVec2f size =
-      InputTextCalcTextSizeW(text + line_start_idx, text + obj->CurLenW, &text_remaining, NULL, true);
+    const wabi::GfVec2f size = InputTextCalcTextSizeW(text + line_start_idx,
+                                                      text + obj->CurLenW,
+                                                      &text_remaining,
+                                                      NULL,
+                                                      true);
     r->x0 = 0.0f;
     r->x1 = size[0];
     r->baseline_y_delta = size[1];
@@ -80,12 +83,12 @@ namespace AnchorStb
     r->num_chars = (int)(text_remaining - (text + line_start_idx));
   }
 
-  // When AnchorInputTextFlags_Password is set, we don't want actions such as CTRL+Arrow to leak the
-  // fact that underlying data are blanks or separators.
+  // When AnchorInputTextFlags_Password is set, we don't want actions such as CTRL+Arrow to leak
+  // the fact that underlying data are blanks or separators.
   static bool is_separator(unsigned int c)
   {
-    return AnchorCharIsBlankW(c) || c == ',' || c == ';' || c == '(' || c == ')' || c == '{' || c == '}' ||
-           c == '[' || c == ']' || c == '|';
+    return AnchorCharIsBlankW(c) || c == ',' || c == ';' || c == '(' || c == ')' || c == '{' ||
+           c == '}' || c == '[' || c == ']' || c == '|';
   }
 
   static int is_word_boundary_from_right(STB_TEXTEDIT_STRING *obj, int idx)
@@ -159,22 +162,25 @@ namespace AnchorStb
     const int text_len = obj->CurLenW;
     ANCHOR_ASSERT(pos <= text_len);
 
-    const int new_text_len_utf8 = AnchorTextCountUtf8BytesFromStr(new_text, new_text + new_text_len);
+    const int new_text_len_utf8 = AnchorTextCountUtf8BytesFromStr(new_text,
+                                                                  new_text + new_text_len);
     if (!is_resizable && (new_text_len_utf8 + obj->CurLenA + 1 > obj->BufCapacityA))
       return false;
 
     // Grow internal buffer if needed
-    if (new_text_len + text_len + 1 > obj->TextW.Size)
-    {
+    if (new_text_len + text_len + 1 > obj->TextW.Size) {
       if (!is_resizable)
         return false;
       ANCHOR_ASSERT(text_len < obj->TextW.Size);
-      obj->TextW.resize(text_len + AnchorClamp(new_text_len * 4, 32, AnchorMax(256, new_text_len)) + 1);
+      obj->TextW.resize(text_len +
+                        AnchorClamp(new_text_len * 4, 32, AnchorMax(256, new_text_len)) + 1);
     }
 
     AnchorWChar *text = obj->TextW.Data;
     if (pos != text_len)
-      memmove(text + pos + new_text_len, text + pos, (size_t)(text_len - pos) * sizeof(AnchorWChar));
+      memmove(text + pos + new_text_len,
+              text + pos,
+              (size_t)(text_len - pos) * sizeof(AnchorWChar));
     memcpy(text + pos, new_text, (size_t)new_text_len * sizeof(AnchorWChar));
 
     obj->Edited = true;
@@ -195,8 +201,10 @@ namespace AnchorStb
 #define STB_TEXTEDIT_K_LINEEND 0x200005    // keyboard input to move cursor to end of line
 #define STB_TEXTEDIT_K_TEXTSTART 0x200006  // keyboard input to move cursor to start of text
 #define STB_TEXTEDIT_K_TEXTEND 0x200007    // keyboard input to move cursor to end of text
-#define STB_TEXTEDIT_K_DELETE 0x200008     // keyboard input to delete selection or character under cursor
-#define STB_TEXTEDIT_K_BACKSPACE 0x200009  // keyboard input to delete selection or character left of cursor
+#define STB_TEXTEDIT_K_DELETE \
+  0x200008  // keyboard input to delete selection or character under cursor
+#define STB_TEXTEDIT_K_BACKSPACE \
+  0x200009  // keyboard input to delete selection or character left of cursor
 #define STB_TEXTEDIT_K_UNDO 0x20000A       // keyboard input to perform undo
 #define STB_TEXTEDIT_K_REDO 0x20000B       // keyboard input to perform redo
 #define STB_TEXTEDIT_K_WORDLEFT 0x20000C   // keyboard input to move cursor left one word
@@ -224,8 +232,7 @@ namespace AnchorStb
     r.num_chars = 0;
 
     // search rows to find one that straddles 'y'
-    while (i < n)
-    {
+    while (i < n) {
       STB_TEXTEDIT_LAYOUTROW(&r, str, i);
       if (r.num_chars <= 0)
         return n;
@@ -249,15 +256,12 @@ namespace AnchorStb
       return i;
 
     // check if it's before the end of the line
-    if (x < r.x1)
-    {
+    if (x < r.x1) {
       // search characters in row for one that straddles 'x'
       prev_x = r.x0;
-      for (k = 0; k < r.num_chars; ++k)
-      {
+      for (k = 0; k < r.num_chars; ++k) {
         float w = STB_TEXTEDIT_GETWIDTH(str, i, k);
-        if (x < prev_x + w)
-        {
+        if (x < prev_x + w) {
           if (x < prev_x + w / 2)
             return k + i;
           else
@@ -280,8 +284,7 @@ namespace AnchorStb
   {
     // In single-line mode, just always make y = 0. This lets the drag keep working if the mouse
     // goes off the top or bottom of the text
-    if (state->single_line)
-    {
+    if (state->single_line) {
       StbTexteditRow r;
       STB_TEXTEDIT_LAYOUTROW(&r, str, 0);
       y = r.ymin;
@@ -300,8 +303,7 @@ namespace AnchorStb
 
     // In single-line mode, just always make y = 0. This lets the drag keep working if the mouse
     // goes off the top or bottom of the text
-    if (state->single_line)
-    {
+    if (state->single_line) {
       StbTexteditRow r;
       STB_TEXTEDIT_LAYOUTROW(&r, str, 0);
       y = r.ymin;
@@ -322,7 +324,10 @@ namespace AnchorStb
   // forward declarations
   void stb_text_undo(STB_TEXTEDIT_STRING *str, STB_TexteditState *state);
   void stb_text_redo(STB_TEXTEDIT_STRING *str, STB_TexteditState *state);
-  void stb_text_makeundo_delete(STB_TEXTEDIT_STRING *str, STB_TexteditState *state, int where, int length);
+  void stb_text_makeundo_delete(STB_TEXTEDIT_STRING *str,
+                                STB_TexteditState *state,
+                                int where,
+                                int length);
   void stb_text_makeundo_insert(STB_TexteditState *state, int where, int length);
   void stb_text_makeundo_replace(STB_TEXTEDIT_STRING *str,
                                  STB_TexteditState *state,
@@ -339,8 +344,7 @@ namespace AnchorStb
     STB_TEXTEDIT_DELETECHARS(str, 0, str->CurLenW);
     if (text_len <= 0)
       return;
-    if (STB_TEXTEDIT_INSERTCHARS(str, 0, text, text_len))
-    {
+    if (STB_TEXTEDIT_INSERTCHARS(str, 0, text, text_len)) {
       state->cursor = text_len;
       state->has_preferred_x = 0;
       return;
@@ -359,32 +363,31 @@ namespace AnchorStb
 
   // find the x/y location of a character, and remember info about the previous row in
   // case we get a move-up event (for page up, we'll have to rescan)
-  void stb_textedit_find_charpos(StbFindState *find, STB_TEXTEDIT_STRING *str, int n, int single_line)
+  void stb_textedit_find_charpos(StbFindState *find,
+                                 STB_TEXTEDIT_STRING *str,
+                                 int n,
+                                 int single_line)
   {
     StbTexteditRow r;
     int prev_start = 0;
     int z = STB_TEXTEDIT_STRINGLEN(str);
     int i = 0, first;
 
-    if (n == z)
-    {
+    if (n == z) {
       // if it's at the end, then find the last line -- simpler than trying to
       // explicitly handle this case in the regular code
-      if (single_line)
-      {
+      if (single_line) {
         STB_TEXTEDIT_LAYOUTROW(&r, str, 0);
         find->y = 0;
         find->first_char = 0;
         find->length = z;
         find->height = r.ymax - r.ymin;
         find->x = r.x1;
-      } else
-      {
+      } else {
         find->y = 0;
         find->x = 0;
         find->height = 1;
-        while (i < z)
-        {
+        while (i < z) {
           STB_TEXTEDIT_LAYOUTROW(&r, str, i);
           prev_start = i;
           i += r.num_chars;
@@ -399,8 +402,7 @@ namespace AnchorStb
     // search rows to find the one that straddles character n
     find->y = 0;
 
-    for (;;)
-    {
+    for (;;) {
       STB_TEXTEDIT_LAYOUTROW(&r, str, i);
       if (n < i + r.num_chars)
         break;
@@ -426,8 +428,7 @@ namespace AnchorStb
   void stb_textedit_clamp(STB_TEXTEDIT_STRING *str, STB_TexteditState *state)
   {
     int n = STB_TEXTEDIT_STRINGLEN(str);
-    if (STB_TEXT_HAS_SELECTION(state))
-    {
+    if (STB_TEXT_HAS_SELECTION(state)) {
       if (state->select_start > n)
         state->select_start = n;
       if (state->select_end > n)
@@ -452,15 +453,18 @@ namespace AnchorStb
   void stb_textedit_delete_selection(STB_TEXTEDIT_STRING *str, STB_TexteditState *state)
   {
     stb_textedit_clamp(str, state);
-    if (STB_TEXT_HAS_SELECTION(state))
-    {
-      if (state->select_start < state->select_end)
-      {
-        stb_textedit_delete(str, state, state->select_start, state->select_end - state->select_start);
+    if (STB_TEXT_HAS_SELECTION(state)) {
+      if (state->select_start < state->select_end) {
+        stb_textedit_delete(str,
+                            state,
+                            state->select_start,
+                            state->select_end - state->select_start);
         state->select_end = state->cursor = state->select_start;
-      } else
-      {
-        stb_textedit_delete(str, state, state->select_end, state->select_start - state->select_end);
+      } else {
+        stb_textedit_delete(str,
+                            state,
+                            state->select_end,
+                            state->select_start - state->select_end);
         state->select_start = state->cursor = state->select_end;
       }
       state->has_preferred_x = 0;
@@ -470,8 +474,7 @@ namespace AnchorStb
   // canoncialize the selection so start <= end
   void stb_textedit_sortselection(STB_TexteditState *state)
   {
-    if (state->select_end < state->select_start)
-    {
+    if (state->select_end < state->select_start) {
       int temp = state->select_end;
       state->select_end = state->select_start;
       state->select_start = temp;
@@ -481,8 +484,7 @@ namespace AnchorStb
   // move cursor to first character of selection
   void stb_textedit_move_to_first(STB_TexteditState *state)
   {
-    if (STB_TEXT_HAS_SELECTION(state))
-    {
+    if (STB_TEXT_HAS_SELECTION(state)) {
       stb_textedit_sortselection(state);
       state->cursor = state->select_start;
       state->select_end = state->select_start;
@@ -493,8 +495,7 @@ namespace AnchorStb
   // move cursor to last character of selection
   void stb_textedit_move_to_last(STB_TEXTEDIT_STRING *str, STB_TexteditState *state)
   {
-    if (STB_TEXT_HAS_SELECTION(state))
-    {
+    if (STB_TEXT_HAS_SELECTION(state)) {
       stb_textedit_sortselection(state);
       stb_textedit_clamp(str, state);
       state->cursor = state->select_end;
@@ -556,8 +557,7 @@ namespace AnchorStb
   // API cut: delete selection
   int stb_textedit_cut(STB_TEXTEDIT_STRING *str, STB_TexteditState *state)
   {
-    if (STB_TEXT_HAS_SELECTION(state))
-    {
+    if (STB_TEXT_HAS_SELECTION(state)) {
       stb_textedit_delete_selection(str, state);  // implicitly clamps
       state->has_preferred_x = 0;
       return 1;
@@ -575,8 +575,7 @@ namespace AnchorStb
     stb_textedit_clamp(str, state);
     stb_textedit_delete_selection(str, state);
     // try to insert the characters
-    if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, text, len))
-    {
+    if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, text, len)) {
       stb_text_makeundo_insert(state, state->cursor, len);
       state->cursor += len;
       state->has_preferred_x = 0;
@@ -593,15 +592,15 @@ namespace AnchorStb
 #endif
 
   // API key: process a keyboard input
-  void stb_textedit_key(STB_TEXTEDIT_STRING *str, STB_TexteditState *state, STB_TEXTEDIT_KEYTYPE key)
+  void stb_textedit_key(STB_TEXTEDIT_STRING *str,
+                        STB_TexteditState *state,
+                        STB_TEXTEDIT_KEYTYPE key)
   {
   retry:
-    switch (key)
-    {
+    switch (key) {
       default: {
         int c = STB_TEXTEDIT_KEYTOTEXT(key);
-        if (c > 0)
-        {
+        if (c > 0) {
           STB_TEXTEDIT_CHARTYPE ch = (STB_TEXTEDIT_CHARTYPE)c;
 
           // can't add newline in single-line mode
@@ -609,20 +608,16 @@ namespace AnchorStb
             break;
 
           if (state->insert_mode && !STB_TEXT_HAS_SELECTION(state) &&
-              state->cursor < STB_TEXTEDIT_STRINGLEN(str))
-          {
+              state->cursor < STB_TEXTEDIT_STRINGLEN(str)) {
             stb_text_makeundo_replace(str, state, state->cursor, 1, 1);
             STB_TEXTEDIT_DELETECHARS(str, state->cursor, 1);
-            if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, &ch, 1))
-            {
+            if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, &ch, 1)) {
               ++state->cursor;
               state->has_preferred_x = 0;
             }
-          } else
-          {
+          } else {
             stb_textedit_delete_selection(str, state);  // implicitly clamps
-            if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, &ch, 1))
-            {
+            if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, &ch, 1)) {
               stb_text_makeundo_insert(state, state->cursor, 1);
               ++state->cursor;
               state->has_preferred_x = 0;
@@ -681,8 +676,7 @@ namespace AnchorStb
       case STB_TEXTEDIT_K_WORDLEFT:
         if (STB_TEXT_HAS_SELECTION(state))
           stb_textedit_move_to_first(state);
-        else
-        {
+        else {
           state->cursor = STB_TEXTEDIT_MOVEWORDLEFT(str, state->cursor);
           stb_textedit_clamp(str, state);
         }
@@ -703,8 +697,7 @@ namespace AnchorStb
       case STB_TEXTEDIT_K_WORDRIGHT:
         if (STB_TEXT_HAS_SELECTION(state))
           stb_textedit_move_to_last(str, state);
-        else
-        {
+        else {
           state->cursor = STB_TEXTEDIT_MOVEWORDRIGHT(str, state->cursor);
           stb_textedit_clamp(str, state);
         }
@@ -740,8 +733,7 @@ namespace AnchorStb
         int is_page = (key & ~STB_TEXTEDIT_K_SHIFT) == STB_TEXTEDIT_K_PGDOWN;
         int row_count = is_page ? state->row_count_per_page : 1;
 
-        if (!is_page && state->single_line)
-        {
+        if (!is_page && state->single_line) {
           // on windows, up&down in single-line behave like left&right
           key = STB_TEXTEDIT_K_RIGHT | (key & STB_TEXTEDIT_K_SHIFT);
           goto retry;
@@ -756,8 +748,7 @@ namespace AnchorStb
         stb_textedit_clamp(str, state);
         stb_textedit_find_charpos(&find, str, state->cursor, state->single_line);
 
-        for (j = 0; j < row_count; ++j)
-        {
+        for (j = 0; j < row_count; ++j) {
           float x, goal_x = state->has_preferred_x ? state->preferred_x : find.x;
           int start = find.first_char + find.length;
 
@@ -773,8 +764,7 @@ namespace AnchorStb
           state->cursor = start;
           STB_TEXTEDIT_LAYOUTROW(&row, str, state->cursor);
           x = row.x0;
-          for (i = 0; i < row.num_chars; ++i)
-          {
+          for (i = 0; i < row.num_chars; ++i) {
             float dx = STB_TEXTEDIT_GETWIDTH(str, start, i);
 #ifdef STB_TEXTEDIT_GETWIDTH_NEWLINE
             if (dx == STB_TEXTEDIT_GETWIDTH_NEWLINE)
@@ -810,8 +800,7 @@ namespace AnchorStb
         int is_page = (key & ~STB_TEXTEDIT_K_SHIFT) == STB_TEXTEDIT_K_PGUP;
         int row_count = is_page ? state->row_count_per_page : 1;
 
-        if (!is_page && state->single_line)
-        {
+        if (!is_page && state->single_line) {
           // on windows, up&down become left&right
           key = STB_TEXTEDIT_K_LEFT | (key & STB_TEXTEDIT_K_SHIFT);
           goto retry;
@@ -826,8 +815,7 @@ namespace AnchorStb
         stb_textedit_clamp(str, state);
         stb_textedit_find_charpos(&find, str, state->cursor, state->single_line);
 
-        for (j = 0; j < row_count; ++j)
-        {
+        for (j = 0; j < row_count; ++j) {
           float x, goal_x = state->has_preferred_x ? state->preferred_x : find.x;
 
           // can only go up if there's a previous row
@@ -838,8 +826,7 @@ namespace AnchorStb
           state->cursor = find.prev_first;
           STB_TEXTEDIT_LAYOUTROW(&row, str, state->cursor);
           x = row.x0;
-          for (i = 0; i < row.num_chars; ++i)
-          {
+          for (i = 0; i < row.num_chars; ++i) {
             float dx = STB_TEXTEDIT_GETWIDTH(str, find.prev_first, i);
 #ifdef STB_TEXTEDIT_GETWIDTH_NEWLINE
             if (dx == STB_TEXTEDIT_GETWIDTH_NEWLINE)
@@ -874,8 +861,7 @@ namespace AnchorStb
       case STB_TEXTEDIT_K_DELETE | STB_TEXTEDIT_K_SHIFT:
         if (STB_TEXT_HAS_SELECTION(state))
           stb_textedit_delete_selection(str, state);
-        else
-        {
+        else {
           int n = STB_TEXTEDIT_STRINGLEN(str);
           if (state->cursor < n)
             stb_textedit_delete(str, state, state->cursor, 1);
@@ -887,11 +873,9 @@ namespace AnchorStb
       case STB_TEXTEDIT_K_BACKSPACE | STB_TEXTEDIT_K_SHIFT:
         if (STB_TEXT_HAS_SELECTION(state))
           stb_textedit_delete_selection(str, state);
-        else
-        {
+        else {
           stb_textedit_clamp(str, state);
-          if (state->cursor > 0)
-          {
+          if (state->cursor > 0) {
             stb_textedit_delete(str, state, state->cursor - 1, 1);
             --state->cursor;
           }
@@ -943,7 +927,8 @@ namespace AnchorStb
         if (state->single_line)
           state->cursor = 0;
         else
-          while (state->cursor > 0 && STB_TEXTEDIT_GETCHAR(str, state->cursor - 1) != STB_TEXTEDIT_NEWLINE)
+          while (state->cursor > 0 &&
+                 STB_TEXTEDIT_GETCHAR(str, state->cursor - 1) != STB_TEXTEDIT_NEWLINE)
             --state->cursor;
         state->has_preferred_x = 0;
         break;
@@ -958,7 +943,8 @@ namespace AnchorStb
         if (state->single_line)
           state->cursor = n;
         else
-          while (state->cursor < n && STB_TEXTEDIT_GETCHAR(str, state->cursor) != STB_TEXTEDIT_NEWLINE)
+          while (state->cursor < n &&
+                 STB_TEXTEDIT_GETCHAR(str, state->cursor) != STB_TEXTEDIT_NEWLINE)
             ++state->cursor;
         state->has_preferred_x = 0;
         break;
@@ -973,7 +959,8 @@ namespace AnchorStb
         if (state->single_line)
           state->cursor = 0;
         else
-          while (state->cursor > 0 && STB_TEXTEDIT_GETCHAR(str, state->cursor - 1) != STB_TEXTEDIT_NEWLINE)
+          while (state->cursor > 0 &&
+                 STB_TEXTEDIT_GETCHAR(str, state->cursor - 1) != STB_TEXTEDIT_NEWLINE)
             --state->cursor;
         state->select_end = state->cursor;
         state->has_preferred_x = 0;
@@ -989,7 +976,8 @@ namespace AnchorStb
         if (state->single_line)
           state->cursor = n;
         else
-          while (state->cursor < n && STB_TEXTEDIT_GETCHAR(str, state->cursor) != STB_TEXTEDIT_NEWLINE)
+          while (state->cursor < n &&
+                 STB_TEXTEDIT_GETCHAR(str, state->cursor) != STB_TEXTEDIT_NEWLINE)
             ++state->cursor;
         state->select_end = state->cursor;
         state->has_preferred_x = 0;
@@ -1013,11 +1001,9 @@ namespace AnchorStb
   // discard the oldest entry in the undo list
   void stb_textedit_discard_undo(StbUndoState *state)
   {
-    if (state->undo_point > 0)
-    {
+    if (state->undo_point > 0) {
       // if the 0th undo state has characters, clean those up
-      if (state->undo_rec[0].char_storage >= 0)
-      {
+      if (state->undo_rec[0].char_storage >= 0) {
         int n = state->undo_rec[0].insert_length, i;
         // delete n characters from all other records
         state->undo_char_point -= n;
@@ -1026,7 +1012,8 @@ namespace AnchorStb
                              (size_t)(state->undo_char_point * sizeof(STB_TEXTEDIT_CHARTYPE)));
         for (i = 0; i < state->undo_point; ++i)
           if (state->undo_rec[i].char_storage >= 0)
-            state->undo_rec[i].char_storage -= n;  // @OPTIMIZE: get rid of char_storage and infer it
+            state->undo_rec[i].char_storage -=
+              n;  // @OPTIMIZE: get rid of char_storage and infer it
       }
       --state->undo_point;
       STB_TEXTEDIT_memmove(state->undo_rec,
@@ -1043,18 +1030,16 @@ namespace AnchorStb
   {
     int k = STB_TEXTEDIT_UNDOSTATECOUNT - 1;
 
-    if (state->redo_point <= k)
-    {
+    if (state->redo_point <= k) {
       // if the k'th undo state has characters, clean those up
-      if (state->undo_rec[k].char_storage >= 0)
-      {
+      if (state->undo_rec[k].char_storage >= 0) {
         int n = state->undo_rec[k].insert_length, i;
         // move the remaining redo character data to the end of the buffer
         state->redo_char_point += n;
-        STB_TEXTEDIT_memmove(
-          state->undo_char + state->redo_char_point,
-          state->undo_char + state->redo_char_point - n,
-          (size_t)((STB_TEXTEDIT_UNDOCHARCOUNT - state->redo_char_point) * sizeof(STB_TEXTEDIT_CHARTYPE)));
+        STB_TEXTEDIT_memmove(state->undo_char + state->redo_char_point,
+                             state->undo_char + state->redo_char_point - n,
+                             (size_t)((STB_TEXTEDIT_UNDOCHARCOUNT - state->redo_char_point) *
+                                      sizeof(STB_TEXTEDIT_CHARTYPE)));
         // adjust the position of all the other records to account for above memmove
         for (i = state->redo_point; i < k; ++i)
           if (state->undo_rec[i].char_storage >= 0)
@@ -1090,8 +1075,7 @@ namespace AnchorStb
       stb_textedit_discard_undo(state);
 
     // if the characters to store won't possibly fit in the buffer, we can't undo
-    if (numchars > STB_TEXTEDIT_UNDOCHARCOUNT)
-    {
+    if (numchars > STB_TEXTEDIT_UNDOCHARCOUNT) {
       state->undo_point = 0;
       state->undo_char_point = 0;
       return NULL;
@@ -1117,12 +1101,10 @@ namespace AnchorStb
     r->insert_length = (STB_TEXTEDIT_POSITIONTYPE)insert_len;
     r->delete_length = (STB_TEXTEDIT_POSITIONTYPE)delete_len;
 
-    if (insert_len == 0)
-    {
+    if (insert_len == 0) {
       r->char_storage = -1;
       return NULL;
-    } else
-    {
+    } else {
       r->char_storage = state->undo_char_point;
       state->undo_char_point += insert_len;
       return &state->undo_char[r->char_storage];
@@ -1145,8 +1127,7 @@ namespace AnchorStb
     r->delete_length = u.insert_length;
     r->where = u.where;
 
-    if (u.delete_length)
-    {
+    if (u.delete_length) {
       // if the undo record says to delete characters, then the redo record will
       // need to re-insert the characters that get deleted, so we need to store
       // them.
@@ -1157,18 +1138,15 @@ namespace AnchorStb
       //    characters stored for *undoing* don't leave room for redo
       // if the last is true, we have to bail
 
-      if (s->undo_char_point + u.delete_length >= STB_TEXTEDIT_UNDOCHARCOUNT)
-      {
+      if (s->undo_char_point + u.delete_length >= STB_TEXTEDIT_UNDOCHARCOUNT) {
         // the undo records take up too much character space; there's no space to store the redo
         // characters
         r->insert_length = 0;
-      } else
-      {
+      } else {
         int i;
 
         // there's definitely room to store the characters eventually
-        while (s->undo_char_point + u.delete_length > s->redo_char_point)
-        {
+        while (s->undo_char_point + u.delete_length > s->redo_char_point) {
           // should never happen:
           if (s->redo_point == STB_TEXTEDIT_UNDOSTATECOUNT)
             return;
@@ -1190,8 +1168,7 @@ namespace AnchorStb
     }
 
     // check type of recorded action:
-    if (u.insert_length)
-    {
+    if (u.insert_length) {
       // easy case: was a deletion, so we need to insert n characters
       STB_TEXTEDIT_INSERTCHARS(str, u.where, &s->undo_char[u.char_storage], u.insert_length);
       s->undo_char_point -= u.insert_length;
@@ -1222,17 +1199,14 @@ namespace AnchorStb
     u->where = r.where;
     u->char_storage = -1;
 
-    if (r.delete_length)
-    {
+    if (r.delete_length) {
       // the redo record requires us to delete characters, so the undo record
       // needs to store the characters
 
-      if (s->undo_char_point + u->insert_length > s->redo_char_point)
-      {
+      if (s->undo_char_point + u->insert_length > s->redo_char_point) {
         u->insert_length = 0;
         u->delete_length = 0;
-      } else
-      {
+      } else {
         int i;
         u->char_storage = s->undo_char_point;
         s->undo_char_point = s->undo_char_point + u->insert_length;
@@ -1245,8 +1219,7 @@ namespace AnchorStb
       STB_TEXTEDIT_DELETECHARS(str, r.where, r.delete_length);
     }
 
-    if (r.insert_length)
-    {
+    if (r.insert_length) {
       // easy case: need to insert n characters
       STB_TEXTEDIT_INSERTCHARS(str, r.where, &s->undo_char[r.char_storage], r.insert_length);
       s->redo_char_point += r.insert_length;
@@ -1263,12 +1236,14 @@ namespace AnchorStb
     stb_text_createundo(&state->undostate, where, 0, length);
   }
 
-  void stb_text_makeundo_delete(STB_TEXTEDIT_STRING *str, STB_TexteditState *state, int where, int length)
+  void stb_text_makeundo_delete(STB_TEXTEDIT_STRING *str,
+                                STB_TexteditState *state,
+                                int where,
+                                int length)
   {
     int i;
     STB_TEXTEDIT_CHARTYPE *p = stb_text_createundo(&state->undostate, where, length, 0);
-    if (p)
-    {
+    if (p) {
       for (i = 0; i < length; ++i)
         p[i] = STB_TEXTEDIT_GETCHAR(str, where + i);
     }
@@ -1281,9 +1256,11 @@ namespace AnchorStb
                                  int new_length)
   {
     int i;
-    STB_TEXTEDIT_CHARTYPE *p = stb_text_createundo(&state->undostate, where, old_length, new_length);
-    if (p)
-    {
+    STB_TEXTEDIT_CHARTYPE *p = stb_text_createundo(&state->undostate,
+                                                   where,
+                                                   old_length,
+                                                   new_length);
+    if (p) {
       for (i = 0; i < old_length; ++i)
         p[i] = STB_TEXTEDIT_GETCHAR(str, where + i);
     }

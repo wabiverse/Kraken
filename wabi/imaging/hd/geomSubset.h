@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HD_GEOM_SUBSET_H
 #define WABI_IMAGING_HD_GEOM_SUBSET_H
 
-#include "wabi/base/vt/array.h"
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/version.h"
 #include "wabi/usd/sdf/path.h"
-#include "wabi/wabi.h"
+#include "wabi/base/vt/array.h"
 #include <vector>
 
 WABI_NAMESPACE_BEGIN

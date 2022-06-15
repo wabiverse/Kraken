@@ -97,6 +97,7 @@ using HdxSelectionTrackerSharedPtr = std::shared_ptr<class HdxSelectionTracker>;
 class HdxSelectionTracker
 {
  public:
+
   HDX_API
   HdxSelectionTracker();
   virtual ~HdxSelectionTracker();
@@ -144,6 +145,7 @@ class HdxSelectionTracker
   }
 
  protected:
+
   /// Increments the internal selection state version, used for invalidation
   /// via GetVersion().
   HDX_API
@@ -156,6 +158,7 @@ class HdxSelectionTracker
                                     std::vector<int> *offsets) const;
 
  private:
+
   int _version;
   HdSelectionSharedPtr _selection;
 };

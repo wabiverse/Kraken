@@ -74,6 +74,7 @@ class SdfAssetPath;
 class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -84,15 +85,12 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
   /// Equivalent to UsdRiPxrRampLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrRampLightFilter(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLightFilter(prim)
-  {}
+  explicit UsdRiPxrRampLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim) {}
 
   /// Construct a UsdRiPxrRampLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrRampLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrRampLightFilter(const UsdSchemaBase &schemaObj)
-    : UsdLuxLightFilter(schemaObj)
+  explicit UsdRiPxrRampLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj)
   {}
 
   /// Destructor.
@@ -143,6 +141,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
   static UsdRiPxrRampLightFilter Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -150,6 +149,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -159,9 +159,11 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RAMPMODE
   // --------------------------------------------------------------------- //
@@ -182,9 +184,11 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateRampModeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRampModeAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // BEGINDISTANCE
   // --------------------------------------------------------------------- //
@@ -208,6 +212,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ENDDISTANCE
   // --------------------------------------------------------------------- //
@@ -231,6 +236,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFF
   // --------------------------------------------------------------------- //
@@ -250,9 +256,11 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateFalloffAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateFalloffAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFFKNOTS
   // --------------------------------------------------------------------- //
@@ -276,6 +284,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFFFLOATS
   // --------------------------------------------------------------------- //
@@ -299,6 +308,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FALLOFFINTERPOLATION
   // --------------------------------------------------------------------- //
@@ -323,6 +333,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMP
   // --------------------------------------------------------------------- //
@@ -346,6 +357,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMPKNOTS
   // --------------------------------------------------------------------- //
@@ -369,6 +381,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMPCOLORS
   // --------------------------------------------------------------------- //
@@ -392,6 +405,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORRAMPINTERPOLATION
   // --------------------------------------------------------------------- //
@@ -416,6 +430,7 @@ class UsdRiPxrRampLightFilter : public UsdLuxLightFilter
                                                 bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

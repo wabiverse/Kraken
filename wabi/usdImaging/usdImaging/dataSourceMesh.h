@@ -39,21 +39,23 @@ WABI_NAMESPACE_BEGIN
 ///
 class UsdImagingDataSourceSubdivisionTags : public HdContainerDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceSubdivisionTags);
+ public:
 
-    bool Has(const TfToken &name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken &name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceSubdivisionTags);
 
-private:
-    UsdImagingDataSourceSubdivisionTags(
-            UsdGeomMesh usdMesh,
-            const UsdImagingDataSourceStageGlobals &stageGlobals);
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
 
-private:
-    UsdGeomMesh _usdMesh;
-    const UsdImagingDataSourceStageGlobals & _stageGlobals;
+ private:
+
+  UsdImagingDataSourceSubdivisionTags(UsdGeomMesh usdMesh,
+                                      const UsdImagingDataSourceStageGlobals &stageGlobals);
+
+ private:
+
+  UsdGeomMesh _usdMesh;
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceSubdivisionTags);
@@ -66,23 +68,25 @@ HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceSubdivisionTags);
 ///
 class UsdImagingDataSourceMeshTopology : public HdContainerDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceMeshTopology);
+ public:
 
-    bool Has(const TfToken &name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken &name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceMeshTopology);
 
-private:
-    UsdImagingDataSourceMeshTopology(
-            const SdfPath &sceneIndexPath,
-            UsdGeomMesh usdMesh,
-            const UsdImagingDataSourceStageGlobals &stageGlobals);
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
 
-private:
-    const SdfPath _sceneIndexPath;
-    UsdGeomMesh _usdMesh;
-    const UsdImagingDataSourceStageGlobals & _stageGlobals;
+ private:
+
+  UsdImagingDataSourceMeshTopology(const SdfPath &sceneIndexPath,
+                                   UsdGeomMesh usdMesh,
+                                   const UsdImagingDataSourceStageGlobals &stageGlobals);
+
+ private:
+
+  const SdfPath _sceneIndexPath;
+  UsdGeomMesh _usdMesh;
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceMeshTopology);
@@ -96,23 +100,25 @@ HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceMeshTopology);
 ///
 class UsdImagingDataSourceMesh : public HdContainerDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceMesh);
+ public:
 
-    bool Has(const TfToken &name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken &name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceMesh);
 
-private:
-    UsdImagingDataSourceMesh(
-            const SdfPath &sceneIndexPath,
-            UsdGeomMesh usdMesh,
-            const UsdImagingDataSourceStageGlobals &stageGlobals);
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
 
-private:
-    const SdfPath _sceneIndexPath;
-    UsdGeomMesh _usdMesh;
-    const UsdImagingDataSourceStageGlobals & _stageGlobals;
+ private:
+
+  UsdImagingDataSourceMesh(const SdfPath &sceneIndexPath,
+                           UsdGeomMesh usdMesh,
+                           const UsdImagingDataSourceStageGlobals &stageGlobals);
+
+ private:
+
+  const SdfPath _sceneIndexPath;
+  UsdGeomMesh _usdMesh;
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceMesh);
@@ -125,22 +131,23 @@ HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceMesh);
 ///
 class UsdImagingDataSourceMeshPrim : public UsdImagingDataSourceGprim
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceMeshPrim);
+ public:
 
-    bool Has(const TfToken &name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken &name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceMeshPrim);
 
-private:
-    UsdImagingDataSourceMeshPrim(
-        const SdfPath &sceneIndexPath,
-        UsdPrim usdPrim,
-        const UsdImagingDataSourceStageGlobals &stageGlobals);
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
+
+ private:
+
+  UsdImagingDataSourceMeshPrim(const SdfPath &sceneIndexPath,
+                               UsdPrim usdPrim,
+                               const UsdImagingDataSourceStageGlobals &stageGlobals);
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceMeshPrim);
 
 WABI_NAMESPACE_END
 
-#endif // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_MESH_H
+#endif  // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_MESH_H

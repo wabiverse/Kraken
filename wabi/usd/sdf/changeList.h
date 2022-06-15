@@ -50,6 +50,7 @@ typedef std::vector<std::pair<SdfLayerHandle, SdfChangeList>> SdfLayerChangeList
 class SdfChangeList
 {
  public:
+
   SdfChangeList() = default;
   SDF_API SdfChangeList(SdfChangeList const &);
   SdfChangeList(SdfChangeList &&) = default;
@@ -126,10 +127,8 @@ class SdfChangeList
     InfoChangeVec::const_iterator FindInfoChange(TfToken const &key) const
     {
       InfoChangeVec::const_iterator iter = infoChanged.begin();
-      for (InfoChangeVec::const_iterator end = infoChanged.end(); iter != end; ++iter)
-      {
-        if (iter->first == key)
-        {
+      for (InfoChangeVec::const_iterator end = infoChanged.end(); iter != end; ++iter) {
+        if (iter->first == key) {
           break;
         }
       }
@@ -208,6 +207,7 @@ class SdfChangeList
   using EntryList = TfSmallVector<std::pair<SdfPath, Entry>, 1>;
 
  public:
+
   const EntryList &GetEntryList() const
   {
     return _entries;
@@ -243,6 +243,7 @@ class SdfChangeList
   }
 
  private:
+
   friend void swap(SdfChangeList &a, SdfChangeList &b)
   {
     a._entries.swap(b._entries);

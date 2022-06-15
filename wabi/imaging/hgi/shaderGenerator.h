@@ -54,6 +54,7 @@ struct HgiShaderFunctionDesc;
 class HgiShaderGenerator
 {
  public:
+
   // Write the generated code to the stringstream given once set up
   HGI_API
   void Execute(std::ostream &ss);
@@ -62,6 +63,7 @@ class HgiShaderGenerator
   virtual ~HgiShaderGenerator();
 
  protected:
+
   HGI_API
   explicit HgiShaderGenerator(const HgiShaderFunctionDesc &descriptor);
 
@@ -78,6 +80,7 @@ class HgiShaderGenerator
   const std::string &_GetVersion() const;
 
  private:
+
   HgiShaderGenerator() = delete;
   HgiShaderGenerator &operator=(const HgiShaderGenerator &) = delete;
   HgiShaderGenerator(const HgiShaderGenerator &) = delete;

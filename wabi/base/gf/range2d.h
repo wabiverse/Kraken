@@ -56,8 +56,7 @@ WABI_NAMESPACE_BEGIN
 class GfRange2d;
 class GfRange2f;
 
-template<>
-struct GfIsGfRange<class GfRange2d>
+template<> struct GfIsGfRange<class GfRange2d>
 {
   static const bool value = true;
 };
@@ -74,6 +73,7 @@ struct GfIsGfRange<class GfRange2d>
 class GfRange2d
 {
  public:
+
   /// Helper typedef.
   typedef GfVec2d MinMaxType;
 
@@ -95,10 +95,7 @@ class GfRange2d
   }
 
   /// This constructor initializes the minimum and maximum points.
-  GfRange2d(const GfVec2d &min, const GfVec2d &max)
-    : _min(min),
-      _max(max)
-  {}
+  GfRange2d(const GfVec2d &min, const GfVec2d &max) : _min(min), _max(max) {}
 
   /// Returns the minimum value of the range.
   const GfVec2d &GetMin() const
@@ -162,7 +159,8 @@ class GfRange2d
   /// operations of this type, the range is assumed to include its extrema.
   bool Contains(const GfVec2d &point) const
   {
-    return (point[0] >= _min[0] && point[0] <= _max[0] && point[1] >= _min[1] && point[1] <= _max[1]);
+    return (point[0] >= _min[0] && point[0] <= _max[0] && point[1] >= _min[1] &&
+            point[1] <= _max[1]);
   }
 
   /// Returns true if the \p range is located entirely inside the range. As
@@ -297,12 +295,10 @@ class GfRange2d
   /// unary multiply.
   GfRange2d operator*=(double m)
   {
-    if (m > 0)
-    {
+    if (m > 0) {
       _min *= m;
       _max *= m;
-    } else
-    {
+    } else {
       GfVec2d tmp = _min;
       _min = _max * m;
       _max = tmp * m;
@@ -392,6 +388,7 @@ class GfRange2d
   static const GfRange2d UnitSquare;
 
  private:
+
   /// Minimum and maximum points.
   GfVec2d _min, _max;
 

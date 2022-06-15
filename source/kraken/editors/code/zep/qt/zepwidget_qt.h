@@ -24,8 +24,8 @@ namespace Zep
   class ZepWidget_Qt : public QWidget, public IZepComponent
   {
    public:
-    ZepWidget_Qt(QWidget *pParent, const ZepPath &root, float fontPointSize)
-      : QWidget(pParent)
+
+    ZepWidget_Qt(QWidget *pParent, const ZepPath &root, float fontPointSize) : QWidget(pParent)
     {
       setFocusPolicy(Qt::StrongFocus);
 
@@ -40,7 +40,9 @@ namespace Zep
       m_spEditor = std::make_unique<ZepEditor>(new ZepDisplay_Qt(pixelScale), root);
       m_spEditor->RegisterCallback(this);
 
-      auto ptToPx = [](float pt, float dpi) { return pt / 72 * dpi; };
+      auto ptToPx = [](float pt, float dpi) {
+        return pt / 72 * dpi;
+      };
       float dpi = QGuiApplication::primaryScreen()->logicalDotsPerInch();
 
       // 14 points, about right for main text area
@@ -64,16 +66,13 @@ namespace Zep
 
     virtual void Notify(std::shared_ptr<ZepMessage> message) override
     {
-      if (message->messageId == Msg::RequestQuit)
-      {
+      if (message->messageId == Msg::RequestQuit) {
         qApp->quit();
-      } else if (message->messageId == Msg::GetClipBoard)
-      {
+      } else if (message->messageId == Msg::GetClipBoard) {
         QClipboard *pClip = QApplication::clipboard();
         message->str = pClip->text().toUtf8().data();
         message->handled = true;
-      } else if (message->messageId == Msg::SetClipBoard)
-      {
+      } else if (message->messageId == Msg::SetClipBoard) {
         QClipboard *pClip = QApplication::clipboard();
         pClip->setText(QString::fromUtf8(message->str.c_str()));
         message->handled = true;
@@ -109,40 +108,32 @@ namespace Zep
       auto isCtrl = [&]() {
 // Meta an control swapped on Apple!
 #ifdef __APPLE__
-        if (ev->modifiers() & Qt::MetaModifier)
-        {
+        if (ev->modifiers() & Qt::MetaModifier) {
           return true;
         }
 #else
-        if (ev->modifiers() & Qt::ControlModifier)
-        {
+        if (ev->modifiers() & Qt::ControlModifier) {
           return true;
         }
 #endif
         return false;
       };
 
-      if (ev->modifiers() & Qt::ShiftModifier)
-      {
+      if (ev->modifiers() & Qt::ShiftModifier) {
         mod |= ModifierKey::Shift;
       }
-      if (isCtrl())
-      {
+      if (isCtrl()) {
         mod |= ModifierKey::Ctrl;
-        if (ev->key() == Qt::Key_1)
-        {
+        if (ev->key() == Qt::Key_1) {
           m_spEditor->SetGlobalMode(ZepMode_Standard::StaticName());
           update();
           return;
-        } else if (ev->key() == Qt::Key_2)
-        {
+        } else if (ev->key() == Qt::Key_2) {
           m_spEditor->SetGlobalMode(ZepMode_Vim::StaticName());
           update();
           return;
-        } else
-        {
-          if (ev->key() >= Qt::Key_A && ev->key() <= Qt::Key_Z)
-          {
+        } else {
+          if (ev->key() >= Qt::Key_A && ev->key() <= Qt::Key_Z) {
             pMode->AddKeyPress((ev->key() - Qt::Key_A) + 'a', mod);
             update();
             return;
@@ -150,50 +141,36 @@ namespace Zep
         }
       }
 
-      if (ev->key() == Qt::Key_Tab)
-      {
+      if (ev->key() == Qt::Key_Tab) {
         pMode->AddKeyPress(ExtKeys::TAB, mod);
-      } else if (ev->key() == Qt::Key_Escape)
-      {
+      } else if (ev->key() == Qt::Key_Escape) {
         pMode->AddKeyPress(ExtKeys::ESCAPE, mod);
-      } else if (ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return)
-      {
+      } else if (ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return) {
         pMode->AddKeyPress(ExtKeys::RETURN, mod);
-      } else if (ev->key() == Qt::Key_Delete)
-      {
+      } else if (ev->key() == Qt::Key_Delete) {
         pMode->AddKeyPress(ExtKeys::DEL, mod);
-      } else if (ev->key() == Qt::Key_Backspace)
-      {
+      } else if (ev->key() == Qt::Key_Backspace) {
         pMode->AddKeyPress(ExtKeys::BACKSPACE, mod);
-      } else if (ev->key() == Qt::Key_Home)
-      {
+      } else if (ev->key() == Qt::Key_Home) {
         pMode->AddKeyPress(ExtKeys::HOME, mod);
-      } else if (ev->key() == Qt::Key_End)
-      {
+      } else if (ev->key() == Qt::Key_End) {
         pMode->AddKeyPress(ExtKeys::END, mod);
-      } else if (ev->key() == Qt::Key_Right)
-      {
+      } else if (ev->key() == Qt::Key_Right) {
         pMode->AddKeyPress(ExtKeys::RIGHT, mod);
-      } else if (ev->key() == Qt::Key_Left)
-      {
+      } else if (ev->key() == Qt::Key_Left) {
         pMode->AddKeyPress(ExtKeys::LEFT, mod);
-      } else if (ev->key() == Qt::Key_Up)
-      {
+      } else if (ev->key() == Qt::Key_Up) {
         pMode->AddKeyPress(ExtKeys::UP, mod);
-      } else if (ev->key() == Qt::Key_Down)
-      {
+      } else if (ev->key() == Qt::Key_Down) {
         pMode->AddKeyPress(ExtKeys::DOWN, mod);
-      } else
-      {
+      } else {
         auto input = ev->text().toUtf8();
-        if (!input.isEmpty())
-        {
+        if (!input.isEmpty()) {
           uint8_t *pIn = (uint8_t *)input.data();
 
           // Convert to UTF8 uint32; not used yet
           uint32_t dw = 0;
-          for (int i = 0; i < input.size(); i++)
-          {
+          for (int i = 0; i < input.size(); i++) {
             dw |= ((uint32_t)pIn[i]) << ((input.size() - i - 1) * 8);
           }
 
@@ -205,8 +182,7 @@ namespace Zep
 
     ZepMouseButton GetMouseButton(QMouseEvent *ev)
     {
-      switch (ev->button())
-      {
+      switch (ev->button()) {
         case Qt::MouseButton::MiddleButton:
           return ZepMouseButton::Middle;
           break;
@@ -223,16 +199,14 @@ namespace Zep
 
     virtual void mousePressEvent(QMouseEvent *ev) override
     {
-      if (m_spEditor)
-      {
+      if (m_spEditor) {
         m_spEditor->OnMouseDown(toNVec2f(ev->localPos()), GetMouseButton(ev));
       }
     }
     virtual void mouseReleaseEvent(QMouseEvent *ev) override
     {
       (void)ev;
-      if (m_spEditor)
-      {
+      if (m_spEditor) {
         m_spEditor->OnMouseUp(toNVec2f(ev->localPos()), GetMouseButton(ev));
       }
     }
@@ -244,8 +218,7 @@ namespace Zep
 
     virtual void mouseMoveEvent(QMouseEvent *ev) override
     {
-      if (m_spEditor)
-      {
+      if (m_spEditor) {
         m_spEditor->OnMouseMove(toNVec2f(ev->localPos()));
       }
     }
@@ -259,13 +232,13 @@ namespace Zep
    private slots:
     void OnTimer()
     {
-      if (m_spEditor->RefreshRequired())
-      {
+      if (m_spEditor->RefreshRequired()) {
         update();
       }
     }
 
    private:
+
     std::unique_ptr<ZepEditor> m_spEditor;
     QTimer m_refreshTimer;
   };

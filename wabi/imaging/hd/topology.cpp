@@ -25,6 +25,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 std::ostream &operator<<(std::ostream &out, HdTopology const &topo)
 {
   out << "HdTopology()";

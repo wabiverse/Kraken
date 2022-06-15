@@ -53,6 +53,7 @@ WABI_NAMESPACE_BEGIN
 class GfMultiInterval
 {
  public:
+
   typedef std::set<GfInterval> Set;
   typedef Set::const_iterator const_iterator;
   typedef Set::const_iterator iterator;
@@ -213,6 +214,7 @@ class GfMultiInterval
   }
 
  private:
+
   void _AssertInvariants() const;
 
   Set _set;

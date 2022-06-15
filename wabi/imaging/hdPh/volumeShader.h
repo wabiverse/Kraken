@@ -51,6 +51,7 @@ using HdVolumeFieldDescriptorVector = std::vector<struct HdVolumeFieldDescriptor
 class HdPh_VolumeShader final : public HdPhSurfaceShader
 {
  public:
+
   explicit HdPh_VolumeShader(HdRenderDelegate *const renderDelegate);
   ~HdPh_VolumeShader() override;
 
@@ -135,6 +136,7 @@ class HdPh_VolumeShader final : public HdPhSurfaceShader
   static GfVec3d GetSafeMax(const GfRange3d &range);
 
  private:
+
   HdRenderDelegate *const _renderDelegate;
   int _lastRenderSettingsVersion;
   float _stepSize;

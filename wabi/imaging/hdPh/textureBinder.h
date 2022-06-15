@@ -44,6 +44,7 @@ using HdBufferSpecVector = std::vector<struct HdBufferSpec>;
 class HdPh_TextureBinder
 {
  public:
+
   using NamedTextureHandle = HdPhShaderCode::NamedTextureHandle;
   using NamedTextureHandleVector = HdPhShaderCode::NamedTextureHandleVector;
 

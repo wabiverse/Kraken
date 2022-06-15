@@ -48,6 +48,7 @@ class HgiMetal;
 class HgiMetalBuffer final : public HgiBuffer
 {
  public:
+
   HGIMETAL_API
   HgiMetalBuffer(HgiMetal *hgi, HgiBufferDesc const &desc);
 
@@ -69,6 +70,7 @@ class HgiMetalBuffer final : public HgiBuffer
   }
 
  private:
+
   HgiMetalBuffer() = delete;
   HgiMetalBuffer &operator=(const HgiMetalBuffer &) = delete;
   HgiMetalBuffer(const HgiMetalBuffer &) = delete;

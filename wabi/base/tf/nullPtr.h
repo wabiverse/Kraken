@@ -31,8 +31,7 @@ WABI_NAMESPACE_BEGIN
 
 // A type used to create the \a TfNullPtr token.
 struct TfNullPtrType
-{
-};
+{};
 
 // A token to represent null for smart pointers like \a TfWeakPtr and \a
 // TfRefPtr.

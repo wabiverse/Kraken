@@ -39,11 +39,10 @@ class UsdPrim;
 class UsdImagingCoordSysAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   typedef UsdImagingPrimAdapter BaseAdapter;
 
-  UsdImagingCoordSysAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingCoordSysAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   virtual ~UsdImagingCoordSysAdapter();
@@ -101,6 +100,7 @@ class UsdImagingCoordSysAdapter : public UsdImagingPrimAdapter
                                   UsdImagingIndexProxy *index);
 
  protected:
+
   USDIMAGING_API
   virtual void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index);
 };

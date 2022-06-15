@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhAssetUvTextureCpuData : public HdPhTextureCpuData
 {
  public:
+
   HDPH_API
   HdPhAssetUvTextureCpuData(std::string const &filePath,
                             size_t targetMemory,
@@ -71,6 +72,7 @@ class HdPhAssetUvTextureCpuData : public HdPhTextureCpuData
   }
 
  private:
+
   void _SetWrapInfo(HioImageSharedPtr const &image);
 
   // Pointer to the potentially converted data.

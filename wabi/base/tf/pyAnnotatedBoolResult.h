@@ -40,10 +40,10 @@
 WABI_NAMESPACE_BEGIN
 
 template<class Annotation>
-struct TfPyAnnotatedBoolResult : boost::equality_comparable<TfPyAnnotatedBoolResult<Annotation>, bool>
+struct TfPyAnnotatedBoolResult
+  : boost::equality_comparable<TfPyAnnotatedBoolResult<Annotation>, bool>
 {
-  TfPyAnnotatedBoolResult()
-  {}
+  TfPyAnnotatedBoolResult() {}
 
   TfPyAnnotatedBoolResult(bool val, Annotation const &annotation)
     : _val(val),
@@ -106,22 +106,19 @@ struct TfPyAnnotatedBoolResult : boost::equality_comparable<TfPyAnnotatedBoolRes
   using AnnotationType = Annotation;
 
  private:
+
   // Helper function for wrapper.
-  template<class Derived>
-  static Annotation _GetAnnotation(const Derived &x)
+  template<class Derived> static Annotation _GetAnnotation(const Derived &x)
   {
     return x.GetAnnotation();
   }
 
-  template<class Derived>
-  static boost::python::object _GetItem(const Derived &x, int i)
+  template<class Derived> static boost::python::object _GetItem(const Derived &x, int i)
   {
-    if (i == 0)
-    {
+    if (i == 0) {
       return boost::python::object(x._val);
     }
-    if (i == 1)
-    {
+    if (i == 1) {
       return boost::python::object(x._annotation);
     }
 
@@ -132,20 +129,19 @@ struct TfPyAnnotatedBoolResult : boost::equality_comparable<TfPyAnnotatedBoolRes
   }
 
  private:
+
   bool _val;
   Annotation _annotation;
 };
 
 /// Returns \c true if the result of \p lhs is the same as \p rhs.
-template<class Annotation>
-bool operator==(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
+template<class Annotation> bool operator==(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
 {
   return rhs.operator==(lhs);
 }
 
 /// Returns \c false if the result of \p lhs is the same as \p rhs.
-template<class Annotation>
-bool operator!=(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
+template<class Annotation> bool operator!=(bool lhs, TfPyAnnotatedBoolResult<Annotation> &rhs)
 {
   return !(rhs == lhs);
 }

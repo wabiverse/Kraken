@@ -32,6 +32,7 @@ namespace Zep
   class Indexer : public ZepComponent
   {
    public:
+
     Indexer(ZepEditor &editor);
 
     virtual void Notify(std::shared_ptr<ZepMessage> message) override;
@@ -48,6 +49,7 @@ namespace Zep
                                                                     const ZepPath &startPath);
 
    private:
+
     bool m_fileSearchActive = false;
     std::future<std::shared_ptr<FileIndexResult>> m_indexResult;
     std::shared_ptr<FileIndexResult> m_spFilePaths;

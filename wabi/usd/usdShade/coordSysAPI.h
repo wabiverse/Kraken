@@ -79,6 +79,7 @@ class SdfAssetPath;
 class UsdShadeCoordSysAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -88,16 +89,12 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
   /// Equivalent to UsdShadeCoordSysAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeCoordSysAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdShadeCoordSysAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdShadeCoordSysAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeCoordSysAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeCoordSysAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdShadeCoordSysAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDSHADE_API
@@ -122,6 +119,7 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
   static UsdShadeCoordSysAPI Get(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -129,6 +127,7 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
@@ -138,9 +137,11 @@ class UsdShadeCoordSysAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

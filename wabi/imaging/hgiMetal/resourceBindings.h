@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class HgiMetalResourceBindings final : public HgiResourceBindings
 {
  public:
+
   HGIMETAL_API
   HgiMetalResourceBindings(HgiResourceBindingsDesc const &desc);
 
@@ -61,6 +62,7 @@ class HgiMetalResourceBindings final : public HgiResourceBindings
   void BindResources(id<MTLComputeCommandEncoder> computeEncoder);
 
  private:
+
   HgiMetalResourceBindings() = delete;
   HgiMetalResourceBindings &operator=(const HgiMetalResourceBindings &) = delete;
   HgiMetalResourceBindings(const HgiMetalResourceBindings &) = delete;

@@ -122,6 +122,7 @@ WABI_NAMESPACE_BEGIN
 class TfPyLock
 {
  public:
+
   /// Acquires the Python GIL and swaps in callers thread state.
   TF_API TfPyLock();
 
@@ -144,6 +145,7 @@ class TfPyLock
   TF_API void EndAllowThreads();
 
  private:
+
   // Non-acquiring constructor for TfPyEnsureGILUnlockedObj's use.
   friend struct TfPyEnsureGILUnlockedObj;
   enum _UnlockedTag
@@ -166,6 +168,7 @@ struct TfPyEnsureGILUnlockedObj
   TF_API TfPyEnsureGILUnlockedObj();
 
  private:
+
   TfPyLock _lock;
 };
 

@@ -40,10 +40,7 @@ struct WorkSpaceLayout
   kScreen *screen;
   TfToken name;
 
-  WorkSpaceLayout()
-    : screen(POINTER_ZERO),
-      name(EMPTY)
-  {}
+  WorkSpaceLayout() : screen(POINTER_ZERO), name(EMPTY) {}
 };
 
 typedef std::vector<WorkSpaceLayout *> WorkSpaceLayoutVector;
@@ -71,11 +68,7 @@ struct WorkSpaceDataRelation
 
   int parentid;
 
-  WorkSpaceDataRelation()
-    : parent(POINTER_ZERO),
-      value(POINTER_ZERO),
-      parentid(VALUE_ZERO)
-  {}
+  WorkSpaceDataRelation() : parent(POINTER_ZERO), value(POINTER_ZERO), parentid(VALUE_ZERO) {}
 };
 
 typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;

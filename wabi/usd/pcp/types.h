@@ -132,9 +132,7 @@ typedef std::vector<PcpSiteTrackerSegment> PcpSiteTracker;
 // Internal type for Sd sites.
 struct Pcp_SdSiteRef : boost::totally_ordered<Pcp_SdSiteRef>
 {
-  Pcp_SdSiteRef(const SdfLayerRefPtr &layer_, const SdfPath &path_)
-    : layer(layer_),
-      path(path_)
+  Pcp_SdSiteRef(const SdfLayerRefPtr &layer_, const SdfPath &path_) : layer(layer_), path(path_)
   {
     // Do nothing
   }

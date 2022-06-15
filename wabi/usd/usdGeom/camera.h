@@ -91,6 +91,7 @@ class SdfAssetPath;
 class UsdGeomCamera : public UsdGeomXformable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -101,16 +102,12 @@ class UsdGeomCamera : public UsdGeomXformable
   /// Equivalent to UsdGeomCamera::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomCamera(const UsdPrim &prim = UsdPrim())
-    : UsdGeomXformable(prim)
-  {}
+  explicit UsdGeomCamera(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim) {}
 
   /// Construct a UsdGeomCamera on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomCamera(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomCamera(const UsdSchemaBase &schemaObj)
-    : UsdGeomXformable(schemaObj)
-  {}
+  explicit UsdGeomCamera(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -160,6 +157,7 @@ class UsdGeomCamera : public UsdGeomXformable
   static UsdGeomCamera Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -168,6 +166,7 @@ class UsdGeomCamera : public UsdGeomXformable
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -177,9 +176,11 @@ class UsdGeomCamera : public UsdGeomXformable
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PROJECTION
   // --------------------------------------------------------------------- //
@@ -204,6 +205,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HORIZONTALAPERTURE
   // --------------------------------------------------------------------- //
@@ -229,6 +231,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VERTICALAPERTURE
   // --------------------------------------------------------------------- //
@@ -254,6 +257,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HORIZONTALAPERTUREOFFSET
   // --------------------------------------------------------------------- //
@@ -278,6 +282,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                                   bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // VERTICALAPERTUREOFFSET
   // --------------------------------------------------------------------- //
@@ -302,6 +307,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FOCALLENGTH
   // --------------------------------------------------------------------- //
@@ -326,6 +332,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CLIPPINGRANGE
   // --------------------------------------------------------------------- //
@@ -350,6 +357,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // CLIPPINGPLANES
   // --------------------------------------------------------------------- //
@@ -376,6 +384,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FSTOP
   // --------------------------------------------------------------------- //
@@ -395,9 +404,11 @@ class UsdGeomCamera : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateFStopAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateFStopAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FOCUSDISTANCE
   // --------------------------------------------------------------------- //
@@ -422,6 +433,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // STEREOROLE
   // --------------------------------------------------------------------- //
@@ -448,6 +460,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHUTTEROPEN
   // --------------------------------------------------------------------- //
@@ -473,6 +486,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SHUTTERCLOSE
   // --------------------------------------------------------------------- //
@@ -499,6 +513,7 @@ class UsdGeomCamera : public UsdGeomXformable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EXPOSURE
   // --------------------------------------------------------------------- //
@@ -521,9 +536,11 @@ class UsdGeomCamera : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateExposureAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

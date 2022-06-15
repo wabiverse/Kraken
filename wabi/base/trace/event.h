@@ -54,6 +54,7 @@ class TraceEventData;
 class TraceEvent
 {
  public:
+
   /// Time in "ticks".
   using TimeStamp = uint64_t;
   using Key = TraceKey;
@@ -194,7 +195,11 @@ class TraceEvent
   }
 
   /// Constructor for Timespan events that takes the start time and end time.
-  TraceEvent(TimespanTag, const Key &key, TimeStamp startTime, TimeStamp endTime, TraceCategoryId cat)
+  TraceEvent(TimespanTag,
+             const Key &key,
+             TimeStamp startTime,
+             TimeStamp endTime,
+             TraceCategoryId cat)
     : _key(key),
       _category(cat),
       _type(_InternalEventType::Timespan),
@@ -319,6 +324,7 @@ class TraceEvent
   }
 
  private:
+
   // Valid event types. This type has more detail that the public facing
   // EventType enum.
   enum class _InternalEventType : uint8_t

@@ -54,6 +54,7 @@ using HdRenderPassAovBindingVector = std::vector<struct HdRenderPassAovBinding>;
 class HdPhDrawTargetRenderPassState final
 {
  public:
+
   HDPH_API
   HdPhDrawTargetRenderPassState();
   HDPH_API
@@ -106,6 +107,7 @@ class HdPhDrawTargetRenderPassState final
   }
 
  private:
+
   HdRenderPassAovBindingVector _aovBindings;
   HdDepthPriority _depthPriority;
 

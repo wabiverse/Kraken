@@ -24,10 +24,10 @@
 #ifndef WABI_IMAGING_HD_FIELD_H
 #define WABI_IMAGING_HD_FIELD_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/bprim.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/bprim.h"
 
 #include <vector>
 
@@ -38,7 +38,7 @@ WABI_NAMESPACE_BEGIN
 TF_DECLARE_PUBLIC_TOKENS(HdFieldTokens, HD_API, HD_FIELD_TOKENS);
 
 class HdSceneDelegate;
-typedef std::vector<class HdField const *> HdFieldPtrConstVector;
+using HdFieldPtrConstVector = std::vector<class HdField const *>;
 
 /// \class HdField
 ///
@@ -48,10 +48,11 @@ typedef std::vector<class HdField const *> HdFieldPtrConstVector;
 class HdField : public HdBprim
 {
  public:
+
   HD_API
   HdField(SdfPath const &id);
   HD_API
-  virtual ~HdField();
+  ~HdField() override;
 
   // Change tracking for HdField
   enum DirtyBits : HdDirtyBits

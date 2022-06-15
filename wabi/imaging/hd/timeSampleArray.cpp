@@ -21,8 +21,8 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/hd/timeSampleArray.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/timeSampleArray.h"
 
 #include "wabi/base/gf/half.h"
 #include "wabi/base/gf/matrix2d.h"

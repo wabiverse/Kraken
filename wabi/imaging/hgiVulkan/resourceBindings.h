@@ -49,6 +49,7 @@ class HgiVulkanDevice;
 class HgiVulkanResourceBindings final : public HgiResourceBindings
 {
  public:
+
   HGIVULKAN_API
   ~HgiVulkanResourceBindings() override;
 
@@ -65,12 +66,14 @@ class HgiVulkanResourceBindings final : public HgiResourceBindings
   uint64_t &GetInflightBits();
 
  protected:
+
   friend class HgiVulkan;
 
   HGIVULKAN_API
   HgiVulkanResourceBindings(HgiVulkanDevice *device, HgiResourceBindingsDesc const &desc);
 
  private:
+
   HgiVulkanResourceBindings() = delete;
   HgiVulkanResourceBindings &operator=(const HgiVulkanResourceBindings &) = delete;
   HgiVulkanResourceBindings(const HgiVulkanResourceBindings &) = delete;

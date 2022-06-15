@@ -59,8 +59,7 @@ enum SdfListOpType
 /// Trait classes for specializing behaviors of SdfListOp for a given item
 /// type.
 ///
-template<class T>
-struct Sdf_ListOpTraits
+template<class T> struct Sdf_ListOpTraits
 {
   typedef std::less<T> ItemComparator;
 };
@@ -72,10 +71,10 @@ struct Sdf_ListOpTraits
 /// SdfListOp is a value type representing an operation that edits a list.
 /// It may add or remove items, reorder them, or replace the list entirely.
 ///
-template<typename T>
-class SdfListOp
+template<typename T> class SdfListOp
 {
  public:
+
   typedef T ItemType;
   typedef std::vector<ItemType> ItemVector;
   typedef ItemType value_type;
@@ -102,13 +101,11 @@ class SdfListOp
   /// or ordered keys.
   bool HasKeys() const
   {
-    if (IsExplicit())
-    {
+    if (IsExplicit()) {
       return true;
     }
     if (_addedItems.size() != 0 || _prependedItems.size() != 0 || _appendedItems.size() != 0 ||
-        _deletedItems.size() != 0)
-    {
+        _deletedItems.size() != 0) {
       return true;
     }
     return _orderedItems.size() != 0;
@@ -217,7 +214,10 @@ class SdfListOp
   /// (index, index + n] with the given \p newItems. If \p newItems is empty
   /// the items in the range will simply be removed.
   SDF_API
-  bool ReplaceOperations(const SdfListOpType op, size_t index, size_t n, const ItemVector &newItems);
+  bool ReplaceOperations(const SdfListOpType op,
+                         size_t index,
+                         size_t n,
+                         const ItemVector &newItems);
 
   /// Composes a stronger SdfListOp's opinions for a given operation list
   /// over this one.
@@ -251,19 +251,36 @@ class SdfListOp
   };
 
  private:
+
   void _SetExplicit(bool isExplicit);
 
   typedef typename Sdf_ListOpTraits<T>::ItemComparator _ItemComparator;
   typedef std::list<ItemType> _ApplyList;
   typedef std::map<ItemType, typename _ApplyList::iterator, _ItemComparator> _ApplyMap;
 
-  void _AddKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
-  void _PrependKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
-  void _AppendKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
-  void _DeleteKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
-  void _ReorderKeys(SdfListOpType, const ApplyCallback &cb, _ApplyList *result, _ApplyMap *search) const;
+  void _AddKeys(SdfListOpType,
+                const ApplyCallback &cb,
+                _ApplyList *result,
+                _ApplyMap *search) const;
+  void _PrependKeys(SdfListOpType,
+                    const ApplyCallback &cb,
+                    _ApplyList *result,
+                    _ApplyMap *search) const;
+  void _AppendKeys(SdfListOpType,
+                   const ApplyCallback &cb,
+                   _ApplyList *result,
+                   _ApplyMap *search) const;
+  void _DeleteKeys(SdfListOpType,
+                   const ApplyCallback &cb,
+                   _ApplyList *result,
+                   _ApplyMap *search) const;
+  void _ReorderKeys(SdfListOpType,
+                    const ApplyCallback &cb,
+                    _ApplyList *result,
+                    _ApplyMap *search) const;
 
  private:
+
   bool _isExplicit;
   ItemVector _explicitItems;
   ItemVector _addedItems;
@@ -274,8 +291,7 @@ class SdfListOp
 };
 
 // ADL swap.
-template<class T>
-void swap(SdfListOp<T> &x, SdfListOp<T> &y)
+template<class T> void swap(SdfListOp<T> &x, SdfListOp<T> &y)
 {
   x.Swap(y);
 }
@@ -287,8 +303,7 @@ SDF_API void SdfApplyListOrdering(std::vector<ItemType> *v, const std::vector<It
 
 // Ostream output methods for list values (useful for debugging and required
 // for storing a list value in a VtValue).
-template<typename T>
-SDF_API std::ostream &operator<<(std::ostream &, const SdfListOp<T> &);
+template<typename T> SDF_API std::ostream &operator<<(std::ostream &, const SdfListOp<T> &);
 
 // Concrete, instantiated listop types.
 typedef class SdfListOp<int> SdfIntListOp;

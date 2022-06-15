@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HgiGLGraphicsPipeline final : public HgiGraphicsPipeline
 {
  public:
+
   HGIGL_API
   ~HgiGLGraphicsPipeline() override;
 
@@ -52,12 +53,14 @@ class HgiGLGraphicsPipeline final : public HgiGraphicsPipeline
   void BindPipeline();
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
   HgiGLGraphicsPipeline(HgiGraphicsPipelineDesc const &desc);
 
  private:
+
   HgiGLGraphicsPipeline() = delete;
   HgiGLGraphicsPipeline &operator=(const HgiGLGraphicsPipeline &) = delete;
   HgiGLGraphicsPipeline(const HgiGLGraphicsPipeline &) = delete;

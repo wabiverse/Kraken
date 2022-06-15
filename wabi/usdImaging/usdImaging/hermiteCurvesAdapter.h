@@ -44,11 +44,10 @@ WABI_NAMESPACE_BEGIN
 class UsdImagingHermiteCurvesAdapter : public UsdImagingGprimAdapter
 {
  public:
+
   typedef UsdImagingGprimAdapter BaseAdapter;
 
-  UsdImagingHermiteCurvesAdapter()
-    : UsdImagingGprimAdapter()
-  {}
+  UsdImagingHermiteCurvesAdapter() : UsdImagingGprimAdapter() {}
   USDIMAGING_API
   virtual ~UsdImagingHermiteCurvesAdapter();
 
@@ -66,10 +65,11 @@ class UsdImagingHermiteCurvesAdapter : public UsdImagingGprimAdapter
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   // ---------------------------------------------------------------------- //
   /// \name Change Processing
@@ -85,9 +85,12 @@ class UsdImagingHermiteCurvesAdapter : public UsdImagingGprimAdapter
   // ---------------------------------------------------------------------- //
 
   USDIMAGING_API
-  VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const override;
+  VtValue GetTopology(UsdPrim const &prim,
+                      SdfPath const &cachePath,
+                      UsdTimeCode time) const override;
 
  protected:
+
   USDIMAGING_API
   bool _IsBuiltinPrimvar(TfToken const &primvarName) const override;
 };

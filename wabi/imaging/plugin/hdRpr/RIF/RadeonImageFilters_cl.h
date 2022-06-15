@@ -31,10 +31,11 @@ extern RIF_API_ENTRY rif_int rifCreateContextFromOpenClContext(rif_uint64 api_ve
                                                                rif_char const *cache_path,
                                                                rif_context *out_context);
 
-extern RIF_API_ENTRY rif_int rifContextCreateImageFromOpenClMemory(rif_context context,
-                                                                   rif_image_desc const *image_desc,
-                                                                   void *mem,
-                                                                   rif_image *out_image);
+extern RIF_API_ENTRY rif_int
+rifContextCreateImageFromOpenClMemory(rif_context context,
+                                      rif_image_desc const *image_desc,
+                                      void *mem,
+                                      rif_image *out_image);
 
 #  ifdef __cplusplus
 }

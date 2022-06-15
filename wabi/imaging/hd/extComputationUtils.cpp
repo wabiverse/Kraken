@@ -148,6 +148,7 @@ WABI_NAMESPACE_BEGIN
   return true;
 }
 
+
 namespace
 {
 

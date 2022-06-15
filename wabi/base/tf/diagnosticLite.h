@@ -124,6 +124,7 @@ struct Tf_DiagnosticLiteHelper
   TF_API void IssueStatus(char const *fmt, ...) const ARCH_PRINTF_FUNCTION(2, 3);
 
  private:
+
   TfCallContext _context;
   TfDiagnosticType _type;
 };
@@ -137,7 +138,8 @@ struct Tf_DiagnosticLiteHelper
 #  define TF_FATAL_CODING_ERROR \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueFatalError
 
-#  define TF_RUNTIME_MSG Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
+#  define TF_RUNTIME_MSG \
+    Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
 
 #  define TF_RUNTIME_MSG_SUCCESS \
     Tf_DiagnosticLiteHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus

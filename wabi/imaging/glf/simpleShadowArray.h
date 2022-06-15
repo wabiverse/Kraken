@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class GlfSimpleShadowArray : public TfRefBase, public TfWeakBase
 {
  public:
+
   GLF_API
   GlfSimpleShadowArray();
   GLF_API
@@ -141,6 +142,7 @@ class GlfSimpleShadowArray : public TfRefBase, public TfWeakBase
   void EndCapture(size_t index);
 
  private:
+
   void _AllocResources();
   void _AllocBindfulTextures();
   void _AllocBindlessTextures();
@@ -152,6 +154,7 @@ class GlfSimpleShadowArray : public TfRefBase, public TfWeakBase
   void _UnbindFramebuffer();
 
  private:
+
   // bindful state
   GfVec2i _size;
   size_t _numLayers;

@@ -50,6 +50,7 @@ class HgiMetal;
 class HgiMetalGraphicsPipeline final : public HgiGraphicsPipeline
 {
  public:
+
   HGIMETAL_API
   HgiMetalGraphicsPipeline(HgiMetal *hgi, HgiGraphicsPipelineDesc const &desc);
 
@@ -61,6 +62,7 @@ class HgiMetalGraphicsPipeline final : public HgiGraphicsPipeline
   void BindPipeline(id<MTLRenderCommandEncoder> renderEncoder);
 
  private:
+
   HgiMetalGraphicsPipeline() = delete;
   HgiMetalGraphicsPipeline &operator=(const HgiMetalGraphicsPipeline &) = delete;
   HgiMetalGraphicsPipeline(const HgiMetalGraphicsPipeline &) = delete;

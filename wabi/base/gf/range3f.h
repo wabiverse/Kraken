@@ -56,8 +56,7 @@ WABI_NAMESPACE_BEGIN
 class GfRange3d;
 class GfRange3f;
 
-template<>
-struct GfIsGfRange<class GfRange3f>
+template<> struct GfIsGfRange<class GfRange3f>
 {
   static const bool value = true;
 };
@@ -74,6 +73,7 @@ struct GfIsGfRange<class GfRange3f>
 class GfRange3f
 {
  public:
+
   /// Helper typedef.
   typedef GfVec3f MinMaxType;
 
@@ -95,10 +95,7 @@ class GfRange3f
   }
 
   /// This constructor initializes the minimum and maximum points.
-  GfRange3f(const GfVec3f &min, const GfVec3f &max)
-    : _min(min),
-      _max(max)
-  {}
+  GfRange3f(const GfVec3f &min, const GfVec3f &max) : _min(min), _max(max) {}
 
   /// Returns the minimum value of the range.
   const GfVec3f &GetMin() const
@@ -162,8 +159,8 @@ class GfRange3f
   /// operations of this type, the range is assumed to include its extrema.
   bool Contains(const GfVec3f &point) const
   {
-    return (point[0] >= _min[0] && point[0] <= _max[0] && point[1] >= _min[1] && point[1] <= _max[1] &&
-            point[2] >= _min[2] && point[2] <= _max[2]);
+    return (point[0] >= _min[0] && point[0] <= _max[0] && point[1] >= _min[1] &&
+            point[1] <= _max[1] && point[2] >= _min[2] && point[2] <= _max[2]);
   }
 
   /// Returns true if the \p range is located entirely inside the range. As
@@ -299,12 +296,10 @@ class GfRange3f
   /// unary multiply.
   GfRange3f operator*=(double m)
   {
-    if (m > 0)
-    {
+    if (m > 0) {
       _min *= m;
       _max *= m;
-    } else
-    {
+    } else {
       GfVec3f tmp = _min;
       _min = _max * m;
       _max = tmp * m;
@@ -396,6 +391,7 @@ class GfRange3f
   static const GfRange3f UnitCube;
 
  private:
+
   /// Minimum and maximum points.
   GfVec3f _min, _max;
 

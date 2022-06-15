@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhTextureUtils
 {
  public:
+
   /// Converts given number of texels.
   ///
   /// Conversion can be in-place if the ends of the source and destination
@@ -64,8 +65,9 @@ class HdPhTextureUtils
 
   /// Get all mip levels from a file.
   HDPH_API
-  static std::vector<HioImageSharedPtr> GetAllMipImages(const std::string &filePath,
-                                                        HioImage::SourceColorSpace sourceColorSpace);
+  static std::vector<HioImageSharedPtr> GetAllMipImages(
+    const std::string &filePath,
+    HioImage::SourceColorSpace sourceColorSpace);
 
   // Compute dimensions so that all tiles fit into the given target memory.
   // First by traversing the given images and then by computing a mip chain

@@ -30,11 +30,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-#define USDIMAGING_TOKENS                                              \
-  ((infoSource, "info:source"))(faceIndexPrimvar)(faceOffsetPrimvar)(( \
-    primvarsNormals,                                                   \
-    "primvars:normals"))((primvarsWidths,                              \
-                          "primvars:widths"))(ptexFaceIndex)(ptexFaceOffset)(usdPopulatedPrimCount)(usdVaryingExtent)(usdVaryingPrimvar)(usdVaryingTopology)(usdVaryingVisibility)(usdVaryingWidths)(usdVaryingNormals)(usdVaryingXform)(usdVaryingTexture)(uvPrimvar)(UsdPreviewSurface)(UsdUVTexture)(UsdPrimvarReader_float)(UsdPrimvarReader_float2)(UsdPrimvarReader_float3)(UsdPrimvarReader_float4)(UsdPrimvarReader_int)(UsdTransform2d)
+#define USDIMAGING_TOKENS                                       \
+  ((infoSource, "info:source"))(faceIndexPrimvar)(              \
+    faceOffsetPrimvar)((primvarsNormals, "primvars:normals"))(( \
+    primvarsWidths,                                             \
+    "primvars:widths"))(ptexFaceIndex)(ptexFaceOffset)(usdPopulatedPrimCount)(usdVaryingExtent)(usdVaryingPrimvar)(usdVaryingTopology)(usdVaryingVisibility)(usdVaryingWidths)(usdVaryingNormals)(usdVaryingXform)(usdVaryingTexture)(uvPrimvar)(UsdPreviewSurface)(UsdUVTexture)(UsdPrimvarReader_float)(UsdPrimvarReader_float2)(UsdPrimvarReader_float3)(UsdPrimvarReader_float4)(UsdPrimvarReader_int)(UsdTransform2d)
 
 TF_DECLARE_PUBLIC_TOKENS(UsdImagingTokens, USDIMAGING_API, USDIMAGING_TOKENS);
 

@@ -72,6 +72,7 @@ class SdfAssetPath;
 class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -82,15 +83,12 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
   /// Equivalent to UsdRiPxrCookieLightFilter::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiPxrCookieLightFilter(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLightFilter(prim)
-  {}
+  explicit UsdRiPxrCookieLightFilter(const UsdPrim &prim = UsdPrim()) : UsdLuxLightFilter(prim) {}
 
   /// Construct a UsdRiPxrCookieLightFilter on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiPxrCookieLightFilter(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiPxrCookieLightFilter(const UsdSchemaBase &schemaObj)
-    : UsdLuxLightFilter(schemaObj)
+  explicit UsdRiPxrCookieLightFilter(const UsdSchemaBase &schemaObj) : UsdLuxLightFilter(schemaObj)
   {}
 
   /// Destructor.
@@ -141,6 +139,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
   static UsdRiPxrCookieLightFilter Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -148,6 +147,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -157,9 +157,11 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COOKIEMODE
   // --------------------------------------------------------------------- //
@@ -192,6 +194,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // WIDTH
   // --------------------------------------------------------------------- //
@@ -211,9 +214,11 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateWidthAttr(VtValue const &defaultValue = VtValue(),
+                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HEIGHT
   // --------------------------------------------------------------------- //
@@ -233,9 +238,11 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRI_API
-  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREMAP
   // --------------------------------------------------------------------- //
@@ -259,6 +266,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREWRAPMODE
   // --------------------------------------------------------------------- //
@@ -287,6 +295,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREFILLCOLOR
   // --------------------------------------------------------------------- //
@@ -311,6 +320,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                           bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREPREMULTIPLIEDALPHA
   // --------------------------------------------------------------------- //
@@ -335,6 +345,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREINVERTU
   // --------------------------------------------------------------------- //
@@ -360,6 +371,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREINVERTV
   // --------------------------------------------------------------------- //
@@ -385,6 +397,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTURESCALEU
   // --------------------------------------------------------------------- //
@@ -408,6 +421,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTURESCALEV
   // --------------------------------------------------------------------- //
@@ -431,6 +445,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREOFFSETU
   // --------------------------------------------------------------------- //
@@ -454,6 +469,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TEXTUREOFFSETV
   // --------------------------------------------------------------------- //
@@ -477,6 +493,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDIRECTIONAL
   // --------------------------------------------------------------------- //
@@ -502,6 +519,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICSHEARX
   // --------------------------------------------------------------------- //
@@ -525,6 +543,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICSHEARY
   // --------------------------------------------------------------------- //
@@ -548,6 +567,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICAPEX
   // --------------------------------------------------------------------- //
@@ -571,6 +591,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICUSELIGHTDIRECTION
   // --------------------------------------------------------------------- //
@@ -597,6 +618,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURAMOUNT
   // --------------------------------------------------------------------- //
@@ -623,6 +645,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURSMULT
   // --------------------------------------------------------------------- //
@@ -646,6 +669,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURTMULT
   // --------------------------------------------------------------------- //
@@ -669,6 +693,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                            bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURNEARDISTANCE
   // --------------------------------------------------------------------- //
@@ -693,6 +718,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                   bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURMIDPOINT
   // --------------------------------------------------------------------- //
@@ -716,6 +742,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURFARDISTANCE
   // --------------------------------------------------------------------- //
@@ -739,6 +766,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURNEARVALUE
   // --------------------------------------------------------------------- //
@@ -762,6 +790,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURMIDVALUE
   // --------------------------------------------------------------------- //
@@ -785,6 +814,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLURFARVALUE
   // --------------------------------------------------------------------- //
@@ -808,6 +838,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICBLUREXPONENT
   // --------------------------------------------------------------------- //
@@ -831,6 +862,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                               bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYNEARDISTANCE
   // --------------------------------------------------------------------- //
@@ -855,6 +887,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYMIDPOINT
   // --------------------------------------------------------------------- //
@@ -878,6 +911,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYFARDISTANCE
   // --------------------------------------------------------------------- //
@@ -902,6 +936,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYNEARVALUE
   // --------------------------------------------------------------------- //
@@ -925,6 +960,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                   bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYMIDVALUE
   // --------------------------------------------------------------------- //
@@ -948,6 +984,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYFARVALUE
   // --------------------------------------------------------------------- //
@@ -971,6 +1008,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ANALYTICDENSITYEXPONENT
   // --------------------------------------------------------------------- //
@@ -994,6 +1032,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORSATURATION
   // --------------------------------------------------------------------- //
@@ -1018,6 +1057,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORMIDPOINT
   // --------------------------------------------------------------------- //
@@ -1041,6 +1081,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORCONTRAST
   // --------------------------------------------------------------------- //
@@ -1065,6 +1106,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                        bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORWHITEPOINT
   // --------------------------------------------------------------------- //
@@ -1088,6 +1130,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                          bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // COLORTINT
   // --------------------------------------------------------------------- //
@@ -1112,6 +1155,7 @@ class UsdRiPxrCookieLightFilter : public UsdLuxLightFilter
                                    bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

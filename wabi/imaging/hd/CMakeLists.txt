@@ -22,9 +22,9 @@ wabi_library(hd
     PUBLIC_CLASSES
         aov
         basisCurves
-        # basisCurvesSchema
+        basisCurvesSchema
         basisCurvesTopology
-        # basisCurvesTopologySchema
+        basisCurvesTopologySchema
         binding
         bprim
         bufferArray
@@ -34,23 +34,23 @@ wabi_library(hd
         bufferSource
         bufferSpec
         camera
-        # cameraSchema
-        # categoriesSchema
+        cameraSchema
+        categoriesSchema
         changeTracker
         command
         compExtCompInputSource
         computation
-        # containerDataSourceEditor
+        containerDataSourceEditor
         coordSys
-        # coordSysBindingSchema
+        coordSysBindingSchema
         dataSource
         dataSourceLegacyPrim
         dataSourceLocator
         dataSourceMaterialNetworkInterface
         debugCodes
-        # dependenciesSchema
-        # dependencySchema
-        # dirtyBitsTranslator
+        dependenciesSchema
+        dependencySchema
+        dirtyBitsTranslator
         dirtyList
         drawingCoord
         drawItem
@@ -61,58 +61,58 @@ wabi_library(hd
         extCompPrimvarBufferSource
         extComputation
         extComputationContext
-        # extComputationInputComputationSchema
-        # extComputationOutputSchema
-        # extComputationPrimvarSchema
-        # extComputationPrimvarsSchema
-        # extComputationSchema
+        extComputationInputComputationSchema
+        extComputationOutputSchema
+        extComputationPrimvarSchema
+        extComputationPrimvarsSchema
+        extComputationSchema
         extComputationUtils
-        # extentSchema
+        extentSchema
         field
-        # filteringSceneIndex
-        # flatteningSceneIndex
+        filteringSceneIndex
+        flatteningSceneIndex
         flatNormals
         geomSubset
-        # geomSubsetSchema
-        # geomSubsetsSchema
-        # instanceCategoriesSchema
-        # instancedBySchema
+        geomSubsetSchema
+        geomSubsetsSchema
+        instanceCategoriesSchema
+        instancedBySchema
         instancer
         instanceRegistry
-        # instancerTopologySchema
-        # instanceSchema
-        # legacyDisplayStyleSchema
-        # legacyPrimSceneIndex
+        instancerTopologySchema
+        instanceSchema
+        legacyDisplayStyleSchema
+        legacyPrimSceneIndex
         light
-        # lightSchema
+        lightSchema
         material
-        # materialBindingSchema
-        # materialConnectionSchema
-        # materialFilteringSceneIndexBase
-        # materialNetworkSchema
-        # materialNetwork2Interface
-        # materialNodeSchema
-        # materialSchema
-        # mergingSceneIndex
+        materialBindingSchema
+        materialConnectionSchema
+        materialFilteringSceneIndexBase
+        materialNetworkSchema
+        materialNetwork2Interface
+        materialNodeSchema
+        materialSchema
+        mergingSceneIndex
         mesh
-        # meshSchema
+        meshSchema
         meshTopology
-        # meshTopologySchema
+        meshTopologySchema
         meshUtil
-        # noticeBatchingSceneIndex
-        # overlayContainerDataSource
+        noticeBatchingSceneIndex
+        overlayContainerDataSource
         perfLog
         pluginRenderDelegateUniqueHandle
         points
-        # prefixingSceneIndex
-        # primDataSourceOverlayCache
+        prefixingSceneIndex
+        primDataSourceOverlayCache
         primGather
         primTypeIndex
-        # primvarSchema
-        # primvarsSchema
-        # purposeSchema
+        primvarSchema
+        primvarsSchema
+        purposeSchema
         renderBuffer
-        # renderBufferSchema
+        renderBufferSchema
         renderDelegate
         rendererPlugin
         rendererPluginHandle
@@ -125,24 +125,24 @@ wabi_library(hd
         resource
         resourceRegistry
         retainedDataSource
-        # retainedSceneIndex
+        retainedSceneIndex
         rprim
         rprimCollection
         rprimSharedData
         sceneDelegate
         sceneExtCompInputSource
-        # sceneIndex
-        # sceneIndexAdapterSceneDelegate
-        # sceneIndexObserver
-        # sceneIndexPlugin
-        # sceneIndexPluginRegistry
+        sceneIndex
+        sceneIndexAdapterSceneDelegate
+        sceneIndexObserver
+        sceneIndexPlugin
+        sceneIndexPluginRegistry
         schema
         selection
         smoothNormals
         sortedIds
         sprim
         strategyBase
-        # subdivisionTagsSchema
+        subdivisionTagsSchema
         task
         timeSampleArray
         tokens
@@ -153,18 +153,18 @@ wabi_library(hd
         unitTestNullRenderDelegate
         unitTestNullRenderPass
         vertexAdjacency
-        # visibilitySchema
+        visibilitySchema
         volume
         volumeFieldBindingSchema
-        # volumeFieldSchema
+        volumeFieldSchema
         vtBufferSource
-        # xformSchema
+        xformSchema
 
     PUBLIC_HEADERS
         api.h
         dataSourceTypeDefs.h
         driver.h
-        # materialNetworkInterface.h
+        materialNetworkInterface.h
         version.h
 
     PRIVATE_CLASSES

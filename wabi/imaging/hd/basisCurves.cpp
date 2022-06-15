@@ -21,26 +21,25 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#include "wabi/imaging/hd/basisCurves.h"
-#include "wabi/base/tf/envSetting.h"
-#include "wabi/imaging/hd/tokens.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/basisCurves.h"
+#include "wabi/imaging/hd/tokens.h"
+#include "wabi/base/tf/envSetting.h"
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens, HD_BASISCURVES_REPR_DESC_TOKENS);
+TF_DEFINE_PUBLIC_TOKENS(HdBasisCurvesReprDescTokens,
+                        HD_BASISCURVES_REPR_DESC_TOKENS);
 
-TF_DEFINE_ENV_SETTING(HD_ENABLE_REFINED_CURVES, 0, "Force curves to always be refined.");
+TF_DEFINE_ENV_SETTING(HD_ENABLE_REFINED_CURVES, 0, 
+                      "Force curves to always be refined.");
 
 HdBasisCurves::HdBasisCurves(SdfPath const &id) : HdRprim(id)
 {
   /*NOTHING*/
 }
 
-HdBasisCurves::~HdBasisCurves()
-{
-  /*NOTHING*/
-}
+HdBasisCurves::~HdBasisCurves() = default;
 
 /* virtual */
 TfTokenVector const &HdBasisCurves::GetBuiltinPrimvarNames() const
@@ -59,6 +58,7 @@ bool HdBasisCurves::IsEnabledForceRefinedCurves()
 {
   return TfGetEnvSetting(HD_ENABLE_REFINED_CURVES) == 1;
 }
+
 
 /* static */
 void HdBasisCurves::ConfigureRepr(TfToken const &reprName, HdBasisCurvesReprDesc desc)

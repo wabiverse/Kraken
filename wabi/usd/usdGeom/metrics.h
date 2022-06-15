@@ -194,6 +194,7 @@ bool UsdGeomLinearUnitsAre(double authoredUnits, double standardUnits, double ep
 class UsdGeomLinearUnits
 {
  public:
+
   static constexpr double nanometers = 1e-9;
   static constexpr double micrometers = 1e-6;
   static constexpr double millimeters = 0.001;

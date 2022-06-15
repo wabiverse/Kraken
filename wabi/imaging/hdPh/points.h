@@ -44,6 +44,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhPoints final : public HdPoints
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdPhPoints");
 
   HDPH_API
@@ -65,6 +66,7 @@ class HdPhPoints final : public HdPoints
   HdDirtyBits GetInitialDirtyBitsMask() const override;
 
  protected:
+
   HDPH_API
   void _InitRepr(TfToken const &reprToken, HdDirtyBits *dirtyBits) override;
 
@@ -82,6 +84,7 @@ class HdPhPoints final : public HdPoints
                                HdDirtyBits *dirtyBitsState);
 
  private:
+
   HdReprSharedPtr _smoothHullRepr;
 
   bool _displayOpacity;

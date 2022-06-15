@@ -59,6 +59,7 @@ using HdPhResourceRegistrySharedPtr = std::shared_ptr<class HdPhResourceRegistry
 class HdPhSurfaceShader : public HdPhShaderCode
 {
  public:
+
   HDPH_API
   HdPhSurfaceShader();
   HDPH_API
@@ -133,7 +134,8 @@ class HdPhSurfaceShader : public HdPhShaderCode
 
   /// Returns if the two shaders can be aggregated into the same draw batch.
   HDPH_API
-  static bool CanAggregate(HdPhShaderCodeSharedPtr const &shaderA, HdPhShaderCodeSharedPtr const &shaderB);
+  static bool CanAggregate(HdPhShaderCodeSharedPtr const &shaderA,
+                           HdPhShaderCodeSharedPtr const &shaderB);
 
   /// Adds the fallback value of the given material param to
   /// buffer specs and sources using the param's name.
@@ -144,6 +146,7 @@ class HdPhSurfaceShader : public HdPhShaderCode
                                                 HdBufferSourceSharedPtrVector *const sources);
 
  protected:
+
   HDPH_API
   void _SetSource(TfToken const &shaderStageKey, std::string const &source);
 
@@ -154,6 +157,7 @@ class HdPhSurfaceShader : public HdPhShaderCode
   ID _ComputeTextureSourceHash() const;
 
  private:
+
   std::string _fragmentSource;
   std::string _geometrySource;
 

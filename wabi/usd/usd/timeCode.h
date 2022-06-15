@@ -80,15 +80,12 @@ TF_DECLARE_PUBLIC_TOKENS(UsdTimeCodeTokens, USD_API, USD_TIME_CODE_TOKENS);
 class UsdTimeCode
 {
  public:
+
   /// Construct with optional time value.  Impilicitly convert from double.
-  constexpr UsdTimeCode(double t = 0.0) noexcept
-    : _value(t)
-  {}
+  constexpr UsdTimeCode(double t = 0.0) noexcept : _value(t) {}
 
   /// Construct and implicitly cast from SdfTimeCode.
-  constexpr UsdTimeCode(const SdfTimeCode &timeCode) noexcept
-    : _value(timeCode.GetValue())
-  {}
+  constexpr UsdTimeCode(const SdfTimeCode &timeCode) noexcept : _value(timeCode.GetValue()) {}
 
   /// Produce a UsdTimeCode representing the lowest/earliest possible
   /// timeCode.  Thus, for any given timeSample \em s, its time ordinate
@@ -162,7 +159,8 @@ class UsdTimeCode
   /// Equality comparison.
   friend bool operator==(const UsdTimeCode &lhs, const UsdTimeCode &rhs)
   {
-    return lhs.IsDefault() == rhs.IsDefault() && (lhs.IsDefault() || (lhs.GetValue() == rhs.GetValue()));
+    return lhs.IsDefault() == rhs.IsDefault() &&
+           (lhs.IsDefault() || (lhs.GetValue() == rhs.GetValue()));
   }
 
   /// Inequality comparison.
@@ -207,6 +205,7 @@ class UsdTimeCode
   }
 
  private:
+
   USD_API
   void _IssueGetValueOnDefaultError() const;
 

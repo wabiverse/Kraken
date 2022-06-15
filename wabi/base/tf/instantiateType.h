@@ -39,8 +39,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T, bool AS_REF_PTR>
-struct Tf_TypeFactoryType
+template<typename T, bool AS_REF_PTR> struct Tf_TypeFactoryType
 {
   struct FactoryType : public TfType::FactoryBase
   {
@@ -50,13 +49,10 @@ struct Tf_TypeFactoryType
     }
   };
 };
-template<class T>
-struct TfTest_RefPtrFactory
-{
-};
+template<class T> struct TfTest_RefPtrFactory
+{};
 
-template<typename T>
-struct Tf_TypeFactoryType<T, false>
+template<typename T> struct Tf_TypeFactoryType<T, false>
 {
   struct FactoryType : public TfType::FactoryBase
   {
@@ -68,8 +64,7 @@ struct Tf_TypeFactoryType<T, false>
 };
 
 // Make the type actually manufacturable.
-template<typename T, bool MANUFACTURABLE>
-struct Tf_MakeTypeManufacturable
+template<typename T, bool MANUFACTURABLE> struct Tf_MakeTypeManufacturable
 {
   static void Doit(TfType t)
   {
@@ -79,11 +74,9 @@ struct Tf_MakeTypeManufacturable
 };
 
 // Don't make it manufacturable.
-template<typename T>
-struct Tf_MakeTypeManufacturable<T, false>
+template<typename T> struct Tf_MakeTypeManufacturable<T, false>
 {
-  static void Doit(TfType)
-  {}
+  static void Doit(TfType) {}
 };
 
 #define _TF_REMOVE_PARENS_HELPER(...) __VA_ARGS__

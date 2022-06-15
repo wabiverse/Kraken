@@ -44,11 +44,12 @@ class TfPatternMatcher;
 class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters
 {
  public:
-  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters()
-  {}
+
+  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters() {}
   USDUTILS_API
-  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters(const std::vector<std::string> &stringFilters,
-                                                         const std::vector<std::string> &codePathFilters);
+  UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters(
+    const std::vector<std::string> &stringFilters,
+    const std::vector<std::string> &codePathFilters);
 
   const std::vector<std::string> &GetStringFilters() const
   {
@@ -66,6 +67,7 @@ class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters
   void SetCodePathFilters(const std::vector<std::string> &codePathFilters);
 
  private:
+
   std::vector<std::string> _stringFilters;
   std::vector<std::string> _codePathFilters;
 };
@@ -99,6 +101,7 @@ class UsdUtilsConditionalAbortDiagnosticDelegateErrorFilters
 class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Delegate
 {
  public:
+
   /// Constructor to initialize conditionalAbortDiagnosticDelegate.
   /// Responsible for adding this delegate instance to TfDiagnosticMgr and
   /// also sets the \p includeFilters and \p excludeFilters
@@ -113,8 +116,8 @@ class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Deleg
   virtual ~UsdUtilsConditionalAbortDiagnosticDelegate();
 
   UsdUtilsConditionalAbortDiagnosticDelegate() = delete;
-  UsdUtilsConditionalAbortDiagnosticDelegate(const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) =
-    delete;
+  UsdUtilsConditionalAbortDiagnosticDelegate(
+    const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) = delete;
   UsdUtilsConditionalAbortDiagnosticDelegate &operator=(
     const UsdUtilsConditionalAbortDiagnosticDelegate &delegate) = delete;
 
@@ -127,12 +130,14 @@ class UsdUtilsConditionalAbortDiagnosticDelegate : public TfDiagnosticMgr::Deleg
   void IssueStatus(const TfStatus &status) override;
 
  private:
+
   const std::vector<TfPatternMatcher> _includePatternStringFilters;
   const std::vector<TfPatternMatcher> _includePatternCodePathFilters;
   const std::vector<TfPatternMatcher> _excludePatternStringFilters;
   const std::vector<TfPatternMatcher> _excludePatternCodePathFilters;
 
  protected:
+
   /// Helper to match \p err against a given set of \p errorFilters
   /// A client can override this to affect the behavior of the rule matcher.
   virtual bool _RuleMatcher(const TfDiagnosticBase &err,

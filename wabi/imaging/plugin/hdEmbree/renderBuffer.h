@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class HdEmbreeRenderBuffer : public HdRenderBuffer
 {
  public:
+
   HdEmbreeRenderBuffer(SdfPath const &id);
   ~HdEmbreeRenderBuffer();
 
@@ -186,6 +187,7 @@ class HdEmbreeRenderBuffer : public HdRenderBuffer
   void Clear(size_t numComponents, int const *value);
 
  private:
+
   // Calculate the needed buffer size, given the allocation parameters.
   static size_t _GetBufferSize(GfVec2i const &dims, HdFormat format);
 

@@ -50,6 +50,7 @@ WABI_NAMESPACE_BEGIN
 class TraceStaticKeyData
 {
  public:
+
   /// \class StringLiteral
   ///
   /// This is a helper class for the constructors of TraceStaticKeyData.
@@ -57,27 +58,22 @@ class TraceStaticKeyData
   class StringLiteral
   {
    public:
+
     /// Constructor from string literals.
-    template<size_t N>
-    constexpr StringLiteral(const char (&s)[N])
-      : str(s)
-    {}
+    template<size_t N> constexpr StringLiteral(const char (&s)[N]) : str(s) {}
 
     /// Default Constructor.
-    constexpr StringLiteral()
-      : str(nullptr)
-    {}
+    constexpr StringLiteral() : str(nullptr) {}
 
    private:
+
     const char *str;
 
     friend class TraceStaticKeyData;
   };
 
   /// Constructor for a \p name.
-  constexpr TraceStaticKeyData(const StringLiteral name)
-    : _name(name.str)
-  {}
+  constexpr TraceStaticKeyData(const StringLiteral name) : _name(name.str) {}
 
   /// Constructor for a function (\p func, \p prettyFunc) and optional
   /// scope \p name.
@@ -103,8 +99,8 @@ class TraceStaticKeyData
   std::string GetString() const;
 
  private:
-  TraceStaticKeyData()
-  {}
+
+  TraceStaticKeyData() {}
 
   const char *_funcName = nullptr;
   const char *_prettyFuncName = nullptr;

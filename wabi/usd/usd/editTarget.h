@@ -77,6 +77,7 @@ TF_DECLARE_WEAK_PTRS(UsdStage);
 class UsdEditTarget
 {
  public:
+
   /// Construct a null EditTarget.  A null EditTarget will return paths
   /// unchanged when asked to map paths.
   USD_API
@@ -111,7 +112,8 @@ class UsdEditTarget
   /// LayerStack.  The \p varSelPath must be a prim variant selection path
   /// (see SdfPath::IsPrimVariantSelectionPath()).
   USD_API
-  static UsdEditTarget ForLocalDirectVariant(const SdfLayerHandle &layer, const SdfPath &varSelPath);
+  static UsdEditTarget ForLocalDirectVariant(const SdfLayerHandle &layer,
+                                             const SdfPath &varSelPath);
 
   /// Equality comparison.
   USD_API
@@ -185,6 +187,7 @@ class UsdEditTarget
   UsdEditTarget ComposeOver(const UsdEditTarget &weaker) const;
 
  private:
+
   UsdEditTarget(const SdfLayerHandle &layer, const PcpMapFunction &mapping);
 
   SdfLayerHandle _layer;

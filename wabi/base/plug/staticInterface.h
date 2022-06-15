@@ -46,6 +46,7 @@ WABI_NAMESPACE_BEGIN
 class Plug_StaticInterfaceBase
 {
  public:
+
   /// Returns \c true if we've tried to initialize the interface pointer,
   /// even if we failed.  This will not attempt to load the plugin or
   /// initialize the interface pointer.
@@ -59,10 +60,12 @@ class Plug_StaticInterfaceBase
 #endif
 
  protected:
+
   PLUG_API
   void _LoadAndInstantiate(const std::type_info &type) const;
 
  protected:
+
   // POD types only!
   mutable std::atomic<bool> _initialized;
   mutable void *_ptr;
@@ -164,10 +167,10 @@ class Plug_StaticInterfaceBase
 /// as a local variable, as a member of a class or structure, or as a function
 /// parameter.
 ///
-template<class Interface>
-class PlugStaticInterface : private Plug_StaticInterfaceBase
+template<class Interface> class PlugStaticInterface : private Plug_StaticInterfaceBase
 {
  public:
+
   static_assert(std::is_abstract<Interface>::value, "Interface type must be abstract.");
 
   typedef PlugStaticInterface<Interface> This;
@@ -211,10 +214,10 @@ class PlugStaticInterface : private Plug_StaticInterfaceBase
   }
 
  private:
+
   Interface *_GetPtr() const
   {
-    if (!_initialized)
-    {
+    if (!_initialized) {
       _LoadAndInstantiate(typeid(Interface));
     }
 

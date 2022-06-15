@@ -63,6 +63,7 @@ TF_DECLARE_PUBLIC_TOKENS(SdfFileFormatTokens, SDF_API, SDF_FILE_FORMAT_TOKENS);
 class SdfFileFormat : public TfRefBase, public TfWeakBase
 {
  public:
+
   SdfFileFormat(const SdfFileFormat &) = delete;
   SdfFileFormat &operator=(const SdfFileFormat &) = delete;
 
@@ -265,9 +266,11 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase
   /// matching extension is not found, this returns a null file format
   /// pointer.
   SDF_API
-  static SdfFileFormatConstPtr FindByExtension(const std::string &path, const FileFormatArguments &args);
+  static SdfFileFormatConstPtr FindByExtension(const std::string &path,
+                                               const FileFormatArguments &args);
 
  protected:
+
   /// Constructor.
   SDF_API SdfFileFormat(const TfToken &formatId,
                         const TfToken &versionString,
@@ -338,6 +341,7 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase
   static SdfAbstractDataConstPtr _GetLayerData(const SdfLayer &layer);
 
  private:
+
   SDF_API
   virtual SdfLayer *_InstantiateNewLayer(const SdfFileFormatConstPtr &fileFormat,
                                          const std::string &identifier,
@@ -378,14 +382,15 @@ class SdfFileFormat : public TfRefBase, public TfWeakBase
 class Sdf_FileFormatFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual SdfFileFormatRefPtr New() const = 0;
 };
 
 // Default file format factory.
-template<typename T>
-class Sdf_FileFormatFactory : public Sdf_FileFormatFactoryBase
+template<typename T> class Sdf_FileFormatFactory : public Sdf_FileFormatFactoryBase
 {
  public:
+
   virtual SdfFileFormatRefPtr New() const
   {
     return TfCreateRefPtr(new T);
@@ -418,8 +423,7 @@ class Sdf_FileFormatFactory : public Sdf_FileFormatFactoryBase
 #else
 #  define SDF_DEFINE_FILE_FORMAT(...) SdfDefineFileFormat<__VA_ARGS__>()
 
-template<class FileFormat, class... BaseFormats>
-void SdfDefineFileFormat()
+template<class FileFormat, class... BaseFormats> void SdfDefineFileFormat()
 {
   TfType::Define<FileFormat, TfType::Bases<BaseFormats...>>()
     .template SetFactory<Sdf_FileFormatFactory<FileFormat>>();
@@ -452,8 +456,7 @@ void SdfDefineFileFormat()
 #else
 #  define SDF_DEFINE_ABSTRACT_FILE_FORMAT(...) SdfDefineAbstractFileFormat<__VA_ARGS__>()
 
-template<class FileFormat, class... BaseFormats>
-void SdfDefineAbstractFileFormat()
+template<class FileFormat, class... BaseFormats> void SdfDefineAbstractFileFormat()
 {
   TfType::Define<FileFormat, TfType::Bases<BaseFormats...>>();
 }
@@ -479,9 +482,7 @@ void SdfDefineAbstractFileFormat()
 #ifdef doxygen
 #  define SDF_FILE_FORMAT_FACTORY_ACCESS
 #else
-#  define SDF_FILE_FORMAT_FACTORY_ACCESS \
-    template<typename T>                 \
-    friend class Sdf_FileFormatFactory
+#  define SDF_FILE_FORMAT_FACTORY_ACCESS template<typename T> friend class Sdf_FileFormatFactory
 #endif  // doxygen
 
 WABI_NAMESPACE_END

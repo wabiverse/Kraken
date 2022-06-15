@@ -71,6 +71,7 @@ WABI_NAMESPACE_BEGIN
 class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource
 {
  public:
+
   /// Constructs a GPU ExtComputation buffer source.
   /// \param[in] inputs the vector of HdBufferSource that are inputs to the
   /// computation only. This should not include inputs that are already
@@ -78,8 +79,9 @@ class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource
   /// \param[inout] resource the GPU resident resource that will contain the data
   /// in the inputs after Resolve is called.
   /// \see HdExtComputation
-  HdPhExtCompGpuComputationBufferSource(HdBufferSourceSharedPtrVector const &inputs,
-                                        HdPhExtCompGpuComputationResourceSharedPtr const &resource);
+  HdPhExtCompGpuComputationBufferSource(
+    HdBufferSourceSharedPtrVector const &inputs,
+    HdPhExtCompGpuComputationResourceSharedPtr const &resource);
 
   HDPH_API
   virtual ~HdPhExtCompGpuComputationBufferSource() = default;
@@ -100,15 +102,18 @@ class HdPhExtCompGpuComputationBufferSource final : public HdNullBufferSource
   }
 
  protected:
+
   virtual bool _CheckValid() const override;
 
  private:
+
   HdBufferSourceSharedPtrVector _inputs;
   HdPhExtCompGpuComputationResourceSharedPtr _resource;
 
   HdPhExtCompGpuComputationBufferSource() = delete;
   HdPhExtCompGpuComputationBufferSource(const HdPhExtCompGpuComputationBufferSource &) = delete;
-  HdPhExtCompGpuComputationBufferSource &operator=(const HdPhExtCompGpuComputationBufferSource &) = delete;
+  HdPhExtCompGpuComputationBufferSource &operator=(const HdPhExtCompGpuComputationBufferSource &) =
+    delete;
 };
 
 WABI_NAMESPACE_END

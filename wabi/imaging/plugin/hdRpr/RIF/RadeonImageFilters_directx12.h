@@ -62,10 +62,11 @@ extern RIF_API_ENTRY rif_int rifCreateContextFromDirectX12Context(rif_uint64 api
  * RIF_ERROR_UNSUPPORTED_IMAGE_FORMAT - if image format defined by \p image_desc is currently
  * unsupported.
  */
-extern RIF_API_ENTRY rif_int rifContextCreateImageFromDirectX12Memory(rif_context context,
-                                                                      rif_image_desc const *image_desc,
-                                                                      void *mem,
-                                                                      rif_image *out_image);
+extern RIF_API_ENTRY rif_int
+rifContextCreateImageFromDirectX12Memory(rif_context context,
+                                         rif_image_desc const *image_desc,
+                                         void *mem,
+                                         rif_image *out_image);
 
 /*!
  * \brief rifCreateOpenCLContextSharedWithDirectX11
@@ -103,10 +104,11 @@ extern RIF_API_ENTRY rif_int rifCreateOpenCLContextSharedWithDirectX11(rif_uint6
  * RIF_ERROR_UNSUPPORTED_IMAGE_FORMAT - if image format defined by \p image_desc is currently
  * unsupported.
  */
-extern RIF_API_ENTRY rif_int rifContextCreateImageFromDirectX11Texture(rif_context context,
-                                                                       rif_image_desc const *image_desc,
-                                                                       void *mem,
-                                                                       rif_image *out_image);
+extern RIF_API_ENTRY rif_int
+rifContextCreateImageFromDirectX11Texture(rif_context context,
+                                          rif_image_desc const *image_desc,
+                                          void *mem,
+                                          rif_image *out_image);
 
 /*!
  * \brief rifContextCreateImageFromDirectX11Buffer
@@ -124,10 +126,11 @@ extern RIF_API_ENTRY rif_int rifContextCreateImageFromDirectX11Texture(rif_conte
  * RIF_ERROR_UNSUPPORTED_IMAGE_FORMAT - if image format defined by \p image_desc is currently
  * unsupported.
  */
-extern RIF_API_ENTRY rif_int rifContextCreateImageFromDirectX11Buffer(rif_context context,
-                                                                      rif_image_desc const *image_desc,
-                                                                      void *mem,
-                                                                      rif_image *out_image);
+extern RIF_API_ENTRY rif_int
+rifContextCreateImageFromDirectX11Buffer(rif_context context,
+                                         rif_image_desc const *image_desc,
+                                         void *mem,
+                                         rif_image *out_image);
 
 #  ifdef __cplusplus
 }

@@ -40,6 +40,7 @@ WABI_NAMESPACE_BEGIN
 class HdxColorChannelTask : public HdxTask
 {
  public:
+
   HDX_API
   HdxColorChannelTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -55,11 +56,13 @@ class HdxColorChannelTask : public HdxTask
   void Execute(HdTaskContext *ctx) override;
 
  protected:
+
   /// Sync the render pass resources
   HDX_API
   void _Sync(HdSceneDelegate *delegate, HdTaskContext *ctx, HdDirtyBits *dirtyBits) override;
 
  private:
+
   HdxColorChannelTask() = delete;
   HdxColorChannelTask(const HdxColorChannelTask &) = delete;
   HdxColorChannelTask &operator=(const HdxColorChannelTask &) = delete;
@@ -98,8 +101,7 @@ class HdxColorChannelTask : public HdxTask
 ///
 struct HdxColorChannelTaskParams
 {
-  HdxColorChannelTaskParams()
-  {}
+  HdxColorChannelTaskParams() {}
 
   // Specifies which output color channel should be drawn. Defaults to 'color'
   // (untouched RGBA).

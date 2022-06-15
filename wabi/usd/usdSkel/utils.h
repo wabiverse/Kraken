@@ -337,12 +337,16 @@ bool UsdSkelNormalizeWeights(VtFloatArray *weights, int numInfluencesPerComponen
 
 /// Sort joint influences such that highest weight values come first.
 USDSKEL_API
-bool UsdSkelSortInfluences(TfSpan<int> indices, TfSpan<float> weights, int numInfluencesPerComponent);
+bool UsdSkelSortInfluences(TfSpan<int> indices,
+                           TfSpan<float> weights,
+                           int numInfluencesPerComponent);
 
 /// \overload
 /// \deprecated Use form that takes TfSpan arguments.
 USDSKEL_API
-bool UsdSkelSortInfluences(VtIntArray *indices, VtFloatArray *weights, int numInfluencesPerComponent);
+bool UsdSkelSortInfluences(VtIntArray *indices,
+                           VtFloatArray *weights,
+                           int numInfluencesPerComponent);
 
 /// Convert an array of constant influences (joint weights or indices)
 /// to an array of varying influences.

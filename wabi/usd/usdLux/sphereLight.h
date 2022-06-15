@@ -64,6 +64,7 @@ class SdfAssetPath;
 class UsdLuxSphereLight : public UsdLuxLight
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -74,16 +75,12 @@ class UsdLuxSphereLight : public UsdLuxLight
   /// Equivalent to UsdLuxSphereLight::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdLuxSphereLight(const UsdPrim &prim = UsdPrim())
-    : UsdLuxLight(prim)
-  {}
+  explicit UsdLuxSphereLight(const UsdPrim &prim = UsdPrim()) : UsdLuxLight(prim) {}
 
   /// Construct a UsdLuxSphereLight on the prim held by \p schemaObj .
   /// Should be preferred over UsdLuxSphereLight(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdLuxSphereLight(const UsdSchemaBase &schemaObj)
-    : UsdLuxLight(schemaObj)
-  {}
+  explicit UsdLuxSphereLight(const UsdSchemaBase &schemaObj) : UsdLuxLight(schemaObj) {}
 
   /// Destructor.
   USDLUX_API
@@ -133,6 +130,7 @@ class UsdLuxSphereLight : public UsdLuxLight
   static UsdLuxSphereLight Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -140,6 +138,7 @@ class UsdLuxSphereLight : public UsdLuxLight
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDLUX_API
@@ -149,9 +148,11 @@ class UsdLuxSphereLight : public UsdLuxLight
 
   // override SchemaBase virtuals.
   USDLUX_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RADIUS
   // --------------------------------------------------------------------- //
@@ -171,9 +172,11 @@ class UsdLuxSphereLight : public UsdLuxLight
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDLUX_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // TREATASPOINT
   // --------------------------------------------------------------------- //
@@ -200,6 +203,7 @@ class UsdLuxSphereLight : public UsdLuxLight
                                       bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

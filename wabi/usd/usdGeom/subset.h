@@ -84,6 +84,7 @@ class SdfAssetPath;
 class UsdGeomSubset : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -94,16 +95,12 @@ class UsdGeomSubset : public UsdTyped
   /// Equivalent to UsdGeomSubset::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomSubset(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdGeomSubset(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdGeomSubset on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomSubset(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomSubset(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdGeomSubset(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -153,6 +150,7 @@ class UsdGeomSubset : public UsdTyped
   static UsdGeomSubset Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -161,6 +159,7 @@ class UsdGeomSubset : public UsdTyped
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -170,9 +169,11 @@ class UsdGeomSubset : public UsdTyped
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ELEMENTTYPE
   // --------------------------------------------------------------------- //
@@ -199,6 +200,7 @@ class UsdGeomSubset : public UsdTyped
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // INDICES
   // --------------------------------------------------------------------- //
@@ -219,9 +221,11 @@ class UsdGeomSubset : public UsdTyped
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateIndicesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateIndicesAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FAMILYNAME
   // --------------------------------------------------------------------- //
@@ -268,6 +272,7 @@ class UsdGeomSubset : public UsdTyped
                                     bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

@@ -66,14 +66,13 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
     // better
 
     PyObject *m_self = detail::wrapper_base_::get_owner(*this);
-    if (m_self)
-    {
+    if (m_self) {
 
       // using pythons mro, get the attribute string that represents
       // the named function. this will return something valid if it exists
       // in this or any ancestor class
-      if (handle<> m = handle<>(allow_null(PyObject_GetAttrString(m_self, const_cast<char *>(func)))))
-      {
+      if (handle<> m = handle<>(
+            allow_null(PyObject_GetAttrString(m_self, const_cast<char *>(func))))) {
         // now get the typehandle to the class. we will use this to
         // determine if this method exists on the derived class
         type_handle typeHandle = objects::registered_class_object(typeid(Derived));
@@ -82,18 +81,16 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
         PyObject *func_object = 0;
 
         if (PyMethod_Check(m.get()) && ((PyMethodObject *)m.get())->im_self == m_self &&
-            class_object->tp_dict != 0)
-        {
+            class_object->tp_dict != 0) {
           // look for the method on the class object.
-          handle<> borrowed_f(
-            allow_null(PyObject_GetAttrString((PyObject *)class_object, const_cast<char *>(func))));
+          handle<> borrowed_f(allow_null(
+            PyObject_GetAttrString((PyObject *)class_object, const_cast<char *>(func))));
 
           // Don't leave an exception if there's no base class method
           PyErr_Clear();
 
           // do the appropriate conversion, if possible
-          if (borrowed_f && PyMethod_Check(borrowed_f.get()))
-          {
+          if (borrowed_f && PyMethod_Check(borrowed_f.get())) {
             func_object = ((PyMethodObject *)borrowed_f.get())->im_func;
           }
         }
@@ -115,8 +112,7 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
   {
     TfPyLock pyLock;
     Override ret = GetOverride(func);
-    if (!ret)
-    {
+    if (!ret) {
       // Raise a *python* exception when no virtual is found.  This is
       // because a subsequent attempt to call ret will result in a python
       // exception, but a far less useful one.  If we were to simply make
@@ -131,8 +127,7 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
     return ret;
   }
 
-  template<typename Ret>
-  TfPyCall<Ret> CallPureVirtual(char const *func) const
+  template<typename Ret> TfPyCall<Ret> CallPureVirtual(char const *func) const
   {
     TfPyLock lock;
     return TfPyCall<Ret>(GetPureOverride(func));
@@ -142,24 +137,24 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
   std::function<Ret(Arg...)> CallVirtual(char const *fname, Ret (Cls::*defaultImpl)(Arg...));
 
   template<class Ret, class Cls, typename... Arg>
-  std::function<Ret(Arg...)> CallVirtual(char const *fname, Ret (Cls::*defaultImpl)(Arg...) const) const;
+  std::function<Ret(Arg...)> CallVirtual(char const *fname,
+                                         Ret (Cls::*defaultImpl)(Arg...) const) const;
 
  protected:
+
   virtual ~TfPyPolymorphic();
 
  private:
+
   // Helper to bind a pointer-to-member-function and a pointer to an
   // instance.
-  template<class Ret, class Cls, typename... Args>
-  struct _BindMemFn
+  template<class Ret, class Cls, typename... Args> struct _BindMemFn
   {
-    using MemFn = typename std::
-      conditional<std::is_const<Cls>::value, Ret (Cls::*)(Args...) const, Ret (Cls::*)(Args...)>::type;
+    using MemFn = typename std::conditional<std::is_const<Cls>::value,
+                                            Ret (Cls::*)(Args...) const,
+                                            Ret (Cls::*)(Args...)>::type;
 
-    _BindMemFn(MemFn memFn, Cls *obj)
-      : _memFn(memFn),
-        _obj(obj)
-    {}
+    _BindMemFn(MemFn memFn, Cls *obj) : _memFn(memFn), _obj(obj) {}
 
     Ret operator()(Args... args) const
     {
@@ -167,19 +162,19 @@ struct TfPyPolymorphic : public TfType::PyPolymorphicBase, public boost::python:
     }
 
    private:
+
     MemFn _memFn;
     Cls *_obj;
   };
 };
 
-template<typename Derived>
-TfPyPolymorphic<Derived>::~TfPyPolymorphic()
-{}
+template<typename Derived> TfPyPolymorphic<Derived>::~TfPyPolymorphic() {}
 
 template<typename Derived>
 template<class Ret, class Cls, typename... Args>
-inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(char const *fname,
-                                                                         Ret (Cls::*defaultImpl)(Args...))
+inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(
+  char const *fname,
+  Ret (Cls::*defaultImpl)(Args...))
 {
   static_assert(std::is_base_of<This, Cls>::value, "This must be a base of Cls.");
   TfPyLock lock;
@@ -190,9 +185,9 @@ inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(char co
 
 template<typename Derived>
 template<class Ret, class Cls, typename... Args>
-inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(char const *fname,
-                                                                         Ret (Cls::*defaultImpl)(Args...)
-                                                                           const) const
+inline std::function<Ret(Args...)> TfPyPolymorphic<Derived>::CallVirtual(
+  char const *fname,
+  Ret (Cls::*defaultImpl)(Args...) const) const
 {
   static_assert(std::is_base_of<This, Cls>::value, "This must be a base of Cls.");
   TfPyLock lock;
@@ -209,18 +204,15 @@ namespace boost
 {
   namespace python
   {
-    template<typename T>
-    struct has_back_reference<WABI_NS::TfPyPolymorphic<T>> : mpl::true_
-    {
-    };
+    template<typename T> struct has_back_reference<WABI_NS::TfPyPolymorphic<T>> : mpl::true_
+    {};
   }  // namespace python
 }  // end namespace boost
 
 WABI_NAMESPACE_BEGIN
 
 // Base case for internal Tf_PyMemberFunctionPointerUpcast.
-template<typename Base, typename Fn>
-struct Tf_PyMemberFunctionPointerUpcast;
+template<typename Base, typename Fn> struct Tf_PyMemberFunctionPointerUpcast;
 
 template<typename Base, typename Derived, typename Ret, typename... Args>
 struct Tf_PyMemberFunctionPointerUpcast<Base, Ret (Derived::*)(Args...)>

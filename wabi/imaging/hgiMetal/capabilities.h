@@ -47,6 +47,7 @@ WABI_NAMESPACE_BEGIN
 class HgiMetalCapabilities final
 {
  public:
+
   HGIMETAL_API
   ~HgiMetalCapabilities();
 
@@ -55,6 +56,7 @@ class HgiMetalCapabilities final
   bool unifiedMemory;
 
  protected:
+
   friend class HgiMetal;
 
   HGIMETAL_API

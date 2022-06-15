@@ -56,6 +56,7 @@ WABI_NAMESPACE_BEGIN
 class Tf_ExpiryNotifier
 {
  public:
+
   TF_API static void Invoke(void const *p);
   TF_API static void SetNotifier(void (*func)(void const *));
 
@@ -63,6 +64,7 @@ class Tf_ExpiryNotifier
   TF_API static void SetNotifier2(void (*func)(void const *));
 
  private:
+
   static void (*_func)(void const *);
   static void (*_func2)(void const *);
 };

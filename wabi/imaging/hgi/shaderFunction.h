@@ -54,6 +54,7 @@ WABI_NAMESPACE_BEGIN
 class HgiShaderFunction
 {
  public:
+
   HGI_API
   virtual ~HgiShaderFunction();
 
@@ -89,12 +90,14 @@ class HgiShaderFunction
   virtual uint64_t GetRawResource() const = 0;
 
  protected:
+
   HGI_API
   HgiShaderFunction(HgiShaderFunctionDesc const &desc);
 
   HgiShaderFunctionDesc _descriptor;
 
  private:
+
   HgiShaderFunction() = delete;
   HgiShaderFunction &operator=(const HgiShaderFunction &) = delete;
   HgiShaderFunction(const HgiShaderFunction &) = delete;

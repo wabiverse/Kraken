@@ -41,6 +41,7 @@ class Tf_PyWrapContextManager : public boost::noncopyable
 {
 
  public:
+
   typedef Tf_PyWrapContextManager This;
 
   static This &GetInstance()
@@ -64,6 +65,7 @@ class Tf_PyWrapContextManager : public boost::noncopyable
   }
 
  private:
+
   Tf_PyWrapContextManager();
 
   friend class TfSingleton<This>;

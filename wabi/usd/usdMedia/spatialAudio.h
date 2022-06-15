@@ -115,6 +115,7 @@ class SdfAssetPath;
 class UsdMediaSpatialAudio : public UsdGeomXformable
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -125,16 +126,12 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
   /// Equivalent to UsdMediaSpatialAudio::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdMediaSpatialAudio(const UsdPrim &prim = UsdPrim())
-    : UsdGeomXformable(prim)
-  {}
+  explicit UsdMediaSpatialAudio(const UsdPrim &prim = UsdPrim()) : UsdGeomXformable(prim) {}
 
   /// Construct a UsdMediaSpatialAudio on the prim held by \p schemaObj .
   /// Should be preferred over UsdMediaSpatialAudio(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdMediaSpatialAudio(const UsdSchemaBase &schemaObj)
-    : UsdGeomXformable(schemaObj)
-  {}
+  explicit UsdMediaSpatialAudio(const UsdSchemaBase &schemaObj) : UsdGeomXformable(schemaObj) {}
 
   /// Destructor.
   USDMEDIA_API
@@ -184,6 +181,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
   static UsdMediaSpatialAudio Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -191,6 +189,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDMEDIA_API
@@ -200,9 +199,11 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
 
   // override SchemaBase virtuals.
   USDMEDIA_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // FILEPATH
   // --------------------------------------------------------------------- //
@@ -232,9 +233,11 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
-  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateFilePathAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // AURALMODE
   // --------------------------------------------------------------------- //
@@ -270,6 +273,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // PLAYBACKMODE
   // --------------------------------------------------------------------- //
@@ -313,6 +317,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // STARTTIME
   // --------------------------------------------------------------------- //
@@ -345,6 +350,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
                                    bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // ENDTIME
   // --------------------------------------------------------------------- //
@@ -376,9 +382,11 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
-  UsdAttribute CreateEndTimeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateEndTimeAttr(VtValue const &defaultValue = VtValue(),
+                                 bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // MEDIAOFFSET
   // --------------------------------------------------------------------- //
@@ -409,6 +417,7 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
                                      bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // GAIN
   // --------------------------------------------------------------------- //
@@ -430,9 +439,11 @@ class UsdMediaSpatialAudio : public UsdGeomXformable
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDMEDIA_API
-  UsdAttribute CreateGainAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateGainAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

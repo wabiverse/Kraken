@@ -192,8 +192,7 @@ namespace Zep
 
     int TotalCount() const
     {
-      if (captureNumbers.empty())
-      {
+      if (captureNumbers.empty()) {
         return 1;
       }
       return std::accumulate(captureNumbers.begin(), captureNumbers.end(), 0);
@@ -202,8 +201,7 @@ namespace Zep
     // Return the first register for commands that only want 1
     char RegisterName() const
     {
-      if (captureRegisters.empty())
-      {
+      if (captureRegisters.empty()) {
         return '"';
       }
       return captureRegisters[0];

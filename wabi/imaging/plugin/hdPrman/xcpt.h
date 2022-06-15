@@ -37,6 +37,7 @@ WABI_NAMESPACE_BEGIN
 class HdPrman_Xcpt : public RixXcpt::XcptHandler
 {
  public:
+
   HDPRMAN_API virtual void HandleXcpt(int code, int severity, const char *msg);
   HDPRMAN_API virtual void HandleExitRequest(int code);
 };

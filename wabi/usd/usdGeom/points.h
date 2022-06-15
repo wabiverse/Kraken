@@ -68,6 +68,7 @@ class SdfAssetPath;
 class UsdGeomPoints : public UsdGeomPointBased
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -78,16 +79,12 @@ class UsdGeomPoints : public UsdGeomPointBased
   /// Equivalent to UsdGeomPoints::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomPoints(const UsdPrim &prim = UsdPrim())
-    : UsdGeomPointBased(prim)
-  {}
+  explicit UsdGeomPoints(const UsdPrim &prim = UsdPrim()) : UsdGeomPointBased(prim) {}
 
   /// Construct a UsdGeomPoints on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomPoints(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomPoints(const UsdSchemaBase &schemaObj)
-    : UsdGeomPointBased(schemaObj)
-  {}
+  explicit UsdGeomPoints(const UsdSchemaBase &schemaObj) : UsdGeomPointBased(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -137,6 +134,7 @@ class UsdGeomPoints : public UsdGeomPointBased
   static UsdGeomPoints Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -145,6 +143,7 @@ class UsdGeomPoints : public UsdGeomPointBased
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -154,9 +153,11 @@ class UsdGeomPoints : public UsdGeomPointBased
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // WIDTHS
   // --------------------------------------------------------------------- //
@@ -181,9 +182,11 @@ class UsdGeomPoints : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateWidthsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateWidthsAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // IDS
   // --------------------------------------------------------------------- //
@@ -208,9 +211,11 @@ class UsdGeomPoints : public UsdGeomPointBased
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateIdsAttr(VtValue const &defaultValue = VtValue(),
+                             bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -258,7 +263,9 @@ class UsdGeomPoints : public UsdGeomPointBased
   /// tools, hence it is static and acts outside a specific prim (as in
   /// attribute based methods).
   USDGEOM_API
-  static bool ComputeExtent(const VtVec3fArray &points, const VtFloatArray &widths, VtVec3fArray *extent);
+  static bool ComputeExtent(const VtVec3fArray &points,
+                            const VtFloatArray &widths,
+                            VtVec3fArray *extent);
 
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.

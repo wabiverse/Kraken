@@ -61,9 +61,9 @@ using TraceCategoryId = uint32_t;
 class TraceCategory
 {
  public:
+
   /// Computes an id for the given a string literal \p str.
-  template<int N>
-  static constexpr TraceCategoryId CreateTraceCategoryId(const char (&str)[N])
+  template<int N> static constexpr TraceCategoryId CreateTraceCategoryId(const char (&str)[N])
   {
     return TraceStringHash::Hash(str);
   }
@@ -86,6 +86,7 @@ class TraceCategory
   TRACE_API static TraceCategory &GetInstance();
 
  private:
+
   friend class TfSingleton<TraceCategory>;
 
   TraceCategory();

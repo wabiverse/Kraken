@@ -52,6 +52,7 @@ WABI_NAMESPACE_BEGIN
 class TraceReporterDataSourceCollection : public TraceReporterDataSourceBase
 {
  public:
+
   using This = TraceReporterDataSourceCollection;
   using ThisRefPtr = std::unique_ptr<This>;
 
@@ -71,6 +72,7 @@ class TraceReporterDataSourceCollection : public TraceReporterDataSourceBase
   TRACE_API std::vector<CollectionPtr> ConsumeData() override;
 
  private:
+
   TRACE_API TraceReporterDataSourceCollection(CollectionPtr collection);
   TRACE_API TraceReporterDataSourceCollection(std::vector<CollectionPtr> collections);
 

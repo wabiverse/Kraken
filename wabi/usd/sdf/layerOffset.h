@@ -61,6 +61,7 @@ class SdfTimeCode;
 class SdfLayerOffset : public boost::totally_ordered<SdfLayerOffset>
 {
  public:
+
   /// \name Constructors
   /// @{
 
@@ -163,6 +164,7 @@ class SdfLayerOffset : public boost::totally_ordered<SdfLayerOffset>
   /// @}
 
  private:
+
   double _offset;
   double _scale;
 };

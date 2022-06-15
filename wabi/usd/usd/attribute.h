@@ -175,10 +175,9 @@ typedef std::vector<UsdAttribute> UsdAttributeVector;
 class UsdAttribute : public UsdProperty
 {
  public:
+
   /// Construct an invalid attribute.
-  UsdAttribute()
-    : UsdProperty(_Null<UsdAttribute>())
-  {}
+  UsdAttribute() : UsdProperty(_Null<UsdAttribute>()) {}
 
   // --------------------------------------------------------------------- //
   /// \name Core Metadata
@@ -285,7 +284,8 @@ class UsdAttribute : public UsdProperty
   /// \sa UsdAttribute::GetTimeSamples
   /// \sa UsdAttribute::GetUnionedTimeSamplesInInterval
   USD_API
-  static bool GetUnionedTimeSamples(const std::vector<UsdAttribute> &attrs, std::vector<double> *times);
+  static bool GetUnionedTimeSamples(const std::vector<UsdAttribute> &attrs,
+                                    std::vector<double> *times);
 
   /// Populates the given vector, \p times with the union of all the
   /// authored sample times in the GfInterval, \p interval on all of the
@@ -426,8 +426,7 @@ class UsdAttribute : public UsdProperty
   /// For more details, see \ref Usd_ValueResolution , and also
   /// \ref Usd_AssetPathValuedAttributes for information on how to
   /// retrieve resolved asset paths from SdfAssetPath-valued attributes.
-  template<typename T>
-  bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Get(T *value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     static_assert(!std::is_const<T>::value, "");
     static_assert(SdfValueTypeTraits<T>::IsValueType, "");
@@ -457,8 +456,7 @@ class UsdAttribute : public UsdProperty
   /// \return false and generate an error if type \c T does not match
   /// this attribute's defined scene description type <b>exactly</b>,
   /// or if there is no existing definition for the attribute.
-  template<typename T>
-  bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
+  template<typename T> bool Set(const T &value, UsdTimeCode time = UsdTimeCode::Default()) const
   {
     static_assert(!std::is_pointer<T>::value, "");
     static_assert(SdfValueTypeTraits<T>::IsValueType || std::is_same<T, SdfValueBlock>::value, "");
@@ -617,6 +615,7 @@ class UsdAttribute : public UsdProperty
   // ---------------------------------------------------------------------- //
 
  private:
+
   friend class UsdAttributeQuery;
   friend class UsdObject;
   friend class UsdPrim;
@@ -624,7 +623,9 @@ class UsdAttribute : public UsdProperty
   friend class Usd_PrimData;
   friend struct UsdPrim_AttrConnectionFinder;
 
-  UsdAttribute(const Usd_PrimDataHandle &prim, const SdfPath &proxyPrimPath, const TfToken &attrName)
+  UsdAttribute(const Usd_PrimDataHandle &prim,
+               const SdfPath &proxyPrimPath,
+               const TfToken &attrName)
     : UsdProperty(UsdTypeAttribute, prim, proxyPrimPath, attrName)
   {}
 
@@ -644,13 +645,13 @@ class UsdAttribute : public UsdProperty
   // new information.
   SdfAttributeSpecHandle _CreateSpec() const;
 
-  bool _Create(const SdfValueTypeName &typeName, bool custom, const SdfVariability &variability) const;
+  bool _Create(const SdfValueTypeName &typeName,
+               bool custom,
+               const SdfVariability &variability) const;
 
-  template<typename T>
-  bool _Get(T *value, UsdTimeCode time) const;
+  template<typename T> bool _Get(T *value, UsdTimeCode time) const;
 
-  template<typename T>
-  bool _Set(const T &value, UsdTimeCode time) const;
+  template<typename T> bool _Set(const T &value, UsdTimeCode time) const;
 
   SdfPath _GetPathForAuthoring(const SdfPath &path, std::string *whyNot) const;
 };

@@ -57,8 +57,7 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec4h;
 
-template<>
-struct GfIsGfVec<class GfVec4h>
+template<> struct GfIsGfVec<class GfVec4h>
 {
   static const bool value = true;
 };
@@ -74,6 +73,7 @@ struct GfIsGfVec<class GfVec4h>
 class GfVec4h
 {
  public:
+
   /// Scalar element type and dimension.
   typedef GfHalf ScalarType;
   static const size_t dimension = 4;
@@ -82,20 +82,13 @@ class GfVec4h
   GfVec4h() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec4h(GfHalf value)
-    : _data{value, value, value, value}
-  {}
+  constexpr explicit GfVec4h(GfHalf value) : _data{value, value, value, value} {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec4h(GfHalf s0, GfHalf s1, GfHalf s2, GfHalf s3)
-    : _data{s0, s1, s2, s3}
-  {}
+  constexpr GfVec4h(GfHalf s0, GfHalf s1, GfHalf s2, GfHalf s3) : _data{s0, s1, s2, s3} {}
 
   /// Construct with pointer to values.
-  template<class Scl>
-  constexpr explicit GfVec4h(Scl const *p)
-    : _data{p[0], p[1], p[2], p[3]}
-  {}
+  template<class Scl> constexpr explicit GfVec4h(Scl const *p) : _data{p[0], p[1], p[2], p[3]} {}
 
   /// Construct from GfVec4d.
   explicit GfVec4h(class GfVec4d const &other);
@@ -199,7 +192,8 @@ class GfVec4h
   /// Equality comparison.
   bool operator==(GfVec4h const &other) const
   {
-    return _data[0] == other[0] && _data[1] == other[1] && _data[2] == other[2] && _data[3] == other[3];
+    return _data[0] == other[0] && _data[1] == other[1] && _data[2] == other[2] &&
+           _data[3] == other[3];
   }
   bool operator!=(GfVec4h const &other) const
   {
@@ -346,6 +340,7 @@ class GfVec4h
   }
 
  private:
+
   GfHalf _data[4];
 };
 

@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HD_BASIS_CURVES_TOPOLOGY_H
 #define WABI_IMAGING_HD_BASIS_CURVES_TOPOLOGY_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hd/topology.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/topology.h"
+#include "wabi/imaging/hd/tokens.h"
 
 #include "wabi/base/vt/array.h"
 #include "wabi/base/vt/value.h"
@@ -76,6 +76,7 @@ WABI_NAMESPACE_BEGIN
 class HdBasisCurvesTopology : public HdTopology
 {
  public:
+
   HD_API
   HdBasisCurvesTopology();
   HD_API
@@ -137,6 +138,13 @@ class HdBasisCurvesTopology : public HdTopology
     return _curveVertexCounts.size();
   }
 
+  /// Returns the number of points implied by vertex counts and indices
+  HD_API
+  size_t GetNumPoints() const
+  {
+    return _numPoints;
+  }
+
   /// See class documentation for valid combination of values
   TfToken GetCurveType() const
   {
@@ -176,6 +184,7 @@ class HdBasisCurvesTopology : public HdTopology
   size_t CalculateNeededNumberOfVaryingControlPoints() const;
 
  private:
+
   TfToken _curveType;
   TfToken _curveBasis;
   TfToken _curveWrap;
@@ -183,10 +192,12 @@ class HdBasisCurvesTopology : public HdTopology
   VtIntArray _curveIndices;
   VtIntArray _invisiblePoints;
   VtIntArray _invisibleCurves;
+  size_t _numPoints;
 };
 
 HD_API
 std::ostream &operator<<(std::ostream &out, HdBasisCurvesTopology const &topo);
+
 
 WABI_NAMESPACE_END
 

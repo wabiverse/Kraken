@@ -57,8 +57,7 @@ WABI_NAMESPACE_BEGIN
 
 class GfVec3h;
 
-template<>
-struct GfIsGfVec<class GfVec3h>
+template<> struct GfIsGfVec<class GfVec3h>
 {
   static const bool value = true;
 };
@@ -74,6 +73,7 @@ struct GfIsGfVec<class GfVec3h>
 class GfVec3h
 {
  public:
+
   /// Scalar element type and dimension.
   typedef GfHalf ScalarType;
   static const size_t dimension = 3;
@@ -82,20 +82,13 @@ class GfVec3h
   GfVec3h() = default;
 
   /// Initialize all elements to a single value.
-  constexpr explicit GfVec3h(GfHalf value)
-    : _data{value, value, value}
-  {}
+  constexpr explicit GfVec3h(GfHalf value) : _data{value, value, value} {}
 
   /// Initialize all elements with explicit arguments.
-  constexpr GfVec3h(GfHalf s0, GfHalf s1, GfHalf s2)
-    : _data{s0, s1, s2}
-  {}
+  constexpr GfVec3h(GfHalf s0, GfHalf s1, GfHalf s2) : _data{s0, s1, s2} {}
 
   /// Construct with pointer to values.
-  template<class Scl>
-  constexpr explicit GfVec3h(Scl const *p)
-    : _data{p[0], p[1], p[2]}
-  {}
+  template<class Scl> constexpr explicit GfVec3h(Scl const *p) : _data{p[0], p[1], p[2]} {}
 
   /// Construct from GfVec3d.
   explicit GfVec3h(class GfVec3d const &other);
@@ -357,6 +350,7 @@ class GfVec3h
   void BuildOrthonormalFrame(GfVec3h *v1, GfVec3h *v2, GfHalf eps = 0.001) const;
 
  private:
+
   GfHalf _data[3];
 };
 
@@ -463,7 +457,10 @@ GF_API bool GfOrthogonalizeBasis(GfVec3h *tx,
                                  bool normalize,
                                  double eps = GF_MIN_ORTHO_TOLERANCE);
 
-GF_API void GfBuildOrthonormalFrame(GfVec3h const &v0, GfVec3h *v1, GfVec3h *v2, GfHalf eps = 0.001);
+GF_API void GfBuildOrthonormalFrame(GfVec3h const &v0,
+                                    GfVec3h *v1,
+                                    GfVec3h *v2,
+                                    GfHalf eps = 0.001);
 
 /// Returns the cross product of \p v1 and \p v2.
 inline GfVec3h GfCross(GfVec3h const &v1, GfVec3h const &v2)

@@ -51,6 +51,7 @@ using HgiComputeCmdsUniquePtr = std::unique_ptr<class HgiComputeCmds>;
 class HgiComputeCmds : public HgiCmds
 {
  public:
+
   HGI_API
   ~HgiComputeCmds() override;
 
@@ -100,10 +101,12 @@ class HgiComputeCmds : public HgiCmds
   virtual void MemoryBarrier(HgiMemoryBarrier barrier) = 0;
 
  protected:
+
   HGI_API
   HgiComputeCmds();
 
  private:
+
   HgiComputeCmds &operator=(const HgiComputeCmds &) = delete;
   HgiComputeCmds(const HgiComputeCmds &) = delete;
 };

@@ -50,10 +50,13 @@ TF_DECLARE_WEAK_AND_REF_PTRS(UsdAbcAlembicFileFormat);
 class UsdAbcAlembicFileFormat : public SdfFileFormat
 {
  public:
+
   // SdfFileFormat overrides
   virtual SdfAbstractDataRefPtr InitData(const FileFormatArguments &) const override;
   virtual bool CanRead(const std::string &file) const override;
-  virtual bool Read(SdfLayer *layer, const std::string &resolvedPath, bool metadataOnly) const override;
+  virtual bool Read(SdfLayer *layer,
+                    const std::string &resolvedPath,
+                    bool metadataOnly) const override;
   virtual bool WriteToFile(const SdfLayer &layer,
                            const std::string &filePath,
                            const std::string &comment = std::string(),
@@ -62,9 +65,12 @@ class UsdAbcAlembicFileFormat : public SdfFileFormat
   virtual bool WriteToString(const SdfLayer &layer,
                              std::string *str,
                              const std::string &comment = std::string()) const override;
-  virtual bool WriteToStream(const SdfSpecHandle &spec, std::ostream &out, size_t indent) const override;
+  virtual bool WriteToStream(const SdfSpecHandle &spec,
+                             std::ostream &out,
+                             size_t indent) const override;
 
  protected:
+
   SDF_FILE_FORMAT_FACTORY_ACCESS;
 
   virtual ~UsdAbcAlembicFileFormat();
@@ -72,6 +78,7 @@ class UsdAbcAlembicFileFormat : public SdfFileFormat
   UsdAbcAlembicFileFormat();
 
  private:
+
   SdfFileFormatConstPtr _usda;
 };
 

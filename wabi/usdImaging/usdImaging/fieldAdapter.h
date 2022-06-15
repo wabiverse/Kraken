@@ -41,11 +41,10 @@ class UsdPrim;
 class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdImagingFieldAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingFieldAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingFieldAdapter() override;
@@ -64,10 +63,11 @@ class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
 
   /// Thread Safe.
   USDIMAGING_API
-  void TrackVariability(UsdPrim const &prim,
-                        SdfPath const &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        UsdImagingInstancerContext const *instancerContext = nullptr) const override;
+  void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDIMAGING_API
@@ -124,6 +124,7 @@ class UsdImagingFieldAdapter : public UsdImagingPrimAdapter
   virtual TfToken GetPrimTypeToken() const = 0;
 
  protected:
+
   USDIMAGING_API
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 };

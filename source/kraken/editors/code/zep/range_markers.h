@@ -47,7 +47,8 @@ namespace Zep
       CursorTipAtLine = (1 << 5),  // Tooltip shown if the user cursor is on the Mark line
       Indicator = (1 << 6),        // Show an indicator on the left side
       Timed = (1 << 7),
-      All = Underline | Tooltip | TooltipAtLine | CursorTip | CursorTipAtLine | Indicator | Background,
+      All = Underline | Tooltip | TooltipAtLine | CursorTip | CursorTipAtLine | Indicator |
+            Background,
       CompileError = Tooltip | CursorTip | Indicator | Background,
       BackgroundMark = Background
     };
@@ -89,12 +90,17 @@ namespace Zep
     virtual void SetEnabled(bool enabled);
     virtual void SetInlineSize(const NVec2f &size);
 
-    void HandleBufferInsert(ZepBuffer &buffer, const GlyphIterator &itrStart, const std::string &str);
-    void HandleBufferDelete(ZepBuffer &buffer, const GlyphIterator &itr, const GlyphIterator &itrEnd);
+    void HandleBufferInsert(ZepBuffer &buffer,
+                            const GlyphIterator &itrStart,
+                            const std::string &str);
+    void HandleBufferDelete(ZepBuffer &buffer,
+                            const GlyphIterator &itr,
+                            const GlyphIterator &itrEnd);
 
     ZepBuffer &GetBuffer();
 
    public:
+
     // TODO: Move to accessors.
     uint32_t displayType = RangeMarkerDisplayType::All;
     uint32_t markerType = RangeMarkerType::Mark;
@@ -106,6 +112,7 @@ namespace Zep
     FlashType flashType = FlashType::Flash;
 
    protected:
+
     ZepBuffer &m_buffer;
     ByteRange m_range;
     mutable float alpha = 1.0f;

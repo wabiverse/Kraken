@@ -67,6 +67,7 @@ class SdfAssetPath;
 class UsdGeomCone : public UsdGeomGprim
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -76,16 +77,12 @@ class UsdGeomCone : public UsdGeomGprim
   /// Equivalent to UsdGeomCone::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdGeomCone(const UsdPrim &prim = UsdPrim())
-    : UsdGeomGprim(prim)
-  {}
+  explicit UsdGeomCone(const UsdPrim &prim = UsdPrim()) : UsdGeomGprim(prim) {}
 
   /// Construct a UsdGeomCone on the prim held by \p schemaObj .
   /// Should be preferred over UsdGeomCone(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdGeomCone(const UsdSchemaBase &schemaObj)
-    : UsdGeomGprim(schemaObj)
-  {}
+  explicit UsdGeomCone(const UsdSchemaBase &schemaObj) : UsdGeomGprim(schemaObj) {}
 
   /// Destructor.
   USDGEOM_API
@@ -135,6 +132,7 @@ class UsdGeomCone : public UsdGeomGprim
   static UsdGeomCone Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -143,6 +141,7 @@ class UsdGeomCone : public UsdGeomGprim
 
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDGEOM_API
@@ -152,9 +151,11 @@ class UsdGeomCone : public UsdGeomGprim
 
   // override SchemaBase virtuals.
   USDGEOM_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // HEIGHT
   // --------------------------------------------------------------------- //
@@ -177,9 +178,11 @@ class UsdGeomCone : public UsdGeomGprim
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateHeightAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RADIUS
   // --------------------------------------------------------------------- //
@@ -202,9 +205,11 @@ class UsdGeomCone : public UsdGeomGprim
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateRadiusAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // AXIS
   // --------------------------------------------------------------------- //
@@ -226,9 +231,11 @@ class UsdGeomCone : public UsdGeomGprim
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateAxisAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateAxisAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // EXTENT
   // --------------------------------------------------------------------- //
@@ -249,9 +256,11 @@ class UsdGeomCone : public UsdGeomGprim
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDGEOM_API
-  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateExtentAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -275,7 +284,10 @@ class UsdGeomCone : public UsdGeomGprim
   /// tools, hence it is static and acts outside a specific prim (as in
   /// attribute based methods).
   USDGEOM_API
-  static bool ComputeExtent(double height, double radius, const TfToken &axis, VtVec3fArray *extent);
+  static bool ComputeExtent(double height,
+                            double radius,
+                            const TfToken &axis,
+                            VtVec3fArray *extent);
 
   /// \overload
   /// Computes the extent as if the matrix \p transform was first applied.

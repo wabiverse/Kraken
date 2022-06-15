@@ -24,11 +24,11 @@
 #ifndef WABI_IMAGING_HD_RPRIM_SHARED_DATA_H
 #define WABI_IMAGING_HD_RPRIM_SHARED_DATA_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/bufferArrayRange.h"
 #include "wabi/imaging/hd/tokens.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/usd/sdf/path.h"
 
@@ -59,8 +59,7 @@ struct HdRprimSharedData
       bounds(),
       instancerLevels(0),
       visible(true),
-      rprimID(),
-      materialTag(HdMaterialTagTokens->defaultMaterialTag)
+      rprimID()
   {}
 
   HdRprimSharedData(int barContainerSize, bool visible)
@@ -68,8 +67,7 @@ struct HdRprimSharedData
       bounds(),
       instancerLevels(0),
       visible(visible),
-      rprimID(),
-      materialTag(HdMaterialTagTokens->defaultMaterialTag)
+      rprimID()
   {}
 
   // BufferArrayRange array
@@ -87,15 +85,13 @@ struct HdRprimSharedData
   // The owning Rprim's identifier.
   SdfPath rprimID;
 
-  // Used to organize drawItems into collections based on material properties.
-  TfToken materialTag;
-
   // Data structure containing the face-varying topologies of an rprim (mesh
   // only) and each of the topology's associated face-varying primvar names.
   // Used in drawing to determine which primvar uses which face-varying
   // channel.
   TopologyToPrimvarVector fvarTopologyToPrimvarVector;
 };
+
 
 WABI_NAMESPACE_END
 

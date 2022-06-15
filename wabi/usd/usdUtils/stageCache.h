@@ -50,6 +50,7 @@ TF_DECLARE_WEAK_AND_REF_PTRS(SdfLayer);
 class UsdUtilsStageCache
 {
  public:
+
   /// Returns the singleton stage cache.
   USDUTILS_API
   static UsdStageCache &Get();

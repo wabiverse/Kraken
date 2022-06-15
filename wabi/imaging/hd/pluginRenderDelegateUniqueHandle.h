@@ -24,9 +24,9 @@
 #ifndef WABI_IMAGING_HD_PLUGIN_RENDER_DELEGATE_UNIQUE_HANDLE_H
 #define WABI_IMAGING_HD_PLUGIN_RENDER_DELEGATE_UNIQUE_HANDLE_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
 #include "wabi/imaging/hd/rendererPluginHandle.h"
-#include "wabi/wabi.h"
 
 #include <cstddef>
 
@@ -47,12 +47,9 @@ class HdRenderDelegate;
 class HdPluginRenderDelegateUniqueHandle final
 {
  public:
-  HdPluginRenderDelegateUniqueHandle()
-    : _delegate(nullptr)
-  {}
-  HdPluginRenderDelegateUniqueHandle(const std::nullptr_t &)
-    : _delegate(nullptr)
-  {}
+
+  HdPluginRenderDelegateUniqueHandle() : _delegate(nullptr) {}
+  HdPluginRenderDelegateUniqueHandle(const std::nullptr_t &) : _delegate(nullptr) {}
 
   /// Transfer ownership
   HD_API
@@ -94,9 +91,11 @@ class HdPluginRenderDelegateUniqueHandle final
   TfToken GetPluginId() const;
 
  private:
+
   friend class HdRendererPlugin;
 
-  HdPluginRenderDelegateUniqueHandle(const HdRendererPluginHandle &plugin, HdRenderDelegate *delegate)
+  HdPluginRenderDelegateUniqueHandle(const HdRendererPluginHandle &plugin,
+                                     HdRenderDelegate *delegate)
     : _plugin(plugin),
       _delegate(delegate)
   {}

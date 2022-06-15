@@ -59,6 +59,7 @@ using HgiGLOpsVector = std::vector<HgiGLOpsFn>;
 class HgiGL final : public Hgi
 {
  public:
+
   HGIGL_API
   HgiGL();
 
@@ -117,7 +118,8 @@ class HgiGL final : public Hgi
   void DestroyResourceBindings(HgiResourceBindingsHandle *resHandle) override;
 
   HGIGL_API
-  HgiGraphicsPipelineHandle CreateGraphicsPipeline(HgiGraphicsPipelineDesc const &pipeDesc) override;
+  HgiGraphicsPipelineHandle CreateGraphicsPipeline(
+    HgiGraphicsPipelineDesc const &pipeDesc) override;
 
   HGIGL_API
   void DestroyGraphicsPipeline(HgiGraphicsPipelineHandle *pipeHandle) override;
@@ -146,18 +148,19 @@ class HgiGL final : public Hgi
   HgiGLDevice *GetPrimaryDevice() const;
 
  protected:
+
   HGIGL_API
   bool _SubmitCmds(HgiCmds *cmds, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiGL &operator=(const HgiGL &) = delete;
   HgiGL(const HgiGL &) = delete;
 
   // Invalidates the resource handle and places the object in the garbage
   // collector vector for future destruction.
   // This is helpful to avoid destroying GPU resources still in-flight.
-  template<class T>
-  void _TrashObject(HgiHandle<T> *handle, std::vector<HgiHandle<T>> *collector)
+  template<class T> void _TrashObject(HgiHandle<T> *handle, std::vector<HgiHandle<T>> *collector)
   {
     collector->push_back(HgiHandle<T>(handle->Get(), /*id*/ 0));
     *handle = HgiHandle<T>();

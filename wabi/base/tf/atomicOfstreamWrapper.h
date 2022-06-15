@@ -79,6 +79,7 @@ WABI_NAMESPACE_BEGIN
 class TfAtomicOfstreamWrapper : boost::noncopyable
 {
  public:
+
   /// Constructor.
   TF_API explicit TfAtomicOfstreamWrapper(const std::string &filePath);
 
@@ -112,6 +113,7 @@ class TfAtomicOfstreamWrapper : boost::noncopyable
   }
 
  private:
+
   std::string _filePath;
   std::string _tmpFilePath;
   std::ofstream _stream;

@@ -56,6 +56,7 @@ class TfScopeDescription
   TfScopeDescription &operator=(TfScopeDescription const &) = delete;
 
  public:
+
   /// Construct with a description.  Push \a description on the stack of
   /// descriptions for this thread.  Caller guarantees that the string
   /// \p description lives at least as long as this TfScopeDescription object.
@@ -93,6 +94,7 @@ class TfScopeDescription
   TF_API void SetDescription(char const *description);
 
  private:
+
   friend inline TfScopeDescription *Tf_GetPreviousScopeDescription(TfScopeDescription *d)
   {
     return d->_prev;

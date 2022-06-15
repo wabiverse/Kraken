@@ -56,6 +56,7 @@ WABI_NAMESPACE_BEGIN
 class UsdStageLoadRules
 {
  public:
+
   /// \enum Rule
   ///
   /// These values are paired with paths to govern payload inclusion on
@@ -204,6 +205,7 @@ class UsdStageLoadRules
   }
 
  private:
+
   friend USD_API std::ostream &operator<<(std::ostream &, std::pair<SdfPath, Rule> const &);
 
   friend USD_API std::ostream &operator<<(std::ostream &, UsdStageLoadRules const &);

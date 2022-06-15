@@ -79,8 +79,7 @@ WABI_NAMESPACE_BEGIN
   VtArray operator op(VtArray const &other) const                               \
   {                                                                             \
     /* accept empty vecs */                                                     \
-    if ((size() != 0 && other.size() != 0) && (size() != other.size()))         \
-    {                                                                           \
+    if ((size() != 0 && other.size() != 0) && (size() != other.size())) {       \
       TF_CODING_ERROR("Non-conforming inputs for operator %s", #op);            \
       return VtArray();                                                         \
     }                                                                           \
@@ -88,22 +87,20 @@ WABI_NAMESPACE_BEGIN
     const bool thisEmpty = size() == 0, otherEmpty = other.size() == 0;         \
     VtArray ret(thisEmpty ? other.size() : size());                             \
     ElementType zero = VtZero<ElementType>();                                   \
-    for (size_t i = 0, n = ret.size(); i != n; ++i)                             \
-    {                                                                           \
+    for (size_t i = 0, n = ret.size(); i != n; ++i) {                           \
       ret[i] = (thisEmpty ? zero : (*this)[i])op(otherEmpty ? zero : other[i]); \
     }                                                                           \
     return ret;                                                                 \
   }
 
-#define VTOPERATOR_CPPARRAY_UNARY(op)                 \
-  VtArray operator op() const                         \
-  {                                                   \
-    VtArray ret(size());                              \
-    for (size_t i = 0, sz = ret.size(); i != sz; ++i) \
-    {                                                 \
-      ret[i] = op(*this)[i];                          \
-    }                                                 \
-    return ret;                                       \
+#define VTOPERATOR_CPPARRAY_UNARY(op)                   \
+  VtArray operator op() const                           \
+  {                                                     \
+    VtArray ret(size());                                \
+    for (size_t i = 0, sz = ret.size(); i != sz; ++i) { \
+      ret[i] = op(*this)[i];                            \
+    }                                                   \
+    return ret;                                         \
   }
 
 // Operations on scalars and arrays
@@ -113,8 +110,7 @@ WABI_NAMESPACE_BEGIN
   VtArray<ElemType> operator op(scalartype const &scalar, VtArray<arraytype> const &vec) \
   {                                                                                      \
     VtArray<rettype> ret(vec.size());                                                    \
-    for (size_t i = 0; i < vec.size(); ++i)                                              \
-    {                                                                                    \
+    for (size_t i = 0; i < vec.size(); ++i) {                                            \
       ret[i] = scalar op vec[i];                                                         \
     }                                                                                    \
     return ret;                                                                          \
@@ -123,8 +119,7 @@ WABI_NAMESPACE_BEGIN
   VtArray<ElemType> operator op(VtArray<arraytype> const &vec, scalartype const &scalar) \
   {                                                                                      \
     VtArray<rettype> ret(vec.size());                                                    \
-    for (size_t i = 0; i < vec.size(); ++i)                                              \
-    {                                                                                    \
+    for (size_t i = 0; i < vec.size(); ++i) {                                            \
       ret[i] = vec[i] op scalar;                                                         \
     }                                                                                    \
     return ret;                                                                          \
@@ -135,30 +130,26 @@ WABI_NAMESPACE_BEGIN
 // define special-case operators on arrays and doubles - except if the array
 // holds doubles, in which case we already defined the operator (with
 // VTOPERATOR_CPPSCALAR above) so we can't do it again!
-#define VTOPERATOR_CPPSCALAR_DOUBLE(op)                                                              \
-  template<typename ElemType>                                                                        \
-  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type operator op( \
-    double const &scalar,                                                                            \
-    VtArray<ElemType> const &vec)                                                                    \
-  {                                                                                                  \
-    VtArray<ElemType> ret(vec.size());                                                               \
-    for (size_t i = 0; i < vec.size(); ++i)                                                          \
-    {                                                                                                \
-      ret[i] = scalar op vec[i];                                                                     \
-    }                                                                                                \
-    return ret;                                                                                      \
-  }                                                                                                  \
-  template<typename ElemType>                                                                        \
-  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type operator op( \
-    VtArray<ElemType> const &vec,                                                                    \
-    double const &scalar)                                                                            \
-  {                                                                                                  \
-    VtArray<ElemType> ret(vec.size());                                                               \
-    for (size_t i = 0; i < vec.size(); ++i)                                                          \
-    {                                                                                                \
-      ret[i] = vec[i] op scalar;                                                                     \
-    }                                                                                                \
-    return ret;                                                                                      \
+#define VTOPERATOR_CPPSCALAR_DOUBLE(op)                                                 \
+  template<typename ElemType>                                                           \
+  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type \
+  operator op(double const &scalar, VtArray<ElemType> const &vec)                       \
+  {                                                                                     \
+    VtArray<ElemType> ret(vec.size());                                                  \
+    for (size_t i = 0; i < vec.size(); ++i) {                                           \
+      ret[i] = scalar op vec[i];                                                        \
+    }                                                                                   \
+    return ret;                                                                         \
+  }                                                                                     \
+  template<typename ElemType>                                                           \
+  typename boost::disable_if<boost::is_same<ElemType, double>, VtArray<ElemType>>::type \
+  operator op(VtArray<ElemType> const &vec, double const &scalar)                       \
+  {                                                                                     \
+    VtArray<ElemType> ret(vec.size());                                                  \
+    for (size_t i = 0; i < vec.size(); ++i) {                                           \
+      ret[i] = vec[i] op scalar;                                                        \
+    }                                                                                   \
+    return ret;                                                                         \
   }
 
 struct Vt_ShapeData;

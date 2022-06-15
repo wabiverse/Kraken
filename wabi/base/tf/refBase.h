@@ -34,10 +34,8 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<class T>
-class TfRefPtr;
-template<class T>
-class TfWeakPtr;
+template<class T> class TfRefPtr;
+template<class T> class TfWeakPtr;
 
 /// \class TfRefBase
 /// \ingroup group_tf_Memory
@@ -73,6 +71,7 @@ class TfWeakPtr;
 class TfRefBase
 {
  public:
+
   typedef void (*UniqueChangedFuncPtr)(TfRefBase const *, bool);
   struct UniqueChangedListener
   {
@@ -81,9 +80,7 @@ class TfRefBase
     void (*unlock)();
   };
 
-  TfRefBase()
-    : _shouldInvokeUniqueChangedListener(false)
-  {}
+  TfRefBase() : _shouldInvokeUniqueChangedListener(false) {}
 
   /// Return the current reference count of this object.
   size_t GetCurrentCount() const
@@ -110,23 +107,23 @@ class TfRefBase
   TF_API static void SetUniqueChangedListener(UniqueChangedListener listener);
 
  protected:
+
   /*
    * Prohibit deletion through a TfRefBase pointer.
    */
   TF_API virtual ~TfRefBase();
 
  private:
+
   TfRefCount _refCount;
   bool _shouldInvokeUniqueChangedListener;
 
   static UniqueChangedListener _uniqueChangedListener;
-  template<typename T>
-  friend class TfRefPtr;
+  template<typename T> friend class TfRefPtr;
   friend struct Tf_RefPtr_UniqueChangedCounter;
   friend struct Tf_RefPtr_Counter;
 
-  template<typename T>
-  friend TfRefPtr<T> TfCreateRefPtrFromProtectedWeakPtr(TfWeakPtr<T> const &);
+  template<typename T> friend TfRefPtr<T> TfCreateRefPtrFromProtectedWeakPtr(TfWeakPtr<T> const &);
 };
 
 /// \class TfSimpleRefBase
@@ -141,6 +138,7 @@ class TfRefBase
 class TfSimpleRefBase : public TfRefBase
 {
  public:
+
   TF_API virtual ~TfSimpleRefBase();
 };
 

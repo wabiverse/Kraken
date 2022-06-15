@@ -48,11 +48,10 @@ class UsdPrim;
 class UsdImagingOpenVDBAssetAdapter : public UsdImagingFieldAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingFieldAdapter;
 
-  UsdImagingOpenVDBAssetAdapter()
-    : UsdImagingFieldAdapter()
-  {}
+  UsdImagingOpenVDBAssetAdapter() : UsdImagingFieldAdapter() {}
 
   USDVOLIMAGING_API
   ~UsdImagingOpenVDBAssetAdapter() override;

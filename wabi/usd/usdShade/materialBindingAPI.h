@@ -151,6 +151,7 @@ class SdfAssetPath;
 class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -161,15 +162,12 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// Equivalent to UsdShadeMaterialBindingAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdShadeMaterialBindingAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdShadeMaterialBindingAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdShadeMaterialBindingAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdShadeMaterialBindingAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdShadeMaterialBindingAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
+  explicit UsdShadeMaterialBindingAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj)
   {}
 
   /// Destructor.
@@ -212,6 +210,7 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   static UsdShadeMaterialBindingAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -219,6 +218,7 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDSHADE_API
@@ -228,9 +228,11 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDSHADE_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.
@@ -256,7 +258,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// The material purpose of the relationship that's returned will match
   /// the specified \p materialPurpose.
   USDSHADE_API
-  UsdRelationship GetDirectBindingRel(const TfToken &materialPurpose = UsdShadeTokens->allPurpose) const;
+  UsdRelationship GetDirectBindingRel(
+    const TfToken &materialPurpose = UsdShadeTokens->allPurpose) const;
 
   /// Returns the collection-based material-binding relationship with the
   /// given \p bindingName and \p materialPurpose on this prim.
@@ -265,8 +268,9 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// The material purpose of the relationship that's returned will match
   /// the specified \p materialPurpose.
   USDSHADE_API
-  UsdRelationship GetCollectionBindingRel(const TfToken &bindingName,
-                                          const TfToken &materialPurpose = UsdShadeTokens->allPurpose) const;
+  UsdRelationship GetCollectionBindingRel(
+    const TfToken &bindingName,
+    const TfToken &materialPurpose = UsdShadeTokens->allPurpose) const;
 
   /// Returns the list of collection-based material binding relationships
   /// on this prim for the given material purpose, \p materialPurpose.
@@ -285,10 +289,10 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   class DirectBinding
   {
    public:
+
     /// Default constructor initializes a DirectBinding object with
     /// invalid material and bindingRel data members.
-    DirectBinding()
-    {}
+    DirectBinding() {}
 
     USDSHADE_API
     explicit DirectBinding(const UsdRelationship &bindingRel);
@@ -318,6 +322,7 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
     }
 
    private:
+
     // The path to the material that is bound to.
     SdfPath _materialPath;
 
@@ -334,10 +339,10 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   class CollectionBinding
   {
    public:
+
     /// Default constructor initializes a CollectionBinding object with
     /// invalid collection, material and bindingRel data members.
-    CollectionBinding()
-    {}
+    CollectionBinding() {}
 
     /// Constructs a CollectionBinding object from the given collection-
     /// binding relationship. This inspects the targets of the relationship
@@ -382,6 +387,7 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
     }
 
    private:
+
     // The collection being bound.
     SdfPath _collectionPath;
 
@@ -405,7 +411,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// generate an error, but the returned Material will be invalid (i.e.
   /// evaluate to false).
   USDSHADE_API
-  DirectBinding GetDirectBinding(const TfToken &materialPurpose = UsdShadeTokens->allPurpose) const;
+  DirectBinding GetDirectBinding(
+    const TfToken &materialPurpose = UsdShadeTokens->allPurpose) const;
 
   /// Returns all the collection-based bindings on this prim for the given
   /// material purpose.
@@ -455,7 +462,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   ///
   /// \sa UsdShadeMaterialBindingAPI::GetMaterialBindingStrength()
   USDSHADE_API
-  static bool SetMaterialBindingStrength(const UsdRelationship &bindingRel, const TfToken &bindingStrength);
+  static bool SetMaterialBindingStrength(const UsdRelationship &bindingRel,
+                                         const TfToken &bindingStrength);
 
   /// @}
 
@@ -637,8 +645,10 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// collection's MembershipQuery object. This is used to cache the
   /// MembershipQuery objects for collections that are encountered during
   /// binding resolution for a tree of prims.
-  using CollectionQueryCache = tbb::
-    concurrent_unordered_map<SdfPath, std::unique_ptr<UsdCollectionAPI::MembershipQuery>, SdfPath::Hash>;
+  using CollectionQueryCache =
+    tbb::concurrent_unordered_map<SdfPath,
+                                  std::unique_ptr<UsdCollectionAPI::MembershipQuery>,
+                                  SdfPath::Hash>;
 
   /// Alias for a unique_ptr to a DirectBinding object.
   using DirectBindingPtr = std::unique_ptr<DirectBinding>;
@@ -715,10 +725,11 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// The python version of this method returns a tuple containing the
   /// bound material and the "winning" binding relationship.
   USDSHADE_API
-  UsdShadeMaterial ComputeBoundMaterial(BindingsCache *bindingsCache,
-                                        CollectionQueryCache *collectionQueryCache,
-                                        const TfToken &materialPurpose = UsdShadeTokens->allPurpose,
-                                        UsdRelationship *bindingRel = nullptr) const;
+  UsdShadeMaterial ComputeBoundMaterial(
+    BindingsCache *bindingsCache,
+    CollectionQueryCache *collectionQueryCache,
+    const TfToken &materialPurpose = UsdShadeTokens->allPurpose,
+    UsdRelationship *bindingRel = nullptr) const;
 
   /// \overload
   /// Computes the resolved bound material for this prim, for the given
@@ -737,8 +748,9 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// The python version of this method returns a tuple containing the
   /// bound material and the "winning" binding relationship.
   USDSHADE_API
-  UsdShadeMaterial ComputeBoundMaterial(const TfToken &materialPurpose = UsdShadeTokens->allPurpose,
-                                        UsdRelationship *bindingRel = nullptr) const;
+  UsdShadeMaterial ComputeBoundMaterial(
+    const TfToken &materialPurpose = UsdShadeTokens->allPurpose,
+    UsdRelationship *bindingRel = nullptr) const;
 
   /// Static API for efficiently and concurrently computing the resolved
   /// material bindings for a vector of UsdPrims, \p prims for the
@@ -874,6 +886,7 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   /// @}
 
  private:
+
   UsdRelationship _CreateDirectBindingRel(const TfToken &materialPurpose) const;
 
   UsdRelationship _CreateCollectionBindingRel(const TfToken &bindingName,
@@ -882,7 +895,8 @@ class UsdShadeMaterialBindingAPI : public UsdAPISchemaBase
   // Helper method for getting collection bindings when the set of all
   // collection binding relationship names for the required purpose is
   // known.
-  CollectionBindingVector _GetCollectionBindings(const TfTokenVector &collBindingPropertyNames) const;
+  CollectionBindingVector _GetCollectionBindings(
+    const TfTokenVector &collBindingPropertyNames) const;
 };
 
 WABI_NAMESPACE_END

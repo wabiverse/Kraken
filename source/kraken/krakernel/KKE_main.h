@@ -90,8 +90,8 @@ enum
   G_DEBUG_STAGE_PRETTY = (1 << 13),
   /* UsdStage SdfPath and Asset Resolution messages */
   G_DEBUG_STAGE_PATHS = (1 << 14),
-  G_DEBUG_STAGE = (G_DEBUG_STAGE_BUILD | G_DEBUG_STAGE_EVAL | G_DEBUG_STAGE_TAG | G_DEBUG_STAGE_TIME |
-                   G_DEBUG_STAGE_PATHS),
+  G_DEBUG_STAGE = (G_DEBUG_STAGE_BUILD | G_DEBUG_STAGE_EVAL | G_DEBUG_STAGE_TAG |
+                   G_DEBUG_STAGE_TIME | G_DEBUG_STAGE_PATHS),
   /* sim debug data display */
   G_DEBUG_SIMDATA = (1 << 15),
   /* gpu debug */

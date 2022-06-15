@@ -40,9 +40,11 @@ class ArAsset;
 class Usd_UsdzResolver : public ArPackageResolver
 {
  public:
+
   Usd_UsdzResolver();
 
-  virtual std::string Resolve(const std::string &packagePath, const std::string &packagedPath) override;
+  virtual std::string Resolve(const std::string &packagePath,
+                              const std::string &packagedPath) override;
 
   virtual std::shared_ptr<ArAsset> OpenAsset(const std::string &packagePath,
                                              const std::string &packagedPath) override;
@@ -60,6 +62,7 @@ class Usd_UsdzResolver : public ArPackageResolver
 class Usd_UsdzResolverCache
 {
  public:
+
   static Usd_UsdzResolverCache &GetInstance();
 
   Usd_UsdzResolverCache(const Usd_UsdzResolverCache &) = delete;
@@ -84,6 +87,7 @@ class Usd_UsdzResolverCache
   void EndCacheScope(VtValue *cacheScopeData);
 
  private:
+
   Usd_UsdzResolverCache();
 
   struct _Cache;

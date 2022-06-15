@@ -57,7 +57,9 @@ namespace HdxUnitTestUtils
 
   // For a drag-select from start to end, with given pick radius, what size
   // ID buffer should we ask for?
-  GfVec2i CalculatePickResolution(GfVec2i const &start, GfVec2i const &end, GfVec2i const &pickRadius);
+  GfVec2i CalculatePickResolution(GfVec2i const &start,
+                                  GfVec2i const &end,
+                                  GfVec2i const &pickRadius);
 
   GfMatrix4d ComputePickingProjectionMatrix(GfVec2i const &start,
                                             GfVec2i const &end,
@@ -67,6 +69,7 @@ namespace HdxUnitTestUtils
   class Marquee
   {
    public:
+
     Marquee();
     ~Marquee();
 
@@ -75,6 +78,7 @@ namespace HdxUnitTestUtils
     void Draw(float width, float height, GfVec2f const &startPos, GfVec2f const &endPos);
 
    private:
+
     GLuint _vbo;
     GLuint _program;
   };

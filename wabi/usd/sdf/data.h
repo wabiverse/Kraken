@@ -49,8 +49,8 @@ TF_DECLARE_WEAK_AND_REF_PTRS(SdfData);
 class SdfData : public SdfAbstractData
 {
  public:
-  SdfData()
-  {}
+
+  SdfData() {}
   SDF_API
   virtual ~SdfData();
 
@@ -71,7 +71,9 @@ class SdfData : public SdfAbstractData
   virtual SdfSpecType GetSpecType(const SdfPath &path) const;
 
   SDF_API
-  virtual bool Has(const SdfPath &path, const TfToken &fieldName, SdfAbstractDataValue *value) const;
+  virtual bool Has(const SdfPath &path,
+                   const TfToken &fieldName,
+                   SdfAbstractDataValue *value) const;
   SDF_API
   virtual bool Has(const SdfPath &path, const TfToken &fieldName, VtValue *value = NULL) const;
   SDF_API
@@ -91,7 +93,9 @@ class SdfData : public SdfAbstractData
   SDF_API
   virtual void Set(const SdfPath &path, const TfToken &fieldName, const VtValue &value);
   SDF_API
-  virtual void Set(const SdfPath &path, const TfToken &fieldName, const SdfAbstractDataConstValue &value);
+  virtual void Set(const SdfPath &path,
+                   const TfToken &fieldName,
+                   const SdfAbstractDataConstValue &value);
   SDF_API
   virtual void Erase(const SdfPath &path, const TfToken &fieldName);
   SDF_API
@@ -116,7 +120,9 @@ class SdfData : public SdfAbstractData
                                                double *tUpper) const;
 
   SDF_API
-  virtual bool QueryTimeSample(const SdfPath &path, double time, SdfAbstractDataValue *optionalValue) const;
+  virtual bool QueryTimeSample(const SdfPath &path,
+                               double time,
+                               SdfAbstractDataValue *optionalValue) const;
   SDF_API
   virtual bool QueryTimeSample(const SdfPath &path, double time, VtValue *value) const;
 
@@ -127,11 +133,13 @@ class SdfData : public SdfAbstractData
   virtual void EraseTimeSample(const SdfPath &path, double time);
 
  protected:
+
   // SdfAbstractData overrides
   SDF_API
   virtual void _VisitSpecs(SdfAbstractDataSpecVisitor *visitor) const;
 
  private:
+
   const VtValue *_GetSpecTypeAndFieldValue(const SdfPath &path,
                                            const TfToken &field,
                                            SdfSpecType *specType) const;
@@ -143,13 +151,12 @@ class SdfData : public SdfAbstractData
   VtValue *_GetOrCreateFieldValue(const SdfPath &path, const TfToken &field);
 
  private:
+
   // Backing storage for a single "spec" -- prim, property, etc.
   typedef std::pair<TfToken, VtValue> _FieldValuePair;
   struct _SpecData
   {
-    _SpecData()
-      : specType(SdfSpecTypeUnknown)
-    {}
+    _SpecData() : specType(SdfSpecTypeUnknown) {}
 
     SdfSpecType specType;
     std::vector<_FieldValuePair> fields;

@@ -32,6 +32,7 @@
 class AnchorISystem
 {
  public:
+
   /**
    * Creates the one and only system.
    * @return An indication of success. */
@@ -49,22 +50,22 @@ class AnchorISystem
   static AnchorISystem *getSystem();
 
  protected:
+
   /**
    * Constructor.
    * Protected default constructor to
    * force use of static createSystem
    * member. */
-  AnchorISystem()
-  {}
+  AnchorISystem() {}
 
   /**
    * Destructor.
    * Protected default constructor to
    * force use of static dispose member. */
-  virtual ~AnchorISystem()
-  {}
+  virtual ~AnchorISystem() {}
 
  public:
+
   /**
    * Returns the system time.
    * Returns the number of milliseconds since the start of the system process.
@@ -220,6 +221,7 @@ class AnchorISystem
   virtual int toggleConsole(int action) = 0;
 
  protected:
+
   /**
    * Initialize the system.
    * @return Indication of success. */
@@ -238,6 +240,7 @@ class AnchorISystem
 class AnchorSystem : public AnchorISystem
 {
  protected:
+
   /**
    * Constructor.
    * Protected default constructor to force use of static createSystem member. */
@@ -249,6 +252,7 @@ class AnchorSystem : public AnchorISystem
   virtual ~AnchorSystem();
 
  public:
+
   /**
    * Returns the system time.
    * Returns the number of milliseconds since the start of the system process.
@@ -362,6 +366,7 @@ class AnchorSystem : public AnchorISystem
   virtual eAnchorStatus getButtons(AnchorButtons &buttons) const = 0;
 
  protected:
+
   /**
    * Initialize the system.
    * @return Indication of success. */

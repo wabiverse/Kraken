@@ -25,6 +25,7 @@ namespace rif
   class Image : public Object
   {
    public:
+
     static rif_image_desc GetDesc(uint32_t width, uint32_t height, HdFormat format);
 
     explicit Image(rif_image imageHandle);

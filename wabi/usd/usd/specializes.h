@@ -52,15 +52,15 @@ class UsdSpecializes
 {
   friend class UsdPrim;
 
-  explicit UsdSpecializes(const UsdPrim &prim)
-    : _prim(prim)
-  {}
+  explicit UsdSpecializes(const UsdPrim &prim) : _prim(prim) {}
 
  public:
+
   /// Adds a path to the specializes listOp at the current EditTarget,
   /// in the position specified by \p position.
   USD_API
-  bool AddSpecialize(const SdfPath &primPath, UsdListPosition position = UsdListPositionBackOfPrependList);
+  bool AddSpecialize(const SdfPath &primPath,
+                     UsdListPosition position = UsdListPositionBackOfPrependList);
 
   /// Removes the specified path from the specializes listOp at the
   /// current EditTarget.
@@ -98,6 +98,7 @@ class UsdSpecializes
   // ---------------------------------------------------------------------- //
 
  private:
+
   UsdPrim _prim;
 };
 

@@ -43,16 +43,12 @@ RAPIDJSON_NAMESPACE_BEGIN
     \tparam StreamType Class derived from \c std::basic_istream.
 */
 
-template<typename StreamType>
-class BasicIStreamWrapper
+template<typename StreamType> class BasicIStreamWrapper
 {
  public:
+
   typedef typename StreamType::char_type Ch;
-  BasicIStreamWrapper(StreamType &stream)
-    : stream_(stream),
-      count_(),
-      peekBuffer_()
-  {}
+  BasicIStreamWrapper(StreamType &stream) : stream_(stream), count_(), peekBuffer_() {}
 
   Ch Peek() const
   {
@@ -63,8 +59,7 @@ class BasicIStreamWrapper
   Ch Take()
   {
     typename StreamType::int_type c = stream_.get();
-    if (RAPIDJSON_LIKELY(c != StreamType::traits_type::eof()))
-    {
+    if (RAPIDJSON_LIKELY(c != StreamType::traits_type::eof())) {
       count_++;
       return static_cast<Ch>(c);
     } else
@@ -102,11 +97,9 @@ class BasicIStreamWrapper
     RAPIDJSON_ASSERT(sizeof(Ch) == 1);  // Only usable for byte stream.
     int i;
     bool hasError = false;
-    for (i = 0; i < 4; ++i)
-    {
+    for (i = 0; i < 4; ++i) {
       typename StreamType::int_type c = stream_.get();
-      if (c == StreamType::traits_type::eof())
-      {
+      if (c == StreamType::traits_type::eof()) {
         hasError = true;
         stream_.clear();
         break;
@@ -119,6 +112,7 @@ class BasicIStreamWrapper
   }
 
  private:
+
   BasicIStreamWrapper(const BasicIStreamWrapper &);
   BasicIStreamWrapper &operator=(const BasicIStreamWrapper &);
 

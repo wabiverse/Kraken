@@ -46,19 +46,16 @@ WABI_NAMESPACE_BEGIN
 class TraceKey
 {
  public:
+
   /// Constructor.
-  constexpr TraceKey(const TraceStaticKeyData &data)
-    : _ptr(&data)
-  {}
+  constexpr TraceKey(const TraceStaticKeyData &data) : _ptr(&data) {}
 
   /// Equality comparison.
   bool operator==(const TraceKey &other) const
   {
-    if (_ptr == other._ptr)
-    {
+    if (_ptr == other._ptr) {
       return true;
-    } else
-    {
+    } else {
       return *_ptr == *other._ptr;
     }
   }
@@ -79,6 +76,7 @@ class TraceKey
   };
 
  private:
+
   const TraceStaticKeyData *_ptr;
 
   // TraceCollection converts TraceKeys to TfTokens for visitors.

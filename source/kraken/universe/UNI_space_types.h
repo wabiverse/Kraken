@@ -92,11 +92,7 @@ struct SpaceLink
   char spacetype;
   char link_flag;
 
-  SpaceLink()
-    : regions(EMPTY),
-      spacetype(VALUE_ZERO),
-      link_flag(VALUE_ZERO)
-  {}
+  SpaceLink() : regions(EMPTY), spacetype(VALUE_ZERO), link_flag(VALUE_ZERO) {}
 };
 
 WABI_NAMESPACE_END

@@ -72,6 +72,7 @@ struct HdEmbreeInstanceContext;
 class HdEmbreeMesh final : public HdMesh
 {
  public:
+
   HF_MALLOC_TAG_NEW("new HdEmbreeMesh");
 
   /// HdEmbreeMesh constructor.
@@ -125,6 +126,7 @@ class HdEmbreeMesh final : public HdMesh
   virtual void Finalize(HdRenderParam *renderParam) override;
 
  protected:
+
   // Initialize the given representation of this Rprim.
   // This is called prior to syncing the prim, the first time the repr
   // is used.
@@ -152,6 +154,7 @@ class HdEmbreeMesh final : public HdMesh
   virtual HdDirtyBits _PropagateDirtyBits(HdDirtyBits bits) const override;
 
  private:
+
   // Helper functions for getting the prototype and instance contexts.
   // These don't do null checks, so the user is responsible for calling them
   // carefully.
@@ -173,7 +176,8 @@ class HdEmbreeMesh final : public HdMesh
 
   // Populate _primvarSourceMap with primvars that are computed.
   // Return the names of the primvars that were successfully updated.
-  TfTokenVector _UpdateComputedPrimvarSources(HdSceneDelegate *sceneDelegate, HdDirtyBits dirtyBits);
+  TfTokenVector _UpdateComputedPrimvarSources(HdSceneDelegate *sceneDelegate,
+                                              HdDirtyBits dirtyBits);
 
   // Populate a single primvar, with given name and data, in the prototype
   // context. Overwrites the current mapping for the name, if necessary.
@@ -193,6 +197,7 @@ class HdEmbreeMesh final : public HdMesh
   static void _EmbreeCullFaces(const RTCFilterFunctionNArguments *args);
 
  private:
+
   // Every HdEmbreeMesh is treated as instanced; if there's no instancer,
   // the prototype has a single identity istance. The prototype is stored
   // as _rtcMeshId, in _rtcMeshScene.

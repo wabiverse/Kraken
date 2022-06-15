@@ -22,25 +22,30 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "wabi/imaging/hd/unitTestNullRenderDelegate.h"
-#include "wabi/imaging/hd/basisCurves.h"
-#include "wabi/imaging/hd/bprim.h"
 #include "wabi/imaging/hd/bufferArray.h"
 #include "wabi/imaging/hd/camera.h"
 #include "wabi/imaging/hd/coordSys.h"
 #include "wabi/imaging/hd/material.h"
 #include "wabi/imaging/hd/mesh.h"
+#include "wabi/imaging/hd/basisCurves.h"
+#include "wabi/imaging/hd/bprim.h"
 #include "wabi/imaging/hd/points.h"
+#include "wabi/imaging/hd/tokens.h"
 #include "wabi/imaging/hd/repr.h"
 #include "wabi/imaging/hd/resourceRegistry.h"
 #include "wabi/imaging/hd/strategyBase.h"
-#include "wabi/imaging/hd/tokens.h"
 #include "wabi/imaging/hd/unitTestNullRenderPass.h"
 
 #include <iostream>
 
 WABI_NAMESPACE_BEGIN
 
-TF_DEFINE_PRIVATE_TOKENS(_tokens, (print)(message));
+TF_DEFINE_PRIVATE_TOKENS(
+    _tokens,
+    (print)
+    (message)
+);
+
 
 ////////////////////////////////////////////////////////////////
 // Null Prims
@@ -146,6 +151,7 @@ class Hd_NullRprim final : public HdRprim
     *dirtyBits &= ~HdChangeTracker::AllSceneDirtyBits;
   }
 
+
   virtual HdDirtyBits GetInitialDirtyBitsMask() const override
   {
     // Set all bits except the varying flag
@@ -156,6 +162,7 @@ class Hd_NullRprim final : public HdRprim
   {
     return bits;
   }
+
 
  protected:
 
@@ -332,6 +339,7 @@ void Hd_UnitTestNullRenderDelegate::DestroyInstancer(HdInstancer *instancer)
   delete instancer;
 }
 
+
 HdRprim *Hd_UnitTestNullRenderDelegate::CreateRprim(TfToken const &typeId, SdfPath const &rprimId)
 {
   return new Hd_NullRprim(typeId, rprimId);
@@ -370,6 +378,7 @@ HdSprim *Hd_UnitTestNullRenderDelegate::CreateFallbackSprim(TfToken const &typeI
 
   return nullptr;
 }
+
 
 void Hd_UnitTestNullRenderDelegate::DestroySprim(HdSprim *sPrim)
 {

@@ -41,6 +41,7 @@ WABI_NAMESPACE_BEGIN
 class NdrArnoldParserPlugin : public NdrParserPlugin
 {
  public:
+
   /// Creates an instance of NdrArnoldParserPlugin.
   NDRARNOLD_API
   NdrArnoldParserPlugin();

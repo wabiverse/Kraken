@@ -32,6 +32,7 @@ class HdArnoldRenderDelegate;
 class HdArnoldMaterialTracker
 {
  public:
+
   /// Queries the list of current materials.
   ///
   /// @param newArraySize Size of the materials after querying the old array.
@@ -74,6 +75,7 @@ class HdArnoldMaterialTracker
   void UntrackMaterials(HdArnoldRenderDelegate *renderDelegate, const SdfPath &shapeId);
 
  private:
+
   VtArray<SdfPath> _materials;  ///< List of materials currently assigned.
 };
 

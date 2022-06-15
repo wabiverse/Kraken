@@ -69,6 +69,7 @@ class SdfAssetPath;
 class UsdRiLightAPI : public UsdAPISchemaBase
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -79,16 +80,12 @@ class UsdRiLightAPI : public UsdAPISchemaBase
   /// Equivalent to UsdRiLightAPI::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRiLightAPI(const UsdPrim &prim = UsdPrim())
-    : UsdAPISchemaBase(prim)
-  {}
+  explicit UsdRiLightAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
 
   /// Construct a UsdRiLightAPI on the prim held by \p schemaObj .
   /// Should be preferred over UsdRiLightAPI(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRiLightAPI(const UsdSchemaBase &schemaObj)
-    : UsdAPISchemaBase(schemaObj)
-  {}
+  explicit UsdRiLightAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
 
   /// Destructor.
   USDRI_API
@@ -130,6 +127,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
   static UsdRiLightAPI Apply(const UsdPrim &prim);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -137,6 +135,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRI_API
@@ -146,9 +145,11 @@ class UsdRiLightAPI : public UsdAPISchemaBase
 
   // override SchemaBase virtuals.
   USDRI_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RISAMPLINGFIXEDSAMPLECOUNT
   // --------------------------------------------------------------------- //
@@ -177,6 +178,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
                                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RISAMPLINGIMPORTANCEMULTIPLIER
   // --------------------------------------------------------------------- //
@@ -200,6 +202,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
                                                         bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RIINTENSITYNEARDIST
   // --------------------------------------------------------------------- //
@@ -226,6 +229,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
                                              bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RILIGHTGROUP
   // --------------------------------------------------------------------- //
@@ -251,6 +255,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
                                       bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RISHADOWTHINSHADOW
   // --------------------------------------------------------------------- //
@@ -278,6 +283,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
                                             bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // RITRACELIGHTPATHS
   // --------------------------------------------------------------------- //
@@ -305,6 +311,7 @@ class UsdRiLightAPI : public UsdAPISchemaBase
                                            bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

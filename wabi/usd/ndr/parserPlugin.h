@@ -132,6 +132,7 @@ struct NdrNodeDiscoveryResult;
 class NdrParserPlugin : public TfWeakBase
 {
  public:
+
   NDR_API
   NdrParserPlugin();
   NDR_API
@@ -175,13 +176,14 @@ class NdrParserPlugin : public TfWeakBase
 class NdrParserPluginFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual NdrParserPlugin *New() const = 0;
 };
 
-template<class T>
-class NdrParserPluginFactory : public NdrParserPluginFactoryBase
+template<class T> class NdrParserPluginFactory : public NdrParserPluginFactoryBase
 {
  public:
+
   virtual NdrParserPlugin *New() const
   {
     return new T;

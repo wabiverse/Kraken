@@ -41,11 +41,10 @@ class UsdPrim;
 class UsdImagingCameraAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   typedef UsdImagingPrimAdapter BaseAdapter;
 
-  UsdImagingCameraAdapter()
-    : UsdImagingPrimAdapter()
-  {}
+  UsdImagingCameraAdapter() : UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   ~UsdImagingCameraAdapter();
@@ -114,6 +113,7 @@ class UsdImagingCameraAdapter : public UsdImagingPrimAdapter
               VtIntArray *outIndices) const override;
 
  protected:
+
   void _RemovePrim(SdfPath const &cachePath, UsdImagingIndexProxy *index) override;
 };
 

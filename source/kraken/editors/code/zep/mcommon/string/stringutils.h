@@ -26,11 +26,9 @@ namespace Zep
   inline size_t Utf8Length(const char *s)
   {
     size_t stringLength = 0;
-    while (*s != 0)
-    {
+    while (*s != 0) {
       size_t len = 1;
-      while (len <= 4 && *s)
-      {
+      while (len <= 4 && *s) {
         if ((*s++ & 0xc0) != 0x80)
           break;
         len++;
@@ -40,8 +38,12 @@ namespace Zep
     return stringLength;
   }
 
-  std::string string_replace(std::string subject, const std::string &search, const std::string &replace);
-  void string_replace_in_place(std::string &subject, const std::string &search, const std::string &replace);
+  std::string string_replace(std::string subject,
+                             const std::string &search,
+                             const std::string &replace);
+  void string_replace_in_place(std::string &subject,
+                               const std::string &search,
+                               const std::string &replace);
 
   // trim from beginning of string (left)
   inline std::string &LTrim(std::string &s, const char *t = " \t\n\r\f\v")
@@ -63,16 +65,14 @@ namespace Zep
     return LTrim(RTrim(s, t), t);
   }
 
-  template<typename T>
-  std::string toString(const T &t)
+  template<typename T> std::string toString(const T &t)
   {
     std::ostringstream oss;
     oss << t;
     return oss.str();
   }
 
-  template<typename T>
-  T fromString(const std::string &s)
+  template<typename T> T fromString(const std::string &s)
   {
     std::istringstream stream(s);
     T t;
@@ -91,8 +91,7 @@ namespace Zep
   struct StringId
   {
     uint32_t id = 0;
-    StringId()
-    {}
+    StringId() {}
     StringId(const char *pszString);
     StringId(const std::string &str);
     explicit StringId(uint32_t _id)
@@ -118,8 +117,7 @@ namespace Zep
     std::string ToString() const
     {
       auto itr = GetStringLookup().find(id);
-      if (itr == GetStringLookup().end())
-      {
+      if (itr == GetStringLookup().end()) {
         return "murmur:" + std::to_string(id);
       }
       return itr->second;
@@ -153,7 +151,8 @@ namespace Zep
     return str == str2;
   }
 
-  inline void string_eat_char(std::string::const_iterator &itr, std::string::const_iterator &itrEnd)
+  inline void string_eat_char(std::string::const_iterator &itr,
+                              std::string::const_iterator &itrEnd)
   {
     if (itr != itrEnd)
       itr++;
@@ -181,8 +180,7 @@ namespace Zep
 
 namespace std
 {
-  template<>
-  struct hash<Zep::StringId>
+  template<> struct hash<Zep::StringId>
   {
     std::size_t operator()(const Zep::StringId &k) const
     {

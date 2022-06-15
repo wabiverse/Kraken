@@ -61,12 +61,13 @@ std::string HdMtlxConvertToString(VtValue const &hdParameterValue);
  * Collecting the hdTextureNodes as the HdMaterialNetwork2 is traversed as
  * well as the Texture name mapping between MaterialX and Hydra. */
 HDMTLX_API
-MaterialX::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(HdMaterialNetwork2 const &hdNetwork,
-                                                             HdMaterialNode2 const &hdMaterialXNode,
-                                                             SdfPath const &materialPath,
-                                                             MaterialX::DocumentPtr const &libraries,
-                                                             std::set<SdfPath> *hdTextureNodes,
-                                                             MaterialX::StringMap *mxHdTextureMap);
+MaterialX::DocumentPtr HdMtlxCreateMtlxDocumentFromHdNetwork(
+  HdMaterialNetwork2 const &hdNetwork,
+  HdMaterialNode2 const &hdMaterialXNode,
+  SdfPath const &materialPath,
+  MaterialX::DocumentPtr const &libraries,
+  std::set<SdfPath> *hdTextureNodes,
+  MaterialX::StringMap *mxHdTextureMap);
 
 WABI_NAMESPACE_END
 

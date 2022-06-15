@@ -39,24 +39,25 @@ WABI_NAMESPACE_BEGIN
 ///
 class UsdImagingDataSourceVolumeFieldBindings : public HdContainerDataSource
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceVolumeFieldBindings);
+ public:
 
-    bool Has(const TfToken & name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken & name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceVolumeFieldBindings);
 
-private:
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
 
-    // Private constructor, use static New() instead.
-    UsdImagingDataSourceVolumeFieldBindings(
-            UsdVolVolume usdVolume,
-            const UsdImagingDataSourceStageGlobals &stageGlobals);
+ private:
+
+  // Private constructor, use static New() instead.
+  UsdImagingDataSourceVolumeFieldBindings(UsdVolVolume usdVolume,
+                                          const UsdImagingDataSourceStageGlobals &stageGlobals);
 
 
-private:
-    UsdVolVolume _usdVolume;
-    const UsdImagingDataSourceStageGlobals &_stageGlobals;
+ private:
+
+  UsdVolVolume _usdVolume;
+  const UsdImagingDataSourceStageGlobals &_stageGlobals;
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceVolumeFieldBindings);
@@ -65,27 +66,28 @@ HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceVolumeFieldBindings);
 
 /// \class UsdImagingDataSourceVolumePrim
 ///
-/// A prim data source representing a UsdVolVolume prim. 
+/// A prim data source representing a UsdVolVolume prim.
 ///
 class UsdImagingDataSourceVolumePrim : public UsdImagingDataSourceGprim
 {
-public:
-    HD_DECLARE_DATASOURCE(UsdImagingDataSourceVolumePrim);
+ public:
 
-    bool Has(const TfToken &name) override;
-    TfTokenVector GetNames() override;
-    HdDataSourceBaseHandle Get(const TfToken &name) override;
+  HD_DECLARE_DATASOURCE(UsdImagingDataSourceVolumePrim);
 
-private:
-    // Private constructor, use static New() instead.
-    UsdImagingDataSourceVolumePrim(
-        const SdfPath &sceneIndexPath,
-        UsdPrim usdPrim,
-        const UsdImagingDataSourceStageGlobals &stageGlobals);
+  bool Has(const TfToken &name) override;
+  TfTokenVector GetNames() override;
+  HdDataSourceBaseHandle Get(const TfToken &name) override;
+
+ private:
+
+  // Private constructor, use static New() instead.
+  UsdImagingDataSourceVolumePrim(const SdfPath &sceneIndexPath,
+                                 UsdPrim usdPrim,
+                                 const UsdImagingDataSourceStageGlobals &stageGlobals);
 };
 
 HD_DECLARE_DATASOURCE_HANDLES(UsdImagingDataSourceVolumePrim);
 
 WABI_NAMESPACE_END
 
-#endif // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_VOLUME_H
+#endif  // WABI_USD_IMAGING_USD_IMAGING_DATA_SOURCE_VOLUME_H

@@ -39,16 +39,11 @@
 
 WABI_NAMESPACE_BEGIN
 
-template<typename T>
-struct Tf_PySequenceToListConverter;
-template<typename T>
-struct Tf_PySequenceToSetConverter;
-template<typename T>
-struct Tf_PyMapToDictionaryConverter;
-template<typename T>
-struct Tf_PySequenceToTupleConverter;
-template<typename First, typename Second>
-struct Tf_PyPairToTupleConverter;
+template<typename T> struct Tf_PySequenceToListConverter;
+template<typename T> struct Tf_PySequenceToSetConverter;
+template<typename T> struct Tf_PyMapToDictionaryConverter;
+template<typename T> struct Tf_PySequenceToTupleConverter;
+template<typename First, typename Second> struct Tf_PyPairToTupleConverter;
 
 /// \class TfPySequenceToList
 ///
@@ -74,8 +69,7 @@ struct Tf_PyPairToTupleConverter;
 /// \endcode
 struct TfPySequenceToList
 {
-  template<typename T>
-  struct apply
+  template<typename T> struct apply
   {
     typedef Tf_PySequenceToListConverter<T> type;
   };
@@ -105,8 +99,7 @@ struct TfPySequenceToList
 /// \endcode
 struct TfPySequenceToSet
 {
-  template<typename T>
-  struct apply
+  template<typename T> struct apply
   {
     typedef Tf_PySequenceToSetConverter<T> type;
   };
@@ -118,8 +111,7 @@ struct TfPySequenceToSet
 /// library maps to dictionaries.
 struct TfPyMapToDictionary
 {
-  template<typename T>
-  struct apply
+  template<typename T> struct apply
   {
     typedef Tf_PyMapToDictionaryConverter<T> type;
   };
@@ -132,8 +124,7 @@ struct TfPyMapToDictionary
 /// \see TfPySequenceToList.
 struct TfPySequenceToTuple
 {
-  template<typename T>
-  struct apply
+  template<typename T> struct apply
   {
     typedef Tf_PySequenceToTupleConverter<T> type;
   };
@@ -143,15 +134,13 @@ struct TfPySequenceToTuple
 /// library pairs to tuples.
 struct TfPyPairToTuple
 {
-  template<typename T>
-  struct apply
+  template<typename T> struct apply
   {
     typedef Tf_PyPairToTupleConverter<typename T::first_type, typename T::second_type> type;
   };
 };
 
-template<typename T>
-struct Tf_PySequenceToListConverter
+template<typename T> struct Tf_PySequenceToListConverter
 {
   typedef typename boost::remove_reference<T>::type SeqType;
   bool convertible() const
@@ -168,8 +157,7 @@ struct Tf_PySequenceToListConverter
   }
 };
 
-template<typename T>
-struct Tf_PySequenceToSetConverter
+template<typename T> struct Tf_PySequenceToSetConverter
 {
   typedef typename std::remove_reference<T>::type SeqType;
   bool convertible() const
@@ -186,8 +174,7 @@ struct Tf_PySequenceToSetConverter
   }
 };
 
-template<typename T>
-struct Tf_PyMapToDictionaryConverter
+template<typename T> struct Tf_PyMapToDictionaryConverter
 {
   typedef typename boost::remove_reference<T>::type SeqType;
   // TODO: convertible() should be made more robust by checking that the
@@ -206,8 +193,7 @@ struct Tf_PyMapToDictionaryConverter
   }
 };
 
-template<typename T>
-struct Tf_PySequenceToTupleConverter
+template<typename T> struct Tf_PySequenceToTupleConverter
 {
   typedef typename boost::remove_reference<T>::type SeqType;
   bool convertible() const
@@ -224,8 +210,7 @@ struct Tf_PySequenceToTupleConverter
   }
 };
 
-template<typename First, typename Second>
-struct Tf_PyPairToTupleConverter
+template<typename First, typename Second> struct Tf_PyPairToTupleConverter
 {
   typedef std::pair<First, Second> PairType;
   bool convertible() const

@@ -30,6 +30,7 @@ WABI_NAMESPACE_BEGIN
 class RprUsdMaterial
 {
  public:
+
   RPRUSD_API
   virtual ~RprUsdMaterial() = default;
 
@@ -55,6 +56,7 @@ class RprUsdMaterial
   void SetName(const char *name);
 
  protected:
+
   rpr::MaterialNode *m_surfaceNode = nullptr;
   rpr::MaterialNode *m_displacementNode = nullptr;
   rpr::MaterialNode *m_volumeNode = nullptr;

@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class GlfSimpleMaterial final
 {
  public:
+
   GLF_API
   GlfSimpleMaterial();
   GLF_API
@@ -78,6 +79,7 @@ class GlfSimpleMaterial final
   bool operator!=(GlfSimpleMaterial const &other) const;
 
  private:
+
   GfVec4f _ambient;
   GfVec4f _diffuse;
   GfVec4f _specular;

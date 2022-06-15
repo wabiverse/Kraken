@@ -69,6 +69,7 @@ class TfErrorMark;
 class TfDiagnosticMgr : public TfWeakBase
 {
  public:
+
   typedef TfDiagnosticMgr This;
 
   typedef std::list<TfError> ErrorList;
@@ -127,6 +128,7 @@ class TfDiagnosticMgr : public TfWeakBase
   class Delegate
   {
    public:
+
     TF_API
     virtual ~Delegate() = 0;
 
@@ -144,6 +146,7 @@ class TfDiagnosticMgr : public TfWeakBase
     virtual void IssueWarning(TfWarning const &warning) = 0;
 
    protected:
+
     /// Abort the program, but avoid the session logging mechanism. This
     /// is intended to be used for fatal error cases where any information
     /// has already been logged.
@@ -292,6 +295,7 @@ class TfDiagnosticMgr : public TfWeakBase
   class ErrorHelper
   {
    public:
+
     ErrorHelper(TfCallContext const &context, TfEnum errorCode, const char *errorCodeString)
       : _context(context),
         _errorCode(errorCode),
@@ -314,6 +318,7 @@ class TfDiagnosticMgr : public TfWeakBase
     void PostQuietly(const std::string &msg, TfDiagnosticInfo info = TfDiagnosticInfo()) const;
 
    private:
+
     TfCallContext _context;
     TfEnum _errorCode;
     const char *_errorCodeString;
@@ -343,6 +348,7 @@ class TfDiagnosticMgr : public TfWeakBase
     void PostQuietly(const std::string &msg) const;
 
    private:
+
     TfCallContext _context;
     TfEnum _warningCode;
     const char *_warningCodeString;
@@ -372,6 +378,7 @@ class TfDiagnosticMgr : public TfWeakBase
     void PostQuietly(const std::string &msg) const;
 
    private:
+
     TfCallContext _context;
     TfEnum _statusCode;
     const char *_statusCodeString;
@@ -390,6 +397,7 @@ class TfDiagnosticMgr : public TfWeakBase
     }
 
    private:
+
     TfCallContext _context;
     TfEnum _statusCode;
   };
@@ -397,6 +405,7 @@ class TfDiagnosticMgr : public TfWeakBase
 #endif
 
  private:
+
   TfDiagnosticMgr();
   virtual ~TfDiagnosticMgr();
   friend class TfSingleton<This>;
@@ -462,13 +471,16 @@ class TfDiagnosticMgr : public TfWeakBase
     bool parity = false;
 
    private:
+
     void _AppendAndPublishImpl(bool clear, ErrorIterator i, ErrorIterator end);
   };
   tbb::enumerable_thread_specific<_LogText> _logText;
 
   // Thread-specific error mark counts.  Use a native key for best performance
   // here.
-  tbb::enumerable_thread_specific<size_t, tbb::cache_aligned_allocator<size_t>, tbb::ets_key_per_instance>
+  tbb::enumerable_thread_specific<size_t,
+                                  tbb::cache_aligned_allocator<size_t>,
+                                  tbb::ets_key_per_instance>
     _errorMarkCounts;
 
   bool _quiet;

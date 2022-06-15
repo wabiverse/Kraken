@@ -54,6 +54,7 @@ struct HgiBufferCpuToGpuOp;
 class HdPhInterleavedMemoryManager : public HdAggregationStrategy
 {
  public:
+
   /// Copy new data from CPU into staging buffer.
   /// This reduces the amount of GPU copy commands we emit by first writing
   /// to the CPU staging area of the buffer and only flushing it to the GPU
@@ -65,6 +66,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
   void Flush() override;
 
  protected:
+
   class _StripedInterleavedBuffer;
 
   // BufferFlushListEntry lets use accumulate writes into the same GPU buffer
@@ -72,6 +74,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
   class _BufferFlushListEntry
   {
    public:
+
     _BufferFlushListEntry(HgiBufferHandle const &buf, uint64_t start, uint64_t end);
 
     HgiBufferHandle buffer;
@@ -85,6 +88,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
   class _StripedInterleavedBufferRange : public HdPhBufferArrayRange
   {
    public:
+
     /// Constructor.
     _StripedInterleavedBufferRange(HdPhResourceRegistry *resourceRegistry)
       : HdPhBufferArrayRange(resourceRegistry),
@@ -201,11 +205,13 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
     }
 
    protected:
+
     /// Returns the aggregation container
     HDPH_API
     const void *_GetAggregation() const override;
 
    private:
+
     enum
     {
       NOT_ALLOCATED = -1
@@ -223,6 +229,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
   class _StripedInterleavedBuffer : public HdBufferArray
   {
    public:
+
     /// Constructor.
     HDPH_API
     _StripedInterleavedBuffer(HdPhInterleavedMemoryManager *mgr,
@@ -304,6 +311,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
     }
 
    protected:
+
     HDPH_API
     void _DeallocateResources();
 
@@ -315,6 +323,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
                                              int stride);
 
    private:
+
     HdPhInterleavedMemoryManager *_manager;
     HdPhResourceRegistry *const _resourceRegistry;
     bool _needsCompaction;
@@ -351,6 +360,7 @@ class HdPhInterleavedMemoryManager : public HdAggregationStrategy
 class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager
 {
  public:
+
   HdPhInterleavedUBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : HdPhInterleavedMemoryManager(resourceRegistry)
   {}
@@ -371,6 +381,7 @@ class HdPhInterleavedUBOMemoryManager : public HdPhInterleavedMemoryManager
 class HdPhInterleavedSSBOMemoryManager : public HdPhInterleavedMemoryManager
 {
  public:
+
   HdPhInterleavedSSBOMemoryManager(HdPhResourceRegistry *resourceRegistry)
     : HdPhInterleavedMemoryManager(resourceRegistry)
   {}

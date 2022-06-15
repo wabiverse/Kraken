@@ -38,11 +38,10 @@ WABI_NAMESPACE_BEGIN
 class Usd_PrimTypeInfoCache
 {
  public:
+
   using TypeId = UsdPrimTypeInfo::_TypeId;
 
-  Usd_PrimTypeInfoCache()
-    : _emptyPrimTypeInfo(&UsdPrimTypeInfo::GetEmptyPrimType())
-  {}
+  Usd_PrimTypeInfoCache() : _emptyPrimTypeInfo(&UsdPrimTypeInfo::GetEmptyPrimType()) {}
 
   // Non-copyable
   Usd_PrimTypeInfoCache(const Usd_PrimTypeInfoCache &) = delete;
@@ -52,13 +51,11 @@ class Usd_PrimTypeInfoCache
   // creating and caching a new one if it doesn't exist.
   const UsdPrimTypeInfo *FindOrCreatePrimTypeInfo(TypeId &&primTypeId)
   {
-    if (primTypeId.IsEmpty())
-    {
+    if (primTypeId.IsEmpty()) {
       return GetEmptyPrimTypeInfo();
     }
 
-    if (auto primTypeInfo = _primTypeInfoMap.Find(primTypeId))
-    {
+    if (auto primTypeInfo = _primTypeInfoMap.Find(primTypeId)) {
       return primTypeInfo;
     }
 
@@ -79,15 +76,18 @@ class Usd_PrimTypeInfoCache
 
   // Computes a mapping of invalid prim type name to its valid fallback
   // type name from the provided fallback prim types dictionary.
-  void ComputeInvalidPrimTypeToFallbackMap(const VtDictionary &fallbackPrimTypesDict,
-                                           TfHashMap<TfToken, TfToken, TfHash> *typeToFallbackTypeMap);
+  void ComputeInvalidPrimTypeToFallbackMap(
+    const VtDictionary &fallbackPrimTypesDict,
+    TfHashMap<TfToken, TfToken, TfHash> *typeToFallbackTypeMap);
 
  private:
+
   // Wrapper around the thread safe hash map implementation used by the
   // Usd_PrimTypeInfoCache to cache prim type info
   class _ThreadSafeHashMapImpl
   {
    public:
+
     _ThreadSafeHashMapImpl() = default;
     _ThreadSafeHashMapImpl(const _ThreadSafeHashMapImpl &) = delete;
 
@@ -98,8 +98,7 @@ class Usd_PrimTypeInfoCache
     const UsdPrimTypeInfo *Find(const KeyType &key) const
     {
       _HashMap::const_accessor accessor;
-      if (_hashMap.find(accessor, key))
-      {
+      if (_hashMap.find(accessor, key)) {
         return accessor->second.get();
       }
       return nullptr;
@@ -112,14 +111,14 @@ class Usd_PrimTypeInfoCache
     {
       const KeyType &key = valuePtr->_GetTypeId();
       _HashMap::accessor accessor;
-      if (_hashMap.insert(accessor, key))
-      {
+      if (_hashMap.insert(accessor, key)) {
         accessor->second = std::move(valuePtr);
       }
       return accessor->second.get();
     }
 
    private:
+
     struct _TbbHashFunc
     {
       inline bool equal(const KeyType &l, const KeyType &r) const

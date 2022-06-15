@@ -359,7 +359,8 @@ typedef struct _rif_image_desc rif_image_desc;
  * \return RIF_SUCCESS - if the rif_image_filter object is created successfully.
  * \return RIF_ERROR_INVALID_PARAMETER - if \p deviceCount is nullptr.
  */
-extern RIF_API_ENTRY rif_int rifGetDeviceCount(rif_backend_api_type backend_api_type, rif_int *deviceCount);
+extern RIF_API_ENTRY rif_int rifGetDeviceCount(rif_backend_api_type backend_api_type,
+                                               rif_int *deviceCount);
 
 /*!
  * \brief rifCreateContext
@@ -441,8 +442,11 @@ extern RIF_API_ENTRY rif_int rifContextCreateImage(rif_context context,
  * requested image info. \return RIF_ERROR_INVALID_PARAMETER_TYPE - if requested image_info type is
  * not supported.
  */
-extern RIF_API_ENTRY rif_int
-rifImageGetInfo(rif_image image, rif_image_info image_info, size_t size, void *data, size_t *size_ret);
+extern RIF_API_ENTRY rif_int rifImageGetInfo(rif_image image,
+                                             rif_image_info image_info,
+                                             size_t size,
+                                             void *data,
+                                             size_t *size_ret);
 
 /*!
  * \brief rifImageMap
@@ -458,7 +462,9 @@ rifImageGetInfo(rif_image image, rif_image_info image_info, size_t size, void *d
  * \RIF_ERRO-_INTERNAL_ERROR - if an internal error occurs. If such an error occurs, Please send a
  * bug report to this email address: AMDRadeonProDeveloper@amd.com.
  */
-extern RIF_API_ENTRY rif_int rifImageMap(rif_image image, rif_image_map_type map_type, void **data);
+extern RIF_API_ENTRY rif_int rifImageMap(rif_image image,
+                                         rif_image_map_type map_type,
+                                         void **data);
 
 /*!
  * \brief rifImageUnmap

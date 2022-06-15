@@ -42,10 +42,12 @@ WABI_NAMESPACE_BEGIN
 class UsdNotice
 {
  public:
+
   /// Base class for UsdStage notices.
   class StageNotice : public TfNotice
   {
    public:
+
     USD_API
     StageNotice(const UsdStageWeakPtr &stage);
     USD_API
@@ -58,6 +60,7 @@ class UsdNotice
     }
 
    private:
+
     UsdStageWeakPtr _stage;
   };
 
@@ -76,9 +79,8 @@ class UsdNotice
   class StageContentsChanged : public StageNotice
   {
    public:
-    explicit StageContentsChanged(const UsdStageWeakPtr &stage)
-      : StageNotice(stage)
-    {}
+
+    explicit StageContentsChanged(const UsdStageWeakPtr &stage) : StageNotice(stage) {}
     USD_API virtual ~StageContentsChanged();
   };
 
@@ -123,6 +125,7 @@ class UsdNotice
     {}
 
    public:
+
     USD_API virtual ~ObjectsChanged();
 
     /// Return true if \p obj was possibly affected by the layer changes
@@ -154,16 +157,17 @@ class UsdNotice
     class PathRange
     {
      public:
+
       /// \class iterator
-      class iterator : public boost::iterator_adaptor<iterator,                            // crtp base,
-                                                      _PathsToChangesMap::const_iterator,  // base iterator
-                                                      const SdfPath &                      // value type
-                                                      >
+      class iterator
+        : public boost::iterator_adaptor<iterator,                            // crtp base,
+                                         _PathsToChangesMap::const_iterator,  // base iterator
+                                         const SdfPath &                      // value type
+                                         >
       {
        public:
-        iterator()
-          : iterator_adaptor_(base_type())
-        {}
+
+        iterator() : iterator_adaptor_(base_type()) {}
 
         /// Return the set of changed fields in layers that affected
         /// the object at the path specified by this iterator.  See
@@ -178,12 +182,11 @@ class UsdNotice
         USD_API bool HasChangedFields() const;
 
        private:
+
         friend class PathRange;
         friend class boost::iterator_core_access;
 
-        iterator(base_type baseIter)
-          : iterator_adaptor_(baseIter)
-        {}
+        iterator(base_type baseIter) : iterator_adaptor_(baseIter) {}
         inline reference dereference() const
         {
           return base()->first;
@@ -192,9 +195,7 @@ class UsdNotice
 
       using const_iterator = iterator;
 
-      PathRange()
-        : _changes(nullptr)
-      {}
+      PathRange() : _changes(nullptr) {}
 
       /// Explicit conversion to SdfPathVector for convenience
       explicit operator SdfPathVector() const
@@ -247,10 +248,9 @@ class UsdNotice
       }
 
      private:
+
       friend class ObjectsChanged;
-      explicit PathRange(const _PathsToChangesMap *changes)
-        : _changes(changes)
-      {}
+      explicit PathRange(const _PathsToChangesMap *changes) : _changes(changes) {}
 
       const _PathsToChangesMap *_changes;
     };
@@ -295,6 +295,7 @@ class UsdNotice
     USD_API bool HasChangedFields(const SdfPath &path) const;
 
    private:
+
     const _PathsToChangesMap *_resyncChanges;
     const _PathsToChangesMap *_infoChanges;
   };
@@ -307,9 +308,8 @@ class UsdNotice
   class StageEditTargetChanged : public StageNotice
   {
    public:
-    explicit StageEditTargetChanged(const UsdStageWeakPtr &stage)
-      : StageNotice(stage)
-    {}
+
+    explicit StageEditTargetChanged(const UsdStageWeakPtr &stage) : StageNotice(stage) {}
     USD_API virtual ~StageEditTargetChanged();
   };
 
@@ -330,6 +330,7 @@ class UsdNotice
   class LayerMutingChanged : public StageNotice
   {
    public:
+
     explicit LayerMutingChanged(const UsdStageWeakPtr &stage,
                                 const std::vector<std::string> &mutedLayers,
                                 const std::vector<std::string> &unmutedLayers)
@@ -353,6 +354,7 @@ class UsdNotice
     }
 
    private:
+
     const std::vector<std::string> &_mutedLayers;
     const std::vector<std::string> &_unMutedLayers;
   };

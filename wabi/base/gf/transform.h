@@ -77,6 +77,7 @@ class GfTransform
 {
 
  public:
+
   /// The default constructor sets the component values to the
   /// identity transformation.
   GfTransform()
@@ -256,6 +257,7 @@ class GfTransform
   }
 
  private:
+
   /// translation
   GfVec3d _translation;
   /// rotation

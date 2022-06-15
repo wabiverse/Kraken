@@ -90,6 +90,7 @@ struct HdxShadowTaskParams
 class HdxShadowTask : public HdTask
 {
  public:
+
   HDX_API
   HdxShadowTask(HdSceneDelegate *delegate, SdfPath const &id);
 
@@ -113,7 +114,9 @@ class HdxShadowTask : public HdTask
   const TfTokenVector &GetRenderTags() const override;
 
  private:
-  void _UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassState, HdxShadowTaskParams const &params);
+
+  void _UpdateDirtyParams(HdPhRenderPassStateSharedPtr &renderPassState,
+                          HdxShadowTaskParams const &params);
 
   HdRenderPassSharedPtrVector _passes;
   HdPhRenderPassStateSharedPtrVector _renderPassStates;

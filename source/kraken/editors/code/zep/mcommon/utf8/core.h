@@ -59,42 +59,35 @@ namespace utf8
     // Maximum valid value for a Unicode code point
     const uint32_t CODE_POINT_MAX = 0x0010ffffu;
 
-    template<typename octet_type>
-    inline uint8_t mask8(octet_type oc)
+    template<typename octet_type> inline uint8_t mask8(octet_type oc)
     {
       return static_cast<uint8_t>(0xff & oc);
     }
-    template<typename u16_type>
-    inline uint16_t mask16(u16_type oc)
+    template<typename u16_type> inline uint16_t mask16(u16_type oc)
     {
       return static_cast<uint16_t>(0xffff & oc);
     }
-    template<typename octet_type>
-    inline bool is_trail(octet_type oc)
+    template<typename octet_type> inline bool is_trail(octet_type oc)
     {
       return ((utf8::internal::mask8(oc) >> 6) == 0x2);
     }
 
-    template<typename u16>
-    inline bool is_lead_surrogate(u16 cp)
+    template<typename u16> inline bool is_lead_surrogate(u16 cp)
     {
       return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
     }
 
-    template<typename u16>
-    inline bool is_trail_surrogate(u16 cp)
+    template<typename u16> inline bool is_trail_surrogate(u16 cp)
     {
       return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
     }
 
-    template<typename u16>
-    inline bool is_surrogate(u16 cp)
+    template<typename u16> inline bool is_surrogate(u16 cp)
     {
       return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
     }
 
-    template<typename u32>
-    inline bool is_code_point_valid(u32 cp)
+    template<typename u32> inline bool is_code_point_valid(u32 cp)
     {
       return (cp <= CODE_POINT_MAX && !utf8::internal::is_surrogate(cp));
     }
@@ -119,16 +112,13 @@ namespace utf8
     template<typename octet_difference_type>
     inline bool is_overlong_sequence(uint32_t cp, octet_difference_type length)
     {
-      if (cp < 0x80)
-      {
+      if (cp < 0x80) {
         if (length != 1)
           return true;
-      } else if (cp < 0x800)
-      {
+      } else if (cp < 0x800) {
         if (length != 2)
           return true;
-      } else if (cp < 0x10000)
-      {
+      } else if (cp < 0x10000) {
         if (length != 3)
           return true;
       }
@@ -222,7 +212,8 @@ namespace utf8
 
       UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
-      code_point = ((code_point << 18) & 0x1fffff) + ((utf8::internal::mask8(*it) << 12) & 0x3ffff);
+      code_point = ((code_point << 18) & 0x1fffff) +
+                   ((utf8::internal::mask8(*it) << 12) & 0x3ffff);
 
       UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
 
@@ -254,8 +245,7 @@ namespace utf8
 
       // Get trail octets and calculate the code point
       utf_error err = UTF8_OK;
-      switch (length)
-      {
+      switch (length) {
         case 0:
           return INVALID_LEAD;
         case 1:
@@ -272,13 +262,10 @@ namespace utf8
           break;
       }
 
-      if (err == UTF8_OK)
-      {
+      if (err == UTF8_OK) {
         // Decoding succeeded. Now, security checks...
-        if (utf8::internal::is_code_point_valid(cp))
-        {
-          if (!utf8::internal::is_overlong_sequence(cp, length))
-          {
+        if (utf8::internal::is_code_point_valid(cp)) {
+          if (!utf8::internal::is_overlong_sequence(cp, length)) {
             // Passed! Return here.
             code_point = cp;
             ++it;
@@ -312,8 +299,7 @@ namespace utf8
   octet_iterator find_invalid(octet_iterator start, octet_iterator end)
   {
     octet_iterator result = start;
-    while (result != end)
-    {
+    while (result != end) {
       utf8::internal::utf_error err_code = utf8::internal::validate_next(result, end);
       if (err_code != internal::UTF8_OK)
         return result;
@@ -321,8 +307,7 @@ namespace utf8
     return result;
   }
 
-  template<typename octet_iterator>
-  inline bool is_valid(octet_iterator start, octet_iterator end)
+  template<typename octet_iterator> inline bool is_valid(octet_iterator start, octet_iterator end)
   {
     return (utf8::find_invalid(start, end) == end);
   }

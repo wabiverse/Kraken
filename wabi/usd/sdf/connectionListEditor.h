@@ -46,6 +46,7 @@ template<class ConnectionChildPolicy>
 class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy>
 {
  protected:
+
   virtual ~Sdf_ConnectionListEditor();
 
   Sdf_ConnectionListEditor(const SdfSpecHandle &connectionOwner,
@@ -58,6 +59,7 @@ class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy>
                      const std::vector<SdfPath> &newItems) const;
 
  private:
+
   typedef Sdf_ListOpListEditor<SdfPathKeyPolicy> Parent;
 };
 
@@ -65,9 +67,11 @@ class Sdf_ConnectionListEditor : public Sdf_ListOpListEditor<SdfPathKeyPolicy>
 ///
 /// List editor implementation for attribute connections.
 ///
-class Sdf_AttributeConnectionListEditor : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>
+class Sdf_AttributeConnectionListEditor
+  : public Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy>
 {
  public:
+
   virtual ~Sdf_AttributeConnectionListEditor();
 
   Sdf_AttributeConnectionListEditor(const SdfSpecHandle &owner,
@@ -78,6 +82,7 @@ class Sdf_AttributeConnectionListEditor : public Sdf_ConnectionListEditor<Sdf_At
                        const std::vector<SdfPath> &newItems) const;
 
  private:
+
   typedef Sdf_ConnectionListEditor<Sdf_AttributeConnectionChildPolicy> Parent;
 };
 
@@ -85,9 +90,11 @@ class Sdf_AttributeConnectionListEditor : public Sdf_ConnectionListEditor<Sdf_At
 ///
 /// List editor implementation for attribute connections.
 ///
-class Sdf_RelationshipTargetListEditor : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy>
+class Sdf_RelationshipTargetListEditor
+  : public Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy>
 {
  public:
+
   virtual ~Sdf_RelationshipTargetListEditor();
 
   Sdf_RelationshipTargetListEditor(const SdfSpecHandle &owner,
@@ -98,6 +105,7 @@ class Sdf_RelationshipTargetListEditor : public Sdf_ConnectionListEditor<Sdf_Rel
                        const std::vector<SdfPath> &newItems) const;
 
  private:
+
   typedef Sdf_ConnectionListEditor<Sdf_RelationshipTargetChildPolicy> Parent;
 };
 

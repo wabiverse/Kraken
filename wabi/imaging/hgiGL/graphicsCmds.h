@@ -50,6 +50,7 @@ class HgiGLDevice;
 class HgiGLGraphicsCmds final : public HgiGraphicsCmds
 {
  public:
+
   HGIGL_API
   ~HgiGLGraphicsCmds() override;
 
@@ -118,6 +119,7 @@ class HgiGLGraphicsCmds final : public HgiGraphicsCmds
   void MemoryBarrier(HgiMemoryBarrier barrier) override;
 
  protected:
+
   friend class HgiGL;
 
   HGIGL_API
@@ -127,6 +129,7 @@ class HgiGLGraphicsCmds final : public HgiGraphicsCmds
   bool _Submit(Hgi *hgi, HgiSubmitWaitType wait) override;
 
  private:
+
   HgiGLGraphicsCmds() = delete;
   HgiGLGraphicsCmds &operator=(const HgiGLGraphicsCmds &) = delete;
   HgiGLGraphicsCmds(const HgiGLGraphicsCmds &) = delete;

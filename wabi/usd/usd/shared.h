@@ -34,20 +34,11 @@
 WABI_NAMESPACE_BEGIN
 
 // Implementation storage + refcount for Usd_Shared.
-template<class T>
-struct Usd_Counted
+template<class T> struct Usd_Counted
 {
-  constexpr Usd_Counted()
-    : count(0)
-  {}
-  explicit Usd_Counted(T const &data)
-    : data(data),
-      count(0)
-  {}
-  explicit Usd_Counted(T &&data)
-    : data(std::move(data)),
-      count(0)
-  {}
+  constexpr Usd_Counted() : count(0) {}
+  explicit Usd_Counted(T const &data) : data(data), count(0) {}
+  explicit Usd_Counted(T &&data) : data(std::move(data)), count(0) {}
 
   friend inline void intrusive_ptr_add_ref(Usd_Counted const *c)
   {
@@ -55,8 +46,7 @@ struct Usd_Counted
   }
   friend inline void intrusive_ptr_release(Usd_Counted const *c)
   {
-    if (c->count.fetch_sub(1, std::memory_order_release) == 1)
-    {
+    if (c->count.fetch_sub(1, std::memory_order_release) == 1) {
       std::atomic_thread_fence(std::memory_order_acquire);
       delete c;
     }
@@ -67,35 +57,26 @@ struct Usd_Counted
 };
 
 struct Usd_EmptySharedTagType
-{
-};
+{};
 constexpr Usd_EmptySharedTagType Usd_EmptySharedTag{};
 
 // This class provides a simple way to share a data object between clients.  It
 // can be used to do simple copy-on-write, etc.
-template<class T>
-struct Usd_Shared
+template<class T> struct Usd_Shared
 {
   // Construct a Usd_Shared with a value-initialized T instance.
-  Usd_Shared()
-    : _held(new Usd_Counted<T>())
-  {}
+  Usd_Shared() : _held(new Usd_Counted<T>()) {}
   // Create a copy of \p obj.
-  explicit Usd_Shared(T const &obj)
-    : _held(new Usd_Counted<T>(obj))
-  {}
+  explicit Usd_Shared(T const &obj) : _held(new Usd_Counted<T>(obj)) {}
   // Move from \p obj.
-  explicit Usd_Shared(T &&obj)
-    : _held(new Usd_Counted<T>(std::move(obj)))
-  {}
+  explicit Usd_Shared(T &&obj) : _held(new Usd_Counted<T>(std::move(obj))) {}
 
   // Create an empty shared, which may not be accessed via Get(),
   // GetMutable(), IsUnique(), Clone(), or MakeUnique().  This is useful when
   // using the insert() or emplace() methods on associative containers, to
   // avoid allocating a temporary in case the object is already present in the
   // container.
-  Usd_Shared(Usd_EmptySharedTagType)
-  {}
+  Usd_Shared(Usd_EmptySharedTagType) {}
 
   // Return a const reference to the shared data.
   T const &Get() const
@@ -155,6 +136,7 @@ struct Usd_Shared
   }
 
  private:
+
   boost::intrusive_ptr<Usd_Counted<T>> _held;
 };
 

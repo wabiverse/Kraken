@@ -24,18 +24,19 @@
 #ifndef WABI_IMAGING_HD_SMOOTH_NORMALS_H
 #define WABI_IMAGING_HD_SMOOTH_NORMALS_H
 
+#include "wabi/wabi.h"
 #include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
 #include "wabi/imaging/hd/bufferSource.h"
 #include "wabi/imaging/hd/computation.h"
 #include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
-#include "wabi/wabi.h"
 
 #include "wabi/base/gf/vec3d.h"
 #include "wabi/base/gf/vec3f.h"
 #include "wabi/base/tf/token.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 class Hd_VertexAdjacency;
 
@@ -49,6 +50,7 @@ class Hd_VertexAdjacency;
 class Hd_SmoothNormals final
 {
  public:
+
   /// Computes the smooth normals result using the supplied adjacency
   /// information and points data. Returns an array of the same size and
   /// type as the source points, with optional packing.
@@ -61,15 +63,18 @@ class Hd_SmoothNormals final
                                                int numPoints,
                                                GfVec3d const *pointsPtr);
   HD_API
-  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(Hd_VertexAdjacency const *adjacency,
-                                                                    int numPoints,
-                                                                    GfVec3f const *pointsPtr);
+  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(
+    Hd_VertexAdjacency const *adjacency,
+    int numPoints,
+    GfVec3f const *pointsPtr);
   HD_API
-  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(Hd_VertexAdjacency const *adjacency,
-                                                                    int numPoints,
-                                                                    GfVec3d const *pointsPtr);
+  static VtArray<HdVec4f_2_10_10_10_REV> ComputeSmoothNormalsPacked(
+    Hd_VertexAdjacency const *adjacency,
+    int numPoints,
+    GfVec3d const *pointsPtr);
 
  private:
+
   Hd_SmoothNormals() = delete;
   ~Hd_SmoothNormals() = delete;
 };
@@ -81,6 +86,7 @@ class Hd_SmoothNormals final
 class Hd_SmoothNormalsComputation : public HdComputedBufferSource
 {
  public:
+
   HD_API
   Hd_SmoothNormalsComputation(Hd_VertexAdjacency const *adjacency,
                               HdBufferSourceSharedPtr const &points,
@@ -97,10 +103,12 @@ class Hd_SmoothNormalsComputation : public HdComputedBufferSource
   virtual TfToken const &GetName() const override;
 
  protected:
+
   HD_API
   virtual bool _CheckValid() const override;
 
  private:
+
   Hd_VertexAdjacency const *_adjacency;
   HdBufferSourceSharedPtr _points;
   TfToken _dstName;

@@ -79,6 +79,7 @@ class SdfAssetPath;
 class UsdRenderVar : public UsdTyped
 {
  public:
+
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
@@ -89,16 +90,12 @@ class UsdRenderVar : public UsdTyped
   /// Equivalent to UsdRenderVar::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdRenderVar(const UsdPrim &prim = UsdPrim())
-    : UsdTyped(prim)
-  {}
+  explicit UsdRenderVar(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
   /// Construct a UsdRenderVar on the prim held by \p schemaObj .
   /// Should be preferred over UsdRenderVar(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdRenderVar(const UsdSchemaBase &schemaObj)
-    : UsdTyped(schemaObj)
-  {}
+  explicit UsdRenderVar(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDRENDER_API
@@ -148,6 +145,7 @@ class UsdRenderVar : public UsdTyped
   static UsdRenderVar Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
+
   /// Returns the kind of schema this class belongs to.
   ///
   /// \sa UsdSchemaKind
@@ -155,6 +153,7 @@ class UsdRenderVar : public UsdTyped
   UsdSchemaKind _GetSchemaKind() const override;
 
  private:
+
   // needs to invoke GetStaticTfType.
   friend class UsdSchemaRegistry;
   USDRENDER_API
@@ -164,9 +163,11 @@ class UsdRenderVar : public UsdTyped
 
   // override SchemaBase virtuals.
   USDRENDER_API
-  const TfType &_GetTfType() const override;;
+  const TfType &_GetTfType() const override;
+  ;
 
  public:
+
   // --------------------------------------------------------------------- //
   // DATATYPE
   // --------------------------------------------------------------------- //
@@ -187,9 +188,11 @@ class UsdRenderVar : public UsdTyped
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDRENDER_API
-  UsdAttribute CreateDataTypeAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely = false) const;
+  UsdAttribute CreateDataTypeAttr(VtValue const &defaultValue = VtValue(),
+                                  bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SOURCENAME
   // --------------------------------------------------------------------- //
@@ -215,6 +218,7 @@ class UsdRenderVar : public UsdTyped
                                     bool writeSparsely = false) const;
 
  public:
+
   // --------------------------------------------------------------------- //
   // SOURCETYPE
   // --------------------------------------------------------------------- //
@@ -258,6 +262,7 @@ class UsdRenderVar : public UsdTyped
                                     bool writeSparsely = false) const;
 
  public:
+
   // ===================================================================== //
   // Feel free to add custom code below this line, it will be preserved by
   // the code generator.

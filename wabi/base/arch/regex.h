@@ -42,6 +42,7 @@ WABI_NAMESPACE_BEGIN
 class ArchRegex
 {
  public:
+
   static constexpr unsigned int CASE_INSENSITIVE = 1u;
   static constexpr unsigned int GLOB = 2u;
 
@@ -69,6 +70,7 @@ class ArchRegex
   ARCH_API bool Match(const std::string &query) const;
 
  private:
+
   class _Impl;
   unsigned int _flags = 0;
   std::string _error;

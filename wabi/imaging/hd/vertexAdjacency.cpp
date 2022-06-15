@@ -31,6 +31,7 @@
 
 WABI_NAMESPACE_BEGIN
 
+
 Hd_VertexAdjacency::Hd_VertexAdjacency()
   : _numPoints(0),
     _adjacencyTable(),
@@ -59,8 +60,10 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
   // We start by needing 2 per point (offset and valence).
   size_t numEntries = _numPoints * 2;
 
+
   // Compute the size of each entry, so we can work out the offsets.
   std::vector<int> vertexValence(_numPoints);
+
 
   int vertIndex = 0;
   for (int i = 0; i < numFaces; ++i) {
@@ -85,10 +88,12 @@ bool Hd_VertexAdjacency::BuildAdjacencyTable(HdMeshTopology const *topology)
     numEntries += 2 * nv;
   }
 
+
   // Each entry is a count followed by pairs of adjacent vertex indices.
   // We use a uniform entry size for all vertices, this allows faster
   // lookups at the cost of some additional memory.
   HD_PERF_COUNTER_SUBTRACT(HdPerfTokens->adjacencyBufSize, _adjacencyTable.size() * sizeof(int));
+
 
   _adjacencyTable.clear();
   _adjacencyTable.resize(numEntries);

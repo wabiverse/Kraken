@@ -51,11 +51,10 @@ WABI_NAMESPACE_BEGIN
 class UsdSkelImagingSkelRootAdapter : public UsdImagingPrimAdapter
 {
  public:
+
   using BaseAdapter = UsdImagingPrimAdapter;
 
-  UsdSkelImagingSkelRootAdapter()
-    : BaseAdapter()
-  {}
+  UsdSkelImagingSkelRootAdapter() : BaseAdapter() {}
 
   USDSKELIMAGING_API
   virtual ~UsdSkelImagingSkelRootAdapter();
@@ -82,10 +81,11 @@ class UsdSkelImagingSkelRootAdapter : public UsdImagingPrimAdapter
 
   /// Thread Safe.
   USDSKELIMAGING_API
-  void TrackVariability(const UsdPrim &prim,
-                        const SdfPath &cachePath,
-                        HdDirtyBits *timeVaryingBits,
-                        const UsdImagingInstancerContext *instancerContext = nullptr) const override;
+  void TrackVariability(
+    const UsdPrim &prim,
+    const SdfPath &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    const UsdImagingInstancerContext *instancerContext = nullptr) const override;
 
   /// Thread Safe.
   USDSKELIMAGING_API
@@ -111,6 +111,7 @@ class UsdSkelImagingSkelRootAdapter : public UsdImagingPrimAdapter
                  UsdImagingIndexProxy *index) override;
 
  protected:
+
   USDSKELIMAGING_API
   void _RemovePrim(const SdfPath &cachePath, UsdImagingIndexProxy *index) override;
 };

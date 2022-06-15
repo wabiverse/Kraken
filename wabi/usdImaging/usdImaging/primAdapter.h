@@ -64,12 +64,12 @@ using UsdImagingPrimAdapterSharedPtr = std::shared_ptr<class UsdImagingPrimAdapt
 class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrimAdapter>
 {
  public:
+
   // ---------------------------------------------------------------------- //
   /// \name Initialization
   // ---------------------------------------------------------------------- //
 
-  UsdImagingPrimAdapter()
-  {}
+  UsdImagingPrimAdapter() {}
 
   USDIMAGING_API
   virtual ~UsdImagingPrimAdapter();
@@ -143,20 +143,22 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   /// cache.
   ///
   /// This method is expected to be called from multiple threads.
-  virtual void TrackVariability(UsdPrim const &prim,
-                                SdfPath const &cachePath,
-                                HdDirtyBits *timeVaryingBits,
-                                UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
+  virtual void TrackVariability(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    HdDirtyBits *timeVaryingBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
 
   /// Populates the \p cache for the given \p prim, \p time and \p
   /// requestedBits.
   ///
   /// This method is expected to be called from multiple threads.
-  virtual void UpdateForTime(UsdPrim const &prim,
-                             SdfPath const &cachePath,
-                             UsdTimeCode time,
-                             HdDirtyBits requestedBits,
-                             UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
+  virtual void UpdateForTime(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    UsdTimeCode time,
+    HdDirtyBits requestedBits,
+    UsdImagingInstancerContext const *instancerContext = nullptr) const = 0;
 
   // ---------------------------------------------------------------------- //
   /// \name Change Processing
@@ -205,7 +207,9 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                                     UsdImagingIndexProxy *index);
 
   USDIMAGING_API
-  virtual void MarkReprDirty(UsdPrim const &prim, SdfPath const &cachePath, UsdImagingIndexProxy *index);
+  virtual void MarkReprDirty(UsdPrim const &prim,
+                             SdfPath const &cachePath,
+                             UsdImagingIndexProxy *index);
 
   USDIMAGING_API
   virtual void MarkCullStyleDirty(UsdPrim const &prim,
@@ -228,7 +232,9 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                                    UsdImagingIndexProxy *index);
 
   USDIMAGING_API
-  virtual void MarkMaterialDirty(UsdPrim const &prim, SdfPath const &cachePath, UsdImagingIndexProxy *index);
+  virtual void MarkMaterialDirty(UsdPrim const &prim,
+                                 SdfPath const &cachePath,
+                                 UsdImagingIndexProxy *index);
 
   USDIMAGING_API
   virtual void MarkLightParamsDirty(UsdPrim const &prim,
@@ -277,7 +283,8 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
 
   /// Return the list of known prototypes of this prim.
   USDIMAGING_API
-  virtual SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim, SdfPath const &cachePath) const;
+  virtual SdfPathVector GetInstancerPrototypes(UsdPrim const &usdPrim,
+                                               SdfPath const &cachePath) const;
 
   /// Sample the primvar for the given prim. If *sampleIndices is not nullptr
   /// and the primvar has indices, it will sample the unflattened primvar and
@@ -434,7 +441,9 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
 
   /// Gets the cullstyle of a specific path in the scene graph.
   USDIMAGING_API
-  virtual HdCullStyle GetCullStyle(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
+  virtual HdCullStyle GetCullStyle(UsdPrim const &prim,
+                                   SdfPath const &cachePath,
+                                   UsdTimeCode time) const;
 
   /// Gets the material path for the given prim, walking up namespace if
   /// necessary.
@@ -459,22 +468,32 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   /// if it is of type basis curves, it will return an HdBasisCurvesTopology.
   /// If the adapter does not have a topology, it returns an empty VtValue.
   USDIMAGING_API
-  virtual VtValue GetTopology(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
+  virtual VtValue GetTopology(UsdPrim const &prim,
+                              SdfPath const &cachePath,
+                              UsdTimeCode time) const;
 
   /// Reads the extent from the given prim. If the extent is not authored,
   /// an empty GfRange3d is returned, the extent will not be computed.
   USDIMAGING_API
-  virtual GfRange3d GetExtent(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
+  virtual GfRange3d GetExtent(UsdPrim const &prim,
+                              SdfPath const &cachePath,
+                              UsdTimeCode time) const;
 
   /// Reads double-sided from the given prim. If not authored, returns false
   USDIMAGING_API
-  virtual bool GetDoubleSided(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
+  virtual bool GetDoubleSided(UsdPrim const &prim,
+                              SdfPath const &cachePath,
+                              UsdTimeCode time) const;
 
   USDIMAGING_API
-  virtual SdfPath GetMaterialId(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
+  virtual SdfPath GetMaterialId(UsdPrim const &prim,
+                                SdfPath const &cachePath,
+                                UsdTimeCode time) const;
 
   USDIMAGING_API
-  virtual VtValue GetMaterialResource(UsdPrim const &prim, SdfPath const &cachePath, UsdTimeCode time) const;
+  virtual VtValue GetMaterialResource(UsdPrim const &prim,
+                                      SdfPath const &cachePath,
+                                      UsdTimeCode time) const;
 
   // ---------------------------------------------------------------------- //
   /// \name ExtComputations
@@ -519,9 +538,10 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
                                            VtValue *sampleValues);
 
   USDIMAGING_API
-  virtual std::string GetExtComputationKernel(UsdPrim const &prim,
-                                              SdfPath const &cachePath,
-                                              const UsdImagingInstancerContext *instancerContext) const;
+  virtual std::string GetExtComputationKernel(
+    UsdPrim const &prim,
+    SdfPath const &cachePath,
+    const UsdImagingInstancerContext *instancerContext) const;
 
   USDIMAGING_API
   virtual VtValue GetInstanceIndices(UsdPrim const &instancerPrim,
@@ -540,6 +560,7 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   }
 
  protected:
+
   using Keys = UsdImagingPrimvarDescCache::Key;
 
   template<typename T>
@@ -737,19 +758,21 @@ class UsdImagingPrimAdapter : public std::enable_shared_from_this<UsdImagingPrim
   static TfToken _UsdToHdRole(TfToken const &usdRole);
 
  private:
+
   UsdImagingDelegate *_delegate;
 };
 
 class UsdImagingPrimAdapterFactoryBase : public TfType::FactoryBase
 {
  public:
+
   virtual UsdImagingPrimAdapterSharedPtr New() const = 0;
 };
 
-template<class T>
-class UsdImagingPrimAdapterFactory : public UsdImagingPrimAdapterFactoryBase
+template<class T> class UsdImagingPrimAdapterFactory : public UsdImagingPrimAdapterFactoryBase
 {
  public:
+
   virtual UsdImagingPrimAdapterSharedPtr New() const
   {
     return std::make_shared<T>();

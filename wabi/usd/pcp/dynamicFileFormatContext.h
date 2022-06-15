@@ -43,6 +43,7 @@ class PcpCache;
 class PcpDynamicFileFormatContext
 {
  public:
+
   using VtValueVector = std::vector<VtValue>;
 
   PCP_API
@@ -68,6 +69,7 @@ class PcpDynamicFileFormatContext
   bool ComposeValueStack(const TfToken &field, VtValueVector *values) const;
 
  private:
+
   // Callback function for ComposeValue. This callback function will
   // be passed values for the field given to ComposeValue from
   // strongest to weakest available opinion and is free to copy or
@@ -91,9 +93,11 @@ class PcpDynamicFileFormatContext
   /// Returns whether the given \p field is allowed to be used to generate
   /// file format arguments. It can also return whether the value type of
   /// the field is a dictionary if needed.
-  bool _IsAllowedFieldForArguments(const TfToken &field, bool *fieldValueIsDictionary = nullptr) const;
+  bool _IsAllowedFieldForArguments(const TfToken &field,
+                                   bool *fieldValueIsDictionary = nullptr) const;
 
  private:
+
   PcpNodeRef _parentNode;
   PcpPrimIndex_StackFrame *_previousStackFrame;
 

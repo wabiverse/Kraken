@@ -24,17 +24,18 @@
 #ifndef WABI_IMAGING_HD_BINDING_H
 #define WABI_IMAGING_HD_BINDING_H
 
-#include "wabi/imaging/hd/api.h"
-#include "wabi/imaging/hd/types.h"
-#include "wabi/imaging/hd/version.h"
 #include "wabi/wabi.h"
+#include "wabi/imaging/hd/api.h"
+#include "wabi/imaging/hd/version.h"
+#include "wabi/imaging/hd/types.h"
 
-#include "wabi/imaging/hd/bufferArrayRange.h"
 #include "wabi/imaging/hd/bufferResource.h"
+#include "wabi/imaging/hd/bufferArrayRange.h"
 
 #include "wabi/base/tf/hash.h"
 
 WABI_NAMESPACE_BEGIN
+
 
 typedef std::vector<class HdBinding> HdBindingVector;
 typedef std::vector<class HdBindingRequest> HdBindingRequestVector;
@@ -47,6 +48,7 @@ typedef std::vector<class HdBindingRequest> HdBindingRequestVector;
 class HdBinding
 {
  public:
+
   enum Type
   {  // primvar, drawing coordinate and dispatch buffer bindings
      // also shader fallback values
@@ -67,6 +69,9 @@ class HdBinding
     // shader parameter bindings
     FALLBACK,                      // fallback value
     TEXTURE_2D,                    // non-bindless uv texture
+    ARRAY_OF_TEXTURE_2D,           // non-bindless array of uv textures. Not
+                                   // to be confused with a texture array
+                                   // (what udim and ptex textures use).
     TEXTURE_FIELD,                 // non-bindless field texture
                                    // creates accessor that samples uvw
                                    // texture after transforming coordinates
@@ -76,6 +81,7 @@ class HdBinding
     TEXTURE_PTEX_TEXEL,            // non-bindless ptex texels
     TEXTURE_PTEX_LAYOUT,           // non-bindless ptex layout
     BINDLESS_TEXTURE_2D,           // bindless uv texture
+    BINDLESS_ARRAY_OF_TEXTURE_2D,  // bindless array of uv textures
     BINDLESS_TEXTURE_FIELD,        // bindless field texture
                                    // (see above)
     BINDLESS_TEXTURE_UDIM_ARRAY,   // bindless uv texture array
@@ -94,9 +100,7 @@ class HdBinding
     // which is assigned but optimized out after linking program.
     NOT_EXIST = 0xffff
   };
-  HdBinding()
-    : _typeAndLocation(-1)
-  {}
+  HdBinding() : _typeAndLocation(-1) {}
   HdBinding(Type type, int location, int textureUnit = 0)
   {
     Set(type, location, textureUnit);
@@ -131,6 +135,7 @@ class HdBinding
   }
 
  private:
+
   int _typeAndLocation;
 };
 
@@ -146,6 +151,7 @@ class HdBinding
 class HdBindingRequest
 {
  public:
+
   HdBindingRequest() = default;
 
   /// A data binding, not backed by neither BufferArrayRange nor
@@ -157,7 +163,10 @@ class HdBindingRequest
       _name(name),
       _resource(nullptr),
       _bar(nullptr),
-      _isInterleaved(false)
+      _isInterleaved(false),
+      _isWritable(false),
+      _arraySize(0),
+      _concatenateNames(false)
   {}
 
   /// A data binding, not backed by neither BufferArrayRange nor
@@ -168,7 +177,10 @@ class HdBindingRequest
       _name(name),
       _resource(nullptr),
       _bar(nullptr),
-      _isInterleaved(false)
+      _isInterleaved(false),
+      _isWritable(false),
+      _arraySize(0),
+      _concatenateNames(false)
   {}
 
   /// A buffer resource binding. Binds a given buffer resource to a specified
@@ -181,7 +193,10 @@ class HdBindingRequest
       _name(name),
       _resource(resource),
       _bar(nullptr),
-      _isInterleaved(false)
+      _isInterleaved(false),
+      _isWritable(false),
+      _arraySize(0),
+      _concatenateNames(false)
   {}
 
   /// A named struct binding. From an interleaved BufferArray, an array of
@@ -192,13 +207,19 @@ class HdBindingRequest
   HdBindingRequest(HdBinding::Type type,
                    TfToken const &name,
                    HdBufferArrayRangeSharedPtr bar,
-                   bool interleave)
+                   bool interleave,
+                   bool writable = false,
+                   size_t arraySize = 0,
+                   bool concatenateNames = false)
     : _bindingType(type),
       _dataType(HdTypeInvalid),
       _name(name),
       _resource(nullptr),
       _bar(bar),
-      _isInterleaved(interleave)
+      _isInterleaved(interleave),
+      _isWritable(writable),
+      _arraySize(arraySize),
+      _concatenateNames(concatenateNames)
   {}
 
   // ---------------------------------------------------------------------- //
@@ -227,6 +248,13 @@ class HdBindingRequest
   bool IsInterleavedBufferArray() const
   {
     return _bar && _isInterleaved;
+  }
+
+  /// True when the resource is being bound so that it can be written to.
+  /// This affects whether it will be declared 'const' or not.
+  bool isWritable() const
+  {
+    return _bar && _isWritable;
   }
 
   /// This binding is typelss. CodeGen only allocate location and
@@ -283,6 +311,19 @@ class HdBindingRequest
     return _dataType;
   }
 
+  /// Array size if request is for an array of structs.
+  size_t GetArraySize() const
+  {
+    return _arraySize;
+  }
+
+  /// Returns whether the struct binding point and struct member names
+  /// should be concatenated when codegen'ing the accessor.
+  bool ConcatenateNames() const
+  {
+    return _concatenateNames;
+  }
+
   // ---------------------------------------------------------------------- //
   /// \name Comparison
   // ---------------------------------------------------------------------- //
@@ -305,13 +346,13 @@ class HdBindingRequest
   size_t ComputeHash() const;
 
   // TfHash support.
-  template<class HashState>
-  friend void TfHashAppend(HashState &h, HdBindingRequest const &br)
+  template<class HashState> friend void TfHashAppend(HashState &h, HdBindingRequest const &br)
   {
     h.Append(br._name, br._bindingType, br._dataType, br._isInterleaved);
   }
 
  private:
+
   // This class unfortunately represents several concepts packed into a single
   // class.  Ideally, we would break this out as one class per concept,
   // however that would also require virtual dispatch, which is overkill for
@@ -328,7 +369,14 @@ class HdBindingRequest
   // Struct binding request
   HdBufferArrayRangeSharedPtr _bar;
   bool _isInterleaved;
+
+  bool _isWritable;
+
+  size_t _arraySize;
+
+  bool _concatenateNames;
 };
+
 
 WABI_NAMESPACE_END
 

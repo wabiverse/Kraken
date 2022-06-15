@@ -54,6 +54,7 @@ struct RprUsdMaterialNodeDesc
 class RprUsdMaterialRegistry
 {
  public:
+
   ~RprUsdMaterialRegistry();
 
   RPRUSD_API
@@ -104,10 +105,12 @@ class RprUsdMaterialRegistry
   void CommitResources(RprUsdImageCache *imageCache);
 
  private:
+
   friend class TfSingleton<RprUsdMaterialRegistry>;
   RprUsdMaterialRegistry();
 
  private:
+
   /// Material network selector for the current session, controlled via env variable
   TfToken m_materialNetworkSelector;
 
@@ -132,6 +135,7 @@ class RprUsdMaterialNodeElement;
 class RprUsdMaterialNodeInfo
 {
  public:
+
   virtual ~RprUsdMaterialNodeInfo() = default;
 
   virtual const char *GetName() const = 0;
@@ -152,6 +156,7 @@ class RprUsdMaterialNodeInfo
 class RprUsdMaterialNodeElement
 {
  public:
+
   virtual ~RprUsdMaterialNodeElement() = default;
 
   virtual const char *GetName() const = 0;
@@ -182,17 +187,18 @@ class RprUsdMaterialNodeElement
   }
 
  protected:
-  RprUsdMaterialNodeElement(Type type)
-    : m_type(type)
-  {}
+
+  RprUsdMaterialNodeElement(Type type) : m_type(type) {}
 
  protected:
+
   Type m_type;
 };
 
 class RprUsdMaterialNodeInput : public RprUsdMaterialNodeElement
 {
  public:
+
   ~RprUsdMaterialNodeInput() override = default;
 
   virtual const char *GetUIMin() const = 0;
@@ -204,9 +210,8 @@ class RprUsdMaterialNodeInput : public RprUsdMaterialNodeElement
   virtual std::vector<TfToken> const &GetTokenValues() const = 0;
 
  protected:
-  RprUsdMaterialNodeInput(Type type)
-    : RprUsdMaterialNodeElement(type)
-  {}
+
+  RprUsdMaterialNodeInput(Type type) : RprUsdMaterialNodeElement(type) {}
 };
 
 inline TfToken const &RprUsdMaterialRegistry::GetMaterialNetworkSelector()
@@ -218,18 +223,17 @@ inline void RprUsdMaterialRegistry::Register(TfToken const &id,
                                              RprUsdMaterialNodeFactoryFnc factory,
                                              RprUsdMaterialNodeInfo const *info)
 {
-  TF_DEBUG(RPR_USD_DEBUG_MATERIAL_REGISTRY).Msg("Registering material node with id \"%s\"\n", id.GetText());
+  TF_DEBUG(RPR_USD_DEBUG_MATERIAL_REGISTRY)
+    .Msg("Registering material node with id \"%s\"\n", id.GetText());
 
   RprUsdMaterialNodeDesc desc = {};
   desc.factory = std::move(factory);
   desc.info = info;
 
   auto status = m_registeredNodesLookup.emplace(id, m_registeredNodes.size());
-  if (!status.second)
-  {
+  if (!status.second) {
     TF_CODING_ERROR("Failed to register %s: already registered", id.GetText());
-  } else
-  {
+  } else {
     m_registeredNodes.push_back(std::move(desc));
   }
 }
