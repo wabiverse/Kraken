@@ -84,11 +84,11 @@ std::string kraken_icon_path_init()
 std::string kraken_startup_file_init()
 {
 #if defined(ARCH_OS_WINDOWS)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usd");
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usda");
 #elif defined(ARCH_OS_DARWIN)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usd");
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usda");
 #else
-  return STRCAT(G.main->exe_path, "../datafiles/startup.usd");
+  return STRCAT(G.main->exe_path, "../datafiles/startup.usda");
 #endif
 }
 

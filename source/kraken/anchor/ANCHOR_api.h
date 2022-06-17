@@ -486,6 +486,7 @@ enum eAnchorUserSpecialDirTypes
   ANCHOR_UserSpecialDirMusic,
   ANCHOR_UserSpecialDirPictures,
   ANCHOR_UserSpecialDirVideos,
+  ANCHOR_UserSpecialDirCaches,
 };
 
 enum eAnchorTrackpadEventSubtypes

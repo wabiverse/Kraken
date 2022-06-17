@@ -1093,7 +1093,7 @@ endif()
 
 elseif(APPLE)
   # Uppercase name for app bundle
-  set_target_properties(kraken PROPERTIES OUTPUT_NAME KRAKEN)
+  set_target_properties(kraken PROPERTIES OUTPUT_NAME Kraken)
 
   # handy install macro to exclude files, we use \$ escape for the "to"
   # argument when calling so ${BUILD_TYPE} does not get expanded
@@ -1150,7 +1150,7 @@ elseif(APPLE)
 
   install(
     TARGETS kraken
-    DESTINATION "."
+    DESTINATION Kraken.app/Contents/MacOS
   )
 
   # install release and app files
@@ -1178,7 +1178,7 @@ elseif(APPLE)
     # Copy the python libs into the install directory
     install_dir(
       ${PYTHON_LIBPATH}
-      ${TARGETDIR_VER}/python/lib
+      ${TARGETDIR_VER}/python
     )
 
     if (EXISTS "/opt/homebrew/Cellar/python@3.9/3.9.13_1/bin")
@@ -1385,6 +1385,23 @@ else()
     DIRECTORY
       ${CMAKE_SOURCE_DIR}/release/datafiles/colormanagement/
     DESTINATION ${TARGETDIR_VER}/datafiles/colormanagement
+  )
+endif()
+
+# -----------------------------------------------------------------------------
+# Startup File (USD)
+
+if(UNIX AND NOT APPLE)
+  install(
+    FILES
+      ${CMAKE_SOURCE_DIR}/release/datafiles/startup.usda
+    DESTINATION "/usr/local/${TARGETDIR_VER}/datafiles/"
+  )
+else()
+  install(
+    FILES
+      ${CMAKE_SOURCE_DIR}/release/datafiles/startup.usda
+    DESTINATION ${TARGETDIR_VER}/datafiles/
   )
 endif()
 

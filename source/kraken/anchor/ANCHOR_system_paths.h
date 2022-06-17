@@ -67,23 +67,23 @@ class AnchorISystemPaths
    * Determine the base dir in which shared resources are located. It will first try to use
    * "unpack and run" path, then look for properly installed path, including versioning.
    * @return Unsigned char string pointing to system dir (eg /usr/share/kraken/). */
-  virtual const AnchorU8 *getSystemDir(int version, const char *versionstr) const = 0;
+  virtual const char *getSystemDir(int version, const char *versionstr) const = 0;
 
   /**
    * Determine the base dir in which user configuration is stored, including versioning.
    * If needed, it will create the base directory.
    * @return Unsigned char string pointing to user dir (eg ~/.kraken/). */
-  virtual const AnchorU8 *getUserDir(int version, const char *versionstr) const = 0;
+  virtual const char *getUserDir(int version, const char *versionstr) const = 0;
 
   /**
    * Determine a special ("well known") and easy to reach user directory.
    * @return Unsigned char string pointing to user dir (eg `~/Documents/`). */
-  virtual const AnchorU8 *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const = 0;
+  virtual const char *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const = 0;
 
   /**
    * Determine the directory of the current binary
    * @return Unsigned char string pointing to the binary dir */
-  virtual const AnchorU8 *getBinaryDir() const = 0;
+  virtual const char *getBinaryDir() const = 0;
 
   /**
    * Add the file to the operating system most recently used files */
@@ -119,20 +119,20 @@ class AnchorSystemPaths : public AnchorISystemPaths
    * "unpack and run" path, then look for properly installed path, including versioning.
    * \return Unsigned char string pointing to system dir (eg /usr/share/kraken/).
    */
-  virtual const AnchorU8 *getSystemDir(int version, const char *versionstr) const = 0;
+  virtual const char *getSystemDir(int version, const char *versionstr) const = 0;
 
   /**
    * Determine the base dir in which user configuration is stored, including versioning.
    * If needed, it will create the base directory.
    * \return Unsigned char string pointing to user dir (eg ~/.kraken/).
    */
-  virtual const AnchorU8 *getUserDir(int version, const char *versionstr) const = 0;
+  virtual const char *getUserDir(int version, const char *versionstr) const = 0;
 
   /**
    * Determine the directory of the current binary
    * \return Unsigned char string pointing to the binary dir
    */
-  virtual const AnchorU8 *getBinaryDir() const = 0;
+  virtual const char *getBinaryDir() const = 0;
 
   /**
    * Add the file to the operating system most recently used files
@@ -160,26 +160,26 @@ class AnchorSystemPathsUnix : public AnchorSystemPaths
    * "unpack and run" path, then look for properly installed path, including versioning.
    * \return Unsigned char string pointing to system dir (eg `/usr/share/kraken/`).
    */
-  const AnchorU8 *getSystemDir(int version, const char *versionstr) const;
+  const char *getSystemDir(int version, const char *versionstr) const;
 
   /**
    * Determine the base dir in which user configuration is stored, including versioning.
    * If needed, it will create the base directory.
    * \return Unsigned char string pointing to user dir (eg `~/.config/.kraken/`).
    */
-  const AnchorU8 *getUserDir(int version, const char *versionstr) const;
+  const char *getUserDir(int version, const char *versionstr) const;
 
   /**
    * Determine a special ("well known") and easy to reach user directory.
    * \return Unsigned char string pointing to user dir (eg `~/Documents/`).
    */
-  const AnchorU8 *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const;
+  const char *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const;
 
   /**
    * Determine the directory of the current binary
    * \return Unsigned char string pointing to the binary dir
    */
-  const AnchorU8 *getBinaryDir() const;
+  const char *getBinaryDir() const;
 
   /**
    * Add the file to the operating system most recently used files
@@ -210,26 +210,26 @@ class AnchorSystemPathsWin32 : public AnchorSystemPaths
    * "unpack and run" path, then look for properly installed path, including versioning.
    * \return Unsigned char string pointing to system dir (eg /usr/share/).
    */
-  const AnchorU8 *getSystemDir(int version, const char *versionstr) const;
+  const char *getSystemDir(int version, const char *versionstr) const;
 
   /**
    * Determine the base dir in which user configuration is stored, including versioning.
    * If needed, it will create the base directory.
    * \return Unsigned char string pointing to user dir (eg ~/).
    */
-  const AnchorU8 *getUserDir(int version, const char *versionstr) const;
+  const char *getUserDir(int version, const char *versionstr) const;
 
   /**
    * Determine a special ("well known") and easy to reach user directory.
    * \return Unsigned char string pointing to user dir (eg `~/Documents/`).
    */
-  const AnchorU8 *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const;
+  const char *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const;
 
   /**
    * Determine the directory of the current binary
    * \return Unsigned char string pointing to the binary dir
    */
-  const AnchorU8 *getBinaryDir() const;
+  const char *getBinaryDir() const;
 
   /**
    * Add the file to the operating system most recently used files
@@ -256,26 +256,26 @@ class AnchorSystemPathsCocoa : public AnchorSystemPaths
    * "unpack and run" path, then look for properly installed path, including versioning.
    * \return Unsigned char string pointing to system dir (eg /usr/share/kraken/).
    */
-  const AnchorU8 *getSystemDir(int version, const char *versionstr) const;
+  const char *getSystemDir(int version, const char *versionstr) const;
 
   /**
    * Determine the base dir in which user configuration is stored, including versioning.
    * If needed, it will create the base directory.
    * \return Unsigned char string pointing to user dir (eg ~/.kraken/).
    */
-  const AnchorU8 *getUserDir(int version, const char *versionstr) const;
+  const char *getUserDir(int version, const char *versionstr) const;
 
   /**
    * Determine a special ("well known") and easy to reach user directory.
    * \return Unsigned char string pointing to user dir (eg `~/Documents/`).
    */
-  const AnchorU8 *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const;
+  const char *getUserSpecialDir(eAnchorUserSpecialDirTypes type) const;
 
   /**
    * Determine the directory of the current binary
    * \return Unsigned char string pointing to the binary dir
    */
-  const AnchorU8 *getBinaryDir() const;
+  const char *getBinaryDir() const;
 
   /**
    * Add the file to the operating system most recently used files
@@ -300,22 +300,22 @@ eAnchorStatus ANCHOR_DisposeSystemPaths(void);
  * Determine the base dir in which shared resources are located. It will first try to use
  * "unpack and run" path, then look for properly installed path, including versioning.
  * @return Unsigned char string pointing to system dir (eg /usr/share/kraken/). */
-const AnchorU8 *ANCHOR_getSystemDir(int version, const char *versionstr);
+const char *ANCHOR_getSystemDir(int version, const char *versionstr);
 
 /**
  * Determine the base dir in which user configuration is stored, including versioning.
  * @return Unsigned char string pointing to user dir (eg ~). */
-const AnchorU8 *ANCHOR_getUserDir(int version, const char *versionstr);
+const char *ANCHOR_getUserDir(int version, const char *versionstr);
 
 /**
  * Determine a special ("well known") and easy to reach user directory.
  * @return Unsigned char string pointing to user dir (eg `~/Documents/`). */
-const AnchorU8 *ANCHOR_getUserSpecialDir(eAnchorUserSpecialDirTypes type);
+const char *ANCHOR_getUserSpecialDir(eAnchorUserSpecialDirTypes type);
 
 /**
  * Determine the dir in which the binary file is found.
  * @return Unsigned char string pointing to binary dir (eg ~/usr/local/bin/). */
-const AnchorU8 *ANCHOR_getBinaryDir(void);
+const char *ANCHOR_getBinaryDir(void);
 
 /**
  * Add the file to the operating system most recently used files */

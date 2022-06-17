@@ -257,7 +257,7 @@ all: .FORCE
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/KRAKEN"
+	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	@echo
 
 debug: all
@@ -279,7 +279,7 @@ xcode:
 	$(BUILD_COMMAND) -arch "arm64" -sdk "macosx" -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain"
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/KRAKEN"
+	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	@echo
 
 # -----------------------------------------------------------------------------
@@ -292,7 +292,7 @@ install: .FORCE
 	cd "$(BUILD_DIR)" ; ninja install
 	@echo
 	@echo Kraken and Pixar USD successfully installed,
-	@echo Run Kraken from: /usr/local/share/kraken/1.50/bin/kraken
+	@echo Run Kraken from: "$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	@echo Run Python or test Pixar UsdView from: $(PYTHON).
 	@echo
 
