@@ -4,14 +4,15 @@
    See 'release/text/readme.html' for the end user read-me.
 
 
+******
 Kraken
-======
+******
 
 .. image:: https://readthedocs.com/projects/wabi-kraken/badge/?version=latest&token=91aa5d2aff1a5927fc39792cbe74688b740a88aae8750c20712733201b278bd0
    :target: https://wabi-kraken.readthedocs-hosted.com/_/sharing/1c32aeuqep6zdr4kk8sojmmi6
    :alt: Documentation Status
 
-.. figure:: https://www.dropbox.com/s/7n2ii6tt1ts7wa7/Artboard%201.png?raw=1
+.. figure:: https://www.dropbox.com/s/0fcfeo5u3q18ryh/Artboard%201.png?raw=1
    :scale: 50 %
    :align: center
 
@@ -26,14 +27,14 @@ core foundation, that we may begin to solve the most challenging issues the worl
 of modern graphics demands, and push the framework for composition & design into
 the future.
 
-Join the community: https://discord.gg/aXP867Q
+Join the community: https://discord.gg/5PYrUu4hqa
 
 
 Phoenix
 ========
 The OpenSubdiv-based real-time render engine of the 21st century.
 
-.. figure:: https://www.dropbox.com/s/7v1fof6ynenzig5/phoenix.png?raw=1
+.. figure:: https://www.dropbox.com/s/zs38x71vou8raje/image_processing20220110-15733-visqpw.png?raw=1
    :scale: 50 %
    :align: center
 
