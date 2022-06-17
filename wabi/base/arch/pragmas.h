@@ -59,6 +59,8 @@
 
 #  define ARCH_PRAGMA_UNUSED_FUNCTION _Pragma("GCC diagnostic ignored \"-Wunused-function\"")
 
+#  define ARCH_PRAGMA_UNUSED_FIELD _Pragma("GCC diagnostic ignored \"-Wunused-private-field\"")
+
 #elif defined(ARCH_COMPILER_CLANG)
 
 #  define ARCH_PRAGMA_PUSH _Pragma("clang diagnostic push")
@@ -86,6 +88,8 @@
 
 #  define ARCH_PRAGMA_INSTANCE_METHOD_NOT_FOUND \
     _Pragma("clang diagnostic ignored \"-Wobjc-method-access\"")
+
+#  define ARCH_PRAGMA_UNUSED_FIELD _Pragma("clang diagnostic ignored \"-Wunused-private-field\"")
 
 #elif defined(ARCH_COMPILER_MSVC)
 
@@ -163,6 +167,10 @@
 
 #if !defined ARCH_PRAGMA_UNUSED_FUNCTION
 #  define ARCH_PRAGMA_UNUSED_FUNCTION
+#endif
+
+#if !defined ARCH_PRAGMA_UNUSED_FIELD
+#  define ARCH_PRAGMA_UNUSED_FIELD
 #endif
 
 #if !defined ARCH_PRAGMA_MACRO_TOO_FEW_ARGUMENTS

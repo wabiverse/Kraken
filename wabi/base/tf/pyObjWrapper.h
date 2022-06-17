@@ -58,8 +58,10 @@ class TfPyObjWrapperStub
   static constexpr std::size_t Align = 8;
 
  private:
-
+  ARCH_PRAGMA_PUSH
+  ARCH_PRAGMA_UNUSED_FIELD
   std::aligned_storage<Size, Align>::type _stub;
+  ARCH_PRAGMA_POP
 };
 
 
