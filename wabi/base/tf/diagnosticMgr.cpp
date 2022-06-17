@@ -614,27 +614,102 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
   string output;
   string codeName = TfDiagnosticMgr::GetCodeName(code);
 
+  std::string msgColor = "[%s]%s %s\n";
+
   /**
    * Support for console colors.  */
 #if defined(ARCH_OS_WINDOWS)
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   SetConsoleTextAttribute(hConsole, code);
-  const std::string messageColor = msg;
 #elif defined(ARCH_OS_DARWIN) || defined(ARCH_OS_LINUX)
-  const std::string messageColor = ("\x1B[31m" + msg + "\033[0m\t\t");
+#  define TF_COLOR_BLACK "\x1B[30m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_RED "\x1B[31m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_GREEN "\x1B[32m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_YELLOW "\x1B[33m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BLUE "\x1B[34m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_MAGENTA "\x1B[35m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_CYAN "\x1B[36m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_WHITE "\x1B[37m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_BLACK "\x1B[90m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_RED "\x1B[91m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_GREEN "\x1B[92m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_YELLOW "\x1B[93m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_BLUE "\x1B[94m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_MAGENTA "\x1B[95m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_CYAN "\x1B[96m[%s]%s %s\033[0m\t\t\n"
+#  define TF_COLOR_BRIGHT_WHITE "\x1B[97m[%s]%s %s\033[0m\t\t\n"
+
+  switch (code.GetValueAsInt()) {
+    case TF_DIAGNOSTIC_INVALID_TYPE:
+      msgColor = TF_COLOR_BLACK;
+      break;
+
+    case TF_DIAGNOSTIC_CODING_ERROR_TYPE:
+      msgColor = TF_COLOR_BLUE;
+      break;
+
+    case TF_DIAGNOSTIC_MSG_SUCCESS_TYPE:
+      msgColor = TF_COLOR_GREEN;
+      break;
+
+    case TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE:
+      msgColor = TF_COLOR_CYAN;
+      break;
+
+    case TF_DIAGNOSTIC_MSG_ERROR_TYPE:
+      msgColor = TF_COLOR_MAGENTA;
+      break;
+
+    case TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE:
+      msgColor = TF_COLOR_BRIGHT_MAGENTA;
+      break;
+
+    case TF_DIAGNOSTIC_MSG_WARNING_TYPE:
+      msgColor = TF_COLOR_YELLOW;
+      break;
+
+    case TF_DIAGNOSTIC_MSG_TYPE:
+      msgColor = TF_COLOR_WHITE;
+      break;
+
+    case TF_DIAGNOSTIC_STATUS_TYPE:
+      msgColor = TF_COLOR_BRIGHT_BLACK;
+      break;
+
+    case TF_DIAGNOSTIC_NONFATAL_ERROR_TYPE:
+      msgColor = TF_COLOR_BRIGHT_BLUE;
+      break;
+
+    case TF_DIAGNOSTIC_FATAL_ERROR_TYPE:
+      msgColor = TF_COLOR_BRIGHT_GREEN;
+      break;
+
+    case TF_DIAGNOSTIC_WARNING_TYPE:
+      msgColor = TF_COLOR_BRIGHT_CYAN;
+      break;
+
+    case TF_APPLICATION_EXIT_TYPE:
+      msgColor = TF_COLOR_BRIGHT_RED;
+      break;
+
+    default:
+      msgColor = TF_COLOR_BRIGHT_WHITE;
+      break;
+  }
+
 #endif /* defined(ARCH_OS_WINDOWS) || defined (ARCH_OS_LINUX) */
 
   if (context.IsDisabled()) {
-    output = TfStringPrintf("[%s]%s %s\n",
+    output = TfStringPrintf(msgColor.c_str(),
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
-                            messageColor.c_str());
+                            msg.c_str());
   } else if (context.IsHidden() || !strcmp(context.GetFunction(), "") ||
              !strcmp(context.GetFile(), "")) {
     output = TfStringPrintf("%s%s: %s [%s]\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
-                            messageColor.c_str(),
+                            msg.c_str(),
                             ArchGetProgramNameForErrors());
   } else {
     output = TfStringPrintf("%s%s: in %s at line %zu of %s -- %s\n",
@@ -643,7 +718,7 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
                             context.GetFunction(),
                             context.GetLine(),
                             context.GetFile(),
-                            messageColor.c_str());
+                            msg.c_str());
   }
 
 #ifdef WITH_PYTHON

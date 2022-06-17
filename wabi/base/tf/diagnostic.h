@@ -319,38 +319,42 @@ void Tf_TerminateHandler();
 #        undef TF_CODING_ERROR
 #      endif
 #      define TF_CODING_ERROR(...) \
-        Tf_PostErrorHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE, __VA_ARGS__)
+        Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_CODING_ERROR_TYPE, __VA_ARGS__)
 
 #      ifdef TF_FATAL_CODING_ERROR
 #        undef TF_FATAL_CODING_ERROR
 #      endif
-#      define TF_FATAL_CODING_ERROR \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueFatalError
+#      define TF_FATAL_CODING_ERROR                                                    \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_FATAL_ERROR_TYPE) \
+          .IssueFatalError
 
 
 #      ifdef TF_CODING_WARNING
 #        undef TF_CODING_WARNING
 #      endif
-#      define TF_CODING_WARNING(...) \
-        Tf_PostWarningHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_CODING_ERROR_TYPE, __VA_ARGS__)
+#      define TF_CODING_WARNING(...)                           \
+        Tf_PostWarningHelper(TF_CALL_CONTEXT.Disable(),        \
+                             TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE, \
+                             __VA_ARGS__)
 
 #      ifdef TF_DIAGNOSTIC_WARNING
 #        undef TF_DIAGNOSTIC_WARNING
 #      endif
-#      define TF_DIAGNOSTIC_WARNING \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Hide(), TF_DIAGNOSTIC_WARNING_TYPE).IssueWarning
+#      define TF_DIAGNOSTIC_WARNING                                                           \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_FATAL_CODING_ERROR_TYPE) \
+          .IssueWarning
 
 #      ifdef TF_RUNTIME_ERROR
 #        undef TF_RUNTIME_ERROR
 #      endif  // TF_RUNTIME_ERROR
 #      define TF_RUNTIME_ERROR(...) \
-        Tf_PostErrorHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE, __VA_ARGS__)
+        Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), TF_APPLICATION_EXIT_TYPE, __VA_ARGS__)
 
 #      ifdef TF_RUNTIME_MSG
 #        undef TF_RUNTIME_MSG
 #      endif
 #      define TF_RUNTIME_MSG(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_CODING_ERROR_TYPE).IssueStatus
 
 #      ifdef TF_RUNTIME_MSG_SUCCESS
 #        undef TF_RUNTIME_MSG_SUCCESS
@@ -368,25 +372,27 @@ void Tf_TerminateHandler();
 #        undef TF_RUNTIME_MSG_WARNING
 #      endif
 #      define TF_RUNTIME_MSG_WARNING(...) \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueWarning
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_WARNING_TYPE).IssueWarning
 
 #      ifdef TF_FATAL_ERROR
 #        undef TF_FATAL_ERROR
 #      endif  // TF_FATAL_ERROR
-#      define TF_FATAL_ERROR \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_FATAL_ERROR_TYPE).IssueFatalError
+#      define TF_FATAL_ERROR                                                              \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_NONFATAL_ERROR_TYPE) \
+          .IssueFatalError
 
 #      ifdef TF_DIAGNOSTIC_FATAL_ERROR
 #        undef TF_DIAGNOSTIC_FATAL_ERROR
 #      endif  // TF_DIAGNOSTIC_FATAL_ERROR
-#      define TF_DIAGNOSTIC_FATAL_ERROR \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE).IssueFatalError
+#      define TF_DIAGNOSTIC_FATAL_ERROR                                                  \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE) \
+          .IssueFatalError
 
 #      ifdef TF_DIAGNOSTIC_NONFATAL_ERROR
 #        undef TF_DIAGNOSTIC_NONFATAL_ERROR
 #      endif  // TF_DIAGNOSTIC_NONFATAL_ERROR
 #      define TF_DIAGNOSTIC_NONFATAL_ERROR \
-        Tf_DiagnosticHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_WARNING_TYPE).IssueWarning
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_TYPE).IssueWarning
 
 // Redefine the following three macros from DiagnosticLite to versions that will
 // accept the following sets of arguments:
@@ -415,27 +421,27 @@ void Tf_TerminateHandler();
 #      ifdef TF_MSG_WARNING
 #        undef TF_MSG_WARNING
 #      endif  // TF_MSG_ERROR
-#      define TF_MSG_WARNING(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+#      define TF_MSG_WARNING(...) Tf_PostWarningHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_WARN
 #        undef TF_WARN
 #      endif  // TF_WARN
-#      define TF_WARN(...) Tf_PostWarningHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+#      define TF_WARN(...) Tf_PostWarningHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_STATUS
 #        undef TF_STATUS
 #      endif  // TF_STATUS
-#      define TF_STATUS(...) Tf_PostStatusHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+#      define TF_STATUS(...) Tf_PostStatusHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_ERROR
 #        undef TF_ERROR
 #      endif  // TF_ERROR
-#      define TF_ERROR(...) Tf_PostErrorHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+#      define TF_ERROR(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_QUIET_ERROR
 #        undef TF_QUIET_ERROR
 #      endif  // TF_ERROR
-#      define TF_QUIET_ERROR(...) Tf_PostQuietlyErrorHelper(TF_CALL_CONTEXT, __VA_ARGS__)
+#      define TF_QUIET_ERROR(...) Tf_PostQuietlyErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 // See documentation above.
 #      define TF_VERIFY(cond, ...) \

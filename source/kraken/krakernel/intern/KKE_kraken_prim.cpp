@@ -36,7 +36,7 @@ WABI_NAMESPACE_BEGIN
 
 KrakenPrimRegistry::KrakenPrimRegistry() : m_initialized(false)
 {
-  TF_WARN("HI");
+  TF_STATUS("The Kraken Prim Registry has been initialized.");
 
   TfSingleton<KrakenPrimRegistry>::SetInstanceConstructed(*this);
   TfRegistryManager::GetInstance().SubscribeTo<KrakenPrim>();

@@ -236,11 +236,11 @@ static bool test_path(char *targetpath,
   }
 
   if (KLI_is_dir(targetpath)) {
-    TF_WARN("found '%s'", targetpath);
+    TF_MSG_SUCCESS("found '%s'", targetpath);
     return true;
   }
 
-  TF_WARN("missing '%s'", targetpath);
+  TF_DIAGNOSTIC_NONFATAL_ERROR("missing '%s'", targetpath);
 
   /* Path not found, don't accidentally use it,
    * otherwise call this function with `check_is_dir` set to false. */
@@ -276,7 +276,7 @@ static bool test_env_path(char *path, const char *envvar, const bool check_is_di
     return true;
   }
 
-  TF_WARN("env '%s' missing: %s", envvar, env_path);
+  TF_DIAGNOSTIC_NONFATAL_ERROR("env '%s' missing: %s", envvar, env_path);
 
   /* Path not found, don't accidentally use it,
    * otherwise call this function with `check_is_dir` set to false. */

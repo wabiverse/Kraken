@@ -53,7 +53,8 @@ void KKE_kraken_plugins_init()
                WABI_VERSION_PATCH);
 
   TF_MSG_SUCCESS("Kraken Awakens | %s", G.main->launch_time);
-  TF_WARN("Pixar Universe | Maelstrom v%s", maelstrom_version_string);
+  TF_MSG("Pixar Universe | Maelstrom v%s", maelstrom_version_string);
+  printf("\n");
 }
 
 WABI_NAMESPACE_END

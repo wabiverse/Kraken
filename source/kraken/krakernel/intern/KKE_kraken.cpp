@@ -93,12 +93,14 @@ static std::string kraken_version_string = "";
 
 static void kraken_version_init()
 {
+  printf("\n");
   kraken_version_string = TfStringPrintf("%d.%02d.%d %s",
                                          KRAKEN_VERSION / 100,
                                          KRAKEN_VERSION % 100,
                                          KRAKEN_VERSION_PATCH,
                                          STRINGIFY(KRAKEN_VERSION_CYCLE));
-  printf("Kraken v%s\n\n", CHARSTR(kraken_version_string));
+  TF_WARN("Kraken v%s", CHARALL(kraken_version_string));
+  printf("\n");
 }
 
 static std::string kraken_get_version_decimal()
