@@ -10,17 +10,24 @@ set(INC
 
 # ------------------------------------ SHARED BACKENDS -----
 list (APPEND SRC_PLATFORM_BACKENDS
-  # Everyone gets Vulkan.
-  backend/backend_vulkan.cpp
-  backend/ANCHOR_BACKEND_vulkan.h
+
 )
 
 # -------------------------------------- UNIX BACKENDS -----
-if(UNIX)
+if(UNIX AND NOT APPLE)
   # Unix currently gets SDL.
   list(APPEND SRC_PLATFORM_BACKENDS
     backend/backend_sdl.cpp
     backend/ANCHOR_BACKEND_sdl.h
+    backend/backend_vulkan.cpp
+    backend/ANCHOR_BACKEND_vulkan.h
+  )
+endif()
+
+if (APPLE)
+  list(APPEND SRC_PLATFORM_BACKENDS
+    backend/backend_cocoa.cpp
+    backend/ANCHOR_BACKEND_cocoa.h
   )
 endif()
 
@@ -30,6 +37,8 @@ if(WIN32)
   list(APPEND SRC_PLATFORM_BACKENDS
     backend/backend_win32.cpp
     backend/ANCHOR_BACKEND_win32.h
+    backend/backend_vulkan.cpp
+    backend/ANCHOR_BACKEND_vulkan.h
   )
 endif()
 

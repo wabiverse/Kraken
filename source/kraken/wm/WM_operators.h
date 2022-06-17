@@ -53,6 +53,8 @@ enum
 
 struct wmOperatorType
 {
+  wmOperatorType();
+
   /** Text for UI, undo. */
   const char *name;
   /** Unique identifier. */

@@ -684,11 +684,11 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
     if (GET_X(win_size) <= 0) {
       FormFactory(win->pos, GfVec2f(0.0, 0.0));
       FormFactory(win->size, GfVec2f(1920, 1080));
-      FormFactory(win->state, UsdUITokens->maximized);
-      FormFactory(win->alignment, UsdUITokens->alignAbsolute);
+      FormFactory(win->state, UsdUITokens->closed);
+      FormFactory(win->alignment, UsdUITokens->closed);
 
       if (win_cursor.IsEmpty()) {
-        FormFactory(win->cursor, UsdUITokens->default_);
+        FormFactory(win->cursor, UsdUITokens->closed);
       }
 
       if (win_title.IsEmpty()) {
@@ -879,11 +879,11 @@ wmWindow *WM_window_open(kContext *C,
   sizex /= native_pixel_size;
   sizey /= native_pixel_size;
 
-  if (alignment == UsdUITokens->alignCenter) {
+  if (alignment == UsdUITokens->closed) {
     /* Window centered around x,y location. */
     rect[0] -= sizex / 2;
     rect[1] -= sizey / 2;
-  } else if (alignment == UsdUITokens->alignParent) {
+  } else if (alignment == UsdUITokens->closed) {
     /* Centered within parent. X,Y as offsets from there. */
     rect[0] += (size[0] - sizex) / 2;
     rect[1] += (size[1] - sizey) / 2;
@@ -952,7 +952,7 @@ wmWindow *WM_window_open(kContext *C,
   WM_check(C);
 
   /* ensure it shows the right spacetype editor */
-  if (space_type != UsdUITokens->spaceEmpty) {
+  if (space_type != UsdUITokens->closed) {
     ScrArea *area = screen->areas.at(0);
     CTX_wm_area_set(C, area);
     ED_area_newspace(C, area, space_type, false);
@@ -1311,7 +1311,7 @@ static int wm_window_new_exec(kContext *C, wmOperator *UNUSED(op))
                             GET_X(size) * 0.95f,
                             GET_Y(size) * 0.9f,
                             spacetype,
-                            UsdUITokens->alignParent,
+                            UsdUITokens->closed,
                             false,
                             false) != NULL);
 

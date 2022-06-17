@@ -6,8 +6,11 @@ wabi_library(work
         tf
         trace
         ${TBB_LIBRARIES}
+        ${Boost_PYTHON_LIBRARY}
+        ${Python_LIBRARIES}
 
     INCLUDE_DIRS
+        ${Boost_INCLUDE_DIRS}
         ${TBB_INCLUDE_DIRS}
 
     PUBLIC_CLASSES

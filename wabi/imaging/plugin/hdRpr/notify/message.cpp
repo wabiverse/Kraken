@@ -24,7 +24,7 @@ WABI_NAMESPACE_BEGIN
 bool HdRprShowMessage(std::string const &title, std::string const &message)
 {
 #if defined WIN32
-  TF_MSG_ERROR("%s", message.c_str());
+  TF_WARN("%s", message.c_str());
   // return MessageBox(nullptr, message.c_str(), title.c_str(), MB_YESNO | MB_ICONEXCLAMATION) ==
   // IDYES;
 #else

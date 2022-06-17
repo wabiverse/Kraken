@@ -414,7 +414,7 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
 
     if (event->type == LEFTMOUSE) {
       short *mod = (
-#if !defined(WIN32)
+#if !defined(WIN32) && defined(USER_EMU_MMB_MOD_OSKEY)
         (UI_MOUSE_EMULATE_3BUTTON_MODIFIER == USER_EMU_MMB_MOD_OSKEY) ? &event->oskey : &event->alt
 #else
         /* Disable for WIN32 for now because it accesses the start menu. */
@@ -602,14 +602,14 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
   if ((event_state->type || event_state->val) &&
       !(ISMOUSE_BUTTON(event_state->type) || ISKEYBOARD(event_state->type) ||
         (event_state->type == EVENT_NONE))) {
-    TF_MSG_WARNING("WM -- Non-keyboard/mouse button found in 'win->eventstate->type = %d'",
-                   event_state->type);
+    TF_WARN("WM -- Non-keyboard/mouse button found in 'win->eventstate->type = %d'",
+            event_state->type);
   }
   if ((event_state->prevtype || event_state->prevval) && /* Ignore cleared event state. */
       !(ISMOUSE_BUTTON(event_state->prevtype) || ISKEYBOARD(event_state->prevtype) ||
         (event_state->type == EVENT_NONE))) {
-    TF_MSG_WARNING("WM -- Non-keyboard/mouse button found in 'win->eventstate->prevtype = %d'",
-                   event_state->prevtype);
+    TF_WARN("WM -- Non-keyboard/mouse button found in 'win->eventstate->prevtype = %d'",
+            event_state->prevtype);
   }
 #endif
 
@@ -709,7 +709,7 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
 
       /* Double click test. */
       if (wm_event_is_double_click(&event)) {
-        TF_MSG("WM -- Send double click");
+        TF_WARN("WM -- Send double click");
         event.val = KM_DBL_CLICK;
       }
       if (event.val == KM_PRESS) {
@@ -762,7 +762,7 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
 
         /* Anchor should do this already for key up. */
         if (event.utf8_buf[0]) {
-          TF_MSG_ERROR("WM -- Anchor on your platform is misbehaving, utf8 events on key up!");
+          TF_WARN("WM -- Anchor on your platform is misbehaving, utf8 events on key up!");
         }
         event.utf8_buf[0] = '\0';
       } else {
@@ -776,8 +776,8 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
 
       if (event.utf8_buf[0]) {
         if (KLI_str_utf8_size(event.utf8_buf) == -1) {
-          TF_MSG_ERROR("WM -- Anchor detected an invalid unicode character '%d'",
-                       (int)(unsigned char)event.utf8_buf[0]);
+          TF_WARN("WM -- Anchor detected an invalid unicode character '%d'",
+                  (int)(unsigned char)event.utf8_buf[0]);
           event.utf8_buf[0] = '\0';
         }
       }
@@ -839,7 +839,7 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
       /* Double click test. */
       /* If previous event was same type, and previous was release, and now it presses... */
       if (wm_event_is_double_click(&event)) {
-        TF_MSG("WM -- Send double click");
+        TF_WARN("WM -- Send double click");
         event.val = KM_DBL_CLICK;
       }
 
@@ -1200,7 +1200,7 @@ static int wm_operator_invoke(kContext *C,
         .Msg("handle evt %d win %p op %s",
              event ? event->type : 0,
              CTX_wm_screen(C)->active_region,
-             ot->idname);
+             ot->idname.GetText());
     }
 
     if (op->type->invoke && event) {
@@ -1225,7 +1225,7 @@ static int wm_operator_invoke(kContext *C,
         wm->op_undo_depth--;
       }
     } else {
-      TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("invalid operator call '%s'", op->idname);
+      TF_DEBUG(KRAKEN_DEBUG_OPERATORS).Msg("invalid operator call '%s'", op->idname.GetText());
     }
 
     if (!(retval & OPERATOR_HANDLED) && (retval & (OPERATOR_FINISHED | OPERATOR_CANCELLED))) {
@@ -1574,7 +1574,7 @@ void WM_event_do_handlers(kContext *C)
 
       if (G.debug & (G_DEBUG_HANDLERS | G_DEBUG_EVENTS) &&
           ((event->type != MOUSEMOVE) || (event->type != INBETWEEN_MOUSEMOVE))) {
-        TF_MSG("\n%s: Handling event\n", __func__);
+        TF_WARN("\n%s: Handling event\n", __func__);
         // WM_event_print(event);
       }
 

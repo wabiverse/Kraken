@@ -30,7 +30,7 @@
 #include "KKE_context.h"
 #include "KKE_screen.h"
 
-#include <wabi/usd/usdUI/area.h>
+// #include <wabi/usd/usdUI/area.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -78,7 +78,7 @@ enum
 };
 
 
-struct ARegion : public UsdUIArea, KrakenPrim
+struct ARegion : public KrakenPrim
 {
   SdfPath path;
 
@@ -98,13 +98,13 @@ struct ARegion : public UsdUIArea, KrakenPrim
 };
 
 ARegion::ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : UsdUIArea(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
-    path(UsdUIArea::GetPath()),
-    name(CreateNameAttr()),
-    spacetype(CreateSpacetypeAttr()),
-    icon(CreateIconAttr()),
-    pos(CreatePosAttr()),
-    size(CreateSizeAttr()),
+  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
+    path(KrakenPrim::GetPath()),
+    name(EMPTY /*CreateNameAttr()*/),
+    spacetype(EMPTY /*CreateSpacetypeAttr()*/),
+    icon(EMPTY /*CreateIconAttr()*/),
+    pos(EMPTY /*CreatePosAttr()*/),
+    size(EMPTY /*CreateSizeAttr()*/),
     regiontype(RGN_TYPE_WINDOW),
     flag(VALUE_ZERO),
     alignment(VALUE_ZERO)

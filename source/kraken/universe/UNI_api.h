@@ -28,6 +28,7 @@
 
 #include "KLI_utildefines.h"
 
+#include <wabi/base/arch/defines.h>
 #include <wabi/usd/usd/attribute.h>
 
 #include <cstddef>
@@ -55,9 +56,9 @@
 #define KRAKEN_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
 #define IDNAME(z) KRAKEN_OPERATOR_TOKENS->z
 
-#define KRAKEN_LUXOVERSE_CREATE_CHILD(i) \
-  Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
-#define KRAKEN_LUXOVERSE_CREATE(g) Define(CTX_data_stage(g), stagepath)
+/* Switch Get() to Define() for production. */
+#define KRAKEN_LUXOVERSE_CREATE_CHILD(i) Get(CTX_data_stage(i), prim->path.AppendPath(stagepath))
+#define KRAKEN_LUXOVERSE_CREATE(g) Get(CTX_data_stage(g), stagepath)
 #define KRAKEN_PRIM_OPERATOR_CREATE(x, y) \
   CTX_data_stage(x)->DefinePrim(          \
     SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))

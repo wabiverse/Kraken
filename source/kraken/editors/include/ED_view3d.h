@@ -43,9 +43,11 @@
 #include <wabi/imaging/hd/renderDelegate.h>
 #include <wabi/imaging/hd/rendererPlugin.h>
 
-#include <wabi/imaging/hgi/hgi.h>
-#include <wabi/imaging/hgiVulkan/hgi.h>
-#include <wabi/imaging/hgiVulkan/instance.h>
+#if WITH_VULKAN
+#  include <wabi/imaging/hgi/hgi.h>
+#  include <wabi/imaging/hgiVulkan/hgi.h>
+#  include <wabi/imaging/hgiVulkan/instance.h>
+#endif /* WITH_VULKAN */
 
 #include <wabi/base/gf/vec4f.h>
 

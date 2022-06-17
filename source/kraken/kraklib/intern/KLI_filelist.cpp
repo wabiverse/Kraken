@@ -199,13 +199,16 @@ static void kli_builddir(struct BuildDirCtx *dir_ctx, const char *dirname)
           file->relname = dlink->name;
           file->path = KLI_strdupcat(dirname, dlink->name);
           KLI_join_dirfile(fullname, sizeof(fullname), dirname, dlink->name);
+#if WIN32
           if (KLI_stat(fullname, &file->s) != -1) {
             file->type = file->s.st_mode;
-          } else if (FILENAME_IS_CURRPAR(file->relname)) {
-            /* Hack around for UNC paths on windows:
-             * does not support stat on '\\SERVER\foo\..', sigh... */
-            file->type |= S_IFDIR;
-          }
+          } else
+#endif /* WIN32 */
+            if (FILENAME_IS_CURRPAR(file->relname)) {
+              /* Hack around for UNC paths on windows:
+               * does not support stat on '\\SERVER\foo\..', sigh... */
+              file->type |= S_IFDIR;
+            }
           dir_ctx->nrfiles++;
           file++;
           dlink = dlink->next;

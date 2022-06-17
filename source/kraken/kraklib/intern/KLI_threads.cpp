@@ -71,10 +71,12 @@ static int num_threads_override = 0;
 
 void KLI_threadapi_init(void)
 {
+#if ARCH_OS_WINDOWS
   mainid = pthread_self();
   if (numaAPI_Initialize() == NUMAAPI_SUCCESS) {
     is_numa_available = true;
   }
+#endif /* WIN32 */
 }
 
 int KLI_thread_is_main(void)

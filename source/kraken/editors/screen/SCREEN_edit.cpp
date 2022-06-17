@@ -50,6 +50,7 @@
 #include "ED_screen.h"
 
 #include <wabi/base/gf/rect2i.h>
+#include <wabi/usd/usdUI/tokens.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -271,7 +272,7 @@ kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect)
   screen_geom_edge_add(screen, sv3, sv4);
   screen_geom_edge_add(screen, sv4, sv1);
 
-  screen_addarea(C, screen, sv1, sv2, sv3, sv4, UsdUITokens->spaceEmpty);
+  screen_addarea(C, screen, sv1, sv2, sv3, sv4, UsdUITokens->closed);
 
   return screen;
 }

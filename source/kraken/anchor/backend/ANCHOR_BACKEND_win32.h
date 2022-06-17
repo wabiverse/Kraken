@@ -31,11 +31,13 @@
 
 #ifdef _WIN32
 
-#  define VK_USE_PLATFORM_WIN32_KHR
-#  include <vulkan/vulkan.h>
+#  if WITH_VULKAN
+#    define VK_USE_PLATFORM_WIN32_KHR
+#    include <vulkan/vulkan.h>
 
-#  include <wabi/imaging/hgiVulkan/vulkan.h>
-#  include <wabi/imaging/hgiVulkan/capabilities.h>
+#    include <wabi/imaging/hgiVulkan/vulkan.h>
+#    include <wabi/imaging/hgiVulkan/capabilities.h>
+#  endif /* WITH_VULKAN */
 
 #  define WIN32_LEAN_AND_MEAN
 #  include <ole2.h>  // for drag-n-drop

@@ -49,11 +49,11 @@
 
 #include <wabi/base/vt/value.h>
 
-#include <wabi/usd/usdUI/area.h>
-#include <wabi/usd/usdUI/screen.h>
+// #include <wabi/usd/usdUI/area.h>
+// #include <wabi/usd/usdUI/screen.h>
 #include <wabi/usd/usdUI/tokens.h>
-#include <wabi/usd/usdUI/window.h>
-#include <wabi/usd/usdUI/workspace.h>
+// #include <wabi/usd/usdUI/window.h>
+// #include <wabi/usd/usdUI/workspace.h>
 
 #include <wabi/usd/usdGeom/cube.h>
 #include <wabi/usd/usdGeom/gprim.h>
@@ -70,9 +70,9 @@ static void decode_kraken_header(FileData *fd)
   const std::string read = fd->sdf_handle->GetDocumentation();
   KLI_strncpy(header, CHARALL(read), SIZEOFKRAKENHEADER);
 
-  if ((read.length() == sizeof(header)) && STREQLEN(header, "Kraken", 6) &&
-      (header[6] == char(" ")) && (header[7] == char("v")) && (isdigit(header[8])) &&
-      (header[9] == char(".")) && (isdigit(header[10])) && (isdigit(header[11]))) {
+  if ((read.length() == sizeof(header)) && STREQLEN(header, "Kraken", 6)) {
+    // (strcmp( " ")) && (header[7] == char("v")) && (isdigit(header[8])) &&
+    // (header[9] == char(".")) && (isdigit(header[10])) && (isdigit(header[11]))) {
     fd->flags |= FD_FLAGS_FILE_OK;
 
     /* get the version number */

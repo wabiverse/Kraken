@@ -39,7 +39,7 @@
 
 #include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usd/collectionAPI.h>
-#include <wabi/usd/usdUI/window.h>
+// #include <wabi/usd/usdUI/window.h>
 
 #include <deque>
 
@@ -59,7 +59,7 @@ struct ScrAreaMap
   ScrAreaMap() : verts(EMPTY), edges(EMPTY), areas(EMPTY) {}
 };
 
-struct wmWindow : public UsdUIWindow, KrakenPrim
+struct wmWindow : public KrakenPrim
 {
   SdfPath path;
   wmWindow *parent;
@@ -111,23 +111,23 @@ struct wmWindow : public UsdUIWindow, KrakenPrim
 
 
 wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
-  : UsdUIWindow(KRAKEN_LUXOVERSE_CREATE(C)),
+  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
     path(stagepath),
     parent(NULL),
-    title(CreateTitleAttr()),
-    icon(CreateIconAttr()),
-    state(CreateStateAttr()),
-    dpi(CreateDpiAttr()),
-    widgetunit(CreateWidgetunitAttr()),
-    scale(CreateScaleAttr()),
-    linewidth(CreateLinewidthAttr()),
-    pixelsz(CreatePixelszAttr()),
-    cursor(CreateCursorAttr()),
-    pos(CreatePosAttr()),
-    alignment(CreateAlignmentAttr()),
-    size(CreateSizeAttr()),
-    type(CreateTypeAttr()),
-    workspace_rel(CreateUiWindowWorkspaceRel()),
+    title(EMPTY /*CreateTitleAttr()*/),
+    icon(EMPTY /*CreateIconAttr()*/),
+    state(EMPTY /*CreateStateAttr()*/),
+    dpi(EMPTY /*CreateDpiAttr()*/),
+    widgetunit(EMPTY /*CreateWidgetunitAttr()*/),
+    scale(EMPTY /*CreateScaleAttr()*/),
+    linewidth(EMPTY /*CreateLinewidthAttr()*/),
+    pixelsz(EMPTY /*CreatePixelszAttr()*/),
+    cursor(EMPTY /*CreateCursorAttr()*/),
+    pos(EMPTY /*CreatePosAttr()*/),
+    alignment(EMPTY /*CreateAlignmentAttr()*/),
+    size(EMPTY /*CreateSizeAttr()*/),
+    type(EMPTY /*CreateTypeAttr()*/),
+    workspace_rel(EMPTY /*CreateUiWindowWorkspaceRel()*/),
     anchorwin(nullptr),
     active(true),
     addmousemove(false),
@@ -138,23 +138,23 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
 {}
 
 wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
-  : UsdUIWindow(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
-    path(UsdUIWindow::GetPath()),
+  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
+    path(KrakenPrim::GetPath()),
     parent(prim),
-    title(CreateTitleAttr()),
-    icon(CreateIconAttr()),
-    state(CreateStateAttr()),
-    dpi(CreateDpiAttr()),
-    widgetunit(CreateWidgetunitAttr()),
-    scale(CreateScaleAttr()),
-    linewidth(CreateLinewidthAttr()),
-    pixelsz(CreatePixelszAttr()),
-    cursor(CreateCursorAttr()),
-    pos(CreatePosAttr()),
-    alignment(CreateAlignmentAttr()),
-    size(CreateSizeAttr()),
-    type(CreateTypeAttr()),
-    workspace_rel(CreateUiWindowWorkspaceRel()),
+    title(EMPTY /*CreateTitleAttr()*/),
+    icon(EMPTY /*CreateIconAttr()*/),
+    state(EMPTY /*CreateStateAttr()*/),
+    dpi(EMPTY /*CreateDpiAttr()*/),
+    widgetunit(EMPTY /*CreateWidgetunitAttr()*/),
+    scale(EMPTY /*CreateScaleAttr()*/),
+    linewidth(EMPTY /*CreateLinewidthAttr()*/),
+    pixelsz(EMPTY /*CreatePixelszAttr()*/),
+    cursor(EMPTY /*CreateCursorAttr()*/),
+    pos(EMPTY /*CreatePosAttr()*/),
+    alignment(EMPTY /*CreateAlignmentAttr()*/),
+    size(EMPTY /*CreateSizeAttr()*/),
+    type(EMPTY /*CreateTypeAttr()*/),
+    workspace_rel(EMPTY /*CreateUiWindowWorkspaceRel()*/),
     anchorwin(nullptr),
     active(true),
     addmousemove(false),

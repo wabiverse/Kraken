@@ -133,7 +133,7 @@ bool KLI_dir_create_recursive(const char *dirname)
 
 static void callLocalErrorCallBack(const char *err)
 {
-  TF_MSG_ERROR("%s\n", err);
+  TF_WARN("%s\n", err);
 }
 
 static bool delete_unique(const char *path, const bool dir)
@@ -215,6 +215,13 @@ int KLI_delete(const char *file, bool dir, bool recursive)
 }
 
 #else /* WIN32 */
+
+int KLI_access(const char *filename, int mode)
+{
+  KLI_assert(!KLI_path_is_rel(filename));
+
+  return 0;
+}
 
 /** \return true on success (i.e. given path now exists on FS), false otherwise. */
 bool KLI_dir_create_recursive(const char *dirname)
@@ -465,9 +472,9 @@ int KLI_delete(const char *file, bool dir, bool recursive)
 {
   KLI_assert(!KLI_path_is_rel(file));
 
-  if (recursive) {
-    return recursive_operation(file, NULL, NULL, delete_single_file, delete_callback_post);
-  }
+  // if (recursive) {
+  //   return recursive_operation(file, NULL, NULL, delete_single_file, delete_callback_post);
+  // }
   if (dir) {
     return rmdir(file);
   }

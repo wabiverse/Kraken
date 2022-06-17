@@ -40,6 +40,8 @@ WABI_NAMESPACE_BEGIN
 
 static RHashOp *global_ops_hash = NULL;
 
+wmOperatorType::wmOperatorType() {}
+
 wmOperatorType *WM_operatortype_find(const TfToken &idname)
 {
   if (!idname.IsEmpty()) {

@@ -35,22 +35,22 @@ using namespace boost::python;
 
 static int _GetMajorVersion()
 {
-  return WABI_MAJOR_VERSION;
+  return WABI_VERSION_MAJOR;
 }
 
 static int _GetMinorVersion()
 {
-  return WABI_MINOR_VERSION;
+  return WABI_VERSION_MINOR;
 }
 
 static int _GetPatchVersion()
 {
-  return WABI_PATCH_VERSION;
+  return WABI_VERSION_PATCH;
 }
 
 static boost::python::tuple _GetVersion()
 {
-  return make_tuple(WABI_MAJOR_VERSION, WABI_MINOR_VERSION, WABI_PATCH_VERSION);
+  return make_tuple(WABI_VERSION_MAJOR, WABI_VERSION_MINOR, WABI_VERSION_PATCH);
 }
 
 // Create a doc string corresponding to the particular

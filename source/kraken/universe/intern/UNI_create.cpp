@@ -47,11 +47,11 @@
 
 #include <wabi/base/vt/value.h>
 
-#include <wabi/usd/usdUI/area.h>
-#include <wabi/usd/usdUI/screen.h>
+// #include <wabi/usd/usdUI/area.h>
+// #include <wabi/usd/usdUI/screen.h>
 #include <wabi/usd/usdUI/tokens.h>
-#include <wabi/usd/usdUI/window.h>
-#include <wabi/usd/usdUI/workspace.h>
+// #include <wabi/usd/usdUI/window.h>
+// #include <wabi/usd/usdUI/workspace.h>
 
 #include <wabi/usd/usdGeom/cube.h>
 #include <wabi/usd/usdGeom/gprim.h>

@@ -34,7 +34,9 @@
 #include <wabi/base/tf/envSetting.h>
 #include <wabi/base/tf/setenv.h>
 
-#include <wabi/imaging/hgiVulkan/diagnostic.h>
+#if WITH_VULKAN
+#  include <wabi/imaging/hgiVulkan/diagnostic.h>
+#endif /* WITH_VULKAN */
 
 WABI_NAMESPACE_BEGIN
 

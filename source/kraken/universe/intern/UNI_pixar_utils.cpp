@@ -53,11 +53,11 @@ void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool v
 
   if (verbose) {
     if (success && fs::exists(usda_path)) {
-      TF_MSG_SUCCESS("Converted new file: %s", CHARALL(usda_path.string()));
+      TF_WARN("Converted new file: %s", CHARALL(usda_path.string()));
       return;
     }
 
-    TF_MSG_ERROR("Could not convert file %s", CHARALL(path.string()));
+    TF_WARN("Could not convert file %s", CHARALL(path.string()));
   }
 }
 
@@ -70,9 +70,9 @@ std::string UNI_pixutil_resolve_asset(const std::string &asset, bool verbose)
 
   if (verbose) {
     if (!resolved_asset.empty()) {
-      TF_MSG_SUCCESS("Asset Resolved Path: %s", CHARALL(resolved_asset));
+      TF_WARN("Asset Resolved Path: %s", CHARALL(resolved_asset));
     } else {
-      TF_MSG_ERROR("Asset %s does not exist.", CHARALL(asset));
+      TF_WARN("Asset %s does not exist.", CHARALL(asset));
     }
   }
 

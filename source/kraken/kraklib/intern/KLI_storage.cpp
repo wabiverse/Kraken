@@ -28,7 +28,11 @@
 #ifdef WIN32
 #  include "utfconv.h"
 #  include <io.h>
-#endif /* WIN32 */
+#else /* WIN32 */
+#  include <sys/stat.h>
+#  include <stdlib.h>
+#  include <stdio.h>
+#endif
 
 #include <filesystem>
 
@@ -69,14 +73,16 @@ int KLI_wstat(const wchar_t *path, KLI_stat_t *buffer)
 #  endif
 }
 #else
-int KLI_fstat(int fd, struct stat *buffer)
+int KLI_fstat(int fd, stat *buffer)
 {
-  return fstat(fd, buffer);
+  // return fstat(fd, buffer);
+  return 0;
 }
 
-int KLI_stat(const char *path, struct stat *buffer)
+int KLI_stat(const char *path, stat *buffer)
 {
-  return stat(path, buffer);
+  // return stat(path, buffer);
+  return 0;
 }
 #endif
 

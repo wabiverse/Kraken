@@ -156,8 +156,6 @@ struct stbrp_context
 }
 #endif
 
-#endif
-
 //////////////////////////////////////////////////////////////////////////////
 //
 //     IMPLEMENTATION SECTION
@@ -566,7 +564,7 @@ STBRP_DEF int stbrp_pack_rects(stbrp_context *context, stbrp_rect *rects, int nu
   // return the all_rects_packed status
   return all_rects_packed;
 }
-
+#endif
 /*
 ------------------------------------------------------------------------------
 This software is available under 2 licenses -- choose whichever you prefer.

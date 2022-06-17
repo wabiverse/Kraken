@@ -33,7 +33,7 @@
 #include "KKE_utils.h"
 
 #include <wabi/base/gf/vec2i.h>
-#include <wabi/usd/usdUI/screen.h>
+// #include <wabi/usd/usdUI/screen.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -72,7 +72,7 @@ struct ScrEdge
   ScrEdge() : v1(POINTER_ZERO), v2(POINTER_ZERO), border(VALUE_ZERO), flag(VALUE_ZERO) {}
 };
 
-struct kScreen : public UsdUIScreen, KrakenPrim
+struct kScreen : public KrakenPrim
 {
   SdfPath path;
 
@@ -98,10 +98,10 @@ struct kScreen : public UsdUIScreen, KrakenPrim
 };
 
 kScreen::kScreen(kContext *C, const SdfPath &stagepath)
-  : UsdUIScreen(KRAKEN_LUXOVERSE_CREATE(C)),
-    path(UsdUIScreen::GetPath()),
-    align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
-    areas_rel(CreateAreasRel()),
+  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
+    path(KrakenPrim::GetPath()),
+    align(EMPTY /*CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))*/),
+    areas_rel(EMPTY /*CreateAreasRel()*/),
     verts(EMPTY),
     areas(EMPTY),
     regions(EMPTY),

@@ -22,84 +22,91 @@
  * Bare Metal.
  */
 
-#define winmax(a, b) (((a) > (b)) ? (a) : (b))
-#define winmin(a, b) (((a) < (b)) ? (a) : (b))
+#if WIN32
 
-#define VK_USE_PLATFORM_WIN32_KHR
-#include <vulkan/vulkan.h>
+#  define winmax(a, b) (((a) > (b)) ? (a) : (b))
+#  define winmin(a, b) (((a) < (b)) ? (a) : (b))
 
-#include "ANCHOR_BACKEND_vulkan.h"
-#include "ANCHOR_BACKEND_win32.h"
-#include "ANCHOR_rect.h"
-#include "ANCHOR_api.h"
-#include "ANCHOR_buttons.h"
-#include "ANCHOR_debug_codes.h"
-#include "ANCHOR_event.h"
-#include "ANCHOR_window.h"
+#  if WITH_VULKAN
+#    define VK_USE_PLATFORM_WIN32_KHR
+#    include <vulkan/vulkan.h>
 
-#include "utfconv.h"
+#    include "ANCHOR_BACKEND_vulkan.h"
+#  endif /* WITH_VULKAN */
 
-#include "KKE_main.h"
+#  include "ANCHOR_BACKEND_win32.h"
+#  include "ANCHOR_rect.h"
+#  include "ANCHOR_api.h"
+#  include "ANCHOR_buttons.h"
+#  include "ANCHOR_debug_codes.h"
+#  include "ANCHOR_event.h"
+#  include "ANCHOR_window.h"
 
-#include <wabi/base/arch/systemInfo.h>
-#include <wabi/base/tf/diagnostic.h>
-#include <wabi/base/tf/envSetting.h>
-#include <wabi/imaging/hgiVulkan/diagnostic.h>
-#include <wabi/imaging/hgiVulkan/graphicsPipeline.h>
-#include <wabi/imaging/hgiVulkan/hgi.h>
-#include <wabi/imaging/hgiVulkan/instance.h>
-#include <wabi/imaging/hgiVulkan/commandBuffer.h>
-#include <wabi/imaging/hgiVulkan/commandQueue.h>
-#include <wabi/imaging/hgiVulkan/pipelineCache.h>
-#include <wabi/imaging/hgiVulkan/texture.h>
-#include <wabi/imaging/hgiVulkan/garbageCollector.h>
-#include <wabi/imaging/hgiVulkan/capabilities.h>
+#  include "utfconv.h"
 
-#define VMA_IMPLEMENTATION
-#include <wabi/imaging/hgiVulkan/vk_mem_alloc.h>
-#undef VMA_IMPLEMENTATION
+#  include "KKE_main.h"
 
-#ifndef _WIN32_IE
+#  include <wabi/base/arch/systemInfo.h>
+#  include <wabi/base/tf/diagnostic.h>
+#  include <wabi/base/tf/envSetting.h>
+#  if WITH_VULKAN
+#    include <wabi/imaging/hgiVulkan/diagnostic.h>
+#    include <wabi/imaging/hgiVulkan/graphicsPipeline.h>
+#    include <wabi/imaging/hgiVulkan/hgi.h>
+#    include <wabi/imaging/hgiVulkan/instance.h>
+#    include <wabi/imaging/hgiVulkan/commandBuffer.h>
+#    include <wabi/imaging/hgiVulkan/commandQueue.h>
+#    include <wabi/imaging/hgiVulkan/pipelineCache.h>
+#    include <wabi/imaging/hgiVulkan/texture.h>
+#    include <wabi/imaging/hgiVulkan/garbageCollector.h>
+#    include <wabi/imaging/hgiVulkan/capabilities.h>
+
+#    define VMA_IMPLEMENTATION
+#    include <wabi/imaging/hgiVulkan/vk_mem_alloc.h>
+#    undef VMA_IMPLEMENTATION
+#  endif /* WITH_VULKAN */
+
+#  ifndef _WIN32_IE
 /**
  * shipped before XP, so doesn't
  * impose addnl requirements. */
-#  define _WIN32_IE 0x0501
-#endif
+#    define _WIN32_IE 0x0501
+#  endif
 
-#include <Dwmapi.h>
+#  include <Dwmapi.h>
 
-#include <assert.h>
-#include <math.h>
-#include <string.h>
+#  include <assert.h>
+#  include <math.h>
+#  include <string.h>
 
-#include <commctrl.h>
-#include <psapi.h>
-#include <shellapi.h>
-#include <shellscalingapi.h>
-#include <shlobj.h>
-#include <strsafe.h>
-#include <tlhelp32.h>
-#include <windowsx.h>
+#  include <commctrl.h>
+#  include <psapi.h>
+#  include <shellapi.h>
+#  include <shellscalingapi.h>
+#  include <shlobj.h>
+#  include <strsafe.h>
+#  include <tlhelp32.h>
+#  include <windowsx.h>
 
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <d3dcompiler.h>
+#  include <d3d12.h>
+#  include <dxgi1_6.h>
+#  include <d3dcompiler.h>
 
-#ifndef GET_POINTERID_WPARAM
+#  ifndef GET_POINTERID_WPARAM
 /**
  * GET_POINTERID_WPARAM */
-#  define GET_POINTERID_WPARAM(wParam) (LOWORD(wParam))
-#endif
+#    define GET_POINTERID_WPARAM(wParam) (LOWORD(wParam))
+#  endif
 
-#include <tchar.h>
-#include <winnt.h>
+#  include <tchar.h>
+#  include <winnt.h>
 
-#include <cstdio>
-#include <cstring>
+#  include <cstdio>
+#  include <cstring>
 
 /**
  * Using XInput for gamepad (will load DLL dynamically) */
-#include <xinput.h>
+#  include <xinput.h>
 typedef DWORD(WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITIES *);
 typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
 
@@ -1044,18 +1051,18 @@ static void AnchorBackendWin32UpdateGamepads()
     const XINPUT_GAMEPAD &gamepad = xinput_state.Gamepad;
     io.BackendFlags |= AnchorBackendFlags_HasGamepad;
 
-#define MAP_BUTTON(NAV_NO, BUTTON_ENUM)                                    \
-  {                                                                        \
-    io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; \
-  }
-#define MAP_ANALOG(NAV_NO, VALUE, V0, V1)              \
-  {                                                    \
-    float vn = (float)(VALUE - V0) / (float)(V1 - V0); \
-    if (vn > 1.0f)                                     \
-      vn = 1.0f;                                       \
-    if (vn > 0.0f && io.NavInputs[NAV_NO] < vn)        \
-      io.NavInputs[NAV_NO] = vn;                       \
-  }
+#  define MAP_BUTTON(NAV_NO, BUTTON_ENUM)                                    \
+    {                                                                        \
+      io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; \
+    }
+#  define MAP_ANALOG(NAV_NO, VALUE, V0, V1)              \
+    {                                                    \
+      float vn = (float)(VALUE - V0) / (float)(V1 - V0); \
+      if (vn > 1.0f)                                     \
+        vn = 1.0f;                                       \
+      if (vn > 0.0f && io.NavInputs[NAV_NO] < vn)        \
+        io.NavInputs[NAV_NO] = vn;                       \
+    }
 
 
     /**
@@ -1110,8 +1117,8 @@ static void AnchorBackendWin32UpdateGamepads()
                gamepad.sThumbLY,
                -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE,
                -32767);
-#undef MAP_BUTTON
-#undef MAP_ANALOG
+#  undef MAP_BUTTON
+#  undef MAP_ANALOG
   }
 }
 
@@ -1155,12 +1162,12 @@ static void AnchorBackendWin32NewFrame()
 /**
  * Allow compilation with old Windows SDK. MinGW doesn't have default _WIN32_WINNT/WINVER versions.
  */
-#ifndef WM_MOUSEHWHEEL
-#  define WM_MOUSEHWHEEL 0x020E
-#endif
-#ifndef DBT_DEVNODES_CHANGED
-#  define DBT_DEVNODES_CHANGED 0x0007
-#endif
+#  ifndef WM_MOUSEHWHEEL
+#    define WM_MOUSEHWHEEL 0x020E
+#  endif
+#  ifndef DBT_DEVNODES_CHANGED
+#    define DBT_DEVNODES_CHANGED 0x0007
+#  endif
 
 static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
 {
@@ -1187,18 +1194,18 @@ static BOOL _IsWindowsVersionOrGreater(WORD major, WORD minor, WORD)
            FALSE;
 }
 
-#define _IsWindowsVistaOrGreater() \
-  _IsWindowsVersionOrGreater(HIBYTE(0x0600), LOBYTE(0x0600), 0)  // _WIN32_WINNT_VISTA
-#define _IsWindows8OrGreater() \
-  _IsWindowsVersionOrGreater(HIBYTE(0x0602), LOBYTE(0x0602), 0)  // _WIN32_WINNT_WIN8
-#define _IsWindows8Point1OrGreater() \
-  _IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0)  // _WIN32_WINNT_WINBLUE
-#define _IsWindows10OrGreater()              \
-  _IsWindowsVersionOrGreater(HIBYTE(0x0A00), \
-                             LOBYTE(0x0A00), \
-                             0)  // _WIN32_WINNT_WINTHRESHOLD / _WIN32_WINNT_WIN10
+#  define _IsWindowsVistaOrGreater() \
+    _IsWindowsVersionOrGreater(HIBYTE(0x0600), LOBYTE(0x0600), 0)  // _WIN32_WINNT_VISTA
+#  define _IsWindows8OrGreater() \
+    _IsWindowsVersionOrGreater(HIBYTE(0x0602), LOBYTE(0x0602), 0)  // _WIN32_WINNT_WIN8
+#  define _IsWindows8Point1OrGreater() \
+    _IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0)  // _WIN32_WINNT_WINBLUE
+#  define _IsWindows10OrGreater()              \
+    _IsWindowsVersionOrGreater(HIBYTE(0x0A00), \
+                               LOBYTE(0x0A00), \
+                               0)  // _WIN32_WINNT_WINTHRESHOLD / _WIN32_WINNT_WIN10
 
-#ifndef DPI_ENUMS_DECLARED
+#  ifndef DPI_ENUMS_DECLARED
 typedef enum
 {
   PROCESS_DPI_UNAWARE = 0,
@@ -1212,14 +1219,14 @@ typedef enum
   MDT_RAW_DPI = 2,
   MDT_DEFAULT = MDT_EFFECTIVE_DPI
 } MONITOR_DPI_TYPE;
-#endif
-#ifndef _DPI_AWARENESS_CONTEXTS_
+#  endif
+#  ifndef _DPI_AWARENESS_CONTEXTS_
 DECLARE_HANDLE(DPI_AWARENESS_CONTEXT);
-#  define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE (DPI_AWARENESS_CONTEXT) - 3
-#endif
-#ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-#  define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (DPI_AWARENESS_CONTEXT) - 4
-#endif
+#    define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE (DPI_AWARENESS_CONTEXT) - 3
+#  endif
+#  ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+#    define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (DPI_AWARENESS_CONTEXT) - 4
+#  endif
 typedef HRESULT(WINAPI *PFN_SetProcessDpiAwareness)(
   PROCESS_DPI_AWARENESS);  // Shcore.lib + dll, Windows 8.1+
 typedef HRESULT(WINAPI *PFN_GetDpiForMonitor)(HMONITOR,
@@ -1254,9 +1261,9 @@ static void AnchorBackendWin32EnableDpiAwareness()
   // #endif
 }
 
-#if defined(_MSC_VER) && !defined(NOGDI)
-#  pragma comment(lib, "gdi32")
-#endif
+#  if defined(_MSC_VER) && !defined(NOGDI)
+#    pragma comment(lib, "gdi32")
+#  endif
 
 static float AnchorBackendWin32GetDpiScaleForMonitor(void *monitor)
 {
@@ -1272,13 +1279,13 @@ static float AnchorBackendWin32GetDpiScaleForMonitor(void *monitor)
       return xdpi / 96.0f;
     }
   }
-#ifndef NOGDI
+#  ifndef NOGDI
   // const HDC dc = ::GetDC(NULL);
   // xdpi = ::GetDeviceCaps(dc, LOGPIXELSX);
   // ydpi = ::GetDeviceCaps(dc, LOGPIXELSY);
   // ANCHOR_ASSERT(xdpi == ydpi);  // Please contact me if you hit this assert!
   // ::ReleaseDC(NULL, dc);
-#endif
+#  endif
   // return xdpi / 96.0f;
   return 1.0f;
 }
@@ -1294,10 +1301,11 @@ static float AnchorBackendWin32GetDpiScaleForHwnd(void *hwnd)
 // Transparency related helpers (optional)
 //--------------------------------------------------------------------------------------------------------
 
-#if defined(_MSC_VER)
-#  pragma comment(lib, \
-                  "dwmapi")  // Link with dwmapi.lib. MinGW will require linking with '-ldwmapi'
-#endif
+#  if defined(_MSC_VER)
+#    pragma comment( \
+      lib,           \
+      "dwmapi")  // Link with dwmapi.lib. MinGW will require linking with '-ldwmapi'
+#  endif
 
 static void AnchorBackendWin32EnableAlphaCompositing(void *hwnd)
 {
@@ -1453,42 +1461,42 @@ eAnchorStatus AnchorDisplayManagerWin32::setCurrentDisplaySetting(
 
 /**
  * Key code values not found in winuser.h */
-#ifndef VK_MINUS
-#  define VK_MINUS 0xBD
-#endif  // VK_MINUS
-#ifndef VK_SEMICOLON
-#  define VK_SEMICOLON 0xBA
-#endif  // VK_SEMICOLON
-#ifndef VK_PERIOD
-#  define VK_PERIOD 0xBE
-#endif  // VK_PERIOD
-#ifndef VK_COMMA
-#  define VK_COMMA 0xBC
-#endif  // VK_COMMA
-#ifndef VK_QUOTE
-#  define VK_QUOTE 0xDE
-#endif  // VK_QUOTE
-#ifndef VK_BACK_QUOTE
-#  define VK_BACK_QUOTE 0xC0
-#endif  // VK_BACK_QUOTE
-#ifndef VK_SLASH
-#  define VK_SLASH 0xBF
-#endif  // VK_SLASH
-#ifndef VK_BACK_SLASH
-#  define VK_BACK_SLASH 0xDC
-#endif  // VK_BACK_SLASH
-#ifndef VK_EQUALS
-#  define VK_EQUALS 0xBB
-#endif  // VK_EQUALS
-#ifndef VK_OPEN_BRACKET
-#  define VK_OPEN_BRACKET 0xDB
-#endif  // VK_OPEN_BRACKET
-#ifndef VK_CLOSE_BRACKET
-#  define VK_CLOSE_BRACKET 0xDD
-#endif  // VK_CLOSE_BRACKET
-#ifndef VK_GR_LESS
-#  define VK_GR_LESS 0xE2
-#endif  // VK_GR_LESS
+#  ifndef VK_MINUS
+#    define VK_MINUS 0xBD
+#  endif  // VK_MINUS
+#  ifndef VK_SEMICOLON
+#    define VK_SEMICOLON 0xBA
+#  endif  // VK_SEMICOLON
+#  ifndef VK_PERIOD
+#    define VK_PERIOD 0xBE
+#  endif  // VK_PERIOD
+#  ifndef VK_COMMA
+#    define VK_COMMA 0xBC
+#  endif  // VK_COMMA
+#  ifndef VK_QUOTE
+#    define VK_QUOTE 0xDE
+#  endif  // VK_QUOTE
+#  ifndef VK_BACK_QUOTE
+#    define VK_BACK_QUOTE 0xC0
+#  endif  // VK_BACK_QUOTE
+#  ifndef VK_SLASH
+#    define VK_SLASH 0xBF
+#  endif  // VK_SLASH
+#  ifndef VK_BACK_SLASH
+#    define VK_BACK_SLASH 0xDC
+#  endif  // VK_BACK_SLASH
+#  ifndef VK_EQUALS
+#    define VK_EQUALS 0xBB
+#  endif  // VK_EQUALS
+#  ifndef VK_OPEN_BRACKET
+#    define VK_OPEN_BRACKET 0xDB
+#  endif  // VK_OPEN_BRACKET
+#  ifndef VK_CLOSE_BRACKET
+#    define VK_CLOSE_BRACKET 0xDD
+#  endif  // VK_CLOSE_BRACKET
+#  ifndef VK_GR_LESS
+#    define VK_GR_LESS 0xE2
+#  endif  // VK_GR_LESS
 
 /**
  * Workaround for some laptop touchpads, some of which seems to
@@ -1499,7 +1507,7 @@ eAnchorStatus AnchorDisplayManagerWin32::setCurrentDisplaySetting(
  * We send a dummy WM_USER message to force PeekMessage to receive
  * something, making it so kraken's window manager sees the new
  * messages coming in. */
-#define BROKEN_PEEK_TOUCHPAD
+#  define BROKEN_PEEK_TOUCHPAD
 
 static void initRawInput()
 {
@@ -1705,7 +1713,7 @@ eAnchorStatus AnchorSystemWin32::init()
   m_hasPerformanceCounter = ::QueryPerformanceFrequency((LARGE_INTEGER *)&m_freq) == TRUE;
   if (m_hasPerformanceCounter) {
     if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
-      TF_MSG_SUCCESS("Anchor -- High Frequency Performance Timer available");
+      TF_WARN("Anchor -- High Frequency Performance Timer available");
     }
     ::QueryPerformanceCounter((LARGE_INTEGER *)&m_start);
   } else {
@@ -1775,7 +1783,7 @@ AnchorISystemWindow *AnchorSystemWin32::createWindow(const char *title,
     m_windowManager->setActiveWindow(window);
   } else {
     if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
-      TF_MSG_ERROR("Window invalid");
+      TF_WARN("Window invalid");
     }
     delete window;
     window = NULL;
@@ -3777,7 +3785,7 @@ static void check_vk_result(VkResult err)
 {
   if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
 
-    TF_MSG_ERROR(
+    TF_WARN(
       "Cannot find a compatible Vulkan installable client"
       "driver (ICD). Please make sure your driver supports"
       "Vulkan before continuing. The vulkan call which has"
@@ -3787,7 +3795,7 @@ static void check_vk_result(VkResult err)
     exit(ANCHOR_FAILURE);
   } else if (err != VK_SUCCESS) {
 
-    TF_MSG_ERROR(
+    TF_WARN(
       "The call to vkCreateInstance failed. Please make"
       "sure you have a Vulkan installable client driver"
       "(ICD) before continuing.");
@@ -3988,8 +3996,8 @@ void AnchorWindowWin32::SetupVulkan()
   m_vulkan_context->PresentMode = presentMode;
 
   if (TfDebug::IsEnabled(ANCHOR_WIN32)) {
-    TF_MSG_SUCCESS("Anchor -- Rendering at maximum possible frames per second.");
-    TF_MSG("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
+    TF_WARN("Anchor -- Rendering at maximum possible frames per second.");
+    TF_WARN("Anchor -- Selected PresentMode = %d", m_vulkan_context->PresentMode);
   }
 
   VkSwapchainKHR swapchain;
@@ -5277,3 +5285,5 @@ AnchorU16 AnchorWindowWin32::getDPIHint()
   // return USER_DEFAULT_SCREEN_DPI;
   return 1;
 }
+
+#endif /* WIN32 */

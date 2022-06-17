@@ -9,7 +9,7 @@ endif()
 set(optionalLibs "")
 set(optionalIncludeDirs "")
 
-if(WITH_ALEMBIC_HDF5)
+if (WITH_ALEMBIC_HDF5)
    add_definitions(-DWITH_ALEMBIC_HDF5)
    list(APPEND optionalLibs ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
    list(APPEND optionalIncludeDirs ${HDF5_INCLUDE_DIRS})

@@ -111,14 +111,14 @@ class UsdGeomBBoxCache::_PrototypeBBoxResolver
 
   struct _PrototypeTask
   {
-    _PrototypeTask() noexcept : numDependencies(0) {}
+    _PrototypeTask() : numDependencies(0) {}
 
     _PrototypeTask(const _PrototypeTask &other) : dependentPrototypes(other.dependentPrototypes)
     {
       numDependencies.store(other.numDependencies.load());
     }
 
-    _PrototypeTask(_PrototypeTask &&other) noexcept
+    _PrototypeTask(_PrototypeTask &&other)
       : dependentPrototypes(std::move(other.dependentPrototypes))
     {
       numDependencies.store(other.numDependencies.load());
@@ -313,6 +313,8 @@ UsdGeomBBoxCache &UsdGeomBBoxCache::operator=(UsdGeomBBoxCache const &other)
   _useExtentsHint = other._useExtentsHint;
   return *this;
 }
+
+UsdGeomBBoxCache::~UsdGeomBBoxCache() noexcept {}
 
 GfBBox3d UsdGeomBBoxCache::ComputeWorldBound(const UsdPrim &prim)
 {

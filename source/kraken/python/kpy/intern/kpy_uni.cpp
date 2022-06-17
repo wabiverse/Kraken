@@ -904,7 +904,7 @@ PyObject *pyuni_object_CreatePyObject(PointerLUXO *ptr)
   // Py_DECREF(tp); /* srna owns, can't hold a reference. */
   // }
   // else {
-  // TF_MSG("could not make type '%s'", LUXO_object_identifier(ptr->type));
+  // TF_WARN("could not make type '%s'", LUXO_object_identifier(ptr->type));
 
 #ifdef USE_PYUNI_OBJECT_REFERENCE
   pyuni = (KPy_KrakenPrim *)PyObject_GC_New(KPy_KrakenPrim, &pyuni_object_Type);

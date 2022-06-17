@@ -128,7 +128,7 @@ int CREATOR_parse_args(int argc, const char **argv)
       exit(KRAKEN_SUCCESS);
     }
 
-    TF_MSG_ERROR("File at %s does not exist.", CHARALL(fp.string()));
+    TF_WARN("File at %s does not exist.", CHARALL(fp.string()));
     exit(KRAKEN_ERROR);
   }
 

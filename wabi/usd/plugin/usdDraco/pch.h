@@ -24,7 +24,7 @@
 // WARNING: THIS FILE IS GENERATED.  DO NOT EDIT.
 // a/*
 *Copyright 2021 Pixar.All Rights Reserved.**Portions of this file are derived from original work by
-   Pixar *distributed with Universal Scene Description,
+                                             Pixar *distributed with Universal Scene Description,
   a project of the *Academy Software Foundation(ASWF).https :  // www.aswf.io/
                                                                **Licensed under the Apache License,
   Version 2.0(the "Apache License") * with the following modification; you may not use this file except in
@@ -372,7 +372,7 @@
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor/tuple/to_list.hpp>
 #include <boost/preprocessor/tuple/to_seq.hpp>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include <boost/python/def.hpp>
 #  include <boost/python/dict.hpp>
 #  include <boost/python/extract.hpp>
@@ -386,7 +386,7 @@
 #    undef tolower
 #    undef toupper
 #  endif
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 #include <boost/range/iterator_range.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits/decay.hpp>
@@ -418,6 +418,6 @@
 #include <tbb/spin_rw_mutex.h>
 #include <tbb/task.h>
 #include <tbb/task_arena.h>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON

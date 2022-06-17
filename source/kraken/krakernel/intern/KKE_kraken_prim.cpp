@@ -36,7 +36,7 @@ WABI_NAMESPACE_BEGIN
 
 KrakenPrimRegistry::KrakenPrimRegistry() : m_initialized(false)
 {
-  TF_MSG("HI");
+  TF_WARN("HI");
 
   TfSingleton<KrakenPrimRegistry>::SetInstanceConstructed(*this);
   TfRegistryManager::GetInstance().SubscribeTo<KrakenPrim>();
@@ -61,7 +61,7 @@ void KrakenPrimRegistry::RegisterInitFunction(const TfType &schemaType,
   }
 
   if (!didInsert) {
-    TF_MSG_ERROR(
+    TF_WARN(
       "KrakenInitFunction already registered for "
       "prim type '%s'",
       schemaType.GetTypeName().c_str());
@@ -74,9 +74,9 @@ KrakenPrimInitFunction KrakenPrimRegistry::GetInitFunction(const UsdPrim &prim)
 
   const TfType &primSchemaType = prim.GetPrimTypeInfo().GetSchemaType();
   if (!primSchemaType) {
-    TF_MSG_ERROR("Could not find prim type '%s' for prim %s",
-                 prim.GetTypeName().GetText(),
-                 UsdDescribe(prim).c_str());
+    TF_WARN("Could not find prim type '%s' for prim %s",
+            prim.GetTypeName().GetText(),
+            UsdDescribe(prim).c_str());
     return nullptr;
   }
 
@@ -147,7 +147,7 @@ bool KrakenPrimRegistry::LoadPluginForType(const TfType &type) const
 
   const PlugPluginPtr pluginForType = plugReg.GetPluginForType(type);
   if (!pluginForType) {
-    TF_MSG_ERROR("Could not find plugin for '%s'", type.GetTypeName().c_str());
+    TF_WARN("Could not find plugin for '%s'", type.GetTypeName().c_str());
     return false;
   }
 
@@ -178,7 +178,7 @@ TF_INSTANTIATE_SINGLETON(KrakenPrimRegistry);
 static bool InitKrakenPrimsFromPlugins(KrakenPrim *prim)
 {
   if (!prim) {
-    TF_MSG_ERROR("Invalid KrakenPrim %s", UsdDescribe(prim->GetPrim()).c_str());
+    TF_WARN("Invalid KrakenPrim %s", UsdDescribe(prim->GetPrim()).c_str());
     return false;
   }
 
@@ -197,7 +197,7 @@ bool KrakenPrim::RegisterPrimInitFromPlugins(KrakenPrim *prim)
 void RegisterKrakenInitFunction(const TfType &primType, const KrakenPrimInitFunction &fn)
 {
   if (!primType.IsA<KrakenPrim>()) {
-    TF_MSG_ERROR("Prim type '%s' must derive from KrakenPrim", primType.GetTypeName().c_str());
+    TF_WARN("Prim type '%s' must derive from KrakenPrim", primType.GetTypeName().c_str());
     return;
   }
 

@@ -44,30 +44,6 @@ endif()
 # Omit superfluous "Up-to-date" messages.
 set(CMAKE_INSTALL_MESSAGE LAZY)
 
-if(APPLE)
-  # !! Cmake < 3.24 will not work on macOS.
-  #
-  # You will need to download and install a change as of 6/10/2022 here: 
-  # https://cmake.org/files/dev/cmake-3.24.20220611-gd8a8b9f-macos-universal.dmg
-  #
-  # and add this at the end of your .zshrc:
-  # export PATH="/Applications/CMake.app/Contents/bin":"$PATH"
-  #  
-  # until brew updates the formula for 3.24 (should not take long).
-  #
-  # otherwise, compiler identification checks will fail and cause all sorts of issues.
-
-  set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for MacOS" FORCE)
-  # Prefer to target Xcode 14.0 Beta on macOS.
-  if (EXISTS "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang.1")
-    set(CMAKE_C_COMPILER "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang.1")
-  endif()
-  # Prefer to target Xcode 14.0 Beta on macOS.
-  if (EXISTS "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang++.1")
-    set(CMAKE_CXX_COMPILER "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/man/man1/clang++.1")
-  endif()
-endif()
-
 # global compile definitions since add_definitions() adds for all.
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
   $<$<CONFIG:Debug>:DEBUG;_DEBUG>

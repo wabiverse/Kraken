@@ -250,7 +250,7 @@ const AnchorU8 *AnchorSystemPathsWin32::getUserSpecialDir(eAnchorUserSpecialDirT
       folderid = Storage::KnownFolders::VideosLibrary().Path();
       break;
     default:
-      TF_MSG_ERROR("Anchor -- Invalid enum value for type parameter");
+      TF_WARN("Anchor -- Invalid enum value for type parameter");
       return NULL;
   }
 
@@ -278,12 +278,153 @@ void AnchorSystemPathsWin32::addToSystemRecentFiles(const char *filename) const
     recentFiles.CreateFileAsync((LPWSTR)filename).GetResults()};
 
   if (fileAdded.Path().empty()) {
-    TF_MSG_ERROR("ANCHOR - Error adding file to System Recent files.");
+    TF_WARN("ANCHOR - Error adding file to System Recent files.");
   }
 }
 
-#endif /* ARCH_OS_WINDOWS */
+#elif defined(ARCH_OS_DARWIN) /* ARCH_OS_WINDOWS */
+#  include <sstream>
 
+#  include <sys/time.h>
+#  include <unistd.h>
+
+#  include <cstdlib>
+#  include <stdio.h>
+
+#  include <pwd.h>
+#  include <string>
+
+using std::string;
+
+WABI_NAMESPACE_USING
+
+#  ifdef PREFIX
+static const char *static_path = PREFIX "/share";
+#  else
+static const char *static_path = NULL;
+#  endif
+
+AnchorSystemPathsCocoa::AnchorSystemPathsCocoa() {}
+
+AnchorSystemPathsCocoa::~AnchorSystemPathsCocoa() {}
+
+const AnchorU8 *AnchorSystemPathsCocoa::getSystemDir(int, const char *versionstr) const
+{
+  /* no prefix assumes a portable build which only uses bundled scripts */
+  if (static_path) {
+    static string system_path = string(static_path) + "/kraken/" + versionstr;
+    return (AnchorU8 *)system_path.c_str();
+  }
+
+  return NULL;
+}
+
+const AnchorU8 *AnchorSystemPathsCocoa::getUserDir(int version, const char *versionstr) const
+{
+  static string user_path = "";
+  static int last_version = 0;
+
+  if (version < 264) {
+    if (user_path.empty() || last_version != version) {
+      const char *home = getenv("HOME");
+
+      last_version = version;
+
+      if (home) {
+        user_path = string(home) + "/.kraken/" + versionstr;
+      } else {
+        return NULL;
+      }
+    }
+    return (AnchorU8 *)user_path.c_str();
+  } else {
+    if (user_path.empty() || last_version != version) {
+      const char *home = getenv("XDG_CONFIG_HOME");
+
+      last_version = version;
+
+      if (home) {
+        user_path = string(home) + "/kraken/" + versionstr;
+      } else {
+        home = getenv("HOME");
+
+        if (home == NULL)
+          home = getpwuid(getuid())->pw_dir;
+
+        user_path = string(home) + "/.config/kraken/" + versionstr;
+      }
+    }
+
+    return (const AnchorU8 *)user_path.c_str();
+  }
+}
+
+const AnchorU8 *AnchorSystemPathsCocoa::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const
+{
+  const char *type_str;
+
+  switch (type) {
+    case ANCHOR_UserSpecialDirDesktop:
+      type_str = "DESKTOP";
+      break;
+    case ANCHOR_UserSpecialDirDocuments:
+      type_str = "DOCUMENTS";
+      break;
+    case ANCHOR_UserSpecialDirDownloads:
+      type_str = "DOWNLOADS";
+      break;
+    case ANCHOR_UserSpecialDirMusic:
+      type_str = "MUSIC";
+      break;
+    case ANCHOR_UserSpecialDirPictures:
+      type_str = "PICTURES";
+      break;
+    case ANCHOR_UserSpecialDirVideos:
+      type_str = "VIDEOS";
+      break;
+    default:
+      TF_CODING_ERROR(
+        "AnchorSystemPathsCocoa::getUserSpecialDir(): Invalid enum value for type parameter\n");
+      return NULL;
+  }
+
+  static string path = "";
+  /* Pipe stderr to /dev/null to avoid error prints. We will fail gracefully still. */
+  string command = string("xdg-user-dir ") + type_str + " 2> /dev/null";
+
+  FILE *fstream = popen(command.c_str(), "r");
+  if (fstream == NULL) {
+    return NULL;
+  }
+  std::stringstream path_stream;
+  while (!feof(fstream)) {
+    char c = fgetc(fstream);
+    /* xdg-user-dir ends the path with '\n'. */
+    if (c == '\n') {
+      break;
+    }
+    path_stream << c;
+  }
+  if (pclose(fstream) == -1) {
+    perror("AnchorSystemPathsCocoa::getUserSpecialDir failed at pclose()");
+    return NULL;
+  }
+
+  path = path_stream.str();
+  return path[0] ? (const AnchorU8 *)path.c_str() : NULL;
+}
+
+const AnchorU8 *AnchorSystemPathsCocoa::getBinaryDir() const
+{
+  return NULL;
+}
+
+void AnchorSystemPathsCocoa::addToSystemRecentFiles(const char * /*filename*/) const
+{
+  /* TODO: implement for X11 */
+}
+
+#endif /* ARCH_OS_DARWIN */
 
 AnchorISystemPaths *AnchorISystemPaths::m_systemPaths = NULL;
 

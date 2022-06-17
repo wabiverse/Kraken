@@ -23,7 +23,10 @@
  */
 
 #include "ANCHOR_BACKEND_sdl.h"
-#include "ANCHOR_BACKEND_vulkan.h"
+
+#if WITH_VULKAN
+#  include "ANCHOR_BACKEND_vulkan.h"
+#endif /* WITH_VULKAN */
 
 #include "ANCHOR_rect.h"
 #include "ANCHOR_api.h"
@@ -43,9 +46,12 @@
 #endif
 
 #include <wabi/base/arch/systemInfo.h>
-#include <wabi/imaging/hgiVulkan/diagnostic.h>
-#include <wabi/imaging/hgiVulkan/hgi.h>
-#include <wabi/imaging/hgiVulkan/instance.h>
+
+#if WITH_VULKAN
+#  include <wabi/imaging/hgiVulkan/diagnostic.h>
+#  include <wabi/imaging/hgiVulkan/hgi.h>
+#  include <wabi/imaging/hgiVulkan/instance.h>
+#endif /* WITH_VULKAN */
 
 WABI_NAMESPACE_USING
 

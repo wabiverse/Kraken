@@ -124,12 +124,12 @@ namespace
                     static_cast<int>(WorkGetConcurrencyLimit()));
   }
 
-#if WABI_HDF5_SUPPORT_ENABLED && !H5_HAVE_THREADSAFE
+#if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
   // A global mutex until our HDF5 library is thread safe.  It has to be
   // recursive to handle the case where we write an Alembic file using an
   // UsdAbc_AlembicData as the source.
   static TfStaticData<std::recursive_mutex> _hdf5;
-#endif  // WABI_HDF5_SUPPORT_ENABLED
+#endif  // WITH_ALEMBIC_HDF5
 
   // The SdfAbstractData time samples type.
   // XXX: SdfAbstractData should typedef this.
@@ -898,7 +898,7 @@ namespace
     }
     layeredABC.emplace_back(filePath);
 
-#if WABI_HDF5_SUPPORT_ENABLED && !H5_HAVE_THREADSAFE
+#if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
     // HDF5 may not be thread-safe.
     using lock_guard = std::lock_guard<std::recursive_mutex>;
     std::unique_ptr<std::lock_guard<std::recursive_mutex>> hfd5Lock(new lock_guard(*_hdf5));
@@ -911,7 +911,7 @@ namespace
     factory.setOgawaNumStreams(_GetNumOgawaStreams());
     IArchive archive = factory.getArchive(layeredABC, abcType);
 
-#if WABI_HDF5_SUPPORT_ENABLED && !H5_HAVE_THREADSAFE
+#if WITH_ALEMBIC_HDF5 && !H5_HAVE_THREADSAFE
     if (abcType == IFactory::kHDF5 || abcType == IFactory::kLayer) {
       // An HDF5, or layered which may have an HDF5 layer
       _mutex = &*_hdf5;

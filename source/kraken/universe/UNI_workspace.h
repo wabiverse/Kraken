@@ -31,7 +31,7 @@
 
 #include "KKE_context.h"
 
-#include <wabi/usd/usdUI/workspace.h>
+// #include <wabi/usd/usdUI/workspace.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -73,7 +73,7 @@ struct WorkSpaceDataRelation
 
 typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
 
-struct WorkSpace : public UsdUIWorkspace, KrakenPrim
+struct WorkSpace : public KrakenPrim
 {
   SdfPath path;
 
@@ -88,10 +88,10 @@ struct WorkSpace : public UsdUIWorkspace, KrakenPrim
 };
 
 WorkSpace::WorkSpace(kContext *C, const SdfPath &stagepath)
-  : UsdUIWorkspace(KRAKEN_LUXOVERSE_CREATE(C)),
-    path(UsdUIWorkspace::GetPath()),
-    name(CreateNameAttr(DEFAULT_TOKEN("Workspace"))),
-    screen_rel(CreateScreenRel()),
+  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
+    path(KrakenPrim::GetPath()),
+    name(EMPTY /*CreateNameAttr(DEFAULT_TOKEN("Workspace"))*/),
+    screen_rel(EMPTY /*CreateScreenRel()*/),
     layouts(EMPTY),
     hook_layout_relations(EMPTY)
 {}

@@ -182,7 +182,7 @@ static void register_pixar_extension_failed(HKEY root, const bool background)
     RegCloseKey(root);
   }
   if (!background) {
-    TF_MSG_ERROR("Could not register file extension.");
+    TF_WARN("Could not register file extension.");
     // MessageBox(0, "Could not register file extension.", "Kraken error", MB_OK | MB_ICONERROR);
   }
 }

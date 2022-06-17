@@ -31,9 +31,12 @@ set(LIB
   kraken_kernel
   kraken_luxo
   kraken_universe
-  kraken_intern_utfconv
   kraken_python
 )
+
+if(WIN32)
+  list(APPEND LIB kraken_intern_utfconv)
+endif()
 
 list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
 list(INSERT LIB 0 ${TBB_LIBRARIES})
@@ -318,7 +321,7 @@ endif()
 if(WIN32)
   target_link_options(kraken PUBLIC "LINKER:/WHOLEARCHIVE:maelstrom")
 elseif(APPLE)
-  target_link_libraries(kraken -Wl,-force_load maelstrom)
+  target_link_libraries(kraken -Wl,-force_load $<TARGET_FILE:maelstrom>)
 elseif(UNIX AND NOT APPLE)
   target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:maelstrom> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
 endif()
@@ -405,6 +408,14 @@ if(UNIX AND NOT APPLE)
       # ---------------------------------
     DESTINATION
       "/usr/local/${TARGETDIR_VER}/lib/."
+  )
+elseif(APPLE)
+  install(
+    TARGETS
+      maelstrom # <- Pixar monolithic
+      # ---------------------------------
+    DESTINATION
+      "./lib/."
   )
 else()
   install(
@@ -581,11 +592,17 @@ if(WIN32)
       ${CMAKE_SOURCE_DIR}/release/fonts
     DESTINATION ${TARGETDIR_VER}/datafiles
   )
-else()
+elseif(UNIX AND NOT APPLE)
   install(
     DIRECTORY
       ${CMAKE_SOURCE_DIR}/release/fonts
     DESTINATION "/usr/local/${TARGETDIR_VER}/datafiles"
+  )
+elseif(APPLE)
+  install(
+    DIRECTORY
+      ${CMAKE_SOURCE_DIR}/release/fonts
+    DESTINATION ${TARGETDIR_VER}/datafiles
   )
 endif()
 
@@ -1154,7 +1171,7 @@ elseif(APPLE)
   endif()
 
   # python
-  if(WITH_PYTHON AND NOT WITH_PYTHON_MODULE AND NOT WITH_PYTHON_FRAMEWORK)
+  if(WITH_PYTHON)
     # Copy the python libs into the install directory
     install_dir(
       ${PYTHON_LIBPATH}
@@ -1191,6 +1208,13 @@ if(WITH_PYTHON)
         ${TARGETDIR_VER}/python/lib/python3.9/site-packages
     )
   elseif(WIN32)
+    install(
+      DIRECTORY
+        ${CMAKE_SOURCE_DIR}/release/scripts/modules/
+      DESTINATION
+        ${TARGETDIR_VER}/scripts/modules
+    )  
+  elseif(APPLE)
     install(
       DIRECTORY
         ${CMAKE_SOURCE_DIR}/release/scripts/modules/
@@ -1365,14 +1389,14 @@ endif()
 target_link_libraries(kraken ${LIB})
 unset(LIB)
 
-setup_platform_linker_flags(maelstrom)
-setup_platform_linker_flags(maelstrom_static)
+# setup_platform_linker_flags(maelstrom)
+# setup_platform_linker_flags(maelstrom_static)
 
 setup_platform_linker_flags(kraken)
 setup_platform_linker_libs(kraken)
 
 if(APPLE)
-  set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
+  # set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
 elseif(UNIX AND NOT APPLE)
   set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kraken.map)
 endif()

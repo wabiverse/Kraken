@@ -119,6 +119,10 @@ class UsdGeomBBoxCache
   USDGEOM_API
   UsdGeomBBoxCache &operator=(UsdGeomBBoxCache const &other);
 
+  /// Deconstructor.
+  USDGEOM_API
+  virtual ~UsdGeomBBoxCache() noexcept;
+
   /// Compute the bound of the given prim in world space, leveraging any
   /// pre-existing, cached bounds.
   ///

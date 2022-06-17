@@ -27,7 +27,7 @@
 #include "KLI_time.h"
 #include "KLI_string_utils.h"
 
-#ifdef __linux__
+#if defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN)
 #  include <sys/time.h>
 #  include <unistd.h>
 
@@ -41,7 +41,7 @@ double PIL_check_seconds_timer(void)
   return ((double)tv.tv_sec + tv.tv_usec / 1000000.0);
 }
 
-#elif _WIN32
+#elif defined(ARCH_OS_WINDOWS)
 #  include "stdlib.h"
 #  include <windows.h>
 #  define sleep(x) Sleep(x)

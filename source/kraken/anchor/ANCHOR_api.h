@@ -41,6 +41,7 @@
 #include <wabi/imaging/hd/engine.h>
 
 #include <wabi/usdImaging/usdImagingGL/engine.h>
+#include <wabi/usdImaging/usdImaging/primAdapter.h>
 
 #ifndef ANCHOR_API
 #  define ANCHOR_API
@@ -571,13 +572,13 @@ struct AnchorDrawList;  // A single draw command list (generally one per window,
                         // may see this as a dynamic "mesh" builder)
 struct AnchorDrawListSharedData;  // Data shared among multiple draw lists (typically owned by
                                   // parent ANCHOR context, but you may create one yourself)
-struct AnchorDrawListSplitter;  // Helper to split a draw list into different layers which can be
-                                // drawn into out of order, then flattened back.
-struct AnchorDrawVert;  // A single vertex (pos + uv + col = 20 bytes by default. Override layout
-                        // with ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
-struct AnchorFont;           // Runtime data for a single font within a parent AnchorFontAtlas
-struct AnchorFontAtlas;      // Runtime data for multiple fonts, bake multiple fonts into a single
-                             // texture, TTF/OTF font loader
+struct AnchorDrawListSplitter;    // Helper to split a draw list into different layers which can be
+                                  // drawn into out of order, then flattened back.
+struct AnchorDrawVert;   // A single vertex (pos + uv + col = 20 bytes by default. Override layout
+                         // with ANCHOR_OVERRIDE_DRAWVERT_STRUCT_LAYOUT)
+struct AnchorFont;       // Runtime data for a single font within a parent AnchorFontAtlas
+struct AnchorFontAtlas;  // Runtime data for multiple fonts, bake multiple fonts into a single
+                         // texture, TTF/OTF font loader
 struct AnchorFontBuilderIO;  // Opaque interface to a font builder (stb_truetype or FreeType).
 struct AnchorFontConfig;     // Configuration data when adding a font or merging fonts
 struct AnchorFontGlyph;  // A single font glyph (code point + coordinates within in AnchorFontAtlas
@@ -720,6 +721,12 @@ typedef uint64_t AnchorU64;  // 64-bit unsigned integer (pre C++11)
 typedef signed long long AnchorS64;    // 64-bit signed integer (post C++11)
 typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
 #endif
+
+WABI_NAMESPACE_BEGIN
+
+using UsdImagingGLEngineSharedPtr = std::shared_ptr<class UsdImagingGLEngine>;
+
+WABI_NAMESPACE_END
 
 /**
  * ----- ANCHOR STRUCTS ----- */
@@ -1162,7 +1169,7 @@ namespace ANCHOR
    *      - Game Engine (RTX)
    *      - Misc. */
   ANCHOR_API
-  wabi::UsdImagingGLEngine GetEngineGL();
+  wabi::UsdImagingGLEngineSharedPtr GetEngineGL();
 
   /**
    * Access the IO structure.
@@ -1489,7 +1496,7 @@ namespace ANCHOR
                                                          // override with
                                                          // SetNextWindowContentSize(), in window
                                                          // coordinates
-  ANCHOR_API float GetWindowContentRegionWidth();  //
+  ANCHOR_API float GetWindowContentRegionWidth();        //
 
   // Windows Scrolling
   ANCHOR_API float GetScrollX();               // get scrolling amount [0 .. GetScrollMaxX()]
@@ -1570,7 +1577,7 @@ namespace ANCHOR
   // Style read access
   ANCHOR_API AnchorFont *GetFont();  // get current font
   ANCHOR_API float GetFontSize();    // get current font size (= height in pixels) of current font
-                                   // with current scale applied
+                                     // with current scale applied
   ANCHOR_API wabi::GfVec2f GetFontTexUvWhitePixel();  // get UV coordinate for a while pixel,
                                                       // useful to draw custom shapes via the
                                                       // AnchorDrawList API
@@ -1654,9 +1661,9 @@ namespace ANCHOR
   ANCHOR_API float GetTextLineHeightWithSpacing();  // ~ FontSize + style.ItemSpacing[1] (distance
                                                     // in pixels between 2 consecutive lines of
                                                     // text)
-  ANCHOR_API float GetFrameHeight();             // ~ FontSize + style.FramePadding[1] * 2
-  ANCHOR_API float GetFrameHeightWithSpacing();  // ~ FontSize + style.FramePadding[1] * 2 +
-                                                 // style.ItemSpacing[1] (distance in pixels
+  ANCHOR_API float GetFrameHeight();                // ~ FontSize + style.FramePadding[1] * 2
+  ANCHOR_API float GetFrameHeightWithSpacing();     // ~ FontSize + style.FramePadding[1] * 2 +
+                                                    // style.ItemSpacing[1] (distance in pixels
                                                  // between 2 consecutive lines of framed widgets)
 
   // ID stack/scopes
@@ -2594,8 +2601,8 @@ namespace ANCHOR
                                     // popup, etc.). See AnchorHoveredFlags for more options.
   ANCHOR_API bool IsItemActive();   // is the last item active? (e.g. button being held, text field
                                     // being edited. This will continuously return true while
-                                   // holding mouse button on an item. Items that don't interact
-                                   // will always return false)
+                                    // holding mouse button on an item. Items that don't interact
+                                    // will always return false)
   ANCHOR_API bool IsItemFocused();  // is the last item focused for keyboard/gamepad navigation?
   ANCHOR_API bool IsItemClicked(
     AnchorMouseButton mouse_button =
@@ -2759,7 +2766,7 @@ namespace ANCHOR
                                              // that there is no mouse available
   ANCHOR_API bool IsAnyMouseDown();          // is any mouse button held?
   ANCHOR_API wabi::GfVec2f GetMousePos();    // shortcut to ANCHOR::GetIO().MousePos provided by
-                                           // user, to be consistent with other calls
+                                             // user, to be consistent with other calls
   ANCHOR_API wabi::GfVec2f GetMousePosOnOpeningCurrentPopup();  // retrieve mouse position at the
                                                                 // time of opening popup we have
                                                                 // BeginPopup() into (helper to
@@ -5154,7 +5161,7 @@ struct AnchorDrawCmd
                            // vtx_buffer[] array, indices in idx_buffer[].
   AnchorDrawCallback UserCallback;  // 4-8  // If != NULL, call the function instead of rendering
                                     // the vertices. clip_rect and texture_id will be set normally.
-  void *UserCallbackData;  // 4-8  // The draw callback code can access this.
+  void *UserCallbackData;           // 4-8  // The draw callback code can access this.
 
   AnchorDrawCmd()
   {
@@ -5335,13 +5342,13 @@ struct AnchorDrawList
   const char *_OwnerName;        // Pointer to owner window's name for debugging
   AnchorDrawVert *_VtxWritePtr;  // [Internal] point within VtxBuffer.Data after each add command
                                  // (to avoid using the AnchorVector<> operators too much)
-  AnchorDrawIdx *_IdxWritePtr;  // [Internal] point within IdxBuffer.Data after each add command
-                                // (to avoid using the AnchorVector<> operators too much)
+  AnchorDrawIdx *_IdxWritePtr;   // [Internal] point within IdxBuffer.Data after each add command
+                                 // (to avoid using the AnchorVector<> operators too much)
   AnchorVector<wabi::GfVec4f> _ClipRectStack;     // [Internal]
   AnchorVector<AnchorTextureID> _TextureIdStack;  // [Internal]
   AnchorVector<wabi::GfVec2f> _Path;              // [Internal] current path building
-  AnchorDrawCmdHeader _CmdHeader;  // [Internal] template of active commands. Fields should match
-                                   // those of CmdBuffer.back().
+  AnchorDrawCmdHeader _CmdHeader;    // [Internal] template of active commands. Fields should match
+                                     // those of CmdBuffer.back().
   AnchorDrawListSplitter _Splitter;  // [Internal] for channels api (note: prefer using your own
                                      // persistent instance of AnchorDrawListSplitter!)
   float _FringeScale;  // [Internal] anti-alias fringe is scaled by this value, this helps to keep
@@ -5689,7 +5696,7 @@ struct AnchorDrawData
   int TotalVtxCount;          // For convenience, sum of all AnchorDrawList's VtxBuffer.Size
   AnchorDrawList **CmdLists;  // Array of AnchorDrawList* to render. The AnchorDrawList are owned
                               // by AnchorContext and only pointed to from here.
-  wabi::GfVec2f DisplayPos;  // Top-left position of the viewport to render (== top-left of the
+  wabi::GfVec2f DisplayPos;   // Top-left position of the viewport to render (== top-left of the
                              // orthogonal projection matrix to use) (== GetMainViewport()->Pos for
                              // the main viewport, == (0.0) in most single-viewport applications)
   wabi::GfVec2f

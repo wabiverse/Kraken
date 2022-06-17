@@ -3600,7 +3600,7 @@ wabi::HdDriver &ANCHOR::GetPixarDriver()
   return G_CTX->HydraDriver;
 }
 
-wabi::UsdImagingGLEngine ANCHOR::GetEngineGL()
+wabi::UsdImagingGLEngineSharedPtr ANCHOR::GetEngineGL()
 {
   return G_CTX->GLEngine;
 }

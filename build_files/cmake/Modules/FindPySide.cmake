@@ -59,6 +59,8 @@ endif()
 
 if(UNIX AND NOT APPLE)
   set(PYSIDEUICBINARY /usr/local/bin/pyside6-uic)
+elseif(APPLE)
+  set(PYSIDEUICBINARY /opt/homebrew/bin/pyside6-uic)
 else()
   find_program(PYSIDEUICBINARY NAMES ${pySideUIC} HINTS ${PYSIDE_BIN_DIR})
 endif()

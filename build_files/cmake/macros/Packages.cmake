@@ -57,7 +57,8 @@ elseif(UNIX AND NOT APPLE)
   set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/linux_centos7_x86_64)
   set(LIB_OBJ_EXT "so")
 elseif(APPLE)
-  set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64)
+  # set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64)
+  set(LIBPATH "/opt/homebrew")
   set(LIB_OBJ_EXT "dylib")
 endif()
 
@@ -341,7 +342,7 @@ if(WIN32)
   set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.lib)
 
 elseif(UNIX)
-  add_definitions(-DBoost_NO_BOOST_CMAKE=1)
+  # add_definitions(-DBoost_NO_BOOST_CMAKE=1)
   # set(BOOST_ROOT "${LIBDIR}")
   find_package(Boost REQUIRED
                COMPONENTS
@@ -439,13 +440,13 @@ elseif(UNIX)
   # Enable TBBs Ability to wait for the completion
   # of worker threads.
   find_package(TBB REQUIRED COMPONENTS tbb)
+  add_library(tbb SHARED IMPORTED)
   add_definitions(-DTBB_PREVIEW_WAITING_FOR_WORKERS=1)
   add_definitions(-DTBB_PREVIEW_ISOLATED_TASK_GROUP=1)
-
-  if(APPLE)
-    macos_get_dependency("tbb" TBB_PREFIX)
-  endif()
-  list(APPEND TBB_LIBRARIES tbb)
+  # if(APPLE)
+  #   macos_get_dependency("tbb" TBB_PREFIX)
+  # endif()
+  list(APPEND TBB_LIBRARIES TBB::tbb)
   list(APPEND TBB_INCLUDE_DIRS
     ${TBB_PREFIX}/include
   )

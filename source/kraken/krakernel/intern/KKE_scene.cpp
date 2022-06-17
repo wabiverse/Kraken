@@ -80,7 +80,7 @@ const TfType &Scene::_GetTfType() const
 
 static bool SceneInitData(KrakenPrim *prim)
 {
-  TF_MSG("TEST, scene init");
+  TF_WARN("TEST, scene init");
 
   Scene scene(G.main->stage_id.string(), *prim);
   Stage stage = scene.stage;

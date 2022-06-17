@@ -116,7 +116,7 @@
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor/tuple/to_list.hpp>
 #include <boost/preprocessor/tuple/to_seq.hpp>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include <boost/python.hpp>
 #  include <boost/python/dict.hpp>
 #  include <boost/python/module.hpp>
@@ -126,7 +126,7 @@
 #    undef tolower
 #    undef toupper
 #  endif
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 #include <boost/type_traits/decay.hpp>
 #include <boost/type_traits/has_trivial_assign.hpp>
 #include <boost/type_traits/has_trivial_constructor.hpp>
@@ -138,6 +138,6 @@
 #include <boost/type_traits/is_enum.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 #  include "wabi/base/tf/pySafePython.h"
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON

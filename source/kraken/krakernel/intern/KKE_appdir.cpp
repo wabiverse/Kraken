@@ -231,16 +231,16 @@ static bool test_path(char *targetpath,
   KLI_assert(!(folder_name == NULL && (subfolder_name != NULL)));
   KLI_path_join(targetpath, targetpath_len, path_base, folder_name, subfolder_name, NULL);
   if (check_is_dir == false) {
-    TF_MSG("using without test: '%s'", targetpath);
+    TF_WARN("using without test: '%s'", targetpath);
     return true;
   }
 
   if (KLI_is_dir(targetpath)) {
-    TF_MSG("found '%s'", targetpath);
+    TF_WARN("found '%s'", targetpath);
     return true;
   }
 
-  TF_MSG("missing '%s'", targetpath);
+  TF_WARN("missing '%s'", targetpath);
 
   /* Path not found, don't accidentally use it,
    * otherwise call this function with `check_is_dir` set to false. */
@@ -267,16 +267,16 @@ static bool test_env_path(char *path, const char *envvar, const bool check_is_di
   KLI_strncpy(path, env_path, FILE_MAX);
 
   if (check_is_dir == false) {
-    TF_MSG("using env '%s' without test: '%s'", envvar, env_path);
+    TF_WARN("using env '%s' without test: '%s'", envvar, env_path);
     return true;
   }
 
   if (KLI_is_dir(env_path)) {
-    TF_MSG("env '%s' found: %s", envvar, env_path);
+    TF_WARN("env '%s' found: %s", envvar, env_path);
     return true;
   }
 
-  TF_MSG("env '%s' missing: %s", envvar, env_path);
+  TF_WARN("env '%s' missing: %s", envvar, env_path);
 
   /* Path not found, don't accidentally use it,
    * otherwise call this function with `check_is_dir` set to false. */
@@ -335,9 +335,9 @@ static bool get_path_local_ex(char *targetpath,
 {
   char relfolder[FILE_MAX];
 
-  TF_MSG("folder='%s', subfolder='%s'",
-         STR_OR_FALLBACK(folder_name),
-         STR_OR_FALLBACK(subfolder_name));
+  TF_WARN("folder='%s', subfolder='%s'",
+          STR_OR_FALLBACK(folder_name),
+          STR_OR_FALLBACK(subfolder_name));
 
   if (folder_name) { /* `subfolder_name` may be NULL. */
     KLI_path_join(relfolder, sizeof(relfolder), folder_name, subfolder_name, NULL);
@@ -430,10 +430,10 @@ static bool get_path_user_ex(char *targetpath,
     return false;
   }
 
-  TF_MSG("'%s', folder='%s', subfolder='%s'",
-         user_path,
-         STR_OR_FALLBACK(folder_name),
-         STR_OR_FALLBACK(subfolder_name));
+  TF_WARN("'%s', folder='%s', subfolder='%s'",
+          user_path,
+          STR_OR_FALLBACK(folder_name),
+          STR_OR_FALLBACK(subfolder_name));
 
   /* `subfolder_name` may be NULL. */
   return test_path(targetpath,
@@ -495,10 +495,10 @@ static bool get_path_system_ex(char *targetpath,
     return false;
   }
 
-  TF_MSG("'%s', folder='%s', subfolder='%s'",
-         system_path,
-         STR_OR_FALLBACK(folder_name),
-         STR_OR_FALLBACK(subfolder_name));
+  TF_WARN("'%s', folder='%s', subfolder='%s'",
+          system_path,
+          STR_OR_FALLBACK(folder_name),
+          STR_OR_FALLBACK(subfolder_name));
 
   /* Try `$KRAKENPATH/folder_name/subfolder_name`, `subfolder_name` may be NULL. */
   return test_path(targetpath,
@@ -906,9 +906,9 @@ static void tempdir_session_create(char *tempdir_session,
     }
   }
 
-  TF_MSG_ERROR("Could not generate a temp file name for '%s', falling back to '%s'",
-               tempdir_session,
-               tempdir);
+  TF_WARN("Could not generate a temp file name for '%s', falling back to '%s'",
+          tempdir_session,
+          tempdir);
   KLI_strncpy(tempdir_session, tempdir, tempdir_session_len);
 }
 

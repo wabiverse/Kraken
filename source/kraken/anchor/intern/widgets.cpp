@@ -125,11 +125,11 @@ static bool InputTextFilterCharacter(unsigned int *p_char,
                                      void *user_data,
                                      ANCHORInputSource input_source);
 static int InputTextCalcTextLenAndLineCount(const char *text_begin, const char **out_text_end);
-static GfVec2f InputTextCalcTextSizeW(const AnchorWChar *text_begin,
-                                      const AnchorWChar *text_end,
-                                      const AnchorWChar **remaining = NULL,
-                                      GfVec2f *out_offset = NULL,
-                                      bool stop_on_new_line = false);
+// static GfVec2f InputTextCalcTextSizeW(const AnchorWChar *text_begin,
+//                                       const AnchorWChar *text_end,
+//                                       const AnchorWChar **remaining = NULL,
+//                                       GfVec2f *out_offset = NULL,
+//                                       bool stop_on_new_line = false);
 
 void ANCHOR::TextEx(const char *text, const char *text_end, AnchorTextFlags flags)
 {
@@ -5849,13 +5849,14 @@ bool ANCHOR::InputTextEx(const char *label,
         searches_result_line_no[1] = line_count;
 
       // Calculate 2d position by finding the beginning of the line and measuring distance
-      cursor_offset[0] = InputTextCalcTextSizeW(AnchorStrbolW(searches_input_ptr[0], text_begin),
-                                                searches_input_ptr[0])[0];
+      // cursor_offset[0] = InputTextCalcTextSizeW(AnchorStrbolW(searches_input_ptr[0],
+      // text_begin),
+      //                                           searches_input_ptr[0])[0];
       cursor_offset[1] = searches_result_line_no[0] * g.FontSize;
       if (searches_result_line_no[1] >= 0) {
-        select_start_offset[0] = InputTextCalcTextSizeW(
-          AnchorStrbolW(searches_input_ptr[1], text_begin),
-          searches_input_ptr[1])[0];
+        // select_start_offset[0] = InputTextCalcTextSizeW(
+        //   AnchorStrbolW(searches_input_ptr[1], text_begin),
+        //   searches_input_ptr[1])[0];
         select_start_offset[1] = searches_result_line_no[1] * g.FontSize;
       }
 

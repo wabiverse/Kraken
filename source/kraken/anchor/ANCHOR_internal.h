@@ -41,6 +41,7 @@
 #include <wabi/imaging/hgi/tokens.h>
 
 #include <wabi/usdImaging/usdImagingGL/engine.h>
+#include <wabi/usdImaging/usdImaging/primAdapter.h>
 
 /**
  * Visual Studio warnings */
@@ -2600,7 +2601,7 @@ struct AnchorContext
    * of Hydra Engines -- all using the same
    * underlying & shared Graphics Resources. */
   wabi::HdDriver HydraDriver;
-  wabi::UsdImagingGLEngine GLEngine;
+  wabi::UsdImagingGLEngineSharedPtr GLEngine;
 
   AnchorIO IO;
   AnchorStyle Style;
@@ -3263,9 +3264,9 @@ struct ANCHOR_API AnchorWindow
   // Windows Rectangles' viewer. The main 'OuterRect', omitted as a field, is window->Rect().
   AnchorBBox OuterRectClipped;  // == Window->Rect() just after setup in Begin(). == window->Rect()
                                 // for root window.
-  AnchorBBox InnerRect;      // Inner rectangle (omit title bar, menu bar, scroll bar)
-  AnchorBBox InnerClipRect;  // == InnerRect shrunk by WindowPadding*0.5f on each side, clipped
-                             // within viewport or parent clip rect.
+  AnchorBBox InnerRect;         // Inner rectangle (omit title bar, menu bar, scroll bar)
+  AnchorBBox InnerClipRect;     // == InnerRect shrunk by WindowPadding*0.5f on each side, clipped
+                                // within viewport or parent clip rect.
   AnchorBBox
     WorkRect;  // Initially covers the whole scrolling region. Reduced by containers e.g
                // columns/tables when active. Shrunk by WindowPadding*1.0f on each side. This
@@ -3274,8 +3275,8 @@ struct ANCHOR_API AnchorWindow
                               // columns/tables. Used by e.g. SpanAllColumns functions to easily
                               // access. Stacked containers are responsible for maintaining this.
                               // // FIXME-WORKRECT: Could be a stack?
-  AnchorBBox ClipRect;  // Current clipping/scissoring rectangle, evolve as we are using
-                        // PushClipRect(), etc. == DrawList->clip_rect_stack.back().
+  AnchorBBox ClipRect;        // Current clipping/scissoring rectangle, evolve as we are using
+                              // PushClipRect(), etc. == DrawList->clip_rect_stack.back().
   AnchorBBox
     ContentRegionRect;  // FIXME: This is currently confusing/misleading. It is essentially
                         // WorkRect but not handling of scrolling. We currently rely on it as

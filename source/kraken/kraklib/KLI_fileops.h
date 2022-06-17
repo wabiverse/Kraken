@@ -90,7 +90,7 @@ struct direntry
   struct _stat s;
 #  endif
 #else
-  struct stat s;
+  // struct KLI_stat_t s;
 #endif
 };
 

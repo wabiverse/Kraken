@@ -471,7 +471,7 @@ static bool _ValueVectorToAnyVtArray(VtValue *value,
   return true;
 }
 
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
 
 using _PySeqToVtArrayFn = bool (*)(VtValue *,
                                    std::vector<std::string> *,
@@ -604,7 +604,7 @@ static bool _PyObjToAnyVtArray(VtValue *value,
   return true;
 }
 
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
 
 static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
                                                      std::vector<std::string> *errMsgs,
@@ -625,11 +625,11 @@ static bool _ConvertToValidMetadataDictValueInternal(VtValue *value,
   } else if (value->IsHolding<std::vector<VtValue>>()) {
     allValid &= _ValueVectorToAnyVtArray(value, errMsgs, keyPath);
   }
-#ifdef WABI_PYTHON_SUPPORT_ENABLED
+#ifdef WITH_PYTHON
   else if (value->IsHolding<TfPyObjWrapper>()) {
     allValid &= _PyObjToAnyVtArray(value, errMsgs, keyPath);
   }
-#endif  // WABI_PYTHON_SUPPORT_ENABLED
+#endif  // WITH_PYTHON
   else if (!SdfValueHasValidType(*value)) {
     allValid = false;
     *value = VtValue();

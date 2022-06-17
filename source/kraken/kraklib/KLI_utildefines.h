@@ -746,3 +746,7 @@ typedef unsigned char uchar;
 #  define setenv(x, y, z) _putenv(CHARALL(STRINGALL(x) + "=" + y))
 #  define DebugOutput(w) OutputDebugString(TEXT(w))
 #endif
+
+#ifndef MAX_PATH
+#  define MAX_PATH 260
+#endif /* MAX_PATH */
