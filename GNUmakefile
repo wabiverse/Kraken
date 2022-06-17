@@ -257,7 +257,7 @@ all: .FORCE
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Kraken successfully built, run from: /usr/local/share/kraken/1.50/bin/kraken
+	@echo Kraken successfully built, run from: "$(BUILD_DIR)_release/bin/Kraken.app/Contents/MacOS/KRAKEN"
 	@echo
 
 debug: all
@@ -279,7 +279,7 @@ xcode:
 	$(BUILD_COMMAND) -arch "arm64" -sdk "macosx" -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain"
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken"
+	@echo Kraken successfully built, run from: "$(BUILD_DIR)_release/bin/Kraken.app/Contents/MacOS/KRAKEN"
 	@echo
 
 # -----------------------------------------------------------------------------

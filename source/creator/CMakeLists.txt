@@ -415,7 +415,7 @@ elseif(APPLE)
       maelstrom # <- Pixar monolithic
       # ---------------------------------
     DESTINATION
-      "./lib/."
+      "${TARGETDIR_VER}/lib/."
   )
 else()
   install(
@@ -1178,10 +1178,12 @@ elseif(APPLE)
       ${TARGETDIR_VER}/python/lib
     )
 
-    install(DIRECTORY ${LIBDIR}/python/bin
-      DESTINATION ${TARGETDIR_VER}/python
-      USE_SOURCE_PERMISSIONS
-    )
+    if (EXISTS "/opt/homebrew/Cellar/python@3.9/3.9.13_1/bin")
+      install(DIRECTORY "/opt/homebrew/Cellar/python@3.9/3.9.13_1/bin"
+        DESTINATION ${TARGETDIR_VER}/python
+        USE_SOURCE_PERMISSIONS
+      )
+    endif()
 
     # Needed for distutils/pip
     # get the last part of the include dir, will be 'python{version}{abiflag}',
