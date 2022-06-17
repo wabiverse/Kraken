@@ -32,7 +32,7 @@
 include(gccclangshareddefaults)
 
 if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6)
-    if (Boost_VERSION LESS 106200)
+    if (Boost_VERSION_MACRO LESS 106200)
         # gcc-6 introduces a placement-new warning, which causes problems
         # in boost-1.61 or less, in the boost::function code.
         # boost-1.62 fixes the warning
