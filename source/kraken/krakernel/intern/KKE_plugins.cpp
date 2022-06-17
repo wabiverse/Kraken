@@ -26,6 +26,7 @@
 #include "KKE_main.h"
 
 #include "KLI_time.h"
+#include "KLI_string_utils.h"
 
 #include <wabi/wabi.h>
 
@@ -37,15 +38,22 @@
 
 WABI_NAMESPACE_BEGIN
 
+static char kraken_version_string[48] = "";
+
 void KKE_kraken_plugins_init()
 {
   PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "maelstrom/"));
   PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "plugin/maelstrom/"));
 
   KLI_pretty_time(TfGetAppLaunchTime(), G.main->launch_time);
+  KLI_snprintf(kraken_version_string,
+               ARRAY_SIZE(kraken_version_string),
+               "%d.%d",
+               WABI_VERSION_DECIMAL / 10000,
+               WABI_VERSION_PATCH);
 
   TF_WARN("Kraken Awakens | %s", G.main->launch_time);
-  TF_WARN("Pixar Universe | Maelstrom v%s\n", CHARALL(WABI_VERSION_DECIMAL));
+  TF_WARN("Pixar Universe | Maelstrom v%s", kraken_version_string);
 }
 
 WABI_NAMESPACE_END

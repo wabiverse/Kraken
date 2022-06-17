@@ -36,7 +36,9 @@ std::string kraken_exe_path_init()
 
 std::string kraken_datafiles_path_init()
 {
-#ifdef _WIN32
+#if defined(ARCH_OS_WINDOWS)
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/");
+#elif defined(ARCH_OS_DARWIN)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/");
 #else
   /**
@@ -48,7 +50,9 @@ std::string kraken_datafiles_path_init()
 
 std::string kraken_python_path_init()
 {
-#ifdef _WIN32
+#if defined(ARCH_OS_WINDOWS)
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/python/lib/");
+#elif defined(ARCH_OS_DARWIN)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/python/lib/");
 #else
   return STRCAT(G.main->exe_path, "../python/lib/python3.9/site-packages");
@@ -57,7 +61,9 @@ std::string kraken_python_path_init()
 
 std::string kraken_fonts_path_init()
 {
-#ifdef _WIN32
+#if defined(ARCH_OS_WINDOWS)
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/fonts/");
+#elif defined(ARCH_OS_DARWIN)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/fonts/");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/fonts/");
@@ -66,7 +72,9 @@ std::string kraken_fonts_path_init()
 
 std::string kraken_icon_path_init()
 {
-#ifdef _WIN32
+#if defined(ARCH_OS_WINDOWS)
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/icons/");
+#elif defined(ARCH_OS_DARWIN)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/icons/");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/icons/");
@@ -75,7 +83,9 @@ std::string kraken_icon_path_init()
 
 std::string kraken_startup_file_init()
 {
-#ifdef _WIN32
+#if defined(ARCH_OS_WINDOWS)
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usd");
+#elif defined(ARCH_OS_DARWIN)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usd");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/startup.usd");

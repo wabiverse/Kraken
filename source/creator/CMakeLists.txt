@@ -358,6 +358,9 @@ elseif(APPLE)
   set(TARGETDIR_VER Kraken.app/Contents/Resources/${KRAKEN_VERSION})
   # Skip relinking on cpack / install
   set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+  set_target_properties(kraken PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/lib")
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/lib")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
 endif()
 
 
@@ -415,7 +418,7 @@ elseif(APPLE)
       maelstrom # <- Pixar monolithic
       # ---------------------------------
     DESTINATION
-      "${TARGETDIR_VER}/lib/."
+      "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/lib/."
   )
 else()
   install(
