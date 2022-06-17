@@ -613,11 +613,28 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
 {
   string output;
   string codeName = TfDiagnosticMgr::GetCodeName(code);
-  if (context.IsHidden() || !strcmp(context.GetFunction(), "") || !strcmp(context.GetFile(), "")) {
+
+  /**
+   * Support for console colors.  */
+#if defined(ARCH_OS_WINDOWS)
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hConsole, code);
+  const std::string messageColor = msg;
+#elif defined(ARCH_OS_DARWIN) || defined(ARCH_OS_LINUX)
+  const std::string messageColor = ("\x1B[31m" + msg + "\033[0m\t\t");
+#endif /* defined(ARCH_OS_WINDOWS) || defined (ARCH_OS_LINUX) */
+
+  if (context.IsDisabled()) {
+    output = TfStringPrintf("[%s]%s %s\n",
+                            codeName.c_str(),
+                            ArchIsMainThread() ? "" : " (secondary thread)",
+                            messageColor.c_str());
+  } else if (context.IsHidden() || !strcmp(context.GetFunction(), "") ||
+             !strcmp(context.GetFile(), "")) {
     output = TfStringPrintf("%s%s: %s [%s]\n",
                             codeName.c_str(),
                             ArchIsMainThread() ? "" : " (secondary thread)",
-                            msg.c_str(),
+                            messageColor.c_str(),
                             ArchGetProgramNameForErrors());
   } else {
     output = TfStringPrintf("%s%s: in %s at line %zu of %s -- %s\n",
@@ -626,7 +643,7 @@ std::string TfDiagnosticMgr::FormatDiagnostic(const TfEnum &code,
                             context.GetFunction(),
                             context.GetLine(),
                             context.GetFile(),
-                            msg.c_str());
+                            messageColor.c_str());
   }
 
 #ifdef WITH_PYTHON

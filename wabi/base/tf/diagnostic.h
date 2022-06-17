@@ -346,6 +346,30 @@ void Tf_TerminateHandler();
 #      define TF_RUNTIME_ERROR(...) \
         Tf_PostErrorHelper(TF_CALL_CONTEXT, TF_DIAGNOSTIC_RUNTIME_ERROR_TYPE, __VA_ARGS__)
 
+#      ifdef TF_RUNTIME_MSG
+#        undef TF_RUNTIME_MSG
+#      endif
+#      define TF_RUNTIME_MSG(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_TYPE).IssueStatus
+
+#      ifdef TF_RUNTIME_MSG_SUCCESS
+#        undef TF_RUNTIME_MSG_SUCCESS
+#      endif
+#      define TF_RUNTIME_MSG_SUCCESS(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_SUCCESS_TYPE).IssueStatus
+
+#      ifdef TF_RUNTIME_MSG_ERROR
+#        undef TF_RUNTIME_MSG_ERROR
+#      endif
+#      define TF_RUNTIME_MSG_ERROR(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueError
+
+#      ifdef TF_RUNTIME_MSG_WARNING
+#        undef TF_RUNTIME_MSG_WARNING
+#      endif
+#      define TF_RUNTIME_MSG_WARNING(...) \
+        Tf_DiagnosticHelper(TF_CALL_CONTEXT.Disable(), TF_DIAGNOSTIC_MSG_ERROR_TYPE).IssueWarning
+
 #      ifdef TF_FATAL_ERROR
 #        undef TF_FATAL_ERROR
 #      endif  // TF_FATAL_ERROR
@@ -372,6 +396,26 @@ void Tf_TerminateHandler();
 // * MACRO(ENUM, const std::string *msg)
 // * MACRO(TfDiagnosticInfo, ENUM, const char *, ...)
 // * MACRO(TfDiagnosticInfo, ENUM, const std::string *msg)
+
+#      ifdef TF_MSG
+#        undef TF_MSG
+#      endif  // TF_MSG
+#      define TF_MSG(...) Tf_PostMsgHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+
+#      ifdef TF_MSG_SUCCESS
+#        undef TF_MSG_SUCCESS
+#      endif  // TF_MSG_SUCCESS
+#      define TF_MSG_SUCCESS(...) Tf_PostMsgSuccessHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+
+#      ifdef TF_MSG_ERROR
+#        undef TF_MSG_ERROR
+#      endif  // TF_MSG_ERROR
+#      define TF_MSG_ERROR(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
+
+#      ifdef TF_MSG_WARNING
+#        undef TF_MSG_WARNING
+#      endif  // TF_MSG_ERROR
+#      define TF_MSG_WARNING(...) Tf_PostErrorHelper(TF_CALL_CONTEXT.Disable(), __VA_ARGS__)
 
 #      ifdef TF_WARN
 #        undef TF_WARN

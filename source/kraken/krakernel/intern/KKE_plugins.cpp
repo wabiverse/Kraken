@@ -38,7 +38,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-static char kraken_version_string[48] = "";
+static char maelstrom_version_string[48] = "";
 
 void KKE_kraken_plugins_init()
 {
@@ -46,14 +46,14 @@ void KKE_kraken_plugins_init()
   PlugRegistry::GetInstance().RegisterPlugins(STRCAT(G.main->datafiles_path, "plugin/maelstrom/"));
 
   KLI_pretty_time(TfGetAppLaunchTime(), G.main->launch_time);
-  KLI_snprintf(kraken_version_string,
-               ARRAY_SIZE(kraken_version_string),
+  KLI_snprintf(maelstrom_version_string,
+               ARRAY_SIZE(maelstrom_version_string),
                "%d.%d",
                WABI_VERSION_DECIMAL / 10000,
                WABI_VERSION_PATCH);
 
-  TF_WARN("Kraken Awakens | %s", G.main->launch_time);
-  TF_WARN("Pixar Universe | Maelstrom v%s", kraken_version_string);
+  TF_MSG_SUCCESS("Kraken Awakens | %s", G.main->launch_time);
+  TF_WARN("Pixar Universe | Maelstrom v%s", maelstrom_version_string);
 }
 
 WABI_NAMESPACE_END

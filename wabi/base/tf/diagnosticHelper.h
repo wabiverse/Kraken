@@ -128,6 +128,23 @@ TF_API void Tf_PostWarningHelper(const TfCallContext &context,
                                  const char *fmt,
                                  ...) ARCH_PRINTF_FUNCTION(4, 5);
 
+TF_API void Tf_PostMsgWarningHelper(const TfCallContext &context, const char *fmt, ...)
+  ARCH_PRINTF_FUNCTION(2, 3);
+
+TF_API void Tf_PostMsgWarningHelper(const TfCallContext &context, const std::string &msg);
+
+
+TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const char *fmt, ...)
+  ARCH_PRINTF_FUNCTION(2, 3);
+
+TF_API void Tf_PostMsgSuccessHelper(const TfCallContext &context, const std::string &msg);
+
+
+TF_API void Tf_PostMsgHelper(const TfCallContext &context, const char *fmt, ...)
+  ARCH_PRINTF_FUNCTION(2, 3);
+
+TF_API void Tf_PostMsgHelper(const TfCallContext &context, const std::string &msg);
+
 TF_API void Tf_PostStatusHelper(const TfCallContext &context, const char *fmt, ...)
   ARCH_PRINTF_FUNCTION(2, 3);
 
