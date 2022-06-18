@@ -33,7 +33,8 @@
 # the end of this file, since some of the Find* modules invoked
 # below may wind up stomping over this value.
 
-set(build_shared_libs "${BUILD_SHARED_LIBS}")
+set(BUILD_SHARED_LIBS OFF)
+add_definitions(-DWABI_STATIC)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Set directory path to precompiled libraries
@@ -58,6 +59,7 @@ elseif(UNIX AND NOT APPLE)
   set(LIB_OBJ_EXT "so")
 elseif(APPLE)
   # set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64)
+  set(PYLIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/python)
   set(LIBPATH "/opt/homebrew")
   set(LIB_OBJ_EXT "dylib")
 endif()
@@ -65,6 +67,7 @@ endif()
 # ! Important
 # Convert the relative path to an absolute path.
 string(REPLACE "kraken/../" "" LIBDIR "${LIBPATH}")
+string(REPLACE "wabianimation/../" "" PYLIBDIR "${PYLIBPATH}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}")
 
@@ -188,11 +191,22 @@ if(WIN32)
     $<$<CONFIG:Release>:${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib>
   )
 else()
-  find_package(Python 3.9 COMPONENTS Interpreter Development REQUIRED)
-  set(PYTHON_INCLUDE_DIR ${Python_INCLUDE_DIRS})
-  set(PYTHON_LIBPATH ${Python_LIBRARY_DIRS})
-  set(PYTHON_LIBRARIES ${Python_LIBRARIES})
-  set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+  if (UNIX AND NOT APPLE)
+    find_package(Python 3.9 COMPONENTS Interpreter Development REQUIRED)
+    set(PYTHON_INCLUDE_DIR ${Python_INCLUDE_DIRS})
+    set(PYTHON_LIBPATH ${Python_LIBRARY_DIRS})
+    set(PYTHON_LIBRARIES ${Python_LIBRARIES})
+    set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+  else()
+    set(FOUND_PYTHON ON)
+    set(Python_VERSION_MAJOR "3")
+    set(Python_VERSION_MINOR "9")
+    set(python_version_nodot "${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
+    set(PYTHON_INCLUDE_DIR ${PYLIBDIR}/include/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR})
+    set(PYTHON_LIBPATH ${PYLIBDIR}/lib)
+    set(PYTHON_LIBRARIES ${PYLIBDIR}/lib/libpython${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.a)
+    set(PYTHON_EXECUTABLE ${PYLIBDIR}/bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR})
+  endif()
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
@@ -342,8 +356,7 @@ if(WIN32)
   set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.lib)
 
 elseif(UNIX)
-  # add_definitions(-DBoost_NO_BOOST_CMAKE=1)
-  # set(BOOST_ROOT "${LIBDIR}")
+  set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED
                COMPONENTS
                  atomic
@@ -381,6 +394,12 @@ list(APPEND BOOST_LIBRARIES
   ${Boost_THREAD_LIBRARY}
 )
 
+if (APPLE)
+  # else, we get a linker error finding licudata
+  # when statically linking against boost above.
+  link_directories("/opt/homebrew/opt/icu4c/lib")
+endif()
+
 # Disable superfluous Boost Warnings
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
@@ -389,7 +408,7 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 find_package(Jinja2)
 if(NOT JINJA2_FOUND)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install jinja2)
+  # execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install jinja2)
   find_package(Jinja2 REQUIRED)
 endif()
 
@@ -440,7 +459,7 @@ elseif(UNIX)
   # Enable TBBs Ability to wait for the completion
   # of worker threads.
   find_package(TBB REQUIRED COMPONENTS tbb)
-  add_library(tbb SHARED IMPORTED)
+  add_library(tbb STATIC IMPORTED)
   add_definitions(-DTBB_PREVIEW_WAITING_FOR_WORKERS=1)
   add_definitions(-DTBB_PREVIEW_ISOLATED_TASK_GROUP=1)
   # if(APPLE)
@@ -706,4 +725,4 @@ endif()
 
 # ----------------------------------------------
 
-set(BUILD_SHARED_LIBS "${build_shared_libs}")
+set(BUILD_SHARED_LIBS OFF)

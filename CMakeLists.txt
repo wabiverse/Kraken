@@ -164,9 +164,10 @@ get_kraken_version()
 set(TARGETDIR_VER ${KRAKEN_VERSION})
 
 #-----------------------------------------------------------------------------
-# Build as shared for plugin support and user extensibility.
+# Build as static.
 
-option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build all libraries as shared libraries" OFF)
+add_definitions(-DWABI_STATIC)
 
 #-----------------------------------------------------------------------------
 # Build Options

@@ -52,6 +52,7 @@ set(SRC
 
 set(LIB
   maelstrom
+  maelstrom_static
   kraken_anchor
   kraken_editor_spacefile
   kraken_editor_screen

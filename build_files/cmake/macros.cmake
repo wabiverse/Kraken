@@ -287,7 +287,7 @@ function(kraken_add_lib__impl
     set_property(TARGET ${name} PROPERTY VS_WINRT_COMPONENT OFF)
   endif()
 
-  add_dependencies(${name} maelstrom)
+  add_dependencies(${name} maelstrom_static)
   
 
   # if(UNIX)

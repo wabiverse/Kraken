@@ -16,7 +16,7 @@ if(WIN32)
     list(APPEND optionalLibs ${PXRCORE_LIBRARY})
     list(APPEND optionalLibs ${PRMAN_LIBRARY})
 elseif(APPLE)
-    set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup -headerpad_max_install_names" )
+    set( CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -undefined dynamic_lookup -headerpad_max_install_names" )
 endif()
 
 set(optionalIncludeDirs "")

@@ -24,6 +24,7 @@ set(SRC
 
 set(LIB
   maelstrom
+  maelstrom_static
   kraken_lib
   kraken_kernel
   kraken_universe

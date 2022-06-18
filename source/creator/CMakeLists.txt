@@ -27,6 +27,7 @@ kraken_include_dirs(
 
 set(LIB
   maelstrom
+  maelstrom_static
   kraken_wm
   kraken_kernel
   kraken_luxo
@@ -300,6 +301,7 @@ if(WITH_PYTHON_MODULE)
 else()
   add_executable(kraken ${EXETYPE} ${SRC})
   add_dependencies(kraken maelstrom)
+  add_dependencies(kraken maelstrom_static)
   if(WIN32)
     kraken_precompile_headers(kraken pch.cpp pch.h)
     set_target_properties(kraken PROPERTIES 
@@ -320,10 +322,13 @@ endif()
 # some of the Pokemon, so we link whole archive
 if(WIN32)
   target_link_options(kraken PUBLIC "LINKER:/WHOLEARCHIVE:maelstrom")
+  target_link_options(kraken PUBLIC "LINKER:/WHOLEARCHIVE:maelstrom_static")
 elseif(APPLE)
   target_link_libraries(kraken -Wl,-force_load $<TARGET_FILE:maelstrom>)
+  target_link_libraries(kraken -Wl,-force_load $<TARGET_FILE:maelstrom_static>)
 elseif(UNIX AND NOT APPLE)
   target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:maelstrom> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
+  target_link_libraries(kraken "-Wl,--whole-archive $<TARGET_FILE:maelstrom_static> -Wl,--no-whole-archive ${TBB_LIBRARIES}")
 endif()
 
 set(KRAKEN_TEXT_FILES
@@ -405,29 +410,32 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(UNIX AND NOT APPLE)
-  install(
-    TARGETS
-      maelstrom # <- Pixar monolithic
-      # ---------------------------------
-    DESTINATION
-      "/usr/local/${TARGETDIR_VER}/lib/."
-  )
+  # don't need to install any shared libraries.
+  # install(
+  #   TARGETS
+  #     maelstrom # <- Pixar monolithic
+  #     # ---------------------------------
+  #   DESTINATION
+  #     "/usr/local/${TARGETDIR_VER}/lib/."
+  # )
 elseif(APPLE)
-  install(
-    TARGETS
-      maelstrom # <- Pixar monolithic
-      # ---------------------------------
-    DESTINATION
-      "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/lib/."
-  )
+  # don't need to install any shared libraries.
+  # install(
+  #   TARGETS
+  #     maelstrom # <- Pixar monolithic
+  #     # ---------------------------------
+  #   DESTINATION
+  #     "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/lib/."
+  # )
 else()
-  install(
-    TARGETS
-      maelstrom # <- Pixar monolithic
-      # ---------------------------------
-    DESTINATION
-      "./AppX/."
-  )
+  # don't need to install any shared libraries.
+  # install(
+  #   TARGETS
+  #     maelstrom # <- Pixar monolithic
+  #     # ---------------------------------
+  #   DESTINATION
+  #     "./AppX/."
+  # )
 endif()
 
 if(WIN32)
@@ -1177,16 +1185,9 @@ elseif(APPLE)
   if(WITH_PYTHON)
     # Copy the python libs into the install directory
     install_dir(
-      ${PYTHON_LIBPATH}
+      ${PYTHON_LIBPATH}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}
       ${TARGETDIR_VER}/python
     )
-
-    if (EXISTS "/opt/homebrew/Cellar/python@3.9/3.9.13_1/bin")
-      install(DIRECTORY "/opt/homebrew/Cellar/python@3.9/3.9.13_1/bin"
-        DESTINATION ${TARGETDIR_VER}/python
-        USE_SOURCE_PERMISSIONS
-      )
-    endif()
 
     # Needed for distutils/pip
     # get the last part of the include dir, will be 'python{version}{abiflag}',

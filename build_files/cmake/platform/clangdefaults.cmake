@@ -31,7 +31,7 @@
 
 include(gccclangshareddefaults)
 
-set(_WABI_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS}")
+set(_WABI_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS}")
 
 # clang annoyingly warns about the -pthread option if it's only linking.
 if(CMAKE_USE_PTHREADS_INIT)

@@ -304,7 +304,7 @@ function(wabi_library NAME)
         endif()
 
         set(prefix "")
-        set(suffix ${CMAKE_SHARED_LIBRARY_SUFFIX})
+        set(suffix ${CMAKE_STATIC_LIBRARY_SUFFIX})
     else()
         # If the caller didn't specify the library type then choose the
         # type now.
@@ -312,7 +312,7 @@ function(wabi_library NAME)
             if(_building_monolithic)
                 set(args_TYPE "OBJECT")
             elseif(BUILD_SHARED_LIBS)
-                set(args_TYPE "SHARED")
+                set(args_TYPE "STATIC")
             else()
                 set(args_TYPE "STATIC")
             endif()
@@ -322,7 +322,7 @@ function(wabi_library NAME)
         if(args_TYPE STREQUAL "STATIC")
             set(suffix ${CMAKE_STATIC_LIBRARY_SUFFIX})
         else()
-            set(suffix ${CMAKE_SHARED_LIBRARY_SUFFIX})
+            set(suffix ${CMAKE_STATIC_LIBRARY_SUFFIX})
         endif()
     endif()
 
@@ -371,7 +371,7 @@ macro(wabi_shared_library NAME)
         # Import necessary NuGet packages for all Pixar USD shared libraries.
         kraken_import_nuget_packages("${WABI_PREFIX}/${NAME}/${NAME}")
     endif()
-    wabi_library(${NAME} TYPE "SHARED" ${ARGN})
+    wabi_library(${NAME} TYPE "STATIC" ${ARGN})
 endmacro(wabi_shared_library)
 
 macro(wabi_static_library NAME)
@@ -498,7 +498,7 @@ function(wabi_build_test_shared_lib LIBRARY_NAME)
     )
 
     add_library(${LIBRARY_NAME}
-        SHARED
+        STATIC
         ${bt_CPPFILES}
     )
     _wabi_target_link_libraries(${LIBRARY_NAME}
@@ -524,7 +524,7 @@ function(wabi_build_test_shared_lib LIBRARY_NAME)
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${testPlugInfoSrcPath}")
         set(TEST_PLUG_INFO_RESOURCE_PATH "Resources")
         set(TEST_PLUG_INFO_ROOT "..")
-        set(LIBRARY_FILE "${CMAKE_SHARED_LIBRARY_PREFIX}${LIBRARY_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+        set(LIBRARY_FILE "${CMAKE_STATIC_LIBRARY_PREFIX}${LIBRARY_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
         set(testPlugInfoLibDir "tests/${bt_INSTALL_PREFIX}/lib/${LIBRARY_NAME}")
         set(testPlugInfoResourceDir "${testPlugInfoLibDir}/${TEST_PLUG_INFO_RESOURCE_PATH}")
@@ -674,7 +674,7 @@ function(wabi_register_test TEST_NAME)
     endif()
 
     cmake_parse_arguments(bt
-        "RUN_SERIAL;PYTHON;REQUIRES_SHARED_LIBS;REQUIRES_PYTHON_MODULES"
+        "RUN_SERIAL;PYTHON;REQUIRES_STATIC_LIBS;REQUIRES_PYTHON_MODULES"
         "CUSTOM_PYTHON;COMMAND;STDOUT_REDIRECT;STDERR_REDIRECT;POST_COMMAND;POST_COMMAND_STDOUT_REDIRECT;POST_COMMAND_STDERR_REDIRECT;PRE_COMMAND;PRE_COMMAND_STDOUT_REDIRECT;PRE_COMMAND_STDERR_REDIRECT;FILES_EXIST;FILES_DONT_EXIST;CLEAN_OUTPUT;EXPECTED_RETURN_CODE;TESTENV"
         "DIFF_COMPARE;ENV;PRE_PATH;POST_PATH"
         ${ARGN}
@@ -687,7 +687,7 @@ function(wabi_register_test TEST_NAME)
         # multiple copies of symbols and will likely re-execute
         # ARCH_CONSTRUCTOR and registration functions, which will almost
         # certainly cause problems.
-        if(bt_REQUIRES_SHARED_LIBS)
+        if(bt_REQUIRES_STATIC_LIBS)
             message(STATUS "Skipping test ${TEST_NAME}, shared libraries required")
             return()
         endif()
@@ -995,7 +995,7 @@ function(wabi_maelstrom_prologue)
             )
 
             # Our shared library.
-            add_library(maelstrom SHARED "${CMAKE_CURRENT_BINARY_DIR}/maelstrom.cpp")
+            add_library(maelstrom STATIC "${CMAKE_CURRENT_BINARY_DIR}/maelstrom.cpp")
             _get_folder("" folder)
             set_target_properties(maelstrom
                 PROPERTIES
@@ -1188,7 +1188,7 @@ function(wabi_monolithic_epilogue)
     set(export "${export}# or include maelstrom-targets-$<CONFIG>.cmake in your own build and generate your\n")
     set(export "${export}# own export file.  Configure with WABI_MONOLITHIC_IMPORT set to the path of\n")
     set(export "${export}# the export file.\n")
-    set(export "${export}add_library(maelstrom SHARED IMPORTED)\n")
+    set(export "${export}add_library(maelstrom STATIC IMPORTED)\n")
     set(export "${export}set_property(TARGET maelstrom PROPERTY IMPORTED_LOCATION FIXME)\n")
     set(export "${export}#set_property(TARGET maelstrom PROPERTY IMPORTED_IMPLIB FIXME)\n")
     set(export "${export}set_property(TARGET maelstrom PROPERTY INTERFACE_COMPILE_DEFINITIONS $<TARGET_PROPERTY:maelstrom_static,INTERFACE_COMPILE_DEFINITIONS>)\n")

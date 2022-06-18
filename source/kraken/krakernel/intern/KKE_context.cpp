@@ -138,6 +138,10 @@ bool CTX_py_init_get(kContext *C)
 void CTX_py_init_set(kContext *C, bool value)
 {
   C->data.py_init = value;
+
+  if(value == true) {
+    TF_MSG_SUCCESS("The python runtime has been initialized.");
+  }
 }
 
 /**

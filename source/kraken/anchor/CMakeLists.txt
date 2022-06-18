@@ -113,6 +113,7 @@ set(INC_SYS
 
 set(LIB
   maelstrom
+  maelstrom_static
   kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}

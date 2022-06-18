@@ -54,6 +54,7 @@ set(INC_SYS
 
 set(LIB
   maelstrom
+  maelstrom_static
   kraken_kernel
   kraken_luxo
   kraken_universe

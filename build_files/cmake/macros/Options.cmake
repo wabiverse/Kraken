@@ -87,7 +87,7 @@ set(WABI_OBJECT_LIBS ""
     "Aggregation of all core libraries built as OBJECT libraries."
 )
 
-set(WABI_LIB_PREFIX ${CMAKE_SHARED_LIBRARY_PREFIX}
+set(WABI_LIB_PREFIX ${CMAKE_STATIC_LIBRARY_PREFIX}
     CACHE
     STRING
     "Prefix for build library name"

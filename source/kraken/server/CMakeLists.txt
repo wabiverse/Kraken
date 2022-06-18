@@ -21,6 +21,7 @@ set(INC_SYS
 
 set(LIB
   maelstrom
+  maelstrom_static
   kraken_wm
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

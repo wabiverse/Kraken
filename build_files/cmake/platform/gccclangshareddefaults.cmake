@@ -35,11 +35,11 @@
 include(Options)
 
 # Enable all warnings.
-set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -Wall")
+set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -Wall")
 
 # Errors are warnings in strict build mode.
 if (${WABI_STRICT_BUILD_MODE})
-    set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -Werror")
+    set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -Werror")
 endif()
 
 # We use hash_map, suppress deprecation warning.
@@ -59,15 +59,15 @@ endif()
 # the linker to pull in the pthread library if necessary so we also clear
 # WABI_THREAD_LIBS.
 if(CMAKE_USE_PTHREADS_INIT)
-    set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -pthread")
+    set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -pthread")
     set(WABI_THREAD_LIBS "")
 endif()
 
 # Enable CXX 20 features.
-set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -std=c++20")
+set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -std=c++20")
 
 # Enable position independent code.
-set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -fPIC")
+set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -fPIC")
 
 # Enable debugging symbols.
-set(_WABI_GCC_CLANG_SHARED_CXX_FLAGS "${_WABI_GCC_CLANG_SHARED_CXX_FLAGS} -g")
+set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -g")

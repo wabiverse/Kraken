@@ -942,7 +942,7 @@ function(_wabi_python_module NAME)
 
     # Add the module target.
     add_library(${LIBRARY_NAME}
-        SHARED
+        STATIC
         ${args_CPPFILES}
     )
     add_dependencies(python ${LIBRARY_NAME})
@@ -1174,7 +1174,7 @@ function(_wabi_library NAME)
     else()
         # Building an explicitly shared library or plugin.
         add_library(${NAME}
-            SHARED
+            STATIC
             ${args_CPPFILES}
             ${args_PUBLIC_HEADERS}
             ${args_PRIVATE_HEADERS}
