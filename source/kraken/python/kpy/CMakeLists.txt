@@ -39,6 +39,8 @@ set(SRC
   intern/kpy_utildefines.h
   intern/kpy.h
 
+  intern/wabi_python.h
+
   KPY_api.h
   KPY_extern_python.h
   KPY_extern_run.h
@@ -55,6 +57,40 @@ set(INC_SYS
 set(LIB
   maelstrom
   maelstrom_static
+  _tf
+  _gf
+  _trace
+  _work
+  _plug
+  _vt
+  _ar
+  _kind
+  _sdf
+  _ndr
+  _sdr
+  _pcp
+  _usd
+  _usdGeom
+  _usdVol
+  _usdMedia
+  _usdShade
+  _usdLux
+  _usdRender
+  _usdHydra
+  _usdRi
+  _usdSkel
+  _usdUI
+  _usdUtils
+  _usdPhysics
+  _usdAbc
+  _usdDraco
+  _garch
+  _cameraUtil
+  _pxOsd
+  _glf
+  _usdImagingGL
+  _usdAppUtils
+  _usdviewq
   kraken_kernel
   kraken_luxo
   kraken_universe

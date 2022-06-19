@@ -429,8 +429,9 @@ PyObject *KPY_app_struct(void)
   /* prevent user from creating new instances */
   KrakenAppType.tp_init = NULL;
   KrakenAppType.tp_new = NULL;
-  KrakenAppType.tp_hash = (hashfunc)
-    _Py_HashPointer; /* without this we can't do set(sys.modules). */
+
+  /* without this we can't do set(sys.modules). */
+  KrakenAppType.tp_hash = (hashfunc) _Py_HashPointer; 
 
   /* kindof a hack ontop of PyStructSequence */
   py_struct_seq_getset_init();

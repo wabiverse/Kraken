@@ -50,9 +50,12 @@
 #include "kpy_library.h"
 #include "kpy_uni.h"
 
+#include "wabi_python.h"
+
 WABI_NAMESPACE_BEGIN
 
 PyObject *kpy_package_py = NULL;
+PyObject *wabi_package_py = NULL;
 
 PyDoc_STRVAR(kpy_script_paths_doc,
              ".. function:: script_paths()\n"
@@ -482,6 +485,88 @@ void KPy_init_modules(struct kContext *C)
 
   /* add our own modules dir, this is a python package */
   kpy_package_py = kpy_import_test("kpy");
+}
+
+static PyObject *wabi_import_test(const char *modname)
+{
+  PyObject *mod = PyImport_ImportModuleLevel(modname, NULL, NULL, NULL, 0);
+
+  if (mod) {
+    Py_DECREF(mod);
+  } else {
+    PyErr_Print();
+    PyErr_Clear();
+  }
+
+  return mod;
+}
+
+/********************************************************************************
+ * Description: Creates the wabi module and adds it to sys.modules for importing
+ ********************************************************************************/
+void WABIPy_init_modules(struct kContext *C)
+{
+  PointerLUXO ctx_ptr;
+  PyObject *mod;
+
+  /* Needs to be first since this dir is needed for future modules */
+  const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
+
+  if (modpath) {
+    // printf("kpy: found module path '%s'.\n", modpath);
+    PyObject *sys_path = PySys_GetObject("path"); /* borrow */
+    PyObject *py_modpath = PyUnicode_FromString(modpath);
+    PyList_Insert(sys_path, 0, py_modpath); /* add first */
+    Py_DECREF(py_modpath);
+  } else {
+    printf("wabi: couldn't find 'scripts/modules', kraken probably won't start.\n");
+  }
+  /* stand alone utility modules not related to kraken directly */
+  // IDProp_Init_Types(); /* not actually a submodule, just types */
+
+  mod = PyModule_New("_wabi");
+
+  /* add the module so we can import it */
+  PyDict_SetItemString(PyImport_GetModuleDict(), "_wabi", mod);
+  Py_DECREF(mod);
+
+  PyModule_AddObject(mod, "Tf", PyInit__tf());
+  PyModule_AddObject(mod, "Gf", PyInit__gf());
+  PyModule_AddObject(mod, "Trace", PyInit__trace());
+  PyModule_AddObject(mod, "Work", PyInit__work());
+  PyModule_AddObject(mod, "Plug", PyInit__plug());
+  PyModule_AddObject(mod, "Vt", PyInit__vt());
+  PyModule_AddObject(mod, "Ar", PyInit__ar());
+  PyModule_AddObject(mod, "Kind", PyInit__kind());
+  PyModule_AddObject(mod, "Sdf", PyInit__sdf());
+  PyModule_AddObject(mod, "Ndr", PyInit__ndr());
+  PyModule_AddObject(mod, "Sdr", PyInit__sdr());
+  PyModule_AddObject(mod, "Pcp", PyInit__pcp());
+  PyModule_AddObject(mod, "Usd", PyInit__usd());
+  PyModule_AddObject(mod, "UsdGeom", PyInit__usdGeom());
+  PyModule_AddObject(mod, "UsdVol", PyInit__usdVol());
+  PyModule_AddObject(mod, "UsdMedia", PyInit__usdMedia());
+  PyModule_AddObject(mod, "UsdShade", PyInit__usdShade());
+  PyModule_AddObject(mod, "UsdLux", PyInit__usdLux());
+  PyModule_AddObject(mod, "UsdRender", PyInit__usdRender());
+  PyModule_AddObject(mod, "UsdHydra", PyInit__usdHydra());
+  PyModule_AddObject(mod, "UsdRi", PyInit__usdRi());
+  PyModule_AddObject(mod, "UsdSkel", PyInit__usdSkel());
+  PyModule_AddObject(mod, "UsdUI", PyInit__usdUI());
+  PyModule_AddObject(mod, "UsdUtils", PyInit__usdUtils());
+  PyModule_AddObject(mod, "UsdPhysics", PyInit__usdPhysics());
+  PyModule_AddObject(mod, "UsdAbc", PyInit__usdAbc());
+  PyModule_AddObject(mod, "UsdDraco", PyInit__usdDraco());
+  PyModule_AddObject(mod, "Garch", PyInit__garch());
+  PyModule_AddObject(mod, "CameraUtil", PyInit__cameraUtil());
+  PyModule_AddObject(mod, "PxOsd", PyInit__pxOsd());
+  PyModule_AddObject(mod, "Glf", PyInit__glf());
+  PyModule_AddObject(mod, "UsdImagingGL", PyInit__usdImagingGL());
+  PyModule_AddObject(mod, "UsdAppUtils", PyInit__usdAppUtils());
+  PyModule_AddObject(mod, "Usdviewq", PyInit__usdviewq());
+
+  /* add our own modules dir, this is a python package */
+  wabi_package_py = wabi_import_test("wabi");
 }
 
 WABI_NAMESPACE_END

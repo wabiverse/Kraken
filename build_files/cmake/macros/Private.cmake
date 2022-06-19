@@ -176,12 +176,12 @@ function(_install_python LIBRARY_NAME)
         # even if we are in the third_party project. This means the import will always
         # look like 'from wabi import X'. We need to do this per-loop iteration because
         # the installDest may be different due to the presence of subdirs.
-        install(
-            FILES
-                ${filesToInstall}
-            DESTINATION
-                "${installDest}"
-        )
+        # install(
+        #     FILES
+        #         ${filesToInstall}
+        #     DESTINATION
+        #         "${installDest}"
+        # )
     endforeach()
 
     # Add the target.

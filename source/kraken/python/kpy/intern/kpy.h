@@ -35,6 +35,9 @@ struct kContext;
 void KPy_init_modules(struct kContext *C);
 extern PyObject *kpy_package_py;
 
+void WABIPy_init_modules(struct kContext *C);
+extern PyObject *wabi_package_py;
+
 /* kpy_interface_atexit.cpp */
 void KPY_atexit_register(void);
 void KPY_atexit_unregister(void);

@@ -404,21 +404,21 @@ function(wabi_setup_python)
 
     # Install a wabi __init__.py with an appropriate __all__
     if(UNIX AND NOT APPLE)
-        _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
+        # _get_install_dir("/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi" installPrefix)
     elseif(APPLE)
-        _get_install_dir("${TARGETDIR_VER}/scripts/modules/wabi" installPrefix)
+        # _get_install_dir("${TARGETDIR_VER}/scripts/modules/wabi" installPrefix)
     elseif(WIN32)
-        _get_install_dir("${TARGETDIR_VER}/scripts/modules/wabi" installPrefix)
+        # _get_install_dir("${TARGETDIR_VER}/scripts/modules/wabi" installPrefix)
     endif()
 
-    file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/generated_modules_init.py"
-        "__all__ = [${pyModulesStr}]\n")
+    # file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/generated_modules_init.py"
+    #     "__all__ = [${pyModulesStr}]\n")
 
-    install(
-        FILES "${CMAKE_CURRENT_BINARY_DIR}/generated_modules_init.py"
-        DESTINATION ${installPrefix}
-        RENAME "__init__.py"
-    )
+    # install(
+    #     FILES "${CMAKE_CURRENT_BINARY_DIR}/generated_modules_init.py"
+    #     DESTINATION ${installPrefix}
+    #     RENAME "__init__.py"
+    # )
 endfunction() # wabi_setup_python
 
 function (wabi_create_test_module MODULE_NAME)
