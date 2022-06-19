@@ -89,7 +89,7 @@ struct WorkSpace : public KrakenPrim
 
 WorkSpace::WorkSpace(kContext *C, const SdfPath &stagepath)
   : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
-    path(KrakenPrim::GetPath()),
+    path(stagepath),
     name(EMPTY /*CreateNameAttr(DEFAULT_TOKEN("Workspace"))*/),
     screen_rel(EMPTY /*CreateScreenRel()*/),
     layouts(EMPTY),

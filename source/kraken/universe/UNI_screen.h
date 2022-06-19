@@ -99,7 +99,7 @@ struct kScreen : public KrakenPrim
 
 kScreen::kScreen(kContext *C, const SdfPath &stagepath)
   : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
-    path(KrakenPrim::GetPath()),
+    path(stagepath),
     align(EMPTY /*CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))*/),
     areas_rel(EMPTY /*CreateAreasRel()*/),
     verts(EMPTY),

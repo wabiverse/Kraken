@@ -1185,7 +1185,7 @@ elseif(APPLE)
   if(WITH_PYTHON)
     # Copy the python bin into the install directory
     install(
-      FILES ${PYTHON_EXECUTABLE}
+      PROGRAMS ${PYTHON_EXECUTABLE}
       DESTINATION ${TARGETDIR_VER}/python/bin
     )
 
