@@ -1183,10 +1183,16 @@ elseif(APPLE)
 
   # python
   if(WITH_PYTHON)
+    # Copy the python bin into the install directory
+    install(
+      FILES ${PYTHON_EXECUTABLE}
+      DESTINATION ${TARGETDIR_VER}/python/bin
+    )
+
     # Copy the python libs into the install directory
     install_dir(
-      ${PYTHON_LIBPATH}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}
-      ${TARGETDIR_VER}/python
+      ${PYTHON_LIBPATH}/
+      ${TARGETDIR_VER}/python/lib
     )
 
     # Needed for distutils/pip
