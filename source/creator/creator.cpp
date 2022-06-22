@@ -102,9 +102,6 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Initialize main Runtime. */
   WM_init(C);
 
-  /* Initialize all pixar modules. */
-  KKE_kraken_python_init(C);
-
   /* Initialize kraken python module. */
   CTX_py_init_set(C, true);
 

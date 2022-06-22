@@ -268,6 +268,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
   /* kpy.* and lets us import it */
   KPy_init_modules(C);
 
+  /* wabi.* all pixar modules. */
   WABIPy_init_modules(C);
 
   pyuni_alloc_types();
