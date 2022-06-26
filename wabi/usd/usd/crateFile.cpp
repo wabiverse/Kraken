@@ -3764,7 +3764,7 @@ namespace Usd_CrateFile
         if (hasSibling) {
           // Branch off a parallel task for the sibling subtree.
           auto siblingOffset = reader.template Read<int64_t>();
-          dispatcher.Run([this, reader, siblingOffset, &dispatcher, parentPath]() mutable {
+          dispatcher.Run([&]() {
             // XXX Remove these tags when bug #132031 is addressed
             TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
             TfAutoMallocTag2 tag2("Usd_CrateFile::CrateFile::Open", "_ReadPaths");
@@ -3883,13 +3883,7 @@ namespace Usd_CrateFile
             return;
           }
 #endif
-          dispatcher.Run([this,
-                          &pathIndexes,
-                          &elementTokenIndexes,
-                          &jumps,
-                          siblingIndex,
-                          &dispatcher,
-                          parentPath]() mutable {
+          dispatcher.Run([&]() {
             // XXX Remove these tags when bug #132031 is addressed
             TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
             TfAutoMallocTag2 tag2("Usd_CrateFile::CrateFile::Open", "_ReadPaths");

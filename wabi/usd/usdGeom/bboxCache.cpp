@@ -81,12 +81,12 @@ class UsdGeomBBoxCache::_BBoxTask
   {
     return _owner;
   }
-  void operator()()
+  void operator()() const
   {
     // Do not save state here; all state should be accumulated externally.
     _owner->_ResolvePrim(this, _primContext, _inverseComponentCtm);
   }
-  _ThreadXformCache *GetXformCaches()
+  _ThreadXformCache *GetXformCaches() const
   {
     return _xfCaches;
   }
@@ -1079,7 +1079,7 @@ bool UsdGeomBBoxCache::_GetBBoxFromExtentsHint(const UsdGeomModelAPI &geomModel,
   return true;
 }
 
-void UsdGeomBBoxCache::_ResolvePrim(_BBoxTask *task,
+void UsdGeomBBoxCache::_ResolvePrim(const _BBoxTask *task,
                                     const _PrimContext &primContext,
                                     const GfMatrix4d &inverseComponentCtm)
 {

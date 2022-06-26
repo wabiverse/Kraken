@@ -45,6 +45,8 @@
 #include <tbb/task.h>
 #if !WITH_TBB_LEGACY
 #  include <tbb/task_group.h>
+#  include <tbb/task_scheduler_observer.h>
+#  include <tbb/global_control.h>
 #endif /* WITH_TBB_LEGACY */
 
 #include <functional>
@@ -120,24 +122,28 @@ class WorkDispatcher
   // Function invoker helper that wraps the invocation with an ErrorMark so we
   // can transmit errors that occur back to the thread that Wait() s for tasks
   // to complete.
-  template<class Fn> struct _InvokerTask
+  template <class Fn>
+  struct _InvokerTask
   {
-    explicit _InvokerTask(Fn &&fn, _ErrorTransports *err) : _fn(std::move(fn)), _errors(err) {}
+    explicit _InvokerTask(Fn &&fn,  _ErrorTransports *err)
+      : _fn(std::move(fn)), 
+        _errors(err)
+    {}
 
-    explicit _InvokerTask(Fn const &fn, _ErrorTransports *err) : _fn(fn), _errors(err) {}
+    explicit _InvokerTask(Fn const &fn, _ErrorTransports *err) 
+      : _fn(fn), 
+        _errors(err)
+    {}
 
     void operator()() const
     {
       TfErrorMark m;
-#  if FIX_ME
       _fn();
-#  endif /* FIX_ME */
       if (!m.IsClean())
         WorkDispatcher::_TransportErrors(m, _errors);
     }
 
    private:
-
     Fn _fn;
     _ErrorTransports *_errors;
   };

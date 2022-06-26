@@ -788,7 +788,7 @@ class Usd_CrateDataImpl
       TfAutoMallocTag tag2("field data");
       auto &fieldValuePairs = liveFieldSets[FieldSetIndex(fsBegin - fieldSets.begin())];
 
-      dispatcher.Run([this, fsBegin, fsEnd, &fields, &fieldValuePairs]() mutable {
+      dispatcher.Run([this, &fsBegin, fsEnd, &fields, &fieldValuePairs]() {
         // XXX Won't need first two tags when bug #132031 is
         // addressed
         TfAutoMallocTag2 tag("Usd", "Usd_CrateDataImpl::Open");
