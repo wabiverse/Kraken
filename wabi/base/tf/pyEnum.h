@@ -33,6 +33,7 @@
 #include "wabi/base/tf/pyObjWrapper.h"
 #include "wabi/base/tf/pyUtils.h"
 #include "wabi/base/tf/type.h"
+#include "wabi/base/tf/wrapTypeHelpers.h"
 
 #include "wabi/base/arch/demangle.h"
 #include "wabi/base/tf/enum.h"
@@ -93,6 +94,10 @@ class Tf_PyEnumRegistry
 
   template<typename T> void RegisterEnumConversions()
   {
+    if (TfPyRegistry<T>::IsTypeRegistered()) {
+      return;
+    }
+
     // Register conversions to and from python.
     boost::python::to_python_converter<T, _EnumToPython<T>>();
     _EnumFromPython<T>();
@@ -104,6 +109,10 @@ class Tf_PyEnumRegistry
   {
     _EnumFromPython()
     {
+      if (TfPyRegistry<T>::IsTypeRegistered()) {
+        return;
+      }
+
       boost::python::converter::registry::insert(&convertible,
                                                  &construct,
                                                  boost::python::type_id<T>());
@@ -394,6 +403,11 @@ template<typename T, bool IsScopedEnum = !std::is_convertible<T, int>::value> st
   explicit TfPyWrapEnum(std::string const &name = std::string())
   {
     using namespace boost::python;
+
+    /* We don't want any duplicates. */
+    if (TfPyRegistry<T>::IsTypeRegistered()) {
+      return;
+    }
 
     const bool explicitName = !name.empty();
 

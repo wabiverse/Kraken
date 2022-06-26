@@ -43,6 +43,7 @@
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyEnum.h"
 #include "wabi/base/tf/pyStaticTokens.h"
+#include "wabi/base/tf/wrapTypeHelpers.h"
 
 #include "wabi/base/vt/valueFromPython.h"
 
@@ -84,6 +85,10 @@ namespace
 
     Sdf_VariantSelectionMapConverter()
     {
+      if (TfPyRegistry<Sdf_VariantSelectionMapConverter>::IsTypeRegistered()) {
+        return;
+      }
+      
       boost::python::converter::registry::push_back(
         &Sdf_VariantSelectionMapConverter::convertible,
         &Sdf_VariantSelectionMapConverter::construct,
