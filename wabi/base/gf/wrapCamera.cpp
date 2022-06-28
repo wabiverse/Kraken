@@ -34,6 +34,7 @@
 #include "wabi/base/gf/camera.h"
 #include "wabi/base/gf/frustum.h"
 #include "wabi/base/tf/pyEnum.h"
+#include "wabi/base/tf/wrapTypeHelpers.h"
 #include "wabi/wabi.h"
 
 #include <boost/python/operators.hpp>
@@ -102,6 +103,10 @@ namespace
 void wrapCamera()
 {
   typedef GfCamera This;
+
+  if (TfPyRegistry<GfCamera>::IsTypeRegistered()) {
+    return;
+  }
 
   class_<This> c("Camera");
 

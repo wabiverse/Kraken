@@ -22,8 +22,6 @@
  * Gadget Vault.
  */
 
-#pragma once
-
 #include "KLI_api.h"
 #include "KLI_assert.h"
 #include "KLI_fileops.h"

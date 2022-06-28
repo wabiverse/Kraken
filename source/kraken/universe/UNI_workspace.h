@@ -73,7 +73,7 @@ struct WorkSpaceDataRelation
 
 typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
 
-struct WorkSpace : public KrakenPrim
+struct WorkSpace : public UsdPrim
 {
   SdfPath path;
 
@@ -88,7 +88,7 @@ struct WorkSpace : public KrakenPrim
 };
 
 WorkSpace::WorkSpace(kContext *C, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
+  : UsdPrim(),
     path(stagepath),
     name(EMPTY /*CreateNameAttr(DEFAULT_TOKEN("Workspace"))*/),
     screen_rel(EMPTY /*CreateScreenRel()*/),

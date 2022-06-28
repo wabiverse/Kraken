@@ -40,6 +40,10 @@ void wrapNode()
   typedef NdrNode This;
   typedef NdrNodePtr ThisPtr;
 
+  if (TfPyRegistry<NdrNodePtr>::IsTypeRegistered()) {
+    return;
+  }
+
   return_value_policy<copy_const_reference> copyRefPolicy;
 
   class_<This, ThisPtr, boost::noncopyable>("Node", no_init)

@@ -31,12 +31,12 @@
 #ifndef WABI_BASE_PLUG_TEST_PLUG_BASE_H
 #define WABI_BASE_PLUG_TEST_PLUG_BASE_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/plug/api.h"
 #include "wabi/base/tf/refBase.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
 #include "wabi/base/tf/weakBase.h"
-#include "wabi/wabi.h"
 
 #include <string>
 

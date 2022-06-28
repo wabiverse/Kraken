@@ -67,6 +67,50 @@ int PyC_ParseStringEnum(PyObject *o, void *p)
   return 0;
 }
 
+void PyC_ObSpit(const char *name, PyObject *var)
+{
+  const char *null_str = "<null>";
+  fprintf(stderr, "<%s> : ", name);
+  if (var == NULL) {
+    fprintf(stderr, "%s\n", null_str);
+  } else {
+    PyObject_Print(var, stderr, 0);
+    const PyTypeObject *type = Py_TYPE(var);
+    fprintf(stderr,
+            " ref:%d, ptr:%p, type: %s\n",
+            (int)var->ob_refcnt,
+            (void *)var,
+            type ? type->tp_name : null_str);
+  }
+}
+
+void PyC_ObSpitStr(char *result, size_t result_len, PyObject *var)
+{
+  /* No name, creator of string can manage that. */
+  const char *null_str = "<null>";
+  if (var == NULL) {
+    KLI_snprintf(result, result_len, "%s", null_str);
+  } else {
+    const PyTypeObject *type = Py_TYPE(var);
+    PyObject *var_str = PyObject_Repr(var);
+    if (var_str == NULL) {
+      /* We could print error here,
+       * but this may be used for generating errors - so don't for now. */
+      PyErr_Clear();
+    }
+    KLI_snprintf(result,
+                 result_len,
+                 " ref=%d, ptr=%p, type=%s, value=%.200s",
+                 (int)var->ob_refcnt,
+                 (void *)var,
+                 type ? type->tp_name : null_str,
+                 var_str ? PyUnicode_AsUTF8(var_str) : "<error>");
+    if (var_str != NULL) {
+      Py_DECREF(var_str);
+    }
+  }
+}
+
 
 /**
  * Use with PyArg_ParseTuple's "O&" formatting.
@@ -571,6 +615,17 @@ short KPy_reports_to_error(ReportList *reports, PyObject *exception, const bool 
 bool KPy_errors_to_report(ReportList *reports)
 {
   return KPy_errors_to_report_ex(reports, NULL, true, true);
+}
+
+void KPy_reports_write_stdout(const ReportList *reports, const char *header)
+{
+  if (header) {
+    PySys_WriteStdout("%s\n", header);
+  }
+
+  for (auto &report : reports->list) {
+    PySys_WriteStdout("%s: %s\n", report->typestr, report->message);
+  }
 }
 
 WABI_NAMESPACE_END

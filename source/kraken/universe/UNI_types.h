@@ -30,36 +30,41 @@ WABI_NAMESPACE_BEGIN
 
 struct Main;
 struct ReportList;
-struct KrakenPrim;
-struct PropertyLUXO;
 struct kContext;
 
-typedef struct KrakenPrim KrakenPrim;
-
-typedef int (*ObjectValidateFunc)(struct KrakenPrim *ptr, void *data, int *have_function);
+typedef int (*ObjectValidateFunc)(const UsdPrim &ptr, void *data, int *have_function);
 typedef int (*ObjectCallbackFunc)(struct kContext *C,
-                                  struct KrakenPrim *ptr,
+                                  const UsdPrim &ptr,
                                   void *func,
                                   UsdAttributeVector list);
 typedef void (*ObjectFreeFunc)(void *data);
-typedef struct KrakenPrim *(*ObjectRegisterFunc)(struct Main *kmain,
-                                                 struct ReportList *reports,
-                                                 void *data,
-                                                 const char *identifier,
-                                                 ObjectValidateFunc validate,
-                                                 ObjectCallbackFunc call,
-                                                 ObjectFreeFunc free);
-typedef void (*ObjectUnregisterFunc)(struct Main *kmain, struct KrakenPrim *type);
-typedef void **(*ObjectInstanceFunc)(struct KrakenPrim *ptr);
+typedef struct PointerLUXO *(*ObjectRegisterFunc)(struct Main *kmain,
+                                                  struct ReportList *reports,
+                                                  void *data,
+                                                  const char *identifier,
+                                                  ObjectValidateFunc validate,
+                                                  ObjectCallbackFunc call,
+                                                  ObjectFreeFunc free);
+typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const UsdPrim &type);
+typedef void **(*ObjectInstanceFunc)(struct PointerLUXO *ptr);
 
-/**
- * Kraken UNI
- *
- * Root UNI data structure that lists all prim types. */
-
-struct KrakenUNI
+typedef enum FunctionFlag
 {
-  std::vector<struct KrakenPrim *> objects;
+  FUNC_USE_SELF_ID = (1 << 11),
+  FUNC_NO_SELF = (1 << 0),
+  FUNC_USE_SELF_TYPE = (1 << 1),
+  FUNC_USE_MAIN = (1 << 2),
+  FUNC_USE_CONTEXT = (1 << 3),
+  FUNC_USE_REPORTS = (1 << 4),
+  FUNC_REGISTER = (1 << 5),
+  FUNC_REGISTER_OPTIONAL = FUNC_REGISTER | (1 << 6),
+  FUNC_ALLOW_WRITE = (1 << 12),
+  FUNC_RUNTIME = (1 << 9),
+} FunctionFlag;
+
+struct KrakenPIXAR
+{
+  std::vector<struct PointerLUXO *> structs = {NULL, NULL};
 };
 
 WABI_NAMESPACE_END

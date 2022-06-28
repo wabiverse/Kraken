@@ -44,7 +44,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
   // List of direct dependencies for this library.
   const std::vector<TfToken> reqs = {TfToken("hio")};
   TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdAppUtils"),
-                                                      TfToken("wabi.UsdAppUtils"),
+                                                      TfToken("kpy.UsdAppUtils"),
                                                       reqs);
 }
 

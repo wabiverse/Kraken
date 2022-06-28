@@ -79,6 +79,17 @@ if($IsWindows) {
 
 # -------------------------------------- Developer Functions. -----
 
+function RunAndDebugKraken
+{
+  if ($IsMacOS) {
+    # note: you'll need to add this to the file to ~/.lldbinit:
+    #
+    # command alias run-no-shell process launch -X 0 --
+    #
+    & lldb -o run-no-shell $KrakenGlobalView/../build_darwin_release/bin/Kraken.app/Contents/MacOS/Kraken
+  }
+}
+
 function HopIntoRootDir
 {
   if ((Test-Path -Path $KrakenGlobalView)) {
@@ -615,6 +626,9 @@ if($KrakenGlobalView) {
 
 # Hop Into Kraken Root
 Set-Alias krkn HopIntoRootDir
+
+# Run Kraken with debugger console.
+Set-Alias dbgkrkn RunAndDebugKraken
 
 # Run Kraken
 Set-Alias kraken_r RunDevelopmentReleaseKraken

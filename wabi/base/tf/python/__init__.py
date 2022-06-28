@@ -78,7 +78,7 @@ def PreparePythonModule(moduleName=None):
         f_locals = frame.f_locals
 
         # If an explicit moduleName is not supplied, construct it from the
-        # caller's module name, like "wabi.Tf", and our naming conventions,
+        # caller's module name, like "kpy.Tf", and our naming conventions,
         # which results in "_tf".
         if moduleName is None:
             moduleName = f_locals["__name__"].split(".")[-1]

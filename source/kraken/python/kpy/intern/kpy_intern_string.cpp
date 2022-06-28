@@ -45,7 +45,7 @@ PyObject *kpy_intern_str___name__;
 PyObject *kpy_intern_str___slots__;
 PyObject *kpy_intern_str_attr;
 PyObject *kpy_intern_str_kr_property;
-PyObject *kpy_intern_str_kr_uni;
+PyObject *kpy_intern_str_kr_stage;
 PyObject *kpy_intern_str_kr_target_properties;
 PyObject *kpy_intern_str_kpy_types;
 PyObject *kpy_intern_str_frame;
@@ -72,7 +72,7 @@ void kpy_intern_string_init(void)
   KPY_INTERN_STR(kpy_intern_str___slots__, "__slots__");
   KPY_INTERN_STR(kpy_intern_str_attr, "attr");
   KPY_INTERN_STR(kpy_intern_str_kr_property, "kr_property");
-  KPY_INTERN_STR(kpy_intern_str_kr_uni, "kr_uni");
+  KPY_INTERN_STR(kpy_intern_str_kr_stage, "kr_stage");
   KPY_INTERN_STR(kpy_intern_str_kr_target_properties, "kr_target_properties");
   KPY_INTERN_STR(kpy_intern_str_kpy_types, "kpy.types");
   KPY_INTERN_STR(kpy_intern_str_frame, "frame");

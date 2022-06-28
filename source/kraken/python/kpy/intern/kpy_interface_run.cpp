@@ -32,7 +32,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_path.h"
-#include "kpy_uni.h"
+#include "kpy_stage.h"
 
 WABI_NAMESPACE_BEGIN
 

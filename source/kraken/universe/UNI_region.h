@@ -78,7 +78,7 @@ enum
 };
 
 
-struct ARegion : public KrakenPrim
+struct ARegion : public UsdPrim
 {
   SdfPath path;
 
@@ -98,8 +98,8 @@ struct ARegion : public KrakenPrim
 };
 
 ARegion::ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
-    path(KrakenPrim::GetPath()),
+  : UsdPrim(),
+    path(UsdPrim::GetPath()),
     name(EMPTY /*CreateNameAttr()*/),
     spacetype(EMPTY /*CreateSpacetypeAttr()*/),
     icon(EMPTY /*CreateIconAttr()*/),

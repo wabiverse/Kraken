@@ -22,8 +22,6 @@
  * Set the Stage.
  */
 
-#pragma once
-
 #include <wabi/usd/sdf/path.h>
 #include <wabi/wabi.h>
 

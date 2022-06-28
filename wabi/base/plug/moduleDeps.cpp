@@ -30,10 +30,10 @@
  */
 ////////////////////////////////////////////////////////////////////////
 
+#include "wabi/wabi.h"
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/base/tf/scriptModuleLoader.h"
 #include "wabi/base/tf/token.h"
-#include "wabi/wabi.h"
 
 #include <vector>
 
@@ -42,9 +42,8 @@ WABI_NAMESPACE_BEGIN
 TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
 {
   // List of direct dependencies for this library.
-  const std::vector<TfToken> reqs = {TfToken("arch"),
-                                     TfToken("js")};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("plug"), TfToken("wabi.Plug"), reqs);
+  const std::vector<TfToken> reqs = {TfToken("arch"), TfToken("js")};
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("plug"), TfToken("kpy.Plug"), reqs);
 }
 
 WABI_NAMESPACE_END

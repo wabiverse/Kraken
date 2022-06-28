@@ -67,7 +67,7 @@ struct ScrGlobalAreaData
 };
 
 
-struct ScrArea : public KrakenPrim
+struct ScrArea : UsdPrim
 {
   int areaid;
   SdfPath path;
@@ -99,9 +99,9 @@ struct ScrArea : public KrakenPrim
 };
 
 ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
+  : UsdPrim(),
     areaid(VALUE_ZERO),
-    path(KrakenPrim::GetPath()),
+    path(UsdPrim::GetPath()),
     v1(POINTER_ZERO),
     v2(POINTER_ZERO),
     v3(POINTER_ZERO),

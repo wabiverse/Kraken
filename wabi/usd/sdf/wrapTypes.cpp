@@ -88,7 +88,7 @@ namespace
       if (TfPyRegistry<Sdf_VariantSelectionMapConverter>::IsTypeRegistered()) {
         return;
       }
-      
+
       boost::python::converter::registry::push_back(
         &Sdf_VariantSelectionMapConverter::convertible,
         &Sdf_VariantSelectionMapConverter::construct,
@@ -331,11 +331,15 @@ void wrapTypes()
   def("GetNameForUnit", &SdfGetNameForUnit, return_value_policy<return_by_value>());
 
   // Register Python conversions for std::vector<SdfUnregisteredValue>
+
   using _UnregisteredValueVector = std::vector<SdfUnregisteredValue>;
-  to_python_converter<_UnregisteredValueVector, TfPySequenceToPython<_UnregisteredValueVector>>();
-  TfPyContainerConversions::from_python_sequence<
-    _UnregisteredValueVector,
-    TfPyContainerConversions::variable_capacity_policy>();
+  if (!TfPyRegistry<SdfUnregisteredValue>::IsTypeRegistered()) {
+    to_python_converter<_UnregisteredValueVector,
+                        TfPySequenceToPython<_UnregisteredValueVector>>();
+    TfPyContainerConversions::from_python_sequence<
+      _UnregisteredValueVector,
+      TfPyContainerConversions::variable_capacity_policy>();
+  }
 
   TfPyWrapEnum<SdfListOpType>();
   TfPyWrapEnum<SdfPermission>();
@@ -410,25 +414,29 @@ void wrapTypes()
   Sdf_VariantSelectionMapConverter();
 
   // Register python conversions for SdfTimeSampleMap.
-  to_python_converter<SdfTimeSampleMap, Sdf_TimeSampleMapConverter>();
+  if (!TfPyRegistry<SdfTimeSampleMap>::IsTypeRegistered()) {
+    to_python_converter<SdfTimeSampleMap, Sdf_TimeSampleMapConverter>();
+  }
 
-  class_<SdfUnregisteredValue>("UnregisteredValue")
-    .def(init<const std::string &>())
-    .def(init<const VtDictionary &>())
-    .def(init<const SdfUnregisteredValue &>())
-    .def(init<const SdfUnregisteredValueListOp &>())
+  if (!TfPyRegistry<SdfUnregisteredValue>::IsTypeRegistered()) {
+    class_<SdfUnregisteredValue>("UnregisteredValue")
+      .def(init<const std::string &>())
+      .def(init<const VtDictionary &>())
+      .def(init<const SdfUnregisteredValue &>())
+      .def(init<const SdfUnregisteredValueListOp &>())
 
-    .add_property(
-      "value",
-      make_function(&SdfUnregisteredValue::GetValue, return_value_policy<return_by_value>()))
+      .add_property(
+        "value",
+        make_function(&SdfUnregisteredValue::GetValue, return_value_policy<return_by_value>()))
 
-    .def(self == self)
-    .def(self != self)
+      .def(self == self)
+      .def(self != self)
 
-    .def("__repr__", _UnregisteredValueRepr)
-    .def("__hash__", _UnregisteredValueHash);
+      .def("__repr__", _UnregisteredValueRepr)
+      .def("__hash__", _UnregisteredValueHash);
 
-  VtValueFromPython<SdfUnregisteredValue>();
+    VtValueFromPython<SdfUnregisteredValue>();
+  }
 
   class_<Sdf_ValueTypeNamesType, boost::noncopyable>("ValueTypeNames", no_init)
     .def("Find", &_FindType)
@@ -541,10 +549,12 @@ void wrapTypes()
     .def_readonly("TexCoord3fArray", SdfValueTypeNames->TexCoord3fArray)
     .def_readonly("TexCoord3dArray", SdfValueTypeNames->TexCoord3dArray);
 
-  class_<SdfValueBlock>("ValueBlock")
-    .def(self == self)
-    .def(self != self)
-    .def("__repr__", _SdfValueBlockRepr)
-    .def("__hash__", _SdfValueBlockHash);
-  VtValueFromPython<SdfValueBlock>();
+  if (!TfPyRegistry<SdfValueBlock>::IsTypeRegistered()) {
+    class_<SdfValueBlock>("ValueBlock")
+      .def(self == self)
+      .def(self != self)
+      .def("__repr__", _SdfValueBlockRepr)
+      .def("__hash__", _SdfValueBlockHash);
+    VtValueFromPython<SdfValueBlock>();
+  }
 }

@@ -32,20 +32,13 @@
 
 import sys, os
 import unittest
-import platform
 
 from wabi import Plug, Tf, Gf
 
 # Test plugins are installed relative to this script
 testRoot = os.path.join(os.path.dirname(__file__), 'PlugPlugins')
 testPluginsDso = testRoot
-
-testPluginsPython = ""
-if platform.system() == "Linux":
-    testPluginsPython = testRoot + 'python/lib/python3.9/site-packages'
-elif platform.system() == "Windows":
-    testPluginsPython = testRoot + 'scripts/modules'
-
+testPluginsPython = testRoot + '/scripts/modules'
 testPluginsDsoSearch = testPluginsDso + '/*/Resources/'
 testPluginsPythonSearch = testPluginsPython + '/**/'
 
@@ -109,18 +102,18 @@ class TestPlug(unittest.TestCase):
         # Verify we received the appropriate notification
         self.assertEqual(self.listener1.numReceived, 1)
         self.assertEqual(set([p.name for p in self.listener1.newPlugins]),
-                    set(['TestPlugDso1', 'TestPlugDso2', 'TestPlugDso3',
+                    set(['TestPlugDso1', 'TestPlugDso2', 'TestPlugDso3', 
                         'TestPlugDsoUnloadable']))
 
         # Verify we received the appropriate notification
         self.assertEqual(self.listener2.numReceived, 2)
         self.assertEqual(set([p.name for p in self.listener2.newPlugins]),
-                    set(['TestPlugDso1', 'TestPlugDso2', 'TestPlugDso3',
+                    set(['TestPlugDso1', 'TestPlugDso2', 'TestPlugDso3', 
                         'TestPlugDsoUnloadable',
                         'TestPlugModule1', 'TestPlugModule2', 'TestPlugModule3',
                         'TestPlugModuleDepBadBase', 'TestPlugModuleDepBadDep',
                         'TestPlugModuleDepBadDep2', 'TestPlugModuleDepBadLoad',
-                        'TestPlugModuleDepCycle',
+                        'TestPlugModuleDepCycle', 
                         'TestPlugModuleLoaded', 'TestPlugModuleLoadedBadBase',
                         'TestPlugModuleUnloadable']))
 
@@ -213,13 +206,13 @@ class TestPlug(unittest.TestCase):
         ppd2.Load()
 
         # Check that plugin correctly reports its declared types.
-        self.assertFalse(ppd1.DeclaresType(Tf.Type('_TestPlugBase<1>'),
+        self.assertFalse(ppd1.DeclaresType(Tf.Type('_TestPlugBase<1>'), 
                                     includeSubclasses=False))
-        self.assertTrue(ppd1.DeclaresType(Tf.Type('_TestPlugBase<1>'),
+        self.assertTrue(ppd1.DeclaresType(Tf.Type('_TestPlugBase<1>'), 
                                 includeSubclasses=True))
-        self.assertTrue(ppd1.DeclaresType(Tf.Type('TestPlugModule1.TestPlugPythonDerived1'),
+        self.assertTrue(ppd1.DeclaresType(Tf.Type('TestPlugModule1.TestPlugPythonDerived1'), 
                                 includeSubclasses=False))
-        self.assertTrue(ppd1.DeclaresType(Tf.Type('TestPlugModule1.TestPlugPythonDerived1'),
+        self.assertTrue(ppd1.DeclaresType(Tf.Type('TestPlugModule1.TestPlugPythonDerived1'), 
                                 includeSubclasses=True))
 
     def test_LoadingPluginDependencies(self):
@@ -252,7 +245,7 @@ class TestPlug(unittest.TestCase):
 
         md = metadata['Types']['TestPlugUnloadable']
 
-        self.assertTrue(md ==
+        self.assertTrue(md == 
             plugin.GetMetadataForType(Tf.Type.FindByName('TestPlugUnloadable')))
 
         self.assertTrue('bases' in md)

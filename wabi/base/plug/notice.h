@@ -31,10 +31,10 @@
 #ifndef WABI_BASE_PLUG_NOTICE_H
 #define WABI_BASE_PLUG_NOTICE_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/plug/api.h"
 #include "wabi/base/tf/declarePtrs.h"
 #include "wabi/base/tf/notice.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

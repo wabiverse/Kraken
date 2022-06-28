@@ -29,58 +29,75 @@
 
 #include "UNI_api.h"
 #include "UNI_object.h"
+#include "UNI_types.h"
 
 WABI_NAMESPACE_BEGIN
 
-KrakenUNI KRAKEN_LUXO;
+const PointerLUXO PointerLUXO_NULL = {NULL};
 
-KrakenPrim LUXO_Area;
-KrakenPrim LUXO_Context;
-KrakenPrim LUXO_KrakenData;
-KrakenPrim LUXO_KrakenLUXO;
-KrakenPrim LUXO_Region;
-KrakenPrim LUXO_Screen;
-KrakenPrim LUXO_Window;
-KrakenPrim LUXO_WorkSpace;
-KrakenPrim LUXO_Object;
+PointerLUXO LUXO_StageData;
+PointerLUXO LUXO_KrakenPixar;
+PointerLUXO LUXO_Context;
+PointerLUXO LUXO_Struct;
+PointerLUXO LUXO_Window;
+PointerLUXO LUXO_WorkSpace;
+PointerLUXO LUXO_Screen;
+PointerLUXO LUXO_Area;
+PointerLUXO LUXO_Region;
 
-ObjectRegisterFunc LUXO_object_register(KrakenPrim *type)
+ObjectRegisterFunc LUXO_struct_register(const PointerLUXO *ptr)
 {
-  return type->reg;
+  return ptr->reg;
 }
 
-ObjectUnregisterFunc LUXO_object_unregister(KrakenPrim *type)
+ObjectUnregisterFunc LUXO_struct_unregister(PointerLUXO *ptr)
 {
   do {
-    if (type->unreg) {
-      return type->unreg;
+    if (ptr->unreg) {
+      return ptr->unreg;
     }
-  } while ((type = type->base));
+  } while ((ptr = ptr));
 
   return NULL;
 }
 
-const char *LUXO_object_identifier(const KrakenPrim *type)
+const char *LUXO_object_identifier(const PointerLUXO &ptr)
 {
-  return type->identifier;
+  return ptr.identifier;
 }
 
-void **LUXO_object_instance(PointerLUXO *ptr)
+bool LUXO_struct_is_a(const PointerLUXO *type, const PointerLUXO *srna)
 {
-  KrakenPrim *type = ptr->type;
+  if (!type) {
+    return false;
+  }
+
+  const auto &children = type->type.GetAllChildren();
+  for (auto base : children) {
+    if (srna && (base == srna->type)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void **LUXO_struct_instance(PointerLUXO *ptr)
+{
+  PointerLUXO *type = ptr->ptr;
 
   do {
     if (type->instance) {
       return type->instance(ptr);
     }
-  } while ((type = type->base));
+  } while ((type = type->ptr));
 
   return NULL;
 }
 
-SdfValueTypeName LUXO_property_type(PropertyLUXO *prop)
+const char *LUXO_property_type(PointerLUXO *ptr)
 {
-  return prop->type;
+  return ptr->type.GetTypeName().GetText();
 }
 
 bool UNI_enum_identifier(TfEnum item, const int value, const char **r_identifier)
@@ -117,7 +134,7 @@ PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier
   //   }
   // }
 
-  return NULL;
+  return *ptr->collection.cbegin();
 }
 
 void LUXO_property_collection_begin(PointerLUXO *ptr,
@@ -130,16 +147,93 @@ void LUXO_property_collection_begin(PointerLUXO *ptr,
 
 void LUXO_main_pointer_create(struct Main *main, PointerLUXO *r_ptr)
 {
-  r_ptr->path = SdfPath("/Main");
-  r_ptr->type = &LUXO_KrakenData;
+  r_ptr->owner_id = NULL;
+  r_ptr->ptr = &LUXO_StageData;
   r_ptr->data = main;
 }
 
+// BlenderDefRNA DefRNA = {
+//     .sdna = NULL,
+//     .structs = {NULL, NULL},
+//     .allocs = {NULL, NULL},
+//     .laststruct = NULL,
+//     .error = 0,
+//     .silent = false,
+//     .preprocess = false,
+//     .verify = true,
+//     .animate = true,
+//     .make_overridable = false,
+// };
+
+void *LUXO_struct_py_type_get(PointerLUXO *srna)
+{
+  return srna->py_type;
+}
+
+void LUXO_struct_py_type_set(PointerLUXO *srna, void *type)
+{
+  srna->py_type = type;
+}
+
+void LUXO_pointer_create(PointerLUXO *type, void *data, PointerLUXO *r_ptr)
+{
+  r_ptr->ptr = type;
+  r_ptr->data = data;
+
+  if (data) {
+    while (r_ptr->ptr && r_ptr->ptr->refine) {
+      PointerLUXO *rtype = r_ptr->ptr->refine(r_ptr);
+
+      if (rtype == r_ptr->ptr) {
+        break;
+      }
+      r_ptr->ptr = rtype;
+    }
+  }
+}
+
+std::vector<PointerLUXO *> &LUXO_struct_type_functions(PointerLUXO *srna)
+{
+  return srna->functions;
+}
+
+int LUXO_function_flag(FunctionLUXO *func)
+{
+  return func->flag;
+}
+
+const char *LUXO_function_identifier(FunctionLUXO *func)
+{
+  return func->identifier;
+}
+
+const char *LUXO_struct_identifier(const PointerLUXO *type)
+{
+  return type->identifier;
+}
+
+/**
+ * Use for sub-typing so we know which ptr is used for a #PointerLUXO.
+ */
+PointerLUXO *srna_from_ptr(PointerLUXO *ptr)
+{
+  if (ptr->ptr == (PointerLUXO *)&LUXO_Struct) {
+    return (PointerLUXO *)ptr->data;
+  }
+
+  return ptr->ptr;
+}
+
+KrakenPIXAR KRAKEN_PIXAR = {
+  .structs =
+    {&LUXO_Struct, &LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
+};
+
 void LUXO_kraken_luxo_pointer_create(PointerLUXO *r_ptr)
 {
-  r_ptr->path = SdfPath("/Kraken");
-  r_ptr->type = &LUXO_KrakenLUXO;
-  r_ptr->data = &KRAKEN_LUXO;
+  r_ptr->owner_id = NULL;
+  r_ptr->ptr = &LUXO_KrakenPixar;
+  r_ptr->data = &KRAKEN_PIXAR;
 }
 
 WABI_NAMESPACE_END

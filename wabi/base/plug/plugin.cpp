@@ -29,13 +29,13 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+#include "wabi/wabi.h"
 #include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/debugCodes.h"
 #include "wabi/base/plug/info.h"
-#include "wabi/wabi.h"
 
-#include "wabi/base/arch/library.h"
 #include "wabi/base/arch/threads.h"
+#include "wabi/base/arch/library.h"
 #include "wabi/base/js/value.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/dl.h"
@@ -156,6 +156,7 @@ pair<PlugPluginPtr, bool> PlugPlugin::_NewPlugin(const Plug_RegistrationMetadata
 
   return pair<PlugPluginPtr, bool>(plugin, true);
 }
+
 
 pair<PlugPluginPtr, bool> PlugPlugin::_NewDynamicLibraryPlugin(
   const Plug_RegistrationMetadata &metadata)
@@ -638,6 +639,7 @@ void PlugPlugin::_DeclareType(const std::string &typeName, const JsObject &typeD
   // Find type aliases.
   _DeclareAliases(type, typeDict);
 }
+
 
 TF_REGISTRY_FUNCTION(TfType)
 {

@@ -65,9 +65,6 @@ struct wmOperatorType
   /** Signal changes, allow for Pub/Sub. */
   const TfNotice notice;
 
-  /** Properties on this operator. */
-  KrakenPrim *uni;
-
   eWmOperatorType flag;
 
   int (*exec)(kContext *C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;

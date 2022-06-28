@@ -24,7 +24,8 @@ set(SRC
   intern/kpy_intern_string.cpp
   intern/kpy_library_load.cpp
   intern/kpy_path.cpp
-  intern/kpy_uni.cpp
+  intern/kpy_pixar_data.cpp
+  intern/kpy_stage.cpp
   intern/kpy.cpp
 
   intern/kpy_app.h
@@ -35,7 +36,7 @@ set(SRC
   intern/kpy_intern_string.h
   intern/kpy_library.h
   intern/kpy_path.h
-  intern/kpy_uni.h
+  intern/kpy_stage.h
   intern/kpy_utildefines.h
   intern/kpy.h
 

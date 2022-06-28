@@ -28,10 +28,10 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
+#include "wabi/wabi.h"
 #include "wabi/base/plug/debugCodes.h"
 #include "wabi/base/tf/debug.h"
 #include "wabi/base/tf/registryManager.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

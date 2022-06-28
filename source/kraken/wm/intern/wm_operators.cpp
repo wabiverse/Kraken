@@ -97,7 +97,7 @@ void WM_operator_properties_free(PointerLUXO *ptr)
 
 void WM_operator_properties_create_ptr(PointerLUXO *prop_ptr, wmOperatorType *ot)
 {
-  CreationFactory::PTR::New(SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_WM), ot->uni, NULL, prop_ptr);
+  CreationFactory::PTR::New(prop_ptr->type, (kContext *)prop_ptr->data);
 }
 
 void WM_operators_init(kContext *C)

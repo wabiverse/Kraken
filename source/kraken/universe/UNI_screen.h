@@ -72,7 +72,7 @@ struct ScrEdge
   ScrEdge() : v1(POINTER_ZERO), v2(POINTER_ZERO), border(VALUE_ZERO), flag(VALUE_ZERO) {}
 };
 
-struct kScreen : public KrakenPrim
+struct kScreen : public UsdPrim
 {
   SdfPath path;
 
@@ -98,7 +98,7 @@ struct kScreen : public KrakenPrim
 };
 
 kScreen::kScreen(kContext *C, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
+  : UsdPrim(),
     path(stagepath),
     align(EMPTY /*CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))*/),
     areas_rel(EMPTY /*CreateAreasRel()*/),

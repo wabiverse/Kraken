@@ -41,7 +41,7 @@ extern PyObject *kpy_intern_str___name__;
 extern PyObject *kpy_intern_str___slots__;
 extern PyObject *kpy_intern_str_attr;
 extern PyObject *kpy_intern_str_kr_property;
-extern PyObject *kpy_intern_str_kr_uni;
+extern PyObject *kpy_intern_str_kr_stage;
 extern PyObject *kpy_intern_str_kr_target_properties;
 extern PyObject *kpy_intern_str_kpy_types;
 extern PyObject *kpy_intern_str_frame;

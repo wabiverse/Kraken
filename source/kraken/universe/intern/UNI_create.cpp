@@ -72,15 +72,6 @@ void UNI_create_stage(kContext *C)
 
   Scene *scene = new Scene(main->stage_id.string());
   CTX_data_scene_set(C, scene);
-
-  KrakenPrimRegistry &reg = KrakenPrimRegistry::GetInstance();
-
-  TfRegistryManager::GetInstance().SubscribeTo<KrakenPrimRegistry>();
-  // TfRegistryManager::GetInstance().SubscribeTo<KrakenPrim>();
-
-  // const UsdPrim &prim = scene->stage->DefinePrim(SdfPath("/Scene"), TfToken("Scene"));
-  // prim.SetTypeName(TfToken("Scene"));
-  // reg.GetInitFunction(prim);
 }
 
 void UNI_destroy(kContext *C)

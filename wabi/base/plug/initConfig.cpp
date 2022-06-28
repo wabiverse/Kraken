@@ -29,17 +29,17 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
-#include "wabi/base/arch/attributes.h"
-#include "wabi/base/arch/fileSystem.h"
-#include "wabi/base/arch/symbols.h"
-#include "wabi/base/arch/systemInfo.h"
+#include "wabi/wabi.h"
 #include "wabi/base/plug/info.h"
 #include "wabi/base/tf/diagnosticLite.h"
 #include "wabi/base/tf/getenv.h"
 #include "wabi/base/tf/pathUtils.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
 #include "wabi/base/tf/stringUtils.h"
-#include "wabi/wabi.h"
+#include "wabi/base/arch/attributes.h"
+#include "wabi/base/arch/fileSystem.h"
+#include "wabi/base/arch/symbols.h"
+#include "wabi/base/arch/systemInfo.h"
 
 WABI_NAMESPACE_BEGIN
 

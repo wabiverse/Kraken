@@ -30,13 +30,13 @@
  */
 /// \file staticInterface.cpp
 
+#include "wabi/wabi.h"
 #include "wabi/base/plug/staticInterface.h"
 #include "wabi/base/plug/interfaceFactory.h"
 #include "wabi/base/plug/plugin.h"
 #include "wabi/base/plug/registry.h"
 #include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/scoped.h"
-#include "wabi/wabi.h"
 #include <mutex>
 #include <string>
 

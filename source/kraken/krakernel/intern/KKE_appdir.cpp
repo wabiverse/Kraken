@@ -103,6 +103,24 @@ void KKE_appdir_exit(void)
 #endif
 }
 
+
+/* -------------------------------------------------------------------- */
+/** \name Internal Utilities
+ * \{ */
+
+/**
+ * \returns a formatted representation of the specified version number. Non-re-entrant!
+ */
+static char *kraken_version_decimal(const int version)
+{
+  static char version_str[5];
+  KLI_assert(version < 1000);
+  KLI_snprintf(version_str, sizeof(version_str), "%d.%d", version / 100, version % 100);
+  return version_str;
+}
+/* -------------------------------------------------------------------- */
+
+
 /**
  * Get the folder that's the "natural" starting point for browsing files on an OS. On Unix that is
  * $HOME, on Windows it is %userprofile%/Documents.
@@ -361,7 +379,7 @@ static bool get_path_local_ex(char *targetpath,
                    targetpath_len,
                    check_is_dir,
                    path_base,
-                   CHARALL(G.main->kraken_version_decimal),
+                   kraken_version_decimal(version),
                    relfolder);
 }
 static bool get_path_local(char *targetpath,
@@ -420,8 +438,7 @@ static bool get_path_user_ex(char *targetpath,
   }
   user_path[0] = '\0';
 
-  user_base_path = (const char *)ANCHOR_getUserDir(version,
-                                                   CHARALL(G.main->kraken_version_decimal));
+  user_base_path = (const char *)ANCHOR_getUserDir(version, kraken_version_decimal(version));
   if (user_base_path) {
     KLI_strncpy(user_path, user_base_path, FILE_MAX);
   }
@@ -485,8 +502,7 @@ static bool get_path_system_ex(char *targetpath,
   }
 
   system_path[0] = '\0';
-  system_base_path = (const char *)ANCHOR_getSystemDir(version,
-                                                       CHARALL(G.main->kraken_version_decimal));
+  system_base_path = (const char *)ANCHOR_getSystemDir(version, kraken_version_decimal(version));
   if (system_base_path) {
     KLI_strncpy(system_path, system_base_path, FILE_MAX);
   }

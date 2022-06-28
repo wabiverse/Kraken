@@ -87,11 +87,11 @@ namespace CreationFactory
 {
   namespace PTR
   {
-    inline void New(SdfPath id, KrakenPrim *type, void *data, PointerLUXO *r_ptr)
+    inline std::unique_ptr<UsdPrimDefinition> New(const UsdPrim &type, kContext *C)
     {
-      r_ptr = new KrakenPrim();
-      r_ptr->path = id;
-      r_ptr->type = type;
+      return UsdSchemaRegistry::GetInstance().BuildComposedPrimDefinition(
+        type.GetName(),
+        type.GetAppliedSchemas());
     }
   }  // namespace PTR
   namespace STR
@@ -104,9 +104,9 @@ namespace CreationFactory
       strprop.variability = SdfVariabilityUniform;
       strprop.custom = false;
 
-      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
-                                                         strprop.type,
-                                                         strprop.variability);
+      UsdAttribute attr = ptr->type.GetPrim().CreateAttribute(strprop.name,
+                                                              strprop.type,
+                                                              strprop.variability);
       attr.Set(std::string(value));
       ptr->props.push_back(attr);
     }
@@ -121,9 +121,9 @@ namespace CreationFactory
       strprop.variability = SdfVariabilityUniform;
       strprop.custom = false;
 
-      UsdAttribute attr = ptr->GetPrim().CreateAttribute(strprop.name,
-                                                         strprop.type,
-                                                         strprop.variability);
+      UsdAttribute attr = ptr->type.CreateAttribute(strprop.name,
+                                                    strprop.type,
+                                                    strprop.variability);
       attr.Set(bool(value));
       ptr->props.push_back(attr);
     }

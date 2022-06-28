@@ -38,34 +38,58 @@
 
 WABI_NAMESPACE_BEGIN
 
-/* Types */
-extern KrakenUNI KRAKEN_LUXO;
+struct Main;
+struct ReportList;
+struct Scene;
+struct kContext;
 
-/* Keep Sorted. */
-extern KrakenPrim LUXO_Area;
-extern KrakenPrim LUXO_Context;
-extern KrakenPrim LUXO_KrakenData;
-extern KrakenPrim LUXO_KrakenLUXO;
-extern KrakenPrim LUXO_Region;
-extern KrakenPrim LUXO_Screen;
-extern KrakenPrim LUXO_Window;
-extern KrakenPrim LUXO_WorkSpace;
-extern KrakenPrim LUXO_Object;
+extern KrakenPIXAR KRAKEN_PIXAR;
 
-void LUXO_kraken_luxo_pointer_create(PointerLUXO *r_ptr);
-void LUXO_main_pointer_create(Main *main, PointerLUXO *r_ptr);
+extern PointerLUXO LUXO_StageData;
+extern PointerLUXO LUXO_KrakenPixar;
+extern PointerLUXO LUXO_Context;
+extern PointerLUXO LUXO_Struct;
+extern PointerLUXO LUXO_Window;
+extern PointerLUXO LUXO_WorkSpace;
+extern PointerLUXO LUXO_Screen;
+extern PointerLUXO LUXO_Area;
+extern PointerLUXO LUXO_Region;
 
-ObjectRegisterFunc LUXO_object_register(KrakenPrim *type);
-ObjectUnregisterFunc LUXO_object_unregister(KrakenPrim *type);
+#define LUXO_POINTER_INVALIDATE(ptr) \
+  {                                  \
+    (ptr)->ptr = NULL;               \
+    (ptr)->owner_id = NULL;          \
+  }                                  \
+  (void)0
+
+void LUXO_kraken_luxo_pointer_create(PointerLUXO *ptr);
+void LUXO_main_pointer_create(Main *main, PointerLUXO *ptr);
+void LUXO_pointer_create(PointerLUXO *type, void *data, PointerLUXO *r_ptr);
+
+void *LUXO_struct_py_type_get(PointerLUXO *srna);
+void LUXO_struct_py_type_set(PointerLUXO *srna, void *type);
+
+const char *LUXO_property_type(PropertyLUXO *prop);
+
+ObjectRegisterFunc LUXO_struct_register(const PointerLUXO *ptr);
+ObjectUnregisterFunc LUXO_struct_unregister(PointerLUXO *ptr);
 
 PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier);
-void **LUXO_object_instance(PointerLUXO *ptr);
-const char *LUXO_object_identifier(const KrakenPrim *type);
+void **LUXO_struct_instance(PointerLUXO *ptr);
+const char *LUXO_object_identifier(const PointerLUXO &ptr);
+const char *LUXO_struct_identifier(const PointerLUXO *type);
+const char *LUXO_struct_identifier(const PointerLUXO *type);
+bool LUXO_struct_is_a(const PointerLUXO *type, const PointerLUXO *srna);
 
-SdfValueTypeName LUXO_property_type(PropertyLUXO *prop);
+std::vector<PointerLUXO *> &LUXO_struct_type_functions(PointerLUXO *srna);
+const char *LUXO_function_identifier(FunctionLUXO *func);
 
-void LUXO_property_collection_begin(PointerLUXO *ptr,
-                                    PropertyLUXO *prop,
-                                    CollectionPropertyLUXO iter);
+int LUXO_function_flag(FunctionLUXO *func);
+
+PointerLUXO *srna_from_ptr(PointerLUXO *ptr);
+
+// void LUXO_property_collection_begin(PointerLUXO *ptr,
+//                                     PropertyLUXO *prop,
+//                                     CollectionPropertyLUXO iter);
 
 WABI_NAMESPACE_END

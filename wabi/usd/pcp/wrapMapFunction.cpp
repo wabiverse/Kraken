@@ -30,6 +30,7 @@
 #include "wabi/base/tf/pyPtrHelpers.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
+#include "wabi/base/tf/wrapTypeHelpers.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;
@@ -93,9 +94,11 @@ void wrapMapFunction()
 {
   typedef PcpMapFunction This;
 
-  TfPyContainerConversions::from_python_sequence<
-    std::vector<PcpMapFunction>,
-    TfPyContainerConversions::variable_capacity_policy>();
+  if (!TfPyRegistry<PcpMapFunction>::IsTypeRegistered()) {
+    TfPyContainerConversions::from_python_sequence<
+      std::vector<PcpMapFunction>,
+      TfPyContainerConversions::variable_capacity_policy>();
+  }
 
   class_<This>("MapFunction")
     .def(init<const This &>())

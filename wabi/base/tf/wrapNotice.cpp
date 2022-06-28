@@ -227,6 +227,10 @@ namespace
 
 void wrapNotice()
 {
+  if (TfPyRegistry<TfNotice>::IsTypeRegistered()) {
+    return;
+  }
+
   // Make sure we can pass callbacks from python.
   TfPyFunctionFromPython<Tf_PyNoticeInternal::Listener::CallbackSig>();
 

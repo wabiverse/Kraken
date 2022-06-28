@@ -97,7 +97,7 @@ endfunction() # _get_python_module_name
 function(_plugInfo_subst libTarget pluginToLibraryPath plugInfoPath)
     _get_resources_dir_name(PLUG_INFO_RESOURCE_PATH)
     set(PLUG_INFO_ROOT "..")
-    set(PLUG_INFO_PLUGIN_NAME "wabi.${libTarget}")
+    set(PLUG_INFO_PLUGIN_NAME "kpy.${libTarget}")
     set(PLUG_INFO_LIBRARY_PATH "${pluginToLibraryPath}")
 
     configure_file(

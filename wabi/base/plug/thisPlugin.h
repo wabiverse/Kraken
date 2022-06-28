@@ -31,9 +31,9 @@
 #ifndef WABI_BASE_PLUG_THIS_PLUGIN_H
 #define WABI_BASE_PLUG_THIS_PLUGIN_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/plug/registry.h"
 #include "wabi/base/tf/preprocessorUtilsLite.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

@@ -31,7 +31,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_path.h"
-#include "kpy_uni.h"
+#include "kpy_stage.h"
 
 #include "KKE_appdir.h"
 #include "KKE_version.h"
@@ -431,7 +431,7 @@ PyObject *KPY_app_struct(void)
   KrakenAppType.tp_new = NULL;
 
   /* without this we can't do set(sys.modules). */
-  KrakenAppType.tp_hash = (hashfunc) _Py_HashPointer; 
+  KrakenAppType.tp_hash = (hashfunc)_Py_HashPointer;
 
   /* kindof a hack ontop of PyStructSequence */
   py_struct_seq_getset_init();

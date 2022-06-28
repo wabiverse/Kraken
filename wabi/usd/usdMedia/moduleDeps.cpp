@@ -37,7 +37,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
   // List of direct dependencies for this library.
   const std::vector<TfToken> reqs = {};
   TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdMedia"),
-                                                      TfToken("wabi.UsdMedia"),
+                                                      TfToken("kpy.UsdMedia"),
                                                       reqs);
 }
 

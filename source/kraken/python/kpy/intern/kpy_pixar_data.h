@@ -20,33 +20,23 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * KRAKEN Python.
+ * It Bites.
  */
 
-#include "KKE_api.h"
+#include "KPY_api.h"
+
 #include "KKE_context.h"
-#include "KKE_robinhood.h"
+#include "KKE_main.h"
+#include "KKE_utils.h"
 
+#include "LUXO_runtime.h"
+
+#include "UNI_api.h"
 #include "UNI_object.h"
-
-#include <wabi/usd/usd/prim.h>
-#include <wabi/usd/usd/stage.h>
-#include <wabi/usd/usd/typed.h>
-
-#include <wabi/base/js/value.h>
-#include <wabi/base/plug/notice.h>
-#include <wabi/base/plug/plugin.h>
-#include <wabi/base/plug/registry.h>
-#include <wabi/base/tf/instantiateSingleton.h>
-#include <wabi/base/tf/singleton.h>
-#include <wabi/base/tf/weakBase.h>
-
-#include <memory>
-#include <tbb/queuing_rw_mutex.h>
-#include <unordered_map>
 
 WABI_NAMESPACE_BEGIN
 
+int KPY_pixar_data_context_type_ready(void);
 
 WABI_NAMESPACE_END

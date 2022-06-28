@@ -39,7 +39,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_path.h"
-#include "kpy_uni.h"
+#include "kpy_stage.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -94,7 +94,7 @@ void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
 void KPY_modules_update(void)
 {
   /* refreshes the main struct */
-  KPY_update_uni_module();
+  KPY_update_stage_module();
 }
 
 static struct _inittab kpy_internal_modules[] = {
@@ -268,10 +268,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
   /* kpy.* and lets us import it */
   KPy_init_modules(C);
 
-  /* wabi.* all pixar modules. */
-  WABIPy_init_modules(C);
-
-  pyuni_alloc_types();
+  pystage_alloc_types();
 
 #ifndef WITH_PYTHON_MODULE
   /* py module runs atexit when kpy is freed */
@@ -311,7 +308,7 @@ void KPY_python_end(void)
   // KPY_uni_props_clear_all();
 
   /* free other python data. */
-  // pyuni_free_types();
+  // pystage_free_types();
 
   /* clear all python data from structs */
 
@@ -326,6 +323,85 @@ void KPY_python_end(void)
 #else
   PyGILState_Release(gilstate);
 #endif
+}
+
+int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *result)
+{
+  PyGILState_STATE gilstate;
+  const bool use_gil = !PyC_IsInterpreterActive();
+
+  PyObject *pyctx;
+  PyObject *item;
+  PointerLUXO *ptr = NULL;
+  bool done = false;
+
+  if (use_gil) {
+    gilstate = PyGILState_Ensure();
+  }
+
+  pyctx = (PyObject *)CTX_py_dict_get(C);
+  item = PyDict_GetItemString(pyctx, member);
+
+  if (item == NULL) {
+    /* pass */
+  } else if (item == Py_None) {
+    done = true;
+  } else if (KPy_StructLUXO_Check(item)) {
+    ptr = &(((KPy_KrakenStage *)item)->ptr);
+
+    // result->ptr = ((BPy_StructRNA *)item)->ptr;
+    CTX_data_pointer_set_ptr(result, ptr);
+    CTX_data_type_set(result, CTX_DATA_TYPE_POINTER);
+    done = true;
+  } else if (PySequence_Check(item)) {
+    PyObject *seq_fast = PySequence_Fast(item, "bpy_context_get sequence conversion");
+    if (seq_fast == NULL) {
+      PyErr_Print();
+      PyErr_Clear();
+    } else {
+      const int len = PySequence_Fast_GET_SIZE(seq_fast);
+      PyObject **seq_fast_items = PySequence_Fast_ITEMS(seq_fast);
+      int i;
+
+      for (i = 0; i < len; i++) {
+        PyObject *list_item = seq_fast_items[i];
+
+        if (KPy_StructLUXO_Check(list_item)) {
+#if 0
+          CollectionPointerLink *link = MEM_callocN(sizeof(CollectionPointerLink),
+                                                    "bpy_context_get");
+          link->ptr = ((BPy_StructRNA *)item)->ptr;
+          BLI_addtail(&result->list, link);
+#endif
+          ptr = &(((KPy_KrakenStage *)list_item)->ptr);
+          CTX_data_list_add_ptr(result, ptr);
+        } else {
+          TF_WARN("'%s' list item not a valid type in sequence type '%s'",
+                  member,
+                  Py_TYPE(item)->tp_name);
+        }
+      }
+      Py_DECREF(seq_fast);
+      CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+      done = true;
+    }
+  }
+
+  if (done == false) {
+    if (item) {
+      TF_WARN("'%s' not a valid type", member);
+    } else {
+      TF_WARN("'%s' not found", member);
+    }
+  } else {
+    TF_WARN("'%s' found", member);
+  }
+
+  if (use_gil) {
+    PyGILState_Release(gilstate);
+  }
+
+  return done;
 }
 
 void KPY_python_reset(kContext *C)

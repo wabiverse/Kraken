@@ -44,4 +44,8 @@ void KPY_python_end(void);
 
 void KPY_python_reset(struct kContext *C);
 
+int KPY_context_member_get(struct kContext *C,
+                           const char *member,
+                           struct kContextDataResult *result);
+
 WABI_NAMESPACE_END

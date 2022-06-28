@@ -36,7 +36,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
 {
   // List of direct dependencies for this library.
   const std::vector<TfToken> reqs = {};
-  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("pcp"), TfToken("wabi.Pcp"), reqs);
+  TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("pcp"), TfToken("kpy.Pcp"), reqs);
 }
 
 WABI_NAMESPACE_END

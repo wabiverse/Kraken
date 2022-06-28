@@ -16,8 +16,6 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
  * ⚓︎ Anchor.

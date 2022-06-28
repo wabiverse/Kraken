@@ -33,8 +33,8 @@
 
 /// \file plug/staticInterface.h
 
-#include "wabi/base/plug/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/plug/api.h"
 
 #include <atomic>
 #include <type_traits>

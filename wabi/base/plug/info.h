@@ -31,9 +31,9 @@
 #ifndef WABI_BASE_PLUG_INFO_H
 #define WABI_BASE_PLUG_INFO_H
 
+#include "wabi/wabi.h"
 #include "wabi/base/arch/attributes.h"
 #include "wabi/base/js/value.h"
-#include "wabi/wabi.h"
 
 #include <functional>
 #include <memory>
@@ -53,9 +53,7 @@ class Plug_RegistrationMetadata
   {
     UnknownType,
     LibraryType,
-#ifdef WITH_PYTHON
     PythonType,
-#endif  // WITH_PYTHON
     ResourceType
   };
 

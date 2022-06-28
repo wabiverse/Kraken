@@ -29,12 +29,12 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
-#include "wabi/base/plug/registry.h"
 #include "wabi/wabi.h"
+#include "wabi/base/plug/registry.h"
 
 #include "wabi/base/plug/debugCodes.h"
-#include "wabi/base/plug/info.h"
 #include "wabi/base/plug/notice.h"
+#include "wabi/base/plug/info.h"
 #include "wabi/base/plug/plugin.h"
 
 #include "wabi/base/arch/attributes.h"
@@ -47,6 +47,7 @@
 #include "wabi/base/tf/stl.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
+#include "wabi/base/work/withScopedParallelism.h"
 
 #include <tbb/concurrent_vector.h>
 #include <tbb/spin_mutex.h>
@@ -137,15 +138,17 @@ PlugPluginPtrVector PlugRegistry::_RegisterPlugins(const std::vector<std::string
     Plug_TaskArena taskArena;
     // XXX -- Is this mutex really needed?
     std::lock_guard<std::mutex> lock(_mutex);
-    Plug_ReadPlugInfo(
-      pathsToPlugInfo,
-      pathsAreOrdered,
-      std::bind(&PlugRegistry::_InsertRegisteredPluginPath, this, std::placeholders::_1),
-      std::bind(&PlugRegistry::_RegisterPlugin<NewPluginsVec>,
-                this,
-                std::placeholders::_1,
-                &newPlugins),
-      &taskArena);
+    WorkWithScopedParallelism([&]() {
+      Plug_ReadPlugInfo(
+        pathsToPlugInfo,
+        pathsAreOrdered,
+        std::bind(&PlugRegistry::_InsertRegisteredPluginPath, this, std::placeholders::_1),
+        std::bind(&PlugRegistry::_RegisterPlugin<NewPluginsVec>,
+                  this,
+                  std::placeholders::_1,
+                  &newPlugins),
+        &taskArena);
+    });
   }
 
   if (!newPlugins.empty()) {
@@ -271,6 +274,7 @@ void PlugPlugin::_RegisterAllPlugins()
                                          Plug_GetPathsInfo().pathsAreOrdered);
     }
   });
+
 
   // Send a notice outside of the call_once.  We don't want to be holding
   // a lock (even an implicit one) when sending a notice.

@@ -47,7 +47,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader)
                                      TfToken("hio"),
                                      TfToken("usdImaging")};
   TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("usdImagingGL"),
-                                                      TfToken("wabi.UsdImagingGL"),
+                                                      TfToken("kpy.UsdImagingGL"),
                                                       reqs);
 }
 

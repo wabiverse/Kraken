@@ -29,12 +29,13 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
+#include "wabi/wabi.h"
 #include "wabi/base/plug/testPlugBase.h"
 #include "wabi/base/plug/registry.h"
 #include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/type.h"
 #include "wabi/base/tf/stringUtils.h"
 #include "wabi/base/tf/type.h"
-#include "wabi/wabi.h"
 
 WABI_NAMESPACE_BEGIN
 

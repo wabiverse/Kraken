@@ -44,12 +44,14 @@
 
 #include "WM_operators.h"
 
+#include "kpy/KPY_extern_python.h"
+
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>
 
 WABI_NAMESPACE_BEGIN
 
-struct kContext : public KrakenPrim
+struct kContext
 {
   kContext() = default;
 
@@ -79,27 +81,58 @@ struct kContext : public KrakenPrim
     UserDef *prefs;
 
     bool py_init;
+    void *py_context;
   } data;
 };
 
 struct kContextDataResult
 {
-  PointerLUXO ptr;
-  std::vector<KrakenPrim *> list;
+  PointerLUXO *ptr;
+  std::vector<const PointerLUXO *> list;
   const char **dir;
   short type; /* 0: normal, 1: seq */
 };
 
+void *CTX_py_dict_get(const kContext *C)
+{
+  return C->data.py_context;
+}
+
+void CTX_data_pointer_set_ptr(kContextDataResult *result, const PointerLUXO *ptr)
+{
+  result->ptr->data = ptr->data;
+}
+
+void CTX_data_list_add_ptr(kContextDataResult *result, const PointerLUXO *ptr)
+{
+  result->list.push_back(ptr);
+}
+
+void CTX_data_type_set(kContextDataResult *result, short type)
+{
+  result->type = type;
+}
+
 static void *ctx_wm_python_context_get(const kContext *C,
                                        const char *member,
-                                       const void *member_type,
+                                       PointerLUXO *member_type,
                                        void *fall_through)
 {
-  /**
-   * TODO: Setup Python. */
-  TF_UNUSED(C);
-  TF_UNUSED(member);
-  TF_UNUSED(member_type);
+#ifdef WITH_PYTHON
+  if (ARCH_UNLIKELY(C && CTX_py_dict_get(C))) {
+    kContextDataResult result;
+    memset(&result, 0, sizeof(kContextDataResult));
+    KPY_context_member_get((kContext *)C, member, &result);
+
+    if (result.ptr->data) {
+      if (LUXO_struct_is_a(result.ptr, member_type)) {
+        return result.ptr->data;
+      }
+    }
+  }
+#else
+  UNUSED_VARS(C, member, member_type);
+#endif
 
   /* don't allow UI context access from non-main threads */
   if (!KLI_thread_is_main()) {
@@ -139,7 +172,7 @@ void CTX_py_init_set(kContext *C, bool value)
 {
   C->data.py_init = value;
 
-  if(value == true) {
+  if (value == true) {
     TF_MSG_SUCCESS("The python runtime has been initialized.");
   }
 }
@@ -159,27 +192,31 @@ wmWindowManager *CTX_wm_manager(const kContext *C)
 
 wmWindow *CTX_wm_window(const kContext *C)
 {
-  return (wmWindow *)ctx_wm_python_context_get(C, "window", &LUXO_Window, C->wm.window);
+  return (
+    wmWindow *)ctx_wm_python_context_get(C, "window", (PointerLUXO *)&LUXO_Window, C->wm.window);
 }
 
 WorkSpace *CTX_wm_workspace(const kContext *C)
 {
-  return (WorkSpace *)ctx_wm_python_context_get(C, "workspace", &LUXO_WorkSpace, C->wm.workspace);
+  return (WorkSpace *)
+    ctx_wm_python_context_get(C, "workspace", (PointerLUXO *)&LUXO_WorkSpace, C->wm.workspace);
 }
 
 kScreen *CTX_wm_screen(const kContext *C)
 {
-  return (kScreen *)ctx_wm_python_context_get(C, "screen", &LUXO_Screen, C->wm.screen);
+  return (
+    kScreen *)ctx_wm_python_context_get(C, "screen", (PointerLUXO *)&LUXO_Screen, C->wm.screen);
 }
 
 ScrArea *CTX_wm_area(const kContext *C)
 {
-  return (ScrArea *)ctx_wm_python_context_get(C, "area", &LUXO_Area, C->wm.area);
+  return (ScrArea *)ctx_wm_python_context_get(C, "area", (PointerLUXO *)&LUXO_Area, C->wm.area);
 }
 
 ARegion *CTX_wm_region(const kContext *C)
 {
-  return (ARegion *)ctx_wm_python_context_get(C, "region", &LUXO_Region, C->wm.region);
+  return (
+    ARegion *)ctx_wm_python_context_get(C, "region", (PointerLUXO *)&LUXO_Region, C->wm.region);
 }
 
 ARegion *CTX_wm_menu(const kContext *C)

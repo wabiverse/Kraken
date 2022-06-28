@@ -29,10 +29,10 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
-#include "wabi/base/plug/notice.h"
-#include "wabi/base/tf/pyNoticeWrapper.h"
-#include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/wabi.h"
+#include "wabi/base/plug/notice.h"
+#include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/pyNoticeWrapper.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/scope.hpp>

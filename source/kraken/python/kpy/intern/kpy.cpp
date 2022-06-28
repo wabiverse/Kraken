@@ -48,14 +48,14 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_library.h"
-#include "kpy_uni.h"
+#include "kpy_stage.h"
+#include "kpy_pixar_data.h"
 
 #include "wabi_python.h"
 
 WABI_NAMESPACE_BEGIN
 
-PyObject *kpy_package_py = NULL;
-PyObject *wabi_package_py = NULL;
+PyObject *kpy_package_py = nullptr;
 
 PyDoc_STRVAR(kpy_script_paths_doc,
              ".. function:: script_paths()\n"
@@ -386,8 +386,8 @@ static PyObject *kpy_import_test(const char *modname)
  ******************************************************************************/
 void KPy_init_modules(struct kContext *C)
 {
-  PointerLUXO ctx_ptr;
   PyObject *mod;
+  PointerLUXO ctx_ptr;
 
   /* Needs to be first since this dir is needed for future modules */
   const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
@@ -419,117 +419,29 @@ void KPy_init_modules(struct kContext *C)
   /* needs to be first so kpy_types can run */
   KPY_library_load_type_ready();
 
-  // KPY_uni_data_context_type_ready();
+  KPY_pixar_data_context_type_ready();
 
   // KPY_uni_gizmo_module(mod);
 
-  // kpy_import_test("kpy_types");
-  // PyModule_AddObject(mod, "data", KPY_uni_module()); /* imports kpy_types by running this */
-  // kpy_import_test("kpy_types");
+  kpy_import_test("kpy_types");
+  PyModule_AddObject(mod, "data", KPY_stage_module()); /* imports kpy_types by running this */
+  TF_STATUS("we here.");
+  kpy_import_test("kpy_types");
+  TF_STATUS("we here.");
   // PyModule_AddObject(mod, "props", KPY_uni_props());
   /* ops is now a python module that does the conversion from SOME_OT_foo -> some.foo */
   // PyModule_AddObject(mod, "ops", KPY_operator_module());
   PyModule_AddObject(mod, "app", KPY_app_struct());
+  TF_STATUS("we done.");
   // PyModule_AddObject(mod, "_utils_units", KPY_utils_units());
   // PyModule_AddObject(mod, "_utils_previews", KPY_utils_previews_module());
   // PyModule_AddObject(mod, "msgbus", KPY_msgbus_module());
-
-  CreationFactory::PTR::New(SdfPath("/"), &LUXO_Context, C, &ctx_ptr);
-  kpy_context_module = (KPy_KrakenPrim *)pyuni_object_CreatePyObject(&ctx_ptr);
+  LUXO_pointer_create(&LUXO_Context, C, &ctx_ptr);
+  kpy_context_module = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ctx_ptr);
   /* odd that this is needed, 1 ref on creation and another for the module
    * but without we get a crash on exit */
   Py_INCREF(kpy_context_module);
-
   PyModule_AddObject(mod, "context", (PyObject *)kpy_context_module);
-
-  /* Register methods and property get/set for RNA types. */
-  //   KPY_uni_types_extend_capi();
-
-  /* utility func's that have nowhere else to go */
-  PyModule_AddObject(mod,
-                     meth_kpy_script_paths.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_script_paths, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_resolver_paths.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_resolver_paths, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_user_resource.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_user_resource, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_system_resource.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_system_resource, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_resource_path.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_resource_path, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_escape_identifier.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_escape_identifier, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_unescape_identifier.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_unescape_identifier, NULL));
-
-  /* register funcs (kpy_uni.c) */
-  PyModule_AddObject(mod,
-                     meth_kpy_register_class.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_register_class, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_unregister_class.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_unregister_class, NULL));
-
-  PyModule_AddObject(mod,
-                     meth_kpy_owner_id_get.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_owner_id_get, NULL));
-  PyModule_AddObject(mod,
-                     meth_kpy_owner_id_set.ml_name,
-                     (PyObject *)PyCFunction_New(&meth_kpy_owner_id_set, NULL));
-
-  /* add our own modules dir, this is a python package */
-  kpy_package_py = kpy_import_test("kpy");
-}
-
-static PyObject *wabi_import_test(const char *modname)
-{
-  PyObject *mod = PyImport_ImportModuleLevel(modname, NULL, NULL, NULL, 0);
-
-  if (mod) {
-    Py_DECREF(mod);
-  } else {
-    PyErr_Print();
-    PyErr_Clear();
-  }
-
-  return mod;
-}
-
-/********************************************************************************
- * Description: Creates the wabi module and adds it to sys.modules for importing
- ********************************************************************************/
-void WABIPy_init_modules(struct kContext *C)
-{
-  PointerLUXO ctx_ptr;
-  PyObject *mod;
-
-  /* Needs to be first since this dir is needed for future modules */
-  const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
-
-  if (modpath) {
-    // printf("kpy: found module path '%s'.\n", modpath);
-    PyObject *sys_path = PySys_GetObject("path"); /* borrow */
-    PyObject *py_modpath = PyUnicode_FromString(modpath);
-    PyList_Insert(sys_path, 0, py_modpath); /* add first */
-    Py_DECREF(py_modpath);
-  } else {
-    printf("wabi: couldn't find 'scripts/modules', kraken probably won't start.\n");
-  }
-  /* stand alone utility modules not related to kraken directly */
-  // IDProp_Init_Types(); /* not actually a submodule, just types */
-
-  mod = PyModule_New("_wabi");
-
-  /* add the module so we can import it */
-  PyDict_SetItemString(PyImport_GetModuleDict(), "_wabi", mod);
-  Py_DECREF(mod);
-
   PyModule_AddObject(mod, "Tf", PyInit__tf());
   PyModule_AddObject(mod, "Gf", PyInit__gf());
   PyModule_AddObject(mod, "Trace", PyInit__trace());
@@ -565,8 +477,49 @@ void WABIPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod, "UsdAppUtils", PyInit__usdAppUtils());
   PyModule_AddObject(mod, "Usdviewq", PyInit__usdviewq());
 
+  /* Register methods and property get/set for RNA types. */
+  //   KPY_uni_types_extend_capi();
+
+  /* utility func's that have nowhere else to go */
+  PyModule_AddObject(mod,
+                     meth_kpy_script_paths.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_script_paths, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_resolver_paths.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_resolver_paths, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_user_resource.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_user_resource, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_system_resource.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_system_resource, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_resource_path.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_resource_path, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_escape_identifier.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_escape_identifier, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_unescape_identifier.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_unescape_identifier, NULL));
+
+  /* register funcs (kpy_stage.c) */
+  PyModule_AddObject(mod,
+                     meth_kpy_register_class.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_register_class, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_unregister_class.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_unregister_class, NULL));
+
+  PyModule_AddObject(mod,
+                     meth_kpy_owner_id_get.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_owner_id_get, NULL));
+  PyModule_AddObject(mod,
+                     meth_kpy_owner_id_set.ml_name,
+                     (PyObject *)PyCFunction_New(&meth_kpy_owner_id_set, NULL));
+
   /* add our own modules dir, this is a python package */
-  wabi_package_py = wabi_import_test("wabi");
+  kpy_package_py = kpy_import_test("kpy");
 }
 
 WABI_NAMESPACE_END

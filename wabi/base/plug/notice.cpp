@@ -29,10 +29,10 @@
  * Modifications copyright (C) 2020-2021 Wabi.
  */
 
-#include "wabi/base/plug/notice.h"
-#include "wabi/base/tf/registryManager.h"
-#include "wabi/base/tf/type.h"
 #include "wabi/wabi.h"
+#include "wabi/base/plug/notice.h"
+#include "wabi/base/tf/type.h"
+#include "wabi/base/tf/registryManager.h"
 
 WABI_NAMESPACE_BEGIN
 

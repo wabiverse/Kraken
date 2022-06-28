@@ -31,8 +31,8 @@
 #ifndef WABI_BASE_PLUG_REGISTRY_H
 #define WABI_BASE_PLUG_REGISTRY_H
 
-#include "wabi/base/plug/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/plug/api.h"
 
 #include "wabi/base/js/value.h"
 #include "wabi/base/tf/declarePtrs.h"

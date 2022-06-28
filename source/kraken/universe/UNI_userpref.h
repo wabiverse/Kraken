@@ -102,7 +102,7 @@ enum eUserPrefFlag
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
 };
 
-struct UserDef : public KrakenPrim
+struct UserDef : public UsdPrim
 {
 
   SdfPath path;
@@ -117,7 +117,7 @@ struct UserDef : public KrakenPrim
 };
 
 UserDef::UserDef(kContext *C, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
+  : UsdPrim(),
     path(stagepath),
     showsave(EMPTY /*CreateShowSavePromptAttr()*/),
     dpifac(EMPTY /*CreateDpifacAttr()*/),

@@ -31,8 +31,8 @@
 #ifndef WABI_BASE_PLUG_PLUGIN_H
 #define WABI_BASE_PLUG_PLUGIN_H
 
-#include "wabi/base/plug/api.h"
 #include "wabi/wabi.h"
+#include "wabi/base/plug/api.h"
 
 #include "wabi/base/js/types.h"
 #include "wabi/base/tf/declarePtrs.h"
@@ -131,9 +131,7 @@ class PlugPlugin : public TfRefBase, public TfWeakBase
   enum _Type
   {
     LibraryType,
-#ifdef WITH_PYTHON
     PythonType,
-#endif  // WITH_PYTHON
     ResourceType
   };
 

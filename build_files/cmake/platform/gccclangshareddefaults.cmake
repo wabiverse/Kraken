@@ -71,3 +71,6 @@ set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -fPIC"
 
 # Enable debugging symbols.
 set(_WABI_GCC_CLANG_STATIC_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS} -g")
+
+_add_define("UNICODE")
+_add_define("_UNICODE")

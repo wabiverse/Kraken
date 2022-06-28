@@ -33,7 +33,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct Main : public KrakenPrim
+struct Main
 {
   uint64_t build_commit_timestamp;
   std::string build_hash;
@@ -56,6 +56,8 @@ struct Main : public KrakenPrim
   std::vector<struct kScreen *> screens;
   std::vector<struct Scene *> scenes;
 };
+
+Main *KKE_main_new(void);
 
 /** #Global.debug */
 enum
@@ -151,6 +153,8 @@ struct Global
 
   /** Message to use when auto execution fails. */
   char autoexec_fail[200];
+
+  char filepath[1024];
 };
 
 enum eGlobalFlag
@@ -200,7 +204,6 @@ void KKE_kraken_enable_debug_codes(void);
 const char *KKE_kraken_version_string(void);
 
 /* ------ */
-
 
 /* Setup in KKE_kraken. */
 extern Global G;

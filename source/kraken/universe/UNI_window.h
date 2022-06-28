@@ -59,7 +59,7 @@ struct ScrAreaMap
   ScrAreaMap() : verts(EMPTY), edges(EMPTY), areas(EMPTY) {}
 };
 
-struct wmWindow : public KrakenPrim
+struct wmWindow : public UsdPrim
 {
   SdfPath path;
   wmWindow *parent;
@@ -111,7 +111,7 @@ struct wmWindow : public KrakenPrim
 
 
 wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE(C)),
+  : UsdPrim(),
     path(stagepath),
     parent(NULL),
     title(EMPTY /*CreateTitleAttr()*/),
@@ -138,8 +138,8 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
 {}
 
 wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
-  : KrakenPrim(KRAKEN_LUXOVERSE_CREATE_CHILD(C)),
-    path(KrakenPrim::GetPath()),
+  : UsdPrim(),
+    path(UsdPrim::GetPath()),
     parent(prim),
     title(EMPTY /*CreateTitleAttr()*/),
     icon(EMPTY /*CreateIconAttr()*/),
@@ -194,7 +194,7 @@ struct wmSpaceTypeListenerParams
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 
-struct wmWindowManager : public KrakenPrim
+struct wmWindowManager : public UsdPrim
 {
   SdfPath path;
 
@@ -225,5 +225,4 @@ wmWindowManager::wmWindowManager()
     drags(EMPTY),
     file_saved(VALUE_ZERO)
 {}
-
 WABI_NAMESPACE_END

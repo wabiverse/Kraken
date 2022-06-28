@@ -33,8 +33,8 @@
 
 /// \file plug/interfaceFactory.h
 
-#include "wabi/base/tf/type.h"
 #include "wabi/wabi.h"
+#include "wabi/base/tf/type.h"
 
 WABI_NAMESPACE_BEGIN
 

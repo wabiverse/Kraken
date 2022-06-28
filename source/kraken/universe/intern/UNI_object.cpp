@@ -29,47 +29,4 @@
 WABI_NAMESPACE_BEGIN
 
 
-KrakenPrim::KrakenPrim(const UsdPrim &prim)
-  : UsdTyped(prim),
-    notice(TfNotice()),
-    type(nullptr),
-    data(nullptr),
-    base(nullptr)
-{}
-
-KrakenPrim::KrakenPrim(const UsdSchemaBase &schemaObj)
-  : UsdTyped(schemaObj),
-    notice(TfNotice()),
-    type(nullptr),
-    data(nullptr),
-    base(nullptr)
-{}
-
-KrakenPrim::~KrakenPrim() {}
-
-
-UsdSchemaKind KrakenPrim::_GetSchemaKind() const
-{
-  return KrakenPrim::schemaKind;
-}
-
-
-const TfType &KrakenPrim::_GetStaticTfType()
-{
-  static TfType tfType = TfType::Find<KrakenPrim>();
-  return tfType;
-}
-
-const TfType &KrakenPrim::_GetTfType() const
-{
-  return _GetStaticTfType();
-}
-
-bool KrakenPrim::_IsTypedSchema()
-{
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
-  return isTyped;
-}
-
-
 WABI_NAMESPACE_END

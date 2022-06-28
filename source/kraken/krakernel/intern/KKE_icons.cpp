@@ -22,8 +22,6 @@
  * Purple Underground.
  */
 
-#pragma once
-
 #include "KKE_icons.h"
 #include "KKE_utils.h"
 

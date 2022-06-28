@@ -27,6 +27,7 @@
 #include "wabi/usd/usd/stage.h"
 
 #include "wabi/base/tf/pyResultConversions.h"
+#include "wabi/base/tf/wrapTypeHelpers.h"
 
 #include <boost/python/class.hpp>
 #include <boost/python/def.hpp>
@@ -47,6 +48,10 @@ void wrapMetrics()
   def("LinearUnitsAre",
       UsdGeomLinearUnitsAre,
       (arg("authoredUnits"), arg("standardUnits"), arg("epsilon") = 1e-5));
+
+  if (TfPyRegistry<UsdGeomLinearUnits>::IsTypeRegistered()) {
+    return;
+  }
 
   boost::python::class_<UsdGeomLinearUnits> cls("LinearUnits", boost::python::no_init);
   cls.def_readonly("nanometers", UsdGeomLinearUnits::nanometers)

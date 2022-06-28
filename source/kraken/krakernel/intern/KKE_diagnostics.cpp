@@ -16,8 +16,6 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
  * KRAKEN Kernel.
@@ -34,6 +32,8 @@
 #include <wabi/base/tf/envSetting.h>
 #include <wabi/base/tf/setenv.h>
 
+#include <wabi/base/plug/debugCodes.h>
+
 #if WITH_VULKAN
 #  include <wabi/imaging/hgiVulkan/diagnostic.h>
 #endif /* WITH_VULKAN */
@@ -42,11 +42,16 @@ WABI_NAMESPACE_BEGIN
 
 void KKE_kraken_enable_debug_codes()
 {
+  TfDebug::Enable(PLUG_LOAD);
+  TfDebug::Enable(PLUG_REGISTRATION);
+  TfDebug::Enable(PLUG_LOAD_IN_SECONDARY_THREAD);
+  TfDebug::Enable(PLUG_INFO_SEARCH);
+
   /**
    * Debugging messages for Anchor. */
   // TfDebug::Enable(ANCHOR_SDL_VULKAN);
   // TfDebug::Enable(ANCHOR_DISPLAY_MANAGER);
-  TfDebug::Enable(ANCHOR_WIN32);
+  // TfDebug::Enable(ANCHOR_WIN32);
 
   /**
    * Debugging messages for MsgBus. */

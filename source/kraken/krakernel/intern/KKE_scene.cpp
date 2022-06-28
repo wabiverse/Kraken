@@ -34,73 +34,45 @@
 
 WABI_NAMESPACE_BEGIN
 
-TF_REGISTRY_FUNCTION(TfType)
-{
-  TfType::Define<Scene, TfType::Bases<KrakenPrim>>();
-  TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
-}
+// TF_REGISTRY_FUNCTION(TfType)
+// {
+//   TfType::Define<Scene, TfType::Bases<KrakenPrim>>();
+//   TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
+// }
 
 Scene::Scene(const std::string &identifier, const UsdPrim &prim)
-  : stage(UsdStage::CreateNew(identifier)),
-    KrakenPrim(prim)
+  : stage(UsdStage::CreateNew(identifier))
 {}
 
 Scene::Scene(const std::string &identifier, const UsdSchemaBase &schemaObj)
-  : stage(UsdStage::CreateNew(identifier)),
-    KrakenPrim(schemaObj)
+  : stage(UsdStage::CreateNew(identifier))
 {}
 
 Scene::~Scene() {}
 
-UsdSchemaKind Scene::_GetSchemaKind() const
+static bool SceneInitData(UsdPrim &prim)
 {
-  return Scene::schemaKind;
-}
+  // TF_WARN("TEST, scene init");
 
-/* static */
-const TfType &Scene::_GetStaticTfType()
-{
-  static TfType tfType = TfType::Find<Scene>();
-  return tfType;
-}
+  // Scene scene(G.main->stage_id.string(), *prim);
+  // Stage stage = scene.stage;
 
-/* static */
-bool Scene::_IsTypedSchema()
-{
-  static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
-  return isTyped;
-}
+  // if (ARCH_UNLIKELY(scene.GetPrim().IsValid() != NULL)) {
+  //   return false;
+  // }
 
-/* virtual */
-const TfType &Scene::_GetTfType() const
-{
-  return _GetStaticTfType();
-}
-
-
-static bool SceneInitData(KrakenPrim *prim)
-{
-  TF_WARN("TEST, scene init");
-
-  Scene scene(G.main->stage_id.string(), *prim);
-  Stage stage = scene.stage;
-
-  if (ARCH_UNLIKELY(scene.GetPrim().IsValid() != NULL)) {
-    return false;
-  }
-
-  stage->SetMetadata(UsdGeomTokens->upAxis, UsdGeomTokens->z);
-  stage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
-  stage->SetColorConfiguration(
-    SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
-  stage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
+  // stage->SetMetadata(UsdGeomTokens->upAxis, UsdGeomTokens->z);
+  // stage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
+  // stage->SetColorConfiguration(
+  //   SdfAssetPath(STRCAT(G.main->datafiles_path, "colormanagement/config.ocio")));
+  // stage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
 
   return true;
 }
 
-TF_REGISTRY_FUNCTION_WITH_TAG(KrakenPrimRegistry, KrakenPrim)
-{
-  RegisterKrakenInitFunction<Scene>(SceneInitData);
-}
+// TF_REGISTRY_FUNCTION_WITH_TAG(KrakenPrimRegistry, KrakenPrim)
+// {
+//   RegisterKrakenInitFunction<Scene>(SceneInitData);
+// }
 
 WABI_NAMESPACE_END

@@ -48,47 +48,65 @@ struct PropertyLUXO
 
 typedef std::vector<PropertyLUXO *> CollectionPropertyLUXO;
 
-struct KrakenPrim : public UsdTyped
+typedef struct PointerLUXO *(*StructRefineFunc)(struct PointerLUXO *ptr);
+
+struct ParameterList
 {
-  explicit KrakenPrim(const UsdPrim &prim = UsdPrim());
-  explicit KrakenPrim(const UsdSchemaBase &schemaObj);
-  virtual ~KrakenPrim();
+  void *data;
+  struct FunctionLUXO *func;
+  int alloc_size;
+};
 
-  static bool RegisterPrimInitFromPlugins(KrakenPrim *prim);
+typedef void (*CallFunc)(struct kContext *C,
+                         struct ReportList *reports,
+                         struct PointerLUXO *ptr,
+                         ParameterList *parms);
 
-  static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
-  /** This scenes active stage. */
-  SdfPath path;
-  TfNotice notice;
+struct FunctionLUXO
+{
+  std::vector<FunctionLUXO> cont;
 
   const char *identifier;
-  struct KrakenPrim *type;
+
+  int flag;
+
+  const char *description;
+
+  CallFunc call;
+
+  PointerLUXO *c_ret;
+};
+
+struct PointerLUXO
+{
+  const char *owner_id;
+
+  /**
+   * context (C) */
   void *data;
+
+  PointerLUXO *ptr;
+  StructRefineFunc refine;
+
+  SdfPath path;
+  const char *identifier;
+
+  UsdPrim type;
+  UsdPrim base;
+
+  void *py_type;
+
+  TfNotice notice;
 
   UsdAttributeVector props;
   CollectionPropertyLUXO collection;
-
-  struct KrakenPrim *base;
 
   ObjectRegisterFunc reg;
   ObjectUnregisterFunc unreg;
   ObjectInstanceFunc instance;
 
- protected:
-
-  UsdSchemaKind _GetSchemaKind() const override;
-
- private:
-
-  friend class UsdSchemaRegistry;
-
-  static const TfType &_GetStaticTfType();
-  static bool _IsTypedSchema();
-  const TfType &_GetTfType() const override;
-  ;
+  std::vector<PointerLUXO *> functions;
 };
-
-typedef KrakenPrim PointerLUXO;
 
 WABI_NAMESPACE_END

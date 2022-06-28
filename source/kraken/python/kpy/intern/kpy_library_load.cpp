@@ -41,7 +41,7 @@
 #include "kpy_capi_utils.h"
 #include "kpy_interface.h"
 #include "kpy_library.h"
-#include "kpy_uni.h"
+#include "kpy_stage.h"
 #include "kpy_utildefines.h"
 
 #include <wabi/usd/sdf/layer.h>
@@ -67,7 +67,7 @@ struct KPy_Library
   bool kmain_is_temp;
 };
 
-static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *kwds);
+static PyObject *kpy_lib_load(KPy_KrakenStage *self, PyObject *args, PyObject *kwds);
 static PyObject *kpy_lib_enter(KPy_Library *self);
 static PyObject *kpy_lib_exit(KPy_Library *self, PyObject *args);
 static PyObject *kpy_lib_dir(KPy_Library *self);
@@ -179,7 +179,7 @@ PyDoc_STRVAR(
   "   :type relative: bool\n"
   "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
   "   :type assets_only: bool\n");
-static PyObject *kpy_lib_load(KPy_PropertyLUXO *self, PyObject *args, PyObject *kw)
+static PyObject *kpy_lib_load(KPy_KrakenStage *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
   Main *kmain = (Main *)self->ptr.data; /* Typically #G_MAIN */
@@ -325,7 +325,6 @@ int KPY_library_load_type_ready(void)
   if (PyType_Ready(&kpy_lib_Type) < 0) {
     return -1;
   }
-
   return 0;
 }
 
