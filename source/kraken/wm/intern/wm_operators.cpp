@@ -28,10 +28,12 @@
 #include "WM_tokens.h"
 #include "WM_window.h"
 
-#include "UNI_factory.h"
-#include "UNI_screen.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
+#include "USD_factory.h"
+#include "USD_screen.h"
+#include "USD_userpref.h"
+#include "USD_window.h"
+
+#include "LUXO_access.h"
 
 #include "KKE_context.h"
 #include "KKE_utils.h"
@@ -85,7 +87,7 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
   notice.Send(invoker);
 }
 
-void WM_operator_properties_free(PointerLUXO *ptr)
+void WM_operator_properties_free(KrakenPRIM *ptr)
 {
   // IDProperty *properties = ptr->data;
 
@@ -95,9 +97,10 @@ void WM_operator_properties_free(PointerLUXO *ptr)
   // }
 }
 
-void WM_operator_properties_create_ptr(PointerLUXO *prop_ptr, wmOperatorType *ot)
+void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
 {
-  CreationFactory::PTR::New(prop_ptr->type, (kContext *)prop_ptr->data);
+  // G.main->wm.at(1)
+  LUXO_pointer_create(ot->pixar, NULL, ptr);
 }
 
 void WM_operators_init(kContext *C)

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "UNI_api.h"
+#include "USD_api.h"
 
 #include <wabi/base/tf/diagnostic.h>
 #include <wabi/usd/sdf/fileFormat.h>
@@ -49,7 +49,7 @@ WABI_NAMESPACE_BEGIN
  * @param path: filepath to (usd|usdc|usdz) file.
  * @param format: the file format to convert to (usd|usdc|usdz)
  * @param verbose: whether to log status to console. */
-void UNI_pixutil_convert_usd(const fs::path &path,
+void USD_pixutil_convert_usd(const fs::path &path,
                              const TfToken &format = UsdUsdaFileFormatTokens->Id,
                              bool verbose = false);
 
@@ -58,6 +58,6 @@ void UNI_pixutil_convert_usd(const fs::path &path,
  * @param path: path to asset to preform Asset Resolution.
  * @param verbose: whether to log status to console.
  * @returns the resolved path or empty string if the asset does not exist. */
-std::string UNI_pixutil_resolve_asset(const std::string &path, bool verbose = false);
+std::string USD_pixutil_resolve_asset(const std::string &path, bool verbose = false);
 
 WABI_NAMESPACE_END

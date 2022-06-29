@@ -17,14 +17,14 @@
  */
 
 /**
- * @file UNI_scene.h
+ * @file USD_scene.h
  * @ingroup UNI
  */
 
 #pragma once
 
-#include "UNI_api.h"
-#include "UNI_object.h"
+#include "USD_api.h"
+#include "USD_object.h"
 
 #include "KKE_version.h"
 

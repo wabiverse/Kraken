@@ -28,7 +28,7 @@
 #include "KKE_screen.h"
 #include "KKE_utils.h"
 
-#include "UNI_object.h"
+#include "USD_object.h"
 
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/arch/vsnprintf.h>

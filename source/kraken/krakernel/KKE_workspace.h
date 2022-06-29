@@ -27,9 +27,9 @@
 #include "KKE_api.h"
 #include "KKE_context.h"
 
-#include "UNI_object.h"
-#include "UNI_screen.h"
-#include "UNI_workspace.h"
+#include "USD_object.h"
+#include "USD_screen.h"
+#include "USD_workspace.h"
 
 WABI_NAMESPACE_BEGIN
 

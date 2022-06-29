@@ -35,6 +35,7 @@ kpy -- The Kraken Python Module.
 __all__ = (
     "app",
     "context",
+    "data",
     "Tf", 
     "Gf", 
     "Trace", 
@@ -69,11 +70,10 @@ __all__ = (
     "UsdImagingGL", 
     "UsdAppUtils", 
     "Usdviewq",
-#     "data",
 #     "ops",
 #     "path",
 #     "props",
-#     "types",
+    "types",
     "utils",
 )
 
@@ -82,6 +82,7 @@ __all__ = (
 from _kpy import (
     app,
     context,
+    data,
     Tf, 
     Gf, 
     Trace,
@@ -116,10 +117,9 @@ from _kpy import (
     UsdImagingGL, 
     UsdAppUtils, 
     Usdviewq,
-#     data,
 #     msgbus,
 #     props,
-#     types,
+    types,
 )
 
 # python modules
@@ -180,7 +180,7 @@ def main():
         "kpy.Usdviewq": Usdviewq,
         # "kpy.app.handlers": app.handlers,
         # "kpy.app.translations": app.translations,
-        # "kpy.types": types,
+        "kpy.types": types,
     })
 
     # Initializes Python classes.

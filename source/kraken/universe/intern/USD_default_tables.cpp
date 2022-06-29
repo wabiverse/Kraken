@@ -22,13 +22,13 @@
  * Set the Stage.
  */
 
-#include "UNI_api.h"
-#include "UNI_area.h"
-#include "UNI_factory.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
+#include "USD_api.h"
+#include "USD_area.h"
+#include "USD_factory.h"
+#include "USD_region.h"
+#include "USD_screen.h"
+#include "USD_userpref.h"
+#include "USD_window.h"
 
 #include "KLI_icons.h"
 
@@ -48,7 +48,7 @@ WABI_NAMESPACE_BEGIN
 /* clang-format off */
 
 
-void UNI_default_table_main_window(kContext *C)
+void USD_default_table_main_window(kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
 
@@ -68,7 +68,7 @@ void UNI_default_table_main_window(kContext *C)
 }
 
 
-void UNI_default_table_user_prefs(kContext *C)
+void USD_default_table_user_prefs(kContext *C)
 {
   UserDef *prefs = CTX_data_prefs(C);
 
@@ -77,7 +77,7 @@ void UNI_default_table_user_prefs(kContext *C)
 }
 
 
-void UNI_default_table_area_v3d(kContext *C)
+void USD_default_table_area_v3d(kContext *C)
 {
   ScrArea *v3d = CTX_wm_area(C);
 
@@ -89,7 +89,7 @@ void UNI_default_table_area_v3d(kContext *C)
 }
 
 
-void UNI_default_table_area_outliner(kContext *C)
+void USD_default_table_area_outliner(kContext *C)
 {
   ScrArea *outliner = CTX_wm_area(C);
 
@@ -101,7 +101,7 @@ void UNI_default_table_area_outliner(kContext *C)
 }
 
 
-void UNI_default_table_area_screen(kContext *C)
+void USD_default_table_area_screen(kContext *C)
 {
   kScreen *screen = CTX_wm_screen(C);
 
@@ -115,7 +115,7 @@ void UNI_default_table_area_screen(kContext *C)
 }
 
 
-void UNI_default_table_area_workspace(kContext *C)
+void USD_default_table_area_workspace(kContext *C)
 {
   WorkSpace *workspace = CTX_wm_workspace(C);
   kScreen *screen = CTX_wm_screen(C);
@@ -126,7 +126,7 @@ void UNI_default_table_area_workspace(kContext *C)
 }
 
 
-void UNI_default_table_scene_data(kContext *C)
+void USD_default_table_scene_data(kContext *C)
 {
   Stage stage = CTX_data_stage(C);
 

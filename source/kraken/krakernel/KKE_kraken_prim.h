@@ -28,7 +28,7 @@
 #include "KKE_context.h"
 #include "KKE_robinhood.h"
 
-#include "UNI_object.h"
+#include "USD_object.h"
 
 #include <wabi/usd/usd/prim.h>
 #include <wabi/usd/usd/stage.h>

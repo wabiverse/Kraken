@@ -26,7 +26,7 @@
 
 #include "KKE_main.h"
 
-#include "UNI_scene.h"
+#include "USD_scene.h"
 
 #include <wabi/base/gf/vec2i.h>
 

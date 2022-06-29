@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "UNI_api.h"
+#include "USD_api.h"
 
 #define MAX_SYSTEM_FILE_PATH 256
 #define MAX_SYSTEM_VERSION_INFO 64
@@ -67,7 +67,7 @@ struct SystemVersion
 struct SystemTime
 {
   /** Returns the formatted launch time. */
-  char launch_time[UNI_MAX_TIME];
+  char launch_time[USD_MAX_TIME];
 };
 
 struct System

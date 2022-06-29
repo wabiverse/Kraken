@@ -33,9 +33,9 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_system_paths.h"
 
-#include "UNI_context.h"
-#include "UNI_userpref.h"
-#include "UNI_factory.h"
+#include "USD_context.h"
+#include "USD_userpref.h"
+#include "USD_factory.h"
 
 #include "KLI_icons.h"
 
@@ -219,7 +219,7 @@ void WM_exit_ex(kContext *C, const bool do_python)
   // UI_exit();
   // KKE_blender_userdef_data_free(&U, false);
 
-  // UNI_exit();
+  // USD_exit();
 
   // GPU_backend_exit();
 

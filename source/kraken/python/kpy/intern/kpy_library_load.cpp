@@ -35,8 +35,8 @@
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
 
-#include "UNI_file.h"
-#include "UNI_space_types.h"
+#include "USD_file.h"
+#include "USD_space_types.h"
 
 #include "kpy_capi_utils.h"
 #include "kpy_interface.h"

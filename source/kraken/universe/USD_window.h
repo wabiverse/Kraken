@@ -24,13 +24,13 @@
  * Set the Stage.
  */
 
-#include "UNI_area.h"
-#include "UNI_context.h"
-#include "UNI_region.h"
-#include "UNI_scene.h"
-#include "UNI_screen.h"
-#include "UNI_wm_types.h"
-#include "UNI_workspace.h"
+#include "USD_area.h"
+#include "USD_context.h"
+#include "USD_region.h"
+#include "USD_scene.h"
+#include "USD_screen.h"
+#include "USD_wm_types.h"
+#include "USD_workspace.h"
 
 #include "WM_operators.h"
 

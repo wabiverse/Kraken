@@ -24,10 +24,10 @@
  * Set the Stage.
  */
 
-#include "UNI_context.h"
-#include "UNI_object.h"
-#include "UNI_screen.h"
-#include "UNI_window.h"
+#include "USD_context.h"
+#include "USD_object.h"
+#include "USD_screen.h"
+#include "USD_window.h"
 
 #include "KKE_context.h"
 

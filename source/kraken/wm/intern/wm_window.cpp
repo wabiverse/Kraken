@@ -32,14 +32,14 @@
 #include "WM_operators.h"
 #include "WM_tokens.h"
 
-#include "UNI_area.h"
-#include "UNI_context.h"
-#include "UNI_factory.h"
-#include "UNI_object.h"
-#include "UNI_operator.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
-#include "UNI_workspace.h"
+#include "USD_area.h"
+#include "USD_context.h"
+#include "USD_factory.h"
+#include "USD_object.h"
+#include "USD_operator.h"
+#include "USD_userpref.h"
+#include "USD_window.h"
+#include "USD_workspace.h"
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_event_consumer.h"
@@ -436,7 +436,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
           wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_open_mainfile));
           CTX_wm_window_set(C, win);
 
-          PointerLUXO props_ptr;
+          KrakenPRIM props_ptr;
           WM_operator_properties_create_ptr(&props_ptr, ot);
           CreationFactory::STR::Set(&props_ptr, "filepath", path);
           CreationFactory::BOOL::Set(&props_ptr, "display_file_selector", false);

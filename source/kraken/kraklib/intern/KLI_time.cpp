@@ -22,7 +22,7 @@
  * Gadget Vault.
  */
 
-#include "UNI_api.h"
+#include "USD_api.h"
 
 #include "KLI_time.h"
 #include "KLI_string_utils.h"
@@ -106,11 +106,11 @@ void PIL_sleep_ms(int ms)
 
 void KLI_pretty_time(time_t t, char *r_time)
 {
-  char buffer[UNI_MAX_TIME];
+  char buffer[USD_MAX_TIME];
 
   std::tm *ptm = std::localtime(&t);
 
-  std::strftime(buffer, UNI_MAX_TIME, "%A, %B %d, %Y %I:%M:%S %p", ptm);
+  std::strftime(buffer, USD_MAX_TIME, "%A, %B %d, %Y %I:%M:%S %p", ptm);
 
-  KLI_strncpy(r_time, buffer, UNI_MAX_TIME);
+  KLI_strncpy(r_time, buffer, USD_MAX_TIME);
 }

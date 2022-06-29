@@ -27,7 +27,7 @@
 #include "KLI_icons.h"
 #include "KLI_path_utils.h"
 
-#include "UNI_space_types.h"
+#include "USD_space_types.h"
 
 WABI_NAMESPACE_BEGIN
 

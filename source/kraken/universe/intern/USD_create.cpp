@@ -32,16 +32,16 @@
 
 #include "LUXO_runtime.h"
 
-#include "UNI_api.h"
-#include "UNI_area.h"
-#include "UNI_context.h"
-#include "UNI_default_tables.h"
-#include "UNI_factory.h"
-#include "UNI_scene.h"
-#include "UNI_screen.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
-#include "UNI_workspace.h"
+#include "USD_api.h"
+#include "USD_area.h"
+#include "USD_context.h"
+#include "USD_default_tables.h"
+#include "USD_factory.h"
+#include "USD_scene.h"
+#include "USD_screen.h"
+#include "USD_userpref.h"
+#include "USD_window.h"
+#include "USD_workspace.h"
 
 #include <wabi/wabi.h>
 
@@ -64,7 +64,7 @@
 
 WABI_NAMESPACE_BEGIN
 
-void UNI_create_stage(kContext *C)
+void USD_create_stage(kContext *C)
 {
   Main *main = CTX_data_main(C);
 
@@ -74,13 +74,13 @@ void UNI_create_stage(kContext *C)
   CTX_data_scene_set(C, scene);
 }
 
-void UNI_destroy(kContext *C)
+void USD_destroy(kContext *C)
 {
   Stage stage = CTX_data_stage(C);
   stage->~UsdStage();
 }
 
-void UNI_open_stage(kContext *C)
+void USD_open_stage(kContext *C)
 {
   Main *main = CTX_data_main(C);
   Stage stage = CTX_data_stage(C);
@@ -88,13 +88,13 @@ void UNI_open_stage(kContext *C)
   stage->Open(main->stage_id.string());
 }
 
-void UNI_save_stage(kContext *C)
+void USD_save_stage(kContext *C)
 {
   Stage stage = CTX_data_stage(C);
   stage->GetRootLayer()->Save();
 }
 
-void UNI_set_defaults(kContext *C)
+void USD_set_defaults(kContext *C)
 {
   /* ----- */
 
@@ -111,7 +111,7 @@ void UNI_set_defaults(kContext *C)
   // CTX_wm_area_set(C, v3d);
 
   /** Load the defaults. */
-  // UNI_default_table_area_v3d(C);
+  // USD_default_table_area_v3d(C);
 
   /* ----- */
 
@@ -125,20 +125,20 @@ void UNI_set_defaults(kContext *C)
   // CTX_wm_area_set(C, outliner);
 
   /** Load the defaults. */
-  // UNI_default_table_area_outliner(C);
+  // USD_default_table_area_outliner(C);
 
   /* ----- */
 
   /** Load the kScreen defaults. */
-  // UNI_default_table_area_screen(C);
+  // USD_default_table_area_screen(C);
 
   /** Load the WorkSpace defaults. */
-  // UNI_default_table_area_workspace(C);
+  // USD_default_table_area_workspace(C);
 
   /* ----- */
 
   /** Load the Default Scene. */
-  // UNI_default_table_scene_data(C);
+  // USD_default_table_scene_data(C);
 }
 
 WABI_NAMESPACE_END

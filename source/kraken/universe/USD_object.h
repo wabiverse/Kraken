@@ -17,15 +17,15 @@
  */
 
 /**
- * @file UNI_object.h
+ * @file USD_object.h
  * @ingroup UNI
  * The @a central foundation for @a all data access.
  */
 
 #pragma once
 
-#include "UNI_api.h"
-#include "UNI_types.h"
+#include "USD_api.h"
+#include "USD_types.h"
 
 #include <wabi/base/tf/hashmap.h>
 #include <wabi/base/tf/notice.h>
@@ -35,37 +35,58 @@
 
 #include <wabi/usd/usd/prim.h>
 #include <wabi/usd/usd/typed.h>
+#include <wabi/usd/usd/collectionAPI.h>
 
 WABI_NAMESPACE_BEGIN
 
-struct PropertyLUXO
+struct KrakenPROP : UsdAttribute
 {
+  KrakenPROP(const UsdAttribute &attr = UsdAttribute()) : UsdAttribute(attr) {}
+
   TfToken name;
-  SdfValueTypeName type;
-  SdfVariability variability;
-  bool custom;
+  PropertyType type;
 };
 
-typedef std::vector<PropertyLUXO *> CollectionPropertyLUXO;
+typedef std::vector<KrakenPROP *> PropertyVectorLUXO;
 
-typedef struct PointerLUXO *(*StructRefineFunc)(struct PointerLUXO *ptr);
+struct KrakenPROPString
+{
+  KrakenPROP property;
+
+  PropStringGetFunc get;
+  PropStringLengthFunc length;
+  PropStringSetFunc set;
+
+  PropStringGetFuncEx get_ex;
+  PropStringLengthFuncEx length_ex;
+  PropStringSetFuncEx set_ex;
+
+  StringPropertySearchFunc search;
+  eStringPropertySearchFlag search_flag;
+
+  int maxlength;
+
+  const char *defaultvalue;
+};
 
 struct ParameterList
 {
   void *data;
-  struct FunctionLUXO *func;
+  struct KrakenFUNC *func;
   int alloc_size;
 };
 
+typedef struct KrakenPRIM *(*StructRefineFunc)(struct KrakenPRIM *ptr);
+
 typedef void (*CallFunc)(struct kContext *C,
                          struct ReportList *reports,
-                         struct PointerLUXO *ptr,
+                         struct KrakenPRIM *ptr,
                          ParameterList *parms);
 
 
-struct FunctionLUXO
+struct KrakenFUNC
 {
-  std::vector<FunctionLUXO> cont;
+  std::vector<KrakenFUNC> cont;
 
   const char *identifier;
 
@@ -75,38 +96,35 @@ struct FunctionLUXO
 
   CallFunc call;
 
-  PointerLUXO *c_ret;
+  KrakenPRIM *c_ret;
 };
 
-struct PointerLUXO
+struct KrakenPRIM : public UsdPrim
 {
+  KrakenPRIM(const UsdPrim &prim = UsdPrim()) : UsdPrim(prim) {}
+
   const char *owner_id;
 
   /**
    * context (C) */
   void *data;
 
-  PointerLUXO *ptr;
+  KrakenPRIM *type;
+  KrakenPRIM *base;
   StructRefineFunc refine;
 
-  SdfPath path;
   const char *identifier;
-
-  UsdPrim type;
-  UsdPrim base;
 
   void *py_type;
 
-  TfNotice notice;
-
-  UsdAttributeVector props;
-  CollectionPropertyLUXO collection;
+  PropertyVectorLUXO props;
+  UsdCollectionAPI collection;
 
   ObjectRegisterFunc reg;
   ObjectUnregisterFunc unreg;
   ObjectInstanceFunc instance;
 
-  std::vector<PointerLUXO *> functions;
+  std::vector<KrakenPRIM *> functions;
 };
 
 WABI_NAMESPACE_END

@@ -106,7 +106,7 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen);
 #  define KLI_path_ncmp strncmp
 #endif
 
-/* also defined in UNI_space_types.h */
+/* also defined in USD_space_types.h */
 #ifndef FILE_MAXDIR
 #  define FILE_MAXDIR 768
 #  define FILE_MAXFILE 256

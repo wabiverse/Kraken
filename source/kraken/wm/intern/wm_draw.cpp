@@ -22,10 +22,10 @@
  * Making GUI Fly.
  */
 
-#include "UNI_area.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
-#include "UNI_window.h"
+#include "USD_area.h"
+#include "USD_region.h"
+#include "USD_screen.h"
+#include "USD_window.h"
 
 #include "KKE_context.h"
 

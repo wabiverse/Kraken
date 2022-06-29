@@ -26,7 +26,7 @@
 
 #include <Python.h>
 
-#include "UNI_object.h"
+#include "USD_object.h"
 
 #include "KKE_context.h"
 
@@ -42,13 +42,13 @@
 #  define USE_WEAKREFS
 
 /* method to invalidate removed py data, XXX, slow to remove objects, otherwise no overhead */
-/* #define USE_PYUNI_INVALIDATE_GC */
+/* #define USE_PYUSD_INVALIDATE_GC */
 
 /* different method */
-#  define USE_PYUNI_INVALIDATE_WEAKREF
+#  define USE_PYUSD_INVALIDATE_WEAKREF
 
 /* support for inter references, currently only needed for corner case */
-#  define USE_PYUNI_OBJECT_REFERENCE
+#  define USE_PYUSD_OBJECT_REFERENCE
 
 #else /* WITH_PYTHON_SAFETY */
 
@@ -56,17 +56,17 @@
 
 #endif /* !WITH_PYTHON_SAFETY */
 
-#define USE_PYUNI_ITER
+#define USE_PYUSD_ITER
 
 WABI_NAMESPACE_BEGIN
 
-// struct KPy_DummyPointerLUXO
+// struct KPy_DummyKrakenPRIM
 // {
 //   PyObject_HEAD /* Required Python macro. */
 // #ifdef USE_WEAKREFS
 //     PyObject *in_weakreflist;
 // #endif
-//   PointerLUXO ptr;
+//   KrakenPRIM ptr;
 // };
 
 struct KPy_KrakenStage
@@ -75,68 +75,50 @@ struct KPy_KrakenStage
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerLUXO ptr;
-#ifdef USE_PYUNI_OBJECT_REFERENCE
+  KrakenPRIM ptr;
+#ifdef USE_PYUSD_OBJECT_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
    * hold onto the collection iterator to prevent it from
    * freeing allocated data we may use */
   PyObject *reference;
-#endif /* !USE_PYUNI_OBJECT_REFERENCE */
+#endif /* !USE_PYUSD_OBJECT_REFERENCE */
 
-#ifdef PYUNI_FREE_SUPPORT
+#ifdef PYUSD_FREE_SUPPORT
   bool freeptr; /* needed in some cases if ptr.data is created on the fly, free when deallocing */
-#endif          /* PYUNI_FREE_SUPPORT */
+#endif          /* PYUSD_FREE_SUPPORT */
 };
 
-struct KPy_PropertyLUXO
+struct KPy_KrakenPROP
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerLUXO ptr;
-  // PropertyLUXO *prop;
+  KrakenPRIM ptr;
+  // KrakenPROP *prop;
 };
 
-struct KPy_FunctionLUXO
+struct KPy_KrakenFUNC
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerLUXO ptr;
-  FunctionLUXO *func;
+  KrakenPRIM ptr;
+  KrakenFUNC *func;
 };
 
-struct KPy_StructLUXO
+struct KPy_UsdAttributeVector
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  PointerLUXO ptr;
-#ifdef USE_PYRNA_STRUCT_REFERENCE
-  /* generic PyObject we hold a reference to, example use:
-   * hold onto the collection iterator to prevent it from freeing allocated data we may use */
-  PyObject *reference;
-#endif /* !USE_PYRNA_STRUCT_REFERENCE */
 
-#ifdef PYRNA_FREE_SUPPORT
-  bool freeptr; /* needed in some cases if ptr.data is created on the fly, free when deallocing */
-#endif          /* PYRNA_FREE_SUPPORT */
+  /* collection iterator specific parts */
+  UsdAttributeVector iter;
 };
-
-// struct KPy_CollectionPropertyLUXO
-// {
-//   PyObject_HEAD /* Required Python macro. */
-// #ifdef USE_WEAKREFS
-//     PyObject *in_weakreflist;
-// #endif
-
-//   /* collection iterator specific parts */
-//   // CollectionPropertyLUXO iter;
-// };
 
 #ifdef __cplusplus
 extern "C" {
@@ -149,37 +131,37 @@ extern PyTypeObject pystage_struct_Type;
 // extern PyTypeObject pystage_prop_collection_Type;
 // extern PyTypeObject pystage_func_Type;
 
-#define KPy_StructLUXO_Check(v) (PyObject_TypeCheck(v, &pystage_struct_Type))
-#define KPy_StructLUXO_CheckExact(v) (Py_TYPE(v) == &pystage_struct_Type)
-// #define KPy_PropertyLUXO_Check(v) (PyObject_TypeCheck(v, &pystage_prop_Type))
-// #define KPy_PropertyLUXO_CheckExact(v) (Py_TYPE(v) == &pystage_prop_Type)
+#define KPy_KrakenStage_Check(v) (PyObject_TypeCheck(v, &pystage_struct_Type))
+#define KPy_KrakenStage_CheckExact(v) (Py_TYPE(v) == &pystage_struct_Type)
+// #define KPy_KrakenPROP_Check(v) (PyObject_TypeCheck(v, &pystage_prop_Type))
+// #define KPy_KrakenPROP_CheckExact(v) (Py_TYPE(v) == &pystage_prop_Type)
 
-#define PYUNI_STRUCT_CHECK_OBJ(obj)                              \
+#define PYUSD_STRUCT_CHECK_OBJ(obj)                              \
   if (ARCH_UNLIKELY(pystage_struct_validity_check(obj) == -1)) { \
     return NULL;                                                 \
   }                                                              \
   (void)0
-#define PYUNI_STRUCT_CHECK_INT(obj)                              \
+#define PYUSD_STRUCT_CHECK_INT(obj)                              \
   if (ARCH_UNLIKELY(pystage_struct_validity_check(obj) == -1)) { \
     return -1;                                                   \
   }                                                              \
   (void)0
 
-#define PYUNI_PROP_CHECK_OBJ(obj)                              \
+#define PYUSD_PROP_CHECK_OBJ(obj)                              \
   if (ARCH_UNLIKELY(pystage_prop_validity_check(obj) == -1)) { \
     return NULL;                                               \
   }                                                            \
   (void)0
-#define PYUNI_PROP_CHECK_INT(obj)                              \
+#define PYUSD_PROP_CHECK_INT(obj)                              \
   if (ARCH_UNLIKELY(pystage_prop_validity_check(obj) == -1)) { \
     return -1;                                                 \
   }                                                            \
   (void)0
 
-#define PYUNI_STRUCT_IS_VALID(pystage) \
-  (ARCH_LIKELY(((KPy_KrakenStage *)(pystage))->ptr.type != NULL))
-#define PYUNI_PROP_IS_VALID(pystage) \
-  (ARCH_LIKELY(((KPy_PropertyLUXO *)(pystage))->ptr.type != NULL))
+#define PYUSD_STRUCT_IS_VALID(pystage) \
+  (ARCH_LIKELY(((KPy_KrakenStage *)(pystage))->ptr->type != NULL))
+#define PYUSD_PROP_IS_VALID(pystage) \
+  (ARCH_LIKELY(((KPy_KrakenPROP *)(pystage))->ptr->type != NULL))
 
 #ifdef __cplusplus
 }
@@ -191,18 +173,18 @@ PyObject *KPY_stage_module(void);
 
 void KPY_update_stage_module(void);
 
-PointerLUXO *pystage_struct_as_srna(PyObject *self, const bool parent, const char *error_prefix);
-PyObject *pystage_struct_CreatePyObject(PointerLUXO *ptr);
+KrakenPRIM *pystage_struct_as_srna(PyObject *self, const bool parent, const char *error_prefix);
+PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr);
 void pystage_alloc_types(void);
 
-PyObject *pystage_srna_PyBase(PointerLUXO *srna);
-void pystage_subtype_set_rna(PyObject *newclass, PointerLUXO *srna);
+PyObject *pystage_srna_PyBase(KrakenPRIM *srna);
+void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;
 extern PyMethodDef meth_kpy_unregister_class;
 
-/* kpy.utils._kr_owner_(get/set) */
+/* kpy.utils._bl_owner_(get/set) */
 extern PyMethodDef meth_kpy_owner_id_set;
 extern PyMethodDef meth_kpy_owner_id_get;
 

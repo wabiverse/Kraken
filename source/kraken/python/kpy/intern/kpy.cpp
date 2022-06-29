@@ -37,9 +37,9 @@
 #include "LUXO_access.h"
 #include "LUXO_runtime.h"
 
-#include "UNI_factory.h"
-#include "UNI_types.h"
-#include "UNI_wm_types.h"
+#include "USD_factory.h"
+#include "USD_types.h"
+#include "USD_wm_types.h"
 
 #include "kpy.h"
 #include "kpy_app.h"
@@ -387,7 +387,7 @@ static PyObject *kpy_import_test(const char *modname)
 void KPy_init_modules(struct kContext *C)
 {
   PyObject *mod;
-  PointerLUXO ctx_ptr;
+  KrakenPRIM ctx_ptr;
 
   /* Needs to be first since this dir is needed for future modules */
   const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
@@ -425,14 +425,11 @@ void KPy_init_modules(struct kContext *C)
 
   kpy_import_test("kpy_types");
   PyModule_AddObject(mod, "data", KPY_stage_module()); /* imports kpy_types by running this */
-  TF_STATUS("we here.");
   kpy_import_test("kpy_types");
-  TF_STATUS("we here.");
   // PyModule_AddObject(mod, "props", KPY_uni_props());
   /* ops is now a python module that does the conversion from SOME_OT_foo -> some.foo */
   // PyModule_AddObject(mod, "ops", KPY_operator_module());
   PyModule_AddObject(mod, "app", KPY_app_struct());
-  TF_STATUS("we done.");
   // PyModule_AddObject(mod, "_utils_units", KPY_utils_units());
   // PyModule_AddObject(mod, "_utils_previews", KPY_utils_previews_module());
   // PyModule_AddObject(mod, "msgbus", KPY_msgbus_module());

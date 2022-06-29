@@ -32,7 +32,7 @@
 
 #include "LUXO_runtime.h"
 
-#include "UNI_types.h"
+#include "USD_types.h"
 
 #include "kpy_driver.h"
 #include "kpy_intern_string.h"
@@ -40,7 +40,7 @@
 
 #include "KPY_extern_python.h"
 
-#define USE_UNI_AS_PYOBJECT
+#define USE_USD_AS_PYOBJECT
 
 #define USE_BYTECODE_WHITELIST
 

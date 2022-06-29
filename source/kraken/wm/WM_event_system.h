@@ -29,7 +29,7 @@
 
 #include "KKE_context.h"
 
-#include "UNI_object.h"
+#include "USD_object.h"
 
 #include "WM_operators.h"
 
@@ -89,14 +89,14 @@ bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2]);
 int WM_operator_name_call_ptr(kContext *C,
                               wmOperatorType *ot,
                               short context,
-                              PointerLUXO *properties);
+                              KrakenPRIM *properties);
 
 void WM_event_init_from_window(wmWindow *win, wmEvent *event);
 
 int WM_operator_name_call(kContext *C,
                           const TfToken &optoken,
                           short context,
-                          PointerLUXO *properties);
+                          KrakenPRIM *properties);
 
 void WM_event_do_refresh_wm(kContext *C);
 

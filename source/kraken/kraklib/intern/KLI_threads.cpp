@@ -28,7 +28,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "UNI_api.h"
+#include "USD_api.h"
 
 #include "KLI_assert.h"
 #include "KLI_time.h"

@@ -15,31 +15,31 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/UNI_create.cpp
-  intern/UNI_default_tables.cpp
-  intern/UNI_file.cpp
-  intern/UNI_object.cpp
-  intern/UNI_pixar_utils.cpp
+  intern/USD_create.cpp
+  intern/USD_default_tables.cpp
+  intern/USD_file.cpp
+  intern/USD_object.cpp
+  intern/USD_pixar_utils.cpp
 
-  UNI_api.h
-  UNI_area.h
-  UNI_context.h
-  UNI_default_tables.h
-  UNI_factory.h
-  UNI_file.h
-  UNI_object.h
-  UNI_operator.h
-  UNI_path_defaults.h
-  UNI_pixar_utils.h
-  UNI_region.h
-  UNI_scene.h
-  UNI_screen.h
-  UNI_system.h
-  UNI_types.h
-  UNI_userpref.h
-  UNI_wm_types.h
-  UNI_window.h
-  UNI_workspace.h
+  USD_api.h
+  USD_area.h
+  USD_context.h
+  USD_default_tables.h
+  USD_factory.h
+  USD_file.h
+  USD_object.h
+  USD_operator.h
+  USD_path_defaults.h
+  USD_pixar_utils.h
+  USD_region.h
+  USD_scene.h
+  USD_screen.h
+  USD_system.h
+  USD_types.h
+  USD_userpref.h
+  USD_wm_types.h
+  USD_window.h
+  USD_workspace.h
 )
 
 set(LIB

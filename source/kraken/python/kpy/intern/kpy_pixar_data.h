@@ -32,8 +32,8 @@
 
 #include "LUXO_runtime.h"
 
-#include "UNI_api.h"
-#include "UNI_object.h"
+#include "USD_api.h"
+#include "USD_object.h"
 
 WABI_NAMESPACE_BEGIN
 

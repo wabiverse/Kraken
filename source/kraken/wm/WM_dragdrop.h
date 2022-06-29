@@ -24,7 +24,7 @@
  * Making GUI Fly.
  */
 
-#include "UNI_wm_types.h"
+#include "USD_wm_types.h"
 
 #include "KKE_context.h"
 

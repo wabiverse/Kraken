@@ -24,8 +24,8 @@
  * Set the Stage.
  */
 
-#include "UNI_api.h"
-#include "UNI_region.h"
+#include "USD_api.h"
+#include "USD_region.h"
 
 WABI_NAMESPACE_BEGIN
 

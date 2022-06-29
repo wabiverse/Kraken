@@ -33,8 +33,8 @@
 #include "WM_init_exit.h"
 #include "WM_window.h"
 
-#include "UNI_api.h"
-#include "UNI_pixar_utils.h"
+#include "USD_api.h"
+#include "USD_pixar_utils.h"
 
 #include "creator.h"
 
@@ -124,7 +124,7 @@ int CREATOR_parse_args(int argc, const char **argv)
   if (convert_stage.size() > 2) {
     const std::filesystem::path fp = convert_stage;
     if (std::filesystem::exists(fp)) {
-      UNI_pixutil_convert_usd(fp, UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
+      USD_pixutil_convert_usd(fp, UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
       exit(KRAKEN_SUCCESS);
     }
 
@@ -133,7 +133,7 @@ int CREATOR_parse_args(int argc, const char **argv)
   }
 
   if (resolve_asset.size() > 2) {
-    !UNI_pixutil_resolve_asset(resolve_asset, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) :
+    !USD_pixutil_resolve_asset(resolve_asset, /*verbose==*/true).empty() ? exit(KRAKEN_SUCCESS) :
                                                                            exit(KRAKEN_ERROR);
   }
 

@@ -29,7 +29,7 @@
 #include "KKE_context.h"
 #include "KKE_robinhood.h"
 
-#include "UNI_object.h"
+#include "USD_object.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -49,7 +49,7 @@ struct Main
 
   std::string kraken_version_decimal;
 
-  char launch_time[UNI_MAX_TIME];
+  char launch_time[USD_MAX_TIME];
 
   std::vector<struct wmWindowManager *> wm;
   std::vector<struct WorkSpace *> workspaces;

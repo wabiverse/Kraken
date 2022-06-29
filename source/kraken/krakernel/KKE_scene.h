@@ -29,15 +29,15 @@
 #include "KKE_main.h"
 #include "KKE_utils.h"
 
-#include "UNI_area.h"
-#include "UNI_object.h"
-#include "UNI_region.h"
-#include "UNI_scene.h"
-#include "UNI_screen.h"
-#include "UNI_space_types.h"
-#include "UNI_window.h"
-#include "UNI_wm_types.h"
-#include "UNI_workspace.h"
+#include "USD_area.h"
+#include "USD_object.h"
+#include "USD_region.h"
+#include "USD_scene.h"
+#include "USD_screen.h"
+#include "USD_space_types.h"
+#include "USD_window.h"
+#include "USD_wm_types.h"
+#include "USD_workspace.h"
 
 WABI_NAMESPACE_BEGIN
 

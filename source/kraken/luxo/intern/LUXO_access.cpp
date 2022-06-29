@@ -27,30 +27,28 @@
 
 #include "KKE_utils.h"
 
-#include "UNI_api.h"
-#include "UNI_object.h"
-#include "UNI_types.h"
+#include "USD_api.h"
+#include "USD_object.h"
+#include "USD_types.h"
 
 WABI_NAMESPACE_BEGIN
 
-const PointerLUXO PointerLUXO_NULL = {NULL};
+KrakenPRIM LUXO_StageData;
+KrakenPRIM LUXO_KrakenPixar;
+KrakenPRIM LUXO_Context;
+KrakenPRIM LUXO_Struct;
+KrakenPRIM LUXO_Window;
+KrakenPRIM LUXO_WorkSpace;
+KrakenPRIM LUXO_Screen;
+KrakenPRIM LUXO_Area;
+KrakenPRIM LUXO_Region;
 
-PointerLUXO LUXO_StageData;
-PointerLUXO LUXO_KrakenPixar;
-PointerLUXO LUXO_Context;
-PointerLUXO LUXO_Struct;
-PointerLUXO LUXO_Window;
-PointerLUXO LUXO_WorkSpace;
-PointerLUXO LUXO_Screen;
-PointerLUXO LUXO_Area;
-PointerLUXO LUXO_Region;
-
-ObjectRegisterFunc LUXO_struct_register(const PointerLUXO *ptr)
+ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr)
 {
   return ptr->reg;
 }
 
-ObjectUnregisterFunc LUXO_struct_unregister(PointerLUXO *ptr)
+ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr)
 {
   do {
     if (ptr->unreg) {
@@ -61,20 +59,21 @@ ObjectUnregisterFunc LUXO_struct_unregister(PointerLUXO *ptr)
   return NULL;
 }
 
-const char *LUXO_object_identifier(const PointerLUXO &ptr)
+const char *LUXO_object_identifier(const KrakenPRIM &ptr)
 {
   return ptr.identifier;
 }
 
-bool LUXO_struct_is_a(const PointerLUXO *type, const PointerLUXO *srna)
+bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna)
 {
+  const KrakenPRIM *base;
+
   if (!type) {
     return false;
   }
 
-  const auto &children = type->type.GetAllChildren();
-  for (auto base : children) {
-    if (srna && (base == srna->type)) {
+  for (base = type; base; base = base->base) {
+    if (base == srna) {
       return true;
     }
   }
@@ -82,25 +81,37 @@ bool LUXO_struct_is_a(const PointerLUXO *type, const PointerLUXO *srna)
   return false;
 }
 
-void **LUXO_struct_instance(PointerLUXO *ptr)
+void **LUXO_struct_instance(KrakenPRIM *ptr)
 {
-  PointerLUXO *type = ptr->ptr;
+  KrakenPRIM *type = ptr->type;
 
   do {
     if (type->instance) {
       return type->instance(ptr);
     }
-  } while ((type = type->ptr));
+  } while ((type = type->base));
 
   return NULL;
 }
 
-const char *LUXO_property_type(PointerLUXO *ptr)
+KrakenPROP *rna_ensure_property(KrakenPROP *prop)
 {
-  return ptr->type.GetTypeName().GetText();
+  if (prop) {
+    return prop;
+  }
 }
 
-bool UNI_enum_identifier(TfEnum item, const int value, const char **r_identifier)
+PropertyType LUXO_property_type_enum(KrakenPROP *prop)
+{
+  return rna_ensure_property(prop)->type;
+}
+
+const char *LUXO_property_type(KrakenPRIM *ptr)
+{
+  return ptr->type->GetTypeName().GetText();
+}
+
+bool USD_enum_identifier(TfEnum item, const int value, const char **r_identifier)
 {
   //   const int i = LUXO_enum_from_value(item, value);
   //   if (i != -1) {
@@ -110,45 +121,33 @@ bool UNI_enum_identifier(TfEnum item, const int value, const char **r_identifier
   return false;
 }
 
-PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier)
+KrakenPROP *LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name)
 {
-  // if (identifier[0] == '[' && identifier[1] == '"') { /* "  (dummy comment to avoid confusing
-  // some
-  //                                                      * function lists in text editors) */
-  //   /* id prop lookup, not so common */
-  //   PropertyLUXO *r_prop = NULL;
-  //   PointerLUXO r_ptr; /* only support single level props */
-  //   if (UNI_path_resolve_property(ptr, identifier, &r_ptr, &r_prop) && (r_ptr.type == ptr->type)
-  //   &&
-  //       (r_ptr.data == ptr->data)) {
-  //     return r_prop;
-  //   }
-  // }
-  // else {
-  //   /* most common case */
-  //   PropertyLUXO *iterprop = UNI_object_iterator_property(ptr->type);
-  //   PointerLUXO propptr;
+  KrakenPRIM prim;
+  KrakenPROP pprim;
+  UsdCollectionAPI collection;
 
-  //   if (UNI_property_collection_lookup_string(ptr, iterprop, identifier, &propptr)) {
-  //     return propptr.data;
-  //   }
-  // }
+  prim = ptr->GetPrim();
+  pprim = prim.GetAttribute(name);
 
-  return *ptr->collection.cbegin();
+  return &pprim;
 }
 
-void LUXO_property_collection_begin(PointerLUXO *ptr,
-                                    PropertyLUXO *prop,
-                                    CollectionPropertyLUXO iter)
+UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfToken &name)
 {
-  iter.push_back(prop);
-  iter.begin();
+  UsdCollectionAPI collection;
+  UsdPrim prim;
+
+  prim = ptr->GetPrim();
+
+  collection = UsdCollectionAPI::Get(prim, name);
+  return collection.GetAllCollections(prim);
 }
 
-void LUXO_main_pointer_create(struct Main *main, PointerLUXO *r_ptr)
+void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
   r_ptr->owner_id = NULL;
-  r_ptr->ptr = &LUXO_StageData;
+  r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
 }
 
@@ -165,63 +164,79 @@ void LUXO_main_pointer_create(struct Main *main, PointerLUXO *r_ptr)
 //     .make_overridable = false,
 // };
 
-void *LUXO_struct_py_type_get(PointerLUXO *srna)
+int LUXO_property_string_length(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  KrakenPROPString *sprop = (KrakenPROPString *)prop;
+
+  KLI_assert(LUXO_property_type_enum(prop) == PROP_STRING);
+
+  if (sprop->length) {
+    return sprop->length(ptr);
+  }
+  if (sprop->length_ex) {
+    return sprop->length_ex(ptr, prop);
+  }
+  return strlen(sprop->defaultvalue);
+}
+
+void *LUXO_struct_py_type_get(KrakenPRIM *srna)
 {
   return srna->py_type;
 }
 
-void LUXO_struct_py_type_set(PointerLUXO *srna, void *type)
+void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
 {
   srna->py_type = type;
 }
 
-void LUXO_pointer_create(PointerLUXO *type, void *data, PointerLUXO *r_ptr)
+void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
 {
-  r_ptr->ptr = type;
+  r_ptr->owner_id = type->GetName().GetText();
+  r_ptr->type = type;
   r_ptr->data = data;
 
   if (data) {
-    while (r_ptr->ptr && r_ptr->ptr->refine) {
-      PointerLUXO *rtype = r_ptr->ptr->refine(r_ptr);
+    while (r_ptr->type && r_ptr->type->refine) {
+      KrakenPRIM *rtype = r_ptr->type->refine(r_ptr);
 
-      if (rtype == r_ptr->ptr) {
+      if (rtype == r_ptr->type) {
         break;
       }
-      r_ptr->ptr = rtype;
+      r_ptr->type = rtype;
     }
   }
 }
 
-std::vector<PointerLUXO *> &LUXO_struct_type_functions(PointerLUXO *srna)
+std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna)
 {
   return srna->functions;
 }
 
-int LUXO_function_flag(FunctionLUXO *func)
+int LUXO_function_flag(KrakenFUNC *func)
 {
   return func->flag;
 }
 
-const char *LUXO_function_identifier(FunctionLUXO *func)
+const char *LUXO_function_identifier(KrakenFUNC *func)
 {
   return func->identifier;
 }
 
-const char *LUXO_struct_identifier(const PointerLUXO *type)
+const char *LUXO_struct_identifier(const KrakenPRIM *type)
 {
   return type->identifier;
 }
 
 /**
- * Use for sub-typing so we know which ptr is used for a #PointerLUXO.
+ * Use for sub-typing so we know which ptr is used for a #KrakenPRIM.
  */
-PointerLUXO *srna_from_ptr(PointerLUXO *ptr)
+KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr)
 {
-  if (ptr->ptr == (PointerLUXO *)&LUXO_Struct) {
-    return (PointerLUXO *)ptr->data;
+  if (ptr->type == (KrakenPRIM *)&LUXO_Struct) {
+    return (KrakenPRIM *)ptr->data;
   }
 
-  return ptr->ptr;
+  return ptr->type;
 }
 
 KrakenPIXAR KRAKEN_PIXAR = {
@@ -229,10 +244,10 @@ KrakenPIXAR KRAKEN_PIXAR = {
     {&LUXO_Struct, &LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 };
 
-void LUXO_kraken_luxo_pointer_create(PointerLUXO *r_ptr)
+void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
   r_ptr->owner_id = NULL;
-  r_ptr->ptr = &LUXO_KrakenPixar;
+  r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = &KRAKEN_PIXAR;
 }
 

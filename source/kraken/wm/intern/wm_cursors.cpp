@@ -26,11 +26,11 @@
 
 #include "WM_cursors_api.h"
 
-#include "UNI_area.h"
-#include "UNI_factory.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
-#include "UNI_window.h"
+#include "USD_area.h"
+#include "USD_factory.h"
+#include "USD_region.h"
+#include "USD_screen.h"
+#include "USD_window.h"
 
 #include "ANCHOR_api.h"
 

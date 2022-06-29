@@ -332,7 +332,7 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
 
   PyObject *pyctx;
   PyObject *item;
-  PointerLUXO *ptr = NULL;
+  KrakenPRIM *ptr = NULL;
   bool done = false;
 
   if (use_gil) {
@@ -344,20 +344,25 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
 
   if (item == NULL) {
     /* pass */
+
   } else if (item == Py_None) {
     done = true;
-  } else if (KPy_StructLUXO_Check(item)) {
+
+  } else if (KPy_KrakenStage_Check(item)) {
     ptr = &(((KPy_KrakenStage *)item)->ptr);
 
-    // result->ptr = ((BPy_StructRNA *)item)->ptr;
+    // result->ptr = ((KPy_StructRNA *)item)->ptr;
     CTX_data_pointer_set_ptr(result, ptr);
     CTX_data_type_set(result, CTX_DATA_TYPE_POINTER);
     done = true;
+
   } else if (PySequence_Check(item)) {
-    PyObject *seq_fast = PySequence_Fast(item, "bpy_context_get sequence conversion");
+    PyObject *seq_fast = PySequence_Fast(item, "kpy_context_get sequence conversion");
+
     if (seq_fast == NULL) {
       PyErr_Print();
       PyErr_Clear();
+
     } else {
       const int len = PySequence_Fast_GET_SIZE(seq_fast);
       PyObject **seq_fast_items = PySequence_Fast_ITEMS(seq_fast);
@@ -366,19 +371,18 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
       for (i = 0; i < len; i++) {
         PyObject *list_item = seq_fast_items[i];
 
-        if (KPy_StructLUXO_Check(list_item)) {
+        if (KPy_KrakenStage_Check(list_item)) {
 #if 0
           CollectionPointerLink *link = MEM_callocN(sizeof(CollectionPointerLink),
-                                                    "bpy_context_get");
-          link->ptr = ((BPy_StructRNA *)item)->ptr;
+                                                    "kpy_context_get");
+          link->ptr = ((KPy_StructRNA *)item)->ptr;
           BLI_addtail(&result->list, link);
 #endif
           ptr = &(((KPy_KrakenStage *)list_item)->ptr);
           CTX_data_list_add_ptr(result, ptr);
         } else {
-          TF_WARN("'%s' list item not a valid type in sequence type '%s'",
-                  member,
-                  Py_TYPE(item)->tp_name);
+          // TF_WARN("'%s' list item not a valid type in sequence type '%s'", member,
+          // Py_TYPE(item)->tp_name);
         }
       }
       Py_DECREF(seq_fast);

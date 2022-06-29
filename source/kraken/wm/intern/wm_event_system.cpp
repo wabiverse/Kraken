@@ -29,13 +29,13 @@
 #include "WM_operators.h"
 #include "WM_window.h"
 
-#include "UNI_area.h"
-#include "UNI_factory.h"
-#include "UNI_operator.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
+#include "USD_area.h"
+#include "USD_factory.h"
+#include "USD_operator.h"
+#include "USD_region.h"
+#include "USD_screen.h"
+#include "USD_userpref.h"
+#include "USD_window.h"
 
 #include "KKE_context.h"
 
@@ -983,7 +983,7 @@ bool WM_operator_poll(kContext *C, wmOperatorType *ot)
 
 static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       wmOperatorType *ot,
-                                      PointerLUXO *properties,
+                                      KrakenPRIM *properties,
                                       ReportList *reports)
 {
   wmOperator *op = new wmOperator();
@@ -1167,7 +1167,7 @@ static void wm_event_handler_ui_cancel(kContext *C)
 static int wm_operator_invoke(kContext *C,
                               wmOperatorType *ot,
                               wmEvent *event,
-                              PointerLUXO *properties,
+                              KrakenPRIM *properties,
                               ReportList *reports,
                               const bool poll_only,
                               bool use_last_properties)
@@ -1333,7 +1333,7 @@ static int wm_operator_invoke(kContext *C,
 
 static int wm_operator_call_internal(kContext *C,
                                      wmOperatorType *ot,
-                                     PointerLUXO *properties,
+                                     KrakenPRIM *properties,
                                      ReportList *reports,
                                      const short context,
                                      const bool poll_only,
@@ -1468,7 +1468,7 @@ static int wm_operator_call_internal(kContext *C,
 int WM_operator_name_call_ptr(kContext *C,
                               wmOperatorType *ot,
                               short context,
-                              PointerLUXO *properties)
+                              KrakenPRIM *properties)
 {
   return wm_operator_call_internal(C, ot, properties, NULL, context, false, NULL);
 }
@@ -1477,7 +1477,7 @@ int WM_operator_name_call_ptr(kContext *C,
 int WM_operator_name_call(kContext *C,
                           const TfToken &optoken,
                           short context,
-                          PointerLUXO *properties)
+                          KrakenPRIM *properties)
 {
   wmOperatorType *ot = WM_operatortype_find(optoken);
   if (ot) {

@@ -22,37 +22,21 @@
  * Set the Stage.
  */
 
-#pragma once
+/**
+ * file format defaults.  */
 
-#include "UNI_api.h"
-#include "UNI_area.h"
-#include "UNI_object.h"
-#include "UNI_region.h"
-#include "UNI_scene.h"
-#include "UNI_screen.h"
-#include "UNI_system.h"
-#include "UNI_window.h"
+#include "USD_api.h"
 
 #include "KKE_context.h"
 
 WABI_NAMESPACE_BEGIN
 
-/**
- * Pixar Stage IO
- * - Stage Creation.
- * - Stage Destruction
- * - Opening Stages.
- * - Saving Stages. */
-void UNI_create_stage(kContext *C);
-void UNI_destroy(kContext *C);
-void UNI_open_stage(kContext *C);
-void UNI_save_stage(kContext *C);
-
-/**
- * Pixar Stage Defaults
- * - Kraken GUI defaults.
- * - Kraken Scene defaults. */
-void UNI_set_defaults(kContext *C);
-
+void USD_default_table_main_window(kContext *C);
+void USD_default_table_user_prefs(kContext *C);
+void USD_default_table_area_v3d(kContext *C);
+void USD_default_table_area_outliner(kContext *C);
+void USD_default_table_area_screen(kContext *C);
+void USD_default_table_area_workspace(kContext *C);
+void USD_default_table_scene_data(kContext *C);
 
 WABI_NAMESPACE_END

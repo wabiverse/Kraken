@@ -17,13 +17,13 @@
  */
 
 /**
- * @file UNI_object.h
+ * @file USD_object.h
  * @ingroup UNI
  * The @a central foundation for @a all data access.
  */
 
-#include "UNI_api.h"
-#include "UNI_object.h"
+#include "USD_api.h"
+#include "USD_object.h"
 
 
 WABI_NAMESPACE_BEGIN

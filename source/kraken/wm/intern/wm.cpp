@@ -22,20 +22,20 @@
  * Making GUI Fly.
  */
 
-#include "UNI_area.h"
-#include "UNI_context.h"
-#include "UNI_default_tables.h"
-#include "UNI_factory.h"
-#include "UNI_object.h"
-#include "UNI_operator.h"
-#include "UNI_pixar_utils.h"
-#include "UNI_region.h"
-#include "UNI_screen.h"
-#include "UNI_space_types.h"
-#include "UNI_userpref.h"
-#include "UNI_window.h"
-#include "UNI_wm_types.h"
-#include "UNI_workspace.h"
+#include "USD_area.h"
+#include "USD_context.h"
+#include "USD_default_tables.h"
+#include "USD_factory.h"
+#include "USD_object.h"
+#include "USD_operator.h"
+#include "USD_pixar_utils.h"
+#include "USD_region.h"
+#include "USD_screen.h"
+#include "USD_space_types.h"
+#include "USD_userpref.h"
+#include "USD_window.h"
+#include "USD_wm_types.h"
+#include "USD_workspace.h"
 
 #include "KLI_string_utils.h"
 
@@ -116,7 +116,7 @@ void wm_add_default(Main *kmain, kContext *C)
   /* ----- */
 
   CTX_wm_window_set(C, win);
-  UNI_default_table_main_window(C);
+  USD_default_table_main_window(C);
 
   /**
    * Now that window is properly initialized,
@@ -140,11 +140,11 @@ void wm_add_default(Main *kmain, kContext *C)
    * Create default user preferences. */
   UserDef *uprefs = new UserDef(C);
   CTX_data_prefs_set(C, uprefs);
-  UNI_default_table_user_prefs(C);
+  USD_default_table_user_prefs(C);
 
   /**
    * Create default cube scene. */
-  UNI_default_table_scene_data(C);
+  USD_default_table_scene_data(C);
 
   /**
    * Save DPI factor, which ANCHOR properly
@@ -164,7 +164,7 @@ void wm_add_default(Main *kmain, kContext *C)
    * properly setup, and verfied for
    * correctness, this is now a valid
    * startup Kraken project file. */
-  UNI_save_stage(C);
+  USD_save_stage(C);
 }
 
 

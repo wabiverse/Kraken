@@ -27,7 +27,7 @@
 #include "KKE_api.h"
 #include "KKE_utils.h"
 
-#include "UNI_wm_types.h"
+#include "USD_wm_types.h"
 
 WABI_NAMESPACE_BEGIN
 

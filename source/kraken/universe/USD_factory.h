@@ -24,8 +24,8 @@
 
 #include "KKE_main.h"
 
-#include "UNI_api.h"
-#include "UNI_object.h"
+#include "USD_api.h"
+#include "USD_object.h"
 
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/relationship.h>
@@ -87,45 +87,46 @@ namespace CreationFactory
 {
   namespace PTR
   {
-    inline std::unique_ptr<UsdPrimDefinition> New(const UsdPrim &type, kContext *C)
-    {
-      return UsdSchemaRegistry::GetInstance().BuildComposedPrimDefinition(
-        type.GetName(),
-        type.GetAppliedSchemas());
-    }
+    // not safe at all.
+    // inline std::unique_ptr<UsdPrimDefinition> New(const UsdPrim &type, kContext *C)
+    // {
+    //   return UsdSchemaRegistry::GetInstance().BuildComposedPrimDefinition(
+    //     type.GetName(),
+    //     type.GetAppliedSchemas());
+    // }
   }  // namespace PTR
   namespace STR
   {
-    inline void Set(PointerLUXO *ptr, const std::string &name, const std::string &value)
+    inline void Set(KrakenPRIM *ptr, const std::string &name, const std::string &value)
     {
-      PropertyLUXO strprop;
-      strprop.name = TfToken(name);
-      strprop.type = SdfValueTypeNames->String;
-      strprop.variability = SdfVariabilityUniform;
-      strprop.custom = false;
+      // KrakenPROP strprop;
+      // strprop.name = TfToken(name);
+      // strprop.type = SdfValueTypeNames->String;
+      // strprop.variability = SdfVariabilityUniform;
+      // strprop.custom = false;
 
-      UsdAttribute attr = ptr->type.GetPrim().CreateAttribute(strprop.name,
-                                                              strprop.type,
-                                                              strprop.variability);
-      attr.Set(std::string(value));
-      ptr->props.push_back(attr);
+      // UsdAttribute attr = ptr->type->GetPrim().CreateAttribute(strprop.name,
+      //                                                         strprop.type,
+      //                                                         strprop.variability);
+      // attr.Set(std::string(value));
+      // ptr->props.push_back(attr);
     }
   }  // namespace STR
   namespace BOOL
   {
-    inline void Set(PointerLUXO *ptr, const std::string &name, const bool &value)
+    inline void Set(KrakenPRIM *ptr, const std::string &name, const bool &value)
     {
-      PropertyLUXO strprop;
-      strprop.name = TfToken(name);
-      strprop.type = SdfValueTypeNames->Bool;
-      strprop.variability = SdfVariabilityUniform;
-      strprop.custom = false;
+      // KrakenPROP strprop;
+      // strprop.name = TfToken(name);
+      // strprop.type = SdfValueTypeNames->Bool;
+      // strprop.variability = SdfVariabilityUniform;
+      // strprop.custom = false;
 
-      UsdAttribute attr = ptr->type.CreateAttribute(strprop.name,
-                                                    strprop.type,
-                                                    strprop.variability);
-      attr.Set(bool(value));
-      ptr->props.push_back(attr);
+      // UsdAttribute attr = ptr->type->CreateAttribute(strprop.name,
+      //                                               strprop.type,
+      //                                               strprop.variability);
+      // attr.Set(bool(value));
+      // ptr->props.push_back(attr);
     }
   }  // namespace BOOL
 }  // namespace CreationFactory

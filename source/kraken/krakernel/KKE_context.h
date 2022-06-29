@@ -25,7 +25,7 @@
 #pragma once
 
 #include "KKE_api.h"
-#include "UNI_object.h"
+#include "USD_object.h"
 
 #include <wabi/usd/usd/common.h>
 
@@ -66,9 +66,9 @@ void CTX_free(kContext *C);
 bool CTX_py_init_get(kContext *C);
 void CTX_py_init_set(kContext *C, bool value);
 void *CTX_py_dict_get(const kContext *C);
-void CTX_data_pointer_set_ptr(kContextDataResult *result, const PointerLUXO *ptr);
+void CTX_data_pointer_set_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
 void CTX_data_type_set(kContextDataResult *result, short type);
-void CTX_data_list_add_ptr(kContextDataResult *result, const PointerLUXO *ptr);
+void CTX_data_list_add_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
 
 /**
  * Kraken Context Getters:

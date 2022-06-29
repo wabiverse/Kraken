@@ -30,11 +30,10 @@
 #include "KKE_main.h"
 #include "KKE_utils.h"
 
-#include "UNI_api.h"
-#include "UNI_types.h"
-#include "UNI_wm_types.h"
-
-#include "UNI_object.h"
+#include "USD_api.h"
+#include "USD_types.h"
+#include "USD_wm_types.h"
+#include "USD_object.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -42,18 +41,19 @@ struct Main;
 struct ReportList;
 struct Scene;
 struct kContext;
+struct KrakenPROP;
 
 extern KrakenPIXAR KRAKEN_PIXAR;
 
-extern PointerLUXO LUXO_StageData;
-extern PointerLUXO LUXO_KrakenPixar;
-extern PointerLUXO LUXO_Context;
-extern PointerLUXO LUXO_Struct;
-extern PointerLUXO LUXO_Window;
-extern PointerLUXO LUXO_WorkSpace;
-extern PointerLUXO LUXO_Screen;
-extern PointerLUXO LUXO_Area;
-extern PointerLUXO LUXO_Region;
+extern KrakenPRIM LUXO_StageData;
+extern KrakenPRIM LUXO_KrakenPixar;
+extern KrakenPRIM LUXO_Context;
+extern KrakenPRIM LUXO_Struct;
+extern KrakenPRIM LUXO_Window;
+extern KrakenPRIM LUXO_WorkSpace;
+extern KrakenPRIM LUXO_Screen;
+extern KrakenPRIM LUXO_Area;
+extern KrakenPRIM LUXO_Region;
 
 #define LUXO_POINTER_INVALIDATE(ptr) \
   {                                  \
@@ -62,34 +62,33 @@ extern PointerLUXO LUXO_Region;
   }                                  \
   (void)0
 
-void LUXO_kraken_luxo_pointer_create(PointerLUXO *ptr);
-void LUXO_main_pointer_create(Main *main, PointerLUXO *ptr);
-void LUXO_pointer_create(PointerLUXO *type, void *data, PointerLUXO *r_ptr);
+void LUXO_kraken_luxo_pointer_create(KrakenPRIM *ptr);
+void LUXO_main_pointer_create(Main *main, KrakenPRIM *ptr);
+void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
 
-void *LUXO_struct_py_type_get(PointerLUXO *srna);
-void LUXO_struct_py_type_set(PointerLUXO *srna, void *type);
+void *LUXO_struct_py_type_get(KrakenPRIM *srna);
+void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type);
 
-const char *LUXO_property_type(PropertyLUXO *prop);
+PropertyType LUXO_property_type_enum(KrakenPROP *prop);
+const char *LUXO_property_type(KrakenPROP *prop);
 
-ObjectRegisterFunc LUXO_struct_register(const PointerLUXO *ptr);
-ObjectUnregisterFunc LUXO_struct_unregister(PointerLUXO *ptr);
+ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr);
+ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr);
 
-PropertyLUXO *LUXO_object_find_property(PointerLUXO *ptr, const char *identifier);
-void **LUXO_struct_instance(PointerLUXO *ptr);
-const char *LUXO_object_identifier(const PointerLUXO &ptr);
-const char *LUXO_struct_identifier(const PointerLUXO *type);
-const char *LUXO_struct_identifier(const PointerLUXO *type);
-bool LUXO_struct_is_a(const PointerLUXO *type, const PointerLUXO *srna);
+KrakenPROP *LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name);
+void **LUXO_struct_instance(KrakenPRIM *ptr);
+const char *LUXO_object_identifier(const KrakenPRIM &ptr);
+const char *LUXO_struct_identifier(const KrakenPRIM *type);
+const char *LUXO_struct_identifier(const KrakenPRIM *type);
+bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna);
 
-std::vector<PointerLUXO *> &LUXO_struct_type_functions(PointerLUXO *srna);
-const char *LUXO_function_identifier(FunctionLUXO *func);
+std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna);
+const char *LUXO_function_identifier(KrakenFUNC *func);
 
-int LUXO_function_flag(FunctionLUXO *func);
+int LUXO_function_flag(KrakenFUNC *func);
 
-PointerLUXO *srna_from_ptr(PointerLUXO *ptr);
+KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr);
 
-// void LUXO_property_collection_begin(PointerLUXO *ptr,
-//                                     PropertyLUXO *prop,
-//                                     CollectionPropertyLUXO iter);
+UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfToken &name);
 
 WABI_NAMESPACE_END

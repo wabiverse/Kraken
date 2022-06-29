@@ -40,7 +40,7 @@
 #include "KKE_context.h"
 #include "KKE_main.h"
 
-#include "UNI_pixar_utils.h"
+#include "USD_pixar_utils.h"
 
 #include "WM_api.h"
 #include "WM_init_exit.h"

@@ -924,7 +924,7 @@ struct wmKeyMapItem
   /** Keymap editor. */
   short maptype;
   short id;
-  PointerLUXO *ptr;
+  KrakenPRIM *ptr;
 
   wmKeyMapItem()
     : idname(EMPTY),

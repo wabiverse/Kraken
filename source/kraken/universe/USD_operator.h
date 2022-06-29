@@ -16,27 +16,46 @@
  * Copyright 2021, Wabi.
  */
 
+#pragma once
+
 /**
  * @file
  * Universe.
  * Set the Stage.
  */
 
-/**
- * file format defaults.  */
+#include "USD_context.h"
+#include "USD_object.h"
 
-#include "UNI_api.h"
-
-#include "KKE_context.h"
+#include <wabi/usd/usd/attribute.h>
 
 WABI_NAMESPACE_BEGIN
 
-void UNI_default_table_main_window(kContext *C);
-void UNI_default_table_user_prefs(kContext *C);
-void UNI_default_table_area_v3d(kContext *C);
-void UNI_default_table_area_outliner(kContext *C);
-void UNI_default_table_area_screen(kContext *C);
-void UNI_default_table_area_workspace(kContext *C);
-void UNI_default_table_scene_data(kContext *C);
+struct wmOperator
+{
+  /* saved */
+  /** Used to retrieve type pointer. */
+  TfToken idname;
+  /** Saved, user-settable properties. */
+  KrakenPRIM *properties;
+
+  /* runtime */
+  /** Operator type definition from idname. */
+  struct wmOperatorType *type;
+  /** Custom storage, only while operator runs. */
+  void *customdata;
+
+  /** Errors and warnings storage. */
+  struct ReportList *reports;
+
+  /** List of operators. */
+  std::vector<wmOperator> macro;
+  /** Current running macro, not saved. */
+  struct wmOperator *opm;
+  /** Runtime for drawing. */
+  struct uiLayout *layout;
+  short flag;
+  char _pad[6];
+};
 
 WABI_NAMESPACE_END

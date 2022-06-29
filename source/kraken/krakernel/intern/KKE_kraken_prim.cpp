@@ -22,8 +22,8 @@
  * Purple Underground.
  */
 
-#include "UNI_scene.h"
-#include "UNI_object.h"
+#include "USD_scene.h"
+#include "USD_object.h"
 
 #include "KKE_kraken_prim.h"
 #include "KKE_main.h"

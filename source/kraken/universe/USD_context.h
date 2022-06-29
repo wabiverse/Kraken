@@ -16,46 +16,43 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
  * Universe.
  * Set the Stage.
  */
 
-#include "UNI_context.h"
-#include "UNI_object.h"
+#pragma once
 
-#include <wabi/usd/usd/attribute.h>
+#include "USD_api.h"
+#include "USD_area.h"
+#include "USD_object.h"
+#include "USD_region.h"
+#include "USD_scene.h"
+#include "USD_screen.h"
+#include "USD_system.h"
+#include "USD_window.h"
+
+#include "KKE_context.h"
 
 WABI_NAMESPACE_BEGIN
 
-struct wmOperator
-{
-  /* saved */
-  /** Used to retrieve type pointer. */
-  TfToken idname;
-  /** Saved, user-settable properties. */
-  PointerLUXO *properties;
+/**
+ * Pixar Stage IO
+ * - Stage Creation.
+ * - Stage Destruction
+ * - Opening Stages.
+ * - Saving Stages. */
+void USD_create_stage(kContext *C);
+void USD_destroy(kContext *C);
+void USD_open_stage(kContext *C);
+void USD_save_stage(kContext *C);
 
-  /* runtime */
-  /** Operator type definition from idname. */
-  struct wmOperatorType *type;
-  /** Custom storage, only while operator runs. */
-  void *customdata;
+/**
+ * Pixar Stage Defaults
+ * - Kraken GUI defaults.
+ * - Kraken Scene defaults. */
+void USD_set_defaults(kContext *C);
 
-  /** Errors and warnings storage. */
-  struct ReportList *reports;
-
-  /** List of operators. */
-  std::vector<wmOperator> macro;
-  /** Current running macro, not saved. */
-  struct wmOperator *opm;
-  /** Runtime for drawing. */
-  struct uiLayout *layout;
-  short flag;
-  char _pad[6];
-};
 
 WABI_NAMESPACE_END

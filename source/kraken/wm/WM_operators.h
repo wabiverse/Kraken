@@ -30,10 +30,10 @@
 
 #include "KKE_robinhood.h"
 
-#include "UNI_object.h"
-#include "UNI_operator.h"
-#include "UNI_path_defaults.h"
-#include "UNI_wm_types.h"
+#include "USD_object.h"
+#include "USD_operator.h"
+#include "USD_path_defaults.h"
+#include "USD_wm_types.h"
 
 #include <wabi/base/tf/hash.h>
 #include <wabi/usd/usd/attribute.h>
@@ -62,6 +62,8 @@ struct wmOperatorType
   /** Use for tool-tips and Python docs. */
   const char *description;
 
+  KrakenPRIM *pixar;
+
   /** Signal changes, allow for Pub/Sub. */
   const TfNotice notice;
 
@@ -80,8 +82,8 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(kContext *C);
 void WM_operators_register(kContext *C);
 
-void WM_operator_properties_create_ptr(PointerLUXO *ptr, wmOperatorType *ot);
-void WM_operator_properties_free(PointerLUXO *ptr);
+void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot);
+void WM_operator_properties_free(KrakenPRIM *ptr);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
 

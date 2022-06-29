@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "UNI_path_defaults.h"
+#include "USD_path_defaults.h"
 
 #include "KLI_utildefines.h"
 
@@ -82,7 +82,7 @@
 #define UNIVERSE_MUTABLE_FOR_ALL(iter, c) for (auto &iter : c)
 
 #define FILE_MAX 1024
-#define UNI_MAX_TIME 80
+#define USD_MAX_TIME 80
 
 #define TIMECODE_DEFAULT UsdTimeCode::Default()
 

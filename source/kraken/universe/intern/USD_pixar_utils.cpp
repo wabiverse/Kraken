@@ -25,7 +25,7 @@
 #include "KKE_main.h"
 #include "KKE_version.h"
 
-#include "UNI_pixar_utils.h"
+#include "USD_pixar_utils.h"
 
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/ar/resolver.h>
@@ -33,7 +33,7 @@
 WABI_NAMESPACE_BEGIN
 
 
-void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool verbose)
+void USD_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool verbose)
 {
   const fs::path usda_path = STRCAT(path.parent_path().string(),
                                     "/" + path.stem().string() + ".usda");
@@ -62,7 +62,7 @@ void UNI_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool v
 }
 
 
-std::string UNI_pixutil_resolve_asset(const std::string &asset, bool verbose)
+std::string USD_pixutil_resolve_asset(const std::string &asset, bool verbose)
 {
   ArResolver &resolver = ArGetResolver();
 

@@ -37,9 +37,9 @@
 #include "LUXO_access.h"
 #include "LUXO_runtime.h"
 
-#include "UNI_factory.h"
-#include "UNI_types.h"
-#include "UNI_wm_types.h"
+#include "USD_factory.h"
+#include "USD_types.h"
+#include "USD_wm_types.h"
 
 #include "kpy.h"
 #include "kpy_app.h"
@@ -58,7 +58,7 @@ WABI_NAMESPACE_BEGIN
 struct KPy_DataContext
 {
   PyObject_HEAD /* Required Python macro. */
-    KPy_StructLUXO *data_luxo;
+    KPy_KrakenStage *data_luxo;
   char filepath[1024];
 };
 
@@ -209,10 +209,10 @@ static PyObject *kpy_pixar_data_temp_data(PyObject *UNUSED(self), PyObject *args
 static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
 {
   Main *kmain_temp = KKE_main_new();
-  PointerLUXO ptr;
+  KrakenPRIM ptr;
   LUXO_pointer_create(&LUXO_KrakenPixar, kmain_temp, &ptr);
 
-  self->data_luxo = (KPy_StructLUXO *)pystage_struct_CreatePyObject(&ptr);
+  self->data_luxo = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ptr);
 
   PyObject_GC_Track(self);
 
@@ -222,7 +222,7 @@ static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
 static PyObject *kpy_pixar_data_context_exit(KPy_DataContext *self, PyObject *UNUSED(args))
 {
   KKE_main_free((Main *)self->data_luxo->ptr.data);
-  self->data_luxo->ptr.ptr = NULL;
+  self->data_luxo->ptr.type = NULL;
   self->data_luxo->ptr.owner_id = NULL;
   Py_RETURN_NONE;
 }

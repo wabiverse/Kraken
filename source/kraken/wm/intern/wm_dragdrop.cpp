@@ -29,8 +29,8 @@
 
 #include "KKE_context.h"
 
-#include "UNI_window.h"
-#include "UNI_wm_types.h"
+#include "USD_window.h"
+#include "USD_wm_types.h"
 
 WABI_NAMESPACE_BEGIN
 
