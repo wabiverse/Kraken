@@ -232,16 +232,16 @@ const char *LUXO_struct_identifier(const KrakenPRIM *type)
  */
 KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr)
 {
-  if (ptr->type == (KrakenPRIM *)&LUXO_Struct) {
+  if (ptr->type == &LUXO_Struct) {
     return (KrakenPRIM *)ptr->data;
   }
 
   return ptr->type;
 }
 
-KrakenPIXAR KRAKEN_PIXAR = {
+KrakenSTAGE KRAKEN_PIXAR = {
   .structs =
-    {&LUXO_Struct, &LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
+    {&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 };
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)

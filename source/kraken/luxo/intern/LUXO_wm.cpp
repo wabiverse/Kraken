@@ -46,6 +46,9 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
+#include "LUXO_runtime.h"
+#include "LUXO_define.h"
+
 WABI_NAMESPACE_BEGIN
 
 KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
@@ -224,6 +227,19 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
                      ICON_NONE,
                      "ActionZone Fullscreen",
                      "AZone FullScr");
+}
+
+static void prim_def_operator(KrakenSTAGE *kprim)
+{
+  KrakenPRIM *sprim;
+  KrakenPROP *prop;
+
+  sprim = PRIM_def_struct(kprim, SdfPath("Operator"));
+}
+
+void PRIM_def_wm(KrakenSTAGE *kprim)
+{
+  prim_def_operator(kprim);
 }
 
 WABI_NAMESPACE_END

@@ -99,9 +99,9 @@ static void kpy_class_free(void *pyob_ptr) {}
 
 struct KPy_TypesModule_State
 {
-  /** `LUXO_KrakenPIXAR`. */
+  /** `LUXO_KrakenSTAGE`. */
   KrakenPRIM ptr;
-  /** `LUXO_KrakenPIXAR.objects`, exposed as `kpy.types` */
+  /** `LUXO_KrakenSTAGE.objects`, exposed as `kpy.types` */
   KrakenPROP *prop;
 };
 
@@ -305,7 +305,9 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
     Py_DECREF(kpy_types);                         /* Fairly safe to assume the dict is kept. */
   }
 
-  newclass = PyDict_GetItemString(kpy_types_dict, idname);
+  if (idname) {
+    newclass = PyDict_GetItemString(kpy_types_dict, idname);
+  }
 
   /* Sanity check, could skip this unless in debug mode. */
   if (newclass) {
@@ -662,20 +664,20 @@ void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna)
 
   /* Add staticmethods and classmethods. */
   // {
-  //   const KrakenPRIM func_ptr(srna);
+    // const KrakenPRIM func_ptr(*srna);
 
-  //   auto &lb = LUXO_struct_type_functions(srna);
-  //   for (auto link : lb) {
-  //     KrakenFUNC *func = (KrakenFUNC *)link;
-  //     const int flag = LUXO_function_flag(func);
-  //     if ((flag & FUNC_NO_SELF) &&         /* Is staticmethod or classmethod. */
-  //         (flag & FUNC_REGISTER) == false) /* Is not for registration. */
-  //     {
-  //       // PyObject *func_py = pystage_func_to_py(&func_ptr, (KrakenPRIM *)func);
-  //       // PyObject_SetAttrString(newclass, LUXO_function_identifier(func), func_py);
-  //       // Py_DECREF(func_py);
-  //     }
-  //   }
+    // auto &lb = LUXO_struct_type_functions(srna);
+    // for (auto link : lb) {
+    //   KrakenFUNC *func = (KrakenFUNC *)link;
+    //   const int flag = LUXO_function_flag(func);
+    //   if ((flag & FUNC_NO_SELF) &&         /* Is staticmethod or classmethod. */
+    //       (flag & FUNC_REGISTER) == false) /* Is not for registration. */
+    //   {
+    //     PyObject *func_py = pystage_func_to_py(&func_ptr, (KrakenPRIM *)func);
+    //     PyObject_SetAttrString(newclass, LUXO_function_identifier(func), func_py);
+    //     Py_DECREF(func_py);
+    //   }
+    // }
   // }
 
   /* Done with LUXO instance. */
@@ -1391,6 +1393,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
   }
 
   void **instance = ptr->data ? LUXO_struct_instance(ptr) : NULL;
+  TF_STATUS("kpy: hi");
   if (instance && *instance) {
     pystage = (KPy_KrakenStage *)*instance;
 

@@ -24,6 +24,7 @@
  * Set the Stage.
  */
 
+#include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/collectionAPI.h>
 
@@ -110,7 +111,7 @@ typedef enum eStringPropertySearchFlag
   PROP_STRING_SEARCH_SUGGESTION = (1 << 2),
 } eStringPropertySearchFlag;
 
-struct KrakenPIXAR
+struct KrakenSTAGE : public UsdStage
 {
   std::vector<struct KrakenPRIM *> structs = {NULL, NULL};
 };
