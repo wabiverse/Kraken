@@ -46,20 +46,24 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
+#include "LUXO_define.h"
+
 #include <wabi/base/tf/token.h>
 
 using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE *kstage, const SdfPath &identifier, KrakenPRIM *kprimfrom = NULL)
+KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE kstage,
+                                const SdfPath &identifier,
+                                KrakenPRIM *kprimfrom)
 {
   KrakenPRIM kprim;
   KrakenPROP prop;
   // KrakenPRIMDEF *kpdef = NULL, *kpdefrom = NULL;
 
   kprim = kstage->GetPrimAtPath(identifier);
-  
+
   UsdCollectionAPI::Apply(kprim, identifier.GetAsToken());
 
   if (kprimfrom && kprimfrom->IsValid()) {
@@ -69,7 +73,7 @@ KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE *kstage, const SdfPath &identifier, 
     kprim.py_type = NULL;
     kprim.base = kprimfrom;
 
-    rel= kprim.collection.CreateIncludesRel();
+    rel = kprim.collection.CreateIncludesRel();
     rel.AddTarget(kprimfrom->GetPath());
   }
 
@@ -79,19 +83,19 @@ KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE *kstage, const SdfPath &identifier, 
   return &kprim;
 }
 
-KrakenPRIM *PRIM_def_struct(KrakenSTAGE *kstage, const SdfPath &identifier, const TfToken &from = TfToken())
+KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage, const SdfPath &identifier, const TfToken &from)
 {
   /* only use PRIM_def_struct() while pre-processing, otherwise use PRIM_def_struct_ptr() */
   // KLI_assert(DefPRIM.preprocess);
 
   /**
-   * -- *** Pixar Style *** -- 
+   * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
   KrakenPRIM kprim = kstage->DefinePrim(identifier, from);
-  
+
   if (!kprim.IsValid()) {
-    
-    TF_WARN("struct %s could not be created.", from, identifier);
+
+    TF_WARN("struct %s could not be created.", identifier.GetText());
     // DefPRIM.error = true;
   }
 

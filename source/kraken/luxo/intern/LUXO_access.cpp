@@ -239,16 +239,18 @@ KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr)
   return ptr->type;
 }
 
-KrakenSTAGE KRAKEN_PIXAR = {
-  .structs =
-    {&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
-};
+KrakenSTAGE::KrakenSTAGE()
+  : UsdStageRefPtr(UsdStage::CreateInMemory()),
+    structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
+{}
+
+KrakenSTAGE KRAKEN_STAGE = {};
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
-  r_ptr->data = &KRAKEN_PIXAR;
+  r_ptr->data = &KRAKEN_STAGE;
 }
 
 WABI_NAMESPACE_END

@@ -229,17 +229,17 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
                      "AZone FullScr");
 }
 
-static void prim_def_operator(KrakenSTAGE *kprim)
+static void prim_def_operator(KrakenSTAGE kstage)
 {
-  KrakenPRIM *sprim;
+  KrakenPRIM *kprim;
   KrakenPROP *prop;
 
-  sprim = PRIM_def_struct(kprim, SdfPath("Operator"));
+  kprim = PRIM_def_struct(kstage, STAGE("Operator"));
 }
 
-void PRIM_def_wm(KrakenSTAGE *kprim)
+void PRIM_def_wm(KrakenSTAGE kstage)
 {
-  prim_def_operator(kprim);
+  prim_def_operator(kstage);
 }
 
 WABI_NAMESPACE_END

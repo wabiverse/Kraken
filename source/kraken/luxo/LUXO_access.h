@@ -43,7 +43,7 @@ struct Scene;
 struct kContext;
 struct KrakenPROP;
 
-extern KrakenSTAGE KRAKEN_PIXAR;
+extern KrakenSTAGE KRAKEN_STAGE;
 
 extern KrakenPRIM LUXO_StageData;
 extern KrakenPRIM LUXO_KrakenPixar;

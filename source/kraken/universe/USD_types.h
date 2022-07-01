@@ -34,6 +34,11 @@ struct Main;
 struct ReportList;
 struct kContext;
 
+/**
+ * Macro to use absolute paths to system prims. */
+#define STAGE(x, ...) SdfPath("/" x)
+
+
 typedef std::vector<UsdCollectionAPI> UsdCollectionsVector;
 
 typedef int (*ObjectValidateFunc)(const UsdPrim &ptr, void *data, int *have_function);
@@ -111,9 +116,11 @@ typedef enum eStringPropertySearchFlag
   PROP_STRING_SEARCH_SUGGESTION = (1 << 2),
 } eStringPropertySearchFlag;
 
-struct KrakenSTAGE : public UsdStage
+struct KrakenSTAGE : public UsdStageRefPtr
 {
-  std::vector<struct KrakenPRIM *> structs = {NULL, NULL};
+  KrakenSTAGE();
+
+  std::vector<struct KrakenPRIM *> structs;
 };
 
 WABI_NAMESPACE_END
