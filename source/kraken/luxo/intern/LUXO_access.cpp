@@ -176,7 +176,6 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
-  *r_ptr = r_ptr->GetPrimAtPath(SdfPath("structs"));
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
@@ -224,7 +223,6 @@ void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
 {
   if (!r_ptr->IsValid()) {
     *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
-    *r_ptr = r_ptr->GetPrimAtPath(SdfPath("structs"));
   }
   r_ptr->owner_id = type->GetName().GetText();
   r_ptr->type = type;
@@ -292,7 +290,6 @@ KrakenSTAGE::KrakenSTAGE()
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
-  *r_ptr = r_ptr->GetPrimAtPath(SdfPath("structs"));
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = (void *&)KRAKEN_STAGE;
