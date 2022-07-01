@@ -55,26 +55,30 @@ using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE kstage, const SdfPath &identifier, const TfToken &from)
+void PRIM_def_struct_ptr(KrakenSTAGE kstage,
+                         const SdfPath &identifier,
+                         KrakenPRIM *r_ptr,
+                         const TfToken &from)
 {
-  KrakenPRIM kprim;
-  KrakenPROP prop;
+  // KrakenPRIM kprim;
+  // KrakenPROP prop;
   // KrakenPRIMDEF *kpdef = NULL, *kpdefrom = NULL;
 
-  kprim = kstage->GetPrimAtPath(STAGE("structs").AppendPath(identifier));
+  *r_ptr = kstage->GetPrimAtPath(STAGE("structs").AppendPath(identifier));
 
-  if (!kprim.IsValid()) {
+  if (!r_ptr->IsValid()) {
     /* This prim doesn't exist yet. */
-    kprim = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
+    *r_ptr = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
   }
 
-  kprim.identifier = identifier.GetAsString().c_str();
+  r_ptr->identifier = identifier.GetAsString().c_str();
   // kprim.SetDocumentation(kprim.description);
-
-  return &kprim;
 }
 
-KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage, const SdfPath &identifier, const TfToken &from)
+void PRIM_def_struct(KrakenSTAGE kstage,
+                     const SdfPath &identifier,
+                     KrakenPRIM *r_ptr,
+                     const TfToken &from)
 {
   /* only use PRIM_def_struct() while pre-processing, otherwise use PRIM_def_struct_ptr() */
   // KLI_assert(DefPRIM.preprocess);
@@ -82,15 +86,15 @@ KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage, const SdfPath &identifier, const
   /**
    * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
-  KrakenPRIM kprim = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
+  *r_ptr = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
 
-  if (!kprim.IsValid()) {
+  if (!r_ptr->IsValid()) {
 
     TF_WARN("struct %s could not be created.", identifier.GetText());
     // DefPRIM.error = true;
   }
 
-  return PRIM_def_struct_ptr(kstage, identifier, from);
+  PRIM_def_struct_ptr(kstage, identifier, r_ptr, from);
 }
 
 WABI_NAMESPACE_END

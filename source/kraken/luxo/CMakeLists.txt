@@ -17,6 +17,7 @@ set(INC_SYS
 set(SRC
   intern/LUXO_access.cpp
   intern/LUXO_define.cpp
+  intern/LUXO_info.cpp
   intern/LUXO_main.cpp
   intern/LUXO_wm.cpp
 

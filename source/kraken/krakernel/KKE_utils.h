@@ -42,6 +42,7 @@ std::string kraken_fonts_path_init(void);
 std::string kraken_python_path_init(void);
 std::string kraken_icon_path_init(void);
 std::string kraken_startup_file_init(void);
+std::string kraken_ocio_file_init(void);
 
 typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
 

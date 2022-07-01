@@ -1,62 +1,18 @@
 #usda 1.0
 (
+    colorConfiguration = @/Users/furby/dev/build_darwin_release/bin/Kraken.app/Contents/Resources/1.50/datafiles/colormanagement/config.ocio@
     colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
-    upAxis = "Z"
 )
 
-def "WabiAnimationStudios"
+def "structs" (
+    prepend apiSchemas = ["CollectionAPI:structs"]
+)
 {
-    def "Internal"
+    prepend rel collection:structs:includes = </structs>
+
+    def "Operator"
     {
-        def "Kraken"
-        {
-            def "MainWindow1"
-            {
-                uniform token ui:window:alignment = "alignAbsolute"
-                uniform token ui:window:cursor = "default"
-                uniform float ui:window:dpi = 1
-                uniform float ui:window:linewidth = 1
-                uniform float ui:window:pixelsz = 1
-                uniform float2 ui:window:pos = (0, 0)
-                uniform float ui:window:scale = 1
-                uniform float2 ui:window:size = (1920, 1080)
-                uniform token ui:window:state = "maximized"
-                uniform token ui:window:title = "Kraken"
-                uniform token ui:window:type = "normal"
-                uniform float ui:window:widgetunit = 20
-                prepend rel ui:window:workspace = </WabiAnimationStudios/Internal/Kraken/Workspaces/Layout>
-            }
-
-            def "Workspaces"
-            {
-                def "Layout"
-                {
-                    uniform token ui:workspace:name = "Workspace"
-                    prepend rel ui:workspace:screen = </WabiAnimationStudios/Internal/Kraken/Workspaces/Layout/Screen>
-
-                    def Screen "Screen"
-                    {
-                        uniform token ui:screen:alignment = "none"
-                        rel ui:screen:areas
-                    }
-                }
-            }
-
-            def "UserDef"
-            {
-                uniform float ui:userpref:dpifac = 1
-                uniform bool ui:userpref:showSavePrompt = 1
-            }
-        }
     }
-}
-
-def Cube "Cube"
-{
-    float3 xformOp:rotateXYZ = (0, 0, 0)
-    float3 xformOp:scale = (1, 1, 1)
-    double3 xformOp:translate = (0, 0, 0)
-    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
 }
 

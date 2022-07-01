@@ -64,6 +64,9 @@ extern KrakenPRIM LUXO_Region;
 
 void LUXO_init(void);
 
+/* remove this once we go back to UsdStage::CreateInMemory */
+void LUXO_save_usd(void);
+
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *ptr);
 void LUXO_main_pointer_create(Main *main, KrakenPRIM *ptr);
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);

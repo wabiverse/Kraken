@@ -82,7 +82,8 @@ void CREATOR_kraken_main(int argc, const char **argv)
 #endif /* !defined(ARCH_OS_WINDOWS) */
 
   /* Initialize Globals (paths, sys). */
-  KKE_kraken_globals_init();
+  /* Already called in KrakenSTAGE ctor. */
+  // KKE_kraken_globals_init();
 
   /* Init plugins. */
   KKE_kraken_plugins_init();

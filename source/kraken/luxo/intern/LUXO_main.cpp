@@ -24,12 +24,14 @@
 
 #include "LUXO_main.h"
 #include "LUXO_internal.h"
+#include "LUXO_access.h"
 
 WABI_NAMESPACE_BEGIN
 
 static void luxo_preprocess(KrakenSTAGE kstage)
 {
   PRIM_def_wm(kstage);
+  PRIM_def_info(kstage);
 }
 
 void LUXO_main(KrakenSTAGE kstage)

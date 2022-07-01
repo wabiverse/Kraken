@@ -39,7 +39,7 @@ std::string kraken_datafiles_path_init()
 #if defined(ARCH_OS_WINDOWS)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/");
 #elif defined(ARCH_OS_DARWIN)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/");
+  return STRCAT(G.main->exe_path, "../../Resources/" + G.main->kraken_version_decimal + "/datafiles/");
 #else
   /**
    * On Linux, datafiles directory lies outside of BIN
@@ -53,7 +53,7 @@ std::string kraken_python_path_init()
 #if defined(ARCH_OS_WINDOWS)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/python/lib/");
 #elif defined(ARCH_OS_DARWIN)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/python/lib/");
+  return STRCAT(G.main->exe_path, "../../Resources/" + G.main->kraken_version_decimal + "/python/lib/");
 #else
   return STRCAT(G.main->exe_path, "../python/lib/python3.9/site-packages");
 #endif
@@ -64,7 +64,7 @@ std::string kraken_fonts_path_init()
 #if defined(ARCH_OS_WINDOWS)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/fonts/");
 #elif defined(ARCH_OS_DARWIN)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/fonts/");
+  return STRCAT(G.main->exe_path, "../../Resources/" + G.main->kraken_version_decimal + "/datafiles/fonts/");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/fonts/");
 #endif
@@ -75,7 +75,7 @@ std::string kraken_icon_path_init()
 #if defined(ARCH_OS_WINDOWS)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/icons/");
 #elif defined(ARCH_OS_DARWIN)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/icons/");
+  return STRCAT(G.main->exe_path, "../../Resources/" + G.main->kraken_version_decimal + "/datafiles/icons/");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/icons/");
 #endif
@@ -86,9 +86,20 @@ std::string kraken_startup_file_init()
 #if defined(ARCH_OS_WINDOWS)
   return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usda");
 #elif defined(ARCH_OS_DARWIN)
-  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/startup.usda");
+  return STRCAT(G.main->exe_path, "../../Resources/" + G.main->kraken_version_decimal + "/datafiles/startup.usda");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/startup.usda");
+#endif
+}
+
+std::string kraken_ocio_file_init()
+{
+#if defined(ARCH_OS_WINDOWS)
+  return STRCAT(G.main->exe_path, G.main->kraken_version_decimal + "/datafiles/colormanagement/config.ocio");
+#elif defined(ARCH_OS_DARWIN)
+  return STRCAT(G.main->exe_path, "../../Resources/" + G.main->kraken_version_decimal + "/datafiles/colormanagement/config.ocio");
+#else
+  return STRCAT(G.main->exe_path, "../datafiles/colormanagement/config.ocio");
 #endif
 }
 

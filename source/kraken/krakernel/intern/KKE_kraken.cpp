@@ -119,7 +119,7 @@ Main *KKE_main_new(void)
   return kmain;
 }
 
-void KKE_kraken_globals_init()
+Global &KKE_kraken_globals_init()
 {
   kraken_version_init();
 
@@ -137,6 +137,9 @@ void KKE_kraken_globals_init()
   G.main->python_path = kraken_python_path_init();
   G.main->icons_path = kraken_icon_path_init();
   G.main->stage_id = kraken_startup_file_init();
+  G.main->ocio_cfg = kraken_ocio_file_init();
+
+  return G;
 }
 
 void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
@@ -160,7 +163,7 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
   } else {
     /**
      * Open user's stage. */
-    USD_open_stage(C);
+    // USD_open_stage(C);
   }
 }
 

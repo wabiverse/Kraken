@@ -319,8 +319,7 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
                                         kpy_intern_str___slots__);
 
     if (tp_slots == NULL) {
-      TF_RUNTIME_ERROR("kpy: expected class '%s' to have __slots__ defined, see kpy_types.py",
-                       idname);
+      TF_WARN("kpy: expected class '%s' to have __slots__ defined, see kpy_types.py", idname);
       newclass = NULL;
     } else if (PyTuple_GET_SIZE(tp_bases)) {
       PyObject *base = PyTuple_GET_ITEM(tp_bases, 0);
@@ -328,9 +327,9 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
       if (base_compare != base) {
         char pyob_info[256];
         PyC_ObSpitStr(pyob_info, sizeof(pyob_info), base_compare);
-        TF_RUNTIME_ERROR("incorrect subclassing of SRNA '%s', expected '%s', see kpy_types.py",
-                         idname,
-                         pyob_info);
+        TF_WARN("incorrect subclassing of SRNA '%s', expected '%s', see kpy_types.py",
+                idname,
+                pyob_info);
         newclass = NULL;
       } else {
         TF_STATUS("SRNA sub-classed: '%s'", idname);

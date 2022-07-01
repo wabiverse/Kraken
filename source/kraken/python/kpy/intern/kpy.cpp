@@ -417,7 +417,8 @@ void KPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod, "types", KPY_uni_types());
 
   /* needs to be first so kpy_types can run */
-  KPY_library_load_type_ready();
+  /* add this back when we re-enable UsdStage::CreateInMemory */
+  // KPY_library_load_type_ready();
 
   KPY_pixar_data_context_type_ready();
 

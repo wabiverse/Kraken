@@ -68,10 +68,10 @@ void USD_create_stage(kContext *C)
 {
   Main *main = CTX_data_main(C);
 
-  main->stage_id = TfStringCatPaths(main->temp_dir, "startup.usda");
+  // main->stage_id = TfStringCatPaths(main->temp_dir, "startup.usda");
 
-  Scene *scene = new Scene(main->stage_id.string());
-  CTX_data_scene_set(C, scene);
+  // Scene *scene = new Scene(main->stage_id.string());
+  // CTX_data_scene_set(C, scene);
 }
 
 void USD_destroy(kContext *C)
@@ -99,7 +99,7 @@ void USD_set_defaults(kContext *C)
   /* ----- */
 
   /** Pixar Stage Initiated. */
-  Stage stage = CTX_data_stage(C);
+  // Stage stage = CTX_data_stage(C);
 
   /* ----- */
 

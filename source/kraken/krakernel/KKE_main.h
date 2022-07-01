@@ -46,6 +46,7 @@ struct Main
   std::string datafiles_path;
 
   std::filesystem::path stage_id;
+  std::filesystem::path ocio_cfg;
 
   std::string kraken_version_decimal;
 
@@ -195,7 +196,7 @@ void KKE_kraken_atexit_register(void (*func)(void *user_data), void *user_data);
 void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *user_data);
 
 void KKE_kraken_main_init(kContext *C, int argc = 0, const char **argv = NULL);
-void KKE_kraken_globals_init();
+Global &KKE_kraken_globals_init();
 void KKE_kraken_plugins_init(void);
 void KKE_kraken_python_init(kContext *C);
 ckeStatusCode KKE_main_runtime(int backend);

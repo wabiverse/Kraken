@@ -58,6 +58,9 @@ void LUXO_init(void)
 {
   LUXO_struct_init();
   LUXO_main(KRAKEN_STAGE);
+
+  /* remove this once we go back to UsdStage::CreateInMemory */
+  LUXO_save_usd();
 }
 
 ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr)
@@ -151,9 +154,9 @@ KrakenPROP *LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name)
   prop = prim.GetProperty(name);
 
   if (!prop || !prop.IsValid()) {
-    TF_RUNTIME_ERROR("%s has no property %s, this is not supposed to happen!",
-                     prim.GetName().GetText(),
-                     name.GetText());
+    TF_WARN("%s has no property %s, this is not supposed to happen!",
+            prim.GetName().GetText(),
+            name.GetText());
   }
 
   return &prop;
@@ -173,6 +176,7 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+  *r_ptr = r_ptr->GetPrimAtPath(SdfPath("structs"));
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
@@ -218,6 +222,10 @@ void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
 
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
 {
+  if (!r_ptr->IsValid()) {
+    *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+    *r_ptr = r_ptr->GetPrimAtPath(SdfPath("structs"));
+  }
   r_ptr->owner_id = type->GetName().GetText();
   r_ptr->type = type;
   r_ptr->data = data;
@@ -266,14 +274,25 @@ KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr)
   return ptr->type;
 }
 
+/* remove this once we go back to UsdStage::CreateInMemory */
+void LUXO_save_usd(void)
+{
+  KRAKEN_STAGE->GetRootLayer()->Save();
+}
+
+/**
+ * Use UsdStage::CreateInMemory when we get out of an alpha state
+ * for now, this makes it easier to debug scene description - it
+ * is located in the Kraken installation /1.50/startup.usda */
 KrakenSTAGE::KrakenSTAGE()
-  : UsdStageRefPtr(UsdStage::CreateInMemory()),
+  : UsdStageRefPtr(UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 {}
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+  *r_ptr = r_ptr->GetPrimAtPath(SdfPath("structs"));
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = (void *&)KRAKEN_STAGE;

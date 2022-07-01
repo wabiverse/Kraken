@@ -232,10 +232,10 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
 
 static void prim_def_operator(KrakenSTAGE kstage)
 {
-  KrakenPRIM *kprim;
-  KrakenPROP *prop;
+  KrakenPRIM kprim;
+  KrakenPROP prop;
 
-  kprim = PRIM_def_struct(kstage, SdfPath("Operator"));
+  PRIM_def_struct(kstage, SdfPath("Operator"), &kprim);
 }
 
 void PRIM_def_wm(KrakenSTAGE kstage)
