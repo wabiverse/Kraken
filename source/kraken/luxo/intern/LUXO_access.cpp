@@ -24,6 +24,7 @@
 
 #include "LUXO_runtime.h"
 #include "LUXO_access.h"
+#include "LUXO_main.h"
 
 #include "KKE_utils.h"
 
@@ -42,6 +43,22 @@ KrakenPRIM LUXO_WorkSpace;
 KrakenPRIM LUXO_Screen;
 KrakenPRIM LUXO_Area;
 KrakenPRIM LUXO_Region;
+
+KrakenSTAGE KRAKEN_STAGE = {};
+
+static void LUXO_struct_init(void)
+{
+  KrakenPRIM sprim = KRAKEN_STAGE->DefinePrim(STAGE("structs"));
+
+  UsdCollectionAPI capi = UsdCollectionAPI::Apply(sprim, TfToken("structs"));
+  capi.CreateIncludesRel().AddTarget(sprim.GetPath());
+}
+
+void LUXO_init(void)
+{
+  LUXO_struct_init();
+  LUXO_main(KRAKEN_STAGE);
+}
 
 ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr)
 {
@@ -124,13 +141,22 @@ bool USD_enum_identifier(TfEnum item, const int value, const char **r_identifier
 KrakenPROP *LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name)
 {
   KrakenPRIM prim;
-  KrakenPROP pprim;
-  UsdCollectionAPI collection;
+  KrakenPROP prop;
+
+  if (!ptr->IsValid()) {
+    *ptr = ptr->GetStage()->GetPseudoRoot();
+  }
 
   prim = ptr->GetPrim();
-  pprim = prim.GetAttribute(name);
+  prop = prim.GetProperty(name);
 
-  return &pprim;
+  if (!prop || !prop.IsValid()) {
+    TF_RUNTIME_ERROR("%s has no property %s, this is not supposed to happen!",
+                     prim.GetName().GetText(),
+                     name.GetText());
+  }
+
+  return &prop;
 }
 
 UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfToken &name)
@@ -146,6 +172,7 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
@@ -244,13 +271,12 @@ KrakenSTAGE::KrakenSTAGE()
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 {}
 
-KrakenSTAGE KRAKEN_STAGE = {};
-
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
-  r_ptr->data = &KRAKEN_STAGE;
+  r_ptr->data = (void *&)KRAKEN_STAGE;
 }
 
 WABI_NAMESPACE_END

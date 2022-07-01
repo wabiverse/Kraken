@@ -62,6 +62,8 @@ extern KrakenPRIM LUXO_Region;
   }                                  \
   (void)0
 
+void LUXO_init(void);
+
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *ptr);
 void LUXO_main_pointer_create(Main *main, KrakenPRIM *ptr);
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);

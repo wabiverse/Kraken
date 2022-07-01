@@ -46,6 +46,8 @@
 #include "WM_init_exit.h"
 #include "WM_window.h"
 
+#include "LUXO_access.h"
+
 #if defined(ARCH_OS_WINDOWS)
 using namespace winrt;
 using namespace winrt::Windows::ApplicationModel;
@@ -97,6 +99,9 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
   /* Determining Stage Configuration and Loadup. */
   KKE_kraken_main_init(C);
+
+  /* Setup and create all root level prims. */
+  LUXO_init();
 
 #if !defined(ARCH_OS_WINDOWS)
   /* Initialize main Runtime. */

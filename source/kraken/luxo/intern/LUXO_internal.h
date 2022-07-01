@@ -37,12 +37,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE kstage,
-                                const SdfPath &identifier,
-                                const TfToken &from = TfToken());
-
-KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage,
-                            const SdfPath &identifier,
-                            const TfToken &from = TfToken());
+void PRIM_def_wm(KrakenSTAGE kstage);
 
 WABI_NAMESPACE_END

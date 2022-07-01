@@ -46,6 +46,7 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
+#include "LUXO_internal.h"
 #include "LUXO_runtime.h"
 #include "LUXO_define.h"
 
@@ -234,12 +235,20 @@ static void prim_def_operator(KrakenSTAGE kstage)
   KrakenPRIM *kprim;
   KrakenPROP *prop;
 
-  kprim = PRIM_def_struct(kstage, STAGE("Operator"));
+  kprim = PRIM_def_struct(kstage, SdfPath("Operator"));
 }
 
 void PRIM_def_wm(KrakenSTAGE kstage)
 {
   prim_def_operator(kstage);
+  // PRIM_def_struct_ui_text(kstage, "Operator", "Storage of an operator being executed, or
+  // registered after execution"); PRIM_def_struct_sdna(kstage, "wmOperator");
+  // PRIM_def_struct_refine_func(kstage, "rna_Operator_refine");
+#ifdef WITH_PYTHON
+  // PRIM_def_struct_register_funcs(kstage, "rna_Operator_register", "rna_Operator_unregister",
+  // "rna_Operator_instance");
+#endif
+  // PRIM_def_struct_flag(kstage, STRUCT_PUBLIC_NAMESPACE_INHERIT);
 }
 
 WABI_NAMESPACE_END

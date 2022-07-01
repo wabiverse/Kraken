@@ -899,7 +899,7 @@ struct wmKeyMapItem
   /* operator */
   /** Used to retrieve operator type pointer. */
   TfToken idname;
-  UsdAttributeVector properties;
+  UsdPropertyVector properties;
 
   /* modal */
   /** Runtime temporary storage for loading. */

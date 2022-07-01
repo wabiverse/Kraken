@@ -90,7 +90,7 @@ static int kpy_class_validate(const UsdPrim &type, void *py_data, int *have_func
   return 1;
 }
 
-static int kpy_class_call(kContext *C, const UsdPrim &type, void *func, UsdAttributeVector parms)
+static int kpy_class_call(kContext *C, const UsdPrim &type, void *func, UsdPropertyVector parms)
 {
   return 1;
 }
@@ -305,9 +305,7 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
     Py_DECREF(kpy_types);                         /* Fairly safe to assume the dict is kept. */
   }
 
-  if (idname) {
-    newclass = PyDict_GetItemString(kpy_types_dict, idname);
-  }
+  newclass = PyDict_GetItemString(kpy_types_dict, idname);
 
   /* Sanity check, could skip this unless in debug mode. */
   if (newclass) {
@@ -481,18 +479,22 @@ int LUXO_property_collection_lookup_token_index(KrakenPRIM *ptr,
                                                 int *r_index)
 {
   KrakenPROP *prop;
-  UsdCollectionsVector iter;
+  UsdPropertyVector iter;
   int found = 0;
   int index = 0;
 
-  iter = LUXO_property_collection_begin(ptr, key);
+  /* get all attributes... */
+  iter = ptr->GetProperties();
 
   for (auto &c : iter) {
-    UsdPrim cPrim = c.GetPrim();
 
-    if (cPrim.IsValid()) {
-      KrakenPRIM kPrim = cPrim;
+    /* if property is USD valid... */
+    if (c.IsValid()) {
+      KrakenPRIM kPrim = c.GetPrim();
+
       prop = LUXO_object_find_property(&kPrim, c.GetName());
+
+      /* we found a python binding to create. */
       if (prop && prop->IsValid()) {
         *r_ptr = kPrim;
         found = 1;
@@ -603,7 +605,7 @@ PyObject *KPY_uni_types(void)
   KPy_TypesModule_State *state = (KPy_TypesModule_State *)PyModule_GetState(submodule);
 
   LUXO_kraken_luxo_pointer_create(&state->ptr);
-  state->prop = LUXO_object_find_property(&state->ptr, TfToken("objects"));
+  state->prop = LUXO_object_find_property(&state->ptr, TfToken("structs"));
 
   /* Internal base types we have no other accessors for. */
   {
@@ -664,20 +666,20 @@ void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna)
 
   /* Add staticmethods and classmethods. */
   // {
-    // const KrakenPRIM func_ptr(*srna);
+  // const KrakenPRIM func_ptr(*srna);
 
-    // auto &lb = LUXO_struct_type_functions(srna);
-    // for (auto link : lb) {
-    //   KrakenFUNC *func = (KrakenFUNC *)link;
-    //   const int flag = LUXO_function_flag(func);
-    //   if ((flag & FUNC_NO_SELF) &&         /* Is staticmethod or classmethod. */
-    //       (flag & FUNC_REGISTER) == false) /* Is not for registration. */
-    //   {
-    //     PyObject *func_py = pystage_func_to_py(&func_ptr, (KrakenPRIM *)func);
-    //     PyObject_SetAttrString(newclass, LUXO_function_identifier(func), func_py);
-    //     Py_DECREF(func_py);
-    //   }
-    // }
+  // auto &lb = LUXO_struct_type_functions(srna);
+  // for (auto link : lb) {
+  //   KrakenFUNC *func = (KrakenFUNC *)link;
+  //   const int flag = LUXO_function_flag(func);
+  //   if ((flag & FUNC_NO_SELF) &&         /* Is staticmethod or classmethod. */
+  //       (flag & FUNC_REGISTER) == false) /* Is not for registration. */
+  //   {
+  //     PyObject *func_py = pystage_func_to_py(&func_ptr, (KrakenPRIM *)func);
+  //     PyObject_SetAttrString(newclass, LUXO_function_identifier(func), func_py);
+  //     Py_DECREF(func_py);
+  //   }
+  // }
   // }
 
   /* Done with LUXO instance. */
@@ -1362,7 +1364,7 @@ void pystage_alloc_types(void)
 
   //   /* Avoid doing this lookup for every getattr. */
   //   LUXO_kraken_luxo_pointer_create(&ptr);
-  //   prop = LUXO_object_find_property(&ptr, "objects");
+  //   prop = LUXO_object_find_property(&ptr, "structs");
 
   //   USD_PROP_BEGIN (&ptr, itemptr, prop) {
   //     PyObject *item = pystage_struct_Subtype(&itemptr);
@@ -1393,7 +1395,6 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
   }
 
   void **instance = ptr->data ? LUXO_struct_instance(ptr) : NULL;
-  TF_STATUS("kpy: hi");
   if (instance && *instance) {
     pystage = (KPy_KrakenStage *)*instance;
 

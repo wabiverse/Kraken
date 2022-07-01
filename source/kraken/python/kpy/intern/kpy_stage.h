@@ -109,7 +109,7 @@ struct KPy_KrakenFUNC
   KrakenFUNC *func;
 };
 
-struct KPy_UsdAttributeVector
+struct KPy_UsdPropertyVector
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
@@ -117,7 +117,7 @@ struct KPy_UsdAttributeVector
 #endif
 
   /* collection iterator specific parts */
-  UsdAttributeVector iter;
+  UsdPropertyVector iter;
 };
 
 #ifdef __cplusplus

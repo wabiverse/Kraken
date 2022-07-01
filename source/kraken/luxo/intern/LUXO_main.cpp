@@ -22,27 +22,19 @@
  * The Universe Gets Animated.
  */
 
-#pragma once
-
-#include "LUXO_runtime.h"
-
-#include "KKE_context.h"
-#include "KKE_main.h"
-#include "KKE_utils.h"
-
-#include "USD_api.h"
-#include "USD_types.h"
-#include "USD_wm_types.h"
-#include "USD_object.h"
+#include "LUXO_main.h"
+#include "LUXO_internal.h"
 
 WABI_NAMESPACE_BEGIN
 
-KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE kstage,
-                                const SdfPath &identifier,
-                                const TfToken &from = TfToken());
+static void luxo_preprocess(KrakenSTAGE kstage)
+{
+  PRIM_def_wm(kstage);
+}
 
-KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage,
-                            const SdfPath &identifier,
-                            const TfToken &from = TfToken());
+void LUXO_main(KrakenSTAGE kstage)
+{
+  luxo_preprocess(kstage);
+}
 
 WABI_NAMESPACE_END

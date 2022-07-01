@@ -27,6 +27,7 @@
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/collectionAPI.h>
+#include <wabi/usd/usd/primRange.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -40,12 +41,13 @@ struct kContext;
 
 
 typedef std::vector<UsdCollectionAPI> UsdCollectionsVector;
+typedef std::vector<UsdProperty> UsdPropertyVector;
 
 typedef int (*ObjectValidateFunc)(const UsdPrim &ptr, void *data, int *have_function);
 typedef int (*ObjectCallbackFunc)(struct kContext *C,
                                   const UsdPrim &ptr,
                                   void *func,
-                                  UsdAttributeVector list);
+                                  UsdPropertyVector list);
 typedef void (*ObjectFreeFunc)(void *data);
 typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
                                                  struct ReportList *reports,

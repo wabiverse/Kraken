@@ -41,6 +41,7 @@
 #include "USD_file.h"
 #include "USD_scene.h"
 #include "USD_screen.h"
+#include "USD_types.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
 #include "USD_wm_types.h"
@@ -54,27 +55,17 @@ using std::string;
 
 WABI_NAMESPACE_BEGIN
 
-KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE kstage,
-                                const SdfPath &identifier,
-                                KrakenPRIM *kprimfrom)
+KrakenPRIM *PRIM_def_struct_ptr(KrakenSTAGE kstage, const SdfPath &identifier, const TfToken &from)
 {
   KrakenPRIM kprim;
   KrakenPROP prop;
   // KrakenPRIMDEF *kpdef = NULL, *kpdefrom = NULL;
 
-  kprim = kstage->GetPrimAtPath(identifier);
+  kprim = kstage->GetPrimAtPath(STAGE("structs").AppendPath(identifier));
 
-  UsdCollectionAPI::Apply(kprim, identifier.GetAsToken());
-
-  if (kprimfrom && kprimfrom->IsValid()) {
-
-    UsdRelationship rel;
-
-    kprim.py_type = NULL;
-    kprim.base = kprimfrom;
-
-    rel = kprim.collection.CreateIncludesRel();
-    rel.AddTarget(kprimfrom->GetPath());
+  if (!kprim.IsValid()) {
+    /* This prim doesn't exist yet. */
+    kprim = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
   }
 
   kprim.identifier = identifier.GetAsString().c_str();
@@ -91,7 +82,7 @@ KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage, const SdfPath &identifier, const
   /**
    * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
-  KrakenPRIM kprim = kstage->DefinePrim(identifier, from);
+  KrakenPRIM kprim = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
 
   if (!kprim.IsValid()) {
 
@@ -99,7 +90,7 @@ KrakenPRIM *PRIM_def_struct(KrakenSTAGE kstage, const SdfPath &identifier, const
     // DefPRIM.error = true;
   }
 
-  return PRIM_def_struct_ptr(kstage, identifier, &kprim);
+  return PRIM_def_struct_ptr(kstage, identifier, from);
 }
 
 WABI_NAMESPACE_END

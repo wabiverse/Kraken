@@ -17,10 +17,14 @@ set(INC_SYS
 set(SRC
   intern/LUXO_access.cpp
   intern/LUXO_define.cpp
+  intern/LUXO_main.cpp
   intern/LUXO_wm.cpp
+
+  intern/LUXO_internal.h
 
   LUXO_access.h
   LUXO_define.h
+  LUXO_main.h
   LUXO_runtime.h
 )
 

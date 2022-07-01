@@ -39,9 +39,9 @@
 
 WABI_NAMESPACE_BEGIN
 
-struct KrakenPROP : UsdAttribute
+struct KrakenPROP : UsdProperty
 {
-  KrakenPROP(const UsdAttribute &attr = UsdAttribute()) : UsdAttribute(attr) {}
+  KrakenPROP(const UsdProperty &prop = UsdProperty()) : UsdProperty(prop) {}
 
   TfToken name;
   PropertyType type;

@@ -72,3 +72,35 @@ class Context(StructLUXO):
                     new_context[attr] = value
 
         return new_context
+
+
+class Operator(StructLUXO):
+    __slots__ = ()
+
+    def __getattribute__(self, attr):
+        properties = StructLUXO.path_resolve(self, "properties")
+        kr_stage = getattr(properties, "kr_stage", None)
+        if (kr_stage is not None) and (attr in kr_stage.properties):
+            return getattr(properties, attr)
+        return super().__getattribute__(attr)
+
+    def __setattr__(self, attr, value):
+        properties = StructLUXO.path_resolve(self, "properties")
+        kr_stage = getattr(properties, "kr_stage", None)
+        if (kr_stage is not None) and (attr in kr_stage.properties):
+            return setattr(properties, attr, value)
+        return super().__setattr__(attr, value)
+
+    def __delattr__(self, attr):
+        properties = StructLUXO.path_resolve(self, "properties")
+        kr_stage = getattr(properties, "kr_stage", None)
+        if (kr_stage is not None) and (attr in kr_stage.properties):
+            return delattr(properties, attr)
+        return super().__delattr__(attr)
+
+    def as_keywords(self, *, ignore=()):
+        """Return a copy of the properties as a dictionary"""
+        ignore = ignore + ("kr_type",)
+        return {attr: getattr(self, attr)
+                for attr in self.properties.kr_type.properties.keys()
+                if attr not in ignore}
