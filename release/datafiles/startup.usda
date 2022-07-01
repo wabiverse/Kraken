@@ -3,6 +3,7 @@
     colorConfiguration = @/Users/furby/dev/build_darwin_release/bin/Kraken.app/Contents/Resources/1.50/datafiles/colormanagement/config.ocio@
     colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
+    upAxis = "Z"
 )
 
 def "structs" (

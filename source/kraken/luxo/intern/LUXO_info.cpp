@@ -1,4 +1,4 @@
- /*
+/*
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -28,6 +28,7 @@
 #include "LUXO_internal.h"
 #include "LUXO_access.h"
 
+#include <wabi/usd/usdGeom/tokens.h>
 #include <wabi/imaging/hdx/tokens.h>
 
 WABI_NAMESPACE_BEGIN
@@ -38,6 +39,7 @@ void prim_def_config(KrakenSTAGE kstage)
   kstage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
   kstage->SetColorConfiguration(SdfAssetPath(G.main->ocio_cfg));
   kstage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
+  kstage->SetMetadata(UsdGeomTokens->upAxis, UsdGeomTokens->z);
 }
 
 void PRIM_def_info(KrakenSTAGE kstage)
@@ -45,4 +47,4 @@ void PRIM_def_info(KrakenSTAGE kstage)
   prim_def_config(kstage);
 }
 
-WABI_NAMESPACE_END 
+WABI_NAMESPACE_END
