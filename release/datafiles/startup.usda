@@ -6,14 +6,17 @@
     upAxis = "Z"
 )
 
-def "structs" (
+def "WabiAnimationStudios" (
     prepend apiSchemas = ["CollectionAPI:structs"]
 )
 {
-    prepend rel collection:structs:includes = </structs>
+    prepend rel collection:structs:includes = </WabiAnimationStudios/Structs>
 
-    def "Operator"
+    def "Structs"
     {
+        def "Operator"
+        {
+        }
     }
 }
 

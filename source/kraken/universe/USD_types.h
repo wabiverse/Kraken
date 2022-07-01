@@ -37,7 +37,9 @@ struct kContext;
 
 /**
  * Macro to use absolute paths to system prims. */
-#define STAGE(x, ...) SdfPath("/" x)
+#define WABI_ROOT_NS "WabiAnimationStudios"
+#define STAGE(x, ...) SdfPath("/" WABI_ROOT_NS "/" x)
+#define STAGE_WABI SdfPath("/" WABI_ROOT_NS)
 
 
 typedef std::vector<UsdCollectionAPI> UsdCollectionsVector;

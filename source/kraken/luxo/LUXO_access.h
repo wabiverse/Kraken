@@ -80,7 +80,7 @@ const char *LUXO_property_type(KrakenPROP *prop);
 ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr);
 ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr);
 
-KrakenPROP *LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name);
+void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP *r_ptr);
 void **LUXO_struct_instance(KrakenPRIM *ptr);
 const char *LUXO_object_identifier(const KrakenPRIM &ptr);
 const char *LUXO_struct_identifier(const KrakenPRIM *type);

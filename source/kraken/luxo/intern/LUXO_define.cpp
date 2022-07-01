@@ -64,11 +64,11 @@ void PRIM_def_struct_ptr(KrakenSTAGE kstage,
   // KrakenPROP prop;
   // KrakenPRIMDEF *kpdef = NULL, *kpdefrom = NULL;
 
-  *r_ptr = kstage->GetPrimAtPath(STAGE("structs").AppendPath(identifier));
+  *r_ptr = kstage->GetPrimAtPath(STAGE("Structs").AppendPath(identifier));
 
   if (!r_ptr->IsValid()) {
     /* This prim doesn't exist yet. */
-    *r_ptr = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
+    *r_ptr = kstage->DefinePrim(STAGE("Structs").AppendPath(identifier), from);
   }
 
   r_ptr->identifier = identifier.GetAsString().c_str();
@@ -86,7 +86,7 @@ void PRIM_def_struct(KrakenSTAGE kstage,
   /**
    * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
-  *r_ptr = kstage->DefinePrim(STAGE("structs").AppendPath(identifier), from);
+  *r_ptr = kstage->DefinePrim(STAGE("Structs").AppendPath(identifier), from);
 
   if (!r_ptr->IsValid()) {
 

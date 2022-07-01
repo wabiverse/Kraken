@@ -48,10 +48,10 @@ KrakenSTAGE KRAKEN_STAGE = {};
 
 static void LUXO_struct_init(void)
 {
-  KrakenPRIM sprim = KRAKEN_STAGE->DefinePrim(STAGE("structs"));
+  KrakenPRIM intern = KRAKEN_STAGE->DefinePrim(STAGE_WABI);
 
-  UsdCollectionAPI capi = UsdCollectionAPI::Apply(sprim, TfToken("structs"));
-  capi.CreateIncludesRel().AddTarget(sprim.GetPath());
+  UsdCollectionAPI capi = UsdCollectionAPI::Apply(intern, TfToken("structs"));
+  capi.CreateIncludesRel().AddTarget(intern.GetPath().AppendPath(SdfPath("Structs")));
 }
 
 void LUXO_init(void)
@@ -141,25 +141,27 @@ bool USD_enum_identifier(TfEnum item, const int value, const char **r_identifier
   return false;
 }
 
-KrakenPROP *LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name)
+void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP *r_ptr)
 {
   KrakenPRIM prim;
-  KrakenPROP prop;
 
   if (!ptr->IsValid()) {
     *ptr = ptr->GetStage()->GetPseudoRoot();
   }
 
   prim = ptr->GetPrim();
-  prop = prim.GetProperty(name);
+  *r_ptr = prim.GetProperty(name);
 
-  if (!prop || !prop.IsValid()) {
-    TF_WARN("%s has no property %s, this is not supposed to happen!",
-            prim.GetName().GetText(),
-            name.GetText());
+  if (!r_ptr || !r_ptr->IsValid()) {
+    std::string msg;
+    msg = TfStringPrintf("%s has no property %s. Available properties are:\n",
+                         prim.GetName().GetText(),
+                         name.GetText());
+    for (auto &p : prim.GetPropertyNames()) {
+      msg += TfStringPrintf("* %s\n", p.GetText());
+    }
+    TF_WARN(msg);
   }
-
-  return &prop;
 }
 
 UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfToken &name)
@@ -175,7 +177,7 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
-  *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
@@ -222,7 +224,7 @@ void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
 {
   if (!r_ptr->IsValid()) {
-    *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+    *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
   }
   r_ptr->owner_id = type->GetName().GetText();
   r_ptr->type = type;
@@ -289,7 +291,7 @@ KrakenSTAGE::KrakenSTAGE()
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
-  *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = (void *&)KRAKEN_STAGE;

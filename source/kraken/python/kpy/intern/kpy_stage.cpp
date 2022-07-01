@@ -102,7 +102,7 @@ struct KPy_TypesModule_State
   /** `LUXO_KrakenSTAGE`. */
   KrakenPRIM ptr;
   /** `LUXO_KrakenSTAGE.objects`, exposed as `kpy.types` */
-  KrakenPROP *prop;
+  KrakenPROP prop;
 };
 
 PyTypeObject pystage_struct_meta_idprop_Type = {
@@ -477,7 +477,7 @@ int LUXO_property_collection_lookup_token_index(KrakenPRIM *ptr,
                                                 KrakenPRIM *r_ptr,
                                                 int *r_index)
 {
-  KrakenPROP *prop;
+  KrakenPROP prop;
   UsdPropertyVector iter;
   int found = 0;
   int index = 0;
@@ -491,10 +491,10 @@ int LUXO_property_collection_lookup_token_index(KrakenPRIM *ptr,
     if (c.IsValid()) {
       KrakenPRIM kPrim = c.GetPrim();
 
-      prop = LUXO_object_find_property(&kPrim, c.GetName());
+      LUXO_object_find_property(&kPrim, c.GetName(), &prop);
 
       /* we found a python binding to create. */
-      if (prop && prop->IsValid()) {
+      if (prop && prop.IsValid()) {
         *r_ptr = kPrim;
         found = 1;
       }
@@ -604,7 +604,7 @@ PyObject *KPY_uni_types(void)
   KPy_TypesModule_State *state = (KPy_TypesModule_State *)PyModule_GetState(submodule);
 
   LUXO_kraken_luxo_pointer_create(&state->ptr);
-  state->prop = LUXO_object_find_property(&state->ptr, TfToken("structs"));
+  LUXO_object_find_property(&state->ptr, TfToken("collection:structs:includes"), &state->prop);
 
   /* Internal base types we have no other accessors for. */
   {
