@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    runs-on: [macos-latest ARM64]
+    runs-on: [self-hosted macOS ARM64]
 
     steps:
     - uses: actions/checkout@v3
