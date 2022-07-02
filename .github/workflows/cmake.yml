@@ -45,6 +45,15 @@ jobs:
     
     - name: Install OpenVDB
       run: brew install openvdb
+      
+    - name: Install Embree
+      run: brew install embree
+      
+    - name: Install PySide6
+      run: pip3 install PySide6
+      
+    - name: Install Jinja2
+      run: pip3 install Jinja2
 
     - name: Configure CMake
       run: cmake -C"${{github.workspace}}/build_files/cmake/config/kraken_release.cmake" -H"${{github.workspace}}" -B"${{github.workspace}}/../build_darwin_release" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
