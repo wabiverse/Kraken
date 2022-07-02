@@ -8,6 +8,10 @@
 Kraken
 ******
 
+.. image:: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake.yml/badge.svg
+   :target: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake.yml
+   :alt: Build Status
+
 .. image:: https://readthedocs.com/projects/wabi-kraken/badge/?version=latest&token=91aa5d2aff1a5927fc39792cbe74688b740a88aae8750c20712733201b278bd0
    :target: https://wabi-kraken.readthedocs-hosted.com/_/sharing/1c32aeuqep6zdr4kk8sojmmi6
    :alt: Documentation Status
