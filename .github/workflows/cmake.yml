@@ -20,7 +20,7 @@ jobs:
       run: brew install python@3.9
       
     - name: Install Boost
-      run: brew install boost --with-python
+      run: brew install boost
 
     - name: Install Boost Python
       run: brew install boost-python
