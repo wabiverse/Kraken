@@ -1,0 +1,24 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: cmake -C"${{github.workspace}}/build_files/cmake/config/kraken_release.cmake" -H"${{github.workspace}}" -B"${{github.workspace}}/../build_darwin_release" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: make -s -C ${{github.workspace}}/../build_darwin_release install
+      
