@@ -15,9 +15,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
+      
+    - name: Install SVN
+      run: brew install svn
+      
     - name: Install Python
-      run: brew install python@3.9
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.2-release/lib/darwin_arm64/python/ ${{github.workspace}}/../lib/apple_darwin_arm64/
+      
+    - name: Install PySide6
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.9 -m pip install PySide6
+      
+    - name: Install PyOpenGL
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.9 -m pip install PyOpenGL
+      
+    - name: Install Jinja2
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.9 -m pip install Jinja2
       
     - name: Install Boost
       run: brew install boost
@@ -48,13 +60,7 @@ jobs:
       
     - name: Install Embree
       run: brew install embree
-      
-    - name: Install PySide6
-      run: pip3 install PySide6
-      
-    - name: Install Jinja2
-      run: pip3 install Jinja2
-
+  
     - name: Configure CMake
       run: cmake -C"${{github.workspace}}/build_files/cmake/config/kraken_release.cmake" -H"${{github.workspace}}" -B"${{github.workspace}}/../build_darwin_release" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
