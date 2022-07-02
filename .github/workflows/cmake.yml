@@ -29,22 +29,22 @@ jobs:
       run: brew install tbb
 
     - name: Install OpenImageIO
-    - run: brew install openimageio
+      run: brew install openimageio
     
     - name: Install OpenEXR
-    - run: brew install openexr
+      run: brew install openexr
     
     - name: Install OpenSubdiv
-    - run: brew install opensubdiv
+      run: brew install opensubdiv
     
     - name: Install PTex
-    - run: brew install ptex
+      run: brew install ptex
     
     - name: Install Alembic
-    - run: brew install alembic
+      run: brew install alembic
     
     - name: Install OpenVDB
-    - run: brew install openvdb
+      run: brew install openvdb
 
     - name: Configure CMake
       run: cmake -C"${{github.workspace}}/build_files/cmake/config/kraken_release.cmake" -H"${{github.workspace}}" -B"${{github.workspace}}/../build_darwin_release" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
