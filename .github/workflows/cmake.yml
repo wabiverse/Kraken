@@ -23,7 +23,7 @@ jobs:
       run: brew install boost
 
     - name: Install Boost Python
-      run: brew install boost-python
+      run: brew install boost-python3
       
     - name: Install TBB
       run: brew install tbb
