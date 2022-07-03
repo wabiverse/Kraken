@@ -16,7 +16,7 @@ Kraken
    :target: https://docs.wabi.foundation/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. figure:: https://www.dropbox.com/s/0fcfeo5u3q18ryh/Artboard%201.png?raw=1
+.. figure:: https://www.dropbox.com/s/doduj291rik0byv/kraken-githubhome-banner.png?raw=1
    :scale: 50 %
    :align: center
 
