@@ -17,15 +17,23 @@ import sys
 import textwrap
 from exhale import utils
 
+# -- Platform specific stuff -------------------------------------------------
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(1, '../../../release/scripts/modules')
 
 if sys.platform == "linux" or sys.platform == "linux2":
   sys.path.insert(2, '')
+  SVN_INCLUDE_ROOT = ""
+  SYS_INCLUDE_ROOT = ""
 elif sys.platform == "darwin":
   sys.path.insert(2, '../../../../lib/apple_darwin_arm64/python/lib/python3.10')
+  SVN_INCLUDE_ROOT = "../../../../lib/apple_darwin_arm64/python/include/python3.10"
+  SYS_INCLUDE_ROOT = "/opt/homebrew/include"
 elif sys.platform == "win32":
   sys.path.insert(2, '')
+  SVN_INCLUDE_ROOT = ""
+  SYS_INCLUDE_ROOT = ""
 
 print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format("1.50", "Wabi Animation Studios"))
 
@@ -96,6 +104,12 @@ def specificationsForKind(kind):
     else:
         return []
 
+# Adds a considerable amount of time to docs, removed until cleaned up...
+# INPUT                   = "../../../source/kraken/anchor"
+# INPUT                  += "../../../source/kraken/editors"
+
+# For now, prefer the manual effort of adding doc paths so we're not wasting time
+# generating a bunch of pure garbage.
 exhale_args = {
     ############################################################################
     # Main extension setup.                                                    #
@@ -113,7 +127,50 @@ exhale_args = {
     "exhaleDoxygenStdin": textwrap.dedent(f'''
                           GENERATE_XML            = YES
                           XML_PROGRAMLISTING      = YES
-                          INPUT                   = "../../../source/kraken"
+                          INPUT                   = "../../../source/kraken/ChaosEngine"
+                          INPUT                  += "../../../source/kraken/draw"
+                          INPUT                  += "../../../source/kraken/krakernel"
+                          INPUT                  += "../../../source/kraken/kraklib"
+                          INPUT                  += "../../../source/kraken/luxo"
+                          INPUT                  += "../../../source/kraken/python/kpy"
+                          INPUT                  += "../../../source/kraken/server"
+                          INPUT                  += "../../../source/kraken/universe"
+                          INPUT                  += "../../../source/kraken/wm"
+                          INPUT                  += "../../../wabi/base/arch/docs"
+                          INPUT                  += "../../../wabi/base/gf/docs"
+                          INPUT                  += "../../../wabi/base/js/docs"
+                          INPUT                  += "../../../wabi/base/plug/docs"
+                          INPUT                  += "../../../wabi/base/tf/docs"
+                          INPUT                  += "../../../wabi/base/trace/docs"
+                          INPUT                  += "../../../wabi/base/vt/docs"
+                          INPUT                  += "../../../wabi/base/work/docs"
+                          INPUT                  += "../../../wabi/imaging/glf/docs"
+                          INPUT                  += "../../../wabi/imaging/hd/docs"
+                          INPUT                  += "../../../wabi/imaging/hdSt/docs"
+                          INPUT                  += "../../../wabi/imaging/hdx/docs"
+                          INPUT                  += "../../../wabi/imaging/hio/docs"
+                          INPUT                  += "../../../wabi/usd/ar/docs"
+                          INPUT                  += "../../../wabi/usd/kind/docs"
+                          INPUT                  += "../../../wabi/usd/ndr/docs"
+                          INPUT                  += "../../../wabi/usd/pcp/docs"
+                          INPUT                  += "../../../wabi/usd/sdf/docs"
+                          INPUT                  += "../../../wabi/usd/sdr/docs"
+                          INPUT                  += "../../../wabi/usd/usd/docs"
+                          INPUT                  += "../../../wabi/usd/usdGeom/docs"
+                          INPUT                  += "../../../wabi/usd/usdHydra/docs"
+                          INPUT                  += "../../../wabi/usd/usdLux/docs"
+                          INPUT                  += "../../../wabi/usd/usdMedia/docs"
+                          INPUT                  += "../../../wabi/usd/usdMtlx/docs"
+                          INPUT                  += "../../../wabi/usd/usdPhysics/docs"
+                          INPUT                  += "../../../wabi/usd/usdRender/docs"
+                          INPUT                  += "../../../wabi/usd/usdRi/docs"
+                          INPUT                  += "../../../wabi/usd/usdShade/docs"
+                          INPUT                  += "../../../wabi/usd/usdSkel/docs"
+                          INPUT                  += "../../../wabi/usd/usdUI/docs"
+                          INPUT                  += "../../../wabi/usd/usdUtils/docs"
+                          INPUT                  += "../../../wabi/usd/usdVol/docs"
+                          INPUT                  += "../../../wabi/usdImaging/usdAppUtils/docs"
+                          INPUT                  += "../../../wabi/usdImaging/usdviewq/docs"
                           EXTRACT_LOCAL_CLASSES   = NO
                           HIDE_UNDOC_CLASSES      = YES
                           HIDE_SCOPE_NAMES        = YES
@@ -136,9 +193,9 @@ exhale_args = {
                           EXPAND_ONLY_PREDEF      = YES
                           EXTERNAL_GROUPS         = NO
                           EXTERNAL_PAGES          = NO
-                          INCLUDE_PATH            = {KRAKEN_ROOT_DIRECTORY}
-                          INCLUDE_PATH           += "../../../../lib/apple_darwin_arm64/python/include/python3.10"
-                          INCLUDE_PATH           += "/opt/homebrew/include"
+                          INCLUDE_PATH            = "{KRAKEN_ROOT_DIRECTORY}"
+                          INCLUDE_PATH           += "{SVN_INCLUDE_ROOT}"
+                          INCLUDE_PATH           += "{SYS_INCLUDE_ROOT}"
                           PREDEFINED             += doxygen
                           PREDFINED              += "TF_DECLARE_PUBLIC_TOKENS"
                           PREDEFINED             += "TF_DEFINE_STACKED"
