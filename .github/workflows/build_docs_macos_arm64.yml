@@ -50,7 +50,7 @@ jobs:
       run: cd ${{github.workspace}}/../lib/apple_darwin_arm64/lxml/dist/ && ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install lxml-4.9.1-cp310-cp310-macosx_11_0_arm64.whl
 
     - name: Build
-      run: cd "${{github.workspace}}" && make doc_clean && make doc_all
+      run: cd "${{github.workspace}}" && make doc_all
     
     - id: 'auth'
       uses: 'google-github-actions/auth@v0.8.0'
