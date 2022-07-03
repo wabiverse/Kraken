@@ -18,11 +18,16 @@ import textwrap
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(1, '../../../release/scripts/modules')
 
-import kpy
+if sys.platform == "linux" or sys.platform == "linux2":
+  sys.path.insert(2, '')
+elif sys.platform == "darwin":
+  sys.path.insert(2, '../../../../lib/apple_darwin_arm64/python/lib/python3.10')
+elif sys.platform == "win32":
+  sys.path.insert(2, '')
 
-print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(kpy.__version__, kpy.__author__))
+print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(1.50, "Wabi Animation Studios"))
 
-version = kpy.__version__.replace('(', '').replace(')', '').replace(', ', '.')
+version = 1.50
 release = version
 
 # on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -42,7 +47,7 @@ display_version = True;
 # -- Project information -----------------------------------------------------
 
 project = 'Kraken'
-copyright = '2021, Wabi'
+copyright = '2022, Wabi'
 author = 'Furby™'
 
 # The full version, including alpha/beta/rc tags
@@ -74,7 +79,7 @@ breathe_projects = {"kraken": "../_build/xml"}
 breathe_default_project = "kraken"
 
 
-KRAKEN_SOURCE_DIRECTORY = os.path.abspath("../../../kraken/source").replace('\\', '/')
+KRAKEN_SOURCE_DIRECTORY = os.path.abspath("../../../source").replace('\\', '/')
 WABI_SOURCE_DIRECTORY = os.path.abspath("../../../wabi").replace('\\', '/')
 
 # Temporarily disable documentation build for code,
@@ -131,6 +136,7 @@ exhale_args = {
                           PREDEFINED             += "RAPIDJSON_NAMESPACE_BEGIN"
                           PREDEFINED             += "RAPIDJSON_NAMESPACE_END"
                           PREDEFINED             += "WABI_NS"
+                          PREDEFINED             += "ANCHOR_API"
                           PREDEFINED             += "GARCH_API"
                           PREDEFINED             += "HGIGL_API"
                           PREDEFINED             += "HGIVULKAN_API"

@@ -1,10 +1,17 @@
 # Minimal makefile for Sphinx documentation
-#`
+
+OS_NCASE:=$(shell uname -s | tr '[A-Z]' '[a-z]')
+
+ifeq ($(OS_NCASE),darwin)
+	SPHINXBUILD:=../../../lib/apple_darwin_arm64/python/bin/sphinx-build
+else
+	SPHINXBUILD:=sphinx-build
+endif
+
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
 SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
 APIDIR        = source/api

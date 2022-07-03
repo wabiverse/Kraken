@@ -310,7 +310,7 @@ function RunKrakenPythonOfficialRelease {
     & "$env:ProgramFiles/Wabi Animation/Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
   }
   if($IsMacOS) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+    & ~/dev/lib/apple_darwin_arm64/python/bin/python3.10 $args
   }
   if($IsLinux) {
     Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
@@ -634,9 +634,11 @@ Set-Alias dbgkrkn RunAndDebugKraken
 Set-Alias kraken_r RunDevelopmentReleaseKraken
 Set-Alias kraken_d RunDevelopmentDebugKraken
 
-# Run Kraken Python (use system on *nix)
+Set-Alias python RunKrakenPythonOfficialRelease
+Set-Alias python3 RunKrakenPythonOfficialRelease
+
+# Run Kraken Python
 if ($IsWindows) {
-  Set-Alias python RunKrakenPythonOfficialRelease
   Set-Alias python_r RunKrakenPythonRelease
   Set-Alias python_d RunKrakenPythonDebug
 }

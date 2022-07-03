@@ -126,22 +126,15 @@ endif
 
 # Prefer the python we ship.
 ifndef PYTHON
-	ifneq (, $(wildcard /usr/local/share/kraken/1.50/python/bin/python3.9))
-		PYTHON:=/usr/local/share/kraken/1.50/python/bin/python3.9
-	else
-		PYTHON:=python3.9
+	ifneq (, $(wildcard /usr/local/share/kraken/1.50/python/bin/python3.10))
+		PYTHON:=/usr/local/share/kraken/1.50/python/bin/python3.10
 	endif
 endif
 
 # For macOS python3 is not installed by default, so fallback to python binary
 # in libraries, or python 2 for running make update to get it.
 ifeq ($(OS_NCASE),darwin)
-	ifeq (, $(shell command -v $(PYTHON)))
-		PYTHON:=../lib/darwin/python/bin/python3.9m
-		ifeq (, $(shell command -v $(PYTHON)))
-			PYTHON:=python
-		endif
-	endif
+	PYTHON:=../lib/apple_darwin_arm64/python/bin/python3.10
 endif
 
 # -----------------------------------------------------------------------------
@@ -377,6 +370,10 @@ format: .FORCE
 doc_all: .FORCE
 	cd doc/sphinx; make html
 	@echo "docs written into: '$(KRAKEN_DIR)/doc/_build'"
+
+doc_clean: .FORCE
+	cd doc/sphinx; make clean
+	@echo "docs cleaned from: '$(KRAKEN_DIR)/doc/_build'"
 
 doc_man: .FORCE
 	$(PYTHON) doc/manpage/kraken.1.py $(KRAKEN_BIN) kraken.1

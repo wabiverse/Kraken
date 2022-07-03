@@ -28,7 +28,7 @@ RUN apt install graphviz -y
 RUN pip3 install Sphinx
 RUN pip3 install breathe
 RUN pip3 install sphinx-rtd-theme
-RUN pip3 install https://storage.googleapis.com/dependency_links/Exhale-1.3.0.tar.gz
+RUN pip3 install exhale
 RUN pip3 install sphinxcontrib-napoleon
 
 # -------------------------------------------------------------------------------------------------------------------------------
