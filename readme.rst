@@ -8,19 +8,27 @@
 Kraken
 ******
 
-.. image:: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake.yml/badge.svg
-   :target: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake.yml
-   :alt: Build Status
+.. image:: https://img.shields.io/github/v/release/Wabi-Studios/Kraken?include_prereleases
+   :target: https://github.com/Wabi-Studios/Kraken/releases/latest
+   :alt: GitHub release (latest SemVer including pre-releases)
 
-.. image:: https://readthedocs.org/projects/wabi-animation-kraken/badge/?version=latest
-   :target: https://docs.wabi.foundation/en/latest/?badge=latest
-   :alt: Documentation Status
+.. image:: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake_macos_arm64.yml/badge.svg
+   :target: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake_macos_arm64.yml
+   :alt: Build Status for arch macOS arm64
+
+.. image:: https://github.com/Wabi-Studios/Kraken/actions/workflows/build_docs_macos_arm64.yml/badge.svg
+   :target: https://docs.wabi.foundation
+   :alt: Documentation
 
 .. figure:: https://www.dropbox.com/s/doduj291rik0byv/kraken-githubhome-banner.png?raw=1
    :scale: 50 %
    :align: center
 
 *Animators, Developers, Filmmakers, & Artists. This Belongs to You.*
+
+    Documentation is currently **experimental**, so please don't mind the dust over at docs.wabi.foundation_.
+
+    .. _docs.wabi.foundation: https://docs.wabi.foundation
 
 Home of the Kraken -- The free and open source 3D animation platform redefining
 animation composition, collaborative workflows, simulation engines, skeletal

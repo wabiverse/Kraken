@@ -12,8 +12,10 @@
 #
 import os
 import subprocess
+import re
 import sys
 import textwrap
+from exhale import utils
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(1, '../../../release/scripts/modules')
@@ -72,8 +74,27 @@ extensions = [
 breathe_projects = {"kraken": "../_build/xml"}
 breathe_default_project = "kraken"
 
-KRAKEN_SOURCE_DIRECTORY = os.path.abspath("../../../source").replace('\\', '/')
-WABI_SOURCE_DIRECTORY = os.path.abspath("../../../wabi").replace('\\', '/')
+KRAKEN_ROOT_DIRECTORY = "../../../."
+
+def specificationsForKind(kind):
+    '''
+    For a given input ``kind``, return the list of reStructuredText specifications
+    for the associated Breathe directive.
+    '''
+    # Change the defaults for .. doxygenclass:: and .. doxygenstruct::
+    if kind == "class" or kind == "struct":
+        return [
+          ":members:",
+          ":protected-members:",
+          ":private-members:",
+          ":undoc-members:"
+        ]
+    # Change the defaults for .. doxygenenum::
+    elif kind == "enum":
+        return [":no-link:"]
+    # An empty list signals to Exhale to use the defaults
+    else:
+        return []
 
 exhale_args = {
     ############################################################################
@@ -82,16 +103,17 @@ exhale_args = {
     "containmentFolder":     "./api",
     "rootFileName":          "kraken_api_root.rst",
     "rootFileTitle":         "Kraken Developer Reference",
-    "doxygenStripFromPath":  "..",
+    "doxygenStripFromPath":  "../../../source/kraken",
     ############################################################################
     # Suggested optional arguments.                                            #
     ############################################################################
     "createTreeView":        True,
     "exhaleExecutesDoxygen": True,
+    "customSpecificationsMapping": utils.makeCustomSpecificationsMapping(specificationsForKind),
     "exhaleDoxygenStdin": textwrap.dedent(f'''
                           GENERATE_XML            = YES
                           XML_PROGRAMLISTING      = YES
-                          INPUT                   = {KRAKEN_SOURCE_DIRECTORY}
+                          INPUT                   = "../../../source/kraken"
                           EXTRACT_LOCAL_CLASSES   = NO
                           HIDE_UNDOC_CLASSES      = YES
                           HIDE_SCOPE_NAMES        = YES
@@ -114,12 +136,12 @@ exhale_args = {
                           EXPAND_ONLY_PREDEF      = YES
                           EXTERNAL_GROUPS         = NO
                           EXTERNAL_PAGES          = NO
-                          INCLUDE_PATH            = {WABI_SOURCE_DIRECTORY + "/../"}
-                          INCLUDE_PATH           += {KRAKEN_SOURCE_DIRECTORY}
-                          PREDEFINED              = DOXYGEN_SHOULD_SKIP_THIS
+                          INCLUDE_PATH            = {KRAKEN_ROOT_DIRECTORY}
+                          INCLUDE_PATH           += "../../../../lib/apple_darwin_arm64/python/include/python3.10"
+                          INCLUDE_PATH           += "/opt/homebrew/include"
                           PREDEFINED             += doxygen
-                          PREDFINED              += "TF_DECLARE_PUBLIC_TOKENS(name, x, y)=class name"
-                          PREDEFINED             += "TF_DEFINE_STACKED(name, x, y)=class name"
+                          PREDFINED              += "TF_DECLARE_PUBLIC_TOKENS"
+                          PREDEFINED             += "TF_DEFINE_STACKED"
                           PREDEFINED             += "WABI_NAMESPACE_BEGIN"
                           PREDEFINED             += "WABI_NAMESPACE_END"
                           PREDEFINED             += "RAPIDJSON_NAMESPACE_BEGIN"
@@ -220,18 +242,7 @@ exhale_args = {
                           EXCLUDE_SYMBOLS        += Glf_*
                           EXCLUDE_SYMBOLS        += UsdImaging_*
                           EXCLUDE_SYMBOLS        += UsdImagingGL_*
-                          EXCLUDE_PATTERNS        = */gf/*.template.h
-                          EXCLUDE_PATTERNS       += */garch/glApi.h
-                          EXCLUDE_PATTERNS       += */kraklib/KLI_string_utils.h
-                          EXCLUDE_PATTERNS       += */sdf/abstractData.h
-                          EXCLUDE_PATTERNS       += */usdImaging/adapterRegistry.h
-                          EXCLUDE_PATTERNS       += */usdAbc/alembicFileFormat.h
-                          EXCLUDE_PATTERNS       += */usdAbc/alembicUtil.h
-                          EXCLUDE_PATTERNS       += */hdx/aovInputTask.h
-                          EXCLUDE_PATTERNS       += */tf/ostreamMethods.h
-                          EXCLUDE_PATTERNS       += */usd/crateDataTypes.h
-                          EXCLUDE_PATTERNS       += */nodes/NOD_tokens.h
-                          EXCLUDE_PATTERNS       += */krakenfile/miniz.h
+                          EXCLUDE_PATTERNS       += */pch/*
                       '''),
     ############################################################################
     # HTML Theme specific configurations.                                      #
@@ -254,16 +265,15 @@ exhale_args = {
         framework for composition & design into the future.
 
         .. note::
-          This is the developer reference as it pertains to the C++ codebase of
-          Kraken. It is subject to change frequently, as different iterations are
-          necessary to find the correct approach. Currently, there is an additional
-          Python API available, kpy.
+          This is the developer reference for the C++ and Python API of Kraken. It
+          is subject to change frequently, as different iterations are necessary
+          to find the correct approach.
     '''),
     ############################################################################
     # Individual page layout configuration.                                    #
     ############################################################################
     "contentsTitle": "Page Contents",
-    "kindsWithContentsDirectives": ["class", "file", "namespace", "struct"],
+    "kindsWithContentsDirectives": ["file", "namespace"],
     ############################################################################
     "verboseBuild": True
 }
@@ -282,24 +292,6 @@ master_doc = 'index'
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
 language = 'en'
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['../_build',
-                    '*.template.h',
-                    'garch/glApi.h',
-                    'kraklib/KLI_string_utils.h',
-                    'sdf/abstractData.h',
-                    'usdImaging/adapterRegistry.h',
-                    'usdAbc/alembicFileFormat.h',
-                    'usdAbc/alembicUtil.h',
-                    'hdx/aovInputTask.h',
-                    'tf/ostreamMethods.h',
-                    'usd/crateDataTypes.h',
-                    'nodes/NOD_tokens.h',
-                    'krakenfile/miniz.h']
-
 
 # -- Options for HTML output -------------------------------------------------
 

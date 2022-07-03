@@ -1,4 +1,4 @@
-name: CMake
+name: macOS arm64
 
 on:
   push:

@@ -50,8 +50,6 @@ typedef unsigned __int64 size_t;
 /* assert. */
 #include "KLI_assert.h"
 
-#ifndef doxygen
-
 namespace fs = std::filesystem;
 
 /* -------------------------------------------------------------------- */
@@ -752,5 +750,3 @@ typedef unsigned char uchar;
 #ifndef MAX_PATH
 #  define MAX_PATH 260
 #endif /* MAX_PATH */
-
-#endif /* doxygen */

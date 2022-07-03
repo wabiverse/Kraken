@@ -1,0 +1,66 @@
+name: docs
+
+on:
+  workflow_run:
+    workflows: [macOS arm64]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Install Sphinx
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install sphinx
+   
+    - name: Install Breathe
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install breathe
+      
+    - name: Install Sphinx Theme
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install sphinx-rtd-theme
+      
+    - name: Install Sphinx Doctring Support
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install sphinxcontrib-napoleon
+      
+    - name: Install Exhale
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install exhale
+      
+    - name: Uninstall LXML
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip uninstall --yes lxml
+      
+    - name: Fix LXML on ARM64 (install wheel)
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install wheel
+      
+    - name: Fix LXML on ARM64 (clone lxml)
+      run: if cd ${{github.workspace}}/../lib/apple_darwin_arm64/lxml; then echo "Skipping... lxml already exists."; else git clone https://github.com/lxml/lxml ${{github.workspace}}/../lib/apple_darwin_arm64/lxml; fi
+      
+    - name: Fix LXML on ARM64 (checkout 4.9.1)
+      run: if cd ${{github.workspace}}/../lib/apple_darwin_arm64/lxml/dist; then echo "Skipping... lxml already installed."; else cd ${{github.workspace}}/../lib/apple_darwin_arm64/lxml && git checkout tags/lxml-4.9.1; fi
+
+    - name: Fix LXML on ARM64 (run setup.py)
+      run: cd ${{github.workspace}}/../lib/apple_darwin_arm64/lxml && ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 setup.py bdist_wheel
+      
+    - name: Install LXML (for arm64 (macos11 =? macos13))
+      run: cd ${{github.workspace}}/../lib/apple_darwin_arm64/lxml/dist/ && ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install lxml-4.9.1-cp310-cp310-macosx_11_0_arm64.whl
+
+    - name: Build
+      run: cd "${{github.workspace}}" && make doc_all
+    
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0.8.0'
+      with:
+        workload_identity_provider: 'projects/871407267879/locations/global/workloadIdentityPools/builder/providers/github-oidc'
+        service_account: 'kraken-github@wabi-300022.iam.gserviceaccount.com'
+
+    - id: 'upload-files'
+      uses: 'google-github-actions/upload-cloud-storage@v0.10.2'
+      with:
+        path: "${{github.workspace}}/doc/sphinx/_build/html"
+        destination: 'docs.wabi.foundation'
+        parent: false

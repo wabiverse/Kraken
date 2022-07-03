@@ -23,12 +23,9 @@ framework for composition & design into the future.
 
 
 .. note::
-   This is the developer reference as it pertains to the C++ codebase of
-   Kraken. It is subject to change frequently, as different iterations are
-   necessary to find to correct approach. Additionally, as of now there is
-   no Python API, as more planning and guidance is necessary before it can
-   recieve active development contributions.
-
+   This is the developer reference for the C++ and Python API of Kraken. It
+   is subject to change frequently, as different iterations are necessary
+   to find the correct approach.
 
 .. toctree::
    :maxdepth: 2
