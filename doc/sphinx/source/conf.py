@@ -25,15 +25,10 @@ elif sys.platform == "darwin":
 elif sys.platform == "win32":
   sys.path.insert(2, '')
 
-print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format(1.50, "Wabi Animation Studios"))
+print("\nKRAKEN VERSION RELEASE: {}\n{} All Rights Reserved.\n".format("1.50", "Wabi Animation Studios"))
 
-version = 1.50
+version = "1.50"
 release = version
-
-# on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
-# if on_rtd:
-#     subprocess.call('cd ..; doxygen', shell=True)
 
 import sphinx_rtd_theme
 
@@ -57,9 +52,9 @@ html_context = {
   'display_github': True,
   'github_user': 'furby-tm',
   'github_repo': 'Kraken',
-  'github_version': 'main',
+  'github_version': 'master',
   'theme_navigation_depth': 4,
-  'conf_py_path': '/doc/doxygen/source/',
+  'conf_py_path': '/doc/sphinx/source/',
   'kraken_version': version,
 }
 
@@ -75,16 +70,10 @@ extensions = [
 ]
 
 breathe_projects = {"kraken": "../_build/xml"}
-
 breathe_default_project = "kraken"
-
 
 KRAKEN_SOURCE_DIRECTORY = os.path.abspath("../../../source").replace('\\', '/')
 WABI_SOURCE_DIRECTORY = os.path.abspath("../../../wabi").replace('\\', '/')
-
-# Temporarily disable documentation build for code,
-# broken.
-# INPUT                  += {WABI_SOURCE_DIRECTORY}
 
 exhale_args = {
     ############################################################################
@@ -268,10 +257,7 @@ exhale_args = {
           This is the developer reference as it pertains to the C++ codebase of
           Kraken. It is subject to change frequently, as different iterations are
           necessary to find the correct approach. Currently, there is an additional
-          Python API available -- the Pixar USD module, wabi, which needs further
-          testing to assess it's capabilities for use in a suitable scripting and
-          plugin writing environment embedded within the scope of a full-scale DCC
-          application.
+          Python API available, kpy.
     '''),
     ############################################################################
     # Individual page layout configuration.                                    #
@@ -301,7 +287,6 @@ language = 'en'
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['../_build',
-                    'darkenergy/*.txt',
                     '*.template.h',
                     'garch/glApi.h',
                     'kraklib/KLI_string_utils.h',

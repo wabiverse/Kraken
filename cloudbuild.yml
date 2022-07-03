@@ -1,3 +1,0 @@
-steps:
-  - name: 'gcr.io/wabi-300022/kraken-docs-image'
-    dir: 'chaos_engine/doc/sphinx'
