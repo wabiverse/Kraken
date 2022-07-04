@@ -60,7 +60,7 @@ release = 'latest'
 
 html_context = {
   'display_github': True,
-  'github_user': 'furby-tm',
+  'github_user': 'Wabi-Studios',
   'github_repo': 'Kraken',
   'github_version': 'master',
   'theme_navigation_depth': 4,
