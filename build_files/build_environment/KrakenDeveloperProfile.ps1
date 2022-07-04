@@ -301,6 +301,40 @@ function RunDevelopmentDebugKraken {
   }
 }
 
+# Build kraken app icons, eventually cross platoform, currently just macOS.
+function CreateKrakenAppIcons
+{
+  Push-Location $KrakenGlobalView
+
+  if ($IsMacOS) {
+    $build_icns_dir = "$KrakenGlobalView/../build_darwin_release/iconsets/Kraken.iconset"
+    $build_icns_svg = "$KrakenGlobalView/release/iconfiles/kraken.svg"
+
+    if (Test-Path -Path $build_icns_dir) {
+      rm -r $build_icns_dir
+      mkdir $build_icons_dir
+    } else {
+      mkdir $build_icns_dir
+    }
+
+    &inkscape -z --export-filename="$build_icns_dir/icon_16x16.png"      -w   16 -h   16 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_16x16@2x.png"   -w   32 -h   32 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_32x32.png"      -w   32 -h   32 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_32x32@2x.png"   -w   64 -h   64 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_128x128.png"    -w  128 -h  128 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_128x128@2x.png" -w  256 -h  256 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_256x256.png"    -w  256 -h  256 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_256x256@2x.png" -w  512 -h  512 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_512x512.png"    -w  512 -h  512 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_512x512@2x.png" -w 1024 -h 1024 "$build_icns_svg"
+    iconutil -c icns "$build_icns_dir"
+
+    Write-Color -Text "Icons Generated: The iconset is located at: $build_icns_dir" -Color Green
+  }
+
+  Pop-Location
+}
+
 function ReloadDeveloperProfile {
   . $PROFILE
 }
@@ -629,6 +663,9 @@ Set-Alias krkn HopIntoRootDir
 
 # Run Kraken with debugger console.
 Set-Alias dbgkrkn RunAndDebugKraken
+
+# Generate Kraken App Icons.
+Set-Alias genicons CreateKrakenAppIcons
 
 # Run Kraken
 Set-Alias kraken_r RunDevelopmentReleaseKraken
