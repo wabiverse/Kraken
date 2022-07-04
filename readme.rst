@@ -27,7 +27,10 @@ Kraken
 *Animators, Developers, Filmmakers, & Artists. This Belongs to You.*
 
     Documentation is currently **experimental**, so please don't mind the dust over at docs.wabi.foundation_.
-
+    Top level pixar docs can now be found here_, eventually, we can get most pages looking like this_.
+    
+    .. _this: https://docs.wabi.foundation/api/page_page_tf_MallocTag.html#page_tf__malloc_tag_1MallocTagAddingTags
+    .. _here: https://docs.wabi.foundation/api/wabi_api_root.html
     .. _docs.wabi.foundation: https://docs.wabi.foundation
 
 Home of the Kraken -- The free and open source 3D animation platform redefining
