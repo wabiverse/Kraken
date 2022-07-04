@@ -31,7 +31,7 @@ framework for composition & design into the future.
    :maxdepth: 2
    :caption: Contents:
 
-   api/kraken_api_root
+   api/wabi_api_root
 
 
 
