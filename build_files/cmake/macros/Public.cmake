@@ -1004,12 +1004,13 @@ function(wabi_maelstrom_prologue)
                     IMPORT_PREFIX "${WABI_LIB_PREFIX}"
             )
             _get_install_dir("lib" libInstallPrefix)
-            install(
-                TARGETS maelstrom
-                LIBRARY DESTINATION ${libInstallPrefix}
-                ARCHIVE DESTINATION ${libInstallPrefix}
-                RUNTIME DESTINATION ${libInstallPrefix}
-            )
+            # nope.
+            # install(
+            #     TARGETS maelstrom
+            #     LIBRARY DESTINATION ${libInstallPrefix}
+            #     ARCHIVE DESTINATION ${libInstallPrefix}
+            #     RUNTIME DESTINATION ${libInstallPrefix}
+            # )
             if(WIN32)
                 install(
                     FILES $<TARGET_PDB_FILE:maelstrom>

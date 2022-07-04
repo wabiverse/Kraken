@@ -299,7 +299,11 @@ if(WITH_PYTHON_MODULE)
   endif()
 
 else()
-  add_executable(kraken ${EXETYPE} ${SRC})
+  if (NOT APPLE)
+    add_executable(kraken ${EXETYPE} ${SRC})
+  else()  
+    add_executable(kraken MACOSX_BUNDLE ${EXETYPE} ${SRC})
+  endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)
   if(WIN32)
@@ -1156,13 +1160,17 @@ elseif(APPLE)
   execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
                   ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
 
-  install(
-    TARGETS kraken
-    DESTINATION Kraken.app/Contents/MacOS
-  )
+  foreach(_rfile ${OSX_APP_SOURCEDIR}/Contents/Resources)
+    set_source_files_properties(${_rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+  endforeach()
 
   # install release and app files
   set(KRAKEN_TEXT_FILES_DESTINATION Kraken.app/Contents/Resources/text)
+
+  # install(
+  #   FILES ${OSX_APP_SOURCEDIR}/Contents/Info.plist
+  #   DESTINATION Kraken.app/Contents
+  # )
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
@@ -1171,15 +1179,8 @@ elseif(APPLE)
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    Kraken.app/Contents/
+    Kraken.app/Contents
   )
-
-  if(WITH_LLVM AND NOT LLVM_STATIC)
-    install(
-      FILES ${LIBDIR}/llvm/lib/libLLVM-3.4.dylib
-      DESTINATION Kraken.app/Contents/MacOS
-    )
-  endif()
 
   # python
   if(WITH_PYTHON)

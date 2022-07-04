@@ -36,7 +36,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Wabi Foundation</string>
 	<key>CFBundleIconFile</key>
-	<string>kraken icon.icns</string>
+	<string>Kraken.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>graphics.foundation.wabi.kraken</string>
 	<key>CFBundleInfoDictionaryVersion</key>

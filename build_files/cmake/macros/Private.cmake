@@ -1070,11 +1070,12 @@ function(_wabi_python_module NAME)
             ${PYTHON_INCLUDE_DIR}
     )
 
-    install(
-        TARGETS ${LIBRARY_NAME}
-        LIBRARY DESTINATION ${libInstallPrefix}
-        RUNTIME DESTINATION ${libInstallPrefix}
-    )
+    # not installing anything on static builds.
+    # install(
+    #     TARGETS ${LIBRARY_NAME}
+    #     LIBRARY DESTINATION ${libInstallPrefix}
+    #     RUNTIME DESTINATION ${libInstallPrefix}
+    # )
 
     if(NOT "${WABI_PREFIX}" STREQUAL "")
         if(args_PRECOMPILED_HEADERS)
