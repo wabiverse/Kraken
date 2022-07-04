@@ -64,5 +64,5 @@ jobs:
         path: "${{github.workspace}}/doc/sphinx/_build/html"
         destination: 'docs.wabi.foundation'
         parent: false
-        concurrency: 2
+        concurrency: 1
 
