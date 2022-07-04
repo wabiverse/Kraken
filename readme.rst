@@ -20,7 +20,7 @@ Kraken
    :target: https://docs.wabi.foundation
    :alt: Documentation
 
-.. figure:: https://www.dropbox.com/s/doduj291rik0byv/kraken-githubhome-banner.png?raw=1
+.. figure:: https://www.dropbox.com/s/0fcfeo5u3q18ryh/kraken-logo.png?raw=1
    :scale: 50 %
    :align: center
 
