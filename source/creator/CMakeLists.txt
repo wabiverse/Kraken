@@ -1109,6 +1109,9 @@ elseif(APPLE)
 
   # handy install macro to exclude files, we use \$ escape for the "to"
   # argument when calling so ${BUILD_TYPE} does not get expanded
+
+  # so we don't install multiple python versions.
+  math(EXPR _out_py_minor_plus_one "${Python_VERSION_MINOR} + 1")
   macro(install_dir from to)
     install(
       DIRECTORY ${from}
@@ -1122,6 +1125,8 @@ elseif(APPLE)
       PATTERN "__pycache__" EXCLUDE
       PATTERN "__MACOSX" EXCLUDE
       PATTERN ".DS_Store" EXCLUDE
+      PATTERN "libpython${Python_VERSION_MAJOR}.${_out_py_minor_plus_one}.a" EXCLUDE
+      PATTERN "*.${_out_py_minor_plus_one}" EXCLUDE # Ex. python3.10 for python3.9
       PATTERN "config-${PYTHON_VERSION}m/*.a" EXCLUDE  # static lib
       PATTERN "lib2to3" EXCLUDE                   # ./lib2to3
       PATTERN "tkinter" EXCLUDE                   # ./tkinter
@@ -1184,6 +1189,9 @@ elseif(APPLE)
 
   # python
   if(WITH_PYTHON)
+    # so we don't install multiple python versions.
+    math(EXPR _out_py_minor_plus_one "${Python_VERSION_MINOR} + 1")
+
     # Copy the python bin into the install directory
     install(
       PROGRAMS ${PYTHON_EXECUTABLE}
