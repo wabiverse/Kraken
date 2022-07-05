@@ -82,6 +82,7 @@ only **macOS** is supported, with Windows and Linux soon to follow.
 Credits
 -------
 Blender Foundation: https://blender.org
+Pixar: https://graphics.pixar.com
 
 License
 -------
