@@ -1167,10 +1167,10 @@ elseif(APPLE)
   # install release and app files
   set(KRAKEN_TEXT_FILES_DESTINATION Kraken.app/Contents/Resources/text)
 
-  # install(
-  #   FILES ${OSX_APP_SOURCEDIR}/Contents/Info.plist
-  #   DESTINATION Kraken.app/Contents
-  # )
+  install(
+    FILES ${OSX_APP_SOURCEDIR}/Contents/Info.plist
+    DESTINATION Kraken.app/Contents
+  )
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
@@ -1179,7 +1179,7 @@ elseif(APPLE)
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    Kraken.app/Contents
+    Kraken.app/Contents/
   )
 
   # python

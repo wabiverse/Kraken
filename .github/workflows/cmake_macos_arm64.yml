@@ -67,3 +67,16 @@ jobs:
     - name: Build
       run: make -s -C ${{github.workspace}}/../build_darwin_release install
       
+    - name: Package
+      run: cd ${{github.workspace}}/../build_darwin_release && cpack -G DragNDrop
+
+    - name: Finalize Package
+      run: cd ${{github.workspace}}/../build_darwin_release && krakendmg=$(find . -maxdepth 1 -name '*.dmg') && create-dmg --background ${{github.workspace}}/release/darwin/background.tif --window-size 740 494 kraken-1.50a-macos-arm64.dmg $krakendmg && rm $krakendmg
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: kraken-1.50a-macos-arm64-${{github.sha}}.dmg
+        path: ${{github.workspace}}/../build_darwin_release/kraken-1.50a-macos-arm64.dmg
+
+    - name: Cleanup
+      run: rm ${{github.workspace}}/../build_darwin_release/kraken-1.50a-macos-arm64.dmg
