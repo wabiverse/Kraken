@@ -76,7 +76,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: kraken-1.50a-macos-arm64-${{github.sha}}.dmg
-        path: $(realpath ${{github.workspace}}/../build_darwin_release/kraken-1.50a-macos-arm64.dmg)
+        path: ~/actions-runner/_work/Kraken/build_darwin_release/kraken-1.50a-macos-arm64.dmg
 
     - name: Cleanup
       run: rm ${{github.workspace}}/../build_darwin_release/kraken-1.50a-macos-arm64.dmg
