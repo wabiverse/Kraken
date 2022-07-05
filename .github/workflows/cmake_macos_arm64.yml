@@ -70,6 +70,9 @@ jobs:
     - name: Package
       run: cd ${{github.workspace}}/../build_darwin_release && cpack -G DragNDrop
 
+    - name: Add Binary
+      run: krakendmgdir=$(find _CPack_Packages -path '*/Darwin/DragNDrop/*-arm64') && cp ${{github.workspace}}/../build_darwin_release/bin/Kraken.app/Contents/MacOS $krakendmgdir/Kraken.app/Contents/MacOS
+
     - name: Finalize Package
       run: cd ${{github.workspace}}/../build_darwin_release && krakendmg=$(find . -maxdepth 1 -name '*.dmg') && rm $krakendmg && krakendmgdir=$(find _CPack_Packages -path '*/Darwin/DragNDrop/*-arm64') && create-dmg --background ${{github.workspace}}/release/darwin/background.tif --window-size 740 494 kraken-1.50a-macos-arm64.dmg $krakendmgdir
 
