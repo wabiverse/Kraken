@@ -70,7 +70,7 @@ Automated Builds
 All commits result in a ready-to-install Kraken package, just visit the 
 actions_ tab and select your operating system. The "build artifact" linked
 at the bottom of each successful workflow will download it directly. Currently
-only **macOS** is supported, with Windows and Linux soon to follow.
+only **macOS on Apple Silicon (M1, M2, ...)** is supported, with Windows and Linux soon to follow.
 
 .. figure:: https://www.dropbox.com/s/m6yd9qczayeia55/automated_ci_macos.png?raw=1
    :scale: 50 %
