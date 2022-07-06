@@ -196,13 +196,13 @@ PyTypeObject pystage_struct_Type = {
   sizeof(KPy_KrakenStage),                     /* tp_basicsize */
   0,                                           /* tp_itemsize */
   /* methods */
-  NULL,  //(destructor)pystage_object_dealloc, /* tp_dealloc */
+  NULL,  //(destructor)pystage_struct_dealloc, /* tp_dealloc */
   0,     /* tp_vectorcall_offset */
   NULL,  /* getattrfunc tp_getattr; */
   NULL,  /* setattrfunc tp_setattr; */
   NULL,
   /* tp_compare */ /* DEPRECATED in Python 3.0! */
-  NULL,            //(reprfunc)pystage_object_repr, /* tp_repr */
+  NULL,            //(reprfunc)pystage_struct_repr, /* tp_repr */
 
   /* Method suites for standard classes */
 
@@ -212,11 +212,11 @@ PyTypeObject pystage_struct_Type = {
 
   /* More standard operations (here for binary compatibility) */
 
-  NULL,  //(hashfunc)pystage_object_hash,         /* hashfunc tp_hash; */
+  NULL,  //(hashfunc)pystage_struct_hash,         /* hashfunc tp_hash; */
   NULL,  /* ternaryfunc tp_call; */
-  NULL,  //(reprfunc)pystage_object_str,          /* reprfunc tp_str; */
-  NULL,  //(getattrofunc)pystage_object_getattro, /* getattrofunc tp_getattro; */
-  NULL,  //(setattrofunc)pystage_object_setattro, /* setattrofunc tp_setattro; */
+  NULL,  //(reprfunc)pystage_struct_str,          /* reprfunc tp_str; */
+  NULL,  //(getattrofunc)pystage_struct_getattro, /* getattrofunc tp_getattro; */
+  NULL,  //(setattrofunc)pystage_struct_setattro, /* setattrofunc tp_setattro; */
 
   /* Functions to access object as input/output buffer */
   NULL, /* PyBufferProcs *tp_as_buffer; */
@@ -259,9 +259,9 @@ PyTypeObject pystage_struct_Type = {
   NULL, /* iternextfunc tp_iternext; */
 
   /*** Attribute descriptor and subclassing stuff ***/
-  NULL,  // pystage_object_methods,   /* struct PyMethodDef *tp_methods; */
+  NULL,  // pystage_struct_methods,   /* struct PyMethodDef *tp_methods; */
   NULL,  /* struct PyMemberDef *tp_members; */
-  NULL,  // pystage_object_getseters, /* struct PyGetSetDef *tp_getset; */
+  NULL,  // pystage_struct_getseters, /* struct PyGetSetDef *tp_getset; */
   NULL,  /* struct _typeobject *tp_base; */
   NULL,  /* PyObject *tp_dict; */
   NULL,  /* descrgetfunc tp_descr_get; */
@@ -269,7 +269,7 @@ PyTypeObject pystage_struct_Type = {
   0,     /* long tp_dictoffset; */
   NULL,  /* initproc tp_init; */
   NULL,  /* allocfunc tp_alloc; */
-  NULL,  // pystage_object_new,       /* newfunc tp_new; */
+  NULL,  // pystage_struct_new,       /* newfunc tp_new; */
   /*  Low-level free-memory routine */
   NULL, /* freefunc tp_free; */
   /* For PyObject_IS_GC */
@@ -351,7 +351,7 @@ static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
   }                  /* The class may have already been declared & allocated. */
   else if ((newclass = (PyObject *)LUXO_struct_py_type_get(srna))) {
     Py_INCREF(newclass);
-  } /* Check if bpy_types.py module has the class defined in it. */
+  } /* Check if kpy_types.py module has the class defined in it. */
   else if ((newclass = pystage_srna_ExternalType(srna))) {
     pystage_subtype_set_rna(newclass, srna);
     Py_INCREF(newclass);
@@ -363,7 +363,7 @@ static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
      *     some = 'value' # or ...
      * - myClass = type(
      *       name='myClass',
-     *       bases=(myBase,), dict={'__module__': 'bpy.types', '__slots__': ()}
+     *       bases=(myBase,), dict={'__module__': 'kpy.types', '__slots__': ()}
      *   )
      */
 
@@ -389,7 +389,7 @@ static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
     /* Always use O not N when calling, N causes refcount errors. */
 #if 0
     newclass = PyObject_CallFunction(
-        metaclass, "s(O) {sss()}", idname, py_base, "__module__", "bpy.types", "__slots__");
+        metaclass, "s(O) {sss()}", idname, py_base, "__module__", "kpy.types", "__slots__");
 #else
     {
       /* Longhand of the call above. */
@@ -608,7 +608,7 @@ PyObject *KPY_uni_types(void)
     };
 
     PyObject *submodule_dict = PyModule_GetDict(submodule);
-    for (int i = 0; i < TfArraySize(pystage_types); i += 1) {
+    for (int i = 0; i < ARRAY_SIZE(pystage_types); i += 1) {
       PyDict_SetItemString(submodule_dict,
                            pystage_types[i]->tp_name,
                            (PyObject *)pystage_types[i]);
@@ -618,13 +618,14 @@ PyObject *KPY_uni_types(void)
   return submodule;
 }
 
-static PyObject *pystage_func_to_py(const KrakenPRIM *ptr, KrakenPRIM *func)
-{
-  // KPy_KrakenFUNC *pyfunc = (KPy_KrakenFUNC *)PyObject_NEW(KPy_KrakenFUNC,
-  // &pystage_func_Type); pyfunc->ptr = *ptr; pyfunc->func = (KrakenFUNC *)func; return (PyObject
-  // *)pyfunc;
-  Py_RETURN_NONE;
-}
+// static PyObject *pystage_func_to_py(const KrakenPRIM *ptr, KrakenPRIM *func)
+// {
+//   // KPy_KrakenFUNC *pyfunc = (KPy_KrakenFUNC *)PyObject_NEW(KPy_KrakenFUNC,
+//   // &pystage_func_Type); pyfunc->ptr = *ptr; pyfunc->func = (KrakenFUNC *)func; return
+//   (PyObject
+//   // *)pyfunc;
+//   Py_RETURN_NONE;
+// }
 
 void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna)
 {
@@ -1029,7 +1030,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
 }
 
 #ifdef USE_PYUSD_OBJECT_REFERENCE
-static void pystage_object_reference_set(KPy_KrakenStage *self, PyObject *reference)
+static void pystage_struct_reference_set(KPy_KrakenStage *self, PyObject *reference)
 {
   if (self->reference) {
     PyObject_GC_UnTrack(self);
@@ -1099,157 +1100,6 @@ static void id_weakref_pool_add(const SdfPath &id, KPy_DummyKrakenPRIM *pystage)
   /* weakinfo_hash owns the weakref */
 }
 #endif /* USE_PYUSD_INVALIDATE_WEAKREF */
-
-#ifdef USE_PYUSD_ITER
-
-// static void pystage_prop_collection_iter_dealloc(KPy_CollectionKrakenPROP *self);
-// static PyObject *pystage_prop_collection_iter_next(KPy_CollectionKrakenPROP *self);
-
-// static PyTypeObject pystage_prop_collection_iter_Type = {
-//   PyVarObject_HEAD_INIT(NULL, 0) "kpy_prop_collection_iter", /* tp_name */
-//   sizeof(KPy_CollectionKrakenPROP),                        /* tp_basicsize */
-//   0,                                                         /* tp_itemsize */
-//   /* methods */
-//   (destructor)pystage_prop_collection_iter_dealloc, /* tp_dealloc */
-//   0,                                              /* tp_vectorcall_offset */
-//   NULL,                                           /* getattrfunc tp_getattr; */
-//   NULL,                                           /* setattrfunc tp_setattr; */
-//   NULL,
-//   /* tp_compare */ /* DEPRECATED in Python 3.0! */
-//   NULL,
-//   /* subclassed */ /* tp_repr */
-
-//   /* Method suites for standard classes */
-
-//   NULL, /* PyNumberMethods *tp_as_number; */
-//   NULL, /* PySequenceMethods *tp_as_sequence; */
-//   NULL, /* PyMappingMethods *tp_as_mapping; */
-
-//   /* More standard operations (here for binary compatibility) */
-
-//   NULL, /* hashfunc tp_hash; */
-//   NULL, /* ternaryfunc tp_call; */
-//   NULL, /* reprfunc tp_str; */
-
-//   /* will only use these if this is a subtype of a py class */
-//   PyObject_GenericGetAttr, /* getattrofunc tp_getattro; */
-//   NULL,                    /* setattrofunc tp_setattro; */
-
-//   /* Functions to access object as input/output buffer */
-//   NULL, /* PyBufferProcs *tp_as_buffer; */
-
-//   /*** Flags to define presence of optional/expanded features ***/
-//   Py_TPFLAGS_DEFAULT, /* long tp_flags; */
-
-//   NULL, /*  char *tp_doc;  Documentation string */
-//   /*** Assigned meaning in release 2.0 ***/
-//   /* call function for all accessible objects */
-//   NULL, /* traverseproc tp_traverse; */
-
-//   /* delete references to contained objects */
-//   NULL, /* inquiry tp_clear; */
-
-//   /***  Assigned meaning in release 2.1 ***/
-//   /*** rich comparisons (subclassed) ***/
-//   NULL, /* richcmpfunc tp_richcompare; */
-
-// /***  weak reference enabler ***/
-// #  ifdef USE_WEAKREFS
-//   offsetof(KPy_CollectionKrakenPROP, in_weakreflist), /* long tp_weaklistoffset; */
-// #  else
-//   0,
-// #  endif
-//   /*** Added in release 2.2 ***/
-//   /*   Iterators */
-//   PyObject_SelfIter,                             /* getiterfunc tp_iter; */
-//   (iternextfunc)pystage_prop_collection_iter_next, /* iternextfunc tp_iternext; */
-
-//   /*** Attribute descriptor and subclassing stuff ***/
-//   NULL, /* struct PyMethodDef *tp_methods; */
-//   NULL, /* struct PyMemberDef *tp_members; */
-//   NULL, /* struct PyGetSetDef *tp_getset; */
-//   NULL, /* struct _typeobject *tp_base; */
-//   NULL, /* PyObject *tp_dict; */
-//   NULL, /* descrgetfunc tp_descr_get; */
-//   NULL, /* descrsetfunc tp_descr_set; */
-//   0,    /* long tp_dictoffset; */
-//   NULL, /* initproc tp_init; */
-//   NULL, /* allocfunc tp_alloc; */
-//   NULL, /* newfunc tp_new; */
-//   /*  Low-level free-memory routine */
-//   NULL, /* freefunc tp_free; */
-//   /* For PyObject_IS_GC */
-//   NULL, /* inquiry tp_is_gc; */
-//   NULL, /* PyObject *tp_bases; */
-//   /* method resolution order */
-//   NULL, /* PyObject *tp_mro; */
-//   NULL, /* PyObject *tp_cache; */
-//   NULL, /* PyObject *tp_subclasses; */
-//   NULL, /* PyObject *tp_weaklist; */
-//   NULL,
-// };
-
-// static PyObject *pystage_prop_collection_iter_CreatePyObject(std::unique_ptr<UsdPrimDefinition>
-// &&ptr, const UsdProperty &prop)
-// {
-//   KPy_CollectionKrakenPROP *self = PyObject_New(KPy_CollectionKrakenPROP,
-//                                                   &pystage_prop_collection_iter_Type);
-
-// #  ifdef USE_WEAKREFS
-//   self->in_weakreflist = NULL;
-// #  endif
-
-//   LUXO_property_collection_begin(ptr, prop, self->iter);
-
-//   return (PyObject *)self;
-// }
-
-// static PyObject *pystage_prop_collection_iter(KPy_KrakenPROP *self)
-// {
-//   return pystage_prop_collection_iter_CreatePyObject(&self->ptr, self->prop);
-// }
-
-// static PyObject *pystage_prop_collection_iter_next(KPy_CollectionKrakenPROP *self)
-// {
-//   if (self->iter.empty()) {
-//     PyErr_SetNone(PyExc_StopIteration);
-//     return NULL;
-//   }
-
-//   KrakenPRIM next;
-//   KPy_KrakenStage *pystage = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&next);
-
-// #  ifdef USE_PYUSD_OBJECT_REFERENCE
-//   if (pystage) { /* Unlikely, but may fail. */
-//     if ((PyObject *)pystage != Py_None) {
-//       /* hold a reference to the iterator since it may have
-//        * allocated memory 'pystage' needs. eg: introspecting dynamic enum's. */
-//       /* TODO: we could have an api call to know if this is
-//        * needed since most collections don't */
-//       pystage_object_reference_set(pystage, (PyObject *)self);
-//     }
-//   }
-// #  endif /* !USE_PYUSD_OBJECT_REFERENCE */
-
-//   self->iter.push_back(new KrakenPROP());
-
-//   return (PyObject *)pystage;
-// }
-
-// static void pystage_prop_collection_iter_dealloc(KPy_CollectionKrakenPROP *self)
-// {
-// #  ifdef USE_WEAKREFS
-//   if (self->in_weakreflist != NULL) {
-//     PyObject_ClearWeakRefs((PyObject *)self);
-//   }
-// #  endif
-
-//   self->iter.end();
-
-//   PyObject_DEL(self);
-// }
-
-#endif /* USE_PYUSD_ITER */
 
 void KPY_uni_init(void)
 {

@@ -73,8 +73,23 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Create Context C. */
   C = CTX_create();
 
+#if defined(__APPLE__) && !defined(WITH_PYTHON_MODULE) && !defined(WITH_HEADLESS)
+  /* Patch to ignore argument finder gives us (PID?) */
+  if (argc == 2 && STRPREFIX(argv[1], "-psn_")) {
+    extern int ANCHOR_HACK_getFirstFile(char buf[]);
+    static char firstfilebuf[512];
+
+    argc = 1;
+
+    if (ANCHOR_HACK_getFirstFile(firstfilebuf)) {
+      argc = 2;
+      argv[1] = firstfilebuf;
+    }
+  }
+#endif
+
   /* Initialize path to executable. */
-  KKE_appdir_program_path_init();
+  KKE_appdir_program_path_init(argv[0]);
 
 #if !defined(ARCH_OS_WINDOWS)
   /* Initialize Threads. */
@@ -104,7 +119,6 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Setup and create all root level prims. */
   LUXO_init();
 
-#if !defined(ARCH_OS_WINDOWS)
   /* Initialize main Runtime. */
   WM_init(C);
 
@@ -113,7 +127,6 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
   /* Run the main event loop. */
   WM_main(C);
-#endif /* !defined(ARCH_OS_WINDOWS) */
 }
 
 #if defined(ARCH_OS_WINDOWS)

@@ -22,9 +22,11 @@
  * It Bites.
  */
 
-#include "kpy_capi_packarray.h"
+#include <Python.h>
 
 #include "kpy_app.h"
+
+#include "kpy_capi_packarray.h"
 
 #include "kpy.h"
 #include "kpy_app.h"
@@ -47,7 +49,7 @@
 
 #include <wabi/base/tf/iterator.h>
 
-#ifdef BUILD_DATE
+#if 0
 extern char build_date[];
 extern char build_time[];
 extern ulong build_commit_timestamp;
@@ -68,9 +70,9 @@ WABI_NAMESPACE_BEGIN
 static PyTypeObject KrakenAppType;
 
 static PyStructSequence_Field app_info_fields[] = {
-  {"version",                                                                         "The Kraken version as a tuple of 3 numbers. eg. (2, 50, 0)"},
+  {"version",                                                                         "The Kraken version as a tuple of 3 numbers. eg. (2, 83, 1)"},
   {"version_file",
-   "The Kraken version, as a tuple, last used to save a .usd file, compatible with "
+   "The Kraken version, as a tuple, last used to save a .blend file, compatible with "
    "``kpy.data.version``. This value should be used for handling compatibility changes between "
    "Kraken versions"},
   {"version_string",                                                                 "The Kraken version formatted as a string"},
@@ -95,23 +97,6 @@ static PyStructSequence_Field app_info_fields[] = {
   {"build_cxxflags",                                                                       "C++ compiler flags"},
   {"build_linkflags",                                                                      "Binary linking flags"},
   {"build_system",                                                                                 "Build system used"},
-
- /* submodules */
-  // {"alembic", "Alembic library information backend"},
-  // {"usd", "USD library information backend"},
-  // {"ffmpeg", "FFmpeg library information backend"},
-  // {"ocio", "OpenColorIO library information backend"},
-  // {"oiio", "OpenImageIO library information backend"},
-  // {"opensubdiv", "OpenSubdiv library information backend"},
-  // {"openvdb", "OpenVDB library information backend"},
-  // {"sdl", "SDL library information backend"},
-  // {"build_options", "A set containing most important enabled optional build features"},
-  // {"handlers", "Application handler callbacks"},
-  // {"translations", "Application and addons internationalization API"},
-
-  /* Modules (not struct sequence). */
-  // {"icons", "Manage custom icons"},
-  // {"timers", "Manage timers"},
   {NULL},
 };
 
@@ -122,7 +107,7 @@ static PyStructSequence_Desc app_info_desc = {
   "kpy.app",       /* name */
   kpy_app_doc,     /* doc */
   app_info_fields, /* fields */
-  TfArraySize(app_info_fields) - 1,
+  ARRAY_SIZE(app_info_fields) - 1,
 };
 
 static PyObject *make_app_info(void)
@@ -134,75 +119,6 @@ static PyObject *make_app_info(void)
   if (app_info == NULL) {
     return NULL;
   }
-#define SetIntItem(flag) PyStructSequence_SET_ITEM(app_info, pos++, PyLong_FromLong(flag))
-#define SetStrItem(str) PyStructSequence_SET_ITEM(app_info, pos++, PyUnicode_FromString(str))
-#define SetBytesItem(str) PyStructSequence_SET_ITEM(app_info, pos++, PyBytes_FromString(str))
-#define SetObjItem(obj) PyStructSequence_SET_ITEM(app_info, pos++, obj)
-
-  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_VERSION / 100, KRAKEN_VERSION % 100, KRAKEN_VERSION_PATCH));
-  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_FILE_VERSION / 100,
-                                KRAKEN_FILE_VERSION % 100,
-                                KRAKEN_FILE_SUBVERSION));
-  SetStrItem(KKE_kraken_version_string());
-
-  SetStrItem(STRINGIFY(KRAKEN_VERSION_CYCLE));
-  SetStrItem("");
-  SetStrItem(KKE_appdir_program_path());
-  SetObjItem(PyBool_FromLong(G.background));
-  SetObjItem(PyBool_FromLong(G.factory_startup));
-
-  /* build info, use bytes since we can't assume any encoding: */
-#ifdef BUILD_DATE
-  SetBytesItem(build_date);
-  SetBytesItem(build_time);
-  SetIntItem(build_commit_timestamp);
-  SetBytesItem(build_commit_date);
-  SetBytesItem(build_commit_time);
-  SetBytesItem(build_hash);
-  SetBytesItem(build_branch);
-  SetBytesItem(build_platform);
-  SetBytesItem(build_type);
-  SetBytesItem(build_cflags);
-  SetBytesItem(build_cxxflags);
-  SetBytesItem(build_linkflags);
-  SetBytesItem(build_system);
-#else
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetIntItem(0);
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-  SetBytesItem("Unknown");
-#endif
-
-  /* submodules */
-  //   SetObjItem(KPY_app_alembic_struct());
-  //   SetObjItem(KPY_app_usd_struct());
-  //   SetObjItem(KPY_app_ffmpeg_struct());
-  //   SetObjItem(KPY_app_ocio_struct());
-  //   SetObjItem(KPY_app_oiio_struct());
-  //   SetObjItem(KPY_app_opensubdiv_struct());
-  //   SetObjItem(KPY_app_openvdb_struct());
-  //   SetObjItem(KPY_app_sdl_struct());
-  //   SetObjItem(KPY_app_build_options_struct());
-  //   SetObjItem(KPY_app_handlers_struct());
-  //   SetObjItem(KPY_app_translations_struct());
-
-  /* modules */
-  //   SetObjItem(KPY_app_icons_module());
-  //   SetObjItem(KPY_app_timers_module());
-
-#undef SetIntItem
-#undef SetStrItem
-#undef SetBytesItem
-#undef SetObjItem
 
   if (PyErr_Occurred()) {
     Py_DECREF(app_info);
@@ -312,85 +228,26 @@ static PyObject *kpy_app_tempdir_get(PyObject *UNUSED(self), void *UNUSED(closur
   return PyC_UnicodeFromByte(KKE_tempdir_session());
 }
 
-PyDoc_STRVAR(
-  kpy_app_driver_dict_doc,
-  "Dictionary for drivers namespace, editable in-place, reset on file load (read-only)");
-static PyObject *kpy_app_driver_dict_get(PyObject *UNUSED(self), void *UNUSED(closure))
-{
-  if (kpy_pydriver_Dict == NULL) {
-    if (kpy_pydriver_create_dict() != 0) {
-      PyErr_SetString(PyExc_RuntimeError, "kpy.app.driver_namespace failed to create dictionary");
-      return NULL;
-    }
-  }
-
-  return Py_INCREF_RET(kpy_pydriver_Dict);
-}
-
 static PyObject *kpy_app_autoexec_fail_message_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
   return PyC_UnicodeFromByte(G.autoexec_fail);
 }
 
 static PyGetSetDef kpy_app_getsets[] = {
-  {"debug",                          kpy_app_debug_get,                 kpy_app_debug_set,                     kpy_app_debug_doc,       (void *)G_DEBUG                          },
-  {"debug_ffmpeg",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_FFMPEG                   },
-  {"debug_freestyle",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_FREESTYLE                },
+  {"debug",                 kpy_app_debug_get,                 kpy_app_debug_set,       kpy_app_debug_doc,       (void *)G_DEBUG                          },
   {"debug_python",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_PYTHON                   },
-  {"debug_events",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_EVENTS                   },
-  {"debug_handlers",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_HANDLERS                 },
-  {"debug_wm",                       kpy_app_debug_get,                 kpy_app_debug_set,                     kpy_app_debug_doc,       (void *)G_DEBUG_WM                       },
-  {"debug_depsgraph",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_STAGE                    },
-  {"debug_depsgraph_build",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_STAGE_BUILD              },
-  {"debug_depsgraph_eval",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_STAGE_EVAL               },
-  {"debug_depsgraph_tag",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_STAGE_TAG                },
-  {"debug_depsgraph_time",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_STAGE_TIME               },
-  {"debug_depsgraph_pretty",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_STAGE_PRETTY             },
-  {"debug_simdata",
-   kpy_app_debug_get,                                                   kpy_app_debug_set,
-   kpy_app_debug_doc,                                                                                                                   (void *)G_DEBUG_SIMDATA                  },
-  {"debug_io",                       kpy_app_debug_get,                 kpy_app_debug_set,                     kpy_app_debug_doc,       (void *)G_DEBUG_IO                       },
-
-  {"use_event_simulate",
-   kpy_app_global_flag_get,                                             kpy_app_global_flag_set__only_disable,
-   kpy_app_global_flag_doc,                                                                                                             (void *)G_FLAG_EVENT_SIMULATE            },
-
-  {"use_userpref_skip_save_on_exit",
-   kpy_app_global_flag_get,                                             kpy_app_global_flag_set,
-   kpy_app_global_flag_doc,                                                                                                             (void *)G_FLAG_USERPREF_NO_SAVE_ON_EXIT  },
-
-  {"debug_value",                    kpy_app_debug_value_get,           kpy_app_debug_value_set,               kpy_app_debug_value_doc, NULL                                     },
-  {"tempdir",                        kpy_app_tempdir_get,               NULL,                                  kpy_app_tempdir_doc,     NULL                                     },
-  {"driver_namespace",               kpy_app_driver_dict_get,           NULL,                                  kpy_app_driver_dict_doc, NULL                                     },
- /* security */
-  {"autoexec_fail",                  kpy_app_global_flag_get,           NULL,                                  NULL,                    (void *)G_FLAG_SCRIPT_AUTOEXEC_FAIL      },
+   kpy_app_debug_get,                                          kpy_app_debug_set,
+   kpy_app_debug_doc,                                                                                            (void *)G_DEBUG_PYTHON                   },
+  {"debug_wm",              kpy_app_debug_get,                 kpy_app_debug_set,       kpy_app_debug_doc,       (void *)G_DEBUG_WM                       },
+  {"debug_io",              kpy_app_debug_get,                 kpy_app_debug_set,       kpy_app_debug_doc,       (void *)G_DEBUG_IO                       },
+  {"debug_value",           kpy_app_debug_value_get,           kpy_app_debug_value_set, kpy_app_debug_value_doc, NULL                                     },
+  {"tempdir",               kpy_app_tempdir_get,               NULL,                    kpy_app_tempdir_doc,     NULL                                     },
+  {"autoexec_fail",         kpy_app_global_flag_get,           NULL,                    NULL,                    (void *)G_FLAG_SCRIPT_AUTOEXEC_FAIL      },
   {"autoexec_fail_quiet",
-   kpy_app_global_flag_get,                                             NULL,
-   NULL,                                                                                                                                (void *)G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET},
-  {"autoexec_fail_message",          kpy_app_autoexec_fail_message_get, NULL,                                  NULL,                    NULL                                     },
-  {NULL,                             NULL,                              NULL,                                  NULL,                    NULL                                     },
+   kpy_app_global_flag_get,                                    NULL,
+   NULL,                                                                                                         (void *)G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET},
+  {"autoexec_fail_message", kpy_app_autoexec_fail_message_get, NULL,                    NULL,                    NULL                                     },
+  {NULL,                    NULL,                              NULL,                    NULL,                    NULL                                     },
 };
 
 static void py_struct_seq_getset_init(void)

@@ -132,8 +132,12 @@ void KLI_join_dirfile(char *__restrict dst,
 #endif
   size_t dirlen = KLI_strnlen(dir, maxlen);
 
-  /* args can't match */
-  KLI_assert((dst != dir) && (dst != file));
+  /* Arguments can't match. */
+  KLI_assert(!ELEM(dst, dir, file));
+
+  /* Files starting with a separator cause a double-slash which could later be interpreted
+   * as a relative path where: `dir == "/"` and `file == "/file"` would result in "//file". */
+  KLI_assert(file[0] != SEP);
 
   if (dirlen == maxlen) {
     memcpy(dst, dir, dirlen);
@@ -148,7 +152,7 @@ void KLI_join_dirfile(char *__restrict dst,
   }
 
   /* inline KLI_path_slash_ensure */
-  if ((dirlen > 0) && !((dst[dirlen - 1] != SEP) && (dst[dirlen - 1] != ALTSEP))) {
+  if ((dirlen > 0) && !ELEM(dst[dirlen - 1], SEP, ALTSEP)) {
     dst[dirlen++] = SEP;
     dst[dirlen] = '\0';
   }
@@ -159,6 +163,7 @@ void KLI_join_dirfile(char *__restrict dst,
 
   KLI_strncpy(dst + dirlen, file, maxlen - dirlen);
 }
+
 /**
  * Joins infinite strings into @param dst,
  * ensuring only a single path separator between each. */
@@ -182,7 +187,7 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
   bool has_trailing_slash = false;
   if (ofs != 0) {
     size_t len = ofs;
-    while ((len != 0) && ((path[len - 1] == SEP) || (path[len - 1] == ALTSEP))) {
+    while ((len != 0) && ELEM(path[len - 1], SEP, ALTSEP)) {
       len -= 1;
     }
     if (len != 0) {
@@ -196,18 +201,18 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
   while ((path = (const char *)va_arg(args, const char *))) {
     has_trailing_slash = false;
     const char *path_init = path;
-    while ((path[0] == SEP) || (path[0] == ALTSEP)) {
+    while (ELEM(path[0], SEP, ALTSEP)) {
       path++;
     }
     size_t len = strlen(path);
     if (len != 0) {
-      while ((len != 0) && ((path[len - 1] == SEP) || path[len - 1] == ALTSEP)) {
+      while ((len != 0) && ELEM(path[len - 1], SEP, ALTSEP)) {
         len -= 1;
       }
 
       if (len != 0) {
         /* the very first path may have a slash at the end */
-        if (ofs && ((dst[ofs - 1] != SEP) || (dst[ofs - 1] != ALTSEP))) {
+        if (ofs && !ELEM(dst[ofs - 1], SEP, ALTSEP)) {
           dst[ofs++] = SEP;
           if (ofs == dst_last) {
             break;
@@ -230,8 +235,7 @@ size_t KLI_path_join(char *__restrict dst, const size_t dst_len, const char *pat
   va_end(args);
 
   if (has_trailing_slash) {
-    if ((ofs != dst_last) && (ofs != 0) &&
-        ((dst[ofs - 1] == SEP) || (dst[ofs - 1] == ALTSEP) == 0)) {
+    if ((ofs != dst_last) && (ofs != 0) && (ELEM(dst[ofs - 1], SEP, ALTSEP) == 0)) {
       dst[ofs++] = SEP;
     }
   }

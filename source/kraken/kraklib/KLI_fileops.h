@@ -100,4 +100,21 @@ struct dirlink
   char *name;
 };
 
+#ifdef __APPLE__
+/**
+ * Expand the leading `~` in the given path to `/Users/$USER`.
+ * This doesn't preserve the trailing path separator.
+ * Giving a path without leading `~` is not an error.
+ */
+const char *KLI_expand_tilde(const char *path_with_tilde);
+#endif
+/* This weirdo pops up in two places. */
+#if !defined(WIN32)
+#  ifndef O_BINARY
+#    define O_BINARY 0
+#  endif
+#else
+void KLI_get_short_name(char short_name[256], const char *filepath);
+#endif
+
 WABI_NAMESPACE_END

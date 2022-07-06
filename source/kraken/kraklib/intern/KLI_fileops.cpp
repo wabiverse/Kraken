@@ -65,6 +65,22 @@ WABI_NAMESPACE_BEGIN
 
 #ifdef WIN32
 
+void KLI_get_short_name(char short_name[256], const char *filepath)
+{
+  wchar_t short_name_16[256];
+  int i = 0;
+
+  UTF16_ENCODE(filepath);
+
+  GetShortPathNameW(filepath_16, short_name_16, 256);
+
+  for (i = 0; i < 256; i++) {
+    short_name[i] = (char)short_name_16[i];
+  }
+
+  UTF16_UN_ENCODE(filepath);
+}
+
 int uaccess(const char *filename, int mode)
 {
   int r = -1;

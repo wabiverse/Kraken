@@ -30,7 +30,7 @@ WABI_NAMESPACE_BEGIN
 
 void KKE_appdir_init(void);
 void KKE_appdir_exit(void);
-void KKE_appdir_program_path_init(void);
+void KKE_appdir_program_path_init(const char *argv0);
 
 const char *KKE_appdir_folder_default(void);
 const char *KKE_appdir_folder_home(void);

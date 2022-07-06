@@ -16,7 +16,7 @@ class _RestrictContext:
     # Enable once data is back on _kpy
     _real_data = _kpy.data
     # safe, the pointer never changes
-    _real_pref = _kpy.context.preferences
+    # _real_pref = _kpy.context.preferences
 
     @property
     def window_manager(self):

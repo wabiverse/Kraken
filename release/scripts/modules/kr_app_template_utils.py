@@ -192,9 +192,9 @@ def reset(*, reload_scripts=False):
     """
     Sets default state.
     """
-    template_id = _kpy.context.preferences.app_template
-    if _kpy.app.debug_python:
-        print("kr_app_template_utils.reset('%s')" % template_id)
+    # template_id = _kpy.context.preferences.app_template
+    # if _kpy.app.debug_python:
+    #     print("kr_app_template_utils.reset('%s')" % template_id)
 
     # TODO reload_scripts
 

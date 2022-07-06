@@ -75,7 +75,7 @@ int KLI_str_utf8_size(const char *p) ATTR_NONNULL();
 
 int KLI_str_utf8_size_safe(const char *p) ATTR_NONNULL();
 
-size_t KLI_str_utf8_from_unicode(uint c, char *outbuf);
+size_t KLI_str_utf8_from_unicode(uint c, char *outbuf, const size_t outbuf_len);
 
 size_t KLI_strnlen(const char *s, const size_t maxlen) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
 

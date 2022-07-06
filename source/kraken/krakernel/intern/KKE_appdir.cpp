@@ -67,7 +67,7 @@ WABI_NAMESPACE_BEGIN
 struct AppDir
 {
   /** Full path to program executable. */
-  char program_filename[FILE_MAX];
+  char program_filepath[FILE_MAX];
   /** Full path to directory in which executable is located. */
   char program_dirname[FILE_MAX];
   /** Persistent temporary directory (defined by the preferences or OS). */
@@ -142,14 +142,36 @@ const char *KKE_appdir_folder_default(void)
 #endif /* WIN32 */
 }
 
+const char *KKE_appdir_folder_root(void)
+{
+#ifndef WIN32
+  return "/";
+#else
+  static char root[4];
+  KLI_windows_get_default_root_dir(root);
+  return root;
+#endif
+}
+
+const char *KKE_appdir_folder_default_or_root(void)
+{
+  const char *path = KKE_appdir_folder_default();
+  if (path == NULL) {
+    path = KKE_appdir_folder_root();
+  }
+  return path;
+}
+
 /**
  * Get the user's home directory, i.e. $HOME on UNIX, %userprofile% on Windows. */
 const char *KKE_appdir_folder_home(void)
 {
-#ifndef WIN32
-  return KLI_getenv("HOME");
-#else /* Windows */
+#ifdef WIN32
   return KLI_getenv("userprofile");
+#elif defined(__APPLE__)
+  return KLI_expand_tilde("~/");
+#else
+  return KLI_getenv("HOME");
 #endif
 }
 
@@ -189,37 +211,202 @@ bool KKE_appdir_folder_documents(char *dir)
   return true;
 }
 
+bool KKE_appdir_folder_caches(char *r_path, const size_t path_len)
+{
+  r_path[0] = '\0';
+
+  const char *caches_root_path = ANCHOR_getUserSpecialDir(ANCHOR_UserSpecialDirCaches);
+  if (caches_root_path == NULL || !KLI_is_dir(caches_root_path)) {
+    caches_root_path = KKE_tempdir_base();
+  }
+  if (caches_root_path == NULL || !KLI_is_dir(caches_root_path)) {
+    return false;
+  }
+
+#ifdef WIN32
+  KLI_path_join(r_path,
+                path_len,
+                caches_root_path,
+                "Wabi Foundation",
+                "Kraken",
+                "Cache",
+                SEP_STR,
+                NULL);
+#elif defined(__APPLE__)
+  KLI_path_join(r_path, path_len, caches_root_path, "Kraken", SEP_STR, NULL);
+#else /* __linux__ */
+  KLI_path_join(r_path, path_len, caches_root_path, "kraken", SEP_STR, NULL);
+#endif
+
+  return true;
+}
+
 /**
  * Gets a good default directory for fonts. */
 bool KKE_appdir_font_folder_default(char *dir)
 {
-  bool success = false;
-  // #ifdef WIN32
-  //   wchar_t wpath[FILE_MAXDIR];
-  //   success = SHGetSpecialFolderPathW(0, wpath, CSIDL_FONTS, 0);
-  //   if (success)
-  //   {
-  //     wcscat(wpath, L"\\");
-  //     KLI_strncpy_wchar_as_utf8(dir, wpath, FILE_MAXDIR);
-  //   }
-  // #endif
-  /* TODO: Values for other platforms. */
-  TF_UNUSED(dir);
-  return success;
+  char test_dir[FILE_MAXDIR];
+  test_dir[0] = '\0';
+
+#ifdef WIN32
+  wchar_t wpath[FILE_MAXDIR];
+  if (SHGetSpecialFolderPathW(0, wpath, CSIDL_FONTS, 0)) {
+    wcscat(wpath, L"\\");
+    KLI_strncpy_wchar_as_utf8(test_dir, wpath, sizeof(test_dir));
+  }
+#elif defined(__APPLE__)
+  STRNCPY(test_dir, KLI_expand_tilde("~/Library/Fonts/"));
+  KLI_path_slash_ensure(test_dir);
+#else
+  STRNCPY(test_dir, "/usr/share/fonts");
+#endif
+
+  if (test_dir[0] && KLI_exists(test_dir)) {
+    KLI_strncpy(dir, test_dir, FILE_MAXDIR);
+    return true;
+  }
+  return false;
 }
 
-void KKE_appdir_program_path_init()
+char *KLI_current_working_dir(char *dir, const size_t maxncpy)
 {
-  KLI_strncpy(g_app.program_filename, CHARALL(ArchGetExecutablePath()), FILE_MAXDIR);
-  KLI_strncpy(g_app.program_dirname, CHARALL(TfGetPathName(ArchGetExecutablePath())), FILE_MAXDIR);
+#if defined(WIN32)
+  wchar_t path[MAX_PATH];
+  if (_wgetcwd(path, MAX_PATH)) {
+    if (BLI_strncpy_wchar_as_utf8(dir, path, maxncpy) != maxncpy) {
+      return dir;
+    }
+  }
+  return NULL;
+#else
+  const char *pwd = KLI_getenv("PWD");
+  if (pwd) {
+    size_t srclen = KLI_strnlen(pwd, maxncpy);
+    if (srclen != maxncpy) {
+      memcpy(dir, pwd, srclen + 1);
+      return dir;
+    }
+    return NULL;
+  }
+  return getcwd(dir, maxncpy);
+#endif
+}
+
+bool KLI_path_is_abs_from_cwd(const char *path)
+{
+  bool is_abs = false;
+  const int path_len_clamp = KLI_strnlen(path, 3);
+
+#ifdef WIN32
+  if ((path_len_clamp >= 3 && KLI_path_is_abs(path)) || KLI_path_is_unc(path)) {
+    is_abs = true;
+  }
+#else
+  if (path_len_clamp >= 2 && path[0] == '/') {
+    is_abs = true;
+  }
+#endif
+  return is_abs;
+}
+
+bool KLI_path_abs_from_cwd(char *path, const size_t maxlen)
+{
+#ifdef DEBUG_STRSIZE
+  memset(path, 0xff, sizeof(*path) * maxlen);
+#endif
+
+  if (!KLI_path_is_abs_from_cwd(path)) {
+    char cwd[FILE_MAX];
+    /* in case the full path to the blend isn't used */
+    if (KLI_current_working_dir(cwd, sizeof(cwd))) {
+      char origpath[FILE_MAX];
+      KLI_strncpy(origpath, path, FILE_MAX);
+      KLI_join_dirfile(path, maxlen, cwd, origpath);
+    } else {
+      printf("Could not get the current working directory - $PWD for an unknown reason.\n");
+    }
+    return true;
+  }
+
+  return false;
+}
+
+static void where_am_i(char *fullname, const size_t maxlen, const char *name)
+{
+#ifdef WITH_BINRELOC
+  /* Linux uses `binreloc` since `argv[0]` is not reliable, call `br_init(NULL)` first. */
+  {
+    const char *path = NULL;
+    path = br_find_exe(NULL);
+    if (path) {
+      KLI_strncpy(fullname, path, maxlen);
+      free((void *)path);
+      return;
+    }
+  }
+#endif
+
+#ifdef _WIN32
+  {
+    wchar_t *fullname_16 = MEM_mallocN(maxlen * sizeof(wchar_t), "ProgramPath");
+    if (GetModuleFileNameW(0, fullname_16, maxlen)) {
+      conv_utf_16_to_8(fullname_16, fullname, maxlen);
+      if (!BLI_exists(fullname)) {
+        CLOG_ERROR(&LOG, "path can't be found: \"%.*s\"", (int)maxlen, fullname);
+        MessageBox(NULL,
+                   "path contains invalid characters or is too long (see console)",
+                   "Error",
+                   MB_OK);
+      }
+      MEM_freeN(fullname_16);
+      return;
+    }
+
+    MEM_freeN(fullname_16);
+  }
+#endif
+
+  /* Unix and non Linux. */
+  if (name && name[0]) {
+
+    KLI_strncpy(fullname, name, maxlen);
+    if (name[0] == '.') {
+      KLI_path_abs_from_cwd(fullname, maxlen);
+#ifdef _WIN32
+      KLI_path_program_extensions_add_win32(fullname, maxlen);
+#endif
+    } else if (KLI_path_slash_rfind(name)) {
+      /* Full path. */
+      KLI_strncpy(fullname, name, maxlen);
+#ifdef _WIN32
+      KLI_path_program_extensions_add_win32(fullname, maxlen);
+#endif
+    } else {
+      KLI_path_program_search(fullname, maxlen, name);
+    }
+    /* Remove "/./" and "/../" so string comparisons can be used on the path. */
+    KLI_path_normalize(NULL, fullname);
+
+#if defined(DEBUG)
+    if (!STREQ(name, fullname)) {
+      TF_INFO("guessing '%s' == '%s'", name, fullname);
+    }
+#endif
+  }
+}
+
+void KKE_appdir_program_path_init(const char *argv0)
+{
+  where_am_i(g_app.program_filepath, sizeof(g_app.program_filepath), argv0);
+  KLI_split_dir_part(g_app.program_filepath, g_app.program_dirname, sizeof(g_app.program_dirname));
 }
 
 /**
  * Path to executable */
 const char *KKE_appdir_program_path(void)
 {
-  KLI_assert(g_app.program_filename[0]);
-  return g_app.program_filename;
+  KLI_assert(g_app.program_filepath[0]);
+  return g_app.program_filepath;
 }
 
 /**
@@ -583,13 +770,8 @@ bool KKE_appdir_program_python_search(char *fullpath,
     const char *python_bin_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_PYTHON, "bin");
     if (python_bin_dir) {
 
-      for (int i = 0; i < TfArraySize(python_names); i++) {
-#if 0
-        /* Blender's join was giving us results like /binpython3.9 instead of /bin/python3.9 */
+      for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
         KLI_join_dirfile(fullpath, fullpath_len, python_bin_dir, python_names[i]);
-#endif 
-        /* So we can instead perform a more "c++ friendly" call here, and still '\0' terminate. */
-        KLI_strncpy(fullpath, TfStringCatPaths(python_bin_dir, python_names[i]).c_str(), fullpath_len);
 
         if (
 #ifdef _WIN32
@@ -606,7 +788,7 @@ bool KKE_appdir_program_python_search(char *fullpath,
   }
 
   if (is_found == false) {
-    for (int i = 0; i < TfArraySize(python_names); i++) {
+    for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
       if (KLI_path_program_search(fullpath, fullpath_len, python_names[i])) {
         is_found = true;
         break;
@@ -800,8 +982,11 @@ const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfold
   const char *path;
 
   /* Only for user folders. */
-  if ((folder_id != KRAKEN_USER_DATAFILES) && (folder_id != KRAKEN_USER_CONFIG) &&
-      (folder_id != KRAKEN_USER_SCRIPTS) && (folder_id != KRAKEN_USER_AUTOSAVE)) {
+  if (!ELEM(folder_id,
+            KRAKEN_USER_DATAFILES,
+            KRAKEN_USER_CONFIG,
+            KRAKEN_USER_SCRIPTS,
+            KRAKEN_USER_AUTOSAVE)) {
     return NULL;
   }
 
@@ -877,7 +1062,7 @@ static void where_is_temp(char *tempdir, const size_t tempdir_len, const char *u
       "TMPDIR",
 #endif
     };
-    for (int i = 0; i < TfArraySize(env_vars); i++) {
+    for (int i = 0; i < ARRAY_SIZE(env_vars); i++) {
       const char *tmp = KLI_getenv(env_vars[i]);
       if (tmp && (tmp[0] != '\0') && KLI_is_dir(tmp)) {
         KLI_strncpy(tempdir, tmp, tempdir_len);
@@ -911,7 +1096,7 @@ static void tempdir_session_create(char *tempdir_session,
 
   if (tempdir_session_len_required <= tempdir_session_len) {
     /* No need to use path joining utility as we know the last character of #tempdir is a slash. */
-    KLI_strncpy(tempdir_session, CHARALL(STRCAT(tempdir, session_name)), tempdir_session_len);
+    KLI_string_join(tempdir_session, tempdir_session_len, tempdir, session_name);
 #ifdef WIN32
     const bool needs_create = (_mktemp_s(tempdir_session, tempdir_session_len_required) == 0);
 #else

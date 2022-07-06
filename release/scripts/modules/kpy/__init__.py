@@ -70,9 +70,6 @@ __all__ = (
     "UsdImagingGL", 
     "UsdAppUtils", 
     "Usdviewq",
-#     "ops",
-#     "path",
-#     "props",
     "types",
     "utils",
 )
@@ -117,15 +114,11 @@ from _kpy import (
     UsdImagingGL, 
     UsdAppUtils, 
     Usdviewq,
-#     msgbus,
-#     props,
     types,
 )
 
 # python modules
 from . import (
-#     ops,
-#     path,
     utils,
 )
 
@@ -178,10 +171,11 @@ def main():
         "kpy.UsdImagingGL": UsdImagingGL,
         "kpy.UsdAppUtils": UsdAppUtils,
         "kpy.Usdviewq": Usdviewq,
-        # "kpy.app.handlers": app.handlers,
-        # "kpy.app.translations": app.translations,
         "kpy.types": types,
     })
+
+    # Initializes all USD Schematics.
+    utils.generate_schema(generate=True)
 
     # Initializes Python classes.
     # (good place to run a profiler or trace).

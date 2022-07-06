@@ -1,11 +1,11 @@
 from _kpy import types as kpy_types
 
-StructLUXO = kpy_types.kpy_struct
+KrakenPRIM = kpy_types.kpy_struct
 StructMetaPropGroup = kpy_types.kpy_struct_meta_idprop
 
 _sentinel = object()
 
-class Context(StructLUXO):
+class Context(KrakenPRIM):
     __slots__ = ()
 
     def path_resolve(self, path, coerce=True):
@@ -62,7 +62,7 @@ class Context(StructLUXO):
         from types import BuiltinMethodType
         new_context = {}
         generic_attrs = (
-            *StructLUXO.__dict__.keys(),
+            *KrakenPRIM.__dict__.keys(),
             "kr_stage", "kr_type", "copy",
         )
         for attr in dir(self):
@@ -74,25 +74,25 @@ class Context(StructLUXO):
         return new_context
 
 
-class Operator(StructLUXO):
+class Operator(KrakenPRIM):
     __slots__ = ()
 
     def __getattribute__(self, attr):
-        properties = StructLUXO.path_resolve(self, "properties")
+        properties = KrakenPRIM.path_resolve(self, "properties")
         kr_stage = getattr(properties, "kr_stage", None)
         if (kr_stage is not None) and (attr in kr_stage.properties):
             return getattr(properties, attr)
         return super().__getattribute__(attr)
 
     def __setattr__(self, attr, value):
-        properties = StructLUXO.path_resolve(self, "properties")
+        properties = KrakenPRIM.path_resolve(self, "properties")
         kr_stage = getattr(properties, "kr_stage", None)
         if (kr_stage is not None) and (attr in kr_stage.properties):
             return setattr(properties, attr, value)
         return super().__setattr__(attr, value)
 
     def __delattr__(self, attr):
-        properties = StructLUXO.path_resolve(self, "properties")
+        properties = KrakenPRIM.path_resolve(self, "properties")
         kr_stage = getattr(properties, "kr_stage", None)
         if (kr_stage is not None) and (attr in kr_stage.properties):
             return delattr(properties, attr)

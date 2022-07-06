@@ -71,4 +71,10 @@ endif()
 
 add_definitions(-DKRAKEN_LIB_EXPORTS)
 
+if(APPLE)
+  list(APPEND SRC
+    intern/storage_apple.mm
+  )
+endif()
+
 kraken_add_lib(kraken_lib "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

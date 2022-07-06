@@ -27,7 +27,7 @@ endif()
 if (APPLE)
   list(APPEND SRC_PLATFORM_BACKENDS
     intern/system_paths.mm
-    backend/backend_cocoa.cpp
+    backend/backend_cocoa.mm
     backend/ANCHOR_BACKEND_cocoa.h
   )
 endif()

@@ -25,6 +25,35 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_BACKEND_cocoa.h"
 
+#import <Cocoa/Cocoa.h>
+
+#include <Carbon/Carbon.h>
+
+#include <sys/sysctl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+
+#include <mach/mach_time.h>
+
+#pragma mark Utility functions
+
+#define FIRSTFILEBUFLG 512
+static bool g_hasFirstFile = false;
+static char g_firstFileBuf[512];
+
+// TODO: Need to investigate this.
+// Function called too early in creator.cpp to have g_hasFirstFile == true
+int ANCHOR_HACK_getFirstFile(char buf[FIRSTFILEBUFLG])
+{
+  if (g_hasFirstFile) {
+    strncpy(buf, g_firstFileBuf, FIRSTFILEBUFLG - 1);
+    buf[FIRSTFILEBUFLG - 1] = '\0';
+    return 1;
+  }
+  else {
+    return 0;
+  }
+}
 
 AnchorU64 AnchorSystemCocoa::performanceCounterToMillis(int perf_ticks) const
 {

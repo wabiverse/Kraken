@@ -265,7 +265,10 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
   }
 #endif
 
-  /* kpy.* and lets us import it */
+  /* Run first, initializes PRIM types. */
+  KPY_uni_init();
+
+  /* Defines kpy.* and lets us import it */
   KPy_init_modules(C);
 
   pystage_alloc_types();

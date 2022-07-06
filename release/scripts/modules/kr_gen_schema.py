@@ -38,14 +38,27 @@ generated that will compile and work with USD Core successfully:
         directly subLayer.
 """
 
-from __future__ import print_function
-import sys, os, re, inspect
+__all__ = (
+  "Initiate"
+)
+
+import kpy as _kpy
+import os as _os
+import sys as _sys
+
+import re, inspect
 import keyword
 from argparse import ArgumentParser
 from collections import namedtuple
 
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound, TemplateSyntaxError
+
+Plug = _kpy.Plug
+Sdf = _kpy.Sdf
+Usd = _kpy.Usd
+Vt = _kpy.Vt
+Tf = _kpy.Tf
 
 # Need to set the environment variable for disabling the schema registry's 
 # loading of schema type prim definitions before importing any pxr libraries,
@@ -55,8 +68,7 @@ from jinja2.exceptions import TemplateNotFound, TemplateSyntaxError
 # to issue coding errors and we don't want those errors to cause failures in 
 # this utility which would be used to repair poorly formed or incorrect 
 # generatedSchema files.
-os.environ["USD_DISABLE_PRIM_DEFINITIONS_FOR_USDGENSCHEMA"] = "1"
-from wabi import Plug, Sdf, Usd, Vt, Tf
+_os.environ["USD_DISABLE_PRIM_DEFINITIONS_FOR_USDGENSCHEMA"] = "1"
 
 # Object used for printing. This gives us a way to control output with regards 
 # to program arguments such as --quiet.
@@ -72,10 +84,10 @@ class _Printer():
 
     def __call__(self, *args):
         if not self._quiet:
-            self.__PrintImpl(sys.stdout, *args)
+            self.__PrintImpl(_sys.stdout, *args)
 
     def Err(self, *args):
-        self.__PrintImpl(sys.stderr, *args)
+        self.__PrintImpl(_sys.stderr, *args)
 
     def SetQuiet(self, quiet):
         self._quiet = quiet
@@ -87,7 +99,7 @@ Print = _Printer()
 #------------------------------------------------------------------------------#
 
 # Name of script, e.g. "usdGenSchema"
-PROGRAM_NAME = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+PROGRAM_NAME = _os.path.splitext(_os.path.basename(_sys.argv[0]))[0]
 
 # Custom-data key authored on an API schema class prim in the schema definition,
 # to define the type of API schema.
@@ -893,7 +905,7 @@ def _WriteFile(filePath, content, validate):
     existingContent = '\n'
     content = (content + '\n'
                if content and not content.endswith('\n') else content)
-    if os.path.exists(filePath):
+    if _os.path.exists(filePath):
         with open(filePath, 'r') as fp:
             existingContent = fp.read()
         if existingContent == content:
@@ -910,13 +922,13 @@ def _WriteFile(filePath, content, validate):
                                 content.split('\n'))))
             Print.Err('Error: validation failed, diffs found. '
                       'Please rerun %s.' % PROGRAM_NAME)
-            sys.exit(1)
+            _sys.exit(1)
     else:
         if validate:
             Print.Err('Error: validation failed, file %s does not exist. '
                       'Please rerun %s.' % 
-                      (os.path.basename(filePath), PROGRAM_NAME))
-            sys.exit(1)
+                      (_os.path.basename(filePath), PROGRAM_NAME))
+            _sys.exit(1)
 
     # Otherwise attempt to write to file.
     try:
@@ -929,7 +941,7 @@ def _WriteFile(filePath, content, validate):
 def _ExtractCustomCode(filePath, default=None):
     defaultTxt = default if default else ''
     
-    if not os.path.exists(filePath):
+    if not _os.path.exists(filePath):
         return defaultTxt
 
     try:
@@ -1142,20 +1154,20 @@ def GenerateCode(templatePath, codeGenPath, tokenData, classes, validate,
 
     if useExportAPI:
         Print('Writing API:')
-        _WriteFile(os.path.join(codeGenPath, 'api.h'),
+        _WriteFile(_os.path.join(codeGenPath, 'api.h'),
                    apiTemplate.render(),
                    validate)
     
     if tokenData:
         Print('Writing Schema Tokens:')
         # tokens.h
-        _WriteFile(os.path.join(codeGenPath, 'tokens.h'),
+        _WriteFile(_os.path.join(codeGenPath, 'tokens.h'),
                    tokensHTemplate.render(tokens=tokenData), validate)
         # tokens.cpp
-        _WriteFile(os.path.join(codeGenPath, 'tokens.cpp'),
+        _WriteFile(_os.path.join(codeGenPath, 'tokens.cpp'),
                    tokensCppTemplate.render(tokens=tokenData), validate)
         # wrapTokens.cpp
-        _WriteFile(os.path.join(codeGenPath, 'wrapTokens.cpp'),
+        _WriteFile(_os.path.join(codeGenPath, 'wrapTokens.cpp'),
                    tokensWrapTemplate.render(tokens=tokenData), validate)
 
     #
@@ -1170,7 +1182,7 @@ def GenerateCode(templatePath, codeGenPath, tokenData, classes, validate,
              for attr in cls.attrs])
 
         # header file
-        clsHFilePath = os.path.join(codeGenPath, cls.GetHeaderFile())
+        clsHFilePath = _os.path.join(codeGenPath, cls.GetHeaderFile())
 
         # Wrap headerTerminatorString with new lines if it is non-empty.
         headerTerminatorString = headerTerminatorString.strip()
@@ -1186,14 +1198,14 @@ def GenerateCode(templatePath, codeGenPath, tokenData, classes, validate,
                    validate)
 
         # source file
-        clsCppFilePath = os.path.join(codeGenPath, cls.GetCppFile())
+        clsCppFilePath = _os.path.join(codeGenPath, cls.GetCppFile())
         customCode = _ExtractCustomCode(clsCppFilePath)
         _WriteFile(clsCppFilePath, 
                    sourceTemplate.render(cls=cls) + customCode,
                    validate)
         
         # wrap file
-        clsWrapFilePath = os.path.join(codeGenPath, cls.GetWrapFile())
+        clsWrapFilePath = _os.path.join(codeGenPath, cls.GetWrapFile())
 
         if useExportAPI:
             customCode = _ExtractCustomCode(clsWrapFilePath, default=(
@@ -1262,8 +1274,8 @@ def GeneratePlugInfo(templatePath, codeGenPath, classes, validate, env,
     if classes:
         import json
         # read existing plugInfo file, strip comments.
-        plugInfoFile = os.path.join(codeGenPath, 'plugInfo.json')
-        if os.path.isfile(plugInfoFile):
+        plugInfoFile = _os.path.join(codeGenPath, 'plugInfo.json')
+        if _os.path.isfile(plugInfoFile):
             with open(plugInfoFile, 'r') as fp:
                 infoLines = fp.readlines()
             infoLines = [l for l in infoLines
@@ -1333,7 +1345,7 @@ def GeneratePlugInfo(templatePath, codeGenPath, classes, validate, env,
             "# Portions of this file auto-generated by %s.\n"
             "# Edits will survive regeneration except for comments and\n"
             "# changes to types with autoGenerated=true.\n"
-            % os.path.basename(os.path.splitext(sys.argv[0])[0])) + 
+            % _os.path.basename(_os.path.splitext(_sys.argv[0])[0])) + 
                    json.dumps(info, indent=4, sort_keys=True,
                               separators=(', ', ': ')))
         _WriteFile(plugInfoFile, content, validate)
@@ -1512,14 +1524,15 @@ def GenerateRegistry(codeGenPath, filePath, classes, validate, env):
     layerSource = re.sub(r'\\+ref [^\s]+ ', '', layerSource)
     layerSource = re.sub(r'\\+section [^\s]+ ', '', layerSource)
 
-    _WriteFile(os.path.join(codeGenPath, 'generatedSchema.usda'), layerSource,
+    _WriteFile(_os.path.join(codeGenPath, 'generatedSchema.usda'), layerSource,
                validate)
 
 def InitializeResolver():
     """Initialize the resolver so that search paths pointing to schema.usda
     files are resolved to the directories where those files are installed"""
     
-    from wabi import Ar, Plug
+    Ar = _kpy.Ar
+    Plug = _kpy.Plug
 
     # Force the use of the ArDefaultResolver so we can take advantage
     # of its search path functionality.
@@ -1538,7 +1551,7 @@ def InitializeResolver():
     # across runs.
     Ar.DefaultResolver.SetDefaultSearchPath(sorted(list(resourcePaths)))
 
-if __name__ == '__main__':
+def Initiate():
     #
     # Parse Command-line
     #
@@ -1570,13 +1583,13 @@ if __name__ == '__main__':
              'argument will be treated as the outermost namespace, with '
              'the rightmost argument as the innermost.')
 
-    defaultTemplateDir = os.path.join(
-        os.path.dirname(
-            os.path.abspath(inspect.getfile(inspect.currentframe()))),
+    defaultTemplateDir = _os.path.join(
+        _os.path.dirname(
+            _os.path.abspath(inspect.getfile(inspect.currentframe()))),
         'codegenTemplates')
 
-    instTemplateDir = os.path.join(
-        os.path.abspath(Plug.Registry().GetPluginWithName('usd').resourcePath),
+    instTemplateDir = _os.path.join(
+        _os.path.abspath(Plug.Registry().GetPluginWithName('usd').resourcePath),
         'codegenTemplates')
 
     parser.add_argument('-t', '--templates',
@@ -1584,7 +1597,7 @@ if __name__ == '__main__':
         type=str,
         help=('Directory containing schema class templates. '
               '[Default: first directory that exists from this list: {0}]'
-              .format(os.pathsep.join([defaultTemplateDir, instTemplateDir]))))
+              .format(_os.pathsep.join([defaultTemplateDir, instTemplateDir]))))
 
     parser.add_argument('-hts', '--headerTerminatorString',
         dest='headerTerminatorString',
@@ -1595,13 +1608,13 @@ if __name__ == '__main__':
               '[Default: %(default)s]'))
 
     args = parser.parse_args()
-    codeGenPath = os.path.abspath(args.codeGenPath)
-    schemaPath = os.path.abspath(args.schemaPath)
+    codeGenPath = _os.path.abspath(args.codeGenPath)
+    schemaPath = _os.path.abspath(args.schemaPath)
 
     if args.templatePath:
-        templatePath = os.path.abspath(args.templatePath)
+        templatePath = _os.path.abspath(args.templatePath)
     else:
-        if os.path.isdir(defaultTemplateDir):
+        if _os.path.isdir(defaultTemplateDir):
             templatePath = defaultTemplateDir
         else:
             templatePath = instTemplateDir
@@ -1621,14 +1634,14 @@ if __name__ == '__main__':
     #
     # Error Checking
     #
-    if not os.path.isfile(schemaPath):
+    if not _os.path.isfile(schemaPath):
         Print.Err('Usage Error: First positional argument must be a USD schema file.')
         parser.print_help()
-        sys.exit(1)
-    if args.templatePath and not os.path.isdir(templatePath):
+        _sys.exit(1)
+    if args.templatePath and not _os.path.isdir(templatePath):
         Print.Err('Usage Error: templatePath argument must be the path to the codegenTemplates.')
         parser.print_help()
-        sys.exit(1)
+        _sys.exit(1)
 
     try:
         #
@@ -1657,8 +1670,8 @@ if __name__ == '__main__':
         #
         # Generate Code from Templates
         #
-        if not os.path.isdir(codeGenPath):
-            os.makedirs(codeGenPath)
+        if not _os.path.isdir(codeGenPath):
+            _os.makedirs(codeGenPath)
 
         j2_env = Environment(loader=FileSystemLoader(templatePath),
                              trim_blocks=True)
@@ -1691,4 +1704,4 @@ if __name__ == '__main__':
     
     except Exception as e:
         Print.Err("ERROR:", str(e))
-        sys.exit(1)
+        _sys.exit(1)

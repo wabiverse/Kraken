@@ -82,14 +82,6 @@ static PyObject *kpy_script_paths(PyObject *UNUSED(self))
   return ret;
 }
 
-static bool kpy_resolver_paths_visit_cb(void *userdata,
-                                        char *UNUSED(path_dst),
-                                        const char *path_src)
-{
-  // PyList_APPEND((PyObject *)userdata, PyC_UnicodeFromByte(path_src));
-  return false; /* never edits the path */
-}
-
 PyDoc_STRVAR(kpy_resolver_paths_doc,
              ".. function:: resolver_paths(absolute=False, packed=False, local=False)\n"
              "\n"
@@ -113,7 +105,15 @@ static PyObject *kpy_resolver_paths(PyObject *UNUSED(self), PyObject *args, PyOb
   bool local = false;
 
   static const char *_keywords[] = {"absolute", "packed", "local", NULL};
-  static _PyArg_Parser _parser = {"|$O&O&O&:resolver_paths", _keywords, 0};
+  static _PyArg_Parser _parser = {
+    "|$" /* Optional keyword only arguments. */
+    "O&" /* `absolute` */
+    "O&" /* `packed` */
+    "O&" /* `local` */
+    ":resolver_paths",
+    _keywords,
+    0,
+  };
   if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                         kw,
                                         &_parser,
@@ -126,19 +126,17 @@ static PyObject *kpy_resolver_paths(PyObject *UNUSED(self), PyObject *args, PyOb
     return NULL;
   }
 
-  // if (absolute) {
-  //   flag |= KKE_RESOLVER_TRAVERSE_ABS;
-  // }
-  // if (!packed) {
-  //   flag |= KKE_RESOLVER_TRAVERSE_SKIP_PACKED;
-  // }
-  // if (local) {
-  //   flag |= KKE_RESOLVER_TRAVERSE_SKIP_LIBRARY;
-  // }
+  if (absolute) {
+    flag |= KKE_SDFPATH_FOREACH_PATH_ABSOLUTE;
+  }
+  if (!packed) {
+    flag |= KKE_SDFPATH_FOREACH_PATH_SKIP_PACKED;
+  }
+  if (local) {
+    flag |= KKE_SDFPATH_FOREACH_PATH_SKIP_LINKED;
+  }
 
   list = PyList_New(0);
-
-  // KKE_resolver_traverse_main(G.main, kpy_resolver_paths_visit_cb, flag, (void *)list);
 
   return list;
 }
@@ -159,7 +157,14 @@ static PyObject *kpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObj
   const char *path;
 
   static const char *_keywords[] = {"type", "path", NULL};
-  static _PyArg_Parser _parser = {"O&|$s:user_resource", _keywords, 0};
+  static _PyArg_Parser _parser = {
+    "O&" /* `type` */
+    "|$" /* Optional keyword only arguments. */
+    "s"  /* `path` */
+    ":user_resource",
+    _keywords,
+    0,
+  };
   if (!_PyArg_ParseTupleAndKeywordsFast(args, kw, &_parser, PyC_ParseStringEnum, &type, &subdir)) {
     return NULL;
   }
@@ -233,7 +238,15 @@ static PyObject *kpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObj
   const char *path;
 
   static const char *_keywords[] = {"type", "major", "minor", NULL};
-  static _PyArg_Parser _parser = {"O&|$ii:resource_path", _keywords, 0};
+  static _PyArg_Parser _parser = {
+    "O&" /* `type` */
+    "|$" /* Optional keyword only arguments. */
+    "i"  /* `major` */
+    "i"  /* `minor` */
+    ":resource_path",
+    _keywords,
+    0,
+  };
   if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                         kw,
                                         &_parser,
@@ -329,7 +342,7 @@ static PyMethodDef meth_kpy_script_paths = {
   kpy_script_paths_doc,
 };
 static PyMethodDef meth_kpy_resolver_paths = {
-  "kraken_paths",
+  "resolver_paths",
   (PyCFunction)kpy_resolver_paths,
   METH_VARARGS | METH_KEYWORDS,
   kpy_resolver_paths_doc,
@@ -386,8 +399,8 @@ static PyObject *kpy_import_test(const char *modname)
  ******************************************************************************/
 void KPy_init_modules(struct kContext *C)
 {
-  PyObject *mod;
   KrakenPRIM ctx_ptr;
+  PyObject *mod;
 
   /* Needs to be first since this dir is needed for future modules */
   const char *const modpath = KKE_appdir_folder_id(KRAKEN_SYSTEM_SCRIPTS, "modules");
@@ -410,8 +423,8 @@ void KPy_init_modules(struct kContext *C)
   PyDict_SetItemString(PyImport_GetModuleDict(), "_kpy", mod);
   Py_DECREF(mod);
 
-  /* run first, initializes rna types */
-  KPY_uni_init();
+  /* needs to be first so kpy_types can run */
+  PyModule_AddObject(mod, "types", KPY_uni_types());
 
   /* The entirety of Pixar USD python bindings... */
   PyModule_AddObject(mod, "Tf", PyInit__tf());
@@ -448,9 +461,6 @@ void KPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod, "UsdImagingGL", PyInit__usdImagingGL());
   PyModule_AddObject(mod, "UsdAppUtils", PyInit__usdAppUtils());
   PyModule_AddObject(mod, "Usdviewq", PyInit__usdviewq());
-
-  /* needs to be first so kpy_types can run */
-  PyModule_AddObject(mod, "types", KPY_uni_types());
 
   /* needs to be first so kpy_types can run */
   KPY_library_load_type_ready();

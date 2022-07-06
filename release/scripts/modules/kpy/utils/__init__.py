@@ -33,7 +33,7 @@ kpy.utils -- Kraken Python Base Functionality Utilities.
 """
 
 __all__ = (
-    "kraken_paths",
+    "resolver_paths",
     "escape_identifier",
     "unescape_identifier",
     "register_class",
@@ -44,7 +44,7 @@ __all__ = (
 )
 
 from _kpy import (
-    kraken_paths,
+    resolver_paths,
     escape_identifier,
     unescape_identifier,
     register_class,
@@ -59,9 +59,12 @@ import kpy as _kpy
 import os as _os
 import sys as _sys
 
+# Generate schemas from _kpy (test)
+import kr_gen_schema as _kr_gen_schema
+
 import addon_utils as _addon_utils
 
-_preferences = _kpy.context.preferences
+# _preferences = _kpy.context.preferences
 _script_module_dirs = "startup", "modules"
 _is_factory_startup = _kpy.app.factory_startup
 
@@ -174,6 +177,13 @@ def modules_from_path(path, loaded_modules):
     return modules
 
 
+def generate_schema(*, generate=False):
+    """
+    Loads in the pixar USD gen schema script.
+    """
+    _kr_gen_schema.Initiate()
+
+
 _global_loaded_modules = []  # store loaded module names for reloading.
 # import kpy_types as _kpy_types  # keep for comparisons, never ever reload this.
 
@@ -189,7 +199,6 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
        as modules.
     :type refresh_scripts: bool
     """
-    # Enable when app is adding back to _kpy.
     use_time = use_class_register_check = _kpy.app.debug_python
     use_time = False
     use_user = not _is_factory_startup
@@ -319,15 +328,15 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
         print("Python Script Load Time %.4f" % (time.time() - t_main))
 
     # Enable when app is adding back to _kpy.
-    # if use_class_register_check:
-    #     for cls in _kpy.types.uni_object.__subclasses__():
-    #         if getattr(cls, "is_registered", False):
-    #             for subcls in cls.__subclasses__():
-    #                 if not subcls.is_registered:
-    #                     print(
-    #                         "Warning, unregistered class: %s(%s)" %
-    #                         (subcls.__name__, cls.__name__)
-    #                     )
+    if use_class_register_check:
+        for cls in _kpy.types.kpy_struct.__subclasses__():
+            if getattr(cls, "is_registered", False):
+                for subcls in cls.__subclasses__():
+                    if not subcls.is_registered:
+                        print(
+                            "Warning, unregistered class: %s(%s)" %
+                            (subcls.__name__, cls.__name__)
+                        )
 
 
 # base scripts
@@ -343,8 +352,9 @@ def script_path_user():
 
 def script_path_pref():
     """returns the user preference or None"""
-    path = _preferences.filepaths.script_directory
-    return _os.path.normpath(path) if path else None
+    # path = _preferences.filepaths.script_directory
+    # return _os.path.normpath(path) if path else None
+    return None
 
 def script_paths(*, subdir=None, user_pref=True, check_all=False, use_user=True):
     """
@@ -836,9 +846,9 @@ def register_submodule_factory(module_name, submodule_names):
 #         yield prefix, url_manual_mapping
 
 
-def make_sdf_paths(struct_name, prop_name, enum_name):
+def make_resolver_paths(struct_name, prop_name, enum_name):
     """
-    Create Pixar SdfPaths from given names.
+    Create Pixar Resolver Paths from given names.
 
     :arg struct_name: Name of a UNI struct (like e.g. "Scene").
     :type struct_name: string
