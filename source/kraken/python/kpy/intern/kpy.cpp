@@ -421,24 +421,27 @@ void KPy_init_modules(struct kContext *C)
 
   KPY_pixar_data_context_type_ready();
 
-  // KPY_uni_gizmo_module(mod);
-
   kpy_import_test("kpy_types");
+
+#if 0
+  /**
+   * @brief The "Shut up and show me your static USD Python Bindings while you figure out your runtime @%$%@ edition..."
+   * Done.
+   */
+
   PyModule_AddObject(mod, "data", KPY_stage_module()); /* imports kpy_types by running this */
   kpy_import_test("kpy_types");
-  // PyModule_AddObject(mod, "props", KPY_uni_props());
-  /* ops is now a python module that does the conversion from SOME_OT_foo -> some.foo */
-  // PyModule_AddObject(mod, "ops", KPY_operator_module());
+
   PyModule_AddObject(mod, "app", KPY_app_struct());
-  // PyModule_AddObject(mod, "_utils_units", KPY_utils_units());
-  // PyModule_AddObject(mod, "_utils_previews", KPY_utils_previews_module());
-  // PyModule_AddObject(mod, "msgbus", KPY_msgbus_module());
   LUXO_pointer_create(&LUXO_Context, C, &ctx_ptr);
   kpy_context_module = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ctx_ptr);
   /* odd that this is needed, 1 ref on creation and another for the module
    * but without we get a crash on exit */
   Py_INCREF(kpy_context_module);
   PyModule_AddObject(mod, "context", (PyObject *)kpy_context_module);
+#endif
+
+  /* The entirety of Pixar USD python bindings... */
   PyModule_AddObject(mod, "Tf", PyInit__tf());
   PyModule_AddObject(mod, "Gf", PyInit__gf());
   PyModule_AddObject(mod, "Trace", PyInit__trace());

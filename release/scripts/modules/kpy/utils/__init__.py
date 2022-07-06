@@ -63,8 +63,9 @@ import addon_utils as _addon_utils
 
 # _preferences = _kpy.context.preferences
 _script_module_dirs = "startup", "modules"
-_is_factory_startup = _kpy.app.factory_startup
-
+# Enable when app is adding back to _kpy.
+# _is_factory_startup = _kpy.app.factory_startup
+_is_factory_startup = True
 
 def execfile(filepath, *, mod=None):
     """
@@ -103,7 +104,9 @@ def execfile(filepath, *, mod=None):
 
 
 def _test_import(module_name, loaded_modules):
-    use_time = _kpy.app.debug_python
+    # Enable when app is adding back to _kpy.
+    #use_time = _kpy.app.debug_python
+    use_time = False
 
     if module_name in loaded_modules:
         return None
@@ -189,7 +192,9 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
        as modules.
     :type refresh_scripts: bool
     """
-    use_time = use_class_register_check = _kpy.app.debug_python
+    # Enable when app is adding back to _kpy.
+    #use_time = use_class_register_check = _kpy.app.debug_python
+    use_time = False
     use_user = not _is_factory_startup
     
     use_time = False
@@ -316,15 +321,16 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
     if use_time:
         print("Python Script Load Time %.4f" % (time.time() - t_main))
 
-    if use_class_register_check:
-        for cls in _kpy.types.uni_object.__subclasses__():
-            if getattr(cls, "is_registered", False):
-                for subcls in cls.__subclasses__():
-                    if not subcls.is_registered:
-                        print(
-                            "Warning, unregistered class: %s(%s)" %
-                            (subcls.__name__, cls.__name__)
-                        )
+    # Enable when app is adding back to _kpy.
+    # if use_class_register_check:
+    #     for cls in _kpy.types.uni_object.__subclasses__():
+    #         if getattr(cls, "is_registered", False):
+    #             for subcls in cls.__subclasses__():
+    #                 if not subcls.is_registered:
+    #                     print(
+    #                         "Warning, unregistered class: %s(%s)" %
+    #                         (subcls.__name__, cls.__name__)
+    #                     )
 
 
 # base scripts
@@ -673,10 +679,12 @@ def keyconfig_init():
 def keyconfig_set(filepath, *, report=None):
     from os.path import basename, splitext
 
-    if _kpy.app.debug_python:
-        print("loading preset:", filepath)
+    # Enable when app is added back to _kpy.
+    # if _kpy.app.debug_python:
+    #     print("loading preset:", filepath)
 
-    keyconfigs = _kpy.context.window_manager.keyconfigs
+    # Enable when context is added back to _kpy.
+    # keyconfigs = _kpy.context.window_manager.keyconfigs
 
     try:
         error_msg = ""
@@ -686,24 +694,24 @@ def keyconfig_set(filepath, *, report=None):
         error_msg = traceback.format_exc()
 
     name = splitext(basename(filepath))[0]
-    kc_new = keyconfigs.get(name)
+    # kc_new = keyconfigs.get(name)
 
     if error_msg:
         if report is not None:
             report({'ERROR'}, error_msg)
         print(error_msg)
-        if kc_new is not None:
-            keyconfigs.remove(kc_new)
+        # if kc_new is not None:
+        #     keyconfigs.remove(kc_new)
         return False
 
     # Get name, exception for default keymap to keep backwards compatibility.
-    if kc_new is None:
-        if report is not None:
-            report({'ERROR'}, "Failed to load keymap %r" % filepath)
-        return False
-    else:
-        keyconfigs.active = kc_new
-        return True
+    # if kc_new is None:
+    #     if report is not None:
+    #         report({'ERROR'}, "Failed to load keymap %r" % filepath)
+    #     return False
+    # else:
+    #     keyconfigs.active = kc_new
+    #     return True
 
 
 def user_resource(resource_type, *, path="", create=False):

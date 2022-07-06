@@ -33,9 +33,9 @@ kpy -- The Kraken Python Module.
 """
 
 __all__ = (
-    "app",
-    "context",
-    "data",
+    # "app",
+    # "context",
+    # "data",
     "Tf", 
     "Gf", 
     "Trace", 
@@ -80,9 +80,9 @@ __all__ = (
 
 # internal kraken C module
 from _kpy import (
-    app,
-    context,
-    data,
+    # app,
+    # context,
+    # data,
     Tf, 
     Gf, 
     Trace,
@@ -143,7 +143,7 @@ def main():
     # fake module to allow:
     #   from kpy.types import Panel
     sys.modules.update({
-        "kpy.app": app,
+        # "kpy.app": app,
         "kpy.Tf": Tf, 
         "kpy.Gf": Gf,
         "kpy.Trace": Trace,

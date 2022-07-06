@@ -13,17 +13,23 @@ import kpy as _kpy
 
 class _RestrictContext:
     __slots__ = ()
-    _real_data = _kpy.data
+    # Enable once data is back on _kpy
+    # _real_data = _kpy.data
     # safe, the pointer never changes
-    _real_pref = _kpy.context.preferences
+    # Enable once context is back on _kpy
+    # _real_pref = _kpy.context.preferences
 
     @property
     def window_manager(self):
-        return self._real_data.window_managers[0]
+        # Enable once data is back on _kpy
+        # return self._real_data.window_managers[0]
+        return {}
 
     @property
     def preferences(self):
-        return self._real_pref
+        # Enable once context is back on _kpy
+        # return self._real_pref
+        return {}
 
 
 class _RestrictData:
@@ -38,11 +44,15 @@ class RestrictKraken:
     __slots__ = ("context", "data")
 
     def __enter__(self):
-        self.data = _kpy.data
-        self.context = _kpy.context
-        _kpy.data = _data_restrict
-        _kpy.context = _context_restrict
+        # Enable once data & context is back on _kpy
+        # self.data = _kpy.data
+        # self.context = _kpy.context
+        # _kpy.data = _data_restrict
+        # _kpy.context = _context_restrict
+        return
 
     def __exit__(self, type, value, traceback):
-        _kpy.data = self.data
-        _kpy.context = self.context
+        # Enable once data & context is back on _kpy
+        # _kpy.data = self.data
+        # _kpy.context = self.context
+        return
