@@ -589,7 +589,7 @@ bool KKE_appdir_program_python_search(char *fullpath,
         KLI_join_dirfile(fullpath, fullpath_len, python_bin_dir, python_names[i]);
 #endif 
         /* So we can instead perform a more "c++ friendly" call here, and still '\0' terminate. */
-        KLI_strncpy(fullpath, TfStringCatPaths(python_bin_dir, python_names[i]).c_str(), FILE_MAX);
+        KLI_strncpy(fullpath, TfStringCatPaths(python_bin_dir, python_names[i]).c_str(), fullpath_len);
 
         if (
 #ifdef _WIN32
