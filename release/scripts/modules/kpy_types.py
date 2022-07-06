@@ -63,7 +63,7 @@ class Context(StructLUXO):
         new_context = {}
         generic_attrs = (
             *StructLUXO.__dict__.keys(),
-            "kr_stage", "stage_type", "copy",
+            "kr_stage", "kr_type", "copy",
         )
         for attr in dir(self):
             if not (attr.startswith("_") or attr in generic_attrs):

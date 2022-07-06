@@ -61,11 +61,9 @@ import sys as _sys
 
 import addon_utils as _addon_utils
 
-# _preferences = _kpy.context.preferences
+_preferences = _kpy.context.preferences
 _script_module_dirs = "startup", "modules"
-# Enable when app is adding back to _kpy.
-# _is_factory_startup = _kpy.app.factory_startup
-_is_factory_startup = True
+_is_factory_startup = _kpy.app.factory_startup
 
 def execfile(filepath, *, mod=None):
     """
@@ -105,8 +103,7 @@ def execfile(filepath, *, mod=None):
 
 def _test_import(module_name, loaded_modules):
     # Enable when app is adding back to _kpy.
-    #use_time = _kpy.app.debug_python
-    use_time = False
+    use_time = _kpy.app.debug_python
 
     if module_name in loaded_modules:
         return None
@@ -193,7 +190,7 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
     :type refresh_scripts: bool
     """
     # Enable when app is adding back to _kpy.
-    #use_time = use_class_register_check = _kpy.app.debug_python
+    use_time = use_class_register_check = _kpy.app.debug_python
     use_time = False
     use_user = not _is_factory_startup
     
@@ -346,10 +343,8 @@ def script_path_user():
 
 def script_path_pref():
     """returns the user preference or None"""
-    # TODO: Implement kpy.context.preferences
-    # path = _preferences.filepaths.script_directory
-    # return _os.path.normpath(path) if path else None
-    return None
+    path = _preferences.filepaths.script_directory
+    return _os.path.normpath(path) if path else None
 
 def script_paths(*, subdir=None, user_pref=True, check_all=False, use_user=True):
     """
@@ -680,11 +675,11 @@ def keyconfig_set(filepath, *, report=None):
     from os.path import basename, splitext
 
     # Enable when app is added back to _kpy.
-    # if _kpy.app.debug_python:
-    #     print("loading preset:", filepath)
+    if _kpy.app.debug_python:
+        print("loading preset:", filepath)
 
     # Enable when context is added back to _kpy.
-    # keyconfigs = _kpy.context.window_manager.keyconfigs
+    keyconfigs = _kpy.context.window_manager.keyconfigs
 
     try:
         error_msg = ""
@@ -694,24 +689,24 @@ def keyconfig_set(filepath, *, report=None):
         error_msg = traceback.format_exc()
 
     name = splitext(basename(filepath))[0]
-    # kc_new = keyconfigs.get(name)
+    kc_new = keyconfigs.get(name)
 
     if error_msg:
         if report is not None:
             report({'ERROR'}, error_msg)
         print(error_msg)
-        # if kc_new is not None:
-        #     keyconfigs.remove(kc_new)
+        if kc_new is not None:
+            keyconfigs.remove(kc_new)
         return False
 
     # Get name, exception for default keymap to keep backwards compatibility.
-    # if kc_new is None:
-    #     if report is not None:
-    #         report({'ERROR'}, "Failed to load keymap %r" % filepath)
-    #     return False
-    # else:
-    #     keyconfigs.active = kc_new
-    #     return True
+    if kc_new is None:
+        if report is not None:
+            report({'ERROR'}, "Failed to load keymap %r" % filepath)
+        return False
+    else:
+        keyconfigs.active = kc_new
+        return True
 
 
 def user_resource(resource_type, *, path="", create=False):

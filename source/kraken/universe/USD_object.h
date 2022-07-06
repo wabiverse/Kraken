@@ -27,6 +27,8 @@
 #include "USD_api.h"
 #include "USD_types.h"
 
+#include "KLI_string_utils.h"
+
 #include <wabi/base/tf/hashmap.h>
 #include <wabi/base/tf/notice.h>
 #include <wabi/base/tf/singleton.h>
@@ -101,7 +103,12 @@ struct KrakenFUNC
 
 struct KrakenPRIM : public UsdPrim
 {
-  KrakenPRIM(const UsdPrim &prim = UsdPrim()) : UsdPrim(prim) {}
+  KrakenPRIM(const UsdPrim &prim = UsdPrim())
+    : UsdPrim(prim),
+      owner_id(IsValid() ? GetParent().GetName().GetText() : NULL),
+      identifier(!GetName().IsEmpty() ? GetName().GetText() : NULL),
+      collection(UsdCollectionAPI())
+  {}
 
   const char *owner_id;
 

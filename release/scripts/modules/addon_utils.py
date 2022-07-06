@@ -44,7 +44,7 @@ __all__ = (
 )
 
 import kpy as _kpy
-# _preferences = _kpy.context.preferences
+_preferences = _kpy.context.preferences
 
 error_encoding = False
 # (name, file, path)

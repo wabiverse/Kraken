@@ -126,6 +126,20 @@ enum eGlobalFileFlags
 
 struct Global
 {
+  Global()
+    : main(nullptr),
+      background(0),
+      factory_startup(0),
+      is_break(0),
+      is_rendering(0),
+      debug_value(0),
+      f(0),
+      debug(0),
+      fileflags(0),
+      autoexec_fail{0},
+      filepath{0}
+  {}
+
   Main *main;
 
   bool background;

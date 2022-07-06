@@ -70,6 +70,7 @@ void LUXO_save_usd(void);
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *ptr);
 void LUXO_main_pointer_create(Main *main, KrakenPRIM *ptr);
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
+void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr);
 
 void *LUXO_struct_py_type_get(KrakenPRIM *srna);
 void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type);
@@ -82,8 +83,6 @@ ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr);
 
 void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP *r_ptr);
 void **LUXO_struct_instance(KrakenPRIM *ptr);
-const char *LUXO_object_identifier(const KrakenPRIM &ptr);
-const char *LUXO_struct_identifier(const KrakenPRIM *type);
 const char *LUXO_struct_identifier(const KrakenPRIM *type);
 bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna);
 

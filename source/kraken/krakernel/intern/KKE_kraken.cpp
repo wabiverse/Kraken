@@ -89,16 +89,18 @@ int UI_DRAG_THRESHOLD_TABLET = int(0);
 int UI_DRAG_THRESHOLD = int(0);
 short UI_DOUBLE_CLICK_TIME = short(0);
 
-static std::string kraken_version_string = "";
+static char kraken_version_string[48] = "";
 
 static void kraken_version_init()
 {
   printf("\n");
-  kraken_version_string = TfStringPrintf("%d.%02d.%d %s",
-                                         KRAKEN_VERSION / 100,
-                                         KRAKEN_VERSION % 100,
-                                         KRAKEN_VERSION_PATCH,
-                                         STRINGIFY(KRAKEN_VERSION_CYCLE));
+  KLI_snprintf(kraken_version_string,
+               ARRAY_SIZE(kraken_version_string),
+               "%d.%01d.%d%s",
+               KRAKEN_VERSION / 100,
+               KRAKEN_VERSION % 100,
+               KRAKEN_VERSION_PATCH,
+               STRINGIFY(KRAKEN_VERSION_CYCLE));
   TF_WARN("Kraken v%s", CHARALL(kraken_version_string));
   printf("\n");
 }

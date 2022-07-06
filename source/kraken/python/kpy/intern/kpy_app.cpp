@@ -139,15 +139,17 @@ static PyObject *make_app_info(void)
 #define SetBytesItem(str) PyStructSequence_SET_ITEM(app_info, pos++, PyBytes_FromString(str))
 #define SetObjItem(obj) PyStructSequence_SET_ITEM(app_info, pos++, obj)
 
-  SetObjItemIncrementInfo(app_info, pos);
-
+  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_VERSION / 100, KRAKEN_VERSION % 100, KRAKEN_VERSION_PATCH));
+  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_FILE_VERSION / 100,
+                                KRAKEN_FILE_VERSION % 100,
+                                KRAKEN_FILE_SUBVERSION));
   SetStrItem(KKE_kraken_version_string());
 
   SetStrItem(STRINGIFY(KRAKEN_VERSION_CYCLE));
   SetStrItem("");
   SetStrItem(KKE_appdir_program_path());
-  SetObjItemBoolIncrementInfo(app_info, pos, G.background);
-  SetObjItemBoolIncrementInfo(app_info, pos, G.factory_startup);
+  SetObjItem(PyBool_FromLong(G.background));
+  SetObjItem(PyBool_FromLong(G.factory_startup));
 
   /* build info, use bytes since we can't assume any encoding: */
 #ifdef BUILD_DATE
@@ -325,14 +327,6 @@ static PyObject *kpy_app_driver_dict_get(PyObject *UNUSED(self), void *UNUSED(cl
   return Py_INCREF_RET(kpy_pydriver_Dict);
 }
 
-PyDoc_STRVAR(kpy_app_preview_render_size_doc,
-             "Reference size for icon/preview renders (read-only)");
-static PyObject *kpy_app_preview_render_size_get(PyObject *UNUSED(self), void *closure)
-{
-  //   return PyLong_FromLong((long)UI_icon_preview_to_render_size(POINTER_AS_INT(closure)));
-  Py_RETURN_NONE;
-}
-
 static PyObject *kpy_app_autoexec_fail_message_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
   return PyC_UnicodeFromByte(G.autoexec_fail);
@@ -390,14 +384,6 @@ static PyGetSetDef kpy_app_getsets[] = {
   {"debug_value",                    kpy_app_debug_value_get,           kpy_app_debug_value_set,               kpy_app_debug_value_doc, NULL                                     },
   {"tempdir",                        kpy_app_tempdir_get,               NULL,                                  kpy_app_tempdir_doc,     NULL                                     },
   {"driver_namespace",               kpy_app_driver_dict_get,           NULL,                                  kpy_app_driver_dict_doc, NULL                                     },
-
-  {"render_icon_size",
-   kpy_app_preview_render_size_get,                                     NULL,
-   kpy_app_preview_render_size_doc,                                                                                                     (void *)ICON_SIZE_ICON                   },
-  {"render_preview_size",
-   kpy_app_preview_render_size_get,                                     NULL,
-   kpy_app_preview_render_size_doc,                                                                                                     (void *)ICON_SIZE_PREVIEW                },
-
  /* security */
   {"autoexec_fail",                  kpy_app_global_flag_get,           NULL,                                  NULL,                    (void *)G_FLAG_SCRIPT_AUTOEXEC_FAIL      },
   {"autoexec_fail_quiet",

@@ -26,7 +26,10 @@
 #include "LUXO_access.h"
 #include "LUXO_main.h"
 
+#include "KLI_string_utils.h"
+
 #include "KKE_utils.h"
+#include "KKE_appdir.h"
 
 #include "USD_api.h"
 #include "USD_object.h"
@@ -59,6 +62,8 @@ void LUXO_init(void)
   LUXO_struct_init();
   LUXO_main(KRAKEN_STAGE);
 
+  KKE_tempdir_init(NULL);
+
   /* remove this once we go back to UsdStage::CreateInMemory */
   LUXO_save_usd();
 }
@@ -74,14 +79,9 @@ ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr)
     if (ptr->unreg) {
       return ptr->unreg;
     }
-  } while ((ptr = ptr));
+  } while ((ptr = ptr->base));
 
   return NULL;
-}
-
-const char *LUXO_object_identifier(const KrakenPRIM &ptr)
-{
-  return ptr.identifier;
 }
 
 bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna)
@@ -175,6 +175,13 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
   return collection.GetAllCollections(prim);
 }
 
+void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr)
+{
+  if (!r_ptr || !r_ptr->IsValid()) {
+    *r_ptr = KRAKEN_STAGE->GetPseudoRoot();
+  }
+}
+
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
@@ -226,7 +233,7 @@ void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
   if (!r_ptr->IsValid()) {
     *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
   }
-  r_ptr->owner_id = type->GetName().GetText();
+  r_ptr->owner_id = r_ptr->GetParent().IsValid() ? r_ptr->GetParent().GetName().GetText() : NULL;
   r_ptr->type = type;
   r_ptr->data = data;
 
@@ -259,7 +266,7 @@ const char *LUXO_function_identifier(KrakenFUNC *func)
 
 const char *LUXO_struct_identifier(const KrakenPRIM *type)
 {
-  return type->identifier;
+  return (type->identifier != NULL) ? type->identifier : "Context";
 }
 
 /**

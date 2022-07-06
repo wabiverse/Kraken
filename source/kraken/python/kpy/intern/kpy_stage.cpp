@@ -327,12 +327,12 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
       if (base_compare != base) {
         char pyob_info[256];
         PyC_ObSpitStr(pyob_info, sizeof(pyob_info), base_compare);
-        TF_WARN("incorrect subclassing of SRNA '%s', expected '%s', see kpy_types.py",
+        TF_WARN("incorrect subclassing of STAGE '%s', expected '%s', see kpy_types.py",
                 idname,
                 pyob_info);
         newclass = NULL;
       } else {
-        TF_STATUS("SRNA sub-classed: '%s'", idname);
+        TF_MSG_SUCCESS("kpy: STAGE sub-classed: '%s'", idname);
       }
     }
   }
@@ -477,32 +477,23 @@ int LUXO_property_collection_lookup_token_index(KrakenPRIM *ptr,
                                                 KrakenPRIM *r_ptr,
                                                 int *r_index)
 {
-  KrakenPROP prop;
-  UsdPropertyVector iter;
+  UsdPrimRange iter;
   int found = 0;
   int index = 0;
 
-  /* get all attributes... */
-  iter = ptr->GetProperties();
+  iter = ptr->GetStage()->Traverse();
 
-  for (auto &c : iter) {
+  for (const KrakenPRIM &prim : iter) {
 
-    /* if property is USD valid... */
-    if (c.IsValid()) {
-      KrakenPRIM kPrim = c.GetPrim();
-
-      LUXO_object_find_property(&kPrim, c.GetName(), &prop);
-
-      /* we found a python binding to create. */
-      if (prop && prop.IsValid()) {
-        *r_ptr = kPrim;
-        found = 1;
-      }
+    if (prim.GetName() == key) {
+      *r_ptr = prim;
+      found = 1;
     }
 
     if (found) {
       break;
     }
+
     ++index;
   }
 
@@ -555,16 +546,15 @@ static PyObject *kpy_types_module_getattro(PyObject *self, PyObject *pyname)
 
 static PyObject *kpy_types_module_dir(PyObject *self)
 {
+  KrakenPRIM *root;
+
   struct KPy_TypesModule_State *state = (KPy_TypesModule_State *)PyModule_GetState(self);
   PyObject *ret = PyList_New(0);
 
-  /* 'let er rip! -> */
-  const auto &types = TfType::GetRoot().GetDirectlyDerivedTypes();
-  for (auto type : types) {
-    for (auto &api : type.GetAliases(type)) {
-      TF_STATUS("kpy: got type: %s", api.c_str());
-      PyList_APPEND(ret, PyUnicode_FromString(api.c_str()));
-    }
+  root = &state->ptr;
+  for (const KrakenPRIM &prim : root->GetStage()->Traverse()) {
+    KrakenPRIM dat = prim;
+    PyList_APPEND(ret, PyUnicode_FromString(LUXO_struct_identifier(&dat)));
   }
 
   /* Include the modules `__dict__` for Python only types. */

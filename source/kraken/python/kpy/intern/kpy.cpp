@@ -413,34 +413,6 @@ void KPy_init_modules(struct kContext *C)
   /* run first, initializes rna types */
   KPY_uni_init();
 
-  /* needs to be first so kpy_types can run */
-  PyModule_AddObject(mod, "types", KPY_uni_types());
-
-  /* needs to be first so kpy_types can run */
-  KPY_library_load_type_ready();
-
-  KPY_pixar_data_context_type_ready();
-
-  kpy_import_test("kpy_types");
-
-#if 0
-  /**
-   * @brief The "Shut up and show me your static USD Python Bindings while you figure out your runtime @%$%@ edition..."
-   * Done.
-   */
-
-  PyModule_AddObject(mod, "data", KPY_stage_module()); /* imports kpy_types by running this */
-  kpy_import_test("kpy_types");
-
-  PyModule_AddObject(mod, "app", KPY_app_struct());
-  LUXO_pointer_create(&LUXO_Context, C, &ctx_ptr);
-  kpy_context_module = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ctx_ptr);
-  /* odd that this is needed, 1 ref on creation and another for the module
-   * but without we get a crash on exit */
-  Py_INCREF(kpy_context_module);
-  PyModule_AddObject(mod, "context", (PyObject *)kpy_context_module);
-#endif
-
   /* The entirety of Pixar USD python bindings... */
   PyModule_AddObject(mod, "Tf", PyInit__tf());
   PyModule_AddObject(mod, "Gf", PyInit__gf());
@@ -476,6 +448,27 @@ void KPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod, "UsdImagingGL", PyInit__usdImagingGL());
   PyModule_AddObject(mod, "UsdAppUtils", PyInit__usdAppUtils());
   PyModule_AddObject(mod, "Usdviewq", PyInit__usdviewq());
+
+  /* needs to be first so kpy_types can run */
+  PyModule_AddObject(mod, "types", KPY_uni_types());
+
+  /* needs to be first so kpy_types can run */
+  KPY_library_load_type_ready();
+
+  KPY_pixar_data_context_type_ready();
+
+  kpy_import_test("kpy_types");
+  PyModule_AddObject(mod, "data", KPY_stage_module()); /* imports kpy_types by running this */
+  kpy_import_test("kpy_types");
+
+  PyModule_AddObject(mod, "app", KPY_app_struct());
+
+  LUXO_pointer_create(&LUXO_Context, C, &ctx_ptr);
+  kpy_context_module = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ctx_ptr);
+  /* odd that this is needed, 1 ref on creation and another for the module
+   * but without we get a crash on exit */
+  Py_INCREF(kpy_context_module);
+  PyModule_AddObject(mod, "context", (PyObject *)kpy_context_module);
 
   /* Register methods and property get/set for RNA types. */
   //   KPY_uni_types_extend_capi();
