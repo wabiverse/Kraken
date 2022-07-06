@@ -39,7 +39,7 @@ generated that will compile and work with USD Core successfully:
 """
 
 __all__ = (
-  "Initiate"
+  "Generate"
 )
 
 import kpy as _kpy
@@ -54,11 +54,12 @@ from collections import namedtuple
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound, TemplateSyntaxError
 
+# Pixar modules for UsdGenSchema.
 Plug = _kpy.Plug
-Sdf = _kpy.Sdf
-Usd = _kpy.Usd
-Vt = _kpy.Vt
-Tf = _kpy.Tf
+Sdf  = _kpy.Sdf
+Usd  = _kpy.Usd
+Vt   = _kpy.Vt
+Tf   = _kpy.Tf
 
 # Need to set the environment variable for disabling the schema registry's 
 # loading of schema type prim definitions before importing any pxr libraries,
@@ -1551,7 +1552,7 @@ def InitializeResolver():
     # across runs.
     Ar.DefaultResolver.SetDefaultSearchPath(sorted(list(resourcePaths)))
 
-def Initiate():
+def Generate():
     #
     # Parse Command-line
     #

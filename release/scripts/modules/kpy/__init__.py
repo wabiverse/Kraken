@@ -70,6 +70,7 @@ __all__ = (
     "UsdImagingGL", 
     "UsdAppUtils", 
     "Usdviewq",
+    "path",
     "types",
     "utils",
 )
@@ -119,6 +120,7 @@ from _kpy import (
 
 # python modules
 from . import (
+    path,
     utils,
 )
 

@@ -305,6 +305,28 @@ void PyC_FileAndNum_Safe(const char **r_filename, int *r_lineno)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Frozen Set Creation
+ * \{ */
+
+PyObject *PyC_FrozenSetFromStrings(const char **strings)
+{
+  const char **str;
+  PyObject *ret;
+
+  ret = PyFrozenSet_New(NULL);
+
+  for (str = strings; *str; str++) {
+    PyObject *py_str = PyUnicode_FromString(*str);
+    PySet_Add(ret, py_str);
+    Py_DECREF(py_str);
+  }
+
+  return ret;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Exception Utilities
  * \{ */
 

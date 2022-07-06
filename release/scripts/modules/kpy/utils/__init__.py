@@ -59,7 +59,7 @@ import kpy as _kpy
 import os as _os
 import sys as _sys
 
-# Generate schemas from _kpy (test)
+# Generate schemas from _kpy
 import kr_gen_schema as _kr_gen_schema
 
 import addon_utils as _addon_utils
@@ -181,7 +181,7 @@ def generate_schema(*, generate=False):
     """
     Loads in the pixar USD gen schema script.
     """
-    _kr_gen_schema.Initiate()
+    _kr_gen_schema.Generate()
 
 
 _global_loaded_modules = []  # store loaded module names for reloading.

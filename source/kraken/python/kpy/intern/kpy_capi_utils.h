@@ -60,6 +60,8 @@ uint64_t PyC_Long_AsU64(PyObject *value);
 void PyC_FileAndNum(const char **r_filename, int *r_lineno);
 void PyC_FileAndNum_Safe(const char **r_filename, int *r_lineno);
 
+PyObject *PyC_FrozenSetFromStrings(const char **strings);
+
 PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *format, ...);
 PyObject *PyC_Err_SetString_Prefix(PyObject *exception_type_prefix, const char *str);
 PyObject *PyC_ExceptionBuffer(void);

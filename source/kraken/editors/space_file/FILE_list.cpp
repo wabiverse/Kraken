@@ -31,6 +31,59 @@
 
 WABI_NAMESPACE_BEGIN
 
+const char *imb_ext_image[] = {
+  ".png",  ".tga",  ".bmp", ".jpg", ".jpeg", ".sgi", ".rgb", ".rgba",
+#ifdef WITH_TIFF
+  ".tif",  ".tiff", ".tx",
+#endif
+#ifdef WITH_OPENJPEG
+  ".jp2",  ".j2c",
+#endif
+#ifdef WITH_HDR
+  ".hdr",
+#endif
+#ifdef WITH_DDS
+  ".dds",
+#endif
+#ifdef WITH_CINEON
+  ".dpx",  ".cin",
+#endif
+#ifdef WITH_OPENEXR
+  ".exr",
+#endif
+#ifdef WITH_OPENIMAGEIO
+  ".psd",  ".pdd",  ".psb",
+#endif
+#ifdef WITH_WEBP
+  ".webp",
+#endif
+  NULL,
+};
+
+const char *imb_ext_movie[] = {
+  ".avi",  ".flc", ".mov", ".movie", ".mp4",  ".m4v",  ".m2v", ".m2t",  ".m2ts", ".mts",
+  ".ts",   ".mv",  ".avs", ".wmv",   ".ogv",  ".ogg",  ".r3d", ".dv",   ".mpeg", ".mpg",
+  ".mpg2", ".vob", ".mkv", ".flv",   ".divx", ".xvid", ".mxf", ".webm", NULL,
+};
+
+const char *imb_ext_audio[] = {
+  ".wav",
+  ".ogg",
+  ".oga",
+  ".mp3",
+  ".mp2",
+  ".ac3",
+  ".aac",
+  ".flac",
+  ".wma",
+  ".eac3",
+  ".aif",
+  ".aiff",
+  ".m4a",
+  ".mka",
+  NULL,
+};
+
 /* would recognize (.usd, .usda, .usdc, .usdz) as well */
 static bool file_is_pixar_backup(const char *str)
 {

@@ -26,9 +26,14 @@
 
 #include "KPY_api.h"
 
+#include "kpy_capi_utils.h"
 #include "kpy_path.h"
 
 WABI_NAMESPACE_BEGIN
+
+extern const char *imb_ext_image[];
+extern const char *imb_ext_movie[];
+extern const char *imb_ext_audio[];
 
 /*----------------------------MODULE INIT-------------------------*/
 static struct PyModuleDef _kpy_path_module_def = {
@@ -48,6 +53,10 @@ PyObject *KPyInit__kpy_path(void)
   PyObject *submodule;
 
   submodule = PyModule_Create(&_kpy_path_module_def);
+
+  PyModule_AddObject(submodule, "extensions_image", PyC_FrozenSetFromStrings(imb_ext_image));
+  PyModule_AddObject(submodule, "extensions_movie", PyC_FrozenSetFromStrings(imb_ext_movie));
+  PyModule_AddObject(submodule, "extensions_audio", PyC_FrozenSetFromStrings(imb_ext_audio));
 
   return submodule;
 }
