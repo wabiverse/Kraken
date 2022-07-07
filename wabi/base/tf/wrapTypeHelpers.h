@@ -90,7 +90,7 @@ TF_API TfType TfType_DefinePythonTypeAndBases(const boost::python::object &class
  * In order to avoid duplicated converters, this should be used before
  * attempting to register a converter for any general type that might
  * be used in more than one Python wrapper. - furby™ */
-template<class PyType, class Enable = void> struct TfPyRegistry
+template<class PyType> struct TfPyRegistry
 {
   static bool IsTypeRegistered()
   {
