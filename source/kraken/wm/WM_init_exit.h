@@ -32,6 +32,8 @@ void WM_init(kContext *C, int argc = 0, const char **argv = NULL);
 void WM_exit(kContext *C);
 void WM_exit_ex(kContext *C, const bool do_python);
 
+void WM_init_manager(kContext *C);
+
 void WM_init_default_styles();
 void WM_jobs_kill_all(wmWindowManager *wm);
 void WM_main(kContext *C);

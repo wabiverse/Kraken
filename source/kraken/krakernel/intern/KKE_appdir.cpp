@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <filesystem>
 
 #include "KLI_assert.h"
 #include "KLI_path_utils.h"
@@ -58,6 +59,8 @@
 /* #mkdtemp on OSX (and probably all *BSD?), not worth making specific check for this OS. */
 #  include <unistd.h>
 #endif /* WIN32 */
+
+namespace fs = std::filesystem;
 
 static const char _str_null[] = "(null)";
 #define STR_OR_FALLBACK(a) ((a) ? (a) : _str_null)
@@ -735,6 +738,30 @@ const char *KKE_appdir_program_dir(void)
   return g_app.program_dirname;
 }
 
+/**
+ * Recursively copies all files and folders from src_id to target_id and overwrites existing files
+ * in target. */
+const char *KKE_appdir_copy_recursive(const int src_id, const int target_id) noexcept
+{
+  fs::path src = KKE_appdir_folder_id(src_id, NULL);
+  fs::path target = KKE_appdir_folder_id_create(target_id, NULL);
+
+  if (!fs::exists(src) || !fs::exists(target)) {
+    return NULL;
+  }
+
+  try {
+    fs::copy(src, target, fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+    return target.c_str();
+  }
+
+  catch (std::exception &e) {
+    std::cout << e.what();
+  }
+
+  return NULL;
+}
+
 bool KKE_appdir_program_python_search(char *fullpath,
                                       const size_t fullpath_len,
                                       const int version_major,
@@ -915,7 +942,6 @@ const char *KKE_appdir_folder_id(const int folder_id, const char *subfolder)
   }
   return NULL;
 }
-
 
 /**
  * Returns the path to a folder in the user area without checking that it actually exists first. */

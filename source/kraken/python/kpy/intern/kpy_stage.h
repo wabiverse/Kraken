@@ -58,8 +58,6 @@
 
 #define USE_PYUSD_ITER
 
-WABI_NAMESPACE_BEGIN
-
 // struct KPy_DummyKrakenPRIM
 // {
 //   PyObject_HEAD /* Required Python macro. */
@@ -75,7 +73,7 @@ struct KPy_KrakenStage
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  KrakenPRIM ptr;
+  wabi::KrakenPRIM ptr;
 #ifdef USE_PYUSD_OBJECT_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
@@ -95,7 +93,7 @@ struct KPy_KrakenPROP
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  KrakenPRIM ptr;
+  wabi::KrakenPRIM ptr;
   // KrakenPROP *prop;
 };
 
@@ -105,8 +103,8 @@ struct KPy_KrakenFUNC
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  KrakenPRIM ptr;
-  KrakenFUNC *func;
+  wabi::KrakenPRIM ptr;
+  wabi::KrakenFUNC *func;
 };
 
 struct KPy_UsdPropertyVector
@@ -117,7 +115,7 @@ struct KPy_UsdPropertyVector
 #endif
 
   /* collection iterator specific parts */
-  UsdPropertyVector iter;
+  wabi::UsdPropertyVector iter;
 };
 
 #ifdef __cplusplus
@@ -173,12 +171,14 @@ PyObject *KPY_stage_module(void);
 
 void KPY_update_stage_module(void);
 
-KrakenPRIM *pystage_struct_as_srna(PyObject *self, const bool parent, const char *error_prefix);
-PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr);
+wabi::KrakenPRIM *pystage_struct_as_srna(PyObject *self,
+                                         const bool parent,
+                                         const char *error_prefix);
+PyObject *pystage_struct_CreatePyObject(wabi::KrakenPRIM *ptr);
 void pystage_alloc_types(void);
 
-PyObject *pystage_srna_PyBase(KrakenPRIM *srna);
-void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna);
+PyObject *pystage_srna_PyBase(wabi::KrakenPRIM *srna);
+void pystage_subtype_set_rna(PyObject *newclass, wabi::KrakenPRIM *srna);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;
@@ -189,5 +189,3 @@ extern PyMethodDef meth_kpy_owner_id_set;
 extern PyMethodDef meth_kpy_owner_id_get;
 
 extern KPy_KrakenStage *kpy_context_module;
-
-WABI_NAMESPACE_END

@@ -49,7 +49,14 @@
 
 #include <wabi/base/tf/iterator.h>
 
-#if 0
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
+
+#ifdef BUILD_DATE
 extern char build_date[];
 extern char build_time[];
 extern ulong build_commit_timestamp;
@@ -64,8 +71,6 @@ extern char build_cxxflags[];
 extern char build_linkflags[];
 extern char build_system[];
 #endif
-
-WABI_NAMESPACE_BEGIN
 
 static PyTypeObject KrakenAppType;
 
@@ -119,6 +124,55 @@ static PyObject *make_app_info(void)
   if (app_info == NULL) {
     return NULL;
   }
+#define SetIntItem(flag) PyStructSequence_SET_ITEM(app_info, pos++, PyLong_FromLong(flag))
+#define SetStrItem(str) PyStructSequence_SET_ITEM(app_info, pos++, PyUnicode_FromString(str))
+#define SetBytesItem(str) PyStructSequence_SET_ITEM(app_info, pos++, PyBytes_FromString(str))
+#define SetObjItem(obj) PyStructSequence_SET_ITEM(app_info, pos++, obj)
+
+  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_VERSION / 100, KRAKEN_VERSION % 100, KRAKEN_VERSION_PATCH));
+  SetObjItem(PyC_Tuple_Pack_I32(KRAKEN_FILE_VERSION / 100,
+                                KRAKEN_FILE_VERSION % 100,
+                                KRAKEN_FILE_SUBVERSION));
+  SetStrItem(KKE_kraken_version_string());
+  SetStrItem(STRINGIFY(KRAKEN_VERSION_CYCLE));
+  SetStrItem(KKE_appdir_program_path());
+  SetObjItem(PyBool_FromLong(G.background));
+  SetObjItem(PyBool_FromLong(G.factory_startup));
+
+#ifdef BUILD_DATE
+  SetBytesItem(build_date);
+  SetBytesItem(build_time);
+  SetIntItem(build_commit_timestamp);
+  SetBytesItem(build_commit_date);
+  SetBytesItem(build_commit_time);
+  SetBytesItem(build_hash);
+  SetBytesItem(build_branch);
+  SetBytesItem(build_platform);
+  SetBytesItem(build_type);
+  SetBytesItem(build_cflags);
+  SetBytesItem(build_cxxflags);
+  SetBytesItem(build_linkflags);
+  SetBytesItem(build_system);
+#else
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetIntItem(0);
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+  SetBytesItem("Unknown");
+#endif
+
+#undef SetIntItem
+#undef SetStrItem
+#undef SetBytesItem
+#undef SetObjItem
 
   if (PyErr_Occurred()) {
     Py_DECREF(app_info);
@@ -281,5 +335,3 @@ PyObject *KPY_app_struct(void)
 
   return ret;
 }
-
-WABI_NAMESPACE_END

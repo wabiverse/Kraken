@@ -28,7 +28,8 @@
 
 #include "KPY_api.h"
 
-WABI_NAMESPACE_BEGIN
+#include "KKE_context.h"
+#include "KKE_report.h"
 
 struct PyC_StringEnumItems
 {
@@ -81,14 +82,12 @@ bool PyC_IsInterpreterActive(void);
 
 /* Kpy ----  */
 
-bool KPy_errors_to_report(struct ReportList *reports);
-short KPy_reports_to_error(struct ReportList *reports, PyObject *exception, const bool clear);
-void KPy_reports_write_stdout(const ReportList *reports, const char *header);
+bool KPy_errors_to_report(wabi::ReportList *reports);
+short KPy_reports_to_error(wabi::ReportList *reports, PyObject *exception, const bool clear);
+void KPy_reports_write_stdout(const wabi::ReportList *reports, const char *header);
 
-extern void kpy_context_set(struct kContext *C, PyGILState_STATE *gilstate);
-extern void kpy_context_clear(struct kContext *C, const PyGILState_STATE *gilstate);
+extern void kpy_context_set(wabi::kContext *C, PyGILState_STATE *gilstate);
+extern void kpy_context_clear(wabi::kContext *C, const PyGILState_STATE *gilstate);
 
 void PyC_ObSpitStr(char *result, size_t result_len, PyObject *var);
 void PyC_ObSpit(const char *name, PyObject *var);
-
-WABI_NAMESPACE_END

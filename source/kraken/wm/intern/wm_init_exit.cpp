@@ -29,6 +29,7 @@
 #include "WM_operators.h"
 #include "WM_tokens.h"
 #include "WM_window.h"
+#include "WM_files.h"
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_system_paths.h"
@@ -63,6 +64,9 @@ void WM_init(kContext *C, int argc, const char **argv)
 
   WM_operators_init(C);
   WM_operators_register(C);
+
+  WM_init_manager(C);
+  WM_files_init(C);
 
   KPY_python_start(C, argc, argv);
   KPY_python_reset(C);

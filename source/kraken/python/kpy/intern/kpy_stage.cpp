@@ -58,7 +58,12 @@
 
 #define USE_POSTPONED_ANNOTATIONS
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 KPy_KrakenStage *kpy_context_module = NULL; /* for fast access */
 
@@ -1352,5 +1357,3 @@ PyMethodDef meth_kpy_owner_id_set = {
   METH_O,
   NULL,
 };
-
-WABI_NAMESPACE_END

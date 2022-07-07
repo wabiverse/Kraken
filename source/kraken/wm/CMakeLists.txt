@@ -27,6 +27,7 @@ set(SRC
   intern/wm_draw.cpp
   intern/wm_dragdrop.cpp
   intern/wm_event_system.cpp
+  intern/wm_files.cpp
   intern/wm_init_exit.cpp
   intern/wm_msgbus.cpp
   intern/wm_operators.cpp
@@ -42,6 +43,7 @@ set(SRC
   WM_draw.h
   WM_dragdrop.h
   WM_event_system.h
+  WM_files.h
   WM_init_exit.h
   WM_inline_tools.h
   WM_msgbus.h

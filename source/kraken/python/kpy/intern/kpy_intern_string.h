@@ -28,8 +28,6 @@
 
 #include "KPY_api.h"
 
-WABI_NAMESPACE_BEGIN
-
 void kpy_intern_string_init(void);
 void kpy_intern_string_exit(void);
 
@@ -49,5 +47,3 @@ extern PyObject *kpy_intern_str_properties;
 extern PyObject *kpy_intern_str_register;
 extern PyObject *kpy_intern_str_self;
 extern PyObject *kpy_intern_str_unregister;
-
-WABI_NAMESPACE_END

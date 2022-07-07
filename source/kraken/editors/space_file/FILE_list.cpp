@@ -29,7 +29,12 @@
 
 #include "USD_space_types.h"
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 const char *imb_ext_image[] = {
   ".png",  ".tga",  ".bmp", ".jpg", ".jpeg", ".sgi", ".rgb", ".rgba",
@@ -350,5 +355,3 @@ int ED_file_extension_icon(const std::string &path)
       return ICON_GRID;
   }
 }
-
-WABI_NAMESPACE_END

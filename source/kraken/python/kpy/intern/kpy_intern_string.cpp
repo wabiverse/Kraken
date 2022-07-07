@@ -33,7 +33,12 @@
 
 #include <wabi/base/tf/iterator.h>
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 static PyObject *kpy_intern_str_arr[16];
 
@@ -93,5 +98,3 @@ void kpy_intern_string_exit(void)
     Py_DECREF(kpy_intern_str_arr[i]);
   }
 }
-
-WABI_NAMESPACE_END

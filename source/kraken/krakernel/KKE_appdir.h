@@ -55,6 +55,8 @@ bool KKE_appdir_program_python_search(char *fullpath,
                                       const int version_major,
                                       const int version_minor);
 
+const char *KKE_appdir_copy_recursive(const int src_id, const int target_id) noexcept;
+
 /* Initialize path to temporary directory. */
 void KKE_tempdir_init(const char *userdir);
 

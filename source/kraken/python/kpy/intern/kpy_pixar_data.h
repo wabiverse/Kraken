@@ -35,8 +35,4 @@
 #include "USD_api.h"
 #include "USD_object.h"
 
-WABI_NAMESPACE_BEGIN
-
 int KPY_pixar_data_context_type_ready(void);
-
-WABI_NAMESPACE_END

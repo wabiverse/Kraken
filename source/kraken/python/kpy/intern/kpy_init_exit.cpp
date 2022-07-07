@@ -42,7 +42,12 @@
  *  -----  The Kraken Python Module. ----- */
 
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 
 /* ------ */
@@ -52,7 +57,7 @@ WABI_NAMESPACE_BEGIN
  *  -----  Python Init & Exit. ----- */
 
 
-void KPY_python_init(kContext *C)
+void KPY_python_init(wabi::kContext *C)
 {
   Main *kmain = CTX_data_main(C);
 
@@ -70,6 +75,3 @@ void KPY_python_exit()
 
 
 /* ------ */
-
-
-WABI_NAMESPACE_END

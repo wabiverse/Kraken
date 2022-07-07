@@ -16,27 +16,24 @@
  * Copyright 2021, Wabi.
  */
 
-#pragma once
-
 /**
  * @file
- * KRAKEN Python.
- * It Bites.
+ * Window Manager.
+ * Making GUI Fly.
  */
 
-#include "KPY_api.h"
+#pragma once
+
+#include "WM_api.h"
+
+#include "WM_msgbus.h"
+#include "WM_operators.h"
 
 #include "KKE_context.h"
-#include "KKE_main.h"
-#include "KKE_utils.h"
 
-#include "LUXO_runtime.h"
+WABI_NAMESPACE_BEGIN
 
-#include "USD_api.h"
-#include "USD_types.h"
-#include "USD_object.h"
+void WM_file_operators_register(void);
+void WM_files_init(kContext *C);
 
-void KPY_context_set(wabi::kContext *C);
-wabi::kContext *KPY_context_get(void);
-
-void KPY_context_update(wabi::kContext *C);
+WABI_NAMESPACE_END

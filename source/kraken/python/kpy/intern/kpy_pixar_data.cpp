@@ -53,7 +53,12 @@
 
 #include "wabi_python.h"
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 struct KPy_DataContext
 {
@@ -242,5 +247,3 @@ int KPY_pixar_data_context_type_ready(void)
 
   return 0;
 }
-
-WABI_NAMESPACE_END

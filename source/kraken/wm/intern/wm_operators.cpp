@@ -27,6 +27,7 @@
 #include "WM_msgbus.h"
 #include "WM_tokens.h"
 #include "WM_window.h"
+#include "WM_files.h"
 
 #include "USD_factory.h"
 #include "USD_screen.h"
@@ -111,6 +112,7 @@ void WM_operators_init(kContext *C)
 
 void WM_operators_register(kContext *C)
 {
+  WM_file_operators_register();
   WM_window_operators_register();
 }
 

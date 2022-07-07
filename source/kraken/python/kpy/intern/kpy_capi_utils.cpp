@@ -35,7 +35,12 @@
 
 #include <wabi/base/arch/hints.h>
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 /**
  * Use with PyArg_ParseTuple's "O&" formatting. */
@@ -550,7 +555,7 @@ bool PyC_IsInterpreterActive(void)
 
 /** \} */
 
-bool KPy_errors_to_report_ex(ReportList *reports,
+bool KPy_errors_to_report_ex(wabi::ReportList *reports,
                              const char *error_prefix,
                              const bool use_full,
                              const bool use_location)
@@ -616,7 +621,7 @@ bool KPy_errors_to_report_ex(ReportList *reports,
   return 1;
 }
 
-short KPy_reports_to_error(ReportList *reports, PyObject *exception, const bool clear)
+short KPy_reports_to_error(wabi::ReportList *reports, PyObject *exception, const bool clear)
 {
   char *report_str = nullptr;
 
@@ -634,12 +639,12 @@ short KPy_reports_to_error(ReportList *reports, PyObject *exception, const bool 
   return (report_str == NULL) ? 0 : -1;
 }
 
-bool KPy_errors_to_report(ReportList *reports)
+bool KPy_errors_to_report(wabi::ReportList *reports)
 {
   return KPy_errors_to_report_ex(reports, NULL, true, true);
 }
 
-void KPy_reports_write_stdout(const ReportList *reports, const char *header)
+void KPy_reports_write_stdout(const wabi::ReportList *reports, const char *header)
 {
   if (header) {
     PySys_WriteStdout("%s\n", header);
@@ -649,5 +654,3 @@ void KPy_reports_write_stdout(const ReportList *reports, const char *header)
     PySys_WriteStdout("%s: %s\n", report->typestr, report->message);
   }
 }
-
-WABI_NAMESPACE_END

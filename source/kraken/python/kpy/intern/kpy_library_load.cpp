@@ -49,13 +49,19 @@
 #include <wabi/usd/usd/primRange.h>
 #include <wabi/usd/usd/stage.h>
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 #define INDEX_ID_MAX 41
 
 struct KPy_Library
 {
-  PyObject_HEAD /* Required Python macro. */
+  /* Required Python macro. */
+  PyObject_HEAD
 
     char relpath[FILE_MAX];
   char abspath[FILE_MAX];
@@ -327,5 +333,3 @@ int KPY_library_load_type_ready(void)
   }
   return 0;
 }
-
-WABI_NAMESPACE_END

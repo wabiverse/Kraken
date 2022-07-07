@@ -59,10 +59,10 @@ import kpy as _kpy
 import os as _os
 import sys as _sys
 
+import addon_utils as _addon_utils
+
 # Generate schemas from _kpy
 import kr_gen_schema as _kr_gen_schema
-
-import addon_utils as _addon_utils
 
 # _preferences = _kpy.context.preferences
 _script_module_dirs = "startup", "modules"
@@ -175,13 +175,6 @@ def modules_from_path(path, loaded_modules):
             modules.append(mod)
 
     return modules
-
-
-def generate_schema(*, generate=False):
-    """
-    Loads in the pixar USD gen schema script.
-    """
-    _kr_gen_schema.Generate()
 
 
 _global_loaded_modules = []  # store loaded module names for reloading.
@@ -327,7 +320,6 @@ def load_scripts(*, reload_scripts=False, refresh_scripts=False):
     if use_time:
         print("Python Script Load Time %.4f" % (time.time() - t_main))
 
-    # Enable when app is adding back to _kpy.
     if use_class_register_check:
         for cls in _kpy.types.kpy_struct.__subclasses__():
             if getattr(cls, "is_registered", False):
@@ -846,17 +838,25 @@ def register_submodule_factory(module_name, submodule_names):
 #         yield prefix, url_manual_mapping
 
 
+def gen_schemas():
+    # Run UsdGenSchema on USD.
+    usdsrc = user_resource('DATAFILES', path='maelstrom/usd/resources/usd/schema.usda')
+    usdgen = user_resource('DATAFILES', path='maelstrom/usd/resources/codegen')
+    usdtmp = user_resource('DATAFILES', path='maelstrom/usd/resources/codegenTemplates')
+    _kr_gen_schema.Generate(schemaPath=usdsrc, codeGenPath=usdgen, templatePath=usdtmp)
+
+
 def make_resolver_paths(struct_name, prop_name, enum_name):
     """
     Create Pixar Resolver Paths from given names.
 
-    :arg struct_name: Name of a UNI struct (like e.g. "Scene").
+    :arg struct_name: Name of a PRIM (like e.g. "Scene").
     :type struct_name: string
-    :arg prop_name: Name of a UNI struct's property.
+    :arg prop_name: Name of a PRIM's property.
     :type prop_name: string
-    :arg enum_name: Name of a UNI enum identifier.
+    :arg enum_name: Name of a PRIM enum identifier.
     :type enum_name: string
-    :return: A triple of three "UNI paths"
+    :return: A triple of three "PRIM paths"
        (most_complete_path, "struct.prop", "struct.prop:'enum'").
        If no enum_name is given, the third element will always be void.
     :rtype: tuple of strings

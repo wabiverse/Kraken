@@ -36,7 +36,11 @@ struct KRAKEN_OPERATOR_TOKENS_TYPE
 {
   KRAKEN_OPERATOR_TOKENS_TYPE();
 
+  /* ----------------------------------- files ops ----- */
+  KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_files_create_appdata);
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_open_mainfile);
+
+  /* --------------------------------- windows ops ----- */
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_window_close);
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_window_new);
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_window_new_main);

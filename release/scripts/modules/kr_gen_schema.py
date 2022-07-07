@@ -42,24 +42,25 @@ __all__ = (
   "Generate"
 )
 
+from _kpy import (
+    Plug,
+    Sdf,
+    Usd,
+    Vt,
+    Tf,
+    Ar,
+)
+
 import kpy as _kpy
 import os as _os
 import sys as _sys
 
-import re, inspect
+import re
 import keyword
-from argparse import ArgumentParser
 from collections import namedtuple
 
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound, TemplateSyntaxError
-
-# Pixar modules for UsdGenSchema.
-Plug = _kpy.Plug
-Sdf  = _kpy.Sdf
-Usd  = _kpy.Usd
-Vt   = _kpy.Vt
-Tf   = _kpy.Tf
 
 # Need to set the environment variable for disabling the schema registry's 
 # loading of schema type prim definitions before importing any pxr libraries,
@@ -329,9 +330,7 @@ class PropInfo(object):
             # "_MultipleApplyTemplate_". This is so we don't end up with an
             # the implementation detail of "__INSTANCE_NAME__" in the identifier
             # itself.
-            self.name = _CamelCase(
-                Usd.SchemaRegistry.MakeMultipleApplyNameInstance(
-                    self.rawName, "_MultipleApplyTemplate_"))
+            self.name = _CamelCase(Usd.SchemaRegistry.MakeMultipleApplyNameInstance(self.rawName, "_MultipleApplyTemplate_"))
         else:
             self.rawName = sdfProp.name
             # For property names, camelCase all tokens irrespective of
@@ -739,7 +738,7 @@ def _MakeMultipleApplySchemaNameTemplate(apiSchemaName):
 
 def ParseUsd(usdFilePath):
     sdfLayer = Sdf.Layer.FindOrOpen(usdFilePath)
-    stage = Usd.Stage.Open(sdfLayer)
+    stage = Usd.Stage.Open(Sdf.Path("/"))
     classes = []
 
     hasInvalidFields = False
@@ -1442,6 +1441,7 @@ def GenerateRegistry(codeGenPath, filePath, classes, validate, env):
     # the schema registry.  Also remove any definitions we included from
     # lower-level schema modules.  We hop back up to the UsdStage API to do
     # so because it is more convenient for these kinds of operations.
+    print(flatLayer)
     flatStage = Usd.Stage.Open(flatLayer)
     pathsToDelete = []
     primsToKeep = {cls.usdPrimTypeName : cls for cls in classes}
@@ -1531,10 +1531,6 @@ def GenerateRegistry(codeGenPath, filePath, classes, validate, env):
 def InitializeResolver():
     """Initialize the resolver so that search paths pointing to schema.usda
     files are resolved to the directories where those files are installed"""
-    
-    Ar = _kpy.Ar
-    Plug = _kpy.Plug
-
     # Force the use of the ArDefaultResolver so we can take advantage
     # of its search path functionality.
     Ar.SetPreferredResolver('ArDefaultResolver')
@@ -1552,107 +1548,29 @@ def InitializeResolver():
     # across runs.
     Ar.DefaultResolver.SetDefaultSearchPath(sorted(list(resourcePaths)))
 
-def Generate():
-    #
-    # Parse Command-line
-    #
-    parser = ArgumentParser(description='Generate C++ schema class code from a '
-        'USD file.')
-    parser.add_argument('schemaPath',
-        nargs='?',
-        type=str,
-        default='./schema.usda',
-        help='The source USD file where schema classes are defined. '
-        '[Default: %(default)s]')
-    parser.add_argument('codeGenPath',
-        nargs='?',
-        type=str,
-        default='.',
-        help='The target directory where the code should be generated. '
-        '[Default: %(default)s]')
-    parser.add_argument('-v', '--validate',
-        action='store_true',
-        help='Verify that the source files are unchanged.')
-    parser.add_argument('-q', '--quiet',
-        action='store_true',
-        help='Do not output text during execution.')
-    parser.add_argument('-n', '--namespace',
-        nargs='+',
-        type=str,
-        help='Wrap code in this specified namespace. Multiple arguments '
-             'will be interpreted as a nested namespace. The leftmost '
-             'argument will be treated as the outermost namespace, with '
-             'the rightmost argument as the innermost.')
+def Generate(*, schemaPath=None, codeGenPath=None, templatePath=None):
+    validate = False
 
-    defaultTemplateDir = _os.path.join(
-        _os.path.dirname(
-            _os.path.abspath(inspect.getfile(inspect.currentframe()))),
-        'codegenTemplates')
+    schemaPath = _os.path.abspath(schemaPath)
+    codeGenPath = _os.path.abspath(codeGenPath)
+    templatePath = _os.path.abspath(templatePath)
+    namespaceOpen  = 'WABI_NAMESPACE_BEGIN'
+    namespaceClose = 'WABI_NAMESPACE_END'
+    namespaceUsing = 'WABI_NAMESPACE_USING'
 
-    instTemplateDir = _os.path.join(
-        _os.path.abspath(Plug.Registry().GetPluginWithName('usd').resourcePath),
-        'codegenTemplates')
-
-    parser.add_argument('-t', '--templates',
-        dest='templatePath',
-        type=str,
-        help=('Directory containing schema class templates. '
-              '[Default: first directory that exists from this list: {0}]'
-              .format(_os.pathsep.join([defaultTemplateDir, instTemplateDir]))))
-
-    parser.add_argument('-hts', '--headerTerminatorString',
-        dest='headerTerminatorString',
-        type=str,
-        default='#endif',
-        help=('The string used to terminate generated C++ header files, '
-              'after the custom code section. '
-              '[Default: %(default)s]'))
-
-    args = parser.parse_args()
-    codeGenPath = _os.path.abspath(args.codeGenPath)
-    schemaPath = _os.path.abspath(args.schemaPath)
-
-    if args.templatePath:
-        templatePath = _os.path.abspath(args.templatePath)
-    else:
-        if _os.path.isdir(defaultTemplateDir):
-            templatePath = defaultTemplateDir
-        else:
-            templatePath = instTemplateDir
-
-    if args.namespace:
-        namespaceOpen  = ' '.join('namespace %s {' % n for n in args.namespace)
-        namespaceClose = '}'*len(args.namespace)
-        namespaceUsing = ('using namespace ' 
-                          + '::'.join(n for n in args.namespace) + ';')
-    else:
-        namespaceOpen  = 'WABI_NAMESPACE_BEGIN'
-        namespaceClose = 'WABI_NAMESPACE_END'
-        namespaceUsing = 'WABI_NAMESPACE_USING'
-
-    Print.SetQuiet(args.quiet)
-
-    #
     # Error Checking
-    #
     if not _os.path.isfile(schemaPath):
-        Print.Err('Usage Error: First positional argument must be a USD schema file.')
-        parser.print_help()
+        Print.Err('Usage Error: Schema Path must be a valid USD schema file.')
         _sys.exit(1)
-    if args.templatePath and not _os.path.isdir(templatePath):
-        Print.Err('Usage Error: templatePath argument must be the path to the codegenTemplates.')
-        parser.print_help()
+    if not _os.path.isdir(templatePath):
+        Print.Err('Usage Error: Template Path must be a directory to the codegenTemplates.')
         _sys.exit(1)
 
     try:
-        #
         # Initialize the asset resolver to resolve search paths
-        #
         InitializeResolver()
-        
-        #
+
         # Gather Schema Class information
-        #
         libName, \
         libPath, \
         libPrefix, \
@@ -1662,15 +1580,13 @@ def Generate():
         skipCodeGen, \
         classes = ParseUsd(schemaPath)
         
-        if args.validate:
+        if validate:
             Print('Validation on, any diffs found will cause failure.')
 
         Print('Processing schema classes:')
         Print(', '.join(map(lambda self: self.usdPrimTypeName, classes)))
 
-        #
         # Generate Code from Templates
-        #
         if not _os.path.isdir(codeGenPath):
             _os.makedirs(codeGenPath)
 
@@ -1694,14 +1610,14 @@ def Generate():
             # Gathered tokens are only used for code-full schemas.
             tokenData = GatherTokens(classes, libName, libTokens)
             GenerateCode(templatePath, codeGenPath, tokenData, classes, 
-                         args.validate,
+                         validate,
                          namespaceOpen, namespaceClose, namespaceUsing,
-                         useExportAPI, j2_env, args.headerTerminatorString)
+                         useExportAPI, j2_env, "#endif")
         # We always generate plugInfo and generateSchema.
-        GeneratePlugInfo(templatePath, codeGenPath, classes, args.validate,
+        GeneratePlugInfo(templatePath, codeGenPath, classes, validate,
                          j2_env, skipCodeGen)
         GenerateRegistry(codeGenPath, schemaPath, classes, 
-                         args.validate, j2_env)
+                         validate, j2_env)
     
     except Exception as e:
         Print.Err("ERROR:", str(e))

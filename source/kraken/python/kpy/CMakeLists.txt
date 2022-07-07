@@ -102,6 +102,10 @@ set(LIB
   ${PTHREADS_LIBRARY}
 )
 
+if(WITH_BUILDINFO)
+  add_definitions(-DBUILD_DATE)
+endif()
+
 # configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${KPY_INSTALL_PATH}/__init__.py)
 
 add_definitions(-DKRAKEN_PYTHON_EXPORTS)

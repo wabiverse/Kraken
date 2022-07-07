@@ -176,12 +176,12 @@ def main():
         "kpy.types": types,
     })
 
-    # Initializes all USD Schematics.
-    utils.generate_schema(generate=True)
-
     # Initializes Python classes.
     # (good place to run a profiler or trace).
     utils.load_scripts()
+
+    # Generate all Pixar USD Schemas.
+    utils.gen_schemas()
 
 
 main()

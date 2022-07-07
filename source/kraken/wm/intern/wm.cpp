@@ -78,15 +78,21 @@ void WM_main(kContext *C)
 }
 
 
-void wm_add_default(Main *kmain, kContext *C)
+void WM_init_manager(kContext *C)
 {
   wmWindowManager *wm = new wmWindowManager();
+  CTX_wm_manager_set(C, wm);
+}
+
+
+void wm_add_default(Main *kmain, kContext *C)
+{
   wmWindow *win;
+  wmWindowManager *wm = CTX_wm_manager(C);
   kScreen *screen = CTX_wm_screen(C);
   WorkSpace *workspace;
   WorkSpaceLayout *layout = KKE_workspace_layout_find_global(kmain, screen, &workspace);
 
-  CTX_wm_manager_set(C, wm);
   win = wm_window_new(C, wm, NULL, false);
   win->scene = CTX_data_scene(C);
 

@@ -23,6 +23,7 @@
  */
 
 #include "KKE_appdir.h"
+#include "KKE_context.h"
 
 #include "KPY_api.h"
 #include "KPY_extern_run.h"
@@ -34,13 +35,18 @@
 #include "kpy_path.h"
 #include "kpy_stage.h"
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 /**
  * @param mode: Passed to #PyRun_String, matches Python's
  * `compile` functions mode argument. #Py_eval_input for
  * `eval`, #Py_file_input for `exec`. */
-static bool kpy_run_string_impl(kContext *C,
+static bool kpy_run_string_impl(wabi::kContext *C,
                                 const char *imports[],
                                 const char *expr,
                                 const int mode)
@@ -84,16 +90,14 @@ static bool kpy_run_string_impl(kContext *C,
 
 /**
  * Run an expression, matches: `exec(compile(..., "eval"))` */
-bool KPY_run_string_eval(kContext *C, const char *imports[], const char *expr)
+bool KPY_run_string_eval(wabi::kContext *C, const char *imports[], const char *expr)
 {
   return kpy_run_string_impl(C, imports, expr, Py_eval_input);
 }
 
 /**
  * Run an entire script, matches: `exec(compile(..., "exec"))` */
-bool KPY_run_string_exec(kContext *C, const char *imports[], const char *expr)
+bool KPY_run_string_exec(wabi::kContext *C, const char *imports[], const char *expr)
 {
   return kpy_run_string_impl(C, imports, expr, Py_file_input);
 }
-
-WABI_NAMESPACE_END

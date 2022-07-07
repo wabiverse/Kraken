@@ -27,8 +27,7 @@
 #include <Python.h>
 
 #include "KPY_api.h"
-
-WABI_NAMESPACE_BEGIN
+#include "KKE_context.h"
 
 typedef enum eSDFPathForeachFlag
 {
@@ -43,11 +42,9 @@ typedef enum eSDFPathForeachFlag
 
 struct kContext;
 
-void KPy_init_modules(struct kContext *C);
+void KPy_init_modules(struct wabi::kContext *C);
 extern PyObject *kpy_package_py;
 
 /* kpy_interface_atexit.cpp */
 void KPY_atexit_register(void);
 void KPY_atexit_unregister(void);
-
-WABI_NAMESPACE_END

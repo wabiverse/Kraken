@@ -53,7 +53,12 @@
 
 #include "wabi_python.h"
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 PyObject *kpy_package_py = nullptr;
 
@@ -397,7 +402,7 @@ static PyObject *kpy_import_test(const char *modname)
 /******************************************************************************
  * Description: Creates the kpy module and adds it to sys.modules for importing
  ******************************************************************************/
-void KPy_init_modules(struct kContext *C)
+void KPy_init_modules(struct wabi::kContext *C)
 {
   KrakenPRIM ctx_ptr;
   PyObject *mod;
@@ -524,5 +529,3 @@ void KPy_init_modules(struct kContext *C)
   /* add our own modules dir, this is a python package */
   kpy_package_py = kpy_import_test("kpy");
 }
-
-WABI_NAMESPACE_END

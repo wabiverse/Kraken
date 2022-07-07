@@ -28,26 +28,18 @@
 
 #include "KKE_robinhood.h"
 #include "KKE_main.h"
+#include "KKE_context.h"
 
 /**
  *  -----  The Kraken Python Module. ----- */
-
-
-WABI_NAMESPACE_BEGIN
-
-
-/* ------ */
 
 
 /**
  *  -----  Python Init & Exit. ----- */
 
 
-void KPY_python_init(kContext *C);
+void KPY_python_init(wabi::kContext *C);
 void KPY_python_exit(void);
 
 
 /* ------ */
-
-
-WABI_NAMESPACE_END

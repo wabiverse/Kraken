@@ -384,6 +384,7 @@ void Tf_PyEnumAddAttribute(boost::python::scope &s,
 /// \endcode
 ///
 
+
 // Detect scoped enums by using that the C++ standard does not allow them to
 // be converted to int implicitly.
 template<typename T, bool IsScopedEnum = !std::is_convertible<T, int>::value> struct TfPyWrapEnum

@@ -28,11 +28,7 @@
 
 #include "KPY_api.h"
 
-WABI_NAMESPACE_BEGIN
-
 int KPY_library_load_type_ready(void);
 extern PyMethodDef KPY_library_load_method_def;
 
 // extern PyMethodDef KPY_library_write_method_def;
-
-WABI_NAMESPACE_END

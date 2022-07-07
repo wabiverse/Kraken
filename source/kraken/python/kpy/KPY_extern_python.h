@@ -25,13 +25,10 @@
  */
 
 #include "KPY_api.h"
+#include "KKE_context.h"
 
 /* For 'FILE'. */
 #include <stdio.h>
-
-WABI_NAMESPACE_BEGIN
-
-struct kContext;
 
 /**
  * Functionality relating to Python setup & teardown. */
@@ -39,13 +36,11 @@ struct kContext;
 void KPY_modules_update(void);
 
 /* wpy_interface.cpp */
-void KPY_python_start(struct kContext *C, int argc, const char **argv);
+void KPY_python_start(wabi::kContext *C, int argc, const char **argv);
 void KPY_python_end(void);
 
-void KPY_python_reset(struct kContext *C);
+void KPY_python_reset(wabi::kContext *C);
 
-int KPY_context_member_get(struct kContext *C,
+int KPY_context_member_get(wabi::kContext *C,
                            const char *member,
-                           struct kContextDataResult *result);
-
-WABI_NAMESPACE_END
+                           wabi::kContextDataResult *result);

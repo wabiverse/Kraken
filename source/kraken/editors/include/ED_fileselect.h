@@ -28,8 +28,4 @@
 
 #include <string>
 
-WABI_NAMESPACE_BEGIN
-
 int ED_file_extension_icon(const std::string &path);
-
-WABI_NAMESPACE_END

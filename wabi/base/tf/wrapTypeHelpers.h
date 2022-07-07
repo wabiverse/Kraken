@@ -85,14 +85,15 @@ struct TfTypePythonClass : public TfType_WrapHelpers::_PythonClass
 /// recursively defines TfTypes for all the Python bases if necessary.
 TF_API TfType TfType_DefinePythonTypeAndBases(const boost::python::object &classObj);
 
-/** 
+/**
  * @brief Checks if we already registered a Python converter for a type.
- * In order to avoid duplicated converters, this should be used before 
+ * In order to avoid duplicated converters, this should be used before
  * attempting to register a converter for any general type that might
  * be used in more than one Python wrapper. - furby™ */
-template <typename PyType> struct TfPyRegistry
+template<class PyType, class Enable = void> struct TfPyRegistry
 {
-  static bool IsTypeRegistered() {
+  static bool IsTypeRegistered()
+  {
     auto info = boost::python::type_id<PyType>();
     const auto *reg = boost::python::converter::registry::query(info);
     return reg != nullptr && reg->m_to_python != nullptr;

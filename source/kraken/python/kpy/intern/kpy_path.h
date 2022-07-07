@@ -28,8 +28,4 @@
 
 #include "KPY_api.h"
 
-WABI_NAMESPACE_BEGIN
-
 PyObject *KPyInit__kpy_path(void);
-
-WABI_NAMESPACE_END

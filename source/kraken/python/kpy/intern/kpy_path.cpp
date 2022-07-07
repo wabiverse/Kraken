@@ -29,7 +29,12 @@
 #include "kpy_capi_utils.h"
 #include "kpy_path.h"
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 extern const char *imb_ext_image[];
 extern const char *imb_ext_movie[];
@@ -60,5 +65,3 @@ PyObject *KPyInit__kpy_path(void)
 
   return submodule;
 }
-
-WABI_NAMESPACE_END

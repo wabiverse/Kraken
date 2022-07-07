@@ -112,7 +112,7 @@ static std::string kraken_get_version_decimal()
 
 const char *KKE_kraken_version_string(void)
 {
-  return CHARALL(kraken_version_string);
+  return kraken_version_string;
 }
 
 Main *KKE_main_new(void)

@@ -31,12 +31,17 @@
 
 #include "WM_api.h"
 
-WABI_NAMESPACE_BEGIN
+#include <boost/python.hpp>
+#include <boost/python/overloads.hpp>
+
+using namespace boost::python;
+
+WABI_NAMESPACE_USING
 
 static PyObject *kpy_atexit(PyObject *UNUSED(self), PyObject *UNUSED(args), PyObject *UNUSED(kw))
 {
   /* close down enough of blender at least not to crash */
-  struct kContext *C = KPY_context_get();
+  struct wabi::kContext *C = KPY_context_get();
 
   //   WM_exit_ex(C, false);
 
@@ -89,5 +94,3 @@ void KPY_atexit_unregister(void)
   atexit_func_call("unregister", func_kpy_atregister);
   func_kpy_atregister = NULL; /* don't really need to set but just in case */
 }
-
-WABI_NAMESPACE_END
