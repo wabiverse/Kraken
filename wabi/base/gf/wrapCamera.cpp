@@ -104,10 +104,6 @@ void wrapCamera()
 {
   typedef GfCamera This;
 
-  if (TfPyRegistry<GfCamera>::IsTypeRegistered()) {
-    return;
-  }
-
   class_<This> c("Camera");
 
   scope s(c);

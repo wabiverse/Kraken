@@ -94,11 +94,9 @@ void wrapMapFunction()
 {
   typedef PcpMapFunction This;
 
-  if (!TfPyRegistry<PcpMapFunction>::IsTypeRegistered()) {
-    TfPyContainerConversions::from_python_sequence<
-      std::vector<PcpMapFunction>,
-      TfPyContainerConversions::variable_capacity_policy>();
-  }
+  TfPyContainerConversions::from_python_sequence<
+    std::vector<PcpMapFunction>,
+    TfPyContainerConversions::variable_capacity_policy>();
 
   class_<This>("MapFunction")
     .def(init<const This &>())

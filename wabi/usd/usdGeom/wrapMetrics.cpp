@@ -49,10 +49,6 @@ void wrapMetrics()
       UsdGeomLinearUnitsAre,
       (arg("authoredUnits"), arg("standardUnits"), arg("epsilon") = 1e-5));
 
-  if (TfPyRegistry<UsdGeomLinearUnits>::IsTypeRegistered()) {
-    return;
-  }
-
   boost::python::class_<UsdGeomLinearUnits> cls("LinearUnits", boost::python::no_init);
   cls.def_readonly("nanometers", UsdGeomLinearUnits::nanometers)
     .def_readonly("micrometers", UsdGeomLinearUnits::micrometers)
