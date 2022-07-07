@@ -922,13 +922,11 @@ def _WriteFile(filePath, content, validate):
                                 content.split('\n'))))
             Print.Err('Error: validation failed, diffs found. '
                       'Please rerun %s.' % PROGRAM_NAME)
-            _sys.exit(1)
     else:
         if validate:
             Print.Err('Error: validation failed, file %s does not exist. '
                       'Please rerun %s.' % 
                       (_os.path.basename(filePath), PROGRAM_NAME))
-            _sys.exit(1)
 
     # Otherwise attempt to write to file.
     try:
@@ -1561,10 +1559,8 @@ def Generate(*, schemaPath=None, codeGenPath=None, templatePath=None):
     # Error Checking
     if not _os.path.isfile(schemaPath):
         Print.Err('Usage Error: Schema Path must be a valid USD schema file.')
-        _sys.exit(1)
     if not _os.path.isdir(templatePath):
         Print.Err('Usage Error: Template Path must be a directory to the codegenTemplates.')
-        _sys.exit(1)
 
     try:
         # Initialize the asset resolver to resolve search paths
@@ -1621,4 +1617,3 @@ def Generate(*, schemaPath=None, codeGenPath=None, templatePath=None):
     
     except Exception as e:
         Print.Err("ERROR:", str(e))
-        _sys.exit(1)
