@@ -738,7 +738,7 @@ def _MakeMultipleApplySchemaNameTemplate(apiSchemaName):
 
 def ParseUsd(usdFilePath):
     sdfLayer = Sdf.Layer.FindOrOpen(usdFilePath)
-    stage = Usd.Stage.Open(Sdf.Path("/"))
+    stage = Usd.Stage.Open(sdfLayer)
     classes = []
 
     hasInvalidFields = False
