@@ -37,7 +37,7 @@
 
 #include "wabi/usd/usd/pyConversions.h"
 {% if cls.isAppliedAPISchema %}
-#include "pxr/base/tf/pyAnnotatedBoolResult.h"
+#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 {% endif %}
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
