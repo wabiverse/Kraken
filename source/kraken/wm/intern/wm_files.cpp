@@ -87,19 +87,17 @@ void WM_file_operators_register(void)
 
 void WM_files_init(kContext *C)
 {
-  /* --- Probably temporary, just create sys appdirs for now. --- */
+  /* --- Probably temporary, just create user appdirs for now. --- */
 
   fs::path target = KKE_appdir_folder_id(KRAKEN_USER_DATAFILES, NULL);
 
-  if (!fs::exists(target)) {
-    KrakenPRIM props_ptr;
-    wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_files_create_appdata));
+  KrakenPRIM props_ptr;
+  wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_files_create_appdata));
 
-    WM_operator_properties_create_ptr(&props_ptr, ot);
+  WM_operator_properties_create_ptr(&props_ptr, ot);
 
-    WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
-    WM_operator_properties_free(&props_ptr);
-  }
+  WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
+  WM_operator_properties_free(&props_ptr);
 
   /* --- */
 }
