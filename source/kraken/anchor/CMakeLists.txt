@@ -26,8 +26,10 @@ endif()
 
 if (APPLE)
   list(APPEND SRC_PLATFORM_BACKENDS
+    backend/backend_apple.swift
     intern/system_paths.mm
     backend/backend_cocoa.mm
+    backend/Anchor.h
     backend/ANCHOR_BACKEND_cocoa.h
   )
 endif()

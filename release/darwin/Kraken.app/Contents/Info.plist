@@ -10,6 +10,9 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>usd</string>
+        <string>usda</string>
+        <string>usdc</string>
+        <string>usdz</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>Kraken_Legacy_Document_Icon.icns</string>
@@ -78,6 +81,9 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>usd</string>
+          <string>usda</string>
+          <string>usdc</string>
+          <string>usdz</string>
 				</array>
 			</dict>
 		</dict>

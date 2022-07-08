@@ -28,17 +28,6 @@
 #
 #  Modifications copyright (C) 2020-2021 Wabi.
 #
-if(APPLE)
-    set(OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for OSX")
-    set(CMAKE_MACOSX_RPATH ON)
-    set(CMAKE_SKIP_BUILD_RPATH FALSE)
-    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/bin")
-    set(TARGETDIR_VER ${CMAKE_INSTALL_PREFIX}/Kraken.app/Contents/Resources/${KRAKEN_VERSION})
-    set(CMAKE_DYLIB_INSTALL_NAME_DIR "${TARGETDIR_VER}/lib" CACHE STRING "install_name path for dylib.")
-    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${TARGETDIR_VER}/lib" isSystemDir)
-endif()
-
 # Allow local includes from source directory.
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -48,6 +37,17 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Default build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if(APPLE)
+  set(OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for OSX")
+  set(CMAKE_MACOSX_RPATH ON)
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/bin")
+  set(TARGETDIR_VER ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app/Contents/Resources/${KRAKEN_VERSION})
+  set(CMAKE_DYLIB_INSTALL_NAME_DIR "${TARGETDIR_VER}/lib" CACHE STRING "install_name path for dylib.")
+  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${TARGETDIR_VER}/lib" isSystemDir)
 endif()
 
 # if (WABI_BUILD_TESTS)

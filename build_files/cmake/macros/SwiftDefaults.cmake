@@ -1,0 +1,1 @@
+set(CMAKE_Swift_LANGUAGE_VERSION 5.0)

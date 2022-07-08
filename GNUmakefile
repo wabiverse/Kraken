@@ -159,19 +159,19 @@ endif
 
 ifneq "$(findstring ninja, $(MAKECMDGOALS))" ""
 	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Ninja
-	BUILD_COMMAND:=ninja
-	DEPS_BUILD_COMMAND:=ninja
+	BUILD_COMMAND:=ninja -C "$(BUILD_DIR)"
+	DEPS_BUILD_COMMAND:=ninja -C "$(BUILD_DIR)"
 else
 	ifneq ("$(wildcard $(BUILD_DIR)/build.ninja)","")
-		BUILD_COMMAND:=ninja
+		BUILD_COMMAND:=ninja -C "$(BUILD_DIR)"
 	else
-		BUILD_COMMAND:=make -s
+		BUILD_COMMAND:=make -s -C "$(BUILD_DIR)"
 	endif
 
 	ifneq ("$(wildcard $(DEPS_BUILD_DIR)/build.ninja)","")
-		DEPS_BUILD_COMMAND:=ninja
+		DEPS_BUILD_COMMAND:=ninja -C "$(BUILD_DIR)"
 	else
-		DEPS_BUILD_COMMAND:=make -s
+		DEPS_BUILD_COMMAND:=make -s -C "$(BUILD_DIR)"
 	endif
 endif
 ifneq "$(findstring xcode, $(MAKECMDGOALS))" ""
@@ -186,6 +186,9 @@ endif
 # Allow passing in own KRAKEN_BIN so developers who don't
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
+	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
+	BUILD_COMMAND:=xcodebuild -arch "arm64" -sdk "macosx" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" | xcpretty
+	DEPS_BUILD_COMMAND:=xcodebuild
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	CLEAN_BUILD_COMMAND:=$(BUILD_COMMAND) -C "$(BUILD_DIR)_release" clean
 else
@@ -247,7 +250,7 @@ all: .FORCE
 
 	@echo
 	@echo Building Kraken and Pixar USD...
-	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
+	$(BUILD_COMMAND)
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
 	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"

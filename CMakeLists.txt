@@ -21,7 +21,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Required Initial Setup
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.4)
 
 if(NOT EXECUTABLE_OUTPUT_PATH)
   set(FIRST_RUN TRUE)
@@ -89,6 +89,10 @@ include(macros)
 kraken_project_hack_pre()
 
 project(Kraken)
+
+if (APPLE)
+  enable_language(Swift)
+endif()
 
 kraken_project_hack_post()
 
@@ -272,6 +276,10 @@ include(ProjectDefaults)
 include(Packages)
 
 set(WABI_PYTHON_SHEBANG "${PYTHON_EXECUTABLE}" CACHE STRING "Replacement path for Python #! line.")
+
+if(APPLE)
+  include(SwiftDefaults)
+endif()
 
 include(CXXDefaults)
 

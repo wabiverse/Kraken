@@ -301,7 +301,13 @@ if(WITH_PYTHON_MODULE)
 else()
   if (NOT APPLE)
     add_executable(kraken ${EXETYPE} ${SRC})
-  else()  
+  else()
+    set(MACOSX_BUNDLE_ICON_FILE Kraken.icns)
+    file(GLOB_RECURSE rfiles ${CMAKE_SOURCE_DIR}/release/darwin/Kraken.app/Contents/Resources/*)
+    foreach(rfile ${rfiles})
+      set_source_files_properties(${rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+      list(APPEND ${SRC} rfile)
+    endforeach()
     add_executable(kraken MACOSX_BUNDLE ${EXETYPE} ${SRC})
   endif()
   add_dependencies(kraken maelstrom)
@@ -364,7 +370,7 @@ elseif(WIN32)
   set(TARGETDIR_VER ${KRAKEN_VERSION})
 
 elseif(APPLE)
-  set(TARGETDIR_VER Kraken.app/Contents/Resources/${KRAKEN_VERSION})
+  set(TARGETDIR_VER ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app/Contents/Resources/${KRAKEN_VERSION})
   # Skip relinking on cpack / install
   set_target_properties(kraken PROPERTIES BUILD_WITH_INSTALL_RPATH true)
   set_target_properties(kraken PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${TARGETDIR_VER}/lib")
@@ -1159,32 +1165,28 @@ elseif(APPLE)
   # Give the bundle actual creation/modification date
   #
   # Note that the directory might not yet exist, which happens when CMake is first run.
-  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
-    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
+  if(NOT EXISTS ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app)
+    file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app)
   endif()
   execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
-                  ${EXECUTABLE_OUTPUT_PATH}/Kraken.app)
-
-  foreach(_rfile ${OSX_APP_SOURCEDIR}/Contents/Resources)
-    set_source_files_properties(${_rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-  endforeach()
+                  ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app)
 
   # install release and app files
-  set(KRAKEN_TEXT_FILES_DESTINATION Kraken.app/Contents/Resources/text)
+  set(KRAKEN_TEXT_FILES_DESTINATION ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app/Contents/Resources/text)
 
-  install(
-    FILES ${OSX_APP_SOURCEDIR}/Contents/Info.plist
-    DESTINATION Kraken.app/Contents
-  )
+  # install(
+  #   FILES ${OSX_APP_SOURCEDIR}/Contents/Info.plist
+  #   DESTINATION Kraken.app/Contents
+  # )
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION Kraken.app/Contents
+    DESTINATION ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app/Contents
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    Kraken.app/Contents/
+    ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/Kraken.app/Contents/
   )
 
   # python
