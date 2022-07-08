@@ -62,7 +62,7 @@ jobs:
       run: brew install embree
 
     - name: Build
-      run: zsh && pwsh && cd ${{github.workspace}} && make release
+      run: zsh && source ~/.zshrc && pwsh && cd ${{github.workspace}} && make release
       
     - name: Package
       run: cd ${{github.workspace}}/../build_darwin_release && cpack -G DragNDrop
