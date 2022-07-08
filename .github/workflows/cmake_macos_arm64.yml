@@ -63,15 +63,9 @@ jobs:
 
     - name: Build
       run: zsh && source ~/.zshrc && pwsh && cd ${{github.workspace}} && make release
-      
+
     - name: Package
-      run: cd ${{github.workspace}}/../build_darwin_release && cpack -G DragNDrop
-
-    - name: Add Binary
-      run: cd ${{github.workspace}}/../build_darwin_release && krakendmgdir=$(find _CPack_Packages -path '*/Darwin/DragNDrop/*-arm64') && rm -r $krakendmgdir/include && rm -r $krakendmgdir/cmake && rm $krakendmgdir/Applications && rm -r $krakendmgdir/Kraken.app/* && cp -R ${{github.workspace}}/../build_darwin_release/bin/Release/Kraken.app/Contents $krakendmgdir/Kraken.app/
-
-    - name: Finalize Package
-      run: cd ${{github.workspace}}/../build_darwin_release && krakendmg=$(find . -maxdepth 1 -name '*.dmg') && rm $krakendmg && krakendmgdir=$(find _CPack_Packages -path '*/Darwin/DragNDrop/*-arm64') && create-dmg --app-drop-link 600 250 --volname "Kraken Installer" --volicon "${{github.workspace}}/release/darwin/KrakenInstaller.icns" --window-pos 400 220 --icon "Kraken.app" 140 250 --background ${{github.workspace}}/release/darwin/background.png --window-size 784 520 kraken-1.50a-macos-arm64.dmg $krakendmgdir
+      run: cd ${{github.workspace}}/../build_darwin_release && rm -r ${{github.workspace}}/../build_darwin_release/bin/Release/Kraken.swiftmodule && create-dmg --app-drop-link 600 250 --volname "Kraken Installer" --volicon "${{github.workspace}}/release/darwin/KrakenInstaller.icns" --window-pos 400 220 --icon "Kraken.app" 140 250 --background ${{github.workspace}}/release/darwin/background.png --window-size 784 520 kraken-1.50a-macos-arm64.dmg ${{github.workspace}}/../build_darwin_release/bin/Release
 
     - uses: actions/upload-artifact@v3
       with:
