@@ -2,6 +2,9 @@
 #define ANCHOR_H
 
 #import <Foundation/Foundation.h>
-#import <kraken_anchor-Swift.h>
+#import <Cocoa/Cocoa.h>
+#import <AppKit/AppKit.h>
+
+@class KrakenApplication;
 
 #endif /* ANCHOR_H */

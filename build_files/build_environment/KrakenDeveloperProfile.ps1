@@ -86,7 +86,7 @@ function RunAndDebugKraken
     #
     # command alias run-no-shell process launch -X 0 --
     #
-    & lldb -o run-no-shell $KrakenGlobalView/../build_darwin_release/bin/Kraken.app/Contents/MacOS/Kraken
+    & lldb -o run-no-shell $KrakenGlobalView/../build_darwin_release/bin/Release/Kraken.app/Contents/MacOS/Kraken
   }
 }
 

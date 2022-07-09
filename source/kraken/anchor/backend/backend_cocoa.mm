@@ -26,7 +26,7 @@
 #include "ANCHOR_BACKEND_cocoa.h"
 
 #import "Anchor.h"
-#import <Cocoa/Cocoa.h>
+#import <kraken_anchor-Swift.h>
 
 #include <Carbon/Carbon.h>
 
@@ -152,8 +152,13 @@ void AnchorSystemCocoa::processMinMaxInfo(void *minmax) {}
 
 eAnchorStatus AnchorSystemCocoa::init()
 {
-  [AnchorSystemApple sayHello];
-  return ANCHOR_SUCCESS;
+  eAnchorStatus success = AnchorSystem::init();
+  if (success) {
+    @autoreleasepool {
+      [KrakenApplication sayHello];
+    }
+  }
+  return success;
 }
 
 eAnchorStatus AnchorSystemCocoa::exit()
