@@ -19,27 +19,16 @@ import Darwin
 import Cocoa
 import AppKit
 
-open class KrakenApplication : NSApplication
+open class KrakenApplication : NSObject
 {
-  let strongDelegate = AppDelegate()
-
-  public override init() 
-  {
-    super.init()
-    self.delegate = strongDelegate
-  }
-
-  public required init?(coder: NSCoder) 
-  {
-    fatalError("init(coder:) has not been implemented")
-  }
-
   @objc 
-  public static func sayHello()
+  public static func graphicsBegin()
   {
     fputs("Hello Anchor.\n", stderr)
 
-    _ = KrakenApplication.shared
+    let app = NSApplication.shared
+    let strongDelegate = AppDelegate()
+    app.delegate = strongDelegate
 
     if (NSApp.mainMenu == nil) {
       var mainMenuBar = NSMenu()

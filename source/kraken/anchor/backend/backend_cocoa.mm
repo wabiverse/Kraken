@@ -155,7 +155,7 @@ eAnchorStatus AnchorSystemCocoa::init()
   eAnchorStatus success = AnchorSystem::init();
   if (success) {
     @autoreleasepool {
-      [KrakenApplication sayHello];
+      [KrakenApplication graphicsBegin];
     }
   }
   return success;

@@ -210,6 +210,16 @@ else()
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
+# Find zstd.
+
+# macOS only, not entirely ruled out if this is local or a larger issue with a recent brew upgrade
+# but without this the linker can't seem to find zstd. We are running beta ventura on beta xcode
+# so everything is chaos, why not add more temporary chaos on top of chaos?
+if (APPLE)
+  link_directories(/opt/homebrew/Cellar/zstd/1.5.2/lib)
+endif()
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Freetype
 
 if(UNIX)
