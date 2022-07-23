@@ -62,13 +62,13 @@ jobs:
       run: brew install embree
 
     - name: Source Zsh
-      run: source ~/.zshrc && pwsh && zsh
-
-    - name: Build
-      run: cd ${{github.workspace}} && make release
+      run: source ~/.zshrc
 
     - name: Switch to Powershell
       run: pwsh
+
+    - name: Build
+      run: cd ${{github.workspace}} && make release
 
     - name: Notarize with Apple Inc.
       run: AppleBundleAndNotarize
