@@ -61,8 +61,11 @@ jobs:
     - name: Install Embree
       run: brew install embree
 
+    - name: Source Zsh
+      run: source ~/.zshrc
+
     - name: Switch to Powershell
-      run: source ~/.zshrc && pwsh && zsh && pwsh
+      run: pwsh
 
     - name: Build
       run: cd ${{github.workspace}} && make release
