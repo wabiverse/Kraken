@@ -28,10 +28,9 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/sceneGraphPrimAPI.h"
+#include "wabi/usd/usdUI/screen.h"
 #include "wabi/usd/usd/schemaRegistry.h"
 #include "wabi/usd/usd/typed.h"
-#include "wabi/usd/usd/tokens.h"
 
 #include "wabi/usd/sdf/types.h"
 #include "wabi/usd/sdf/assetPath.h"
@@ -41,78 +40,75 @@ WABI_NAMESPACE_BEGIN
 // Register the schema with the TfType system.
 TF_REGISTRY_FUNCTION(TfType)
 {
-  TfType::Define<UsdUISceneGraphPrimAPI, TfType::Bases<UsdAPISchemaBase>>();
+  TfType::Define<UsdUIScreen, TfType::Bases<UsdTyped>>();
+
+  // Register the usd prim typename as an alias under UsdSchemaBase. This
+  // enables one to call
+  // TfType::Find<UsdSchemaBase>().FindDerivedByName("Screen")
+  // to find TfType<UsdUIScreen>, which is how IsA queries are
+  // answered.
+  TfType::AddAlias<UsdSchemaBase, UsdUIScreen>("Screen");
 }
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _schemaTokens,
-    (SceneGraphPrimAPI)
-);
-
 /* virtual */
-UsdUISceneGraphPrimAPI::~UsdUISceneGraphPrimAPI() {}
+UsdUIScreen::~UsdUIScreen() {}
 
 /* static */
-UsdUISceneGraphPrimAPI UsdUISceneGraphPrimAPI::Get(const UsdStagePtr &stage, const SdfPath &path)
+UsdUIScreen UsdUIScreen::Get(const UsdStagePtr &stage, const SdfPath &path)
 {
   if (!stage) {
     TF_CODING_ERROR("Invalid stage");
-    return UsdUISceneGraphPrimAPI();
+    return UsdUIScreen();
   }
-  return UsdUISceneGraphPrimAPI(stage->GetPrimAtPath(path));
+  return UsdUIScreen(stage->GetPrimAtPath(path));
 }
 
+/* static */
+UsdUIScreen UsdUIScreen::Define(const UsdStagePtr &stage, const SdfPath &path)
+{
+  static TfToken usdPrimTypeName("Screen");
+  if (!stage) {
+    TF_CODING_ERROR("Invalid stage");
+    return UsdUIScreen();
+  }
+  return UsdUIScreen(stage->DefinePrim(path, usdPrimTypeName));
+}
 
 /* virtual */
-UsdSchemaKind UsdUISceneGraphPrimAPI::_GetSchemaKind() const
+UsdSchemaKind UsdUIScreen::_GetSchemaKind() const
 {
-  return UsdUISceneGraphPrimAPI::schemaKind;
+  return UsdUIScreen::schemaKind;
 }
 
 /* static */
-bool UsdUISceneGraphPrimAPI::CanApply(const UsdPrim &prim, std::string *whyNot)
+const TfType &UsdUIScreen::_GetStaticTfType()
 {
-  return prim.CanApplyAPI<UsdUISceneGraphPrimAPI>(whyNot);
-}
-
-/* static */
-UsdUISceneGraphPrimAPI UsdUISceneGraphPrimAPI::Apply(const UsdPrim &prim)
-{
-  if (prim.ApplyAPI<UsdUISceneGraphPrimAPI>()) {
-    return UsdUISceneGraphPrimAPI(prim);
-  }
-  return UsdUISceneGraphPrimAPI();
-}
-
-/* static */
-const TfType &UsdUISceneGraphPrimAPI::_GetStaticTfType()
-{
-  static TfType tfType = TfType::Find<UsdUISceneGraphPrimAPI>();
+  static TfType tfType = TfType::Find<UsdUIScreen>();
   return tfType;
 }
 
 /* static */
-bool UsdUISceneGraphPrimAPI::_IsTypedSchema()
+bool UsdUIScreen::_IsTypedSchema()
 {
   static bool isTyped = _GetStaticTfType().IsA<UsdTyped>();
   return isTyped;
 }
 
 /* virtual */
-const TfType &UsdUISceneGraphPrimAPI::_GetTfType() const
+const TfType &UsdUIScreen::_GetTfType() const
 {
   return _GetStaticTfType();
 }
 
-UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayNameAttr() const
+UsdAttribute UsdUIScreen::GetAlignmentAttr() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiDisplayName);
+  return GetPrim().GetAttribute(UsdUITokens->uiScreenAlignment);
 }
 
-UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayNameAttr(VtValue const &defaultValue,
-                                                           bool writeSparsely) const
+UsdAttribute UsdUIScreen::CreateAlignmentAttr(VtValue const &defaultValue,
+                                              bool writeSparsely) const
 {
-  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiDisplayName,
+  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiScreenAlignment,
                                     SdfValueTypeNames->Token,
                                     /* custom = */ false,
                                     SdfVariabilityUniform,
@@ -120,20 +116,15 @@ UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayNameAttr(VtValue const &defaul
                                     writeSparsely);
 }
 
-UsdAttribute UsdUISceneGraphPrimAPI::GetDisplayGroupAttr() const
+UsdRelationship UsdUIScreen::GetAreasRel() const
 {
-  return GetPrim().GetAttribute(UsdUITokens->uiDisplayGroup);
+  return GetPrim().GetRelationship(UsdUITokens->uiScreenAreas);
 }
 
-UsdAttribute UsdUISceneGraphPrimAPI::CreateDisplayGroupAttr(VtValue const &defaultValue,
-                                                            bool writeSparsely) const
+UsdRelationship UsdUIScreen::CreateAreasRel() const
 {
-  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiDisplayGroup,
-                                    SdfValueTypeNames->Token,
-                                    /* custom = */ false,
-                                    SdfVariabilityUniform,
-                                    defaultValue,
-                                    writeSparsely);
+  return GetPrim().CreateRelationship(UsdUITokens->uiScreenAreas,
+                                      /* custom = */ false);
 }
 
 namespace
@@ -150,14 +141,14 @@ namespace
 }  // namespace
 
 /*static*/
-const TfTokenVector &UsdUISceneGraphPrimAPI::GetSchemaAttributeNames(bool includeInherited)
+const TfTokenVector &UsdUIScreen::GetSchemaAttributeNames(bool includeInherited)
 {
   static TfTokenVector localNames = {
-    UsdUITokens->uiDisplayName,
-    UsdUITokens->uiDisplayGroup,
+    UsdUITokens->uiScreenCollectionAreasIncludeRoot,
+    UsdUITokens->uiScreenAlignment,
   };
   static TfTokenVector allNames = _ConcatenateAttributeNames(
-    UsdAPISchemaBase::GetSchemaAttributeNames(true),
+    UsdTyped::GetSchemaAttributeNames(true),
     localNames);
 
   if (includeInherited)

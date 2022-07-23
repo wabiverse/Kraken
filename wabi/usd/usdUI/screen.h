@@ -28,17 +28,20 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef USDUI_GENERATED_SCENEGRAPHPRIMAPI_H
-#define USDUI_GENERATED_SCENEGRAPHPRIMAPI_H
+#ifndef USDUI_GENERATED_SCREEN_H
+#define USDUI_GENERATED_SCREEN_H
 
-/// \file usdUI/sceneGraphPrimAPI.h
+/// \file usdUI/screen.h
 
 #include "wabi/wabi.h"
 #include "wabi/usd/usdUI/api.h"
-#include "wabi/usd/usd/apiSchemaBase.h"
+#include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdUI/tokens.h"
+
+#include "wabi/usd/usd/collectionAPI.h"
+#include "wabi/usd/usdUI/area.h"
 
 #include "wabi/base/vt/value.h"
 
@@ -54,13 +57,14 @@ WABI_NAMESPACE_BEGIN
 class SdfAssetPath;
 
 // -------------------------------------------------------------------------- //
-// SCENEGRAPHPRIMAPI                                                          //
+// SCREEN                                                                     //
 // -------------------------------------------------------------------------- //
 
-/// \class UsdUISceneGraphPrimAPI
+/// \class UsdUIScreen
 ///
 ///
-/// Utility schema for display properties of a prim
+/// A Screen to support the management of
+/// GUI areas within a DCC Application Window.
 ///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
@@ -68,29 +72,29 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdUITokens->rightHanded
 /// as the value.
 ///
-class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase
+class UsdUIScreen : public UsdTyped
 {
  public:
 
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
-  static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
-  /// Construct a UsdUISceneGraphPrimAPI on UsdPrim \p prim .
-  /// Equivalent to UsdUISceneGraphPrimAPI::Get(prim.GetStage(), prim.GetPath())
+  /// Construct a UsdUIScreen on UsdPrim \p prim .
+  /// Equivalent to UsdUIScreen::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdUISceneGraphPrimAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
+  explicit UsdUIScreen(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
-  /// Construct a UsdUISceneGraphPrimAPI on the prim held by \p schemaObj .
-  /// Should be preferred over UsdUISceneGraphPrimAPI(schemaObj.GetPrim()),
+  /// Construct a UsdUIScreen on the prim held by \p schemaObj .
+  /// Should be preferred over UsdUIScreen(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdUISceneGraphPrimAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
+  explicit UsdUIScreen(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDUI_API
-  virtual ~UsdUISceneGraphPrimAPI();
+  virtual ~UsdUIScreen();
 
   /// Return a vector of names of all pre-declared attributes for this schema
   /// class and all its ancestor classes.  Does not include attributes that
@@ -98,55 +102,42 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase
   USDUI_API
   static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
-  /// Return a UsdUISceneGraphPrimAPI holding the prim adhering to this
+  /// Return a UsdUIScreen holding the prim adhering to this
   /// schema at \p path on \p stage.  If no prim exists at \p path on
   /// \p stage, or if the prim at that path does not adhere to this schema,
   /// return an invalid schema object.  This is shorthand for the following:
   ///
   /// \code
-  /// UsdUISceneGraphPrimAPI(stage->GetPrimAtPath(path));
+  /// UsdUIScreen(stage->GetPrimAtPath(path));
   /// \endcode
   ///
   USDUI_API
-  static UsdUISceneGraphPrimAPI Get(const UsdStagePtr &stage, const SdfPath &path);
+  static UsdUIScreen Get(const UsdStagePtr &stage, const SdfPath &path);
 
-
-  /// Returns true if this <b>single-apply</b> API schema can be applied to
-  /// the given \p prim. If this schema can not be a applied to the prim,
-  /// this returns false and, if provided, populates \p whyNot with the
-  /// reason it can not be applied.
+  /// Attempt to ensure a \a UsdPrim adhering to this schema at \p path
+  /// is defined (according to UsdPrim::IsDefined()) on this stage.
   ///
-  /// Note that if CanApply returns false, that does not necessarily imply
-  /// that calling Apply will fail. Callers are expected to call CanApply
-  /// before calling Apply if they want to ensure that it is valid to
-  /// apply a schema.
+  /// If a prim adhering to this schema at \p path is already defined on this
+  /// stage, return that prim.  Otherwise author an \a SdfPrimSpec with
+  /// \a specifier == \a SdfSpecifierDef and this schema's prim type name for
+  /// the prim at \p path at the current EditTarget.  Author \a SdfPrimSpec s
+  /// with \p specifier == \a SdfSpecifierDef and empty typeName at the
+  /// current EditTarget for any nonexistent, or existing but not \a Defined
+  /// ancestors.
   ///
-  /// \sa UsdPrim::GetAppliedSchemas()
-  /// \sa UsdPrim::HasAPI()
-  /// \sa UsdPrim::CanApplyAPI()
-  /// \sa UsdPrim::ApplyAPI()
-  /// \sa UsdPrim::RemoveAPI()
+  /// The given \a path must be an absolute prim path that does not contain
+  /// any variant selections.
+  ///
+  /// If it is impossible to author any of the necessary PrimSpecs, (for
+  /// example, in case \a path cannot map to the current UsdEditTarget's
+  /// namespace) issue an error and return an invalid \a UsdPrim.
+  ///
+  /// Note that this method may return a defined prim whose typeName does not
+  /// specify this schema class, in case a stronger typeName opinion overrides
+  /// the opinion at the current EditTarget.
   ///
   USDUI_API
-  static bool CanApply(const UsdPrim &prim, std::string *whyNot = nullptr);
-
-  /// Applies this <b>single-apply</b> API schema to the given \p prim.
-  /// This information is stored by adding "SceneGraphPrimAPI" to the
-  /// token-valued, listOp metadata \em apiSchemas on the prim.
-  ///
-  /// \return A valid UsdUISceneGraphPrimAPI object is returned upon success.
-  /// An invalid (or empty) UsdUISceneGraphPrimAPI object is returned upon
-  /// failure. See \ref UsdPrim::ApplyAPI() for conditions
-  /// resulting in failure.
-  ///
-  /// \sa UsdPrim::GetAppliedSchemas()
-  /// \sa UsdPrim::HasAPI()
-  /// \sa UsdPrim::CanApplyAPI()
-  /// \sa UsdPrim::ApplyAPI()
-  /// \sa UsdPrim::RemoveAPI()
-  ///
-  USDUI_API
-  static UsdUISceneGraphPrimAPI Apply(const UsdPrim &prim);
+  static UsdUIScreen Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
 
@@ -172,58 +163,50 @@ class UsdUISceneGraphPrimAPI : public UsdAPISchemaBase
  public:
 
   // --------------------------------------------------------------------- //
-  // DISPLAYNAME
+  // ALIGNMENT
   // --------------------------------------------------------------------- //
-  /// When publishing a nodegraph or a material, it can be useful to
-  /// provide an optional display name, for readability.
+  ///
+  /// This authored attribute applies an alignment to all
+  /// Areas within this Screen's collection.
   ///
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `uniform token ui:displayName` |
+  /// | Declaration | `uniform token ui:screen:alignment = "none"` |
   /// | C++ Type | TfToken |
   /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
+  /// | \ref UsdUITokens "Allowed Values" | none, top, bottom, left, right, horizontalSplit,
+  /// verticalSplit |
   USDUI_API
-  UsdAttribute GetDisplayNameAttr() const;
+  UsdAttribute GetAlignmentAttr() const;
 
-  /// See GetDisplayNameAttr(), and also
+  /// See GetAlignmentAttr(), and also
   /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
   /// If specified, author \p defaultValue as the attribute's default,
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreateDisplayNameAttr(VtValue const &defaultValue = VtValue(),
-                                     bool writeSparsely = false) const;
+  UsdAttribute CreateAlignmentAttr(VtValue const &defaultValue = VtValue(),
+                                   bool writeSparsely = false) const;
 
  public:
 
   // --------------------------------------------------------------------- //
-  // DISPLAYGROUP
+  // AREAS
   // --------------------------------------------------------------------- //
-  /// When publishing a nodegraph or a material, it can be useful to
-  /// provide an optional display group, for organizational purposes and
-  /// readability. This is because often the usd shading hierarchy is rather
-  /// flat while we want to display it in organized groups.
+  ///
+  /// Relationship to a collection of UsdUIAreas prims, in which
+  /// this Screen controls.
   ///
   ///
-  /// | ||
-  /// | -- | -- |
-  /// | Declaration | `uniform token ui:displayGroup` |
-  /// | C++ Type | TfToken |
-  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
-  /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
   USDUI_API
-  UsdAttribute GetDisplayGroupAttr() const;
+  UsdRelationship GetAreasRel() const;
 
-  /// See GetDisplayGroupAttr(), and also
-  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
-  /// If specified, author \p defaultValue as the attribute's default,
-  /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
-  /// the default for \p writeSparsely is \c false.
+  /// See GetAreasRel(), and also
+  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create
   USDUI_API
-  UsdAttribute CreateDisplayGroupAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely = false) const;
+  UsdRelationship CreateAreasRel() const;
 
  public:
 

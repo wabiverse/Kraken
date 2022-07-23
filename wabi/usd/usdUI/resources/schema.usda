@@ -1,8 +1,8 @@
 #usda 1.0
 (
-    "This file describes the USD Shader schemata for code generation."
+    "This file describes the USD UI schemata for code generation."
     subLayers = [
-        @usd/schema.usda@
+         @./../../../usd/resources/usd/schema.usda@
     ]
 )
 
@@ -10,28 +10,346 @@ over "GLOBAL" (
     customData = {
         string libraryName      = "usdUI"
         string libraryPath      = "wabi/usd/usdUI"
-        # dictionary libraryTokens = {}
+        dictionary libraryTokens = {
+            dictionary areas = {
+                string doc = """
+                This token represents the collection name to use
+                with UsdCollectionAPI to represent groups of UI
+                layout areas of a UsdUIScreen prim.
+                """
+            }            
+        }
     }
 )
 {
 }
 
+class UserPref "UserPref" (
+    inherits = </Typed>
+    doc = """
+    Provides preferences and options to display
+    and customize a DCC to your liking, such as
+    setting themes, fonts, or managing system
+    options like whether or not to display
+    certain prompts.
+    """
+)
+{
+    uniform bool ui:userpref:showSavePrompt = 1 (
+        doc = """
+        When quitting the application, it is usually helpful to be
+        prompted whether or not you have unsaved changes giving you
+        one last chance to save your work. Modifying this setting
+        controls whether or not this prompt is enabled.
+        """
+        customData = {
+            string apiName = "showSavePrompt"
+        }        
+    )
+    uniform float ui:userpref:dpifac = 1 (
+        doc = """
+        The user interface dpi multiplier
+        to scale UI elements based on the
+        DPI.
+        """
+        customData = {
+            string apiName = "dpifac"
+        }          
+    )
+}
+
+class Window "Window" (
+    inherits = </Typed>
+    doc = """
+    Provides a window for the purpose of displaying an application's GUI.
+    """
+)
+{
+    uniform token ui:window:title (
+        doc = """
+        The window title that is displayed on the top of the window. This
+        window title gives context for what this window is used for.
+        """
+        customData = {
+            string apiName = "title"
+        }
+    )
+    uniform asset ui:window:icon (
+        doc = """
+        This points to an image that should be displayed on the window's,
+        top most region where the title is.
+        """
+        customData = {
+            string apiName = "icon"
+        }
+    )
+    uniform token ui:window:type = "normal" (
+        allowedTokens = ["normal", "detached", "dialog"]
+        doc = """
+        The window type will determine whether it is apart of the main
+        central window instance, or whether it is a detached, seperate
+        window instance, or if it is a temporary dialog box.
+        """
+        customData = {
+            string apiName = "type"
+        }
+    )
+    uniform token ui:window:state = "normal" (
+        allowedTokens = ["normal", "maximized", "minimized", "fullscreen", "embedded"]
+        doc = """
+        The current window state as it pertains to
+        normal, maximized, minimized, fullscreen, or
+        embedded.
+        """
+        customData = {
+            string apiName = "state"
+        }
+    )
+    uniform float ui:window:dpi = 1 (
+        doc = """
+        The current window DPI value
+        for better interface drawing.
+        """
+        customData = {
+            string apiName = "dpi"
+        }
+    )
+    uniform float ui:window:scale = 1 (
+        doc = """
+        The user interface scale, scaling
+        all UI components to this value.
+        """
+        customData = {
+            string apiName = "scale"
+        }        
+    )
+    uniform float ui:window:pixelsz = 1 (
+        doc = """
+        The user interface pixel size,
+        scaling the pixel size for all
+        UI components in the window.
+        """
+        customData = {
+            string apiName = "pixelsz"
+        }        
+    )
+    uniform float ui:window:widgetunit = 20 (
+        doc = """
+        Additional adjustments to optimize
+        widget displays based on DPI settings.
+        """
+        customData = {
+            string apiName = "widgetunit"
+        }        
+    )   
+    uniform float ui:window:linewidth = 1 (
+        doc = """
+        The user interface line width,
+        scaling the width of borders.
+        """
+        customData = {
+            string apiName = "linewidth"
+        }        
+    ) 
+    uniform token ui:window:cursor = "default" (
+        allowedTokens = ["default", "textEdit", "wait", "stop", "edit", "copy", "hand", "cross", "paint", "dot", "knife", "vloop", "paintBrush", "eraser", "eyedropper", "swapArea", "xMove", "yMove", "hSplit", "vSplit", "zoomIn", "zoomOut"]
+        doc = """
+        The current window cursor type.
+        """
+        customData = {
+            string apiName = "cursor"
+        }
+    )
+    uniform token ui:window:alignment = "alignAbsolute" (
+        allowedTokens = ["alignAbsolute", "alignCenter", "alignParent"]
+        doc = """
+        Alignment for a window in a monitor. To control it's
+        position within the display, whether it be absolutley
+        positioned, centered, or centered to it's parent window.
+        """
+        customData = {
+            string apiName = "alignment"
+        }
+    )    
+    uniform float2 ui:window:pos (
+        doc = """
+        Position for a window in a monitor. X is the monitor's relative
+        vertical location of the window. Y is the monitor's relative
+        horizontal location of the window.
+        """
+        customData = {
+            string apiName = "pos"
+        }
+    )
+    uniform float2 ui:window:size (
+        doc = """
+        Size for a window in a monitor. X is the width. Y is the height.
+        """
+        customData = {
+            string apiName = "size"
+        }
+    )
+    rel ui:window:workspace (
+        doc = """
+        The active workspace to be presented within this window.
+        """
+    )
+}
+
+class Workspace "Workspace" (
+    inherits = </Typed>
+    doc = """
+    A workspace acts like a predefined window layout. The
+    purpose of a workspace is to have a layout created around
+    your needs, whether that purpose might be modeling, animating,
+    scripting, or any other purpose you might find helpful for any
+    specific task.
+
+    It is often useful to have many different kinds of workspaces
+    so you can quickly switch between layouts based on your needs
+    and contextual task at hand.
+    """
+)
+{
+    uniform token ui:workspace:name (
+        doc = """
+        The workspace name that is displayed in a application's GUI.
+        Usually laid out within a quickly accessible tab selection
+        grouped with other existing workspaces, to quickly switch 
+        around.
+        """
+        customData = {
+            string apiName = "name"
+        }
+    )
+    rel ui:workspace:screen (
+        doc = """
+        The Screen which houses the layout of this Workspace.
+        """
+        customData = {
+            string apiName = "screen"
+        }
+    )
+}
+
+class Screen "Screen" (
+    inherits = </Typed>
+    doc = """
+    A Screen to support the management of
+    GUI areas within a DCC Application Window.
+    """
+    customData = {
+        string extraIncludes = """
+#include "wabi/usd/usd/collectionAPI.h"
+#include "wabi/usd/usdUI/area.h" """
+    }
+    prepend apiSchemas = ["CollectionAPI:areas"]
+) {
+    uniform bool ui:screen:collection:areas:includeRoot = 1 (
+        customData = {
+            token apiName = ""
+        }
+    )
+    uniform token ui:screen:alignment = "none" (
+        allowedTokens = ["none", "top", "bottom", "left", "right", "horizontalSplit", "verticalSplit"]
+        doc = """
+        This authored attribute applies an alignment to all
+        Areas within this Screen's collection.
+        """
+        customData = {
+            token apiName = "alignment"
+        }
+    )
+    rel ui:screen:areas (
+        doc = """
+        Relationship to a collection of UsdUIAreas prims, in which
+        this Screen controls.
+        """      
+        customData = {
+            string apiName = "areas"
+        }  
+    )
+}
+
+class Area "Area" (
+    inherits = </Typed>
+    doc = """
+    A area is a UI component which makes up the smaller individual
+    components within their encompassing Screen. Areas can have
+    dynamically set layouts within their parented Screen.
+    """
+)
+{
+    uniform token ui:area:name (
+        doc = """
+        This attribute specifies the name of this area
+        which is to be displayed in the Application's GUI.
+        """
+        customData = {
+            token apiName = "name"
+        }       
+    )
+    uniform token ui:area:spacetype = "SpaceEmpty" (
+        allowedTokens = ["SpaceEmpty", "SpaceView3D", "SpaceGraph", "SpaceOutliner", "SpaceProperties", "SpaceFile", "SpaceImage", "SpaceInfo", "SpaceSequence", "SpaceText", "SpaceNode", "SpaceConsole", "SpacePref", "SpaceClip", "SpaceTopbar", "SpaceStatusbar", "SpaceSpreadsheet"]
+        doc = """
+        A SpaceType is the type of area this
+        authored token will create. For example
+        SpaceView3D will create a 3D Viewport.
+        """
+        customData = {
+            token apiName = "spacetype"
+        }
+    )
+    uniform asset ui:area:icon (
+        doc = """
+        This attribute specifies the asset path to an icon
+        which is to be displayed in the Application's GUI.
+        """
+        customData = {
+            token apiName = "icon"
+        }       
+    )
+    uniform float2 ui:area:pos (
+        doc = """
+        This attribute specifies the position relative to the window.
+        In the X axis it measures the horizontal position relative to
+        the window and on the Y Axis it measures the vertical position
+        relative to the window.
+        """
+        customData = {
+            token apiName = "pos"
+        }
+    )
+    uniform float2 ui:area:size (
+        doc = """
+        This attribute specifies the size relative to the window.
+        In the X axis it measures the width of this area within a
+        window and on the Y Axis it measures the height of this
+        area within the window.
+        """
+        customData = {
+            token apiName = "size"
+        }
+    )    
+}
+
 class "NodeGraphNodeAPI"(
     inherits = </APISchemaBase>
     doc = """
-    This api helps storing information about nodes in node graphs.
+    This api helps storing information about
+    nodes in node graphs.
     """
 ) {
     uniform float2 ui:nodegraph:node:pos (
         doc = """
         Declared relative position to the parent in a node graph.
         X is the horizontal position.
-        Y is the vertical position. Higher numbers correspond to lower positions 
+        Y is the vertical position. Higher numbers correspond to lower positions
         (coordinates are Qt style, not cartesian).
 
         These positions are not explicitly meant in pixel space, but rather
         assume that the size of a node is approximately 1.0x1.0. Where size-x is
-        the node width and size-y height of the node. Depending on 
+        the node width and size-y height of the node. Depending on
         graph UI implementation, the size of a node may vary in each direction.
 
         Example: If a node's width is 300 and it is position is at 1000, we
@@ -44,13 +362,13 @@ class "NodeGraphNodeAPI"(
 
     uniform int ui:nodegraph:node:stackingOrder (
         doc = """
-        This optional value is a useful hint when an application cares about 
+        This optional value is a useful hint when an application cares about
         the visibility of a node and whether each node overlaps another.
-        
-        Nodes with lower stacking order values are meant to be drawn below 
+
+        Nodes with lower stacking order values are meant to be drawn below
         higher ones. Negative values are meant as background. Positive values
         are meant as foreground.
-        Undefined values should be treated as 0. 
+        Undefined values should be treated as 0.
 
         There are no set limits in these values.
         """
@@ -70,7 +388,7 @@ class "NodeGraphNodeAPI"(
 
     uniform asset ui:nodegraph:node:icon (
         doc = """
-        This points to an image that should be displayed on the node.  It is 
+        This points to an image that should be displayed on the node.  It is
         intended to be useful for summary visual classification of nodes, rather
         than a thumbnail preview of the computed result of the node in some
         computational system.
@@ -82,8 +400,8 @@ class "NodeGraphNodeAPI"(
 
     uniform token ui:nodegraph:node:expansionState (
         allowedTokens = ["open", "closed", "minimized"]
-        doc = """ 
-        The current expansionState of the node in the ui. 
+        doc = """
+        The current expansionState of the node in the ui.
         'open' = fully expanded
         'closed' = fully collapsed
         'minimized' = should take the least space possible
@@ -99,7 +417,7 @@ class "NodeGraphNodeAPI"(
         X is the width.
         Y is the height.
 
-        This value is optional, because node size is often determined 
+        This value is optional, because node size is often determined
         based on the number of in- and outputs of a node.
         """
         customData = {
@@ -125,7 +443,7 @@ class "SceneGraphPrimAPI"(
     )
     uniform token ui:displayGroup (
         doc = """When publishing a nodegraph or a material, it can be useful to
-        provide an optional display group, for organizational purposes and 
+        provide an optional display group, for organizational purposes and
         readability. This is because often the usd shading hierarchy is rather
         flat while we want to display it in organized groups.
         """
@@ -140,23 +458,23 @@ class Backdrop "Backdrop" (
     doc = """Provides a 'group-box' for the purpose of node graph organization.
 
     Unlike containers, backdrops do not store the Shader nodes inside of them.
-    Backdrops are an organizational tool that allows Shader nodes to be visually 
-    grouped together in a node-graph UI, but there is no direct relationship 
-    between a Shader node and a Backdrop. 
+    Backdrops are an organizational tool that allows Shader nodes to be visually
+    grouped together in a node-graph UI, but there is no direct relationship
+    between a Shader node and a Backdrop.
 
-    The guideline for a node-graph UI is that a Shader node is considered part 
-    of a Backdrop when the Backdrop is the smallest Backdrop a Shader node's 
+    The guideline for a node-graph UI is that a Shader node is considered part
+    of a Backdrop when the Backdrop is the smallest Backdrop a Shader node's
     bounding-box fits inside.
 
-    Backdrop objects are contained inside a NodeGraph, similar to how Shader 
+    Backdrop objects are contained inside a NodeGraph, similar to how Shader
     objects are contained inside a NodeGraph.
 
     Backdrops have no shading inputs or outputs that influence the rendered
     results of a NodeGraph. Therefore they can be safely ignored during import.
 
-    Like Shaders and NodeGraphs, Backdrops subscribe to the NodeGraphNodeAPI to 
+    Like Shaders and NodeGraphs, Backdrops subscribe to the NodeGraphNodeAPI to
     specify position and size.
-    """ 
+    """
 )
 {
     uniform token ui:description (
@@ -168,4 +486,3 @@ class Backdrop "Backdrop" (
         }
     )
 }
-

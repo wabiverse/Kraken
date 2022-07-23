@@ -98,4 +98,3 @@ extern{% if useExportAPI %} {{ Upper(libraryName) }}_API{% endif %} TfStaticData
 {% endif %}
 
 #endif
-/* clang-format on */

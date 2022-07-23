@@ -28,7 +28,7 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/backdrop.h"
+#include "wabi/usd/usdUI/userPref.h"
 #include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
@@ -56,27 +56,33 @@ namespace
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+  static UsdAttribute _CreateShowSavePromptAttr(UsdUIUserPref &self,
+                                                object defaultVal,
+                                                bool writeSparsely)
   {
-    return self.CreateDescriptionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
+    return self.CreateShowSavePromptAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Bool),
+                                         writeSparsely);
   }
 
-  static std::string _Repr(const UsdUIBackdrop &self)
+  static UsdAttribute _CreateDpifacAttr(UsdUIUserPref &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateDpifacAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float),
+                                 writeSparsely);
+  }
+
+  static std::string _Repr(const UsdUIUserPref &self)
   {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf("UsdUI.Backdrop(%s)", primRepr.c_str());
+    return TfStringPrintf("UsdUI.UserPref(%s)", primRepr.c_str());
   }
 
 }  // anonymous namespace
 
-void wrapUsdUIBackdrop()
+void wrapUsdUIUserPref()
 {
-  typedef UsdUIBackdrop This;
+  typedef UsdUIUserPref This;
 
-  class_<This, bases<UsdTyped>> cls("Backdrop");
+  class_<This, bases<UsdTyped>> cls("UserPref");
 
   cls.def(init<UsdPrim>(arg("prim")))
     .def(init<UsdSchemaBase const &>(arg("schemaObj")))
@@ -102,9 +108,14 @@ void wrapUsdUIBackdrop()
     .def(!self)
 
 
-    .def("GetDescriptionAttr", &This::GetDescriptionAttr)
-    .def("CreateDescriptionAttr",
-         &_CreateDescriptionAttr,
+    .def("GetShowSavePromptAttr", &This::GetShowSavePromptAttr)
+    .def("CreateShowSavePromptAttr",
+         &_CreateShowSavePromptAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetDpifacAttr", &This::GetDpifacAttr)
+    .def("CreateDpifacAttr",
+         &_CreateDpifacAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("__repr__", ::_Repr);

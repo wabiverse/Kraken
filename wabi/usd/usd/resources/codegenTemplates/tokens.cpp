@@ -53,5 +53,3 @@ TfStaticData<{{ tokensPrefix }}TokensType> {{ tokensPrefix }}Tokens;
 
 {{ namespaceClose }}
 {% endif %}
-
-/* clang-format on */

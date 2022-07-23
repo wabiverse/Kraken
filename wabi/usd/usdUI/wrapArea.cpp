@@ -28,13 +28,12 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/nodeGraphNodeAPI.h"
+#include "wabi/usd/usdUI/area.h"
 #include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
 
 #include "wabi/usd/usd/pyConversions.h"
-#include "wabi/base/tf/pyAnnotatedBoolResult.h"
 #include "wabi/base/tf/pyContainerConversions.h"
 #include "wabi/base/tf/pyResultConversions.h"
 #include "wabi/base/tf/pyUtils.h"
@@ -57,85 +56,49 @@ namespace
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreatePosAttr(UsdUINodeGraphNodeAPI &self,
-                                     object defaultVal,
-                                     bool writeSparsely)
+  static UsdAttribute _CreateNameAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
-                              writeSparsely);
+    return self.CreateNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
-  static UsdAttribute _CreateStackingOrderAttr(UsdUINodeGraphNodeAPI &self,
-                                               object defaultVal,
-                                               bool writeSparsely)
+  static UsdAttribute _CreateSpacetypeAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateStackingOrderAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int),
-                                        writeSparsely);
+    return self.CreateSpacetypeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                    writeSparsely);
   }
 
-  static UsdAttribute _CreateDisplayColorAttr(UsdUINodeGraphNodeAPI &self,
-                                              object defaultVal,
-                                              bool writeSparsely)
-  {
-    return self.CreateDisplayColorAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Color3f),
-                                       writeSparsely);
-  }
-
-  static UsdAttribute _CreateIconAttr(UsdUINodeGraphNodeAPI &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+  static UsdAttribute _CreateIconAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
   {
     return self.CreateIconAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Asset),
                                writeSparsely);
   }
 
-  static UsdAttribute _CreateExpansionStateAttr(UsdUINodeGraphNodeAPI &self,
-                                                object defaultVal,
-                                                bool writeSparsely)
+  static UsdAttribute _CreatePosAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateExpansionStateAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                         writeSparsely);
+    return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
+                              writeSparsely);
   }
 
-  static UsdAttribute _CreateSizeAttr(UsdUINodeGraphNodeAPI &self,
-                                      object defaultVal,
-                                      bool writeSparsely)
+  static UsdAttribute _CreateSizeAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
   {
     return self.CreateSizeAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
                                writeSparsely);
   }
 
-  static std::string _Repr(const UsdUINodeGraphNodeAPI &self)
+  static std::string _Repr(const UsdUIArea &self)
   {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf("UsdUI.NodeGraphNodeAPI(%s)", primRepr.c_str());
-  }
-
-  struct UsdUINodeGraphNodeAPI_CanApplyResult : public TfPyAnnotatedBoolResult<std::string>
-  {
-    UsdUINodeGraphNodeAPI_CanApplyResult(bool val, std::string const &msg)
-      : TfPyAnnotatedBoolResult<std::string>(val, msg)
-    {}
-  };
-
-  static UsdUINodeGraphNodeAPI_CanApplyResult _WrapCanApply(const UsdPrim &prim)
-  {
-    std::string whyNot;
-    bool result = UsdUINodeGraphNodeAPI::CanApply(prim, &whyNot);
-    return UsdUINodeGraphNodeAPI_CanApplyResult(result, whyNot);
+    return TfStringPrintf("UsdUI.Area(%s)", primRepr.c_str());
   }
 
 }  // anonymous namespace
 
-void wrapUsdUINodeGraphNodeAPI()
+void wrapUsdUIArea()
 {
-  typedef UsdUINodeGraphNodeAPI This;
+  typedef UsdUIArea This;
 
-  UsdUINodeGraphNodeAPI_CanApplyResult::Wrap<UsdUINodeGraphNodeAPI_CanApplyResult>(
-    "_CanApplyResult",
-    "whyNot");
-
-  class_<This, bases<UsdAPISchemaBase>> cls("NodeGraphNodeAPI");
+  class_<This, bases<UsdTyped>> cls("Area");
 
   cls.def(init<UsdPrim>(arg("prim")))
     .def(init<UsdSchemaBase const &>(arg("schemaObj")))
@@ -144,11 +107,8 @@ void wrapUsdUINodeGraphNodeAPI()
     .def("Get", &This::Get, (arg("stage"), arg("path")))
     .staticmethod("Get")
 
-    .def("CanApply", &_WrapCanApply, (arg("prim")))
-    .staticmethod("CanApply")
-
-    .def("Apply", &This::Apply, (arg("prim")))
-    .staticmethod("Apply")
+    .def("Define", &This::Define, (arg("stage"), arg("path")))
+    .staticmethod("Define")
 
     .def("GetSchemaAttributeNames",
          &This::GetSchemaAttributeNames,
@@ -164,19 +124,14 @@ void wrapUsdUINodeGraphNodeAPI()
     .def(!self)
 
 
-    .def("GetPosAttr", &This::GetPosAttr)
-    .def("CreatePosAttr",
-         &_CreatePosAttr,
+    .def("GetNameAttr", &This::GetNameAttr)
+    .def("CreateNameAttr",
+         &_CreateNameAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-    .def("GetStackingOrderAttr", &This::GetStackingOrderAttr)
-    .def("CreateStackingOrderAttr",
-         &_CreateStackingOrderAttr,
-         (arg("defaultValue") = object(), arg("writeSparsely") = false))
-
-    .def("GetDisplayColorAttr", &This::GetDisplayColorAttr)
-    .def("CreateDisplayColorAttr",
-         &_CreateDisplayColorAttr,
+    .def("GetSpacetypeAttr", &This::GetSpacetypeAttr)
+    .def("CreateSpacetypeAttr",
+         &_CreateSpacetypeAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetIconAttr", &This::GetIconAttr)
@@ -184,9 +139,9 @@ void wrapUsdUINodeGraphNodeAPI()
          &_CreateIconAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
-    .def("GetExpansionStateAttr", &This::GetExpansionStateAttr)
-    .def("CreateExpansionStateAttr",
-         &_CreateExpansionStateAttr,
+    .def("GetPosAttr", &This::GetPosAttr)
+    .def("CreatePosAttr",
+         &_CreatePosAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetSizeAttr", &This::GetSizeAttr)

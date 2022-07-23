@@ -401,6 +401,5 @@ TfTokenVector
 // Just remember to wrap code in the appropriate delimiters:
 // '{{ namespaceOpen }}', '{{ namespaceClose }}'.
 {% endif %}
-/* clang-format on */
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--

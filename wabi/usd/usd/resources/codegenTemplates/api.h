@@ -54,4 +54,3 @@
 #  endif
 
 #endif
-/* clang-format on */

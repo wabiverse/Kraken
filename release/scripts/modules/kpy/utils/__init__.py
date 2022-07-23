@@ -839,10 +839,17 @@ def register_submodule_factory(module_name, submodule_names):
 
 
 def gen_schemas():
+    # Shared codegen templates.
+    usdtmp = user_resource('DATAFILES', path='maelstrom/usd/resources/codegenTemplates')
+
     # Run UsdGenSchema on USD.
     usdsrc = user_resource('DATAFILES', path='maelstrom/usd/resources/usd/schema.usda')
     usdgen = user_resource('DATAFILES', path='maelstrom/usd/resources/codegen')
-    usdtmp = user_resource('DATAFILES', path='maelstrom/usd/resources/codegenTemplates')
+    _kr_gen_schema.Generate(schemaPath=usdsrc, codeGenPath=usdgen, templatePath=usdtmp)
+
+    # Run UsdGenSchema on UI.
+    usdsrc = user_resource('DATAFILES', path='maelstrom/usdUI/resources/usdUI/schema.usda')
+    usdgen = user_resource('DATAFILES', path='maelstrom/usdUI/resources/codegen')
     _kr_gen_schema.Generate(schemaPath=usdsrc, codeGenPath=usdgen, templatePath=usdtmp)
 
 

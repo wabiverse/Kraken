@@ -78,4 +78,3 @@ void wrap{{ tokensPrefix }}Tokens()
     _AddToken(cls, "{{ token.id }}", {{ tokensPrefix }}Tokens->{{ token.id }});
 {% endfor %}
 }
-/* clang-format on */

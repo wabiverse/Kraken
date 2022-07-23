@@ -28,7 +28,7 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/backdrop.h"
+#include "wabi/usd/usdUI/workspace.h"
 #include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
@@ -56,27 +56,25 @@ namespace
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+  static UsdAttribute _CreateNameAttr(UsdUIWorkspace &self, object defaultVal, bool writeSparsely)
   {
-    return self.CreateDescriptionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
+    return self.CreateNameAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                               writeSparsely);
   }
 
-  static std::string _Repr(const UsdUIBackdrop &self)
+  static std::string _Repr(const UsdUIWorkspace &self)
   {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf("UsdUI.Backdrop(%s)", primRepr.c_str());
+    return TfStringPrintf("UsdUI.Workspace(%s)", primRepr.c_str());
   }
 
 }  // anonymous namespace
 
-void wrapUsdUIBackdrop()
+void wrapUsdUIWorkspace()
 {
-  typedef UsdUIBackdrop This;
+  typedef UsdUIWorkspace This;
 
-  class_<This, bases<UsdTyped>> cls("Backdrop");
+  class_<This, bases<UsdTyped>> cls("Workspace");
 
   cls.def(init<UsdPrim>(arg("prim")))
     .def(init<UsdSchemaBase const &>(arg("schemaObj")))
@@ -102,11 +100,14 @@ void wrapUsdUIBackdrop()
     .def(!self)
 
 
-    .def("GetDescriptionAttr", &This::GetDescriptionAttr)
-    .def("CreateDescriptionAttr",
-         &_CreateDescriptionAttr,
+    .def("GetNameAttr", &This::GetNameAttr)
+    .def("CreateNameAttr",
+         &_CreateNameAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
+
+    .def("GetScreenRel", &This::GetScreenRel)
+    .def("CreateScreenRel", &This::CreateScreenRel)
     .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);

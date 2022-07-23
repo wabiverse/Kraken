@@ -28,14 +28,14 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#ifndef USDUI_GENERATED_NODEGRAPHNODEAPI_H
-#define USDUI_GENERATED_NODEGRAPHNODEAPI_H
+#ifndef USDUI_GENERATED_AREA_H
+#define USDUI_GENERATED_AREA_H
 
-/// \file usdUI/nodeGraphNodeAPI.h
+/// \file usdUI/area.h
 
 #include "wabi/wabi.h"
 #include "wabi/usd/usdUI/api.h"
-#include "wabi/usd/usd/apiSchemaBase.h"
+#include "wabi/usd/usd/typed.h"
 #include "wabi/usd/usd/prim.h"
 #include "wabi/usd/usd/stage.h"
 #include "wabi/usd/usdUI/tokens.h"
@@ -54,14 +54,15 @@ WABI_NAMESPACE_BEGIN
 class SdfAssetPath;
 
 // -------------------------------------------------------------------------- //
-// NODEGRAPHNODEAPI                                                           //
+// AREA                                                                       //
 // -------------------------------------------------------------------------- //
 
-/// \class UsdUINodeGraphNodeAPI
+/// \class UsdUIArea
 ///
 ///
-/// This api helps storing information about
-/// nodes in node graphs.
+/// A area is a UI component which makes up the smaller individual
+/// components within their encompassing Screen. Areas can have
+/// dynamically set layouts within their parented Screen.
 ///
 ///
 /// For any described attribute \em Fallback \em Value or \em Allowed \em Values below
@@ -69,29 +70,29 @@ class SdfAssetPath;
 /// So to set an attribute to the value "rightHanded", use UsdUITokens->rightHanded
 /// as the value.
 ///
-class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase
+class UsdUIArea : public UsdTyped
 {
  public:
 
   /// Compile time constant representing what kind of schema this class is.
   ///
   /// \sa UsdSchemaKind
-  static const UsdSchemaKind schemaKind = UsdSchemaKind::SingleApplyAPI;
+  static const UsdSchemaKind schemaKind = UsdSchemaKind::ConcreteTyped;
 
-  /// Construct a UsdUINodeGraphNodeAPI on UsdPrim \p prim .
-  /// Equivalent to UsdUINodeGraphNodeAPI::Get(prim.GetStage(), prim.GetPath())
+  /// Construct a UsdUIArea on UsdPrim \p prim .
+  /// Equivalent to UsdUIArea::Get(prim.GetStage(), prim.GetPath())
   /// for a \em valid \p prim, but will not immediately throw an error for
   /// an invalid \p prim
-  explicit UsdUINodeGraphNodeAPI(const UsdPrim &prim = UsdPrim()) : UsdAPISchemaBase(prim) {}
+  explicit UsdUIArea(const UsdPrim &prim = UsdPrim()) : UsdTyped(prim) {}
 
-  /// Construct a UsdUINodeGraphNodeAPI on the prim held by \p schemaObj .
-  /// Should be preferred over UsdUINodeGraphNodeAPI(schemaObj.GetPrim()),
+  /// Construct a UsdUIArea on the prim held by \p schemaObj .
+  /// Should be preferred over UsdUIArea(schemaObj.GetPrim()),
   /// as it preserves SchemaBase state.
-  explicit UsdUINodeGraphNodeAPI(const UsdSchemaBase &schemaObj) : UsdAPISchemaBase(schemaObj) {}
+  explicit UsdUIArea(const UsdSchemaBase &schemaObj) : UsdTyped(schemaObj) {}
 
   /// Destructor.
   USDUI_API
-  virtual ~UsdUINodeGraphNodeAPI();
+  virtual ~UsdUIArea();
 
   /// Return a vector of names of all pre-declared attributes for this schema
   /// class and all its ancestor classes.  Does not include attributes that
@@ -99,55 +100,42 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase
   USDUI_API
   static const TfTokenVector &GetSchemaAttributeNames(bool includeInherited = true);
 
-  /// Return a UsdUINodeGraphNodeAPI holding the prim adhering to this
+  /// Return a UsdUIArea holding the prim adhering to this
   /// schema at \p path on \p stage.  If no prim exists at \p path on
   /// \p stage, or if the prim at that path does not adhere to this schema,
   /// return an invalid schema object.  This is shorthand for the following:
   ///
   /// \code
-  /// UsdUINodeGraphNodeAPI(stage->GetPrimAtPath(path));
+  /// UsdUIArea(stage->GetPrimAtPath(path));
   /// \endcode
   ///
   USDUI_API
-  static UsdUINodeGraphNodeAPI Get(const UsdStagePtr &stage, const SdfPath &path);
+  static UsdUIArea Get(const UsdStagePtr &stage, const SdfPath &path);
 
-
-  /// Returns true if this <b>single-apply</b> API schema can be applied to
-  /// the given \p prim. If this schema can not be a applied to the prim,
-  /// this returns false and, if provided, populates \p whyNot with the
-  /// reason it can not be applied.
+  /// Attempt to ensure a \a UsdPrim adhering to this schema at \p path
+  /// is defined (according to UsdPrim::IsDefined()) on this stage.
   ///
-  /// Note that if CanApply returns false, that does not necessarily imply
-  /// that calling Apply will fail. Callers are expected to call CanApply
-  /// before calling Apply if they want to ensure that it is valid to
-  /// apply a schema.
+  /// If a prim adhering to this schema at \p path is already defined on this
+  /// stage, return that prim.  Otherwise author an \a SdfPrimSpec with
+  /// \a specifier == \a SdfSpecifierDef and this schema's prim type name for
+  /// the prim at \p path at the current EditTarget.  Author \a SdfPrimSpec s
+  /// with \p specifier == \a SdfSpecifierDef and empty typeName at the
+  /// current EditTarget for any nonexistent, or existing but not \a Defined
+  /// ancestors.
   ///
-  /// \sa UsdPrim::GetAppliedSchemas()
-  /// \sa UsdPrim::HasAPI()
-  /// \sa UsdPrim::CanApplyAPI()
-  /// \sa UsdPrim::ApplyAPI()
-  /// \sa UsdPrim::RemoveAPI()
+  /// The given \a path must be an absolute prim path that does not contain
+  /// any variant selections.
+  ///
+  /// If it is impossible to author any of the necessary PrimSpecs, (for
+  /// example, in case \a path cannot map to the current UsdEditTarget's
+  /// namespace) issue an error and return an invalid \a UsdPrim.
+  ///
+  /// Note that this method may return a defined prim whose typeName does not
+  /// specify this schema class, in case a stronger typeName opinion overrides
+  /// the opinion at the current EditTarget.
   ///
   USDUI_API
-  static bool CanApply(const UsdPrim &prim, std::string *whyNot = nullptr);
-
-  /// Applies this <b>single-apply</b> API schema to the given \p prim.
-  /// This information is stored by adding "NodeGraphNodeAPI" to the
-  /// token-valued, listOp metadata \em apiSchemas on the prim.
-  ///
-  /// \return A valid UsdUINodeGraphNodeAPI object is returned upon success.
-  /// An invalid (or empty) UsdUINodeGraphNodeAPI object is returned upon
-  /// failure. See \ref UsdPrim::ApplyAPI() for conditions
-  /// resulting in failure.
-  ///
-  /// \sa UsdPrim::GetAppliedSchemas()
-  /// \sa UsdPrim::HasAPI()
-  /// \sa UsdPrim::CanApplyAPI()
-  /// \sa UsdPrim::ApplyAPI()
-  /// \sa UsdPrim::RemoveAPI()
-  ///
-  USDUI_API
-  static UsdUINodeGraphNodeAPI Apply(const UsdPrim &prim);
+  static UsdUIArea Define(const UsdStagePtr &stage, const SdfPath &path);
 
  protected:
 
@@ -173,102 +161,62 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase
  public:
 
   // --------------------------------------------------------------------- //
-  // POS
+  // NAME
   // --------------------------------------------------------------------- //
   ///
-  /// Declared relative position to the parent in a node graph.
-  /// X is the horizontal position.
-  /// Y is the vertical position. Higher numbers correspond to lower positions
-  /// (coordinates are Qt style, not cartesian).
-  ///
-  /// These positions are not explicitly meant in pixel space, but rather
-  /// assume that the size of a node is approximately 1.0x1.0. Where size-x is
-  /// the node width and size-y height of the node. Depending on
-  /// graph UI implementation, the size of a node may vary in each direction.
-  ///
-  /// Example: If a node's width is 300 and it is position is at 1000, we
-  /// store for x-position: 1000 * (1.0/300)
+  /// This attribute specifies the name of this area
+  /// which is to be displayed in the Application's GUI.
   ///
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `uniform float2 ui:nodegraph:node:pos` |
-  /// | C++ Type | GfVec2f |
-  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2 |
+  /// | Declaration | `uniform token ui:area:name` |
+  /// | C++ Type | TfToken |
+  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
   USDUI_API
-  UsdAttribute GetPosAttr() const;
+  UsdAttribute GetNameAttr() const;
 
-  /// See GetPosAttr(), and also
+  /// See GetNameAttr(), and also
   /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
   /// If specified, author \p defaultValue as the attribute's default,
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreatePosAttr(VtValue const &defaultValue = VtValue(),
-                             bool writeSparsely = false) const;
+  UsdAttribute CreateNameAttr(VtValue const &defaultValue = VtValue(),
+                              bool writeSparsely = false) const;
 
  public:
 
   // --------------------------------------------------------------------- //
-  // STACKINGORDER
+  // SPACETYPE
   // --------------------------------------------------------------------- //
   ///
-  /// This optional value is a useful hint when an application cares about
-  /// the visibility of a node and whether each node overlaps another.
-  ///
-  /// Nodes with lower stacking order values are meant to be drawn below
-  /// higher ones. Negative values are meant as background. Positive values
-  /// are meant as foreground.
-  /// Undefined values should be treated as 0.
-  ///
-  /// There are no set limits in these values.
+  /// A SpaceType is the type of area this
+  /// authored token will create. For example
+  /// SpaceView3D will create a 3D Viewport.
   ///
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `uniform int ui:nodegraph:node:stackingOrder` |
-  /// | C++ Type | int |
-  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Int |
+  /// | Declaration | `uniform token ui:area:spacetype = "SpaceEmpty"` |
+  /// | C++ Type | TfToken |
+  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+  /// | \ref UsdUITokens "Allowed Values" | SpaceEmpty, SpaceView3D, SpaceGraph, SpaceOutliner,
+  /// SpaceProperties, SpaceFile, SpaceImage, SpaceInfo, SpaceSequence, SpaceText, SpaceNode,
+  /// SpaceConsole, SpacePref, SpaceClip, SpaceTopbar, SpaceStatusbar, SpaceSpreadsheet |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
   USDUI_API
-  UsdAttribute GetStackingOrderAttr() const;
+  UsdAttribute GetSpacetypeAttr() const;
 
-  /// See GetStackingOrderAttr(), and also
+  /// See GetSpacetypeAttr(), and also
   /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
   /// If specified, author \p defaultValue as the attribute's default,
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreateStackingOrderAttr(VtValue const &defaultValue = VtValue(),
-                                       bool writeSparsely = false) const;
-
- public:
-
-  // --------------------------------------------------------------------- //
-  // DISPLAYCOLOR
-  // --------------------------------------------------------------------- //
-  ///
-  /// This hint defines what tint the node should have in the node graph.
-  ///
-  ///
-  /// | ||
-  /// | -- | -- |
-  /// | Declaration | `uniform color3f ui:nodegraph:node:displayColor` |
-  /// | C++ Type | GfVec3f |
-  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Color3f |
-  /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
-  USDUI_API
-  UsdAttribute GetDisplayColorAttr() const;
-
-  /// See GetDisplayColorAttr(), and also
-  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
-  /// If specified, author \p defaultValue as the attribute's default,
-  /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
-  /// the default for \p writeSparsely is \c false.
-  USDUI_API
-  UsdAttribute CreateDisplayColorAttr(VtValue const &defaultValue = VtValue(),
-                                      bool writeSparsely = false) const;
+  UsdAttribute CreateSpacetypeAttr(VtValue const &defaultValue = VtValue(),
+                                   bool writeSparsely = false) const;
 
  public:
 
@@ -276,15 +224,13 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase
   // ICON
   // --------------------------------------------------------------------- //
   ///
-  /// This points to an image that should be displayed on the node.  It is
-  /// intended to be useful for summary visual classification of nodes, rather
-  /// than a thumbnail preview of the computed result of the node in some
-  /// computational system.
+  /// This attribute specifies the asset path to an icon
+  /// which is to be displayed in the Application's GUI.
   ///
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `uniform asset ui:nodegraph:node:icon` |
+  /// | Declaration | `uniform asset ui:area:icon` |
   /// | C++ Type | SdfAssetPath |
   /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Asset |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
@@ -303,33 +249,32 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase
  public:
 
   // --------------------------------------------------------------------- //
-  // EXPANSIONSTATE
+  // POS
   // --------------------------------------------------------------------- //
   ///
-  /// The current expansionState of the node in the ui.
-  /// 'open' = fully expanded
-  /// 'closed' = fully collapsed
-  /// 'minimized' = should take the least space possible
+  /// This attribute specifies the position relative to the window.
+  /// In the X axis it measures the horizontal position relative to
+  /// the window and on the Y Axis it measures the vertical position
+  /// relative to the window.
   ///
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `uniform token ui:nodegraph:node:expansionState` |
-  /// | C++ Type | TfToken |
-  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Token |
+  /// | Declaration | `uniform float2 ui:area:pos` |
+  /// | C++ Type | GfVec2f |
+  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2 |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
-  /// | \ref UsdUITokens "Allowed Values" | open, closed, minimized |
   USDUI_API
-  UsdAttribute GetExpansionStateAttr() const;
+  UsdAttribute GetPosAttr() const;
 
-  /// See GetExpansionStateAttr(), and also
+  /// See GetPosAttr(), and also
   /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
   /// If specified, author \p defaultValue as the attribute's default,
   /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
   /// the default for \p writeSparsely is \c false.
   USDUI_API
-  UsdAttribute CreateExpansionStateAttr(VtValue const &defaultValue = VtValue(),
-                                        bool writeSparsely = false) const;
+  UsdAttribute CreatePosAttr(VtValue const &defaultValue = VtValue(),
+                             bool writeSparsely = false) const;
 
  public:
 
@@ -337,17 +282,15 @@ class UsdUINodeGraphNodeAPI : public UsdAPISchemaBase
   // SIZE
   // --------------------------------------------------------------------- //
   ///
-  /// Optional size hint for a node in a node graph.
-  /// X is the width.
-  /// Y is the height.
-  ///
-  /// This value is optional, because node size is often determined
-  /// based on the number of in- and outputs of a node.
+  /// This attribute specifies the size relative to the window.
+  /// In the X axis it measures the width of this area within a
+  /// window and on the Y Axis it measures the height of this
+  /// area within the window.
   ///
   ///
   /// | ||
   /// | -- | -- |
-  /// | Declaration | `uniform float2 ui:nodegraph:node:size` |
+  /// | Declaration | `uniform float2 ui:area:size` |
   /// | C++ Type | GfVec2f |
   /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2 |
   /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |

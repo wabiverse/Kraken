@@ -446,6 +446,5 @@ public:
     //  - Close the namespace with {{ namespaceClose }}
 {% endif %}
     //  - Close the include guard with #endif
-    /* clang-format on */
     // ===================================================================== //
     // --(BEGIN CUSTOM CODE)--

@@ -28,7 +28,7 @@
  *
  * Modifications copyright (C) 2020-2021 Wabi.
  */
-#include "wabi/usd/usdUI/backdrop.h"
+#include "wabi/usd/usdUI/screen.h"
 #include "wabi/usd/usd/schemaBase.h"
 
 #include "wabi/usd/sdf/primSpec.h"
@@ -56,27 +56,27 @@ namespace
   WRAP_CUSTOM;
 
 
-  static UsdAttribute _CreateDescriptionAttr(UsdUIBackdrop &self,
-                                             object defaultVal,
-                                             bool writeSparsely)
+  static UsdAttribute _CreateAlignmentAttr(UsdUIScreen &self,
+                                           object defaultVal,
+                                           bool writeSparsely)
   {
-    return self.CreateDescriptionAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
-                                      writeSparsely);
+    return self.CreateAlignmentAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Token),
+                                    writeSparsely);
   }
 
-  static std::string _Repr(const UsdUIBackdrop &self)
+  static std::string _Repr(const UsdUIScreen &self)
   {
     std::string primRepr = TfPyRepr(self.GetPrim());
-    return TfStringPrintf("UsdUI.Backdrop(%s)", primRepr.c_str());
+    return TfStringPrintf("UsdUI.Screen(%s)", primRepr.c_str());
   }
 
 }  // anonymous namespace
 
-void wrapUsdUIBackdrop()
+void wrapUsdUIScreen()
 {
-  typedef UsdUIBackdrop This;
+  typedef UsdUIScreen This;
 
-  class_<This, bases<UsdTyped>> cls("Backdrop");
+  class_<This, bases<UsdTyped>> cls("Screen");
 
   cls.def(init<UsdPrim>(arg("prim")))
     .def(init<UsdSchemaBase const &>(arg("schemaObj")))
@@ -102,11 +102,14 @@ void wrapUsdUIBackdrop()
     .def(!self)
 
 
-    .def("GetDescriptionAttr", &This::GetDescriptionAttr)
-    .def("CreateDescriptionAttr",
-         &_CreateDescriptionAttr,
+    .def("GetAlignmentAttr", &This::GetAlignmentAttr)
+    .def("CreateAlignmentAttr",
+         &_CreateAlignmentAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
+
+    .def("GetAreasRel", &This::GetAreasRel)
+    .def("CreateAreasRel", &This::CreateAreasRel)
     .def("__repr__", ::_Repr);
 
   _CustomWrapCode(cls);

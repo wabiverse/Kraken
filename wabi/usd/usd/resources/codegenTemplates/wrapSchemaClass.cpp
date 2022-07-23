@@ -284,6 +284,5 @@ void wrap{{ cls.cppClassName }}()
 // 'namespace {', '}'.
 //
 {% endif %}
-/* clang-format on */
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
