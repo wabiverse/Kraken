@@ -31,7 +31,7 @@
 #include "KKE_context.h"
 
 #include <wabi/usd/sdf/path.h>
-// #include <wabi/usd/usdUI/userPref.h>
+#include <wabi/usd/usdUI/userPref.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -102,7 +102,7 @@ enum eUserPrefFlag
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
 };
 
-struct UserDef : public UsdPrim
+struct UserDef : public UsdUIUserPref
 {
 
   SdfPath path;
@@ -117,10 +117,10 @@ struct UserDef : public UsdPrim
 };
 
 UserDef::UserDef(kContext *C, const SdfPath &stagepath)
-  : UsdPrim(),
-    path(stagepath),
-    showsave(EMPTY /*CreateShowSavePromptAttr()*/),
-    dpifac(EMPTY /*CreateDpifacAttr()*/),
+  : UsdUIUserPref(KRAKEN_STAGE_CREATE(C)),
+    path(GetPath()),
+    showsave(CreateShowSavePromptAttr()),
+    dpifac(CreateDpifacAttr()),
     uiflag(VALUE_ZERO)
 {}
 

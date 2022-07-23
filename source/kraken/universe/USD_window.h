@@ -39,7 +39,7 @@
 
 #include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usd/collectionAPI.h>
-// #include <wabi/usd/usdUI/window.h>
+#include <wabi/usd/usdUI/window.h>
 
 #include <deque>
 
@@ -59,7 +59,7 @@ struct ScrAreaMap
   ScrAreaMap() : verts(EMPTY), edges(EMPTY), areas(EMPTY) {}
 };
 
-struct wmWindow : public UsdPrim
+struct wmWindow : public UsdUIWindow
 {
   SdfPath path;
   wmWindow *parent;
@@ -111,23 +111,23 @@ struct wmWindow : public UsdPrim
 
 
 wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
-  : UsdPrim(),
-    path(stagepath),
+  : UsdUIWindow(KRAKEN_STAGE_CREATE(C)),
+    path(GetPath()),
     parent(NULL),
-    title(EMPTY /*CreateTitleAttr()*/),
-    icon(EMPTY /*CreateIconAttr()*/),
-    state(EMPTY /*CreateStateAttr()*/),
-    dpi(EMPTY /*CreateDpiAttr()*/),
-    widgetunit(EMPTY /*CreateWidgetunitAttr()*/),
-    scale(EMPTY /*CreateScaleAttr()*/),
-    linewidth(EMPTY /*CreateLinewidthAttr()*/),
-    pixelsz(EMPTY /*CreatePixelszAttr()*/),
-    cursor(EMPTY /*CreateCursorAttr()*/),
-    pos(EMPTY /*CreatePosAttr()*/),
-    alignment(EMPTY /*CreateAlignmentAttr()*/),
-    size(EMPTY /*CreateSizeAttr()*/),
-    type(EMPTY /*CreateTypeAttr()*/),
-    workspace_rel(EMPTY /*CreateUiWindowWorkspaceRel()*/),
+    title(CreateTitleAttr()),
+    icon(CreateIconAttr()),
+    state(CreateStateAttr()),
+    dpi(CreateDpiAttr()),
+    widgetunit(CreateWidgetunitAttr()),
+    scale(CreateScaleAttr()),
+    linewidth(CreateLinewidthAttr()),
+    pixelsz(CreatePixelszAttr()),
+    cursor(CreateCursorAttr()),
+    pos(CreatePosAttr()),
+    alignment(CreateAlignmentAttr()),
+    size(CreateSizeAttr()),
+    type(CreateTypeAttr()),
+    workspace_rel(CreateUiWindowWorkspaceRel()),
     anchorwin(nullptr),
     active(true),
     addmousemove(false),
@@ -138,23 +138,23 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
 {}
 
 wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
-  : UsdPrim(),
-    path(UsdPrim::GetPath()),
+  : UsdUIWindow(KRAKEN_STAGE_CREATE_CHILD(C)),
+    path(GetPath()),
     parent(prim),
-    title(EMPTY /*CreateTitleAttr()*/),
-    icon(EMPTY /*CreateIconAttr()*/),
-    state(EMPTY /*CreateStateAttr()*/),
-    dpi(EMPTY /*CreateDpiAttr()*/),
-    widgetunit(EMPTY /*CreateWidgetunitAttr()*/),
-    scale(EMPTY /*CreateScaleAttr()*/),
-    linewidth(EMPTY /*CreateLinewidthAttr()*/),
-    pixelsz(EMPTY /*CreatePixelszAttr()*/),
-    cursor(EMPTY /*CreateCursorAttr()*/),
-    pos(EMPTY /*CreatePosAttr()*/),
-    alignment(EMPTY /*CreateAlignmentAttr()*/),
-    size(EMPTY /*CreateSizeAttr()*/),
-    type(EMPTY /*CreateTypeAttr()*/),
-    workspace_rel(EMPTY /*CreateUiWindowWorkspaceRel()*/),
+    title(CreateTitleAttr()),
+    icon(CreateIconAttr()),
+    state(CreateStateAttr()),
+    dpi(CreateDpiAttr()),
+    widgetunit(CreateWidgetunitAttr()),
+    scale(CreateScaleAttr()),
+    linewidth(CreateLinewidthAttr()),
+    pixelsz(CreatePixelszAttr()),
+    cursor(CreateCursorAttr()),
+    pos(CreatePosAttr()),
+    alignment(CreateAlignmentAttr()),
+    size(CreateSizeAttr()),
+    type(CreateTypeAttr()),
+    workspace_rel(CreateUiWindowWorkspaceRel()),
     anchorwin(nullptr),
     active(true),
     addmousemove(false),

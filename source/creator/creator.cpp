@@ -119,6 +119,9 @@ void CREATOR_kraken_main(int argc, const char **argv)
   /* Setup and create all root level prims. */
   LUXO_init();
 
+  /* This sets the context stage. */
+  LUXO_set_stage_ctx(C);
+
   /* Initialize main Runtime. */
   WM_init(C);
 

@@ -34,7 +34,7 @@
 #include "KKE_context.h"
 #include "KKE_screen.h"
 
-// #include <wabi/usd/usdUI/area.h>
+#include <wabi/usd/usdUI/area.h>
 
 WABI_NAMESPACE_BEGIN
 
@@ -67,7 +67,7 @@ struct ScrGlobalAreaData
 };
 
 
-struct ScrArea : UsdPrim
+struct ScrArea : UsdUIArea
 {
   int areaid;
   SdfPath path;
@@ -99,18 +99,18 @@ struct ScrArea : UsdPrim
 };
 
 ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : UsdPrim(),
+  : UsdUIArea(KRAKEN_STAGE_CREATE_CHILD(C)),
     areaid(VALUE_ZERO),
-    path(UsdPrim::GetPath()),
+    path(GetPath()),
     v1(POINTER_ZERO),
     v2(POINTER_ZERO),
     v3(POINTER_ZERO),
     v4(POINTER_ZERO),
-    name(EMPTY /*CreateNameAttr(DEFAULT_TOKEN("Area"))*/),
-    spacetype(EMPTY /*CreateSpacetypeAttr(DEFAULT_VALUE(UsdUITokens->spaceEmpty))*/),
-    icon(EMPTY /*CreateIconAttr(DEFAULT_ASSET(KLI_icon(ICON_KRAKEN)))*/),
-    pos(EMPTY /*CreatePosAttr(DEFAULT_VEC2F(0, 0))*/),
-    size(EMPTY /*CreateSizeAttr(DEFAULT_VEC2F(1, 1))*/),
+    name(CreateNameAttr(DEFAULT_TOKEN("Area"))),
+    spacetype(CreateSpacetypeAttr(DEFAULT_VALUE(UsdUITokens->spaceEmpty))),
+    icon(CreateIconAttr(DEFAULT_ASSET(KLI_icon(ICON_KRAKEN)))),
+    pos(CreatePosAttr(DEFAULT_VEC2F(0, 0))),
+    size(CreateSizeAttr(DEFAULT_VEC2F(1, 1))),
     type(POINTER_ZERO),
     global(POINTER_ZERO),
     do_refresh(VALUE_ZERO),

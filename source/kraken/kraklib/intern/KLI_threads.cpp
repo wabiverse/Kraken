@@ -52,6 +52,17 @@
 
 #include "KLI_numaapi.h"
 
+#if defined(__APPLE__) && defined(_OPENMP) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 2) && \
+    !defined(__clang__)
+#  define USE_APPLE_OMP_FIX
+#endif
+
+#ifdef USE_APPLE_OMP_FIX
+/* ************** libgomp (Apple gcc 4.2.1) TLS bug workaround *************** */
+extern pthread_key_t gomp_tls_key;
+static void *thread_tls_data;
+#endif
+
 static pthread_mutex_t _image_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t _image_draw_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t _viewer_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -62,7 +73,6 @@ static pthread_mutex_t _colormanage_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t _fftw_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t _view3d_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t mainid;
-static bool is_numa_available = false;
 static unsigned int thread_levels = 0; /* threads can be invoked inside threads */
 static int num_threads_override = 0;
 
@@ -71,12 +81,7 @@ static int num_threads_override = 0;
 
 void KLI_threadapi_init(void)
 {
-#if ARCH_OS_WINDOWS
   mainid = pthread_self();
-  if (numaAPI_Initialize() == NUMAAPI_SUCCESS) {
-    is_numa_available = true;
-  }
-#endif /* WIN32 */
 }
 
 int KLI_thread_is_main(void)

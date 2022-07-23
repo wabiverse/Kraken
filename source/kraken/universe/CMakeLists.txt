@@ -52,6 +52,6 @@ set(LIB
   ${PYTHON_LIBRARIES}
 )
 
-add_definitions(-DKRAKEN_LUXOVERSE_EXPORTS)
+add_definitions(-DKRAKEN_USD_EXPORTS)
 
 kraken_add_lib(kraken_universe "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

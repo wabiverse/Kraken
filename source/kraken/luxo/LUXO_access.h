@@ -95,4 +95,6 @@ KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr);
 
 UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfToken &name);
 
+void LUXO_set_stage_ctx(kContext *C);
+
 WABI_NAMESPACE_END

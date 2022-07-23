@@ -34,6 +34,7 @@
 #include "USD_api.h"
 #include "USD_object.h"
 #include "USD_types.h"
+#include "USD_scene.h"
 
 WABI_NAMESPACE_BEGIN
 
@@ -66,6 +67,12 @@ void LUXO_init(void)
 
   /* remove this once we go back to UsdStage::CreateInMemory */
   LUXO_save_usd();
+}
+
+void LUXO_set_stage_ctx(kContext *C)
+{
+  Scene *scene = new Scene(KRAKEN_STAGE);
+  CTX_data_scene_set(C, scene);
 }
 
 ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr)

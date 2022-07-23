@@ -115,6 +115,7 @@ enum eSceneLoadSet
 
 struct Scene
 {
+  explicit Scene(const UsdStageRefPtr &stage);
   explicit Scene(const std::string &identifier, const UsdPrim &prim = UsdPrim());
   explicit Scene(const std::string &identifier, const UsdSchemaBase &schemaObj);
   virtual ~Scene();

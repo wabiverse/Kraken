@@ -54,10 +54,10 @@ void USD_default_table_main_window(kContext *C)
 
   FormFactory(PROP_IFACE(win->title),         VALUE_IFACE(TfToken("Kraken")));
   FormFactory(PROP_IFACE(win->icon),          VALUE_IFACE(SdfAssetPath(KLI_icon(ICON_KRAKEN))));
-  FormFactory(PROP_IFACE(win->state),         VALUE_IFACE(UsdUITokens->closed));
-  FormFactory(PROP_IFACE(win->cursor),        VALUE_IFACE(UsdUITokens->closed));
-  FormFactory(PROP_IFACE(win->alignment),     VALUE_IFACE(UsdUITokens->closed));
-  FormFactory(PROP_IFACE(win->type),          VALUE_IFACE(UsdUITokens->closed));
+  FormFactory(PROP_IFACE(win->state),         VALUE_IFACE(UsdUITokens->normal));
+  FormFactory(PROP_IFACE(win->cursor),        VALUE_IFACE(UsdUITokens->default_));
+  FormFactory(PROP_IFACE(win->alignment),     VALUE_IFACE(UsdUITokens->alignAbsolute));
+  FormFactory(PROP_IFACE(win->type),          VALUE_IFACE(UsdUITokens->normal));
   FormFactory(PROP_IFACE(win->pos),           VALUE_IFACE(GfVec2f(0.0, 0.0)));
   FormFactory(PROP_IFACE(win->size),          VALUE_IFACE(GfVec2f(1920, 1080)));
   FormFactory(PROP_IFACE(win->dpi),           VALUE_IFACE(float(1.0)));
@@ -82,7 +82,7 @@ void USD_default_table_area_v3d(kContext *C)
   ScrArea *v3d = CTX_wm_area(C);
 
   FormFactory(PROP_IFACE(v3d->name),      VALUE_IFACE(TfToken("View3D")));
-  FormFactory(PROP_IFACE(v3d->spacetype), VALUE_IFACE(UsdUITokens->closed));
+  FormFactory(PROP_IFACE(v3d->spacetype), VALUE_IFACE(UsdUITokens->spaceView3D));
   FormFactory(PROP_IFACE(v3d->icon),      VALUE_IFACE(SdfAssetPath(KLI_icon(ICON_HYDRA))));
   FormFactory(PROP_IFACE(v3d->pos),       VALUE_IFACE(GfVec2f(0, 0)));
   FormFactory(PROP_IFACE(v3d->size),      VALUE_IFACE(GfVec2f(1800, 1080)));  
@@ -94,7 +94,7 @@ void USD_default_table_area_outliner(kContext *C)
   ScrArea *outliner = CTX_wm_area(C);
 
   FormFactory(PROP_IFACE(outliner->name),      VALUE_IFACE(TfToken("Outliner")));
-  FormFactory(PROP_IFACE(outliner->spacetype), VALUE_IFACE(UsdUITokens->closed));
+  FormFactory(PROP_IFACE(outliner->spacetype), VALUE_IFACE(UsdUITokens->spaceOutliner));
   FormFactory(PROP_IFACE(outliner->icon),      VALUE_IFACE(SdfAssetPath(KLI_icon(ICON_LUXO))));
   FormFactory(PROP_IFACE(outliner->pos),       VALUE_IFACE(GfVec2f(1800, 0)));
   FormFactory(PROP_IFACE(outliner->size),      VALUE_IFACE(GfVec2f(120, 1080)));
@@ -111,7 +111,7 @@ void USD_default_table_area_screen(kContext *C)
     FormFactory(PROP_IFACE(screen->areas_rel), VALUE_IFACE(SdfPath(area->path)));
   }
 
-  FormFactory(PROP_IFACE(screen->align), VALUE_IFACE(UsdUITokens->closed));
+  FormFactory(PROP_IFACE(screen->align), VALUE_IFACE(UsdUITokens->none));
 }
 
 

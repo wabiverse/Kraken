@@ -44,27 +44,27 @@ WABI_NAMESPACE_BEGIN
 struct KRAKEN_PATH_DEFAULTS
 {
   /** Kraken Root Namespace. */
-  const inline static TfToken KRAKEN_ROOT = TfToken("/WabiAnimationStudios/Internal/Kraken");
+  const inline static TfToken KRAKEN_ROOT = TfToken("/WabiAnimationStudios/Structs");
 
   /** Kraken :: Ops Root. */
   const inline static TfToken KRAKEN_OPERATORS = TfToken(
-    "/WabiAnimationStudios/Internal/Kraken/Ops");
+    "/WabiAnimationStudios/Structs/Ops");
 
   /** Kraken :: UserDef Root. */
   const inline static TfToken KRAKEN_USERPREFS = TfToken(
-    "/WabiAnimationStudios/Internal/Kraken/UserDef");
+    "/WabiAnimationStudios/Structs/UserDef");
 
   /** Kraken :: WindowManager Root. */
   const inline static TfToken KRAKEN_WM = TfToken(
-    "/WabiAnimationStudios/Internal/Kraken/WindowManager");
+    "/WabiAnimationStudios/Structs/WindowManager");
 
   /** Kraken :: MainWindow Root. */
   const inline static TfToken KRAKEN_WINDOW = TfToken(
-    "/WabiAnimationStudios/Internal/Kraken/MainWindow");
+    "/WabiAnimationStudios/Structs/MainWindow");
 
   /** Kraken :: MainWindow :: Workspaces Root. */
   const inline static TfToken KRAKEN_WORKSPACES = TfToken(
-    "/WabiAnimationStudios/Internal/Kraken/Workspaces");
+    "/WabiAnimationStudios/Structs/Workspaces");
 };
 
 WABI_NAMESPACE_END

@@ -35,21 +35,21 @@
 #include <iterator>
 
 #if defined(WABI_STATIC)
-#  define KRAKEN_LUXOVERSE_API
-#  define KRAKEN_LUXOVERSE_API_TEMPLATE_CLASS(...)
-#  define KRAKEN_LUXOVERSE_API_TEMPLATE_STRUCT(...)
-#  define KRAKEN_LUXOVERSE_LOCAL
+#  define KRAKEN_USD_API
+#  define KRAKEN_USD_API_TEMPLATE_CLASS(...)
+#  define KRAKEN_USD_API_TEMPLATE_STRUCT(...)
+#  define KRAKEN_USD_LOCAL
 #else
-#  if defined(KRAKEN_LUXOVERSE_EXPORTS)
-#    define KRAKEN_LUXOVERSE_API ARCH_EXPORT
-#    define KRAKEN_LUXOVERSE_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
-#    define KRAKEN_LUXOVERSE_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
+#  if defined(KRAKEN_USD_EXPORTS)
+#    define KRAKEN_USD_API ARCH_EXPORT
+#    define KRAKEN_USD_API_TEMPLATE_CLASS(...) ARCH_EXPORT_TEMPLATE(class, __VA_ARGS__)
+#    define KRAKEN_USD_API_TEMPLATE_STRUCT(...) ARCH_EXPORT_TEMPLATE(struct, __VA_ARGS__)
 #  else
-#    define KRAKEN_LUXOVERSE_API ARCH_IMPORT
-#    define KRAKEN_LUXOVERSE_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
-#    define KRAKEN_LUXOVERSE_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
+#    define KRAKEN_USD_API ARCH_IMPORT
+#    define KRAKEN_USD_API_TEMPLATE_CLASS(...) ARCH_IMPORT_TEMPLATE(class, __VA_ARGS__)
+#    define KRAKEN_USD_API_TEMPLATE_STRUCT(...) ARCH_IMPORT_TEMPLATE(struct, __VA_ARGS__)
 #  endif
-#  define KRAKEN_LUXOVERSE_LOCAL ARCH_HIDDEN
+#  define KRAKEN_USD_LOCAL ARCH_HIDDEN
 #endif
 
 #define KRAKEN_DECLARE_STATIC_TOKEN(x) const TfToken x
@@ -57,8 +57,8 @@
 #define IDNAME(z) KRAKEN_OPERATOR_TOKENS->z
 
 /* Switch Get() to Define() for production. */
-#define KRAKEN_LUXOVERSE_CREATE_CHILD(i) Get(CTX_data_stage(i), prim->path.AppendPath(stagepath))
-#define KRAKEN_LUXOVERSE_CREATE(g) Get(CTX_data_stage(g), stagepath)
+#define KRAKEN_STAGE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
+#define KRAKEN_STAGE_CREATE(g) Define(CTX_data_stage(g), stagepath)
 #define KRAKEN_PRIM_OPERATOR_CREATE(x, y) \
   CTX_data_stage(x)->DefinePrim(          \
     SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_OPERATORS).AppendPath(SdfPath(y)))
