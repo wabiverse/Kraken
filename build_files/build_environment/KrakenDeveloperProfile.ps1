@@ -99,11 +99,10 @@ function HopIntoRootDir
 
 function CodeSignWholeArchive
 {
-  Get-ChildItem -Path /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app -Recurse | ForEach-Object {
-    $absPath = Get-Item $_.FullName
-    Write-Color -Text "Code Signing", ": ", "$absPath" -Color Magenta, Cyan, Green
-    & codesign --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $absPath 2>&1>$null
-  }
+  $krakenbundle = "/Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app"
+  Write-Color -Text "Code Signing", ": ", "$krakenbundle" -Color Magenta, Cyan, Green
+  & codesign -f -o runtime --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $krakenbundle
+  codesign -dv -r- $krakenbundle
 }
 
 function AppleBundleAndNotarize
