@@ -97,8 +97,18 @@ function HopIntoRootDir
   }
 }
 
+function CodeSignWholeArchive
+{
+  Get-ChildItem -Path /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app -Recurse | ForEach-Object {
+    $absPath = Get-Item $_.FullName
+    Write-Color -Text "Code Signing", ": ", "$absPath" -Color Magenta, Cyan, Green
+    & codesign --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $absPath 2>&1>$null
+  }
+}
+
 function AppleBundleAndNotarize
 {
+  CodeSignWholeArchive
   ditto -c -k --keepParent /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app.zip
   xcrun notarytool submit -f normal --keychain-profile "Kraken" --progress --wait /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app.zip
 }
