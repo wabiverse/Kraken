@@ -180,7 +180,38 @@ AnchorISystemWindow *AnchorSystemCocoa::createWindow(const char *title,
                                                      const bool is_dialog,
                                                      const AnchorISystemWindow *parentWindow)
 {
-  return nullptr;
+  AnchorISystemWindow *window = NULL;
+  
+  /* convert the title string for swift. */
+  NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
+
+  /* convert the cxx enum to the swift enum. */
+  AnchorWindowState nsstate = AnchorWindowStateWindowStateNormal;
+  switch (state) {
+    case AnchorWindowStateNormal:
+      nsstate = AnchorWindowStateWindowStateNormal;
+      break;
+    case AnchorWindowStateMaximized:
+      nsstate = AnchorWindowStateWindowStateMaximized;
+      break;
+    case AnchorWindowStateMinimized:
+      nsstate = AnchorWindowStateWindowStateMinimized;
+      break;
+    case AnchorWindowStateFullScreen:
+      nsstate = AnchorWindowStateWindowStateFullScreen;
+      break;
+    case AnchorWindowStateEmbedded:
+      nsstate = AnchorWindowStateWindowStateEmbedded;
+      break;
+    default:
+      nsstate = AnchorWindowStateWindowStateNormal;
+      break;
+  }
+
+  /* create the window on metal with swift. */
+  [KrakenApplication createWindowWithTitle:titleutf left:left top:top width:width height:height state:nsstate isDialog:is_dialog];
+
+  return window;
 }
 
 eAnchorStatus AnchorSystemCocoa::getCursorPosition(AnchorS32 &x, AnchorS32 &y) const

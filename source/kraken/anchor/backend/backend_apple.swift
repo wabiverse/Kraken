@@ -18,6 +18,16 @@ import Foundation
 import Darwin
 import Cocoa
 import AppKit
+import Metal
+
+@objc
+public enum AnchorWindowState: Int {
+  case WindowStateNormal = 0
+  case WindowStateMaximized = 1
+  case WindowStateMinimized = 2
+  case WindowStateFullScreen = 3
+  case WindowStateEmbedded = 4
+}
 
 open class KrakenApplication : NSObject
 {
@@ -31,6 +41,7 @@ open class KrakenApplication : NSObject
     app.delegate = strongDelegate
 
     NSApp = app
+    NSApp.delegate = strongDelegate
 
     if (NSApp.mainMenu == nil) {
       var mainMenuBar = NSMenu()
@@ -67,7 +78,7 @@ open class KrakenApplication : NSObject
       NSApp.windowsMenu = windowMenu
     }
 
-    NSApp.finishLaunching()
+    // NSApp.finishLaunching()
   }
 
   @objc
@@ -98,6 +109,87 @@ open class KrakenApplication : NSObject
     } while (event != nil)
 
     return anyProcessed
+  }
+
+  @objc 
+  public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: AnchorWindowState, isDialog: Bool)
+  {
+    var window: AnchorWindowApple?
+    autoreleasepool {
+
+      let frame = (NSScreen.main?.visibleFrame)!
+      let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
+
+      var bottom = (contentRect.size.height - 1) - height - top
+
+      /* Ensures window top left is inside this available rect. */
+      let leftC = left > contentRect.origin.x ? left : contentRect.origin.x
+      /* Add contentRect.origin.y to respect docksize. */
+      bottom = bottom > contentRect.origin.y ? bottom + contentRect.origin.y : contentRect.origin.y
+
+      window = AnchorWindowApple(title: title, 
+                                 left: leftC, 
+                                 bottom: bottom, 
+                                 width: width, 
+                                 height: height, 
+                                 state: state, 
+                                 dialog: isDialog,
+                                 parent: nil)
+
+      /**
+       * might as well pass execution onto cocoa here,
+       * just to keep kraken running with a window until
+       * we have metal fleshed out on the swapchain. */
+      NSApp.run()
+    }
+  }
+}
+
+class AnchorWindowApple : NSObject
+{
+  var window: NSWindow
+  var metalDevice: MTLDevice!
+  var metalLayer: CAMetalLayer!
+
+  init(title: String, 
+       left: CGFloat, 
+       bottom: CGFloat, 
+       width: CGFloat, 
+       height: CGFloat, 
+       state: AnchorWindowState, 
+       dialog: Bool,
+       parent: AnchorWindowApple?) 
+  {
+    let rect = NSRect(origin: CGPoint(x: left, y: bottom), size: CGSize(width: width, height: height))
+    let minSize = NSSize(width: 320, height: 240)
+
+    var styleMask: NSWindow.StyleMask = [.titled, .closable, .resizable]
+    if (!dialog) {
+      styleMask.insert(.miniaturizable)
+    }
+
+    self.window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
+    self.window.contentMinSize = minSize
+
+    self.metalDevice = MTLCreateSystemDefaultDevice()
+    var view: NSView?
+
+    if (metalDevice != nil) {
+      self.metalLayer = CAMetalLayer()
+      self.metalLayer.edgeAntialiasingMask = CAEdgeAntialiasingMask(rawValue: 0)
+      self.metalLayer.masksToBounds = false
+      self.metalLayer.isOpaque = false
+      self.metalLayer.framebufferOnly = true
+      self.metalLayer.presentsWithTransaction = false
+      self.metalLayer.removeAllAnimations()
+      self.metalLayer.device = metalDevice
+
+      /* todo: create metal view. */
+    }
+
+    self.window.makeKeyAndOrderFront(nil)
+
+    self.window.title = title
   }
 }
 
