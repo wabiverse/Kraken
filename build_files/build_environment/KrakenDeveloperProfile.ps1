@@ -97,6 +97,12 @@ function HopIntoRootDir
   }
 }
 
+function AppleBundleAndNotarize
+{
+  ditto -c -k --keepParent /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app.zip
+  xcrun notarytool submit -f normal --keychain-profile "Kraken" --progress --wait /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app.zip
+}
+
 function RunUnrealEngine5WithDebugger
 {
   if ($IsMacOS) {
