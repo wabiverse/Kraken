@@ -71,7 +71,7 @@ jobs:
       run: cd ${{github.workspace}} && make release
 
     - name: Notarize with Apple Inc.
-      run: pwsh AppleBundleAndNotarize
+      run: pwsh -Command AppleBundleAndNotarize
 
     - name: Package
       run: cd ${{github.workspace}}/../build_darwin_release && rm -r ${{github.workspace}}/../build_darwin_release/bin/Release/Kraken.swiftmodule && create-dmg --app-drop-link 600 250 --volname "Kraken Installer" --volicon "${{github.workspace}}/release/darwin/KrakenInstaller.icns" --window-pos 400 220 --icon "Kraken.app" 140 250 --background ${{github.workspace}}/release/darwin/background.png --window-size 784 520 kraken-1.50a-macos-arm64.dmg ${{github.workspace}}/../build_darwin_release/bin/Release
