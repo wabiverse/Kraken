@@ -30,6 +30,8 @@ open class KrakenApplication : NSObject
     let strongDelegate = AppDelegate()
     app.delegate = strongDelegate
 
+    NSApp = app
+
     if (NSApp.mainMenu == nil) {
       var mainMenuBar = NSMenu()
       var menuItem = NSMenuItem()
@@ -66,6 +68,36 @@ open class KrakenApplication : NSObject
     }
 
     NSApp.finishLaunching()
+  }
+
+  @objc
+  public static func processEvents() -> Bool
+  {
+    var anyProcessed = false
+    var event: NSEvent?
+
+    repeat {
+      let kill = autoreleasepool {
+        event = NSApp.nextEvent(matching: .any, until: .distantPast, inMode: .default, dequeue: true)
+
+        if (event == nil) {
+          return true
+        }
+
+        anyProcessed = true
+
+        NSApp.sendEvent(event!)
+
+        return false
+      }
+
+      if (kill) {
+        break
+      }
+
+    } while (event != nil)
+
+    return anyProcessed
   }
 }
 

@@ -74,7 +74,8 @@ AnchorU64 AnchorSystemCocoa::getMilliSeconds() const
 
 bool AnchorSystemCocoa::processEvents(bool waitForEvent)
 {
-  return true;
+  bool anyProcessed = [KrakenApplication processEvents];
+  return anyProcessed;
 }
 
 eAnchorStatus AnchorSystemCocoa::getModifierKeys(AnchorModifierKeys &keys) const
