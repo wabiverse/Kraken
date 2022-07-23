@@ -83,7 +83,7 @@ Static Python Bindings
 ======================
 Kraken has an embedded Python interpreter which is loaded when Kraken is started and stays active while Kraken is running. The internal Kraken module **kpy** statically binds both the (``kpy.context`` ``kpy.data`` ``kpy.app``, ...) API and all the Pixar **USD** python bindings within the same python module with substantial crossover between the two APIs at it's core. This is **USD** as a *runtime*, and is the framework for which all core development is founded upon. On the outset it might not look like much as this is still early days -- but you can imagine something similiar to Blender's **bpy** python module, with the main difference being the "Scene" or in this context, the "Stage", having *total* control over the underlying API schematics and/or opinions. A digital content creation suite *which evolves to the content* - rather than the content having to adapt to the needs of a platform.
 
-.. figure:: https://www.dropbox.com/s/okfncc4dy1u2baz/Screenshot%202022-07-06%20at%204.02.44%20PM.png?raw=1
+.. figure:: https://www.dropbox.com/s/1yka8wfqtl07m2z/Screenshot%202022-07-23%20at%2012.38.28%20AM.png?raw=1
    :scale: 50 %
    :align: center
 
