@@ -104,7 +104,7 @@ function HopIntoRootDir
 function AppleBundleAndNotarize
 {
   $KRAKEN_DMG_NAME = "kraken-$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR$KRAKEN_BUILDING_VERSION_CYCLE-macos-arm64.dmg"
-  zsh $KrakenGlobalView/release/darwin/bundle.sh --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/release --dmg $KRAKEN_DMG_NAME
+  zsh $KrakenGlobalView/release/darwin/bundle.sh --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/release --dmg /Users/furby/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME
 }
 
 function RunUnrealEngine5WithDebugger

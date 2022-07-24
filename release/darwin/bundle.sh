@@ -116,7 +116,8 @@ echo
 
 # Create the disk image.
 _directory_size=$(du -sh ${_tmp_dir} | awk -F'[^0-9]*' '$0=$1')
-_image_size=$(echo "${_directory_size}" + 400 | bc) # extra 400 need for codesign to work (why on earth?)
+# 1725 is as small as kraken can go here...
+_image_size=$(echo "${_directory_size}" + 1725 | bc) # extra 1725 need for codesign to work (why on earth?)
 
 echo
 echo -n "Creating disk image of size ${_image_size}M.."
