@@ -99,46 +99,10 @@ function HopIntoRootDir
   }
 }
 
-function CodeSignWholeArchive
-{
-  # $codesignpython = "/Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/python/bin/python3.9"
-  # Write-Color -Text "Code Signing", ": ", "$codesignpython" -Color Magenta, Cyan, Green
-  # & codesign -f -o runtime --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $codesignpython
-  # codesign -dv -r- $codesignpython
-
-  # Setup the code signing keys.
-  $env:KRAKEN_KEYCHAIN = "packaging.keychain"
-  $env:KRAKEN_KEYCHAIN_PASSWORD = "secret"
-  $env:CERT = "/Users/furby/dev/KrakenCAs/UQ9J5QT9DL-app.Certificates.p12"
-  $env:CERT_PASSWORD = "password"
-
-  /usr/bin/security create-keychain -p $env:KRAKEN_KEYCHAIN_PASSWORD $env:KRAKEN_KEYCHAIN
-  /usr/bin/security list-keychains -d user -s $env:KRAKEN_KEYCHAIN $(security list-keychains -d user | sed s/\`"//g)
-  /usr/bin/security set-keychain-settings $env:KRAKEN_KEYCHAIN
-  /usr/bin/security unlock-keychain -p $env:KRAKEN_KEYCHAIN_PASSWORD $env:KRAKEN_KEYCHAIN
-  /usr/bin/security import $env:CERT -k $env:KRAKEN_KEYCHAIN -P $env:CERT_PASSWORD -T "/usr/bin/codesign"
-  $env:CERT_IDENTITY=$(security find-identity -v -p codesigning $env:KRAKEN_KEYCHAIN | head -1 | grep '"' | sed -e 's/[^\"]*\"//' -e 's/\".*//')
-  $env:CERT_UUID=$(security find-identity -v -p codesigning $env:KRAKEN_KEYCHAIN | head -1 | grep '"' | awk '{print $2}')
-  /usr/bin/security set-key-partition-list -S apple-tool:,apple: -s -k $env:KRAKEN_KEYCHAIN_PASSWORD -D "$env:CERT_IDENTITY" -t private $env:KRAKEN_KEYCHAIN
-  /usr/bin/security delete-keychain $env:KRAKEN_KEYCHAIN
-  
-  Write-Color -Text "Code Signing", ": ", "$KrakenGlobalView/release/darwin/entitlements.plist" -Color Magenta, Cyan, Green
-  codesign --force --sign "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" --keychain "packaging.keychain" --timestamp -o runtime -vvvv --entitlements $KrakenGlobalView/release/darwin/entitlements.plist
-  
-  # Insert all other .so and .dylib here...
-
-  $krakenbundle = "/Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app"
-  Write-Color -Text "Code Signing", ": ", "$krakenbundle" -Color Magenta, Cyan, Green
-  codesign --force --sign "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" --keychain "packaging.keychain" --timestamp -o runtime -vvvv --entitlements $KrakenGlobalView/release/darwin/entitlements.plist $krakenbundle
-  
-  codesign --verify --strict -vvvv $krakenbundle
-}
-
 function AppleBundleAndNotarize
 {
-  CodeSignWholeArchive
-  ditto -c -k --keepParent /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app.zip
-  xcrun notarytool submit -f normal --keychain-profile "Kraken" --progress --wait /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app.zip
+  # Using Blender's script for this...
+  & zsh $KrakenGlobalView/release/darwin/bundle.sh
 }
 
 function RunUnrealEngine5WithDebugger
