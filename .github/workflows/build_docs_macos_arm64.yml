@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: pwsh
     permissions:
       contents: 'read'
       id-token: 'write'

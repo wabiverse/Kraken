@@ -12,6 +12,9 @@ env:
 jobs:
   build:
     runs-on: self-hosted
+    defaults:
+      run:
+        shell: pwsh
 
     steps:
     - uses: actions/checkout@v3
