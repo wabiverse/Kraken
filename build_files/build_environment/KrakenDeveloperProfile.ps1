@@ -101,15 +101,15 @@ function HopIntoRootDir
 
 function CodeSignWholeArchive
 {
-  $codesignpython = "/Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/python/bin/python3.9"
-  Write-Color -Text "Code Signing", ": ", "$codesignpython" -Color Magenta, Cyan, Green
-  & codesign -f -o runtime --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $codesignpython
-  codesign -dv -r- $codesignpython
+  # $codesignpython = "/Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/python/bin/python3.9"
+  # Write-Color -Text "Code Signing", ": ", "$codesignpython" -Color Magenta, Cyan, Green
+  # & codesign -f -o runtime --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $codesignpython
+  # codesign -dv -r- $codesignpython
 
   # Always codesign the most outer bit last.
   $krakenbundle = "/Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release/Kraken.app"
   Write-Color -Text "Code Signing", ": ", "$krakenbundle" -Color Magenta, Cyan, Green
-  & codesign -f -o runtime --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $krakenbundle
+  & codesign -f -o runtime --entitlements $KrakenGlobalView/release/darwin/entitlements.plist --timestamp -s "Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" -v $krakenbundle
   codesign -dv -r- $krakenbundle
 }
 
