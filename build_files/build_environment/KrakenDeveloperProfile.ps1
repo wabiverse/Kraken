@@ -5,6 +5,7 @@
 
 $KRAKEN_BUILDING_VERSION_MAJOR = 1
 $KRAKEN_BUILDING_VERSION_MINOR = 50
+$KRAKEN_BUILDING_VERSION_CYCLE = "a"
 $KRAKEN_DEVELOPMENT_MILESTONE = "Initial Release Sprint"
 $PIXAR_BUILDING_VERSION = 22.05
 
@@ -99,10 +100,11 @@ function HopIntoRootDir
   }
 }
 
+# Using Blender's script for this...
 function AppleBundleAndNotarize
 {
-  # Using Blender's script for this...
-  & zsh $KrakenGlobalView/release/darwin/bundle.sh
+  $KRAKEN_DMG_NAME = "kraken-$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR$KRAKEN_BUILDING_VERSION_CYCLE-macos-arm64.dmg"
+  zsh $KrakenGlobalView/release/darwin/bundle.sh --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/release --dmg $KRAKEN_DMG_NAME
 }
 
 function RunUnrealEngine5WithDebugger
