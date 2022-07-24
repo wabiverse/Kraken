@@ -19,6 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       
+    - name: Install Doxygen
+      run: brew install doxygen
+
     - name: Install Sphinx
       run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install sphinx
    
