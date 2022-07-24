@@ -5,6 +5,9 @@
 #   ../build_linux_i386
 # This is for users who like to configure & build kraken with a single command.
 
+# Removed the 'xcode' target, simply because apple always uses xcode as Make
+# is not capable of compiling Swift.
+
 define HELP_TEXT
 
 Convenience Targets
@@ -17,7 +20,6 @@ Convenience Targets
    * developer:     Enable faster builds, error checking and tests, recommended for developers.
    * config:        Run cmake configuration tool to set build options.
    * ninja:         Use ninja build tool for faster builds.
-   * xcode:         Generate an Xcode Project to build and develop kraken.
 
    Note: passing the argument 'BUILD_DIR=path' when calling make will override the default build dir.
    Note: passing the argument 'BUILD_CMAKE_ARGS=args' lets you add cmake arguments.
@@ -174,11 +176,6 @@ else
 		DEPS_BUILD_COMMAND:=make -s -C "$(BUILD_DIR)"
 	endif
 endif
-ifneq "$(findstring xcode, $(MAKECMDGOALS))" ""
-	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
-	BUILD_COMMAND:=xcodebuild
-	DEPS_BUILD_COMMAND:=xcodebuild
-endif
 
 # -----------------------------------------------------------------------------
 # Kraken binary path
@@ -187,7 +184,7 @@ endif
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
 	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
-	BUILD_COMMAND:=xcodebuild -arch "arm64" -sdk "macosx" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install CODE_SIGN_IDENTITY="Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" | xcbeautify
+	BUILD_COMMAND:=xcodebuild -arch "arm64" -sdk "macosx13.0" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install CODE_SIGN_IDENTITY="Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" | xcbeautify
 	DEPS_BUILD_COMMAND:=xcodebuild
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	CLEAN_BUILD_COMMAND:=$(BUILD_COMMAND) -C "$(BUILD_DIR)_release" clean
@@ -260,23 +257,6 @@ debug: all
 release: all
 developer: all
 ninja: all
-
-# -----------------------------------------------------------------------------
-# Build Kraken using Apple Xcode.
-xcode:
-	@echo
-	@echo Configuring Kraken in \"$(BUILD_DIR)\" ...
-
-#	# do this always incase of failed initial build, could be smarter here...
-	@$(CMAKE_CONFIG)
-
-	@echo
-	@echo Building Kraken and Pixar USD...
-	$(BUILD_COMMAND) -arch "arm64" -sdk "macosx" -project "$(BUILD_DIR)/Kraken.xcodeproj" -jobs $(NPROCS) -configuration Release -scheme install CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain"
-	@echo
-	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
-	@echo
 
 # -----------------------------------------------------------------------------
 # Run Install (So you don't have to rebuild everytime, python scripts, etc)

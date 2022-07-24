@@ -32,6 +32,16 @@ if ($IsMacOS) {
   } elseif(Test-Path -Path $INTEL_HOMEBREW_PATH) {
     $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$INTEL_HOMEBREW_PATH
   }
+
+  # CMake workaround until brew is pulling in 3.24 where cmake is fixed.
+  # Otherwise it leaves you to a much-unhappy "WHY CAN'T IT FIND MY APPLECLANG".
+  # (We make the assumption that if it's in your App folder, it's latest. Is this
+  # safe? Well, this is powershell. So unless you're cool like me you're likely
+  # on zsh or bash anyway.)
+  $CMAKE_APPDIR_PATH_USER = "/Applications/CMake.app/Contents/bin"
+  if (Test-Path -Path $CMAKE_APPDIR_PATH_USER) {
+    $env:PATH = '{0}{1}{2}' -f $CMAKE_APPDIR_PATH_USER,[IO.Path]::PathSeparator,$env:PATH
+  }
 }
 
 # --------------------------------------- Powershell modules. -----
@@ -50,14 +60,6 @@ if (Get-Module -ListAvailable -Name Terminal-Icons) {
 else {
   # Automatically installed if it doesn't exist...
   Install-Module Terminal-Icons -Confirm:$true -Force
-}
-
-if (Get-Module -ListAvailable -Name oh-my-posh) {
-  Import-Module oh-my-posh
-} 
-else {
-  # Automatically installed if it doesn't exist...
-  Install-Module oh-my-posh -Confirm:$true -Force
 }
 
 if (Get-Module -ListAvailable -Name posh-git) {
@@ -675,7 +677,7 @@ function RefreshConsole {
 # Shell theme
 if($KrakenGlobalView) {
   Push-Location $KrakenGlobalView
-  Set-PoshPrompt -Theme './build_files/build_environment/krakentheme.omp.json'
+  oh-my-posh init pwsh --config './build_files/build_environment/krakentheme.omp.json' | Invoke-Expression
   Pop-Location
 }
 
