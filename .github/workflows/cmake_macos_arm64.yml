@@ -67,8 +67,8 @@ jobs:
     - name: Source Zsh
       run: zsh
 
-    - name: Switch to Powershell
-      run: zsh && source ~/.zshrc && pwsh
+    - name: Ensure Powershell
+      run: pwsh
 
     - name: Build
       run: cd ${{github.workspace}} && make release
