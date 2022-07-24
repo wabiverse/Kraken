@@ -64,6 +64,9 @@ jobs:
     - name: Install Embree
       run: brew install embree
 
+    - name: Install Create DMG Utility
+      run: brew install create-dmg
+
     - name: Source Zsh
       run: zsh
 
