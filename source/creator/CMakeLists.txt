@@ -288,7 +288,6 @@ if(WITH_PYTHON_MODULE)
   if(APPLE)
     set_target_properties(kraken PROPERTIES 
       MACOSX_BUNDLE TRUE
-      XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME YES
     )
   endif()
 

@@ -109,7 +109,8 @@ function AppleBundleAndNotarize
   --dmg /Users/furby/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME `
   --bundle-id $env:N_BUNDLE_ID `
   --username $env:N_USERNAME `
-  --password $env:N_PASSWORD
+  --password $env:N_PASSWORD `
+  --codesign $env:C_CERT
 }
 
 function RunUnrealEngine5WithDebugger
