@@ -33,9 +33,9 @@ _script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 _volume_name="Kraken"
 _tmp_dir="$(mktemp -d)"
 _tmp_dmg="/tmp/kraken-tmp.dmg"
-_background_image="${_script_dir}/background.tif"
+_background_image="${_script_dir}/release/darwin/background.tif"
 _mount_dir="/Volumes/${_volume_name}"
-_entitlements="${_script_dir}/entitlements.plist"
+_entitlements="${_script_dir}/release/darwin/entitlements.plist"
 
 # Handle arguments.
 while [[ $# -gt 0 ]]; do
