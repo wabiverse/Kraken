@@ -1133,9 +1133,11 @@ elseif(APPLE)
       PATTERN "__pycache__" EXCLUDE
       PATTERN "__MACOSX" EXCLUDE
       PATTERN ".DS_Store" EXCLUDE
+      PATTERN "libpython${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.a" EXCLUDE
       PATTERN "libpython${Python_VERSION_MAJOR}.${_out_py_minor_minus_one}.a" EXCLUDE
       PATTERN "*.${_out_py_minor_minus_one}" EXCLUDE # Ex. python3.10 & not python3.9
       PATTERN "config-${PYTHON_VERSION}m/*.a" EXCLUDE  # static lib
+      PATTERN "PySide6" EXCLUDE                   # ./PySide6
       PATTERN "lib2to3" EXCLUDE                   # ./lib2to3
       PATTERN "tkinter" EXCLUDE                   # ./tkinter
       PATTERN "lib-dynload/_tkinter.*" EXCLUDE    # ./lib-dynload/_tkinter.co

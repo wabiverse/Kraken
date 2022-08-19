@@ -28,7 +28,7 @@
 			<true/>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>graphics.foundation.wabi.kraken</string>
+				<string>foundation.wabi.kraken</string>
 			</array>
 			<key>CFBundleTypeIconSystemGenerated</key>
 			<true/>
@@ -41,7 +41,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Kraken.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>graphics.foundation.wabi.kraken</string>
+	<string>foundation.wabi.kraken</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -66,7 +66,7 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeIdentifier</key>
-			<string>graphics.foundation.wabi.kraken.file</string>
+			<string>foundation.wabi.file</string>
 			<key>UTTypeDescription</key>
 			<string>USD File</string>
 			<key>UTTypeIcons</key>

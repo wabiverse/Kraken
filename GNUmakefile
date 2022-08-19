@@ -184,7 +184,7 @@ endif
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
 	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
-	BUILD_COMMAND:=xcodebuild -arch "arm64" -sdk "macosx13.0" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install CODE_SIGN_IDENTITY="Developer ID Application: Tyler Furreboe (UQ9J5QT9DL)" PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" | xcbeautify
+	BUILD_COMMAND:=xcodebuild -arch "arm64" -sdk "macosx13.0" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install | xcbeautify
 	DEPS_BUILD_COMMAND:=xcodebuild
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	CLEAN_BUILD_COMMAND:=$(BUILD_COMMAND) -C "$(BUILD_DIR)_release" clean

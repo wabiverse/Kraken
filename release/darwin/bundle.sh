@@ -115,9 +115,8 @@ cp -r "${SRC_DIR}/Kraken.app" "${_tmp_dir}/" || exit 1
 echo
 
 # Create the disk image.
-_directory_size=$(du -sh ${_tmp_dir} | awk -F'[^0-9]*' '$0=$1')
-# 1820 is as small as kraken can go here...
-_image_size=$(echo "${_directory_size}" + 1820 | bc) # extra 1820 need for codesign to work (why on earth?)
+_directory_size=$(du -sm "${_tmp_dir}" | awk -F'[^0-9]*' '$0=$1')
+_image_size=$(echo "${_directory_size}" + 800 | bc) # extra 800 need for codesign to work (why on earth?)
 
 echo
 echo -n "Creating disk image of size ${_image_size}M.."
