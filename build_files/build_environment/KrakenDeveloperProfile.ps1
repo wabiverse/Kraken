@@ -320,12 +320,7 @@ function CreateKrakenAppIcons
     $build_icns_dir = "$KrakenGlobalView/../build_darwin_release/iconsets/Kraken.iconset"
     $build_icns_svg = "$KrakenGlobalView/release/iconfiles/kraken.svg"
 
-    if (Test-Path -Path $build_icns_dir) {
-      rm -r $build_icns_dir
-      mkdir $build_icons_dir
-    } else {
-      mkdir $build_icns_dir
-    }
+    New-Item -ItemType Directory -Path $build_icns_dir -Force
 
     &inkscape -z --export-filename="$build_icns_dir/icon_16x16.png"      -w   16 -h   16 "$build_icns_svg"
     &inkscape -z --export-filename="$build_icns_dir/icon_16x16@2x.png"   -w   32 -h   32 "$build_icns_svg"
