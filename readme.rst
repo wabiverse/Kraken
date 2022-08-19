@@ -20,6 +20,10 @@ Kraken
    :target: https://docs.wabi.foundation
    :alt: Documentation
 
+.. image:: https://discordapp.com/api/guilds/461556513010483200/widget.png?style=shield
+   :target: https://discord.gg/5PYrUu4hqa
+   :alt: Discord Community
+
 .. figure:: https://www.dropbox.com/s/0fcfeo5u3q18ryh/kraken-logo.png?raw=1
    :scale: 50 %
    :align: center
@@ -41,8 +45,6 @@ ever-growing needs of both artists and production pipelines. It is with this str
 core foundation, that we may begin to solve the most challenging issues the world
 of modern graphics demands, and push the framework for composition & design into
 the future.
-
-Join the community: https://discord.gg/5PYrUu4hqa
 
 
 Phoenix
