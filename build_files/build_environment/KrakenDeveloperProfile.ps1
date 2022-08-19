@@ -105,8 +105,8 @@ function AppleBundleAndNotarize
 {
   $KRAKEN_DMG_NAME = "kraken-$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR$KRAKEN_BUILDING_VERSION_CYCLE-macos-arm64.dmg"
   zsh $KrakenGlobalView/release/darwin/bundle.sh `
-  --source /Users/furby/dev/build_darwin_release/bin/Release `
-  --dmg /Users/furby/dev/build_darwin_release/$KRAKEN_DMG_NAME `
+  --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release `
+  --dmg /Users/furby/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME `
   --bundle-id $env:N_BUNDLE_ID `
   --username $env:N_USERNAME `
   --password $env:N_PASSWORD `
