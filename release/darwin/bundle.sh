@@ -141,7 +141,7 @@ echo "Renaming Applications to empty string."
 mv ${_mount_dir}/Applications "${_mount_dir}/ "
 
 echo "Running applescript to set folder looks ..."
-cat "${_script_dir}/kraken.applescript" | osascript
+cat "${_script_dir}/release/darwin/kraken.applescript" | osascript
 
 echo "Waiting after applescript ..."
 sleep 5
