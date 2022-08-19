@@ -206,12 +206,12 @@ if [ ! -z "${N_USERNAME}" ] && [ ! -z "${N_PASSWORD}" ] && [ ! -z "${N_BUNDLE_ID
             sleep 600
             xcrun altool --notarization-info "${_requuid}" --username "${N_USERNAME}" --password "${N_PASSWORD}" >${_tmpout} 2>&1
             _status=$(cat "${_tmpout}" | grep "Status:" | awk '{ print $2 }')
-            if [ "${_status}" == "invalid" ]; then
+            if [ "${_status}" = "invalid" ]; then
                 echo "Got invalid notarization!"
                 break;
             fi
 
-            if [ "${_status}" == "success" ]; then
+            if [ "${_status}" = "success" ]; then
                 echo -n "Notarization successful! Stapling..."
                 xcrun stapler staple -v "${DEST_DMG}"
                 break;
