@@ -26,13 +26,13 @@ jobs:
       run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.2-release/lib/darwin_arm64/python/ ${{github.workspace}}/../lib/apple_darwin_arm64/python/
       
     - name: Install PySide6
-      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.9 -m pip install PySide6
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install PySide6
       
     - name: Install PyOpenGL
-      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.9 -m pip install PyOpenGL
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install PyOpenGL
       
     - name: Install Jinja2
-      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.9 -m pip install Jinja2
+      run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install Jinja2
       
     - name: Install Boost
       run: brew install boost

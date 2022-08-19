@@ -86,12 +86,12 @@ wabi_library(usdviewq
 if(UNIX AND NOT APPLE)
     install(DIRECTORY
         resources/icons
-        DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+        DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/wabi/Usdviewq
     )
 
     install(DIRECTORY
         resources/fonts
-        DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Usdviewq
+        DESTINATION /usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/wabi/Usdviewq
     )
 elseif(APPLE)
     install(DIRECTORY

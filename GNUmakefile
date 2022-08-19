@@ -287,7 +287,7 @@ deps: .FORCE
 	@echo Configuring dependencies in \"$(DEPS_BUILD_DIR)\"
 
 #	#@python3.9 $(DEPS_INSTALL_SCRIPT) --build clean
-	@python3.9 $(DEPS_INSTALL_SCRIPT) --build all
+	@python3.10 $(DEPS_INSTALL_SCRIPT) --build all
 
 	@echo
 	@echo Dependencies successfully built and installed to $(DEPS_INSTALL_DIR).

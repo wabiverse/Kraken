@@ -108,7 +108,7 @@ endfunction() # _plugInfo_subst
 
 # Install compiled python files alongside the python object,
 # e.g. MSDOS: ${TARGETDIR_VER}/scripts/modules/wabi/Ar/__init__.pyc
-# e.g. LINUX: ${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/Ar/__init__.pyc
+# e.g. LINUX: ${TARGETDIR_VER}/python/lib/python3.10/site-packages/wabi/Ar/__init__.pyc
 function(_install_python LIBRARY_NAME)
     set(options  "")
     set(oneValueArgs "")
@@ -123,7 +123,7 @@ function(_install_python LIBRARY_NAME)
     if(WIN32)
         set(libPythonPrefix ${TARGETDIR_VER}/scripts/modules)
     elseif(UNIX AND NOT APPLE)
-        set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
+        set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.10/site-packages)
     elseif(APPLE)
         set(libPythonPrefix ${TARGETDIR_VER}/scripts/modules)
     endif()
@@ -172,7 +172,7 @@ function(_install_python LIBRARY_NAME)
             message(FATAL_ERROR "Cannot have non-Python file ${file} in PYTHON_FILES.")
         endif()
 
-        # Note that we always install under ${TARGETDIR_VER}/python/lib/python3.9/site-packages,
+        # Note that we always install under ${TARGETDIR_VER}/python/lib/python3.10/site-packages,
         # even if we are in the third_party project. This means the import will always
         # look like 'from wabi import X'. We need to do this per-loop iteration because
         # the installDest may be different due to the presence of subdirs.
@@ -307,7 +307,7 @@ function(_install_pyside_ui_files LIBRARY_NAME)
     if(WIN32)
         set(libPythonPrefix ${TARGETDIR_VER}/scripts/modules)
     elseif(UNIX AND NOT APPLE)
-        set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages)
+        set(libPythonPrefix ./share/kraken/${TARGETDIR_VER}/python/lib/python3.10/site-packages)
     elseif(APPLE)
         set(libPythonPrefix ${TARGETDIR_VER}/scripts/modules)
     endif()
@@ -972,7 +972,7 @@ function(_wabi_python_module NAME)
     if(WIN32)
       set(libInstallPrefix "${TARGETDIR_VER}/scripts/modules/wabi/${pyModuleName}")
     elseif(UNIX AND NOT APPLE)
-      set(libInstallPrefix "/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.9/site-packages/wabi/${pyModuleName}")
+      set(libInstallPrefix "/usr/local/share/kraken/${TARGETDIR_VER}/python/lib/python3.10/site-packages/wabi/${pyModuleName}")
     elseif(APPLE)
       set(libInstallPrefix "${TARGETDIR_VER}/scripts/modules/wabi/${pyModuleName}")
     endif()

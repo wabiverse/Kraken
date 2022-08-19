@@ -221,8 +221,8 @@ def GetPythonInfo():
         raise RuntimeError("Platform not supported")
 
     if Windows():
-        python_version_no_dot=39
-        python_version=3.9
+        python_version_no_dot=310
+        python_version=310
         python_dir     = "{installed_libs_dir}/python/{py_ver}".format(installed_libs_dir=context.libInstDir, py_ver=python_version_no_dot)
         python_include = os.path.join(python_dir, "include")
         python_lib     = os.path.join(python_dir, "libs")
@@ -1761,7 +1761,7 @@ def InstallOSL(context, force, buildArgs):
             pugi = subprocess.call("svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64/pugixml/", stdout=subprocess.PIPE, shell=True)
             linuxArgs = [
                 '-Dpugixml_ROOT={pugixml_root_path}'.format(pugixml_root_path=context.libInstDir),
-                '-Dpybind11_ROOT=~/.local/lib/python3.9/site-packages/pybind11'
+                '-Dpybind11_ROOT=~/.local/lib/python3.10/site-packages/pybind11'
             ]
             extraArgs += linuxArgs
 

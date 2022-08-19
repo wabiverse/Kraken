@@ -273,7 +273,7 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <Content Include=\"${LIBDIR}/boost/lib/boost_iostreams-${BOOST_LIBRARY_SUFFIX}.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${LIBDIR}/boost/lib/boost_numpy39-${BOOST_LIBRARY_SUFFIX}.dll\">
+    <Content Include=\"${LIBDIR}/boost/lib/boost_numpy310-${BOOST_LIBRARY_SUFFIX}.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include=\"${LIBDIR}/boost/lib/boost_program_options-${BOOST_LIBRARY_SUFFIX}.dll\">
@@ -288,7 +288,7 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <Content Include=\"${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${LIBDIR}/boost/lib/boost_python39-${BOOST_LIBRARY_SUFFIX}.dll\">
+    <Content Include=\"${LIBDIR}/boost/lib/boost_python310-${BOOST_LIBRARY_SUFFIX}.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include=\"${LIBDIR}/boost/lib/boost_filesystem-${BOOST_LIBRARY_SUFFIX}.dll\">
@@ -339,10 +339,10 @@ if(${proj_path} STREQUAL "source/creator/kraken")
 
     <!-- PYTHON -->
 
-    <Content Include=\"${LIBDIR}/python/39/bin/python3.dll\">
+    <Content Include=\"${LIBDIR}/python/310/bin/python3.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=\"${LIBDIR}/python/39/bin/python39.dll\">
+    <Content Include=\"${LIBDIR}/python/310/bin/python310.dll\">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 
@@ -668,8 +668,8 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/kraken.build.appxrecipe)
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${LIBDIR}/boost/lib/boost_numpy39-${BOOST_LIBRARY_SUFFIX}.dll\">
-      <PackagePath>boost_numpy39-${BOOST_LIBRARY_SUFFIX}.dll</PackagePath>
+    <AppxPackagedFile Include=\"${LIBDIR}/boost/lib/boost_numpy310-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <PackagePath>boost_numpy310-${BOOST_LIBRARY_SUFFIX}.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
@@ -693,8 +693,8 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/kraken.build.appxrecipe)
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include=\"${LIBDIR}/boost/lib/boost_python39-${BOOST_LIBRARY_SUFFIX}.dll\">
-      <PackagePath>boost_python39-${BOOST_LIBRARY_SUFFIX}.dll</PackagePath>
+    <AppxPackagedFile Include=\"${LIBDIR}/boost/lib/boost_python310-${BOOST_LIBRARY_SUFFIX}.dll\">
+      <PackagePath>boost_python310-${BOOST_LIBRARY_SUFFIX}.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
@@ -766,14 +766,14 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/kraken.build.appxrecipe)
 
     <!-- PYTHON -->
 
-    <AppxPackagedFile Include=\"${LIBDIR}/python/39/bin/python3.dll\">
+    <AppxPackagedFile Include=\"${LIBDIR}/python/310/bin/python3.dll\">
       <PackagePath>python3.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>
 
-    <AppxPackagedFile Include=\"${LIBDIR}/python/39/bin/python39.dll\">
-      <PackagePath>python39.dll</PackagePath>
+    <AppxPackagedFile Include=\"${LIBDIR}/python/310/bin/python310.dll\">
+      <PackagePath>python310.dll</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>${GEN_TIME}</Modified>
     </AppxPackagedFile>

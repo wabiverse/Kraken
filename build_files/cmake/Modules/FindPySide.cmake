@@ -40,7 +40,7 @@ execute_process(
 )
 if (pySideImportResult EQUAL 0)
     set(pySideImportResult "PySide6")
-    set(pySideUIC pyside6-uic python3-pyside6-uic pyside6-uic-3.9)
+    set(pySideUIC pyside6-uic python3-pyside6-uic pyside6-uic-3.10)
 endif()
 
 # PySide6 not found OR PYSIDE explicitly requested

@@ -516,12 +516,12 @@ if(WIN32)
       ${LIBDIR}/boost/lib/boost_chrono-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_date_time-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_iostreams-${BOOST_LIBRARY_SUFFIX}.dll
-      ${LIBDIR}/boost/lib/boost_numpy39-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_numpy310-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_program_options-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_regex-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_system-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.dll
-      ${LIBDIR}/boost/lib/boost_python39-${BOOST_LIBRARY_SUFFIX}.dll
+      ${LIBDIR}/boost/lib/boost_python310-${BOOST_LIBRARY_SUFFIX}.dll
       ${LIBDIR}/boost/lib/boost_filesystem-${BOOST_LIBRARY_SUFFIX}.dll
       # OSL
       ${LIBDIR}/osl/bin/oslcomp.dll
@@ -553,8 +553,8 @@ if(WIN32)
       # ZLIB
       ${LIBDIR}/zlib/bin/zlib.dll
       # PYTHON
-      ${LIBDIR}/python/39/bin/python3.dll
-      ${LIBDIR}/python/39/bin/python39.dll
+      ${LIBDIR}/python/310/bin/python3.dll
+      ${LIBDIR}/python/310/bin/python310.dll
       # OPENVDB
       ${LIBDIR}/openvdb/bin/openvdb.dll
       # MICROSOFT CRT
@@ -894,8 +894,8 @@ elseif(WIN32)
     )
   endif()
 
-  set(PYTHON_VERSION 3.9)
-  set(_PYTHON_VERSION_NO_DOTS 39)
+  set(PYTHON_VERSION 3.10)
+  set(_PYTHON_VERSION_NO_DOTS 310)
 
   if(WITH_PYTHON)
 
@@ -1045,7 +1045,7 @@ endif()
 #     ${BOOST_LIBPATH}/boost_filesystem-${BOOST_POSTFIX}
 #     ${BOOST_LIBPATH}/boost_iostreams-${BOOST_POSTFIX}
 #     ${BOOST_LIBPATH}/boost_program_options-${BOOST_POSTFIX}
-#     ${BOOST_LIBPATH}/boost_python39-${BOOST_POSTFIX}
+#     ${BOOST_LIBPATH}/boost_python310-${BOOST_POSTFIX}
 #     ${BOOST_LIBPATH}/boost_regex-${BOOST_POSTFIX}
 #     ${BOOST_LIBPATH}/boost_system-${BOOST_POSTFIX}
 #     ${BOOST_LIBPATH}/boost_thread-${BOOST_POSTFIX}
@@ -1062,7 +1062,7 @@ endif()
 #     ${BOOST_DEBUG_LIBPATH}/boost_filesystem-${BOOST_DEBUG_POSTFIX}
 #     ${BOOST_DEBUG_LIBPATH}/boost_iostreams-${BOOST_DEBUG_POSTFIX}
 #     ${BOOST_DEBUG_LIBPATH}/boost_program_options-${BOOST_DEBUG_POSTFIX}
-#     ${BOOST_DEBUG_LIBPATH}/boost_python39-${BOOST_DEBUG_POSTFIX}
+#     ${BOOST_DEBUG_LIBPATH}/boost_python310-${BOOST_DEBUG_POSTFIX}
 #     ${BOOST_DEBUG_LIBPATH}/boost_regex-${BOOST_DEBUG_POSTFIX}
 #     ${BOOST_DEBUG_LIBPATH}/boost_system-${BOOST_DEBUG_POSTFIX}
 #     ${BOOST_DEBUG_LIBPATH}/boost_thread-${BOOST_DEBUG_POSTFIX}
@@ -1120,7 +1120,7 @@ elseif(APPLE)
   # argument when calling so ${BUILD_TYPE} does not get expanded
 
   # so we don't install multiple python versions.
-  math(EXPR _out_py_minor_plus_one "${Python_VERSION_MINOR} + 1")
+  math(EXPR _out_py_minor_minus_one "${Python_VERSION_MINOR} - 1")
   macro(install_dir from to)
     install(
       DIRECTORY ${from}
@@ -1134,8 +1134,8 @@ elseif(APPLE)
       PATTERN "__pycache__" EXCLUDE
       PATTERN "__MACOSX" EXCLUDE
       PATTERN ".DS_Store" EXCLUDE
-      PATTERN "libpython${Python_VERSION_MAJOR}.${_out_py_minor_plus_one}.a" EXCLUDE
-      PATTERN "*.${_out_py_minor_plus_one}" EXCLUDE # Ex. python3.10 for python3.9
+      PATTERN "libpython${Python_VERSION_MAJOR}.${_out_py_minor_minus_one}.a" EXCLUDE
+      PATTERN "*.${_out_py_minor_minus_one}" EXCLUDE # Ex. python3.10 & not python3.9
       PATTERN "config-${PYTHON_VERSION}m/*.a" EXCLUDE  # static lib
       PATTERN "lib2to3" EXCLUDE                   # ./lib2to3
       PATTERN "tkinter" EXCLUDE                   # ./tkinter
@@ -1195,7 +1195,7 @@ elseif(APPLE)
   # python
   if(WITH_PYTHON)
     # so we don't install multiple python versions.
-    math(EXPR _out_py_minor_plus_one "${Python_VERSION_MINOR} + 1")
+    math(EXPR _out_py_minor_minus_one "${Python_VERSION_MINOR} - 1")
 
     # Copy the python bin into the install directory
     install(
@@ -1231,7 +1231,7 @@ if(WITH_PYTHON)
       DIRECTORY
         ${CMAKE_SOURCE_DIR}/release/scripts/modules/
       DESTINATION
-        ${TARGETDIR_VER}/python/lib/python3.9/site-packages
+        ${TARGETDIR_VER}/python/lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages
     )
   elseif(WIN32)
     install(
@@ -1257,7 +1257,7 @@ if(WITH_ARNOLD)
       DIRECTORY
         ${LIBDIR}/python/arnold
       DESTINATION
-        ${TARGETDIR_VER}/python/lib/python3.9/site-packages
+        ${TARGETDIR_VER}/python/lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages
     )
   elseif(WIN32)
     install(

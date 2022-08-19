@@ -37,7 +37,7 @@ if len(sys.argv) < 3 or len(sys.argv) > 4:
 
 if len(sys.argv) == 3:
     with open(sys.argv[2], 'w') as f:
-        print('@python3.9 "%%~dp0%s" %%*' % (sys.argv[1], ), file=f)
+        print('@python3.10 "%%~dp0%s" %%*' % (sys.argv[1], ), file=f)
 
 else:
     with open(sys.argv[2], 'r') as s:
