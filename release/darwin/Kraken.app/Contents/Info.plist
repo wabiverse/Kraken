@@ -63,6 +63,8 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
+        <string>public.3d-content</string>
+        <string>public.content</string>
 				<string>public.data</string>
 			</array>
 			<key>UTTypeIdentifier</key>
