@@ -214,7 +214,6 @@
         <string>public.3d-content</string>
         <string>public.content</string>
         <string>public.data</string>
-        <string>public.text</string>
       </array>
       <key>UTTypeIdentifier</key>
       <string>foundation.wabi.usd.crate</string>
