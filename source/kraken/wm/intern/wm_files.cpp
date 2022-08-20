@@ -87,25 +87,14 @@ void WM_file_operators_register(void)
 
 void WM_files_init(kContext *C)
 {
-  /* --- Probably temporary, just create user appdirs for now. --- */
-
-#if BLENDER_CAN_DO_THIS_AND_WE_CANT
-  // Apple doesn't like this at all, will have to check
-  // how to obtain this policy -- likely due to us having
-  // to set XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME in order
-  // to be notarized by apple, but somehow Blender doesn't
-  // have to worry about this.
-
   KrakenPRIM props_ptr;
+
   wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_files_create_appdata));
 
   WM_operator_properties_create_ptr(&props_ptr, ot);
 
   WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
   WM_operator_properties_free(&props_ptr);
-#endif /* BLENDER_CAN_DO_THIS_AND_WE_CANT */
-
-  /* --- */
 }
 
 WABI_NAMESPACE_END

@@ -839,20 +839,17 @@ def register_submodule_factory(module_name, submodule_names):
 
 
 def gen_schemas():
-    # The application '1.50/datafiles' path.
-    respath = resource_path('LOCAL')
-
     # Shared codegen templates.
-    usdtmp = _os.path.join(respath, "datafiles/maelstrom/usd/resources/codegenTemplates")
+    usdtmp = user_resource('DATAFILES', path='maelstrom/usd/resources/codegenTemplates')
 
     # Run UsdGenSchema on USD.
-    usdsrc = _os.path.join(respath, "datafiles/maelstrom/usd/resources/usd/schema.usda")
-    usdgen = _os.path.join(respath, "datafiles/maelstrom/usd/resources/codegen")
+    usdsrc = user_resource('DATAFILES', path="maelstrom/usd/resources/usd/schema.usda")
+    usdgen = user_resource('DATAFILES', path="maelstrom/usd/resources/codegen")
     _kr_gen_schema.Generate(schemaPath=usdsrc, codeGenPath=usdgen, templatePath=usdtmp)
 
     # Run UsdGenSchema on UI.
-    usdsrc = _os.path.join(respath, "datafiles/maelstrom/usdUI/resources/usdUI/schema.usda")
-    usdgen = _os.path.join(respath, "datafiles/maelstrom/usdUI/resources/codegen")
+    usdsrc = user_resource('DATAFILES', path="maelstrom/usdUI/resources/usdUI/schema.usda")
+    usdgen = user_resource('DATAFILES', path="maelstrom/usdUI/resources/codegen")
     _kr_gen_schema.Generate(schemaPath=usdsrc, codeGenPath=usdgen, templatePath=usdtmp)
 
 

@@ -203,7 +203,7 @@ class AppDelegate : NSObject, NSApplicationDelegate
     fputs("Kraken is LIVE.\n", stderr)
   }
 
-  func applicationDidFinishLaunching(_ aNotification: Notification)
+  func applicationDidFinishLaunching(_ notification: Notification)
   {
     fputs("Kraken launched successfully.\n", stderr)
 
@@ -214,8 +214,26 @@ class AppDelegate : NSObject, NSApplicationDelegate
     NSEvent.isMouseCoalescingEnabled = false
   }
 
-  func applicationWillTerminate(_ aNotification: Notification) 
+  func applicationWillTerminate(_ notification: Notification) 
   {
 
+  }
+
+  func application(_ sender: NSApplication, openFile filename: String) -> Bool
+  {
+    let windowsList = NSApp.orderedWindows
+    if (windowsList.count <= 0) {
+      windowsList[0].makeKeyAndOrderFront(nil)
+    }
+
+    let filenameTextSize = filename.maximumLengthOfBytes(using: .utf8)
+    if (filenameTextSize <= 0) {
+      return false
+    }
+
+    /**
+     * @BINDME: push this onto the event stack in Anchor system -> CXX */
+
+    return true
   }
 }
