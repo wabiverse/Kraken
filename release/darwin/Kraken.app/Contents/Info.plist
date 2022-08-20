@@ -28,7 +28,7 @@
 			<true/>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>foundation.wabi.kraken</string>
+				<string>com.pixar.universal-scene-description</string>
 			</array>
 			<key>CFBundleTypeIconSystemGenerated</key>
 			<true/>
