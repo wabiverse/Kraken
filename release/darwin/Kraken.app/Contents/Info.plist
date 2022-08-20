@@ -2,37 +2,106 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.13</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>usd</string>
-        <string>usda</string>
-        <string>usdc</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>10.13</string>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array>
+        <string>usd</string>
+      </array>
+      <key>CFBundleTypeIconFile</key>
+      <string>Kraken_Legacy_Document_Icon.icns</string>
+      <key>CFBundleTypeName</key>
+      <string>Kraken File</string>
+      <key>CFBundleTypeOSTypes</key>
+      <array>
+        <string>PUSD</string>
+      </array>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>LSIsAppleDefaultForType</key>
+      <true/>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>com.pixar.universal-scene-description</string>
+      </array>
+      <key>CFBundleTypeIconSystemGenerated</key>
+      <true/>
+    </dict>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array>
         <string>usdz</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>Kraken_Legacy_Document_Icon.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Kraken File</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>PUSD</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSIsAppleDefaultForType</key>
-			<true/>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.pixar.universal-scene-description</string>
-			</array>
-			<key>CFBundleTypeIconSystemGenerated</key>
-			<true/>
-		</dict>
+      </array>
+      <key>CFBundleTypeIconFile</key>
+      <string>Kraken_Legacy_Document_Icon.icns</string>
+      <key>CFBundleTypeName</key>
+      <string>Kraken ARKit</string>
+      <key>CFBundleTypeOSTypes</key>
+      <array>
+        <string>USDZ</string>
+      </array>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>LSIsAppleDefaultForType</key>
+      <true/>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>com.pixar.universal-scene-description-mobile</string>
+      </array>
+      <key>CFBundleTypeIconSystemGenerated</key>
+      <true/>
+    </dict>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array>
+        <string>usda</string>
+      </array>
+      <key>CFBundleTypeIconFile</key>
+      <string>Kraken_Legacy_Document_Icon.icns</string>
+      <key>CFBundleTypeName</key>
+      <string>Kraken ASCII</string>
+      <key>CFBundleTypeOSTypes</key>
+      <array>
+        <string>USDA</string>
+      </array>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>LSIsAppleDefaultForType</key>
+      <true/>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>com.pixar.usd.ascii</string>
+      </array>
+      <key>CFBundleTypeIconSystemGenerated</key>
+      <true/>
+    </dict>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array>
+        <string>usdc</string>
+      </array>
+      <key>CFBundleTypeIconFile</key>
+      <string>Kraken_Legacy_Document_Icon.icns</string>
+      <key>CFBundleTypeName</key>
+      <string>Kraken Crate</string>
+      <key>CFBundleTypeOSTypes</key>
+      <array>
+        <string>USDC</string>
+      </array>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>LSIsAppleDefaultForType</key>
+      <true/>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>com.pixar.usd.crate</string>
+      </array>
+      <key>CFBundleTypeIconSystemGenerated</key>
+      <true/>
+    </dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Kraken</string>
@@ -60,35 +129,112 @@
 	<true/>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
+    <dict>
+      <key>UTTypeConformsTo</key>
+      <array>
         <string>public.3d-content</string>
         <string>public.content</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeIdentifier</key>
-			<string>foundation.wabi.file</string>
-			<key>UTTypeDescription</key>
-			<string>USD File</string>
-			<key>UTTypeIcons</key>
-			<dict>
-				<key>UTTypeIconName</key>
-				<string>USD File</string>
-				<key>UTTypeIconText</key>
-				<string>usd</string>
-			</dict>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>usd</string>
-          <string>usda</string>
-          <string>usdc</string>
+        <string>public.data</string>
+      </array>
+      <key>UTTypeIdentifier</key>
+      <string>foundation.wabi.universal-scene-description</string>
+      <key>UTTypeDescription</key>
+      <string>USD File</string>
+      <key>UTTypeIcons</key>
+      <dict>
+        <key>UTTypeIconName</key>
+        <string>USD File</string>
+        <key>UTTypeIconText</key>
+        <string>usd</string>
+      </dict>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
+          <string>usd</string>
+        </array>
+      </dict>
+    </dict>
+    <dict>
+      <key>UTTypeConformsTo</key>
+      <array>
+        <string>public.3d-content</string>
+        <string>public.content</string>
+        <string>public.data</string>
+      </array>
+      <key>UTTypeIdentifier</key>
+      <string>foundation.wabi.universal-scene-description-mobile</string>
+      <key>UTTypeDescription</key>
+      <string>USDZ File</string>
+      <key>UTTypeIcons</key>
+      <dict>
+        <key>UTTypeIconName</key>
+        <string>USDZ File</string>
+        <key>UTTypeIconText</key>
+        <string>usdz</string>
+      </dict>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
           <string>usdz</string>
-				</array>
-			</dict>
-		</dict>
+        </array>
+      </dict>
+    </dict>
+    <dict>
+      <key>UTTypeConformsTo</key>
+      <array>
+        <string>public.3d-content</string>
+        <string>public.content</string>
+        <string>public.data</string>
+        <string>public.text</string>
+      </array>
+      <key>UTTypeIdentifier</key>
+      <string>foundation.wabi.usd.ascii</string>
+      <key>UTTypeDescription</key>
+      <string>USDA File</string>
+      <key>UTTypeIcons</key>
+      <dict>
+        <key>UTTypeIconName</key>
+        <string>USDA File</string>
+        <key>UTTypeIconText</key>
+        <string>usda</string>
+      </dict>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
+          <string>usda</string>
+        </array>
+      </dict>
+    </dict>
+    <dict>
+      <key>UTTypeConformsTo</key>
+      <array>
+        <string>public.3d-content</string>
+        <string>public.content</string>
+        <string>public.data</string>
+        <string>public.text</string>
+      </array>
+      <key>UTTypeIdentifier</key>
+      <string>foundation.wabi.usd.crate</string>
+      <key>UTTypeDescription</key>
+      <string>USDC File</string>
+      <key>UTTypeIcons</key>
+      <dict>
+        <key>UTTypeIconName</key>
+        <string>USDC File</string>
+        <key>UTTypeIconText</key>
+        <string>usdc</string>
+      </dict>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
+          <string>usdc</string>
+        </array>
+      </dict>
+    </dict>
 	</array>
 </dict>
 </plist>
