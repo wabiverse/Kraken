@@ -102,33 +102,33 @@
       <key>CFBundleTypeIconSystemGenerated</key>
       <true/>
     </dict>
-	</array>
-	<key>CFBundleExecutable</key>
-	<string>Kraken</string>
-	<key>CFBundleGetInfoString</key>
-	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Wabi Foundation</string>
-	<key>CFBundleIconFile</key>
-	<string>Kraken.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>foundation.wabi.kraken</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Kraken</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>NSHighResolutionCapable</key>
-	<true/>
-	<key>UTExportedTypeDeclarations</key>
-	<array>
+  </array>
+  <key>CFBundleExecutable</key>
+  <string>Kraken</string>
+  <key>CFBundleGetInfoString</key>
+  <string>${MACOSX_BUNDLE_LONG_VERSION_STRING}, Wabi Foundation</string>
+  <key>CFBundleIconFile</key>
+  <string>Kraken.icns</string>
+  <key>CFBundleIdentifier</key>
+  <string>foundation.wabi.kraken</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>Kraken</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
+  <key>CFBundleSignature</key>
+  <string>????</string>
+  <key>CFBundleVersion</key>
+  <string>${MACOSX_BUNDLE_LONG_VERSION_STRING}</string>
+  <key>NSPrincipalClass</key>
+  <string>NSApplication</string>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+  <key>UTExportedTypeDeclarations</key>
+  <array>
     <dict>
       <key>UTTypeConformsTo</key>
       <array>
@@ -234,6 +234,6 @@
         </array>
       </dict>
     </dict>
-	</array>
+  </array>
 </dict>
 </plist>
