@@ -20,7 +20,7 @@
 			<string>Kraken File</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>USD</string>
+				<string>PUSD</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
