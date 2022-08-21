@@ -157,6 +157,8 @@ open class AnchorWindowApple : NSObject
   var window: NSWindow
   var metalDevice: MTLDevice!
   var metalLayer: CAMetalLayer!
+  var metalView: NSView
+  
   var state: AnchorWindowState
 
   init(title: String, 
@@ -181,25 +183,40 @@ open class AnchorWindowApple : NSObject
     self.window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
     self.window.contentMinSize = minSize
 
+    /* setup metal device. */
     self.metalDevice = MTLCreateSystemDefaultDevice()
-    var view: NSView?
+    
+    /* setup metal layer. */
+    self.metalLayer = CAMetalLayer()
+    self.metalLayer.edgeAntialiasingMask = CAEdgeAntialiasingMask(rawValue: 0)
+    self.metalLayer.masksToBounds = false
+    self.metalLayer.isOpaque = true
+    self.metalLayer.framebufferOnly = true
+    self.metalLayer.presentsWithTransaction = false
+    self.metalLayer.removeAllAnimations()
+    self.metalLayer.device = self.metalDevice
 
-    if (metalDevice != nil) {
-      self.metalLayer = CAMetalLayer()
-      self.metalLayer.edgeAntialiasingMask = CAEdgeAntialiasingMask(rawValue: 0)
-      self.metalLayer.masksToBounds = false
-      self.metalLayer.isOpaque = false
-      self.metalLayer.framebufferOnly = true
-      self.metalLayer.presentsWithTransaction = false
-      self.metalLayer.removeAllAnimations()
-      self.metalLayer.device = metalDevice
+    /* setup metal view. */
+    self.metalView = NSView(frame: rect)
+    self.metalView.wantsLayer = true
+    self.metalView.layer = self.metalLayer
 
-      /* todo: create metal view. */
-    }
+    /* attach to window. */
+    self.window.contentView = self.metalView
+    self.window.initialFirstResponder = self.metalView
+
+    /**
+     * support other types: OpenGL. Vulkan.
+     * ... ??? ---------------------------- */
 
     self.window.makeKeyAndOrderFront(nil)
-
     self.window.title = title
+  }
+
+  @objc
+  public func getMetalView() -> NSView
+  {
+    return self.metalView
   }
 
   @objc
