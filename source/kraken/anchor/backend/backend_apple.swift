@@ -37,10 +37,12 @@ open class AnchorSystemApple : NSObject
   let menu = AppMenu()
 
   @objc 
-  public override init() 
+  public init(cocoa: CocoaAppDelegate) 
   {
     super.init()
     fputs("Hello Anchor.\n", stderr)
+
+    self.strongDelegate.cocoa = cocoa
 
     self.app.delegate = self.strongDelegate
     self.app.mainMenu = self.menu
@@ -253,6 +255,7 @@ open class AnchorWindowApple : NSObject
 class AppDelegate : NSObject, NSApplicationDelegate
 {
   private var m_windowFocus = true
+  var cocoa: CocoaAppDelegate!
 
   override init() 
   {
@@ -317,20 +320,7 @@ class AppDelegate : NSObject, NSApplicationDelegate
   }
 
   func application(_ sender: NSApplication, openFile filename: String) -> Bool
-  {
-    let windowsList = NSApp.orderedWindows
-    if (windowsList.count >= 0) {
-      windowsList[0].makeKeyAndOrderFront(nil)
-    }
-
-    let filenameTextSize = filename.maximumLengthOfBytes(using: .utf8)
-    if (filenameTextSize <= 0) {
-      return false
-    }
-
-    /**
-     * @BINDME: push this onto the event stack in Anchor system -> CXX */
-
-    return true
+  {    
+    return self.cocoa.handleOpenDocumentRequest(filename)
   }
 }

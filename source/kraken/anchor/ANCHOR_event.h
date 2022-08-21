@@ -73,7 +73,7 @@ class AnchorEvent : public AnchorIEvent
     : m_type(type),
       m_time(msec),
       m_window(window),
-      m_data(NULL)
+      m_data(nullptr)
   {}
 
   /**
@@ -266,4 +266,24 @@ class AnchorEventKey : public AnchorEvent
 
   /** The key event data. */
   AnchorEventKeyData m_keyEventData;
+};
+
+class AnchorEventString : public AnchorEvent
+{
+ public:
+  AnchorEventString(AnchorU64 msec,
+                    eAnchorEventType type,
+                    AnchorISystemWindow *window,
+                    AnchorEventDataPtr data_ptr)
+    : AnchorEvent(msec, type, window)
+  {
+    m_data = data_ptr;
+  }
+
+  ~AnchorEventString()
+  {
+    if (m_data) {
+      free(m_data);
+    }
+  }
 };

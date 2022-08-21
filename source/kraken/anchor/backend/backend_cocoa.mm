@@ -23,8 +23,11 @@
  */
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_event.h"
 #include "ANCHOR_BACKEND_cocoa.h"
 #include "ANCHOR_BACKEND_metal.h"
+
+#import "ANCHOR_BACKEND_notice.h"
 
 #import "Anchor.h"
 #import <kraken_anchor-Swift.h>
@@ -37,6 +40,7 @@
 
 #include <mach/mach_time.h>
 
+WABI_NAMESPACE_USING
 
 #pragma mark Utility functions
 
@@ -64,7 +68,10 @@ eAnchorStatus AnchorSystemCocoa::init()
   eAnchorStatus success = AnchorSystem::init();
   if (success) {
     @autoreleasepool {
-      AnchorSystemApple *appDelegate = [[AnchorSystemApple alloc] init];
+      CocoaAppDelegate *cxxDelegate = [[CocoaAppDelegate alloc] init];
+      [cxxDelegate setSystemCocoa:(void *)this];
+
+      AnchorSystemApple *appDelegate = [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
     }
   }
   return success;
@@ -93,6 +100,11 @@ AnchorISystemWindow *AnchorSystemCocoa::createWindow(const char *title,
   window = new AnchorAppleMetal(this, title, left, top, width, height, state, is_dialog);
   if (window->getValid()) {
     /* Store pointer to window in window manager, set it to active, and push events. */
+    ANCHOR_ASSERT(m_windowManager);
+    m_windowManager->addWindow(window);
+    m_windowManager->setActiveWindow(window);
+    pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowActivate, window));
+    pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, window));
   } else {
     /* don't destroy this until the metal context is fully implemented and expected. */
     //delete window;
@@ -247,15 +259,69 @@ eAnchorKey AnchorSystemCocoa::processSpecialKey(short vKey, short scanCode) cons
   return eAnchorKey::AnchorKeyEnter;
 }
 
+bool AnchorSystemCocoa::handleOpenDocumentRequest(void *filepathStr)
+{
+  NSString *filepath = (NSString *)filepathStr;
+  NSArray *windowsList;
+  char *temp_buff;
+  size_t filenameTextSize;
+
+  windowsList = [NSApp orderedWindows];
+  if ([windowsList count]) {
+    [[windowsList objectAtIndex:0] makeKeyAndOrderFront:nil];
+  }
+
+  AnchorSystemWindow *window = (AnchorSystemWindow *)m_windowManager->getActiveWindow();
+
+  if (!window) {
+    return NO;
+  }
+
+  if (window && window->getCursorGrabModeIsWarp()) {
+    return NO;
+  }
+
+  filenameTextSize = [filepath lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+  temp_buff = (char *)malloc(filenameTextSize + 1);
+
+  if (temp_buff == NULL) {
+    return ANCHOR_FAILURE;
+  }
+
+  strncpy(temp_buff, [filepath cStringUsingEncoding:NSUTF8StringEncoding], filenameTextSize);
+  temp_buff[filenameTextSize] = '\0';
+
+  pushEvent(new AnchorEventString(ANCHOR::GetTime(), AnchorEventTypeOpenMainFile, window, (AnchorEventDataPtr)temp_buff));
+
+  printf("yay\n");
+  printf(temp_buff);
+
+  return YES;
+}
+
+@implementation CocoaAppDelegate : NSObject
+- (bool)handleOpenDocumentRequest:(NSString *)filename
+{
+  fputs("called me\n", stderr);
+  AnchorSystemCocoa *system = (AnchorSystemCocoa *)systemCocoa;
+
+  return system->handleOpenDocumentRequest(filename);
+}
+- (void)setSystemCocoa:(void *)sysCocoa
+{
+  systemCocoa = sysCocoa;
+}
+@end
+
 
 AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
-                                     const char *title,
-                                     AnchorS32 left,
-                                     AnchorS32 top,
-                                     AnchorU32 width,
-                                     AnchorU32 height,
-                                     eAnchorWindowState state,
-                                     bool dialog)
+                                   const char *title,
+                                   AnchorS32 left,
+                                   AnchorS32 top,
+                                   AnchorU32 width,
+                                   AnchorU32 height,
+                                   eAnchorWindowState state,
+                                   bool dialog)
   : AnchorSystemWindow(width, height, state, false, false),
     m_metalView(nil),
     m_metalLayer(nil),
@@ -331,6 +397,70 @@ AnchorAppleMetal::~AnchorAppleMetal()
   m_window = nil;
 }
 
+#pragma mark Drawing context
+
+void AnchorAppleMetal::SetupMetal()
+{
+
+}
+
+static void SetFont()
+{
+  AnchorIO &io = ANCHOR::GetIO();
+  io.Fonts->AddFontDefault();
+}
+
+void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
+{
+  if (type == ANCHOR_DrawingContextTypeMetal) {
+
+    /**
+     * Create Metal Resources. */
+
+    SetupMetal();
+
+    /**
+     * Setup ANCHOR context. */
+
+    ANCHOR_CHECKVERSION();
+    ANCHOR::CreateContext();
+
+    /**
+     * Setup Keyboard & Gamepad controls. */
+
+    AnchorIO &io = ANCHOR::GetIO();
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= AnchorConfigFlags_NavEnableGamepad;
+
+    /**
+     * Setup Default Kraken theme.
+     *   Themes::
+     *     - ANCHOR::StyleColorsDefault()
+     *     - ANCHOR::StyleColorsLight()
+     *     - ANCHOR::StyleColorsDark() */
+
+    ANCHOR::StyleColorsDefault();
+
+    /**
+     * Create Pixar Hydra Graphics Interface. */
+
+    HdDriver driver;
+    HgiUniquePtr hgi = HgiUniquePtr(m_hgi);
+    driver.name = HgiTokens->renderDriver;
+    driver.driver = VtValue(hgi.get());
+
+    /**
+     * Setup Pixar Driver & Engine. */
+
+    ANCHOR::GetPixarDriver().name = driver.name;
+    ANCHOR::GetPixarDriver().driver = driver.driver;
+
+    SetFont();
+
+    /* ------ */
+  }
+}
+
 eAnchorStatus AnchorAppleMetal::activateDrawingContext()
 {
   return ANCHOR_SUCCESS;
@@ -354,11 +484,6 @@ eAnchorStatus AnchorAppleMetal::setModifiedState(bool isUnsavedChanges)
 bool AnchorAppleMetal::getModifiedState()
 {
   return false;
-}
-
-void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
-{
-
 }
 
 void AnchorAppleMetal::setIcon(const char *icon)

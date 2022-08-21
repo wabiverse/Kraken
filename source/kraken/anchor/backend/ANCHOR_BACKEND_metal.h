@@ -30,6 +30,11 @@
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
+#if WITH_METAL
+# include <wabi/imaging/hgiMetal/hgi.h>
+# include <wabi/imaging/hgiMetal/capabilities.h>
+#endif /* WITH_METAL */
+
 @class AnchorWindowApple;
 @class CAMetalLayer;
 @class CocoaMetalView;
@@ -107,6 +112,10 @@ class AnchorAppleMetal : public AnchorSystemWindow
   }
 
  protected:
+
+  void SetupMetal();
+
+ protected:
   /* The swift window which holds the metal view. */
   AnchorWindowApple *m_window;
 
@@ -123,4 +132,6 @@ class AnchorAppleMetal : public AnchorSystemWindow
   bool m_immediateDraw;
   bool m_debug_context;
   bool m_is_dialog;
+
+  wabi::HgiMetal *m_hgi;
 };

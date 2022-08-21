@@ -95,7 +95,13 @@ eAnchorStatus AnchorSystem::createFullScreenWindow(AnchorSystemWindow **window,
                                                settings.xPixels,
                                                settings.yPixels,
                                                AnchorWindowStateNormal,
+#if defined(ARCH_OS_WINDOWS)
                                                ANCHOR_DrawingContextTypeVulkan,
+#elif defined(ARCH_OS_DARWIN)
+                                               ANCHOR_DrawingContextTypeMetal,
+#else /* ARCH_OS_LINUX */
+                                               ANCHOR_DrawingContextTypeOpenGL
+#endif /* ARCH_OS_WINDOWS */
                                                0,
                                                true /* exclusive */);
   return (*window == NULL) ? ANCHOR_FAILURE : ANCHOR_SUCCESS;

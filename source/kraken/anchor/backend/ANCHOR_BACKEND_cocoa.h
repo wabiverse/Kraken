@@ -127,6 +127,8 @@ class AnchorSystemCocoa : public AnchorSystem
    * Check current key layout for AltGr. */
   inline void handleKeyboardChange(void) {}
 
+  bool handleOpenDocumentRequest(void *filepathStr);
+
  private:
 
   eAnchorStatus init();

@@ -32,6 +32,7 @@ if (APPLE)
     backend/Anchor.h
     backend/ANCHOR_BACKEND_cocoa.h
     backend/ANCHOR_BACKEND_metal.h
+    backend/ANCHOR_BACKEND_notice.h
   )
 endif()
 
@@ -144,7 +145,9 @@ if(WIN32)
 endif()
 
 kraken_add_lib(kraken_anchor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
-
+set_target_properties(kraken_anchor PROPERTIES
+  XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "${CMAKE_SOURCE_DIR}/source/kraken/anchor/backend/notice-bridge.h"
+)
 if(WIN32)
   kraken_precompile_headers(kraken_anchor pch.cpp pch.h)
 endif()
