@@ -14,7 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2020 Blender Foundation. All rights reserved.
- * Modifications Copyright 2022, Wabi.
+ * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
 #import <Foundation/Foundation.h>
