@@ -7,7 +7,7 @@
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
 
-@class KrakenApplication;
+@class AnchorSystemApple;
 @class AnchorWindowApple;
 
 #endif /* ANCHOR_H */

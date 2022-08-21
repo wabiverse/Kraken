@@ -64,7 +64,7 @@ eAnchorStatus AnchorSystemCocoa::init()
   eAnchorStatus success = AnchorSystem::init();
   if (success) {
     @autoreleasepool {
-      [KrakenApplication graphicsBegin];
+      AnchorSystemApple *appDelegate = [[AnchorSystemApple alloc] init];
     }
   }
   return success;
@@ -120,7 +120,7 @@ AnchorU64 AnchorSystemCocoa::getMilliSeconds() const
 
 bool AnchorSystemCocoa::processEvents(bool waitForEvent)
 {
-  bool anyProcessed = [KrakenApplication processEvents];
+  bool anyProcessed = [AnchorSystemApple processEvents];
   return anyProcessed;
 }
 
@@ -292,7 +292,7 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
   }
 
   /* create the window on metal with swift. */
-  m_window = [KrakenApplication createWindowWithTitle:titleutf left:left top:top width:width height:height state:nsstate isDialog:dialog];
+  m_window = [AnchorSystemApple createWindowWithTitle:titleutf left:left top:top width:width height:height state:nsstate isDialog:dialog];
 }
 
 AnchorAppleMetal::~AnchorAppleMetal()

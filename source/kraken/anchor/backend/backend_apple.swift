@@ -30,50 +30,34 @@ public enum AnchorWindowState: Int {
   case WindowStateEmbedded = 4
 }
 
-open class KrakenApplication : NSObject
+open class AnchorSystemApple : NSObject
 {
+  let app = NSApplication.shared
+  let strongDelegate = AppDelegate()
+  let menu = AppMenu()
+
   @objc 
-  public static func graphicsBegin()
+  public override init() 
   {
+    super.init()
     fputs("Hello Anchor.\n", stderr)
 
-    let app = NSApplication.shared
-    let strongDelegate = AppDelegate()
-    let menu = AppMenu()
+    self.app.delegate = self.strongDelegate
+    self.app.mainMenu = self.menu
 
-    app.delegate = strongDelegate
-    app.mainMenu = menu
-
-    NSApp = app
-    NSApp.finishLaunching()
+    self.app.setActivationPolicy(.regular)
+    self.app.finishLaunching()
   }
 
   @objc
   public static func processEvents() -> Bool
   {
     var anyProcessed = false
-    var event: NSEvent?
 
-    repeat {
-      let kill = autoreleasepool {
-        event = NSApp.nextEvent(matching: .any, until: .distantPast, inMode: .default, dequeue: true)
-
-        if (event == nil) {
-          return true
-        }
-
-        anyProcessed = true
-
-        NSApp.sendEvent(event!)
-
-        return false
-      }
-
-      if (kill) {
-        break
-      }
-
-    } while (event != nil)
+    while let event = NSApp.nextEvent(matching: .any, until: .distantPast, inMode: .default, dequeue: true) {
+      anyProcessed = true
+      NSApp.sendEvent(event)
+    }
 
     return anyProcessed
   }
@@ -82,34 +66,33 @@ open class KrakenApplication : NSObject
   public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: AnchorWindowState, isDialog: Bool) -> AnchorWindowApple?
   {
     var window: AnchorWindowApple?
-    autoreleasepool {
 
-      let frame = (NSScreen.main?.visibleFrame)!
-      let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
+    let frame = (NSScreen.main?.visibleFrame)!
+    let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
 
-      var bottom = (contentRect.size.height - 1) - height - top
+    var bottom = (contentRect.size.height - 1) - height - top
 
-      /* Ensures window top left is inside this available rect. */
-      let leftC = left > contentRect.origin.x ? left : contentRect.origin.x
-      /* Add contentRect.origin.y to respect docksize. */
-      bottom = bottom > contentRect.origin.y ? bottom + contentRect.origin.y : contentRect.origin.y
+    /* Ensures window top left is inside this available rect. */
+    let leftC = left > contentRect.origin.x ? left : contentRect.origin.x
+    /* Add contentRect.origin.y to respect docksize. */
+    bottom = bottom > contentRect.origin.y ? bottom + contentRect.origin.y : contentRect.origin.y
 
-      window = AnchorWindowApple(title: title, 
-                                 left: leftC, 
-                                 bottom: bottom, 
-                                 width: width, 
-                                 height: height, 
-                                 state: state, 
-                                 dialog: isDialog,
-                                 parent: nil)
+    window = AnchorWindowApple(title: title, 
+                                left: leftC, 
+                                bottom: bottom, 
+                                width: width, 
+                                height: height, 
+                                state: state, 
+                                dialog: isDialog,
+                                parent: nil)
 
-      if let window = window {
-        /* proceed... */
-      } else {
-        fputs("AnchorWindowApple::createWindow(): window invalid\n", stderr)
-        window = nil
-      }
+    if let window = window {
+      /* proceed... */
+    } else {
+      fputs("AnchorWindowApple::createWindow(): window invalid\n", stderr)
+      window = nil
     }
+
     return window
   }
 }
