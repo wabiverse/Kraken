@@ -30,6 +30,8 @@
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
+class AnchorAppleMetal;
+
 class AnchorSystemCocoa : public AnchorSystem
 {
  public:

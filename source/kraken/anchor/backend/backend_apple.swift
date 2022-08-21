@@ -19,6 +19,7 @@ import Darwin
 import Cocoa
 import AppKit
 import Metal
+import QuartzCore
 
 @objc
 public enum AnchorWindowState: Int {
@@ -38,47 +39,13 @@ open class KrakenApplication : NSObject
 
     let app = NSApplication.shared
     let strongDelegate = AppDelegate()
+    let menu = AppMenu()
+
     app.delegate = strongDelegate
+    app.mainMenu = menu
 
     NSApp = app
-    NSApp.delegate = strongDelegate
-
-    if (NSApp.mainMenu == nil) {
-      var mainMenuBar = NSMenu()
-      var menuItem = NSMenuItem()
-      var windowMenu = NSMenu()
-      var appMenu = NSMenu()
-
-      appMenu.title = "Kraken"
-      appMenu.addItem(withTitle: "About Kraken", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
-      appMenu.addItem(NSMenuItem.separator())
-
-      let hide = appMenu.addItem(withTitle: "Hide Kraken", action: #selector(NSApplication.hide), keyEquivalent: "h")
-      hide.keyEquivalentModifierMask = [.command]
-      let others = appMenu.addItem(withTitle: "Hide Others", action: #selector(NSApplication.hideOtherApplications), keyEquivalent: "h")
-      others.keyEquivalentModifierMask = [.option, .command]
-      appMenu.addItem(withTitle: "Show All", action: #selector(NSApplication.unhideAllApplications), keyEquivalent: "")
-      let q = appMenu.addItem(withTitle: "Quit Kraken", action: #selector(NSApplication.terminate), keyEquivalent: "q")
-      q.keyEquivalentModifierMask = [.command]
-      menuItem.submenu = appMenu
-      mainMenuBar.addItem(menuItem)
-
-      // NSApp.performSelector(inBackground: Selector("setAppleMenu"), with: appMenu)
-
-      windowMenu.title = "Window"
-      let mini = windowMenu.addItem(withTitle: "Minimize", action: #selector(NSApplication.miniaturizeAll), keyEquivalent: "m")
-      mini.keyEquivalentModifierMask = [.command]
-      windowMenu.addItem(withTitle: "Zoom", action: #selector(NSApplication.accessibilityZoomButton), keyEquivalent: "")
-      let fs = windowMenu.addItem(withTitle: "Enter Full Screen", action: #selector(NSApplication.accessibilityFullScreenButton), keyEquivalent: "f")
-      fs.keyEquivalentModifierMask = [.control, .command]
-      let x = windowMenu.addItem(withTitle: "Close", action: #selector(NSApplication.terminate), keyEquivalent: "w")
-      x.keyEquivalentModifierMask = [.command]
-
-      NSApp.mainMenu = mainMenuBar
-      NSApp.windowsMenu = windowMenu
-    }
-
-    // NSApp.finishLaunching()
+    NSApp.finishLaunching()
   }
 
   @objc
@@ -112,7 +79,7 @@ open class KrakenApplication : NSObject
   }
 
   @objc 
-  public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: AnchorWindowState, isDialog: Bool)
+  public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: AnchorWindowState, isDialog: Bool) -> AnchorWindowApple?
   {
     var window: AnchorWindowApple?
     autoreleasepool {
@@ -136,20 +103,78 @@ open class KrakenApplication : NSObject
                                  dialog: isDialog,
                                  parent: nil)
 
-      /**
-       * might as well pass execution onto cocoa here,
-       * just to keep kraken running with a window until
-       * we have metal fleshed out on the swapchain. */
-      NSApp.run()
+      if let window = window {
+        /* proceed... */
+      } else {
+        fputs("AnchorWindowApple::createWindow(): window invalid\n", stderr)
+        window = nil
+      }
     }
+    return window
   }
 }
 
-class AnchorWindowApple : NSObject
+class AppMenu: NSMenu
+{
+  override init(title: String) {
+    super.init(title: title)
+
+    let mainMenu = NSMenuItem()
+    mainMenu.submenu = NSMenu(title: "Kraken")
+    mainMenu.submenu?.items = [
+      NSMenuItem(title: "About Kraken", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
+      NSMenuItem.separator(),
+      NSMenuItem(title: "Hide Kraken", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h", modifier: [.command]),
+      NSMenuItem(title: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h", modifier: [.option, .command]),
+      NSMenuItem(title: "Show All", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: ""),
+      NSMenuItem.separator(),
+      NSMenuItem(title: "Quit Kraken", action: #selector(NSApplication.shared.terminate(_:)), keyEquivalent: "q", modifier: [.command])
+    ]
+
+    let windowMenu = NSMenuItem()
+    windowMenu.submenu = NSMenu(title: "Window")
+    windowMenu.submenu?.items = [
+      NSMenuItem(title: "Minimize", action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: [.command]),
+      NSMenuItem(title: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "Enter Full Screen", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: [.control, .command]),
+      NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: [.command])
+    ]
+
+    items = [mainMenu, windowMenu]
+  }
+
+  required init(coder: NSCoder) {
+    super.init(coder: coder)
+  }
+}
+
+extension NSMenuItem 
+{
+  convenience init(title string: String, 
+                   target: AnyObject = self as AnyObject, 
+                   action selector: Selector?, 
+                   keyEquivalent charCode: String, 
+                   modifier: NSEvent.ModifierFlags = .command)
+  {
+    self.init(title: string, action: selector, keyEquivalent: charCode)
+    keyEquivalentModifierMask = modifier
+    self.target = target
+  }
+
+  convenience init(title string: String, submenuItems: [NSMenuItem])
+  {
+    self.init(title: string, action: nil, keyEquivalent: "")
+    self.submenu = NSMenu()
+    self.submenu?.items = submenuItems
+  }
+}
+
+open class AnchorWindowApple : NSObject
 {
   var window: NSWindow
   var metalDevice: MTLDevice!
   var metalLayer: CAMetalLayer!
+  var state: AnchorWindowState
 
   init(title: String, 
        left: CGFloat, 
@@ -160,6 +185,8 @@ class AnchorWindowApple : NSObject
        dialog: Bool,
        parent: AnchorWindowApple?) 
   {
+    self.state = state
+
     let rect = NSRect(origin: CGPoint(x: left, y: bottom), size: CGSize(width: width, height: height))
     let minSize = NSSize(width: 320, height: 240)
 
@@ -191,6 +218,36 @@ class AnchorWindowApple : NSObject
 
     self.window.title = title
   }
+
+  @objc
+  public func getCocoaWindow() -> NSWindow
+  {
+    return self.window
+  }
+
+  @objc
+  public func setCocoaTitle(title: String) -> Void
+  {
+    self.window.title = title
+  }
+
+  @objc
+  public func getCocoaTitle() -> String
+  {
+    return self.window.title
+  }
+
+  @objc 
+  public func closeCocoaWindow() -> Void
+  {
+    self.window.close()
+  }
+
+  @objc 
+  public func getCocoaState() -> AnchorWindowState
+  {
+    return self.state
+  }
 }
 
 class AppDelegate : NSObject, NSApplicationDelegate
@@ -200,7 +257,47 @@ class AppDelegate : NSObject, NSApplicationDelegate
   override init() 
   {
     super.init()
+    NotificationCenter.default.addObserver(self, selector: #selector(self.windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
     fputs("Kraken is LIVE.\n", stderr)
+  }
+
+  @objc
+  func windowWillClose(_ notification: Notification)
+  {
+    let closingWindow = notification.object as! NSWindow
+
+    if let index = NSApp.orderedWindows.firstIndex(of: closingWindow) {
+      if (index != NSNotFound) {
+        return
+      }
+    }
+
+    for currentWindow in NSApp.orderedWindows {
+      if (currentWindow == closingWindow) {
+        continue
+      }
+
+      if (currentWindow.isOnActiveSpace && currentWindow.canBecomeMain) {
+        currentWindow.makeKeyAndOrderFront(nil)
+        return
+      }
+    }
+      
+    if let windowNumbers = NSWindow.windowNumbers(options: .init(rawValue: 0)) {
+      for windowNumber in windowNumbers {
+        if let currentWindow = NSApp.window(withWindowNumber: windowNumber.intValue) {
+
+          if (currentWindow == closingWindow) {
+            continue
+          }
+
+          if (currentWindow.canBecomeKey) {
+            currentWindow.makeKeyAndOrderFront(nil)
+            return
+          }
+        }
+      }
+    }
   }
 
   func applicationDidFinishLaunching(_ notification: Notification)
@@ -222,7 +319,7 @@ class AppDelegate : NSObject, NSApplicationDelegate
   func application(_ sender: NSApplication, openFile filename: String) -> Bool
   {
     let windowsList = NSApp.orderedWindows
-    if (windowsList.count <= 0) {
+    if (windowsList.count >= 0) {
       windowsList[0].makeKeyAndOrderFront(nil)
     }
 

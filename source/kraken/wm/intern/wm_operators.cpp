@@ -112,8 +112,8 @@ void WM_operators_init(kContext *C)
 
 void WM_operators_register(kContext *C)
 {
-  WM_file_operators_register();
   WM_window_operators_register();
+  WM_file_operators_register();
 }
 
 WABI_NAMESPACE_END

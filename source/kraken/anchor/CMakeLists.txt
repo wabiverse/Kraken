@@ -31,6 +31,7 @@ if (APPLE)
     backend/backend_cocoa.mm
     backend/Anchor.h
     backend/ANCHOR_BACKEND_cocoa.h
+    backend/ANCHOR_BACKEND_metal.h
   )
 endif()
 
