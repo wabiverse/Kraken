@@ -38,5 +38,6 @@
 
 - (void)setSystemCocoa:(void *)sysCocoa;
 - (bool)handleOpenDocumentRequest:(NSString *)filename;
+- (bool)handleApplicationBecomeActiveEvent;
 
 @end

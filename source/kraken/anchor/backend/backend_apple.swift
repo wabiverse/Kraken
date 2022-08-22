@@ -40,8 +40,11 @@ open class AnchorSystemApple : NSObject
   public init(cocoa: CocoaAppDelegate) 
   {
     super.init()
-    fputs("Hello Anchor.\n", stderr)
 
+    /** 
+     * @UNIFIED Anchor System.
+     * recieves cocoa instance, so swift can use 
+     * the same instanced cxx anchor system. */
     self.strongDelegate.cocoa = cocoa
 
     self.app.delegate = self.strongDelegate
@@ -49,19 +52,6 @@ open class AnchorSystemApple : NSObject
 
     self.app.setActivationPolicy(.regular)
     self.app.finishLaunching()
-  }
-
-  @objc
-  public static func processEvents() -> Bool
-  {
-    var anyProcessed = false
-
-    while let event = NSApp.nextEvent(matching: .any, until: .distantPast, inMode: .default, dequeue: true) {
-      anyProcessed = true
-      NSApp.sendEvent(event)
-    }
-
-    return anyProcessed
   }
 
   @objc 
@@ -160,7 +150,7 @@ open class AnchorWindowApple : NSObject
   var metalDevice: MTLDevice!
   var metalLayer: CAMetalLayer!
   var metalView: NSView
-  
+  var dialog: Bool = false
   var state: AnchorWindowState
 
   init(title: String, 
@@ -173,6 +163,7 @@ open class AnchorWindowApple : NSObject
        parent: AnchorWindowApple?) 
   {
     self.state = state
+    self.dialog = dialog
 
     let rect = NSRect(origin: CGPoint(x: left, y: bottom), size: CGSize(width: width, height: height))
     let minSize = NSSize(width: 320, height: 240)
@@ -250,6 +241,12 @@ open class AnchorWindowApple : NSObject
   {
     return self.state
   }
+
+  @objc 
+  public func getIsDialog() -> Bool
+  {
+    return self.dialog
+  }
 }
 
 class AppDelegate : NSObject, NSApplicationDelegate
@@ -314,13 +311,20 @@ class AppDelegate : NSObject, NSApplicationDelegate
     NSEvent.isMouseCoalescingEnabled = false
   }
 
-  func applicationWillTerminate(_ notification: Notification) 
-  {
+  /**
+   * @NOTE: Event processing is handled & dispatched in the central Anchor System.
+   * This is so all platforms can share the same underlying system, vs rewriting
+   * it all for swift. */
 
+  func applicationWillBecomeActive(_ notification: Notification) 
+  {
+    /* calls instanced cxx anchor system function. */
+    self.cocoa.handleApplicationBecomeActiveEvent()
   }
 
   func application(_ sender: NSApplication, openFile filename: String) -> Bool
-  {    
+  { 
+    /* calls instanced cxx anchor system function. */
     return self.cocoa.handleOpenDocumentRequest(filename)
   }
 }

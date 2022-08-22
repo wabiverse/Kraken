@@ -129,6 +129,8 @@ class AnchorSystemCocoa : public AnchorSystem
 
   bool handleOpenDocumentRequest(void *filepathStr);
 
+  eAnchorStatus handleApplicationBecomeActiveEvent();
+
  private:
 
   eAnchorStatus init();
@@ -189,20 +191,42 @@ class AnchorSystemCocoa : public AnchorSystem
                                                eAnchorButtonMask mask);
 
   /**
-   * Converts raw WIN32 key codes from the wndproc to GHOST keys.
+   * Converts raw key codes to Anchor keys.
    * @param vKey: The virtual key from #hardKey.
    * @param ScanCode: The ScanCode of pressed key (similar to PS/2 Set 1).
    * @param extend: Flag if key is not primly (left or right).
-   * @return The GHOST key (GHOST_kKeyUnknown if no match). */
+   * @return The Anchor key (AnchorKeyUnknown if no match). */
   eAnchorKey convertKey(short vKey, short ScanCode, short extend) const;
 
   /**
-   * Catches raw WIN32 key codes from WM_INPUT in the wndproc.
+   * Catches raw key codes from WM_INPUT.
    * @param raw: RawInput structure with detailed info about the key event.
    * @param keyDown: Pointer flag that specify if a key is down.
    * @param vk: Pointer to virtual key.
-   * @return The GHOST key (GHOST_kKeyUnknown if no match). */
+   * @return The Anchor key (AnchorKeyUnknown if no match). */
   eAnchorKey hardKey(AnchorS32 const &raw, bool *r_keyDown, bool *r_is_repeated_modifier);
 
   eAnchorKey processSpecialKey(short vKey, short scanCode) const;
+
+  eAnchorStatus handleKeyEvent(void *eventPtr);
+
+  char *getClipboard(bool selection) const;
+
+ protected:
+  /** Event has been processed directly by Cocoa (or NDOF manager)
+   * and has sent a anchor event to be dispatched */
+  bool m_outsideLoopEventProcessed;
+
+  /** Raised window is not yet known by the window manager,
+   * so delay application become active event handling */
+  bool m_needDelayedEventProcessing;
+
+  /** State of the modifiers. */
+  AnchorU64 m_modifierMask;
+
+  /** Ignores window size messages (when window is dragged). */
+  bool m_ignoreWindowSizedMessages;
+
+  /** Temporarily ignore momentum scroll events */
+  bool m_ignoreMomentumScroll;
 };

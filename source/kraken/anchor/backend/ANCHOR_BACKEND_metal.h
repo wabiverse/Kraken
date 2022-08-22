@@ -111,6 +111,8 @@ class AnchorAppleMetal : public AnchorSystemWindow
     return ANCHOR_FAILURE;
   }
 
+  AnchorWindowApple *getWindow();
+
  protected:
 
   void SetupMetal();

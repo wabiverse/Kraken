@@ -68,10 +68,12 @@ eAnchorStatus AnchorSystemCocoa::init()
   eAnchorStatus success = AnchorSystem::init();
   if (success) {
     @autoreleasepool {
+      /* cxx system: sets this system instance pointer inside of CocoaAppDelegate. */
       CocoaAppDelegate *cxxDelegate = [[CocoaAppDelegate alloc] init];
       [cxxDelegate setSystemCocoa:(void *)this];
 
-      AnchorSystemApple *appDelegate = [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
+      /* swift system: recieves this system instance, so it can call into this class. */
+      [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
     }
   }
   return success;
@@ -132,8 +134,276 @@ AnchorU64 AnchorSystemCocoa::getMilliSeconds() const
 
 bool AnchorSystemCocoa::processEvents(bool waitForEvent)
 {
-  bool anyProcessed = [AnchorSystemApple processEvents];
+  bool anyProcessed = false;
+  NSEvent *event;
+  do {
+    @autoreleasepool {
+      event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                 untilDate:[NSDate distantPast]
+                                    inMode:NSDefaultRunLoopMode
+                                   dequeue:YES];
+      if (event == nil) {
+        break;
+      }
+
+      anyProcessed = true;
+
+      if ([event type] == NSEventTypeKeyDown && [event keyCode] == kVK_Tab &&
+          ([event modifierFlags] & NSEventModifierFlagControl)) {
+        handleKeyEvent(event);
+      }
+      else {
+        if ([event type] == NSEventTypeKeyUp &&
+            ([event modifierFlags] & (NSEventModifierFlagCommand | NSEventModifierFlagOption)))
+          handleKeyEvent(event);
+
+        [NSApp sendEvent:event];
+      }
+    }
+  } while (event != nil);
+
+  if (m_needDelayedEventProcessing)
+    handleApplicationBecomeActiveEvent();
+
+  if (m_outsideLoopEventProcessed) {
+    m_outsideLoopEventProcessed = false;
+    return true;
+  }
+
+  m_ignoreWindowSizedMessages = false;
+
   return anyProcessed;
+}
+
+eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
+{
+  for (AnchorISystemWindow *iwindow : m_windowManager->getWindows()) {
+    AnchorAppleMetal *window = (AnchorAppleMetal *)iwindow;
+    AnchorWindowApple *cocoaWindow = window->getWindow();
+    if ([cocoaWindow getIsDialog]) {
+      [[cocoaWindow getCocoaWindow] makeKeyAndOrderFront:nil];
+    }
+  }
+
+  unsigned long modifiers;
+  AnchorISystemWindow *window = m_windowManager->getActiveWindow();
+
+  if (!window) {
+    m_needDelayedEventProcessing = true;
+    return ANCHOR_FAILURE;
+  }
+  else {
+    m_needDelayedEventProcessing = false;
+  }
+
+  modifiers = [[[NSApplication sharedApplication] currentEvent] modifierFlags];
+
+  if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
+    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+                                 (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown :
+                                                                          AnchorEventTypeKeyUp,
+                                 window,
+                                 AnchorKeyLeftShift,
+                                 false));
+  }
+  if ((modifiers & NSEventModifierFlagControl) != (m_modifierMask & NSEventModifierFlagControl)) {
+    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+                                 (modifiers & NSEventModifierFlagControl) ? AnchorEventTypeKeyDown :
+                                                                            AnchorEventTypeKeyUp,
+                                 window,
+                                 AnchorKeyLeftControl,
+                                 false));
+  }
+  if ((modifiers & NSEventModifierFlagOption) != (m_modifierMask & NSEventModifierFlagOption)) {
+    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+                                 (modifiers & NSEventModifierFlagOption) ? AnchorEventTypeKeyDown :
+                                                                           AnchorEventTypeKeyUp,
+                                 window,
+                                 AnchorKeyLeftAlt,
+                                 false));
+  }
+  if ((modifiers & NSEventModifierFlagCommand) != (m_modifierMask & NSEventModifierFlagCommand)) {
+    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+                                 (modifiers & NSEventModifierFlagCommand) ? AnchorEventTypeKeyDown :
+                                                                            AnchorEventTypeKeyUp,
+                                 window,
+                                 AnchorKeyOS,
+                                 false));
+  }
+
+  m_modifierMask = modifiers;
+
+  m_outsideLoopEventProcessed = true;
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus AnchorSystemCocoa::handleKeyEvent(void *eventPtr)
+{
+  NSEvent *event = (NSEvent *)eventPtr;
+  AnchorISystemWindow *window;
+  unsigned long modifiers;
+  NSString *characters;
+  NSData *convertedCharacters;
+  eAnchorKey keyCode;
+  NSString *charsIgnoringModifiers;
+
+  window = m_windowManager->getWindowAssociatedWithOSWindow((void *)[event window]);
+  if (!window) {
+    // printf("\nW failure for event 0x%x",[event type]);
+    return ANCHOR_FAILURE;
+  }
+
+  char utf8_buf[6] = {'\0'};
+
+  switch ([event type]) {
+
+    case NSEventTypeKeyDown:
+    case NSEventTypeKeyUp:
+      charsIgnoringModifiers = [event charactersIgnoringModifiers];
+      if ([charsIgnoringModifiers length] > 0) {
+        keyCode = convertKey([event keyCode],
+                             [charsIgnoringModifiers characterAtIndex:0],
+                             [event type] == NSEventTypeKeyDown ? kUCKeyActionDown :
+                                                                  kUCKeyActionUp);
+      }
+      else {
+        keyCode = convertKey([event keyCode],
+                             0,
+                             [event type] == NSEventTypeKeyDown ? kUCKeyActionDown :
+                                                                  kUCKeyActionUp);
+      }
+
+      characters = [event characters];
+      if ([characters length] > 0) {
+        convertedCharacters = [characters dataUsingEncoding:NSUTF8StringEncoding];
+
+        for (int x = 0; x < [convertedCharacters length]; x++) {
+          utf8_buf[x] = ((char *)[convertedCharacters bytes])[x];
+        }
+      }
+
+      /* arrow keys should not have utf8 */
+      if ((keyCode >= AnchorKeyLeftArrow) && (keyCode <= AnchorKeyDownArrow)) {
+        utf8_buf[0] = '\0';
+      }
+
+      /* F keys should not have utf8 */
+      if ((keyCode >= AnchorKeyF1) && (keyCode <= AnchorKeyF20))
+        utf8_buf[0] = '\0';
+
+      /* no text with command key pressed */
+      if (m_modifierMask & NSEventModifierFlagCommand)
+        utf8_buf[0] = '\0';
+
+      if ((keyCode == AnchorKeyQ) && (m_modifierMask & NSEventModifierFlagCommand))
+        break;  // Cmd-Q is directly handled by Cocoa
+
+      if ([event type] == NSEventTypeKeyDown) {
+        pushEvent(new AnchorEventKey([event timestamp] * 1000,
+                                     AnchorEventTypeKeyDown,
+                                     window,
+                                     (eAnchorKey)keyCode,
+                                     [event isARepeat],
+                                     utf8_buf));
+      }
+      else {
+        pushEvent(new AnchorEventKey([event timestamp] * 1000, 
+                                     AnchorEventTypeKeyUp, 
+                                     window, 
+                                     keyCode, 
+                                     false, 
+                                     NULL));
+      }
+      m_ignoreMomentumScroll = true;
+      break;
+
+    case NSEventTypeFlagsChanged:
+      modifiers = [event modifierFlags];
+
+      if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
+        pushEvent(new AnchorEventKey([event timestamp] * 1000,
+                                     (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown :
+                                                                              AnchorEventTypeKeyUp,
+                                     window,
+                                     AnchorKeyLeftShift,
+                                     false));
+      }
+      if ((modifiers & NSEventModifierFlagControl) !=
+          (m_modifierMask & NSEventModifierFlagControl)) {
+        pushEvent(new AnchorEventKey(
+            [event timestamp] * 1000,
+            (modifiers & NSEventModifierFlagControl) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+            window,
+            AnchorKeyLeftControl,
+            false));
+      }
+      if ((modifiers & NSEventModifierFlagOption) !=
+          (m_modifierMask & NSEventModifierFlagOption)) {
+        pushEvent(new AnchorEventKey(
+            [event timestamp] * 1000,
+            (modifiers & NSEventModifierFlagOption) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+            window,
+            AnchorKeyLeftAlt,
+            false));
+      }
+      if ((modifiers & NSEventModifierFlagCommand) !=
+          (m_modifierMask & NSEventModifierFlagCommand)) {
+        pushEvent(new AnchorEventKey(
+            [event timestamp] * 1000,
+            (modifiers & NSEventModifierFlagCommand) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+            window,
+            AnchorKeyOS,
+            false));
+      }
+
+      m_modifierMask = modifiers;
+      m_ignoreMomentumScroll = true;
+      break;
+
+    default:
+      return ANCHOR_FAILURE;
+      break;
+  }
+
+  return ANCHOR_SUCCESS;
+}
+
+#pragma mark Clipboard get/set
+
+char *AnchorSystemCocoa::getClipboard(bool selection) const
+{
+  char *temp_buff;
+  size_t pastedTextSize;
+
+  @autoreleasepool {
+
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+
+    NSString *textPasted = [pasteBoard stringForType:NSPasteboardTypeString];
+
+    if (textPasted == nil) {
+      return NULL;
+    }
+
+    pastedTextSize = [textPasted lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
+    temp_buff = (char *)malloc(pastedTextSize + 1);
+
+    if (temp_buff == NULL) {
+      return NULL;
+    }
+
+    strncpy(temp_buff, [textPasted cStringUsingEncoding:NSUTF8StringEncoding], pastedTextSize);
+
+    temp_buff[pastedTextSize] = '\0';
+
+    if (temp_buff) {
+      return temp_buff;
+    }
+    else {
+      return NULL;
+    }
+  }
 }
 
 eAnchorStatus AnchorSystemCocoa::getModifierKeys(AnchorModifierKeys &keys) const
@@ -293,24 +563,30 @@ bool AnchorSystemCocoa::handleOpenDocumentRequest(void *filepathStr)
 
   pushEvent(new AnchorEventString(ANCHOR::GetTime(), AnchorEventTypeOpenMainFile, window, (AnchorEventDataPtr)temp_buff));
 
-  printf("yay\n");
-  printf(temp_buff);
-
   return YES;
 }
 
 @implementation CocoaAppDelegate : NSObject
+
 - (bool)handleOpenDocumentRequest:(NSString *)filename
 {
-  fputs("called me\n", stderr);
   AnchorSystemCocoa *system = (AnchorSystemCocoa *)systemCocoa;
 
   return system->handleOpenDocumentRequest(filename);
 }
+
+- (bool)handleApplicationBecomeActiveEvent
+{
+  AnchorSystemCocoa *system = (AnchorSystemCocoa *)systemCocoa;
+
+  return system->handleApplicationBecomeActiveEvent();
+}
+
 - (void)setSystemCocoa:(void *)sysCocoa
 {
   systemCocoa = sysCocoa;
 }
+
 @end
 
 
@@ -395,6 +671,13 @@ AnchorAppleMetal::~AnchorAppleMetal()
   // }
 
   m_window = nil;
+}
+
+#pragma mark Swift Accessors
+
+AnchorWindowApple *AnchorAppleMetal::getWindow()
+{
+  return m_window;
 }
 
 #pragma mark Drawing context
