@@ -438,7 +438,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
           KrakenPRIM props_ptr;
           WM_operator_properties_create_ptr(&props_ptr, ot);
-          CreationFactory::STR::Set(&props_ptr, "filepath", path);
+          CreationFactory::ASSET::Set(&props_ptr, "filepath", path);
           CreationFactory::BOOL::Set(&props_ptr, "display_file_selector", false);
           WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
           WM_operator_properties_free(&props_ptr);

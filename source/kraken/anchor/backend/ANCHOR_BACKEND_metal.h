@@ -37,10 +37,9 @@
 
 @class AnchorWindowApple;
 @class CAMetalLayer;
-@class CocoaMetalView;
-@class CocoaWindow;
 @class NSCursor;
 @class NSObject;
+@class NSView;
 
 class AnchorSystemCocoa;
 
@@ -113,6 +112,8 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   AnchorWindowApple *getWindow();
 
+  void setNativePixelSize(void);
+
  protected:
 
   void SetupMetal();
@@ -122,7 +123,7 @@ class AnchorAppleMetal : public AnchorSystemWindow
   AnchorWindowApple *m_window;
 
   /* The Metal view. */
-  CocoaMetalView *m_metalView;
+  NSView *m_metalView;
   CAMetalLayer *m_metalLayer;
 
   /* The SystemCocoa class to send events. */

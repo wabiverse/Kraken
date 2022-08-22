@@ -599,8 +599,6 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
                                    eAnchorWindowState state,
                                    bool dialog)
   : AnchorSystemWindow(width, height, state, false, false),
-    m_metalView(nil),
-    m_metalLayer(nil),
     m_systemCocoa(systemCocoa),
     m_cursor(0),
     m_immediateDraw(false),
@@ -635,6 +633,35 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
 
   /* create the window on metal with swift. */
   m_window = [AnchorSystemApple createWindowWithTitle:titleutf left:left top:top width:width height:height state:nsstate isDialog:dialog];
+  m_metalView = [m_window getMetalView];
+  m_metalLayer = [m_window getMetalLayer];
+
+  /* now we're ready for it. */
+  setDrawingContextType(ANCHOR_DrawingContextTypeMetal);
+  activateDrawingContext();
+
+  [[m_window getCocoaWindow] setAcceptsMouseMovedEvents:YES];
+
+  NSView *contentview = [[m_window getCocoaWindow] contentView];
+  [contentview setAllowedTouchTypes:(NSTouchTypeMaskDirect | NSTouchTypeMaskIndirect)];
+
+  [[m_window getCocoaWindow] registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType,
+                                                      NSStringPboardType,
+                                                      NSTIFFPboardType,
+                                                      nil]];
+
+  if (/*dialog && parentWindow*/false) {
+    // [parentWindow->getCocoaWindow() addChildWindow:m_window ordered:NSWindowAbove];
+    // [m_window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
+  }
+  else {
+    [[m_window getCocoaWindow] setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+  }
+
+  if (state == AnchorWindowStateFullScreen)
+    setState(AnchorWindowStateFullScreen);
+
+  setNativePixelSize();
 }
 
 AnchorAppleMetal::~AnchorAppleMetal()
@@ -659,18 +686,53 @@ AnchorAppleMetal::~AnchorAppleMetal()
   }
 
   /* Check for other kraken opened windows and make the front-most key
-   * NOTE: for some reason the closed window is still in the list.
-   * @TODO: do this in swift... */
+   * NOTE: for some reason the closed window is still in the list. */
 
-  // NSArray *windowsList = [NSApp orderedWindows];
-  // for (int a = 0; a < [windowsList count]; a++) {
-  //   if (m_window != (CocoaWindow *)[windowsList objectAtIndex:a]) {
-  //     [[windowsList objectAtIndex:a] makeKeyWindow];
-  //     break;
-  //   }
-  // }
+  NSArray *windowsList = [NSApp orderedWindows];
+  for (int a = 0; a < [windowsList count]; a++) {
+    if ([m_window getCocoaWindow] != (NSWindow *)[windowsList objectAtIndex:a]) {
+      [[windowsList objectAtIndex:a] makeKeyWindow];
+      break;
+    }
+  }
 
   m_window = nil;
+}
+
+/* called for event, when window leaves monitor to another */
+void AnchorAppleMetal::setNativePixelSize(void)
+{
+  NSRect backingBounds = [m_metalView convertRectToBacking:[m_metalView bounds]];
+
+  AnchorRect rect;
+  getClientBounds(rect);
+
+  m_nativePixelSize = (float)backingBounds.size.width / (float)rect.getWidth();
+}
+
+void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
+{
+  NSRect rect;
+  ANCHOR_ASSERT(getValid());
+
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  NSRect screenSize = [[m_window getScreen] visibleFrame];
+
+  NSWindow *window = [m_window getCocoaWindow];
+
+  // Max window contents as screen size (excluding title bar...)
+  NSRect contentRect = [NSWindow contentRectForFrameRect:screenSize
+                                               styleMask:[[m_window getCocoaWindow] styleMask]];
+
+  rect = [[m_window getCocoaWindow] contentRectForFrameRect:[[m_window getCocoaWindow] frame]];
+
+  bounds.m_b = contentRect.size.height - (rect.origin.y - contentRect.origin.y);
+  bounds.m_l = rect.origin.x - contentRect.origin.x;
+  bounds.m_r = rect.origin.x - contentRect.origin.x + rect.size.width;
+  bounds.m_t = contentRect.size.height - (rect.origin.y + rect.size.height - contentRect.origin.y);
+
+  [pool drain];
 }
 
 #pragma mark Swift Accessors
@@ -746,7 +808,10 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
 
 eAnchorStatus AnchorAppleMetal::activateDrawingContext()
 {
-  return ANCHOR_SUCCESS;
+  if (ANCHOR::GetCurrentContext() != NULL)
+    return ANCHOR_SUCCESS;
+  else
+    return ANCHOR_FAILURE;
 }
 
 eAnchorStatus AnchorAppleMetal::swapBuffers()
@@ -776,7 +841,7 @@ void AnchorAppleMetal::setIcon(const char *icon)
 
 bool AnchorAppleMetal::getValid() const
 {
-  return AnchorSystemWindow::getValid() && m_window != NULL;
+  return AnchorSystemWindow::getValid() && m_window != NULL && m_metalView != NULL;
 }
 
 void *AnchorAppleMetal::getOSWindow() const
@@ -818,13 +883,33 @@ eAnchorStatus AnchorAppleMetal::setClientSize(AnchorU32 width, AnchorU32 height)
   return ANCHOR_SUCCESS;
 }
 
-void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
-{
-
-}
-
 eAnchorStatus AnchorAppleMetal::setState(eAnchorWindowState state)
 {
+  /* convert cxx enum to swift enum. */
+  AnchorWindowState nsstate = AnchorWindowStateWindowStateNormal;
+  switch (state) {
+    case AnchorWindowStateNormal:
+      nsstate = AnchorWindowStateWindowStateNormal;
+      break;
+    case AnchorWindowStateMaximized:
+      nsstate = AnchorWindowStateWindowStateMaximized;
+      break;
+    case AnchorWindowStateMinimized:
+      nsstate = AnchorWindowStateWindowStateMinimized;
+      break;
+    case AnchorWindowStateFullScreen:
+      nsstate = AnchorWindowStateWindowStateFullScreen;
+      break;
+    case AnchorWindowStateEmbedded:
+      nsstate = AnchorWindowStateWindowStateEmbedded;
+      break;
+    default:
+      nsstate = AnchorWindowStateWindowStateNormal;
+      break;
+  }
+
+  [[m_window getCocoaWindow] setCocoaState:nsstate];
+
   return ANCHOR_SUCCESS;
 }
 
@@ -832,6 +917,7 @@ eAnchorWindowState AnchorAppleMetal::getState() const
 {
   eAnchorWindowState state;
 
+  /* convert swift enum to cxx enum. */
   AnchorWindowState nsstate = [m_window getCocoaState];
   switch (nsstate) {
     case AnchorWindowStateWindowStateNormal:

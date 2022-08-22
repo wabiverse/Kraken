@@ -173,7 +173,7 @@ open class AnchorWindowApple : NSObject
       styleMask.insert(.miniaturizable)
     }
 
-    self.window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
+    self.window = NSWindow(contentRect: rect, styleMask: styleMask, backing: .buffered, defer: false)
     self.window.contentMinSize = minSize
 
     /* setup metal device. */
@@ -213,6 +213,12 @@ open class AnchorWindowApple : NSObject
   }
 
   @objc
+  public func getMetalLayer() -> CAMetalLayer
+  {
+    return self.metalLayer
+  }
+
+  @objc
   public func getCocoaWindow() -> NSWindow
   {
     return self.window
@@ -240,6 +246,18 @@ open class AnchorWindowApple : NSObject
   public func getCocoaState() -> AnchorWindowState
   {
     return self.state
+  }
+
+  @objc 
+  public func setCocoaState(newState: AnchorWindowState)
+  {
+    self.state = newState
+  }
+
+  @objc 
+  public func getScreen() -> NSScreen
+  {
+    return self.window.screen!
   }
 
   @objc 

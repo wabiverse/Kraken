@@ -100,8 +100,9 @@ void WM_operator_properties_free(KrakenPRIM *ptr)
 
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
 {
-  // G.main->wm.at(1)
-  LUXO_pointer_create(ot->pixar, NULL, ptr);
+  *ptr = ot->pixar;
+
+  LUXO_pointer_create(ptr, NULL, ptr);
 }
 
 void WM_operators_init(kContext *C)

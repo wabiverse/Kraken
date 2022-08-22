@@ -62,7 +62,7 @@ struct wmOperatorType
   /** Use for tool-tips and Python docs. */
   const char *description;
 
-  KrakenPRIM *pixar;
+  KrakenPRIM pixar;
 
   /** Signal changes, allow for Pub/Sub. */
   const TfNotice notice;

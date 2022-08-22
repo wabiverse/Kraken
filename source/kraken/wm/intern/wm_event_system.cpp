@@ -987,15 +987,13 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       ReportList *reports)
 {
   wmOperator *op = new wmOperator();
-
+  
   op->type = ot;
   op->idname = ot->idname;
 
-  /* Initialize properties. */
-  if (properties && !properties->props.empty()) {
-    op->properties = properties;
-  } else {
-    // op->properties
+  /* Set authored properties. */
+  if (properties->IsValid()) {
+    op->ptr = properties;
   }
 
   /* Initialize error reports. */
@@ -1109,10 +1107,6 @@ static bool isect_pt_v(const GfVec4i &rect, const GfVec2i &xy)
 
 void WM_operator_free(wmOperator *op)
 {
-  if (op && !op->properties->props.empty()) {
-    // IDP_FreeProperty(op->properties);
-  }
-
   if (op->reports && (op->reports->flag & RPT_FREE)) {
     // KKE_reports_clear(op->reports);
     delete op->reports;

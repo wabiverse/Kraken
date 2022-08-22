@@ -97,4 +97,47 @@ void PRIM_def_struct(KrakenSTAGE kstage,
   PRIM_def_struct_ptr(kstage, identifier, r_ptr, from);
 }
 
+void PRIM_def_begin(KrakenPRIM *prim, 
+                    const TfToken &identifier,
+                    const TfToken &type)
+{
+  *prim = G.main->kraken.stage->DefinePrim(STAGE("Structs").AppendPath(SdfPath(type)).AppendPath(SdfPath(identifier)), type);
+}
+
+void PRIM_def_boolean(KrakenPRIM *prim, 
+                      const std::string &identifier, 
+                      bool default_value, 
+                      const std::string &ui_name, 
+                      const std::string &ui_description)
+{ 
+  UsdAttribute attr = prim->CreateAttribute(TfToken(identifier), SdfValueTypeNames->Bool, SdfVariability::SdfVariabilityVarying);
+  attr.Set(default_value);
+
+  if (ui_name.length()) {
+    attr.SetDisplayName(ui_name);
+  }
+
+  if (ui_description.length()) {
+    attr.SetDocumentation(ui_description);
+  }
+}
+
+void PRIM_def_asset(KrakenPRIM *prim, 
+                    const std::string &identifier, 
+                    const std::string &default_value, 
+                    const std::string &ui_name, 
+                    const std::string &ui_description)
+{ 
+  UsdAttribute attr = prim->CreateAttribute(TfToken(identifier), SdfValueTypeNames->Asset, SdfVariability::SdfVariabilityVarying);
+  attr.Set(SdfAssetPath(default_value));
+
+  if (ui_name.length()) {
+    attr.SetDisplayName(ui_name);
+  }
+
+  if (ui_description.length()) {
+    attr.SetDocumentation(ui_description);
+  }
+}
+
 WABI_NAMESPACE_END

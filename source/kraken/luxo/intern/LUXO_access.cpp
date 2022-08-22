@@ -301,7 +301,9 @@ void LUXO_save_usd(void)
 KrakenSTAGE::KrakenSTAGE()
   : UsdStageRefPtr(UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
-{}
+{
+  G.main->kraken.stage = *this;
+}
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {

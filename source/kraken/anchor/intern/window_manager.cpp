@@ -174,15 +174,3 @@ AnchorISystemWindow *AnchorWindowManager::getWindowAssociatedWithOSWindow(void *
   return NULL;
 }
 
-bool AnchorWindowManager::getAnyModifiedState()
-{
-  bool isAnyModified = false;
-  std::vector<AnchorISystemWindow *>::iterator iter;
-
-  for (iter = m_windows.begin(); iter != m_windows.end(); ++iter) {
-    if ((*iter)->getModifiedState())
-      isAnyModified = true;
-  }
-
-  return isAnyModified;
-}

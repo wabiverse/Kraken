@@ -99,34 +99,24 @@ namespace CreationFactory
   {
     inline void Set(KrakenPRIM *ptr, const std::string &name, const std::string &value)
     {
-      // KrakenPROP strprop;
-      // strprop.name = TfToken(name);
-      // strprop.type = SdfValueTypeNames->String;
-      // strprop.variability = SdfVariabilityUniform;
-      // strprop.custom = false;
-
-      // UsdAttribute attr = ptr->type->GetPrim().CreateAttribute(strprop.name,
-      //                                                         strprop.type,
-      //                                                         strprop.variability);
-      // attr.Set(std::string(value));
-      // ptr->props.push_back(attr);
+      UsdAttribute attr = ptr->GetAttribute(TfToken(name));
+      attr.Set(value);
+    }
+  }  // namespace STR
+  namespace ASSET
+  {
+    inline void Set(KrakenPRIM *ptr, const std::string &name, const std::string &value)
+    {
+      UsdAttribute attr = ptr->GetAttribute(TfToken(name));
+      attr.Set(SdfAssetPath(value));
     }
   }  // namespace STR
   namespace BOOL
   {
     inline void Set(KrakenPRIM *ptr, const std::string &name, const bool &value)
     {
-      // KrakenPROP strprop;
-      // strprop.name = TfToken(name);
-      // strprop.type = SdfValueTypeNames->Bool;
-      // strprop.variability = SdfVariabilityUniform;
-      // strprop.custom = false;
-
-      // UsdAttribute attr = ptr->type->CreateAttribute(strprop.name,
-      //                                               strprop.type,
-      //                                               strprop.variability);
-      // attr.Set(bool(value));
-      // ptr->props.push_back(attr);
+      UsdAttribute attr = ptr->GetAttribute(TfToken(name));
+      attr.Set(value);
     }
   }  // namespace BOOL
 }  // namespace CreationFactory

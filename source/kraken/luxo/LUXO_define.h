@@ -47,4 +47,20 @@ void PRIM_def_struct(KrakenSTAGE kstage,
                      KrakenPRIM *r_ptr,
                      const TfToken &from = TfToken());
 
+void PRIM_def_begin(KrakenPRIM *prim, 
+                    const TfToken &identifier,
+                    const TfToken &type = TfToken());
+
+void PRIM_def_boolean(KrakenPRIM *prim, 
+                      const std::string &identifier, 
+                      bool default_value, 
+                      const std::string &ui_name, 
+                      const std::string &ui_description);
+
+void PRIM_def_asset(KrakenPRIM *prim, 
+                     const std::string &identifier, 
+                     const std::string &default_value, 
+                     const std::string &ui_name, 
+                     const std::string &ui_description);
+
 WABI_NAMESPACE_END

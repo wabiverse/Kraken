@@ -52,6 +52,10 @@ struct Main
 
   char launch_time[USD_MAX_TIME];
 
+  struct {
+    UsdStageRefPtr stage;
+  } kraken;
+
   std::vector<struct wmWindowManager *> wm;
   std::vector<struct WorkSpace *> workspaces;
   std::vector<struct kScreen *> screens;

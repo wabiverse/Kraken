@@ -16,23 +16,37 @@ def "WabiAnimationStudios" (
     {
         def "Operator"
         {
+            def Operator "WM_OT_open_mainfile"
+            {
+                custom bool display_file_selector = 1 (
+                    displayName = "Display File Selector"
+                )
+                custom asset filepath = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/startup.usda@ (
+                    displayName = "File Path"
+                    doc = "The path to a .usd file path to open"
+                )
+                custom bool load_ui = 1 (
+                    displayName = "Load UI"
+                    doc = "Load user interface setup in the .usd file"
+                )
+            }
         }
 
         def Window "MainWindow1"
         {
             uniform token ui:window:alignment = "alignAbsolute"
             uniform token ui:window:cursor = "default"
-            uniform float ui:window:dpi = 1
+            uniform float ui:window:dpi = 36
             uniform asset ui:window:icon = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/icons/kraken-desktop.png@
             uniform float ui:window:linewidth = 1
-            uniform float ui:window:pixelsz = 1
-            uniform float2 ui:window:pos = (0, 18470608)
+            uniform float ui:window:pixelsz = 2
+            uniform float2 ui:window:pos = (0, 18467768)
             uniform float ui:window:scale = 1
             uniform float2 ui:window:size = (1920, 1080)
             uniform token ui:window:state = "normal"
             uniform token ui:window:title = "Kraken"
             uniform token ui:window:type = "normal"
-            uniform float ui:window:widgetunit = 20
+            uniform float ui:window:widgetunit = 12.5
             prepend rel ui:window:workspace = </WabiAnimationStudios/Structs/Workspaces/Layout>
         }
 

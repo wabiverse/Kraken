@@ -29,12 +29,14 @@
 #include "WM_files.h"
 #include "WM_event_system.h"
 
+#include "USD_object.h"
 #include "USD_factory.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
 
 #include "LUXO_access.h"
+#include "LUXO_define.h"
 
 #include "KKE_context.h"
 #include "KKE_utils.h"
@@ -76,11 +78,37 @@ void WM_OT_files_create_appdata(wmOperatorType *ot)
   ot->exec = wm_user_datafiles_write_exec;
 }
 
+static int wm_open_mainfile_exec(kContext *C, wmOperator *op)
+{
+  return OPERATOR_FINISHED;
+}
+
+static int wm_open_mainfile_invoke(kContext *C, wmOperator *op, wmEvent *UNUSED(event))
+{
+  return OPERATOR_FINISHED;
+}
+
+void WM_OT_open_mainfile(wmOperatorType *ot)
+{
+  ot->name = "Open";
+  ot->idname = IDNAME(WM_OT_open_mainfile);
+  ot->description = "Open a Kraken file";
+
+  ot->invoke = wm_open_mainfile_invoke;
+  ot->exec = wm_open_mainfile_exec;
+
+  PRIM_def_begin(&ot->pixar, ot->idname, TfToken("Operator"));
+  PRIM_def_boolean(&ot->pixar, "load_ui", true, "Load UI", "Load user interface setup in the .usd file");
+  PRIM_def_boolean(&ot->pixar, "display_file_selector", true, "Display File Selector", "");
+  PRIM_def_asset(&ot->pixar, "filepath", G.main->stage_id, "File Path", "The path to a .usd file path to open");
+}
+
 void WM_file_operators_register(void)
 {
   /* ------ */
 
   WM_operatortype_append(WM_OT_files_create_appdata);
+  WM_operatortype_append(WM_OT_open_mainfile);
 
   /* ------ */
 }

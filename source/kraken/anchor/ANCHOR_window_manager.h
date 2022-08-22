@@ -125,12 +125,6 @@ class AnchorWindowManager
    */
   AnchorISystemWindow *getWindowAssociatedWithOSWindow(void *osWindow);
 
-  /**
-   * Return true if any windows has a modified status
-   * \return True if any window has unsaved changes
-   */
-  bool getAnyModifiedState();
-
  protected:
 
   /** The list of windows managed */

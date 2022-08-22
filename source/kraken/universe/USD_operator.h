@@ -37,7 +37,7 @@ struct wmOperator
   /** Used to retrieve type pointer. */
   TfToken idname;
   /** Saved, user-settable properties. */
-  KrakenPRIM *properties;
+  KrakenPRIM *ptr;
 
   /* runtime */
   /** Operator type definition from idname. */
