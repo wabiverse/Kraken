@@ -37,6 +37,9 @@
 
 @class AnchorWindowApple;
 @class CAMetalLayer;
+@class MTLCommandQueue;
+@class MTLRenderPipelineState;
+@class MTLTexture;
 @class NSCursor;
 @class NSObject;
 @class NSView;
@@ -125,6 +128,9 @@ class AnchorAppleMetal : public AnchorSystemWindow
   /* The Metal view. */
   NSView *m_metalView;
   CAMetalLayer *m_metalLayer;
+  MTLCommandQueue *m_metalCmdQueue;
+  MTLRenderPipelineState *m_metalRenderPipeline;
+  MTLTexture *m_defaultFramebufferMetalTexture;
 
   /* The SystemCocoa class to send events. */
   AnchorSystemCocoa *m_systemCocoa;

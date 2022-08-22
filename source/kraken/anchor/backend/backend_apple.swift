@@ -152,6 +152,7 @@ open class AnchorWindowApple : NSObject
   var metalView: NSView
   var dialog: Bool = false
   var state: AnchorWindowState
+  var windowDelegate: CocoaWindowDelegate
 
   init(title: String, 
        left: CGFloat, 
@@ -204,6 +205,9 @@ open class AnchorWindowApple : NSObject
 
     self.window.makeKeyAndOrderFront(nil)
     self.window.title = title
+
+    self.windowDelegate = CocoaWindowDelegate()
+    self.window.delegate = self.windowDelegate
   }
 
   @objc
@@ -264,6 +268,18 @@ open class AnchorWindowApple : NSObject
   public func getIsDialog() -> Bool
   {
     return self.dialog
+  }
+}
+
+class CocoaWindowDelegate : NSObject, NSWindowDelegate
+{
+  override init()
+  {
+    super.init()
+  }
+
+  func windowDidMove(_ notification: Notification) {
+    fputs("Window moved\n", stderr)
   }
 }
 

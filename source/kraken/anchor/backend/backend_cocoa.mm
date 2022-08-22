@@ -590,6 +590,25 @@ bool AnchorSystemCocoa::handleOpenDocumentRequest(void *filepathStr)
 @end
 
 
+static void anchor_fatal_error_dialog(const char *msg)
+{
+  /* clang-format off */
+  @autoreleasepool {
+    /* clang-format on */
+    NSString *message = [NSString stringWithFormat:@"Error opening window:\n%s", msg];
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"Quit"];
+    [alert setMessageText:@"Kraken"];
+    [alert setInformativeText:message];
+    [alert setAlertStyle:NSAlertStyleCritical];
+    [alert runModal];
+  }
+
+  exit(1);
+}
+
+
 AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
                                    const char *title,
                                    AnchorS32 left,
@@ -637,7 +656,7 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
   m_metalLayer = [m_window getMetalLayer];
 
   /* now we're ready for it. */
-  setDrawingContextType(ANCHOR_DrawingContextTypeMetal);
+  newDrawingContext(ANCHOR_DrawingContextTypeMetal);
   activateDrawingContext();
 
   [[m_window getCocoaWindow] setAcceptsMouseMovedEvents:YES];
@@ -719,8 +738,6 @@ void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
 
   NSRect screenSize = [[m_window getScreen] visibleFrame];
 
-  NSWindow *window = [m_window getCocoaWindow];
-
   // Max window contents as screen size (excluding title bar...)
   NSRect contentRect = [NSWindow contentRectForFrameRect:screenSize
                                                styleMask:[[m_window getCocoaWindow] styleMask]];
@@ -744,15 +761,86 @@ AnchorWindowApple *AnchorAppleMetal::getWindow()
 
 #pragma mark Drawing context
 
+static const MTLPixelFormat METAL_FRAMEBUFFERPIXEL_FORMAT = MTLPixelFormatBGRA8Unorm;
+static const OSType METAL_CORE_VIDEO_PIXEL_FORMAT = kCVPixelFormatType_32BGRA;
+
 void AnchorAppleMetal::SetupMetal()
 {
+  m_hgi = new HgiMetal(m_metalLayer.device);
 
+  /* clang-format off */
+  @autoreleasepool {
+    /* clang-format on */
+    id<MTLDevice> device = m_metalLayer.device;
+
+    /* Create a command queue for blit/present operation. */
+    m_metalCmdQueue = (MTLCommandQueue *)m_hgi->GetQueue();
+
+    /* Create shaders for blit operation. */
+    NSString *source = @R"msl(
+      using namespace metal;
+
+      struct Vertex {
+        float4 position [[position]];
+        float2 texCoord [[attribute(0)]];
+      };
+
+      vertex Vertex vertex_shader(uint v_id [[vertex_id]]) {
+        Vertex vtx;
+
+        vtx.position.x = float(v_id & 1) * 4.0 - 1.0;
+        vtx.position.y = float(v_id >> 1) * 4.0 - 1.0;
+        vtx.position.z = 0.0;
+        vtx.position.w = 1.0;
+
+        vtx.texCoord = vtx.position.xy * 0.5 + 0.5;
+
+        return vtx;
+      }
+
+      constexpr sampler s {};
+
+      fragment float4 fragment_shader(Vertex v [[stage_in]],
+                      texture2d<float> t [[texture(0)]]) {
+        return t.sample(s, v.texCoord);
+      }
+
+      )msl";
+
+    MTLCompileOptions *options = [[[MTLCompileOptions alloc] init] autorelease];
+    options.languageVersion = MTLLanguageVersion2_2;
+
+    NSError *error = nil;
+    id<MTLLibrary> library = [device newLibraryWithSource:source options:options error:&error];
+    if (error) {
+      anchor_fatal_error_dialog(
+          "AnchorAppleMetal::SetupMetal: newLibraryWithSource:options:error: failed!");
+    }
+
+    /* Create a render pipeline for blit operation. */
+    MTLRenderPipelineDescriptor *desc = [[[MTLRenderPipelineDescriptor alloc] init] autorelease];
+
+    desc.fragmentFunction = [library newFunctionWithName:@"fragment_shader"];
+    desc.vertexFunction = [library newFunctionWithName:@"vertex_shader"];
+
+    [desc.colorAttachments objectAtIndexedSubscript:0].pixelFormat = METAL_FRAMEBUFFERPIXEL_FORMAT;
+
+    m_metalRenderPipeline = (MTLRenderPipelineState *)[device
+        newRenderPipelineStateWithDescriptor:desc
+                                       error:&error];
+    if (error) {
+      anchor_fatal_error_dialog(
+          "AnchorAppleMetal::SetupMetal: newRenderPipelineStateWithDescriptor:error: failed!");
+    }
+  }
 }
 
 static void SetFont()
 {
   AnchorIO &io = ANCHOR::GetIO();
-  io.Fonts->AddFontDefault();
+  AnchorFont *font = io.Fonts->AddFontDefault();
+
+  io.FontDefault = font;
 }
 
 void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
@@ -786,6 +874,14 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
 
     ANCHOR::StyleColorsDefault();
 
+    ANCHOR_ASSERT(io.BackendPlatformUserData == NULL && "Already initialized a platform backend!");
+
+    io.BackendPlatformUserData = (void *)[m_window getCocoaWindow];
+    io.BackendRendererUserData = (void *)m_metalLayer;
+    io.BackendPlatformName = "AnchorBackendApple";
+    io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;
+    io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;
+
     /**
      * Create Pixar Hydra Graphics Interface. */
 
@@ -803,6 +899,11 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
     SetFont();
 
     /* ------ */
+
+    unsigned char *pixels;
+    int width, height;
+    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+    size_t upload_size = width * height * 4 * sizeof(char);
   }
 }
 
@@ -816,6 +917,18 @@ eAnchorStatus AnchorAppleMetal::activateDrawingContext()
 
 eAnchorStatus AnchorAppleMetal::swapBuffers()
 {
+  if (ANCHOR::GetCurrentContext() == NULL) {
+    return ANCHOR_FAILURE;
+  }
+
+  ANCHOR::NewFrame();
+
+  ANCHOR::Begin("Kraken");
+  ANCHOR::Text("Computer Graphics of the Modern Age.");
+  ANCHOR::End();
+
+  ANCHOR::Render();
+
   return ANCHOR_SUCCESS;
 }
 
@@ -908,7 +1021,7 @@ eAnchorStatus AnchorAppleMetal::setState(eAnchorWindowState state)
       break;
   }
 
-  [[m_window getCocoaWindow] setCocoaState:nsstate];
+  [m_window setCocoaState:nsstate];
 
   return ANCHOR_SUCCESS;
 }

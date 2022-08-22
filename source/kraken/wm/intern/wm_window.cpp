@@ -59,6 +59,7 @@
 #include "ED_fileselect.h"
 #include "ED_screen.h"
 
+#include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
 
 WABI_NAMESPACE_BEGIN
@@ -592,7 +593,13 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     GET_Y(win_size),
     AnchorWindowStateNormal,
     is_dialog,
+#if defined(ARCH_OS_WIN32)
     ANCHOR_DrawingContextTypeDX12,
+#elif defined(ARCH_OS_DARWIN)
+    ANCHOR_DrawingContextTypeMetal,
+#else /* ARCH_OS_LINUX */
+    ANCHOR_DrawingContextTypeOpenGL,
+#endif /* ARCH_OS_WIN32 */
     0);
   if (anchorwin) {
     // win->gpuctx = GPU_context_create(anchorwin);
