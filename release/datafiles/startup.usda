@@ -16,7 +16,9 @@ def "WabiAnimationStudios" (
     {
         def "Operator"
         {
-            def Operator "WM_OT_open_mainfile"
+            def Operator "WM_OT_open_mainfile" (
+                doc = "Open a Kraken file"
+            )
             {
                 custom bool display_file_selector = 1 (
                     displayName = "Display File Selector"
@@ -29,6 +31,7 @@ def "WabiAnimationStudios" (
                     displayName = "Load UI"
                     doc = "Load user interface setup in the .usd file"
                 )
+                custom uniform token ui:operator:name = "Open"
             }
         }
 
@@ -40,7 +43,7 @@ def "WabiAnimationStudios" (
             uniform asset ui:window:icon = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/icons/kraken-desktop.png@
             uniform float ui:window:linewidth = 1
             uniform float ui:window:pixelsz = 2
-            uniform float2 ui:window:pos = (0, 18467768)
+            uniform float2 ui:window:pos = (0, 18467352)
             uniform float ui:window:scale = 1
             uniform float2 ui:window:size = (1920, 1080)
             uniform token ui:window:state = "normal"

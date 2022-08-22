@@ -97,7 +97,7 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
   ot->invoke = wm_open_mainfile_invoke;
   ot->exec = wm_open_mainfile_exec;
 
-  PRIM_def_begin(&ot->pixar, ot->idname, TfToken("Operator"));
+  PRIM_def_begin(&ot->pixar, ot->idname, TfToken("Operator"), ot->name, ot->description);
   PRIM_def_boolean(&ot->pixar, "load_ui", true, "Load UI", "Load user interface setup in the .usd file");
   PRIM_def_boolean(&ot->pixar, "display_file_selector", true, "Display File Selector", "");
   PRIM_def_asset(&ot->pixar, "filepath", G.main->stage_id, "File Path", "The path to a .usd file path to open");

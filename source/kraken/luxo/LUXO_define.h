@@ -49,7 +49,9 @@ void PRIM_def_struct(KrakenSTAGE kstage,
 
 void PRIM_def_begin(KrakenPRIM *prim, 
                     const TfToken &identifier,
-                    const TfToken &type = TfToken());
+                    const TfToken &type = TfToken(),
+                    const std::string &ui_name = std::string(), 
+                    const std::string &ui_description = std::string());
 
 void PRIM_def_boolean(KrakenPRIM *prim, 
                       const std::string &identifier, 

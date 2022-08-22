@@ -99,9 +99,19 @@ void PRIM_def_struct(KrakenSTAGE kstage,
 
 void PRIM_def_begin(KrakenPRIM *prim, 
                     const TfToken &identifier,
-                    const TfToken &type)
+                    const TfToken &type,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
 {
   *prim = G.main->kraken.stage->DefinePrim(STAGE("Structs").AppendPath(SdfPath(type)).AppendPath(SdfPath(identifier)), type);
+  if (ui_name.length()) {
+    UsdAttribute name = prim->CreateAttribute(TfToken("ui:operator:name"), SdfValueTypeNames->Token, SdfVariability::SdfVariabilityUniform);
+    name.Set(TfToken(ui_name));
+  }
+
+  if (ui_description.length()) {
+    prim->SetDocumentation(ui_description);
+  }
 }
 
 void PRIM_def_boolean(KrakenPRIM *prim, 
