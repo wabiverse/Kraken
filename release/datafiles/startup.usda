@@ -16,6 +16,48 @@ def "WabiAnimationStudios" (
     {
         def "Operator"
         {
+            def Operator "WM_OT_window_close" (
+                doc = "Close the current window"
+            )
+            {
+                custom uniform token ui:operator:name = "Close Window"
+            }
+
+            def Operator "WM_OT_window_new" (
+                doc = "Create a new window"
+            )
+            {
+                custom uniform token ui:operator:name = "New Window"
+            }
+
+            def Operator "WM_OT_window_new_main" (
+                doc = "Create a new main window with its own workspace and scene selection"
+            )
+            {
+                custom uniform token ui:operator:name = "New Main Window"
+            }
+
+            def Operator "WM_OT_window_fullscreen_toggle" (
+                doc = "Toggle the current window fullscreen"
+            )
+            {
+                custom uniform token ui:operator:name = "Toggle Window Fullscreen"
+            }
+
+            def Operator "WM_OT_quit_kraken" (
+                doc = "Quit Kraken"
+            )
+            {
+                custom uniform token ui:operator:name = "Quit Kraken"
+            }
+
+            def Operator "WM_OT_files_create_appdata" (
+                doc = "Install user directories at OS appdata"
+            )
+            {
+                custom uniform token ui:operator:name = "Create User AppData Directory"
+            }
+
             def Operator "WM_OT_open_mainfile" (
                 doc = "Open a Kraken file"
             )
@@ -43,7 +85,7 @@ def "WabiAnimationStudios" (
             uniform asset ui:window:icon = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/icons/kraken-desktop.png@
             uniform float ui:window:linewidth = 1
             uniform float ui:window:pixelsz = 2
-            uniform float2 ui:window:pos = (0, 18467352)
+            uniform float2 ui:window:pos = (0, 18466944)
             uniform float ui:window:scale = 1
             uniform float2 ui:window:size = (1920, 1080)
             uniform token ui:window:state = "normal"

@@ -35,6 +35,7 @@
 #include "USD_window.h"
 
 #include "LUXO_access.h"
+#include "LUXO_define.h"
 
 #include "KKE_context.h"
 #include "KKE_utils.h"
@@ -69,6 +70,13 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 
   wmOperatorType *ot = new wmOperatorType();
   opfunc(ot);
+
+  /* ------ */
+
+  if(!ot->pixar.IsValid())
+  {
+    PRIM_def_begin(&ot->pixar, ot->idname, TfToken("Operator"), ot->name, ot->description);
+  }
 
   /* ------ */
 
