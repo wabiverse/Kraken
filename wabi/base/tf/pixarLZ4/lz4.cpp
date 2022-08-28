@@ -50,6 +50,7 @@
  */
 #define ACCELERATION_DEFAULT 1
 
+
 /*-************************************
  *  CPU Feature Detection
  **************************************/
@@ -80,11 +81,11 @@
  * LZ4_FORCE_SW_BITCOUNT
  * Define this parameter if your target system or compiler does not support hardware bit count
  */
-#if defined(_MSC_VER) &&                                                            \
-  defined(_WIN32_WCE) /* Visual Studio for WinCE doesn't support Hardware bit count \
-                       */
+#if defined(_MSC_VER) && \
+  defined(_WIN32_WCE) /* Visual Studio for WinCE doesn't support Hardware bit count */
 #  define LZ4_FORCE_SW_BITCOUNT
 #endif
+
 
 /*-************************************
  *  Dependency
@@ -108,6 +109,7 @@
 #define LZ4_STATIC_LINKING_ONLY /* LZ4_DISTANCE_MAX */
 #include "lz4.h"
 /* see also "memory routines" below */
+
 
 /*-************************************
  *  Compiler Options
@@ -171,6 +173,7 @@
 #  define unlikely(expr) expect((expr) != 0, 0)
 #endif
 
+
 /*-************************************
  *  Memory routines
  **************************************/
@@ -180,6 +183,7 @@
 #define FREEMEM(p) free(p)
 #include <string.h> /* memset, memcpy */
 #define MEM_INIT(p, v, s) memset((p), (v), (s))
+
 
 /*-************************************
  *  Common Constants
@@ -248,8 +252,7 @@ static int g_debuglog_enable = 1;
  *  Types
  **************************************/
 #if defined(__cplusplus) || (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 \
-                                                                                         */    \
-                            )
+                                                                                         */)
 #  include <stdint.h>
 typedef uint8_t BYTE;
 typedef uint16_t U16;
@@ -272,7 +275,7 @@ typedef U64 reg_t; /* 64-bits in x32 mode */
 typedef size_t reg_t;   /* 32-bits in x32 mode */
 #endif
 
-/* PXR - modification; add namespace. */
+/* PIXAR - modification; add namespace. */
 #include "wabi/wabi.h"
 WABI_NAMESPACE_BEGIN
 namespace wabi_lz4
@@ -284,6 +287,7 @@ namespace wabi_lz4
     limitedOutput = 1,
     fillOutput = 2
   } limitedOutput_directive;
+
 
   /*-************************************
    *  Reading and writing into memory
@@ -297,6 +301,7 @@ namespace wabi_lz4
     } one = {1}; /* don't use static : performance detrimental */
     return one.c[0];
   }
+
 
 #if defined(LZ4_FORCE_MEMORY_ACCESS) && (LZ4_FORCE_MEMORY_ACCESS == 2)
   /* lie to the compiler about data alignment; use with caution */
@@ -392,6 +397,7 @@ namespace wabi_lz4
 
 #endif /* LZ4_FORCE_MEMORY_ACCESS */
 
+
   static U16 LZ4_readLE16(const void *memPtr)
   {
     if (LZ4_isLittleEndian()) {
@@ -431,13 +437,14 @@ namespace wabi_lz4
   static const unsigned inc32table[8] = {0, 1, 2, 1, 0, 4, 4, 4};
   static const int dec64table[8] = {0, 0, 0, -1, -4, 1, 2, 3};
 
+
 #ifndef LZ4_FAST_DEC_LOOP
 #  if defined(__i386__) || defined(__x86_64__)
 #    define LZ4_FAST_DEC_LOOP 1
 #  elif defined(__aarch64__) && !defined(__clang__)
-/* On aarch64, we disable this optimization for clang because on certain
- * mobile chipsets and clang, it reduces performance. For more information
- * refer to https://github.com/lz4/lz4/pull/707. */
+  /* On aarch64, we disable this optimization for clang because on certain
+   * mobile chipsets and clang, it reduces performance. For more information
+   * refer to https://github.com/lz4/lz4/pull/707. */
 #    define LZ4_FAST_DEC_LOOP 1
 #  else
 #    define LZ4_FAST_DEC_LOOP 0
@@ -528,6 +535,7 @@ namespace wabi_lz4
   }
 #endif
 
+
   /*-************************************
    *  Common functions
    **************************************/
@@ -549,8 +557,7 @@ namespace wabi_lz4
                                                 7, 1, 2, 4, 6, 4, 4, 5, 7, 2, 6, 5, 7, 6, 7, 7};
         return DeBruijnBytePos[((U64)((val & -(long long)val) * 0x0218A392CDABBD3FULL)) >> 58];
 #endif
-      } else /* 32 bits */
-      {
+      } else /* 32 bits */ {
 #if defined(_MSC_VER) && !defined(LZ4_FORCE_SW_BITCOUNT)
         unsigned long r;
         _BitScanForward(&r, (U32)val);
@@ -564,8 +571,7 @@ namespace wabi_lz4
         return DeBruijnBytePos[((U32)((val & -(S32)val) * 0x077CB531U)) >> 27];
 #endif
       }
-    } else /* Big Endian CPU */
-    {
+    } else /* Big Endian CPU */ {
       if (sizeof(val) == 8) { /* 64-bits */
 #if defined(_MSC_VER) && defined(_WIN64) && !defined(LZ4_FORCE_SW_BITCOUNT)
         unsigned long r = 0;
@@ -594,8 +600,7 @@ namespace wabi_lz4
         r += (!val);
         return r;
 #endif
-      } else /* 32 bits */
-      {
+      } else /* 32 bits */ {
 #if defined(_MSC_VER) && !defined(LZ4_FORCE_SW_BITCOUNT)
         unsigned long r = 0;
         _BitScanReverse(&r, (unsigned long)val);
@@ -659,6 +664,7 @@ namespace wabi_lz4
     return (unsigned)(pIn - pStart);
   }
 
+
 #ifndef LZ4_COMMONDEFS_ONLY
   /*-************************************
    *  Local Constants
@@ -666,6 +672,7 @@ namespace wabi_lz4
   static const int LZ4_64Klimit = ((64 KB) + (MFLIMIT - 1));
   static const U32 LZ4_skipTrigger =
     6; /* Increase this value ==> compression run slower on incompressible data */
+
 
   /*-************************************
    *  Local Structures and types
@@ -714,6 +721,7 @@ namespace wabi_lz4
     dictSmall
   } dictIssue_directive;
 
+
   /*-************************************
    *  Local Utils
    **************************************/
@@ -734,12 +742,15 @@ namespace wabi_lz4
     return LZ4_STREAMSIZE;
   }
 
-/*-************************************
- *  Internal Definitions used in Tests
- **************************************/
-#  if defined(__cplusplus)
+
+  /*-************************************
+   *  Internal Definitions used in Tests
+   **************************************/
+  /* PIXAR - modification; remove C linkage.
+  #if defined (__cplusplus)
   extern "C" {
-#  endif
+  #endif
+  */
 
   int LZ4_compress_forceExtDict(LZ4_stream_t *LZ4_dict,
                                 const char *source,
@@ -753,9 +764,11 @@ namespace wabi_lz4
                                        const void *dictStart,
                                        size_t dictSize);
 
-#  if defined(__cplusplus)
+  /* PIXAR - modification; remove C linkage.
+  #if defined (__cplusplus)
   }
-#  endif
+  #endif
+  */
 
   /*-******************************
    *  Compression functions
@@ -1087,6 +1100,7 @@ namespace wabi_lz4
           LZ4_putPositionOnHash(ip, h, cctx->hashTable, tableType, base);
 
         } while ((match + LZ4_DISTANCE_MAX < ip) || (LZ4_read32(match) != LZ4_read32(ip)));
+
       } else { /* byU32, byU16 */
 
         const BYTE *forwardIp = ip;
@@ -1328,6 +1342,7 @@ namespace wabi_lz4
           *token = 0;
           goto _next_match;
         }
+
       } else { /* byU32, byU16 */
 
         U32 const h = LZ4_hashPosition(ip, tableType);
@@ -1422,6 +1437,7 @@ namespace wabi_lz4
     assert(result > 0);
     return result;
   }
+
 
   int LZ4_compress_fast_extState(void *state,
                                  const char *source,
@@ -1615,6 +1631,7 @@ namespace wabi_lz4
     }
   }
 
+
   int LZ4_compress_fast(const char *source,
                         char *dest,
                         int inputSize,
@@ -1639,10 +1656,12 @@ namespace wabi_lz4
     return result;
   }
 
+
   int LZ4_compress_default(const char *src, char *dst, int srcSize, int maxOutputSize)
   {
     return LZ4_compress_fast(src, dst, srcSize, maxOutputSize, 1);
   }
+
 
   /* hidden debug function */
   /* strangely enough, gcc generates faster code when this function is uncommented, even if unused
@@ -1683,6 +1702,7 @@ namespace wabi_lz4
                                   acceleration);
     }
   }
+
 
   /* Note!: This function leaves the stream in an unclean/broken state!
    * It is not safe to subsequently use the same state with a _fastReset() or
@@ -1731,6 +1751,7 @@ namespace wabi_lz4
     }
   }
 
+
   int LZ4_compress_destSize(const char *src, char *dst, int *srcSizePtr, int targetDstSize)
   {
 #  if (LZ4_HEAPMODE)
@@ -1750,6 +1771,7 @@ namespace wabi_lz4
 #  endif
     return result;
   }
+
 
   /*-******************************
    *  Streaming functions
@@ -1823,6 +1845,7 @@ namespace wabi_lz4
     FREEMEM(LZ4_stream);
     return (0);
   }
+
 
 #  define HASH_UNIT sizeof(reg_t)
   int LZ4_loadDict(LZ4_stream_t *LZ4_dict, const char *dictionary, int dictSize)
@@ -1905,6 +1928,7 @@ namespace wabi_lz4
     workingStream->internal_donotuse.dictCtx = dictCtx;
   }
 
+
   static void LZ4_renormDictT(LZ4_stream_t_internal *LZ4_dict, int nextSize)
   {
     assert(nextSize >= 0);
@@ -1927,6 +1951,7 @@ namespace wabi_lz4
       LZ4_dict->dictionary = dictEnd - LZ4_dict->dictSize;
     }
   }
+
 
   int LZ4_compress_fast_continue(LZ4_stream_t *LZ4_stream,
                                  const char *source,
@@ -2074,6 +2099,7 @@ namespace wabi_lz4
     }
   }
 
+
   /* Hidden debug function, to force-test external dictionary mode */
   int LZ4_compress_forceExtDict(LZ4_stream_t *LZ4_dict,
                                 const char *source,
@@ -2117,6 +2143,7 @@ namespace wabi_lz4
     return result;
   }
 
+
   /*! LZ4_saveDict() :
    *  If previously compressed data block is not guaranteed to remain available at its memory
    * location, save it into a safer place (char* safeBuffer). Note : you don't need to call
@@ -2143,6 +2170,7 @@ namespace wabi_lz4
 
     return dictSize;
   }
+
 
   /*-*******************************
    *  Decompression functions
@@ -2238,6 +2266,7 @@ namespace wabi_lz4
       const int safeDecode = (endOnInput == endOnInputSize);
       const int checkOffset = ((safeDecode) && (dictSize < (int)(64 KB)));
 
+
       /* Set up the "end" pointers for the shortcut. */
       const BYTE *const shortiend = iend - (endOnInput ? 14 : 8) /*maxLL*/ - 2 /*offset*/;
       const BYTE *const shortoend = oend - (endOnInput ? 14 : 8) /*maxLL*/ - 18 /*maxML*/;
@@ -2246,6 +2275,7 @@ namespace wabi_lz4
       size_t offset;
       unsigned token;
       size_t length;
+
 
       DEBUGLOG(5, "LZ4_decompress_generic (srcSize:%i, dstSize:%i)", srcSize, outputSize);
 
@@ -2699,6 +2729,7 @@ namespace wabi_lz4
     }
   }
 
+
   /*===== Instantiate the API decoding functions. =====*/
 
   LZ4_FORCE_O2_GCC_PPC64LE
@@ -2893,8 +2924,8 @@ namespace wabi_lz4
     LZ4_streamDecode_t *lz4s = (LZ4_streamDecode_t *)ALLOC_AND_ZERO(sizeof(LZ4_streamDecode_t));
     LZ4_STATIC_ASSERT(
       LZ4_STREAMDECODESIZE >=
-      sizeof(LZ4_streamDecode_t_internal)); /* A compilation error here means
-                                               LZ4_STREAMDECODESIZE is not large enough */
+      sizeof(LZ4_streamDecode_t_internal)); /* A compilation error here means LZ4_STREAMDECODESIZE
+                                               is not large enough */
     return lz4s;
   }
 
@@ -3061,6 +3092,7 @@ namespace wabi_lz4
     return result;
   }
 
+
   /*
   Advanced decoding functions :
   *_usingDict() :
@@ -3108,6 +3140,7 @@ namespace wabi_lz4
     assert(dictSize >= 0);
     return LZ4_decompress_fast_extDict(source, dest, originalSize, dictStart, (size_t)dictSize);
   }
+
 
   /*=*************************************************
    *  Obsolete Functions
@@ -3200,6 +3233,6 @@ namespace wabi_lz4
 
 #endif /* LZ4_COMMONDEFS_ONLY */
 
-  /* PXR - modification, add namespace. */
+  /* PIXAR - modification, add namespace. */
 }  // namespace wabi_lz4
 WABI_NAMESPACE_END

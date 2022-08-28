@@ -1,35 +1,39 @@
 /*
- * Copyright 2021 Pixar. All Rights Reserved.
- *
- * Portions of this file are derived from original work by Pixar
- * distributed with Universal Scene Description, a project of the
- * Academy Software Foundation (ASWF). https://www.aswf.io/
- *
- * Licensed under the Apache License, Version 2.0 (the "Apache License")
- * with the following modification; you may not use this file except in
- * compliance with the Apache License and the following modification:
- * Section 6. Trademarks. is deleted and replaced with:
- *
- * 6. Trademarks. This License does not grant permission to use the trade
- *    names, trademarks, service marks, or product names of the Licensor
- *    and its affiliates, except as required to comply with Section 4(c)
- *    of the License and to reproduce the content of the NOTICE file.
- *
- * You may obtain a copy of the Apache License at:
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the Apache License with the above modification is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
- * ANY KIND, either express or implied. See the Apache License for the
- * specific language governing permissions and limitations under the
- * Apache License.
- *
- * Modifications copyright (C) 2020-2021 Wabi.
- */
+ *  LZ4 - Fast LZ compression algorithm
+ *  Header File
+ *  Copyright (C) 2011-present, Yann Collet.
 
-/* PXR - modification; remove C linkage.
+   BSD 2-Clause License (http://www.opensource.org/licenses/bsd-license.php)
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are
+   met:
+
+       * Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above
+   copyright notice, this list of conditions and the following disclaimer
+   in the documentation and/or other materials provided with the
+   distribution.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+   You can contact the author at :
+    - LZ4 homepage : http://www.lz4.org
+    - LZ4 source repository : https://github.com/lz4/lz4
+*/
+
+/* PIXAR - modification; remove C linkage.
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -41,13 +45,13 @@ extern "C" {
 /* --- Dependency --- */
 #  include <stddef.h> /* size_t */
 
-/* PXR - modification; hoist this include out of namespace scope. */
+/* PIXAR - modification; hoist this include out of namespace scope. */
 #  if defined(__cplusplus) || \
     (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) /* C99 */)
 #    include <stdint.h>
 #  endif
 
-/* PXR - modification; add namespace. */
+/* PIXAR - modification; add namespace. */
 #  include "wabi/wabi.h"
 WABI_NAMESPACE_BEGIN
 namespace wabi_lz4
@@ -110,6 +114,7 @@ namespace wabi_lz4
 #    define LZ4LIB_API LZ4LIB_VISIBILITY
 #  endif
 
+
 /*------   Version   ------*/
 #  define LZ4_VERSION_MAJOR 1   /* for breaking interface changes  */
 #  define LZ4_VERSION_MINOR 9   /* for new (non-breaking) interface capabilities */
@@ -127,6 +132,7 @@ namespace wabi_lz4
     void); /**< library version number; useful to check dll version */
   LZ4LIB_API const char *LZ4_versionString(
     void); /**< library version string; useful to check dll version */
+
 
 /*-************************************
  *  Tuning parameter
@@ -171,17 +177,19 @@ namespace wabi_lz4
    * code (negative value). If the source stream is detected malformed, the function will stop
    * decoding and return a negative result. Note 1 : This function is protected against malicious
    * data packets : it will never writes outside 'dst' buffer, nor read outside 'source' buffer,
-   * even if the compressed block is maliciously modified to order the decoder to do these actions.
-   * In such case, the decoder stops immediately, and considers the compressed block malformed.
-   * Note 2 : compressedSize and dstCapacity must be provided to the function, the compressed block
-   * does not contain them. The implementation is free to send / store / derive this information in
-   * whichever way is most beneficial. If there is a need for a different format which bundles
-   * together both compressed data and its metadata, consider looking at lz4frame.h instead.
+   *          even if the compressed block is maliciously modified to order the decoder to do these
+   * actions. In such case, the decoder stops immediately, and considers the compressed block
+   * malformed. Note 2 : compressedSize and dstCapacity must be provided to the function, the
+   * compressed block does not contain them. The implementation is free to send / store / derive
+   * this information in whichever way is most beneficial. If there is a need for a different
+   * format which bundles together both compressed data and its metadata, consider looking at
+   * lz4frame.h instead.
    */
   LZ4LIB_API int LZ4_decompress_safe(const char *src,
                                      char *dst,
                                      int compressedSize,
                                      int dstCapacity);
+
 
 /*-************************************
  *  Advanced Functions
@@ -215,6 +223,7 @@ namespace wabi_lz4
                                    int dstCapacity,
                                    int acceleration);
 
+
   /*! LZ4_compress_fast_extState() :
    *  Same as LZ4_compress_fast(), using an externally allocated memory space for its state.
    *  Use LZ4_sizeofState() to know how much memory must be allocated,
@@ -228,6 +237,7 @@ namespace wabi_lz4
                                             int srcSize,
                                             int dstCapacity,
                                             int acceleration);
+
 
   /*! LZ4_compress_destSize() :
    *  Reverse the logic : compresses as much data as possible from 'src' buffer
@@ -245,6 +255,7 @@ namespace wabi_lz4
                                        char *dst,
                                        int *srcSizePtr,
                                        int targetDstSize);
+
 
   /*! LZ4_decompress_safe_partial() :
    *  Decompress an LZ4 compressed block, of size 'srcSize' at position 'src',
@@ -274,6 +285,7 @@ namespace wabi_lz4
                                              int srcSize,
                                              int targetOutputSize,
                                              int dstCapacity);
+
 
   /*-*********************************************
    *  Streaming Compression Functions
@@ -362,6 +374,7 @@ namespace wabi_lz4
    */
   LZ4LIB_API int LZ4_saveDict(LZ4_stream_t *streamPtr, char *safeBuffer, int maxDictSize);
 
+
   /*-**********************************************
    *  Streaming Decompression Functions
    *  Bufferless synchronous API
@@ -437,6 +450,7 @@ namespace wabi_lz4
                                               int srcSize,
                                               int dstCapacity);
 
+
   /*! LZ4_decompress_*_usingDict() :
    *  These decoding functions work the same as
    *  a combination of LZ4_setStreamDecode() followed by LZ4_decompress_*_continue()
@@ -453,6 +467,7 @@ namespace wabi_lz4
                                                int dictSize);
 
 #endif /* LZ4_H_2983827168210 */
+
 
   /*^*************************************
    * !!!!!!   STATIC LINKING ONLY   !!!!!!
@@ -488,6 +503,7 @@ namespace wabi_lz4
 #    else
 #      define LZ4LIB_STATIC_API
 #    endif
+
 
   /*! LZ4_compress_fast_extState_fastReset() :
    *  A variant of LZ4_compress_fast_extState().
@@ -535,6 +551,7 @@ namespace wabi_lz4
    */
   LZ4LIB_STATIC_API void LZ4_attach_dictionary(LZ4_stream_t *workingStream,
                                                const LZ4_stream_t *dictionaryStream);
+
 
   /*! In-place compression and decompression
    *
@@ -588,12 +605,12 @@ namespace wabi_lz4
    */
 
 #    define LZ4_DECOMPRESS_INPLACE_MARGIN(compressedSize) (((compressedSize) >> 8) + 32)
-#    define LZ4_DECOMPRESS_INPLACE_BUFFER_SIZE(decompressedSize)                       \
-      ((decompressedSize) +                                                            \
-       LZ4_DECOMPRESS_INPLACE_MARGIN(                                                  \
-         decompressedSize)) /**< note: presumes that compressedSize <                  \
-                               decompressedSize. note2: margin is overestimated a bit, \
-                               since it could use compressedSize instead */
+#    define LZ4_DECOMPRESS_INPLACE_BUFFER_SIZE(decompressedSize)                                \
+      ((decompressedSize) +                                                                     \
+       LZ4_DECOMPRESS_INPLACE_MARGIN(                                                           \
+         decompressedSize)) /**< note: presumes that compressedSize < decompressedSize. note2:  \
+                               margin is overestimated a bit, since it could use compressedSize \
+                               instead */
 
 #    ifndef LZ4_DISTANCE_MAX         /* history window size; can be user-defined at compile time */
 #      define LZ4_DISTANCE_MAX 65535 /* set to maximum value by default */
@@ -602,15 +619,16 @@ namespace wabi_lz4
 #    define LZ4_COMPRESS_INPLACE_MARGIN \
       (LZ4_DISTANCE_MAX +               \
        32) /* LZ4_DISTANCE_MAX can be safely replaced by srcSize when it's smaller */
-#    define LZ4_COMPRESS_INPLACE_BUFFER_SIZE(maxCompressedSize)                     \
-      ((maxCompressedSize) +                                                        \
-       LZ4_COMPRESS_INPLACE_MARGIN) /**< maxCompressedSize is generally             \
-                                       LZ4_COMPRESSBOUND(inputSize), but can be set \
-                                       to any lower value, with the risk that       \
-                                       compression can fail (return code 0(zero)) */
+#    define LZ4_COMPRESS_INPLACE_BUFFER_SIZE(maxCompressedSize)                                  \
+      ((maxCompressedSize) +                                                                     \
+       LZ4_COMPRESS_INPLACE_MARGIN) /**< maxCompressedSize is generally                          \
+                                       LZ4_COMPRESSBOUND(inputSize), but can be set to any lower \
+                                       value, with the risk that compression can fail (return    \
+                                       code 0(zero)) */
 
 #  endif /* LZ4_STATIC_3504398509 */
 #endif   /* LZ4_STATIC_LINKING_ONLY */
+
 
 #ifndef LZ4_H_98237428734687
 #  define LZ4_H_98237428734687
@@ -708,6 +726,7 @@ namespace wabi_lz4
    */
   LZ4LIB_API LZ4_stream_t *LZ4_initStream(void *buffer, size_t size);
 
+
 /*! LZ4_streamDecode_t :
  *  information structure to track an LZ4 stream during decompression.
  *  init this structure  using LZ4_setStreamDecode() before first use.
@@ -722,6 +741,7 @@ namespace wabi_lz4
     unsigned long long table[LZ4_STREAMDECODESIZE_U64];
     LZ4_streamDecode_t_internal internal_donotuse;
   }; /* previously typedef'd to LZ4_streamDecode_t */
+
 
 /*-************************************
  *  Obsolete Functions
@@ -761,12 +781,10 @@ namespace wabi_lz4
   LZ4LIB_API int LZ4_compress(const char *src, char *dest, int srcSize);
   LZ4_DEPRECATED("use LZ4_compress_default() instead")
   LZ4LIB_API
-  int LZ4_compress_limitedOutput(const char *src, char *dest, int srcSize, int maxOutputSize);
+    int LZ4_compress_limitedOutput(const char *src, char *dest, int srcSize, int maxOutputSize);
   LZ4_DEPRECATED("use LZ4_compress_fast_extState() instead")
-  LZ4LIB_API int LZ4_compress_withState(void *state,
-                                        const char *source,
-                                        char *dest,
-                                        int inputSize);
+  LZ4LIB_API
+    int LZ4_compress_withState(void *state, const char *source, char *dest, int inputSize);
   LZ4_DEPRECATED("use LZ4_compress_fast_extState() instead")
   LZ4LIB_API int LZ4_compress_limitedOutput_withState(void *state,
                                                       const char *source,
@@ -803,14 +821,11 @@ namespace wabi_lz4
    * achieved will therefore be no better than compressing each chunk
    * independently.
    */
-  LZ4_DEPRECATED("Use LZ4_createStream() instead")
-  LZ4LIB_API void *LZ4_create(char *inputBuffer);
-  LZ4_DEPRECATED("Use LZ4_createStream() instead")
-  LZ4LIB_API int LZ4_sizeofStreamState(void);
+  LZ4_DEPRECATED("Use LZ4_createStream() instead") LZ4LIB_API void *LZ4_create(char *inputBuffer);
+  LZ4_DEPRECATED("Use LZ4_createStream() instead") LZ4LIB_API int LZ4_sizeofStreamState(void);
   LZ4_DEPRECATED("Use LZ4_resetStream() instead")
   LZ4LIB_API int LZ4_resetStreamState(void *state, char *inputBuffer);
-  LZ4_DEPRECATED("Use LZ4_saveDict() instead")
-  LZ4LIB_API char *LZ4_slideInputBuffer(void *state);
+  LZ4_DEPRECATED("Use LZ4_saveDict() instead") LZ4LIB_API char *LZ4_slideInputBuffer(void *state);
 
   /* Obsolete streaming decoding functions */
   LZ4_DEPRECATED("use LZ4_decompress_safe_usingDict() instead")
@@ -879,13 +894,14 @@ namespace wabi_lz4
    */
   LZ4LIB_API void LZ4_resetStream(LZ4_stream_t *streamPtr);
 
-  /* PXR - modification, add namespace. */
+  /* PIXAR - modification, add namespace. */
 }  // wabi_lz4
 WABI_NAMESPACE_END
 
 #endif /* LZ4_H_98237428734687 */
 
-/* PXR - modification; remove C linkage.
+
+/* PIXAR - modification; remove C linkage.
 #if defined (__cplusplus)
 }
 #endif
