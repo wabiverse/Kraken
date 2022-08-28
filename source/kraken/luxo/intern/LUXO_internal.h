@@ -35,9 +35,9 @@
 #include "USD_wm_types.h"
 #include "USD_object.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
-void PRIM_def_info(KrakenSTAGE kstage);
-void PRIM_def_wm(KrakenSTAGE kstage);
+void PRIM_def_info(const Stage &kstage);
+void PRIM_def_wm(const Stage &kstage);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

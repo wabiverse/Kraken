@@ -1576,12 +1576,15 @@ class UsdStage : public TfRefBase, public TfWeakBase
   // --------------------------------------------------------------------- //
   // Stage Construction & Initialization
   // --------------------------------------------------------------------- //
-
+ 
+ protected:
   UsdStage(const SdfLayerRefPtr &rootLayer,
            const SdfLayerRefPtr &sessionLayer,
            const ArResolverContext &pathResolverContext,
            const UsdStagePopulationMask &mask,
            InitialLoadSet load);
+           
+ private:
 
   // Helper for Open() overloads -- searches and publishes to bound caches.
   template<class... Args>

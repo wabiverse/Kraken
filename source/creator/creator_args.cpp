@@ -49,11 +49,12 @@
 #include <vector>
 #include <filesystem>
 
+#include <wabi/base/tf/callContext.h>
 #include <wabi/base/tf/diagnostic.h>
 #include <wabi/base/tf/iterator.h>
 #include <wabi/usd/usd/stage.h>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 /* NAMESPACES */
 namespace CREATOR_ARGS = boost::program_options;
@@ -124,11 +125,11 @@ int CREATOR_parse_args(int argc, const char **argv)
   if (convert_stage.size() > 2) {
     const std::filesystem::path fp = convert_stage;
     if (std::filesystem::exists(fp)) {
-      USD_pixutil_convert_usd(fp, UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
+      USD_pixutil_convert_usd(fp, wabi::UsdUsdaFileFormatTokens->Id, /*verbose==*/true);
       exit(KRAKEN_SUCCESS);
     }
 
-    TF_WARN("File at %s does not exist.", CHARALL(fp.string()));
+    wabi::TF_WARN("File at %s does not exist.", CHARALL(fp.string()));
     exit(KRAKEN_ERROR);
   }
 

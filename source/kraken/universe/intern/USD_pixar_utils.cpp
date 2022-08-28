@@ -22,15 +22,18 @@
  * Set the Stage.
  */
 
+#include "kraken/kraken.h"
+
 #include "KKE_main.h"
-#include "KKE_version.h"
 
 #include "USD_pixar_utils.h"
 
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/ar/resolver.h>
 
-WABI_NAMESPACE_BEGIN
+WABI_NAMESPACE_USING
+
+KRAKEN_NAMESPACE_BEGIN
 
 
 void USD_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool verbose)
@@ -80,4 +83,4 @@ std::string USD_pixutil_resolve_asset(const std::string &asset, bool verbose)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

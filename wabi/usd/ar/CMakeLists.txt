@@ -15,23 +15,20 @@ install(
   DESTINATION include/wabi/usd/ar
 )
 
-set(versionedHeaders "")
 set(versionedCPPFiles "")
 set(versionedPrivateHeaders "")
 set(versionedPythonHeaders "")
 set(versionedPythonCPPFiles "")
 set(versionedPymoduleCPPFiles "")
 
-
-list(APPEND versionedHeaders 
-      asset_v2.h
-      defaultResolver_v2.h
-      filesystemAsset_v2.h
-      filesystemWritableAsset.h
-      resolver_v2.h
-      resolverContext_v2.h
-      writableAsset.h
+list(APPEND versionedPrivateHeaders
+    asset_v2.h
+    defaultResolver_v2.h
+    filesystemAsset_v2.h
+    resolver_v2.h
+    resolverContext_v2.h
 )
+
 list(APPEND versionedCPPFiles
       asset_v2.cpp
       defaultResolver_v2.cpp
@@ -71,6 +68,7 @@ wabi_library(ar
         defaultResolver.h
         defaultResolverContext.h
         filesystemAsset.h
+        filesystemWritableAsset.h
         definePackageResolver.h
         defineResolver.h
         defineResolverContext.h
@@ -84,10 +82,12 @@ wabi_library(ar
         resolverScopedCache.h
         threadLocalScopedCache.h
         timestamp.h
-        ${versionedHeaders}
+        writableAsset.h
 
     PYTHON_PUBLIC_HEADERS
         pyResolverContext.h
+
+    PYTHON_PRIVATE_HEADERS
         ${versionedPythonHeaders}
 
     PRIVATE_HEADERS

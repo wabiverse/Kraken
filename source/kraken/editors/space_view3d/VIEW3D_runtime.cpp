@@ -34,7 +34,7 @@
 
 #include <wabi/base/arch/hints.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void ED_view3d_run(bool *show)
 {
@@ -90,4 +90,4 @@ void ED_view3d_run(bool *show)
   ANCHOR::End();
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

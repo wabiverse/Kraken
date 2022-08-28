@@ -38,7 +38,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 static PyObject *kpy_intern_str_arr[16];
 
@@ -88,12 +88,12 @@ void kpy_intern_string_init(void)
 
 #undef KPY_INTERN_STR
 
-  KLI_assert(i == TfArraySize(kpy_intern_str_arr));
+  KLI_assert(i == wabi::TfArraySize(kpy_intern_str_arr));
 }
 
 void kpy_intern_string_exit(void)
 {
-  uint i = TfArraySize(kpy_intern_str_arr);
+  uint i = wabi::TfArraySize(kpy_intern_str_arr);
   while (i--) {
     Py_DECREF(kpy_intern_str_arr[i]);
   }

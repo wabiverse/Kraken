@@ -50,7 +50,7 @@
 
 #include <wabi/base/gf/rect2i.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 ScrVert *screen_geom_vertex_add_ex(ScrAreaMap *area_map, short x, short y)
@@ -88,4 +88,4 @@ ScrEdge *screen_geom_edge_add(kScreen *screen, ScrVert *v1, ScrVert *v2)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

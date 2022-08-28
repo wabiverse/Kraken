@@ -40,13 +40,13 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 /**
  * @param mode: Passed to #PyRun_String, matches Python's
  * `compile` functions mode argument. #Py_eval_input for
  * `eval`, #Py_file_input for `exec`. */
-static bool kpy_run_string_impl(wabi::kContext *C,
+static bool kpy_run_string_impl(kraken::kContext *C,
                                 const char *imports[],
                                 const char *expr,
                                 const int mode)
@@ -90,14 +90,14 @@ static bool kpy_run_string_impl(wabi::kContext *C,
 
 /**
  * Run an expression, matches: `exec(compile(..., "eval"))` */
-bool KPY_run_string_eval(wabi::kContext *C, const char *imports[], const char *expr)
+bool KPY_run_string_eval(kraken::kContext *C, const char *imports[], const char *expr)
 {
   return kpy_run_string_impl(C, imports, expr, Py_eval_input);
 }
 
 /**
  * Run an entire script, matches: `exec(compile(..., "exec"))` */
-bool KPY_run_string_exec(wabi::kContext *C, const char *imports[], const char *expr)
+bool KPY_run_string_exec(kraken::kContext *C, const char *imports[], const char *expr)
 {
   return kpy_run_string_impl(C, imports, expr, Py_file_input);
 }

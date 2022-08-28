@@ -32,7 +32,7 @@
 
 #include "wabi/base/tf/registryManager.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 // TF_REGISTRY_FUNCTION(TfType)
 // {
@@ -40,18 +40,18 @@ WABI_NAMESPACE_BEGIN
 //   TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
 // }
 
-Scene::Scene(const UsdStageRefPtr &stage)
+Scene::Scene(const wabi::UsdStageRefPtr &stage)
   : stage(stage)
 {}
 
-Scene::Scene(const std::string &identifier, const UsdPrim &prim)
-  : stage(UsdStage::CreateNew(identifier))
+Scene::Scene(const std::string &identifier, const wabi::UsdPrim &prim)
+  : stage(wabi::UsdStage::CreateNew(identifier))
 {}
 
-Scene::Scene(const std::string &identifier, const UsdSchemaBase &schemaObj)
-  : stage(UsdStage::CreateNew(identifier))
+Scene::Scene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj)
+  : stage(wabi::UsdStage::CreateNew(identifier))
 {}
 
 Scene::~Scene() {}
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

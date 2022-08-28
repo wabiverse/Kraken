@@ -37,7 +37,7 @@
 #  define _freea(x)
 #endif
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 namespace AnchorGizmo
 {
@@ -367,7 +367,7 @@ namespace AnchorGizmo
     res.w = _w;
     return res;
   }
-  vec_t makeVect(GfVec2f v)
+  vec_t makeVect(wabi::GfVec2f v)
   {
     vec_t res;
     res.x = v[0];
@@ -831,9 +831,9 @@ namespace AnchorGizmo
     vec_t mRayVector;
 
     float mRadiusSquareCenter;
-    GfVec2f mScreenSquareCenter;
-    GfVec2f mScreenSquareMin;
-    GfVec2f mScreenSquareMax;
+    wabi::GfVec2f mScreenSquareCenter;
+    wabi::GfVec2f mScreenSquareMin;
+    wabi::GfVec2f mScreenSquareMax;
 
     float mScreenFactor;
     vec_t mRelativeOrigin;
@@ -940,10 +940,10 @@ namespace AnchorGizmo
   static int GetRotateType(OPERATION op);
   static int GetScaleType(OPERATION op);
 
-  static GfVec2f worldToPos(const vec_t &worldPos,
+  static wabi::GfVec2f worldToPos(const vec_t &worldPos,
                             const matrix_t &mat,
-                            GfVec2f position = GfVec2f(gContext.mX, gContext.mY),
-                            GfVec2f size = GfVec2f(gContext.mWidth, gContext.mHeight))
+                            wabi::GfVec2f position = wabi::GfVec2f(gContext.mX, gContext.mY),
+                            wabi::GfVec2f size = wabi::GfVec2f(gContext.mWidth, gContext.mHeight))
   {
     vec_t trans;
     trans.TransformPoint(worldPos, mat);
@@ -954,13 +954,13 @@ namespace AnchorGizmo
     trans.y *= size[1];
     trans.x += position[0];
     trans.y += position[1];
-    return GfVec2f(trans.x, trans.y);
+    return wabi::GfVec2f(trans.x, trans.y);
   }
 
   static void ComputeCameraRay(vec_t &rayOrigin,
                                vec_t &rayDir,
-                               GfVec2f position = GfVec2f(gContext.mX, gContext.mY),
-                               GfVec2f size = GfVec2f(gContext.mWidth, gContext.mHeight))
+                               wabi::GfVec2f position = wabi::GfVec2f(gContext.mX, gContext.mY),
+                               wabi::GfVec2f size = wabi::GfVec2f(gContext.mWidth, gContext.mHeight))
   {
     AnchorIO &io = ANCHOR::GetIO();
 
@@ -1063,7 +1063,7 @@ namespace AnchorGizmo
     return plan.Dot3(point) + plan.w;
   }
 
-  static bool IsInContextRect(GfVec2f p)
+  static bool IsInContextRect(wabi::GfVec2f p)
   {
     return IsWithin(p[0], gContext.mX, gContext.mXMax) &&
            IsWithin(p[1], gContext.mY, gContext.mYMax);
@@ -1109,7 +1109,7 @@ namespace AnchorGizmo
 #else
     AnchorIO &io = ANCHOR::GetIO();
     ANCHOR::SetNextWindowSize(io.DisplaySize);
-    ANCHOR::SetNextWindowPos(GfVec2f(0, 0));
+    ANCHOR::SetNextWindowPos(wabi::GfVec2f(0, 0));
 #endif
 
     ANCHOR::PushStyleColor(AnchorCol_WindowBg, 0);
@@ -1214,10 +1214,10 @@ namespace AnchorGizmo
     float rightLength = GetSegmentLengthClipSpace(makeVect(0.f, 0.f), rightViewInverse);
     gContext.mScreenFactor = gContext.mGizmoSizeClipSpace / rightLength;
 
-    GfVec2f centerSSpace = worldToPos(makeVect(0.f, 0.f), gContext.mMVP);
+    wabi::GfVec2f centerSSpace = worldToPos(makeVect(0.f, 0.f), gContext.mMVP);
     gContext.mScreenSquareCenter = centerSSpace;
-    gContext.mScreenSquareMin = GfVec2f(centerSSpace[0] - 10.f, centerSSpace[1] - 10.f);
-    gContext.mScreenSquareMax = GfVec2f(centerSSpace[0] + 10.f, centerSSpace[1] + 10.f);
+    gContext.mScreenSquareMin = wabi::GfVec2f(centerSSpace[0] - 10.f, centerSSpace[1] - 10.f);
+    gContext.mScreenSquareMax = wabi::GfVec2f(centerSSpace[0] + 10.f, centerSSpace[1] + 10.f);
 
     ComputeCameraRay(gContext.mRayOrigin, gContext.mRayVector);
   }
@@ -1393,7 +1393,7 @@ namespace AnchorGizmo
       if (!Intersects(op, static_cast<OPERATION>(ROTATE_Z >> axis))) {
         continue;
       }
-      GfVec2f *circlePos = (GfVec2f *)alloca(sizeof(GfVec2f) *
+      wabi::GfVec2f *circlePos = (wabi::GfVec2f *)alloca(sizeof(wabi::GfVec2f) *
                                              (circleMul * halfCircleSegmentCount + 1));
 
       float angleStart = atan2f(cameraToModelNormalized[(4 - axis) % 3],
@@ -1431,7 +1431,7 @@ namespace AnchorGizmo
     if (gContext.mbUsing &&
         (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) &&
         IsRotateType(type)) {
-      GfVec2f circlePos[halfCircleSegmentCount + 1];
+      wabi::GfVec2f circlePos[halfCircleSegmentCount + 1];
 
       circlePos[0] = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
       for (unsigned int i = 1; i < halfCircleSegmentCount; i++) {
@@ -1453,17 +1453,17 @@ namespace AnchorGizmo
                             true,
                             2);
 
-      GfVec2f destinationPosOnScreen = circlePos[1];
+      wabi::GfVec2f destinationPosOnScreen = circlePos[1];
       char tmps[512];
       AnchorFormatString(tmps,
                          sizeof(tmps),
                          rotationInfoMask[type - MT_ROTATE_X],
                          (gContext.mRotationAngle / ZPI) * 180.f,
                          gContext.mRotationAngle);
-      drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
+      drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
                         ANCHOR_COL32_BLACK,
                         tmps);
-      drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
+      drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
                         ANCHOR_COL32_WHITE,
                         tmps);
     }
@@ -1472,9 +1472,9 @@ namespace AnchorGizmo
   static void DrawHatchedAxis(const vec_t &axis)
   {
     for (int j = 1; j < 10; j++) {
-      GfVec2f baseSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor,
+      wabi::GfVec2f baseSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor,
                                        gContext.mMVP);
-      GfVec2f worldDirSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2 + 1) *
+      wabi::GfVec2f worldDirSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2 + 1) *
                                              gContext.mScreenFactor,
                                            gContext.mMVP);
       gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, ANCHOR_COL32(0, 0, 0, 0x80), 6.f);
@@ -1518,10 +1518,10 @@ namespace AnchorGizmo
       if (belowAxisLimit) {
         bool hasTranslateOnAxis = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i));
         float markerScale = hasTranslateOnAxis ? 1.4f : 1.0f;
-        GfVec2f baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
-        GfVec2f worldDirSSpaceNoScale = worldToPos(dirAxis * markerScale * gContext.mScreenFactor,
+        wabi::GfVec2f baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
+        wabi::GfVec2f worldDirSSpaceNoScale = worldToPos(dirAxis * markerScale * gContext.mScreenFactor,
                                                    gContext.mMVP);
-        GfVec2f worldDirSSpace = worldToPos((dirAxis * markerScale * scaleDisplay[i]) *
+        wabi::GfVec2f worldDirSSpace = worldToPos((dirAxis * markerScale * scaleDisplay[i]) *
                                               gContext.mScreenFactor,
                                             gContext.mMVP);
 
@@ -1553,15 +1553,15 @@ namespace AnchorGizmo
     if (gContext.mbUsing &&
         (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) &&
         IsScaleType(type)) {
-      // GfVec2f sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
-      GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position,
+      // wabi::GfVec2f sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
+      wabi::GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position,
                                                   gContext.mViewProjection);
       /*vec_t dif(destinationPosOnScreen.x - sourcePosOnScreen.x, destinationPosOnScreen.y -
          sourcePosOnScreen.y); dif.Normalize(); dif *= 5.f;
          drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
          drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
-           drawList->AddLine(GfVec2f(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y),
-         GfVec2f(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y),
+           drawList->AddLine(wabi::GfVec2f(sourcePosOnScreen.x + dif.x, sourcePosOnScreen.y + dif.y),
+         wabi::GfVec2f(destinationPosOnScreen.x - dif.x, destinationPosOnScreen.y - dif.y),
          translationLineColor, 2.f);
            */
       char tmps[512];
@@ -1571,10 +1571,10 @@ namespace AnchorGizmo
                          sizeof(tmps),
                          scaleInfoMask[type - MT_SCALE_X],
                          scaleDisplay[translationInfoIndex[componentInfoIndex]]);
-      drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
+      drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
                         ANCHOR_COL32_BLACK,
                         tmps);
-      drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
+      drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
                         ANCHOR_COL32_WHITE,
                         tmps);
     }
@@ -1596,7 +1596,7 @@ namespace AnchorGizmo
     AnchorU32 colors[7];
     ComputeColors(colors, type, TRANSLATE);
 
-    const GfVec2f origin = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
+    const wabi::GfVec2f origin = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
 
     // draw
     bool belowAxisLimit = false;
@@ -1612,20 +1612,20 @@ namespace AnchorGizmo
 
       // draw axis
       if (belowAxisLimit && Intersects(op, static_cast<OPERATION>(TRANSLATE_X << i))) {
-        GfVec2f baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
-        GfVec2f worldDirSSpace = worldToPos(dirAxis * gContext.mScreenFactor, gContext.mMVP);
+        wabi::GfVec2f baseSSpace = worldToPos(dirAxis * 0.1f * gContext.mScreenFactor, gContext.mMVP);
+        wabi::GfVec2f worldDirSSpace = worldToPos(dirAxis * gContext.mScreenFactor, gContext.mMVP);
 
         drawList->AddLine(baseSSpace, worldDirSSpace, colors[i + 1], 3.f);
 
         // Arrow head begin
-        GfVec2f dir(origin - worldDirSSpace);
+        wabi::GfVec2f dir(origin - worldDirSSpace);
 
         float d = sqrtf(AnchorLengthSqr(dir));
         dir /= d;  // Normalize
         dir *= 6.0f;
 
-        GfVec2f ortogonalDir(dir[1], -dir[0]);  // Perpendicular vector
-        GfVec2f a(worldDirSSpace + dir);
+        wabi::GfVec2f ortogonalDir(dir[1], -dir[0]);  // Perpendicular vector
+        wabi::GfVec2f a(worldDirSSpace + dir);
         drawList->AddTriangleFilled(worldDirSSpace - dir,
                                     a + ortogonalDir,
                                     a - ortogonalDir,
@@ -1639,7 +1639,7 @@ namespace AnchorGizmo
 
       // draw plane
       if (belowPlaneLimit && Contains(op, TRANSLATE_PLANS[i])) {
-        GfVec2f screenQuadPts[4];
+        wabi::GfVec2f screenQuadPts[4];
         for (int j = 0; j < 4; ++j) {
           vec_t cornerWorldPos = (dirPlaneX * quadUV[j * 2] + dirPlaneY * quadUV[j * 2 + 1]) *
                                  gContext.mScreenFactor;
@@ -1655,8 +1655,8 @@ namespace AnchorGizmo
     if (gContext.mbUsing &&
         (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) &&
         IsTranslateType(type)) {
-      GfVec2f sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
-      GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position,
+      wabi::GfVec2f sourcePosOnScreen = worldToPos(gContext.mMatrixOrigin, gContext.mViewProjection);
+      wabi::GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position,
                                                   gContext.mViewProjection);
       vec_t dif = {destinationPosOnScreen[0] - sourcePosOnScreen[0],
                    destinationPosOnScreen[1] - sourcePosOnScreen[1],
@@ -1667,8 +1667,8 @@ namespace AnchorGizmo
       drawList->AddCircle(sourcePosOnScreen, 6.f, translationLineColor);
       drawList->AddCircle(destinationPosOnScreen, 6.f, translationLineColor);
       drawList->AddLine(
-        GfVec2f(sourcePosOnScreen[0] + dif[0], sourcePosOnScreen[1] + dif[1]),
-        GfVec2f(destinationPosOnScreen[0] - dif[0], destinationPosOnScreen[1] - dif[1]),
+        wabi::GfVec2f(sourcePosOnScreen[0] + dif[0], sourcePosOnScreen[1] + dif[1]),
+        wabi::GfVec2f(destinationPosOnScreen[0] - dif[0], destinationPosOnScreen[1] - dif[1]),
         translationLineColor,
         2.f);
 
@@ -1681,10 +1681,10 @@ namespace AnchorGizmo
                          deltaInfo[translationInfoIndex[componentInfoIndex]],
                          deltaInfo[translationInfoIndex[componentInfoIndex + 1]],
                          deltaInfo[translationInfoIndex[componentInfoIndex + 2]]);
-      drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
+      drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
                         ANCHOR_COL32_BLACK,
                         tmps);
-      drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
+      drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
                         ANCHOR_COL32_WHITE,
                         tmps);
     }
@@ -1781,8 +1781,8 @@ namespace AnchorGizmo
 
       matrix_t boundsMVP = gContext.mModelSource * gContext.mViewProjection;
       for (int i = 0; i < 4; i++) {
-        GfVec2f worldBound1 = worldToPos(aabb[i], boundsMVP);
-        GfVec2f worldBound2 = worldToPos(aabb[(i + 1) % 4], boundsMVP);
+        wabi::GfVec2f worldBound1 = worldToPos(aabb[i], boundsMVP);
+        wabi::GfVec2f worldBound2 = worldToPos(aabb[(i + 1) % 4], boundsMVP);
         if (!IsInContextRect(worldBound1) || !IsInContextRect(worldBound2)) {
           continue;
         }
@@ -1793,8 +1793,8 @@ namespace AnchorGizmo
         for (int j = 0; j < stepCount; j++) {
           float t1 = (float)j * stepLength;
           float t2 = (float)j * stepLength + stepLength * 0.5f;
-          GfVec2f worldBoundSS1 = AnchorLerp(worldBound1, worldBound2, GfVec2f(t1, t1));
-          GfVec2f worldBoundSS2 = AnchorLerp(worldBound1, worldBound2, GfVec2f(t2, t2));
+          wabi::GfVec2f worldBoundSS1 = AnchorLerp(worldBound1, worldBound2, wabi::GfVec2f(t1, t1));
+          wabi::GfVec2f worldBoundSS2 = AnchorLerp(worldBound1, worldBound2, wabi::GfVec2f(t2, t2));
           // drawList->AddLine(worldBoundSS1, worldBoundSS2, ANCHOR_COL32(0, 0, 0, 0) +
           // anchorAlpha, 3.f);
           drawList->AddLine(worldBoundSS1,
@@ -1803,7 +1803,7 @@ namespace AnchorGizmo
                             2.f);
         }
         vec_t midPoint = (aabb[i] + aabb[(i + 1) % 4]) * 0.5f;
-        GfVec2f midBound = worldToPos(midPoint, boundsMVP);
+        wabi::GfVec2f midBound = worldToPos(midPoint, boundsMVP);
         static const float AnchorBigRadius = 8.f;
         static const float AnchorSmallRadius = 6.f;
         bool overBigAnchor = AnchorLengthSqr(worldBound1 - io.MousePos) <=
@@ -1932,7 +1932,7 @@ namespace AnchorGizmo
 
         // info text
         char tmps[512];
-        GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position,
+        wabi::GfVec2f destinationPosOnScreen = worldToPos(gContext.mModel.v.position,
                                                     gContext.mViewProjection);
         AnchorFormatString(tmps,
                            sizeof(tmps),
@@ -1943,10 +1943,10 @@ namespace AnchorGizmo
                              scale.component[1].Length(),
                            (bounds[5] - bounds[2]) * gContext.mBoundsMatrix.component[2].Length() *
                              scale.component[2].Length());
-        drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
+        drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 15, destinationPosOnScreen[1] + 15),
                           ANCHOR_COL32_BLACK,
                           tmps);
-        drawList->AddText(GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
+        drawList->AddText(wabi::GfVec2f(destinationPosOnScreen[0] + 14, destinationPosOnScreen[1] + 14),
                           ANCHOR_COL32_WHITE,
                           tmps);
       }
@@ -2002,11 +2002,11 @@ namespace AnchorGizmo
       const float startOffset = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i)) ? 1.0f :
                                                                                          0.1f;
       const float endOffset = Contains(op, static_cast<OPERATION>(TRANSLATE_X << i)) ? 1.4f : 1.0f;
-      const GfVec2f posOnPlanScreen = worldToPos(posOnPlan, gContext.mViewProjection);
-      const GfVec2f axisStartOnScreen = worldToPos(
+      const wabi::GfVec2f posOnPlanScreen = worldToPos(posOnPlan, gContext.mViewProjection);
+      const wabi::GfVec2f axisStartOnScreen = worldToPos(
         gContext.mModel.v.position + dirAxis * gContext.mScreenFactor * startOffset,
         gContext.mViewProjection);
-      const GfVec2f axisEndOnScreen = worldToPos(gContext.mModel.v.position +
+      const wabi::GfVec2f axisEndOnScreen = worldToPos(gContext.mModel.v.position +
                                                    dirAxis * gContext.mScreenFactor * endOffset,
                                                  gContext.mViewProjection);
 
@@ -2063,11 +2063,11 @@ namespace AnchorGizmo
       const vec_t localPos = intersectWorldPos - gContext.mModel.v.position;
       vec_t idealPosOnCircle = Normalized(localPos);
       idealPosOnCircle.TransformVector(gContext.mModelInverse);
-      const GfVec2f idealPosOnCircleScreen = worldToPos(idealPosOnCircle * gContext.mScreenFactor,
+      const wabi::GfVec2f idealPosOnCircleScreen = worldToPos(idealPosOnCircle * gContext.mScreenFactor,
                                                         gContext.mMVP);
 
       // gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, ANCHOR_COL32_WHITE);
-      const GfVec2f distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
+      const wabi::GfVec2f distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
 
       const float distance = makeVect(distanceOnScreen).Length();
       if (distance < 8.f)  // pixel size
@@ -2095,7 +2095,7 @@ namespace AnchorGizmo
       type = MT_MOVE_SCREEN;
     }
 
-    const vec_t screenCoord = makeVect(io.MousePos - GfVec2f(gContext.mX, gContext.mY));
+    const vec_t screenCoord = makeVect(io.MousePos - wabi::GfVec2f(gContext.mX, gContext.mY));
 
     // compute
     for (unsigned int i = 0; i < 3 && type == MT_NONE; i++) {
@@ -2116,14 +2116,14 @@ namespace AnchorGizmo
                                           BuildPlan(gContext.mModel.v.position, dirAxis));
       vec_t posOnPlan = gContext.mRayOrigin + gContext.mRayVector * len;
 
-      const GfVec2f axisStartOnScreen = worldToPos(gContext.mModel.v.position +
+      const wabi::GfVec2f axisStartOnScreen = worldToPos(gContext.mModel.v.position +
                                                      dirAxis * gContext.mScreenFactor * 0.1f,
                                                    gContext.mViewProjection) -
-                                        GfVec2f(gContext.mX, gContext.mY);
-      const GfVec2f axisEndOnScreen = worldToPos(gContext.mModel.v.position +
+                                        wabi::GfVec2f(gContext.mX, gContext.mY);
+      const wabi::GfVec2f axisEndOnScreen = worldToPos(gContext.mModel.v.position +
                                                    dirAxis * gContext.mScreenFactor,
                                                  gContext.mViewProjection) -
-                                      GfVec2f(gContext.mX, gContext.mY);
+                                      wabi::GfVec2f(gContext.mX, gContext.mY);
 
       vec_t closestPointOnAxis = PointOnSegment(screenCoord,
                                                 makeVect(axisStartOnScreen),
@@ -2652,7 +2652,7 @@ namespace AnchorGizmo
     struct CubeFace
     {
       float z;
-      GfVec2f faceCoordsScreen[4];
+      wabi::GfVec2f faceCoordsScreen[4];
       AnchorU32 color;
     };
     CubeFace *faces = (CubeFace *)_malloca(sizeof(CubeFace) * matrixCount * 6);
@@ -2722,7 +2722,7 @@ namespace AnchorGizmo
         CubeFace &cubeFace = faces[cubeFaceCount];
 
         // 3D->2D
-        // GfVec2f faceCoordsScreen[4];
+        // wabi::GfVec2f faceCoordsScreen[4];
         for (unsigned int iCoord = 0; iCoord < 4; iCoord++) {
           cubeFace.faceCoordsScreen[iCoord] = worldToPos(faceCoords[iCoord] * 0.5f * invert, res);
         }
@@ -2802,8 +2802,8 @@ namespace AnchorGizmo
 
   void ViewManipulate(float *view,
                       float length,
-                      GfVec2f position,
-                      GfVec2f size,
+                      wabi::GfVec2f position,
+                      wabi::GfVec2f size,
                       AnchorU32 backgroundColor)
   {
     static bool isDraging = false;
@@ -2845,25 +2845,25 @@ namespace AnchorGizmo
     const matrix_t res = cubeView * cubeProjection;
 
     // panels
-    static const GfVec2f panelPosition[9] = {GfVec2f(0.75f, 0.75f),
-                                             GfVec2f(0.25f, 0.75f),
-                                             GfVec2f(0.f, 0.75f),
-                                             GfVec2f(0.75f, 0.25f),
-                                             GfVec2f(0.25f, 0.25f),
-                                             GfVec2f(0.f, 0.25f),
-                                             GfVec2f(0.75f, 0.f),
-                                             GfVec2f(0.25f, 0.f),
-                                             GfVec2f(0.f, 0.f)};
+    static const wabi::GfVec2f panelPosition[9] = {wabi::GfVec2f(0.75f, 0.75f),
+                                             wabi::GfVec2f(0.25f, 0.75f),
+                                             wabi::GfVec2f(0.f, 0.75f),
+                                             wabi::GfVec2f(0.75f, 0.25f),
+                                             wabi::GfVec2f(0.25f, 0.25f),
+                                             wabi::GfVec2f(0.f, 0.25f),
+                                             wabi::GfVec2f(0.75f, 0.f),
+                                             wabi::GfVec2f(0.25f, 0.f),
+                                             wabi::GfVec2f(0.f, 0.f)};
 
-    static const GfVec2f panelSize[9] = {GfVec2f(0.25f, 0.25f),
-                                         GfVec2f(0.5f, 0.25f),
-                                         GfVec2f(0.25f, 0.25f),
-                                         GfVec2f(0.25f, 0.5f),
-                                         GfVec2f(0.5f, 0.5f),
-                                         GfVec2f(0.25f, 0.5f),
-                                         GfVec2f(0.25f, 0.25f),
-                                         GfVec2f(0.5f, 0.25f),
-                                         GfVec2f(0.25f, 0.25f)};
+    static const wabi::GfVec2f panelSize[9] = {wabi::GfVec2f(0.25f, 0.25f),
+                                         wabi::GfVec2f(0.5f, 0.25f),
+                                         wabi::GfVec2f(0.25f, 0.25f),
+                                         wabi::GfVec2f(0.25f, 0.5f),
+                                         wabi::GfVec2f(0.5f, 0.5f),
+                                         wabi::GfVec2f(0.25f, 0.5f),
+                                         wabi::GfVec2f(0.25f, 0.25f),
+                                         wabi::GfVec2f(0.5f, 0.25f),
+                                         wabi::GfVec2f(0.25f, 0.25f)};
 
     // tag faces
     bool boxes[27]{};
@@ -2907,9 +2907,9 @@ namespace AnchorGizmo
         for (int iPanel = 0; iPanel < 9; iPanel++) {
           vec_t boxCoord = boxOrigin + indexVectorX * float(iPanel % 3) +
                            indexVectorY * float(iPanel / 3) + makeVect(1.f, 1.f, 1.f);
-          const GfVec2f p = panelPosition[iPanel] * 2.f;
-          const GfVec2f s = panelSize[iPanel] * 2.f;
-          GfVec2f faceCoordsScreen[4];
+          const wabi::GfVec2f p = panelPosition[iPanel] * 2.f;
+          const wabi::GfVec2f s = panelSize[iPanel] * 2.f;
+          wabi::GfVec2f faceCoordsScreen[4];
           vec_t panelPos[4] = {dx * p[0] + dy * p[1],
                                dx * p[0] + dy * (p[1] + s[1]),
                                dx * (p[0] + s[0]) + dy * (p[1] + s[1]),
@@ -2922,7 +2922,7 @@ namespace AnchorGizmo
                                                   size);
           }
 
-          const GfVec2f panelCorners[2] = {panelPosition[iPanel],
+          const wabi::GfVec2f panelCorners[2] = {panelPosition[iPanel],
                                            panelPosition[iPanel] + panelSize[iPanel]};
           bool insidePanel = localx > panelCorners[0][0] && localx < panelCorners[1][0] &&
                              localy > panelCorners[0][1] && localy < panelCorners[1][1];

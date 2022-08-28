@@ -64,7 +64,7 @@ using namespace Kraken;
 using namespace Kraken::implementation;
 #endif /* defined(ARCH_OS_WINDOWS) */
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 void CREATOR_kraken_main(int argc, const char **argv)
 {
@@ -120,16 +120,16 @@ void CREATOR_kraken_main(int argc, const char **argv)
   LUXO_init();
 
   /* This sets the context stage. */
-  LUXO_set_stage_ctx(C);
+  // LUXO_set_stage_ctx(C);
 
   /* Initialize main Runtime. */
-  WM_init(C);
+  // WM_init(C);
 
   /* Initialize kraken python module. */
-  CTX_py_init_set(C, true);
+  // CTX_py_init_set(C, true);
 
   /* Run the main event loop. */
-  WM_main(C);
+  // WM_main(C);
 }
 
 #if defined(ARCH_OS_WINDOWS)

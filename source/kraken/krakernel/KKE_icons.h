@@ -29,7 +29,7 @@
 
 #include <wabi/base/tf/token.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 typedef struct PreviewImage
 {
@@ -71,4 +71,4 @@ struct Icon
 
 void KKE_icon_changed(const int icon_id);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -41,7 +41,7 @@
 
 #include <boost/program_options.hpp>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  * Converts a given binary usd file (usd|usdc|usdz) to a human readable
@@ -60,4 +60,4 @@ void USD_pixutil_convert_usd(const fs::path &path,
  * @returns the resolved path or empty string if the asset does not exist. */
 std::string USD_pixutil_resolve_asset(const std::string &path, bool verbose = false);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

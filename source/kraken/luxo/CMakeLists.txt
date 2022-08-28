@@ -1,6 +1,7 @@
 set(INC
   .
   ../../../. # Pixar USD
+  ../../../source
   ../editors/include
   ../universe
   ../krakernel

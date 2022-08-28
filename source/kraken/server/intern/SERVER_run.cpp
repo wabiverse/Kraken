@@ -38,7 +38,7 @@
 #include <wabi/base/tf/staticTokens.h>
 #include <wabi/wabi.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 eServerNetworkPort ServerAttachNetworkPort()
 {
@@ -109,4 +109,4 @@ eServerErrorCode ServerClose()
   return SERVER_SUCCESS;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

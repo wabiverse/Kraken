@@ -24,11 +24,12 @@
 
 #include <Python.h>
 
+#include "kraken/kraken.h"
+
 #include "KLI_utildefines.h"
 #include "KLI_string_utils.h"
 
 #include "KKE_appdir.h"
-#include "KKE_version.h"
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_robinhood.h"
@@ -58,7 +59,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 PyObject *kpy_package_py = nullptr;
 
@@ -402,7 +403,7 @@ static PyObject *kpy_import_test(const char *modname)
 /******************************************************************************
  * Description: Creates the kpy module and adds it to sys.modules for importing
  ******************************************************************************/
-void KPy_init_modules(struct wabi::kContext *C)
+void KPy_init_modules(struct kraken::kContext *C)
 {
   KrakenPRIM ctx_ptr;
   PyObject *mod;

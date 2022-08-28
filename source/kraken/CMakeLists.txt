@@ -1,5 +1,6 @@
 add_subdirectory(anchor)
 add_subdirectory(editors)
+add_subdirectory(gpu)
 add_subdirectory(wm)
 add_subdirectory(krakernel)
 add_subdirectory(kraklib)

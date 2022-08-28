@@ -53,7 +53,7 @@ using namespace winrt::Windows::Storage;
 
 using namespace std;
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /* keep local to this file */
 struct __dirstream
@@ -383,7 +383,7 @@ void KLI_windows_get_default_root_dir(char *root)
   // }
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END
 
 #else
 

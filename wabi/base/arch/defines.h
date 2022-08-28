@@ -26,6 +26,16 @@
 
 #include "wabi/wabi.h"
 
+#if defined(__APPLE__)
+#  include "TargetConditionals.h"
+#  define ARCH_OS_DARWIN
+#  if TARGET_OS_IPHONE
+#    define ARCH_OS_IOS
+#  else
+#    define ARCH_OS_OSX
+#  endif /* TARGET_OS_IPHONE */
+#endif
+
 WABI_NAMESPACE_BEGIN
 
 //
@@ -34,14 +44,6 @@ WABI_NAMESPACE_BEGIN
 
 #if defined(__linux__)
 #  define ARCH_OS_LINUX
-#elif defined(__APPLE__)
-#  include "TargetConditionals.h"
-#  define ARCH_OS_DARWIN
-#  if TARGET_OS_IPHONE
-#    define ARCH_OS_IOS
-#  else
-#    define ARCH_OS_OSX
-#  endif
 #elif defined(_WIN32) || defined(_WIN64)
 #  define ARCH_OS_WINDOWS
 #endif

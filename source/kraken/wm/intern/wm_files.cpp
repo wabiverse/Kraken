@@ -47,7 +47,7 @@
 
 namespace fs = std::filesystem;
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 static int wm_user_datafiles_write_exec(kContext *C, wmOperator *op)
 {
@@ -97,10 +97,10 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
   ot->invoke = wm_open_mainfile_invoke;
   ot->exec = wm_open_mainfile_exec;
 
-  PRIM_def_begin(&ot->pixar, ot->idname, TfToken("Operator"), ot->name, ot->description);
-  PRIM_def_boolean(&ot->pixar, "load_ui", true, "Load UI", "Load user interface setup in the .usd file");
-  PRIM_def_boolean(&ot->pixar, "display_file_selector", true, "Display File Selector", "");
-  PRIM_def_asset(&ot->pixar, "filepath", G.main->stage_id, "File Path", "The path to a .usd file path to open");
+  PRIM_def_begin(ot->prim, ot->idname, TfToken("Operator"), ot->name, ot->description);
+  PRIM_def_boolean(ot->prim, "load_ui", true, "Load UI", "Load user interface setup in the .usd file");
+  PRIM_def_boolean(ot->prim, "display_file_selector", true, "Display File Selector", "");
+  PRIM_def_asset(ot->prim, "filepath", G.main->stage_id, "File Path", "The path to a .usd file path to open");
 }
 
 void WM_file_operators_register(void)
@@ -125,4 +125,4 @@ void WM_files_init(kContext *C)
   WM_operator_properties_free(&props_ptr);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

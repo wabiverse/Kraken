@@ -35,11 +35,11 @@
 #include <wabi/base/tf/debug.h>
 #include <wabi/wabi.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4]);
 
 void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y);
 void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

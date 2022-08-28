@@ -26,7 +26,7 @@
 
 #include "KKE_api.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void KKE_appdir_init(void);
 void KKE_appdir_exit(void);
@@ -97,4 +97,4 @@ enum
 #define KRAKEN_HISTORY_FILE "recent-files.txt"
 #define KRAKEN_PLATFORM_SUPPORT_FILE "platform_support.txt"
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

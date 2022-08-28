@@ -51,6 +51,7 @@ wabi_library(hdSt
         drawTargetRenderPassState
         dynamicUvTextureObject
         extComputation
+        extCompComputeShader
         extCompGpuComputation
         extCompGpuComputationResource
         extCompGpuPrimvarBufferSource
@@ -72,6 +73,7 @@ wabi_library(hdSt
         lightingShader
         material
         materialNetwork
+        materialNetworkShader
         mesh
         package
         points
@@ -83,6 +85,7 @@ wabi_library(hdSt
         renderPass
         renderPassShader
         renderPassState
+        resourceBinder
         resourceRegistry
         samplerObject
         samplerObjectRegistry
@@ -120,18 +123,15 @@ wabi_library(hdSt
         cullingShaderKey
         drawBatch
         drawItemsCache
-        extCompComputeShader
         fieldTextureCpuData
         imageShaderShaderKey
         indirectDrawBatch
-        materialNetworkShader
         materialParam
         meshShaderKey
         meshTopology 
         pipelineDrawBatch
         pointsShaderKey
         quadrangulate
-        resourceBinder
         resourceLayout
         shaderKey
         subdivision

@@ -1,6 +1,5 @@
 ######################################################################################### KRAKEN ######
 
-set(KRAKEN_RELEASE_MODE       ON  CACHE BOOL "" FORCE)
 set(WITH_BUILDINFO           ON  CACHE BOOL "" FORCE)
 set(WITH_LICENSING           ON  CACHE BOOL "" FORCE)
 

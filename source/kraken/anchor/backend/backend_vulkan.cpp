@@ -25,7 +25,7 @@
 #include "ANCHOR_BACKEND_vulkan.h"
 #include <stdio.h>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 // Reusable buffers used for rendering 1 current in-flight frame, for
 // ANCHOR_ImplVulkan_RenderDrawData() [Please zero-clear before use!]

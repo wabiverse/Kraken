@@ -39,7 +39,7 @@
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/prim.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 enum
 {
@@ -62,10 +62,10 @@ struct wmOperatorType
   /** Use for tool-tips and Python docs. */
   const char *description;
 
-  KrakenPRIM pixar;
+  wabi::UsdPrim prim;
 
   /** Signal changes, allow for Pub/Sub. */
-  const TfNotice notice;
+  // const TfNotice notice;
 
   eWmOperatorType flag;
 
@@ -87,4 +87,4 @@ void WM_operator_properties_free(KrakenPRIM *ptr);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

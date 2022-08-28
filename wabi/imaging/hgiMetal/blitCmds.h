@@ -99,9 +99,9 @@ class HgiMetalBlitCmds final : public HgiBlitCmds
   void _CreateEncoder();
 
   HgiMetal *_hgi;
-  id<MTLCommandBuffer> _commandBuffer;
-  id<MTLBlitCommandEncoder> _blitEncoder;
-  NSString *_label;
+  MTL::CommandBuffer *_commandBuffer;
+  MTL::BlitCommandEncoder *_blitEncoder;
+  NS::String *_label;
   bool _secondaryCommandBuffer;
 
   // BlitCmds is used only one frame so storing multi-frame state on BlitCmds

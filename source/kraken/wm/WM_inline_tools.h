@@ -33,7 +33,7 @@
  * out of the way of the main WindowManager
  * logic. */
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 inline TfToken wm_verify_spacetype(const TfToken &query)
 {
@@ -74,4 +74,4 @@ inline TfToken wm_verify_spacetype(const TfToken &query)
   }
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

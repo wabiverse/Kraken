@@ -73,7 +73,8 @@ struct KPy_KrakenStage
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  wabi::KrakenPRIM ptr;
+  wabi::UsdStageWeakPtr ptr;
+  void *data;
 #ifdef USE_PYUSD_OBJECT_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
@@ -93,7 +94,7 @@ struct KPy_KrakenPROP
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  wabi::KrakenPRIM ptr;
+  kraken::KrakenPRIM ptr;
   // KrakenPROP *prop;
 };
 
@@ -103,8 +104,8 @@ struct KPy_KrakenFUNC
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  wabi::KrakenPRIM ptr;
-  wabi::KrakenFUNC *func;
+  kraken::KrakenPRIM ptr;
+  kraken::KrakenFUNC *func;
 };
 
 struct KPy_UsdPropertyVector
@@ -115,7 +116,7 @@ struct KPy_UsdPropertyVector
 #endif
 
   /* collection iterator specific parts */
-  wabi::UsdPropertyVector iter;
+  kraken::UsdPropertyVector iter;
 };
 
 #ifdef __cplusplus
@@ -157,9 +158,9 @@ extern PyTypeObject pystage_struct_Type;
   (void)0
 
 #define PYUSD_STRUCT_IS_VALID(pystage) \
-  (ARCH_LIKELY(((KPy_KrakenStage *)(pystage))->ptr->type != NULL))
+  (ARCH_LIKELY(((KPy_KrakenStage *)(pystage))->ptr->GetStage().IsInvalid() != true))
 #define PYUSD_PROP_IS_VALID(pystage) \
-  (ARCH_LIKELY(((KPy_KrakenPROP *)(pystage))->ptr->type != NULL))
+  (ARCH_LIKELY(((KPy_KrakenPROP *)(pystage))->ptr->IsValid() == true))
 
 #ifdef __cplusplus
 }
@@ -171,14 +172,14 @@ PyObject *KPY_stage_module(void);
 
 void KPY_update_stage_module(void);
 
-wabi::KrakenPRIM *pystage_struct_as_srna(PyObject *self,
+kraken::KrakenPRIM *pystage_struct_as_srna(PyObject *self,
                                          const bool parent,
                                          const char *error_prefix);
-PyObject *pystage_struct_CreatePyObject(wabi::KrakenPRIM *ptr);
+PyObject *pystage_struct_CreatePyObject(kraken::KrakenPRIM *ptr);
 void pystage_alloc_types(void);
 
-PyObject *pystage_srna_PyBase(wabi::KrakenPRIM *srna);
-void pystage_subtype_set_rna(PyObject *newclass, wabi::KrakenPRIM *srna);
+PyObject *pystage_srna_PyBase(kraken::KrakenPRIM *srna);
+void pystage_subtype_set_rna(PyObject *newclass, kraken::KrakenPRIM *srna);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;

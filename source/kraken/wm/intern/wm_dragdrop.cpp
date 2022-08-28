@@ -32,7 +32,7 @@
 #include "USD_window.h"
 #include "USD_wm_types.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
 {
@@ -111,4 +111,4 @@ void WM_drag_free_list(std::vector<wmDrag *> &drags)
   drags.clear();
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

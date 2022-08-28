@@ -35,7 +35,7 @@
 
 #include "KKE_context.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  * Pixar Stage IO
@@ -55,4 +55,4 @@ void USD_save_stage(kContext *C);
 void USD_set_defaults(kContext *C);
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

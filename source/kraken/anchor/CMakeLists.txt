@@ -1,11 +1,16 @@
 set(INC
   .
   ../../../. # Pixar USD
+  ../../../source
+  ./apple
+  ./interop
   ./backend
   ./intern
   ../krakernel
   ../kraklib
   ../universe
+  ../gpu/metal
+  # ${CMAKE_SOURCE_DIR}/source/kraken/anchor
 )
 
 # ------------------------------------ SHARED BACKENDS -----
@@ -25,14 +30,14 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if (APPLE)
+  list(APPEND SRC_APPLE_BACKEND
+    apple/anchor_system.swift
+  )
   list(APPEND SRC_PLATFORM_BACKENDS
-    backend/backend_apple.swift
     intern/system_paths.mm
     backend/backend_cocoa.mm
-    backend/Anchor.h
     backend/ANCHOR_BACKEND_cocoa.h
     backend/ANCHOR_BACKEND_metal.h
-    backend/ANCHOR_BACKEND_notice.h
   )
 endif()
 
@@ -118,6 +123,7 @@ set(INC_SYS
 set(LIB
   maelstrom
   maelstrom_static
+  kraken_gpu
   kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
@@ -146,9 +152,19 @@ endif()
 
 kraken_add_lib(kraken_anchor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 if (APPLE)
-  set_target_properties(kraken_anchor PROPERTIES
-    XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "${CMAKE_SOURCE_DIR}/source/kraken/anchor/backend/notice-bridge.h"
-  )
+  # to bind the entirety of Pixar USD to Swift.
+  # and make it usable via "import Pixar"...
+  target_include_directories(kraken_anchor PUBLIC
+    ${XCODE_SDK_DIR}/MacOSX13.0.sdk/usr/include/c++/v1
+    ${TBB_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR}/bin/include/wabi)
+  kraken_add_lib(kraken_anchor_apple "${SRC_APPLE_BACKEND}" "${INC}" "${INC_SYS}" "${LIB}")
+  target_compile_options(kraken_anchor_apple PRIVATE 
+    "SHELL:-enable-experimental-cxx-interop")
+  add_dependencies(kraken_anchor_apple kraken_anchor)
+  target_link_libraries(kraken_anchor_apple PRIVATE kraken_anchor)
 endif()
 if(WIN32)
   kraken_precompile_headers(kraken_anchor pch.cpp pch.h)

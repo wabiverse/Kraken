@@ -30,7 +30,7 @@
 
 #include <wabi/base/gf/vec2i.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 enum eSpaceWindowType
 {
@@ -97,4 +97,4 @@ struct SpaceWindow
 
 typedef int wmWindowFlags;
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

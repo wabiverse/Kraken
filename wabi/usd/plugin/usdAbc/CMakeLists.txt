@@ -23,12 +23,7 @@ wabi_plugin(usdAbc
         usd
         usdGeom
         ${ALEMBIC_LIBRARIES}
-        ${OPENEXR_Half_LIBRARY} 
-        ${OPENEXR_Imath_LIBRARY} 
-        ${OPENEXR_Iex_LIBRARY} 
-        ${OPENEXR_IexMath_LIBRARY}
-        ${OPENEXR_LIBRARIES}
-        ${IMATH_LIBRARY}
+        ${ALL_IMAGING_LIBS}
         ${optionalLibs}
 
     INCLUDE_DIRS

@@ -22,12 +22,13 @@
  * Purple Underground.
  */
 
+#include "kraken/kraken.h"
+
 #include "KLI_threads.h"
 
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
-#include "KKE_version.h"
 #include "KKE_workspace.h"
 
 #include "LUXO_access.h"
@@ -49,7 +50,7 @@
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct kContext
 {
@@ -322,4 +323,4 @@ void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg)
   C->wm.operator_poll_msg = msg;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

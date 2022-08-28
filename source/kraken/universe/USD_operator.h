@@ -29,7 +29,7 @@
 
 #include <wabi/usd/usd/attribute.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct wmOperator
 {
@@ -58,4 +58,4 @@ struct wmOperator
   char _pad[6];
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

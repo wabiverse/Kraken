@@ -31,6 +31,8 @@
 
 WABI_NAMESPACE_USING
 
+KRAKEN_NAMESPACE_USING
+
 AnchorSystem::AnchorSystem()
   : m_nativePixel(false),
     m_windowFocus(true),

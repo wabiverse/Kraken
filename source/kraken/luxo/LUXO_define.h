@@ -35,34 +35,34 @@
 #include "USD_wm_types.h"
 #include "USD_object.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
-void PRIM_def_struct_ptr(KrakenSTAGE kstage,
+void PRIM_def_struct_ptr(const Stage &kstage,
                          const SdfPath &identifier,
                          KrakenPRIM *r_ptr,
                          const TfToken &from = TfToken());
 
-void PRIM_def_struct(KrakenSTAGE kstage,
+void PRIM_def_struct(const Stage &kstage,
                      const SdfPath &identifier,
                      KrakenPRIM *r_ptr,
                      const TfToken &from = TfToken());
 
-void PRIM_def_begin(KrakenPRIM *prim, 
+void PRIM_def_begin(wabi::UsdPrim &prim, 
                     const TfToken &identifier,
                     const TfToken &type = TfToken(),
                     const std::string &ui_name = std::string(), 
                     const std::string &ui_description = std::string());
 
-void PRIM_def_boolean(KrakenPRIM *prim, 
+void PRIM_def_boolean(wabi::UsdPrim &prim, 
                       const std::string &identifier, 
                       bool default_value, 
                       const std::string &ui_name, 
                       const std::string &ui_description);
 
-void PRIM_def_asset(KrakenPRIM *prim, 
-                     const std::string &identifier, 
-                     const std::string &default_value, 
-                     const std::string &ui_name, 
-                     const std::string &ui_description);
+void PRIM_def_asset(wabi::UsdPrim &prim, 
+                    const std::string &identifier, 
+                    const std::string &default_value, 
+                    const std::string &ui_name, 
+                    const std::string &ui_description);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

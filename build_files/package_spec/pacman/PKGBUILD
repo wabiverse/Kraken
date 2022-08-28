@@ -2,10 +2,10 @@
 kraken_srcdir=$(dirname $startdir)"/../.."
 # value may be formatted: 35042:35051M
 kraken_revision=$(svnversion $kraken_srcdir | cut -d: -f2 | awk '{print $3}')
-kraken_version=$(grep "KRAKEN_VERSION\s" $kraken_srcdir/source/kraken/krakernel/KKE_version.h | awk '{print $3}')
+kraken_version=$(grep "KRAKEN_VERSION\s" $kraken_srcdir/source/kraken/kraken.h | awk '{print $3}')
 kraken_version=$(expr $kraken_version / 100).$(expr $kraken_version % 100)  # 256 -> 2.56
-kraken_version_char=$(sed -ne 's/.*KRAKEN_VERSION.*\([a-z]\)$/\1/p' $kraken_srcdir/source/kraken/krakernel/KKE_version.h)
-# kraken_subversion=$(grep KRAKEN_SUBVERSION $kraken_srcdir/source/kraken/krakernel/KKE_version.h | awk '{print $3}')
+kraken_version_char=$(sed -ne 's/.*KRAKEN_VERSION.*\([a-z]\)$/\1/p' $kraken_srcdir/source/kraken/kraken.h)
+# kraken_subversion=$(grep KRAKEN_SUBVERSION $kraken_srcdir/source/kraken/kraken.h | awk '{print $3}')
 
 # map the version a -> 1
 # not to be confused with kraken's internal subversions

@@ -52,7 +52,7 @@
 #include <wabi/base/gf/rect2i.h>
 #include <wabi/usd/usdUI/tokens.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 bool ED_screen_change(kContext *C, kScreen *screen)
@@ -278,4 +278,4 @@ kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

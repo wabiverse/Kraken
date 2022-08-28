@@ -14,7 +14,7 @@ wabi_plugin(hioOiio
         hio
         tf
         ${OIIO_LIBRARIES}
-        ${OPENEXR_LIBRARIES}
+        ${ALL_IMAGING_LIBS}
 
     INCLUDE_DIRS
         ${OIIO_INCLUDE_DIRS}

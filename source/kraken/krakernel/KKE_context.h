@@ -27,11 +27,13 @@
 #include "KKE_api.h"
 #include "USD_object.h"
 
+#include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/common.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
-typedef UsdStageRefPtr Stage;
+typedef wabi::UsdStageRefPtr Stage;
+typedef wabi::UsdPrim Prim;
 
 struct ScrArea;
 struct Main;
@@ -120,4 +122,4 @@ struct kContextPollMsgParams
   void *user_data;
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

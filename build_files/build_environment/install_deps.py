@@ -1717,7 +1717,7 @@ else:
 def InstallOSL(context, force, buildArgs):
     with CurrentWorkingDirectory(DownloadURL(OSL_URL, context, force)):
         extraArgs = [
-            '-DCMAKE_CXX_STANDARD=17',
+            '-DCMAKE_CXX_STANDARD=23',
             '-DBUILD_SHARED_LIBS=ON',
             '-DOSL_BUILD_TESTS=OFF',
             '-DOSL_BUILD_MATERIALX=ON',

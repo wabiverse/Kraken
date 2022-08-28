@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "kraken/kraken.h"
+
 #include "ANCHOR_api.h"
 
 #include <wabi/base/tf/debug.h>
@@ -31,8 +33,6 @@
 
 WABI_NAMESPACE_BEGIN
 
-
 TF_DEBUG_CODES(KRAKEN_DEBUG_MSGBUS, KRAKEN_DEBUG_OPERATORS);
-
 
 WABI_NAMESPACE_END

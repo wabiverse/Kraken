@@ -40,7 +40,7 @@ typedef unsigned int mode_t;
 #  define PATH_MAX 1024
 #endif
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /* Cross Platform Implementations (Seperate by preprocessors) */
 bool KLI_dir_create_recursive(const char *dirname);
@@ -117,4 +117,4 @@ const char *KLI_expand_tilde(const char *path_with_tilde);
 void KLI_get_short_name(char short_name[256], const char *filepath);
 #endif
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

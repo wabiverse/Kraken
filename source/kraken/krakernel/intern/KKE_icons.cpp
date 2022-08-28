@@ -25,7 +25,7 @@
 #include "KKE_icons.h"
 #include "KKE_utils.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 static RHash *gIcons = nullptr;
 static std::mutex gIconMutex;
@@ -36,4 +36,4 @@ static Icon *icon_ghash_lookup(const std::string &icon_id)
   return (Icon *)KKE_rhash_lookup(gIcons, FIND_TOKEN(icon_id));
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

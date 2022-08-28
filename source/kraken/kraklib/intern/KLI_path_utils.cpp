@@ -57,7 +57,7 @@
 #include <wabi/base/tf/iterator.h>
 #include <wabi/base/tf/pathUtils.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 #ifdef WIN32
 
@@ -809,4 +809,4 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen)
 }
 #endif /* WIN32 */
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

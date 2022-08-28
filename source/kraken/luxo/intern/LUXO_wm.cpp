@@ -50,7 +50,7 @@
 #include "LUXO_runtime.h"
 #include "LUXO_define.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
 {
@@ -230,7 +230,7 @@ KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
                      "AZone FullScr");
 }
 
-static void prim_def_operator(KrakenSTAGE kstage)
+static void prim_def_operator(const Stage &kstage)
 {
   KrakenPRIM kprim;
   KrakenPROP prop;
@@ -238,7 +238,7 @@ static void prim_def_operator(KrakenSTAGE kstage)
   PRIM_def_struct(kstage, SdfPath("Operator"), &kprim);
 }
 
-void PRIM_def_wm(KrakenSTAGE kstage)
+void PRIM_def_wm(const Stage &kstage)
 {
   prim_def_operator(kstage);
   // PRIM_def_struct_ui_text(kstage, "Operator", "Storage of an operator being executed, or
@@ -251,4 +251,4 @@ void PRIM_def_wm(KrakenSTAGE kstage)
   // PRIM_def_struct_flag(kstage, STRUCT_PUBLIC_NAMESPACE_INHERIT);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

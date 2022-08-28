@@ -22,6 +22,8 @@
  * Making GUI Fly.
  */
 
+#include "kraken/kraken.h"
+
 #include "USD_area.h"
 #include "USD_context.h"
 #include "USD_object.h"
@@ -45,7 +47,6 @@
 #include "KKE_main.h"
 #include "KKE_screen.h"
 #include "KKE_utils.h"
-#include "KKE_version.h"
 
 #include <mutex>
 #include <string>
@@ -56,7 +57,7 @@
  *  -----  The Kraken WindowManager. ----- */
 
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 /* ------ */
@@ -66,7 +67,7 @@ WABI_NAMESPACE_BEGIN
  *  -----  The MsgBus Callback. ----- */
 
 
-MsgBusCallback::MsgBusCallback(wmNotifier *notice) : ref(1), notice(notice->notice), note(notice)
+MsgBusCallback::MsgBusCallback(wmNotifier *notice) : ref(1), note(notice)
 {}
 
 void MsgBusCallback::wmCOMM(const TfNotice &notice, MsgBus const &sender)
@@ -166,8 +167,7 @@ wmNotifier::wmNotifier()
     data(0),
     subtype(0),
     action(0),
-    reference(nullptr),
-    notice(TfNotice())
+    reference(nullptr)
 {}
 
 
@@ -175,12 +175,12 @@ void wmNotifier::Push()
 {
   MsgBusCallback *cb = new MsgBusCallback(this);
   MsgBus invoker(cb);
-  TfNotice::Register(invoker, &MsgBusCallback::wmCOMM, invoker);
-  notice.Send(invoker);
+  // TfNotice::Register(invoker, &MsgBusCallback::wmCOMM, invoker);
+  // notice.Send(invoker);
 }
 
 
-MsgBusCallback::MsgBusCallback(wmOperatorType *ot) : ref(1), notice(ot->notice), op({ot}) {}
+MsgBusCallback::MsgBusCallback(wmOperatorType *ot) : ref(1), op({ot}) {}
 
 void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)
 {
@@ -194,4 +194,4 @@ void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

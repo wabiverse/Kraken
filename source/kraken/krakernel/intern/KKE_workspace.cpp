@@ -42,7 +42,7 @@
 #include "KLI_assert.h"
 #include "KLI_string_utils.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
@@ -292,4 +292,4 @@ kScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout)
   return layout->screen;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

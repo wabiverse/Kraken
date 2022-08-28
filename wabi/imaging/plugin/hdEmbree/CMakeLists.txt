@@ -1,7 +1,7 @@
 set(WABI_PREFIX wabi/imaging)
 set(WABI_PACKAGE hdEmbree)
 
-if(NOT EMBREE_FOUND)
+if(NOT Embree_FOUND)
     message(WARNING "Not building ${WABI_PACKAGE} because of missing dependency: Embree")
     return()
 endif()

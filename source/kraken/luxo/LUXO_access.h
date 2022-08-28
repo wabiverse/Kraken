@@ -35,7 +35,7 @@
 #include "USD_wm_types.h"
 #include "USD_object.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct Main;
 struct ReportList;
@@ -67,8 +67,8 @@ void LUXO_init(void);
 /* remove this once we go back to UsdStage::CreateInMemory */
 void LUXO_save_usd(void);
 
-void LUXO_kraken_luxo_pointer_create(KrakenPRIM *ptr);
-void LUXO_main_pointer_create(Main *main, KrakenPRIM *ptr);
+void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr);
+void LUXO_main_pointer_create(Main *main, KrakenPRIM *r_ptr);
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
 void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr);
 
@@ -97,4 +97,6 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 
 void LUXO_set_stage_ctx(kContext *C);
 
-WABI_NAMESPACE_END
+Stage &LUXO_get_stage();
+
+KRAKEN_NAMESPACE_END

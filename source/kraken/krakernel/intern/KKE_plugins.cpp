@@ -36,7 +36,7 @@
 #include <wabi/base/plug/info.h>
 #include <wabi/base/plug/registry.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 static char maelstrom_version_string[48] = "";
 
@@ -57,4 +57,4 @@ void KKE_kraken_plugins_init()
   printf("\n");
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

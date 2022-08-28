@@ -104,10 +104,10 @@ file(TO_CMAKE_PATH "C:/Program Files/Microsoft Visual Studio/2022/Preview/Common
   WINDOWS_11_PLATFORM
 )
 
-set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${CMAKE_BINARY_DIR}/bin/Release\"")
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} /AI\"${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}\"")
 
 # Enable exception handling.
-if(KRAKEN_RELEASE_MODE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_RELEASE}")
 else()
     set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} ${_WABI_CXX_FLAGS_DEBUG}")

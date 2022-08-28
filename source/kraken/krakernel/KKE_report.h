@@ -29,7 +29,7 @@
 
 #include "USD_wm_types.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void KKE_reports_init(ReportList *reports, int flag);
 void KKE_reports_clear(ReportList *reports);
@@ -42,4 +42,4 @@ char *KKE_reports_string(ReportList *reports, eReportType level);
 
 const char *KKE_report_type_str(eReportType type);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -10,14 +10,14 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>Kraken</PackageIdentityName>
     <PackageIdentityPublisher>CN=Wabi Animation</PackageIdentityPublisher>
-    <IntermediateOutputPath>@CMAKE_BINARY_DIR@\source\creator\kraken.dir\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>@CMAKE_BINARY_DIR@\source\creator\kraken.dir\@CMAKE_BUILD_TYPE@\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath>
     </PackageRegistrationPath>
     <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
-    <LayoutDir>@CMAKE_BINARY_DIR@\bin\Release\AppX</LayoutDir>
+    <LayoutDir>@CMAKE_BINARY_DIR@\bin\@CMAKE_BUILD_TYPE@\AppX</LayoutDir>
     <RegisteredManifestChecksum>@APPX_RECIPE_CHECKSUM_HASH@</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>Kraken_@KRAKEN_VERSION@.0.0_x64__k8b6ffsk23gvw</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>Kraken_k8b6ffsk23gvw!App</RegisteredUserModeAppID>
@@ -26,22 +26,22 @@
     <RegisteredVersion>@KRAKEN_VERSION@.0.0</RegisteredVersion>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="@CMAKE_BINARY_DIR@\bin\Release\AppxManifest.xml">
+    <AppXManifest Include="@CMAKE_BINARY_DIR@\bin\@CMAKE_BUILD_TYPE@\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>@GEN_TIME@</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\kraken.exe">
+    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\@CMAKE_BUILD_TYPE@\kraken.exe">
       <PackagePath>kraken.exe</PackagePath>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\Kraken.winmd">
+    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\@CMAKE_BUILD_TYPE@\Kraken.winmd">
       <PackagePath>Kraken.winmd</PackagePath>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\lib\Release\maelstrom.dll">
+    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\lib\@CMAKE_BUILD_TYPE@\maelstrom.dll">
       <PackagePath>maelstrom.dll</PackagePath>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
@@ -320,12 +320,12 @@
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\kraken\microsoft\app\App.xbf">
+    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\@CMAKE_BUILD_TYPE@\kraken\microsoft\app\App.xbf">
       <PackagePath>kraken\microsoft\app\App.xbf</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>@GEN_TIME@</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\Release\resources.pri">
+    <AppxPackagedFile Include="@CMAKE_BINARY_DIR@\bin\@CMAKE_BUILD_TYPE@\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
       <Modified>@GEN_TIME@</Modified>

@@ -37,3 +37,15 @@ set(_WABI_CXX_FLAGS "${_WABI_GCC_CLANG_STATIC_CXX_FLAGS}")
 if(CMAKE_USE_PTHREADS_INIT)
     _disable_warning("unused-command-line-argument")
 endif()
+
+# Index while building to provide linting support of cxx as well as swift.
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} -index-store-path ${CMAKE_BINARY_DIR}/symbol_index")
+
+# Important that we don't get autolinking with macOS frameworks.
+set(_WABI_CXX_FLAGS "${_WABI_CXX_FLAGS} -fno-autolink")
+
+set(CMAKE_FIND_FRAMEWORK NEVER)
+set(CMAKE_FIND_APPBUNDLE NEVER)
+
+set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH FALSE)
+set(CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH FALSE)

@@ -31,7 +31,7 @@
 
 #include "USD_object.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct Main
 {
@@ -51,10 +51,6 @@ struct Main
   std::string kraken_version_decimal;
 
   char launch_time[USD_MAX_TIME];
-
-  struct {
-    UsdStageRefPtr stage;
-  } kraken;
 
   std::vector<struct wmWindowManager *> wm;
   std::vector<struct WorkSpace *> workspaces;
@@ -227,6 +223,6 @@ extern int UI_DRAG_THRESHOLD_TABLET;
 extern int UI_DRAG_THRESHOLD;
 extern short UI_DOUBLE_CLICK_TIME;
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END
 
 #endif /* KRAKEN_KERNEL_MAIN_H */

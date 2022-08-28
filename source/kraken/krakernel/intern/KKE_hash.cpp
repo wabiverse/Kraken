@@ -24,7 +24,7 @@
 
 #include "KKE_utils.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void *KKE_rhash_lookup(RHash *rh, const TfToken &key)
 {
@@ -37,4 +37,4 @@ void KKE_rhash_insert(RHash *rh, const TfToken &key, void *value)
   rh->insert(typename RHash::value_type(std::make_pair(key, value)));
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

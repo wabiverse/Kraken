@@ -26,7 +26,7 @@
 
 #include "WM_api.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_init(kContext *C, int argc = 0, const char **argv = NULL);
 void WM_exit(kContext *C);
@@ -56,4 +56,4 @@ enum eWmKernelPaths
   VERSION_DECIMAL
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

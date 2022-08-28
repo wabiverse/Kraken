@@ -1,0 +1,4 @@
+using python : 3.10 : /Users/furby/dev/lib/apple_darwin_arm64/python/bin/python3.10
+ : /Users/furby/dev/lib/apple_darwin_arm64/python/include/python3.10
+ : /Users/furby/dev/lib/apple_darwin_arm64/python/lib/python3.10
+;

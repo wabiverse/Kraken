@@ -40,7 +40,7 @@
 #include "KKE_context.h"
 #include "KKE_utils.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 static RHashOp *global_ops_hash = NULL;
 
@@ -73,9 +73,9 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 
   /* ------ */
 
-  if(!ot->pixar.IsValid())
+  if(!ot->prim.IsValid())
   {
-    PRIM_def_begin(&ot->pixar, ot->idname, TfToken("Operator"), ot->name, ot->description);
+    PRIM_def_begin(ot->prim, ot->idname, TfToken("Operator"), ot->name, ot->description);
   }
 
   /* ------ */
@@ -85,15 +85,15 @@ void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 
   /* ------ */
 
-  TfNotice notice = TfNotice();
+  // TfNotice notice = TfNotice();
   MsgBusCallback *cb = new MsgBusCallback(ot);
   MsgBus invoker(cb);
-  TfNotice::Register(invoker, &MsgBusCallback::OperatorCOMM, invoker);
+  // TfNotice::Register(invoker, &MsgBusCallback::OperatorCOMM, invoker);
 
   /* ------ */
 
   /** Operator says Hello. */
-  notice.Send(invoker);
+  // notice.Send(invoker);
 }
 
 void WM_operator_properties_free(KrakenPRIM *ptr)
@@ -108,7 +108,7 @@ void WM_operator_properties_free(KrakenPRIM *ptr)
 
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
 {
-  *ptr = ot->pixar;
+  ptr = new KrakenPRIM(ot->prim);
 
   LUXO_pointer_create(ptr, NULL, ptr);
 }
@@ -125,4 +125,4 @@ void WM_operators_register(kContext *C)
   WM_file_operators_register();
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

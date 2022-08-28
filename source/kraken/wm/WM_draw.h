@@ -28,8 +28,8 @@
 
 #include "KKE_context.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_draw_update(kContext *C);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

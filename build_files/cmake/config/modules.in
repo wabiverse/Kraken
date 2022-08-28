@@ -1,0 +1,25 @@
+module Pixar {
+  module Base {
+    umbrella "base"
+    requires cplusplus
+    export *
+  }
+
+  module Imaging {
+    umbrella "imaging"
+    requires cplusplus
+    export *
+  }
+
+  module Usd {
+    umbrella "usd"
+    requires cplusplus
+    export *
+  }
+
+  module UsdImaging {
+    umbrella "usdImaging"
+    requires cplusplus
+    export *
+  }
+}

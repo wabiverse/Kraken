@@ -56,7 +56,7 @@
 #  include <pwd.h>
 #  include <string>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 using std::string;
 
@@ -192,7 +192,7 @@ void AnchorSystemPathsUnix::addToSystemRecentFiles(const char * /*filename*/) co
 #  endif
 #  include "utfconv.h"
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 #  if defined(ARCH_OS_WINDOWS)
 using namespace winrt;

@@ -17,6 +17,9 @@ wabi_library(hgiMetal
         trace
         ${METAL_LIBRARY}
         ${APPUIKIT_LIBRARY}
+        "-framework Foundation"
+        "-framework Metal"
+        "-framework QuartzCore"
 
     PUBLIC_HEADERS
         api.h
@@ -51,6 +54,7 @@ wabi_library(hgiMetal
         graphicsCmds.mm
         graphicsPipeline.mm
         hgi.mm
+        metal.cpp
         resourceBindings.mm
         sampler.mm
         shaderFunction.mm

@@ -82,12 +82,12 @@ bool PyC_IsInterpreterActive(void);
 
 /* Kpy ----  */
 
-bool KPy_errors_to_report(wabi::ReportList *reports);
-short KPy_reports_to_error(wabi::ReportList *reports, PyObject *exception, const bool clear);
-void KPy_reports_write_stdout(const wabi::ReportList *reports, const char *header);
+bool KPy_errors_to_report(kraken::ReportList *reports);
+short KPy_reports_to_error(kraken::ReportList *reports, PyObject *exception, const bool clear);
+void KPy_reports_write_stdout(const kraken::ReportList *reports, const char *header);
 
-extern void kpy_context_set(wabi::kContext *C, PyGILState_STATE *gilstate);
-extern void kpy_context_clear(wabi::kContext *C, const PyGILState_STATE *gilstate);
+extern void kpy_context_set(kraken::kContext *C, PyGILState_STATE *gilstate);
+extern void kpy_context_clear(kraken::kContext *C, const PyGILState_STATE *gilstate);
 
 void PyC_ObSpitStr(char *result, size_t result_len, PyObject *var);
 void PyC_ObSpit(const char *name, PyObject *var);

@@ -16,6 +16,7 @@ kraken_include_dirs(
   ${KRAKEN_FRAMEWORK_SDK}
   ${KRAKEN_FRAMEWORK}
   ../../.
+  ../../source/.
   ../kraken/anchor
   ../kraken/editors/include
   ../kraken/kraklib
@@ -29,18 +30,18 @@ set(LIB
   maelstrom
   maelstrom_static
   kraken_wm
-  kraken_kernel
   kraken_luxo
   kraken_universe
   kraken_python
 )
 
+# list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
+list(INSERT LIB 0 ${TBB_LIBRARIES})
+list(INSERT LIB 0 kraken_kernel)
+
 if(WIN32)
   list(APPEND LIB kraken_intern_utfconv)
 endif()
-
-list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})
-list(INSERT LIB 0 ${TBB_LIBRARIES})
 
 kraken_include_dirs(${TBB_INCLUDE_DIRS})
 kraken_include_dirs(${Boost_INCLUDE_DIRS})
@@ -62,6 +63,7 @@ list(APPEND LIB
   kraken_kernel
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}
+  ${ALL_IMAGING_LIBS}
   ${OPENCOLORIO_LIBRARIES}
   ${OPENIMAGEIO_LIBRARIES}
   ${PTHREADS_LIBRARY}
@@ -310,7 +312,7 @@ else()
       set_source_files_properties(${rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
       list(APPEND ${SRC} rfile)
     endforeach()
-    add_executable(kraken MACOSX_BUNDLE ${EXETYPE} ${SRC})
+    add_executable(kraken MACOSX_BUNDLE ${SRC})
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)
@@ -318,7 +320,7 @@ else()
     kraken_precompile_headers(kraken pch.cpp pch.h)
     set_target_properties(kraken PROPERTIES 
       VS_WINRT_COMPONENT OFF
-      VS_DEPLOYMENT_LOCATION "${CMAKE_BINARY_DIR}/bin/Release/AppX"
+      VS_DEPLOYMENT_LOCATION "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/AppX"
       VS_SOLUTION_DEPLOY ON
     )
   endif()
@@ -1430,7 +1432,15 @@ endif()
 # -----------------------------------------------------------------------------
 # Setup link libs
 
-target_link_libraries(kraken ${LIB})
+if(APPLE)
+  set(ADDITIONAL_FRAMEWORKS 
+    "-framework IOKit"
+    "-framework Foundation"
+    "-framework Metal"
+    "-framework QuartzCore"
+  )
+endif()
+target_link_libraries(kraken ${LIB} ${ADDITIONAL_FRAMEWORKS})
 unset(LIB)
 
 # setup_platform_linker_flags(maelstrom)
@@ -1482,13 +1492,8 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
 
   # Other required dependencies to MSIX AppX Package
   # Python, Color Management, Icons, Scripts, Etc.
-  if(KRAKEN_RELEASE_MODE)
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release/${KRAKEN_VERSION}
-            DESTINATION "./AppX/.")
-  else()
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/Debug/${KRAKEN_VERSION}
-            DESTINATION "./AppX/.")
-  endif()
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/${KRAKEN_VERSION}
+          DESTINATION "./AppX/.")
 
   install(
     TARGETS kraken
@@ -1498,7 +1503,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
 
   install(
     DIRECTORY
-      ${CMAKE_BINARY_DIR}/bin/Release/kraken
+      ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/kraken
     DESTINATION
       "./AppX/."
   )

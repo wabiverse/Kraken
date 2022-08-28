@@ -28,26 +28,26 @@
 
 #include <cstdlib>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 namespace AnchorSequencer
 {
-  static bool SequencerAddDelButton(AnchorDrawList *draw_list, GfVec2f pos, bool add = true)
+  static bool SequencerAddDelButton(AnchorDrawList *draw_list, wabi::GfVec2f pos, bool add = true)
   {
     AnchorIO &io = ANCHOR::GetIO();
-    AnchorBBox delRect(pos, GfVec2f(pos[0] + 16, pos[1] + 16));
+    AnchorBBox delRect(pos, wabi::GfVec2f(pos[0] + 16, pos[1] + 16));
     bool overDel = delRect.Contains(io.MousePos);
     int delColor = overDel ? 0xFFAAAAAA : 0x50000000;
     float midy = pos[1] + 16 / 2 - 0.5f;
     float midx = pos[0] + 16 / 2 - 0.5f;
     draw_list->AddRect(delRect.Min, delRect.Max, delColor, 4);
-    draw_list->AddLine(GfVec2f(delRect.Min[0] + 3, midy),
-                       GfVec2f(delRect.Max[0] - 3, midy),
+    draw_list->AddLine(wabi::GfVec2f(delRect.Min[0] + 3, midy),
+                       wabi::GfVec2f(delRect.Max[0] - 3, midy),
                        delColor,
                        2);
     if (add)
-      draw_list->AddLine(GfVec2f(midx, delRect.Min[1] + 3),
-                         GfVec2f(midx, delRect.Max[1] - 3),
+      draw_list->AddLine(wabi::GfVec2f(midx, delRect.Min[1] + 3),
+                         wabi::GfVec2f(midx, delRect.Max[1] - 3),
                          delColor,
                          2);
     return overDel;
@@ -82,9 +82,9 @@ namespace AnchorSequencer
     ANCHOR::BeginGroup();
 
     AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
-    GfVec2f canvas_pos =
+    wabi::GfVec2f canvas_pos =
       ANCHOR::GetCursorScreenPos();  // AnchorDrawList API uses screen coordinates!
-    GfVec2f canvas_size = ANCHOR::GetContentRegionAvail();  // Resize canvas to what's available
+    wabi::GfVec2f canvas_size = ANCHOR::GetContentRegionAvail();  // Resize canvas to what's available
     int firstFrameUsed = firstFrame ? *firstFrame : 0;
 
 
@@ -113,7 +113,7 @@ namespace AnchorSequencer
     AnchorBBox regionRect(canvas_pos, canvas_pos + canvas_size);
 
     static bool panningView = false;
-    static GfVec2f panningViewSource;
+    static wabi::GfVec2f panningViewSource;
     static int panningViewFrame;
     if (ANCHOR::IsWindowFocused() && io.KeyAlt && io.MouseDown[2]) {
       if (!panningView) {
@@ -142,9 +142,9 @@ namespace AnchorSequencer
     // --
     if (expanded && !*expanded) {
       ANCHOR::InvisibleButton("canvas",
-                              GfVec2f(canvas_size[0] - canvas_pos[0], (float)ItemHeight));
+                              wabi::GfVec2f(canvas_size[0] - canvas_pos[0], (float)ItemHeight));
       draw_list->AddRectFilled(canvas_pos,
-                               GfVec2f(canvas_size[0] + canvas_pos[0], canvas_pos[1] + ItemHeight),
+                               wabi::GfVec2f(canvas_size[0] + canvas_pos[0], canvas_pos[1] + ItemHeight),
                                0xFF3D3837,
                                0);
       char tmps[512];
@@ -153,7 +153,7 @@ namespace AnchorSequencer
                          "%d Frames / %d entries",
                          frameCount,
                          sequenceCount);
-      draw_list->AddText(GfVec2f(canvas_pos[0] + 26, canvas_pos[1] + 2), 0xFFFFFFFF, tmps);
+      draw_list->AddText(wabi::GfVec2f(canvas_pos[0] + 26, canvas_pos[1] + 2), 0xFFFFFFFF, tmps);
     } else {
       bool hasScrollBar(true);
       /*
@@ -164,20 +164,20 @@ namespace AnchorSequencer
            }
            */
       // test scroll area
-      GfVec2f headerSize(canvas_size[0], (float)ItemHeight);
-      GfVec2f scrollBarSize(canvas_size[0], 14.f);
+      wabi::GfVec2f headerSize(canvas_size[0], (float)ItemHeight);
+      wabi::GfVec2f scrollBarSize(canvas_size[0], 14.f);
       ANCHOR::InvisibleButton("topBar", headerSize);
       draw_list->AddRectFilled(canvas_pos, canvas_pos + headerSize, 0xFFFF0000, 0);
-      GfVec2f childFramePos = ANCHOR::GetCursorScreenPos();
-      GfVec2f childFrameSize(canvas_size[0],
+      wabi::GfVec2f childFramePos = ANCHOR::GetCursorScreenPos();
+      wabi::GfVec2f childFrameSize(canvas_size[0],
                              canvas_size[1] - 8.f - headerSize[1] -
                                (hasScrollBar ? scrollBarSize[1] : 0));
       ANCHOR::PushStyleColor(AnchorCol_FrameBg, 0);
       ANCHOR::BeginChildFrame(889, childFrameSize);
       sequence->focused = ANCHOR::IsWindowFocused();
-      ANCHOR::InvisibleButton("contentBar", GfVec2f(canvas_size[0], float(controlHeight)));
-      const GfVec2f contentMin = ANCHOR::GetItemRectMin();
-      const GfVec2f contentMax = ANCHOR::GetItemRectMax();
+      ANCHOR::InvisibleButton("contentBar", wabi::GfVec2f(canvas_size[0], float(controlHeight)));
+      const wabi::GfVec2f contentMin = ANCHOR::GetItemRectMin();
+      const wabi::GfVec2f contentMax = ANCHOR::GetItemRectMax();
       const AnchorBBox contentRect(contentMin, contentMax);
       const float contentHeight = contentMax[1] - contentMin[1];
 
@@ -185,8 +185,8 @@ namespace AnchorSequencer
       draw_list->AddRectFilled(canvas_pos, canvas_pos + canvas_size, 0xFF242424, 0);
 
       // current frame top
-      AnchorBBox topRect(GfVec2f(canvas_pos[0] + legendWidth, canvas_pos[1]),
-                         GfVec2f(canvas_pos[0] + canvas_size[0], canvas_pos[1] + ItemHeight));
+      AnchorBBox topRect(wabi::GfVec2f(canvas_pos[0] + legendWidth, canvas_pos[1]),
+                         wabi::GfVec2f(canvas_pos[0] + canvas_size[0], canvas_pos[1] + ItemHeight));
 
       if (!MovingCurrentFrame && !MovingScrollBar && movingEntry == -1 &&
           sequenceOptions & SEQUENCER_CHANGE_FRAME && currentFrame && *currentFrame >= 0 &&
@@ -208,13 +208,13 @@ namespace AnchorSequencer
 
       // header
       draw_list->AddRectFilled(canvas_pos,
-                               GfVec2f(canvas_size[0] + canvas_pos[0], canvas_pos[1] + ItemHeight),
+                               wabi::GfVec2f(canvas_size[0] + canvas_pos[0], canvas_pos[1] + ItemHeight),
                                0xFF3D3837,
                                0);
       if (sequenceOptions & SEQUENCER_ADD) {
         if (SequencerAddDelButton(
               draw_list,
-              GfVec2f(canvas_pos[0] + legendWidth - ItemHeight, canvas_pos[1] + 2),
+              wabi::GfVec2f(canvas_pos[0] + legendWidth - ItemHeight, canvas_pos[1] + 2),
               true) &&
             io.MouseReleased[0])
           ANCHOR::OpenPopup("addEntry");
@@ -250,13 +250,13 @@ namespace AnchorSequencer
         int tiretEnd = baseIndex ? regionHeight : ItemHeight;
 
         if (px <= (canvas_size[0] + canvas_pos[0]) && px >= (canvas_pos[0] + legendWidth)) {
-          draw_list->AddLine(GfVec2f((float)px, canvas_pos[1] + (float)tiretStart),
-                             GfVec2f((float)px, canvas_pos[1] + (float)tiretEnd - 1),
+          draw_list->AddLine(wabi::GfVec2f((float)px, canvas_pos[1] + (float)tiretStart),
+                             wabi::GfVec2f((float)px, canvas_pos[1] + (float)tiretEnd - 1),
                              0xFF606060,
                              1);
 
-          draw_list->AddLine(GfVec2f((float)px, canvas_pos[1] + (float)ItemHeight),
-                             GfVec2f((float)px, canvas_pos[1] + (float)regionHeight - 1),
+          draw_list->AddLine(wabi::GfVec2f((float)px, canvas_pos[1] + (float)ItemHeight),
+                             wabi::GfVec2f((float)px, canvas_pos[1] + (float)regionHeight - 1),
                              0x30606060,
                              1);
         }
@@ -264,7 +264,7 @@ namespace AnchorSequencer
         if (baseIndex && px > (canvas_pos[0] + legendWidth)) {
           char tmps[512];
           AnchorFormatString(tmps, ANCHOR_ARRAYSIZE(tmps), "%d", i);
-          draw_list->AddText(GfVec2f((float)px + 3.f, canvas_pos[1]), 0xFFBBBBBB, tmps);
+          draw_list->AddText(wabi::GfVec2f((float)px + 3.f, canvas_pos[1]), 0xFFBBBBBB, tmps);
         }
       };
 
@@ -275,11 +275,11 @@ namespace AnchorSequencer
         int tiretEnd = int(contentMax[1]);
 
         if (px <= (canvas_size[0] + canvas_pos[0]) && px >= (canvas_pos[0] + legendWidth)) {
-          // draw_list->AddLine(GfVec2f((float)px, canvas_pos[1] + (float)tiretStart),
-          // GfVec2f((float)px, canvas_pos[1] + (float)tiretEnd - 1), 0xFF606060, 1);
+          // draw_list->AddLine(wabi::GfVec2f((float)px, canvas_pos[1] + (float)tiretStart),
+          // wabi::GfVec2f((float)px, canvas_pos[1] + (float)tiretEnd - 1), 0xFF606060, 1);
 
-          draw_list->AddLine(GfVec2f(float(px), float(tiretStart)),
-                             GfVec2f(float(px), float(tiretEnd)),
+          draw_list->AddLine(wabi::GfVec2f(float(px), float(tiretStart)),
+                             wabi::GfVec2f(float(px), float(tiretEnd)),
                              0x30606060,
                              1);
         }
@@ -290,9 +290,9 @@ namespace AnchorSequencer
       drawLine(sequence->GetFrameMin(), ItemHeight);
       drawLine(sequence->GetFrameMax(), ItemHeight);
       /*
-                    draw_list->AddLine(canvas_pos, GfVec2f(canvas_pos[0], canvas_pos[1] +
-         controlHeight), 0xFF000000, 1); draw_list->AddLine(GfVec2f(canvas_pos[0], canvas_pos[1] +
-         ItemHeight), GfVec2f(canvas_size[0], canvas_pos[1] + ItemHeight), 0xFF000000, 1);
+                    draw_list->AddLine(canvas_pos, wabi::GfVec2f(canvas_pos[0], canvas_pos[1] +
+         controlHeight), 0xFF000000, 1); draw_list->AddLine(wabi::GfVec2f(canvas_pos[0], canvas_pos[1] +
+         ItemHeight), wabi::GfVec2f(canvas_size[0], canvas_pos[1] + ItemHeight), 0xFF000000, 1);
                     */
       // clip content
 
@@ -303,20 +303,20 @@ namespace AnchorSequencer
       for (int i = 0; i < sequenceCount; i++) {
         int type;
         sequence->Get(i, NULL, NULL, &type, NULL);
-        GfVec2f tpos(contentMin[0] + 3, contentMin[1] + i * ItemHeight + 2 + customHeight);
+        wabi::GfVec2f tpos(contentMin[0] + 3, contentMin[1] + i * ItemHeight + 2 + customHeight);
         draw_list->AddText(tpos, 0xFFFFFFFF, sequence->GetItemLabel(i));
 
         if (sequenceOptions & SEQUENCER_DEL) {
           bool overDel = SequencerAddDelButton(
             draw_list,
-            GfVec2f(contentMin[0] + legendWidth - ItemHeight + 2 - 10, tpos[1] + 2),
+            wabi::GfVec2f(contentMin[0] + legendWidth - ItemHeight + 2 - 10, tpos[1] + 2),
             false);
           if (overDel && io.MouseReleased[0])
             delEntry = i;
 
           bool overDup = SequencerAddDelButton(
             draw_list,
-            GfVec2f(contentMin[0] + legendWidth - ItemHeight - ItemHeight + 2 - 10, tpos[1] + 2),
+            wabi::GfVec2f(contentMin[0] + legendWidth - ItemHeight - ItemHeight + 2 - 10, tpos[1] + 2),
             true);
           if (overDup && io.MouseReleased[0])
             dupEntry = i;
@@ -333,9 +333,9 @@ namespace AnchorSequencer
         unsigned int col = (i & 1) ? 0xFF3A3636 : 0xFF413D3D;
 
         size_t localCustomHeight = sequence->GetCustomHeight(i);
-        GfVec2f pos = GfVec2f(contentMin[0] + legendWidth,
+        wabi::GfVec2f pos = wabi::GfVec2f(contentMin[0] + legendWidth,
                               contentMin[1] + ItemHeight * i + 1 + customHeight);
-        GfVec2f sz = GfVec2f(canvas_size[0] + canvas_pos[0],
+        wabi::GfVec2f sz = wabi::GfVec2f(canvas_size[0] + canvas_pos[0],
                              pos[1] + ItemHeight - 1 + localCustomHeight);
         if (!popupOpened && cy >= pos[1] && cy < pos[1] + (ItemHeight + localCustomHeight) &&
             movingEntry == -1 && cx > contentMin[0] && cx < contentMin[0] + canvas_size[0]) {
@@ -346,7 +346,7 @@ namespace AnchorSequencer
         customHeight += localCustomHeight;
       }
 
-      draw_list->PushClipRect(childFramePos + GfVec2f(float(legendWidth), 0.f),
+      draw_list->PushClipRect(childFramePos + wabi::GfVec2f(float(legendWidth), 0.f),
                               childFramePos + childFrameSize);
 
       // vertical frame lines in content area
@@ -364,8 +364,8 @@ namespace AnchorSequencer
           customHeight += sequence->GetCustomHeight(i);
         ;
         draw_list->AddRectFilled(
-          GfVec2f(contentMin[0], contentMin[1] + ItemHeight * *selectedEntry + customHeight),
-          GfVec2f(contentMin[0] + canvas_size[0],
+          wabi::GfVec2f(contentMin[0], contentMin[1] + ItemHeight * *selectedEntry + customHeight),
+          wabi::GfVec2f(contentMin[0] + canvas_size[0],
                   contentMin[1] + ItemHeight * (*selectedEntry + 1) + customHeight),
           0x801080FF,
           1.f);
@@ -379,11 +379,11 @@ namespace AnchorSequencer
         sequence->Get(i, &start, &end, NULL, &color);
         size_t localCustomHeight = sequence->GetCustomHeight(i);
 
-        GfVec2f pos = GfVec2f(contentMin[0] + legendWidth - firstFrameUsed * framePixelWidth,
+        wabi::GfVec2f pos = wabi::GfVec2f(contentMin[0] + legendWidth - firstFrameUsed * framePixelWidth,
                               contentMin[1] + ItemHeight * i + 1 + customHeight);
-        GfVec2f slotP1(pos[0] + *start * framePixelWidth, pos[1] + 2);
-        GfVec2f slotP2(pos[0] + *end * framePixelWidth + framePixelWidth, pos[1] + ItemHeight - 2);
-        GfVec2f slotP3(pos[0] + *end * framePixelWidth + framePixelWidth,
+        wabi::GfVec2f slotP1(pos[0] + *start * framePixelWidth, pos[1] + 2);
+        wabi::GfVec2f slotP2(pos[0] + *end * framePixelWidth + framePixelWidth, pos[1] + ItemHeight - 2);
+        wabi::GfVec2f slotP3(pos[0] + *end * framePixelWidth + framePixelWidth,
                        pos[1] + ItemHeight - 2 + localCustomHeight);
         unsigned int slotColor = color | 0xFF000000;
         unsigned int slotColorHalf = (color & 0xFFFFFF) | 0x40000000;
@@ -397,8 +397,8 @@ namespace AnchorSequencer
           sequence->DoubleClick(i);
         }
         AnchorBBox rects[3] = {
-          AnchorBBox(slotP1, GfVec2f(slotP1[0] + framePixelWidth / 2, slotP2[1])),
-          AnchorBBox(GfVec2f(slotP2[0] - framePixelWidth / 2, slotP1[1]), slotP2),
+          AnchorBBox(slotP1, wabi::GfVec2f(slotP1[0] + framePixelWidth / 2, slotP2[1])),
+          AnchorBBox(wabi::GfVec2f(slotP2[0] - framePixelWidth / 2, slotP1[1]), slotP2),
           AnchorBBox(slotP1, slotP2)};
 
         const unsigned int quadColor[] = {0xFFFFFFFF,
@@ -433,35 +433,35 @@ namespace AnchorSequencer
 
         // custom draw
         if (localCustomHeight > 0) {
-          GfVec2f rp(canvas_pos[0], contentMin[1] + ItemHeight * i + 1 + customHeight);
+          wabi::GfVec2f rp(canvas_pos[0], contentMin[1] + ItemHeight * i + 1 + customHeight);
           AnchorBBox customRect(
-            rp + GfVec2f(legendWidth -
+            rp + wabi::GfVec2f(legendWidth -
                            (firstFrameUsed - sequence->GetFrameMin() - 0.5f) * framePixelWidth,
                          float(ItemHeight)),
-            rp + GfVec2f(legendWidth + (sequence->GetFrameMax() - firstFrameUsed - 0.5f + 2.f) *
+            rp + wabi::GfVec2f(legendWidth + (sequence->GetFrameMax() - firstFrameUsed - 0.5f + 2.f) *
                                          framePixelWidth,
                          float(localCustomHeight + ItemHeight)));
           AnchorBBox clippingRect(
-            rp + GfVec2f(float(legendWidth), float(ItemHeight)),
-            rp + GfVec2f(canvas_size[0], float(localCustomHeight + ItemHeight)));
+            rp + wabi::GfVec2f(float(legendWidth), float(ItemHeight)),
+            rp + wabi::GfVec2f(canvas_size[0], float(localCustomHeight + ItemHeight)));
 
-          AnchorBBox legendRect(rp + GfVec2f(0.f, float(ItemHeight)),
-                                rp + GfVec2f(float(legendWidth), float(localCustomHeight)));
+          AnchorBBox legendRect(rp + wabi::GfVec2f(0.f, float(ItemHeight)),
+                                rp + wabi::GfVec2f(float(legendWidth), float(localCustomHeight)));
           AnchorBBox legendClippingRect(
-            canvas_pos + GfVec2f(0.f, float(ItemHeight)),
-            canvas_pos + GfVec2f(float(legendWidth), float(localCustomHeight + ItemHeight)));
+            canvas_pos + wabi::GfVec2f(0.f, float(ItemHeight)),
+            canvas_pos + wabi::GfVec2f(float(legendWidth), float(localCustomHeight + ItemHeight)));
           customDraws.push_back({i, customRect, legendRect, clippingRect, legendClippingRect});
         } else {
-          GfVec2f rp(canvas_pos[0], contentMin[1] + ItemHeight * i + customHeight);
+          wabi::GfVec2f rp(canvas_pos[0], contentMin[1] + ItemHeight * i + customHeight);
           AnchorBBox customRect(
-            rp + GfVec2f(legendWidth -
+            rp + wabi::GfVec2f(legendWidth -
                            (firstFrameUsed - sequence->GetFrameMin() - 0.5f) * framePixelWidth,
                          float(0.f)),
-            rp + GfVec2f(legendWidth + (sequence->GetFrameMax() - firstFrameUsed - 0.5f + 2.f) *
+            rp + wabi::GfVec2f(legendWidth + (sequence->GetFrameMax() - firstFrameUsed - 0.5f + 2.f) *
                                          framePixelWidth,
                          float(ItemHeight)));
-          AnchorBBox clippingRect(rp + GfVec2f(float(legendWidth), float(0.f)),
-                                  rp + GfVec2f(canvas_size[0], float(ItemHeight)));
+          AnchorBBox clippingRect(rp + wabi::GfVec2f(float(legendWidth), float(0.f)),
+                                  rp + wabi::GfVec2f(canvas_size[0], float(ItemHeight)));
 
           compactCustomDraws.push_back({i, customRect, AnchorBBox(), clippingRect, AnchorBBox()});
         }
@@ -514,13 +514,13 @@ namespace AnchorSequencer
         float cursorOffset = contentMin[0] + legendWidth +
                              (*currentFrame - firstFrameUsed) * framePixelWidth +
                              framePixelWidth / 2 - cursorWidth * 0.5f;
-        draw_list->AddLine(GfVec2f(cursorOffset, canvas_pos[1]),
-                           GfVec2f(cursorOffset, contentMax[1]),
+        draw_list->AddLine(wabi::GfVec2f(cursorOffset, canvas_pos[1]),
+                           wabi::GfVec2f(cursorOffset, contentMax[1]),
                            0xA02A2AFF,
                            cursorWidth);
         char tmps[512];
         AnchorFormatString(tmps, ANCHOR_ARRAYSIZE(tmps), "%d", *currentFrame);
-        draw_list->AddText(GfVec2f(cursorOffset + 10, canvas_pos[1] + 2), 0xFF2A2AFF, tmps);
+        draw_list->AddText(wabi::GfVec2f(cursorOffset + 10, canvas_pos[1] + 2), 0xFF2A2AFF, tmps);
       }
 
       draw_list->PopClipRect();
@@ -541,14 +541,14 @@ namespace AnchorSequencer
 
       // copy paste
       if (sequenceOptions & SEQUENCER_COPYPASTE) {
-        AnchorBBox rectCopy(GfVec2f(contentMin[0] + 100, canvas_pos[1] + 2),
-                            GfVec2f(contentMin[0] + 100 + 30, canvas_pos[1] + ItemHeight - 2));
+        AnchorBBox rectCopy(wabi::GfVec2f(contentMin[0] + 100, canvas_pos[1] + 2),
+                            wabi::GfVec2f(contentMin[0] + 100 + 30, canvas_pos[1] + ItemHeight - 2));
         bool inRectCopy = rectCopy.Contains(io.MousePos);
         unsigned int copyColor = inRectCopy ? 0xFF1080FF : 0xFF000000;
         draw_list->AddText(rectCopy.Min, copyColor, "Copy");
 
-        AnchorBBox rectPaste(GfVec2f(contentMin[0] + 140, canvas_pos[1] + 2),
-                             GfVec2f(contentMin[0] + 140 + 30, canvas_pos[1] + ItemHeight - 2));
+        AnchorBBox rectPaste(wabi::GfVec2f(contentMin[0] + 140, canvas_pos[1] + 2),
+                             wabi::GfVec2f(contentMin[0] + 140 + 30, canvas_pos[1] + ItemHeight - 2));
         bool inRectPaste = rectPaste.Contains(io.MousePos);
         unsigned int pasteColor = inRectPaste ? 0xFF1080FF : 0xFF000000;
         draw_list->AddText(rectPaste.Min, pasteColor, "Paste");
@@ -566,16 +566,16 @@ namespace AnchorSequencer
       ANCHOR::PopStyleColor();
       if (hasScrollBar) {
         ANCHOR::InvisibleButton("scrollBar", scrollBarSize);
-        GfVec2f scrollBarMin = ANCHOR::GetItemRectMin();
-        GfVec2f scrollBarMax = ANCHOR::GetItemRectMax();
+        wabi::GfVec2f scrollBarMin = ANCHOR::GetItemRectMin();
+        wabi::GfVec2f scrollBarMax = ANCHOR::GetItemRectMax();
 
         // ratio = number of frames visible in control / number to total frames
 
         float startFrameOffset = ((float)(firstFrameUsed - sequence->GetFrameMin()) /
                                   (float)frameCount) *
                                  (canvas_size[0] - legendWidth);
-        GfVec2f scrollBarA(scrollBarMin[0] + legendWidth, scrollBarMin[1] - 2);
-        GfVec2f scrollBarB(scrollBarMin[0] + canvas_size[0], scrollBarMax[1] - 1);
+        wabi::GfVec2f scrollBarA(scrollBarMin[0] + legendWidth, scrollBarMin[1] - 2);
+        wabi::GfVec2f scrollBarB(scrollBarMin[0] + canvas_size[0], scrollBarMax[1] - 1);
         draw_list->AddRectFilled(scrollBarA, scrollBarB, 0xFF222222, 0);
 
         AnchorBBox scrollBarRect(scrollBarA, scrollBarB);
@@ -584,16 +584,16 @@ namespace AnchorSequencer
         draw_list->AddRectFilled(scrollBarA, scrollBarB, 0xFF101010, 8);
 
 
-        GfVec2f scrollBarC(scrollBarMin[0] + legendWidth + startFrameOffset, scrollBarMin[1]);
-        GfVec2f scrollBarD(scrollBarMin[0] + legendWidth + barWidthInPixels + startFrameOffset,
+        wabi::GfVec2f scrollBarC(scrollBarMin[0] + legendWidth + startFrameOffset, scrollBarMin[1]);
+        wabi::GfVec2f scrollBarD(scrollBarMin[0] + legendWidth + barWidthInPixels + startFrameOffset,
                            scrollBarMax[1] - 2);
         draw_list->AddRectFilled(scrollBarC,
                                  scrollBarD,
                                  (inScrollBar || MovingScrollBar) ? 0xFF606060 : 0xFF505050,
                                  6);
 
-        AnchorBBox barHandleLeft(scrollBarC, GfVec2f(scrollBarC[0] + 14, scrollBarD[1]));
-        AnchorBBox barHandleRight(GfVec2f(scrollBarD[0] - 14, scrollBarC[1]), scrollBarD);
+        AnchorBBox barHandleLeft(scrollBarC, wabi::GfVec2f(scrollBarC[0] + 14, scrollBarD[1]));
+        AnchorBBox barHandleRight(wabi::GfVec2f(scrollBarD[0] - 14, scrollBarC[1]), scrollBarD);
 
         bool onLeft = barHandleLeft.Contains(io.MousePos);
         bool onRight = barHandleRight.Contains(io.MousePos);
@@ -717,7 +717,7 @@ namespace AnchorSequencer
 
     if (expanded) {
       bool overExpanded = SequencerAddDelButton(draw_list,
-                                                GfVec2f(canvas_pos[0] + 2, canvas_pos[1] + 2),
+                                                wabi::GfVec2f(canvas_pos[0] + 2, canvas_pos[1] + 2),
                                                 !*expanded);
       if (overExpanded && io.MouseReleased[0])
         *expanded = !*expanded;

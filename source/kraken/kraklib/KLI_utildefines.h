@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "kraken/kraken.h"
+
 /* std */
 #include <filesystem>
 #include <iostream>

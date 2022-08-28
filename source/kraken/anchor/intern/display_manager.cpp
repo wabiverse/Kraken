@@ -29,6 +29,8 @@
 
 WABI_NAMESPACE_USING
 
+KRAKEN_NAMESPACE_USING
+
 AnchorDisplayManager::AnchorDisplayManager(void) : m_settingsInitialized(false) {}
 
 AnchorDisplayManager::~AnchorDisplayManager(void) {}

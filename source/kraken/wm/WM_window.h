@@ -33,7 +33,7 @@
 
 #include <wabi/base/gf/rect2i.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 typedef void (*wmGenericUserDataFreeFn)(void *data);
 
@@ -102,4 +102,4 @@ void WM_window_set_active_layout(wmWindow *win, WorkSpace *workspace, WorkSpaceL
 void WM_exit_schedule_delayed(const kContext *C);
 void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

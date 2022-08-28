@@ -482,9 +482,14 @@ endfunction()
 function(setup_platform_linker_libs
   target
   )
-  # jemalloc must be early in the list, to be before pthread (see T57998)
-  if(WITH_MEM_MIMALLOC)
-    target_link_libraries(${target} ${MIMALLOC_LIBRARIES})
+  
+  if (WIN32)
+    if(WITH_MEM_MIMALLOC)
+      target_link_libraries(${target} ${MIMALLOC_LIBRARIES})
+    endif()
+  else()
+    # jemalloc must be early in the list, to be before pthread (see T57998)
+    target_link_libraries(${target} ${WABI_MALLOC_LIBRARY})
   endif()
 
   if(WIN32 AND NOT UNIX)
@@ -805,11 +810,11 @@ function(get_kraken_version)
   # - KRAKEN_VERSION_PATCH
   # - KRAKEN_VERSION_CYCLE (alpha, beta, rc, release)
 
-  # So cmake depends on KKE_version.h, beware of inf-loops!
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/kraken/krakernel/KKE_version.h
-                 ${CMAKE_BINARY_DIR}/source/kraken/krakernel/KKE_version.h.done COPYONLY)
+  # So cmake depends on kraken.h, beware of inf-loops!
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/kraken/kraken.h
+                 ${CMAKE_BINARY_DIR}/source/kraken/kraken.h.done COPYONLY)
 
-  file(STRINGS ${CMAKE_SOURCE_DIR}/source/kraken/krakernel/KKE_version.h _contents REGEX "^#define[ \t]+KRAKEN_.*$")
+  file(STRINGS ${CMAKE_SOURCE_DIR}/source/kraken/kraken.h _contents REGEX "^#define[ \t]+KRAKEN_.*$")
 
   string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
   string(REGEX REPLACE ".*#define[ \t]+KRAKEN_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")

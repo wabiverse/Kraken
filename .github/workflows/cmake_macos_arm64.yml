@@ -23,8 +23,41 @@ jobs:
       run: brew install svn
       
     - name: Install Python
-      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.2-release/lib/darwin_arm64/python/ ${{github.workspace}}/../lib/apple_darwin_arm64/python/
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/python/ ${{github.workspace}}/../lib/apple_darwin_arm64/python/
       
+    - name: Install OpenImageIO
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/openimageio/ ${{github.workspace}}/../lib/apple_darwin_arm64/openimageio/
+
+    - name: Install OpenColorIO
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/opencolorio/ ${{github.workspace}}/../lib/apple_darwin_arm64/opencolorio/
+
+    - name: Install Embree
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/embree/ ${{github.workspace}}/../lib/apple_darwin_arm64/embree/
+
+    - name: Install Alembic
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/alembic/ ${{github.workspace}}/../lib/apple_darwin_arm64/alembic/
+
+    - name: Install TIFF
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/tiff/ ${{github.workspace}}/../lib/apple_darwin_arm64/tiff/
+
+    - name: Install JPEG
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/jpeg/ ${{github.workspace}}/../lib/apple_darwin_arm64/jpeg/
+
+    - name: Install OpenJPEG
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/openjpeg/ ${{github.workspace}}/../lib/apple_darwin_arm64/openjpeg/
+
+    - name: Install PNG
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/png/ ${{github.workspace}}/../lib/apple_darwin_arm64/png/
+
+    - name: Install PugiXML
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/pugixml/ ${{github.workspace}}/../lib/apple_darwin_arm64/pugixml/
+
+    - name: Install OpenEXR
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/openexr/ ${{github.workspace}}/../lib/apple_darwin_arm64/openexr/
+
+    - name: Install Imath
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/tags/blender-3.3-release/lib/darwin_arm64/imath/ ${{github.workspace}}/../lib/apple_darwin_arm64/imath/
+
     - name: Install PySide6
       run: ${{github.workspace}}/../lib/apple_darwin_arm64/python/bin/python3.10 -m pip install PySide6
       
@@ -42,12 +75,6 @@ jobs:
       
     - name: Install TBB
       run: brew install tbb
-
-    - name: Install OpenImageIO
-      run: brew install openimageio
-    
-    - name: Install OpenEXR
-      run: brew install openexr
     
     - name: Install OpenSubdiv
       run: brew install opensubdiv
@@ -60,9 +87,6 @@ jobs:
     
     - name: Install OpenVDB
       run: brew install openvdb
-      
-    - name: Install Embree
-      run: brew install embree
 
     - name: Source Zsh
       run: zsh

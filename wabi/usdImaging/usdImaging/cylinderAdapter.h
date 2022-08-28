@@ -60,7 +60,7 @@ class UsdImagingCylinderAdapter : public UsdImagingGprimAdapter
   USDIMAGING_API
   HdDirtyBits ProcessPropertyChange(UsdPrim const &prim,
                                     SdfPath const &cachePath,
-                                    TfToken const &propertyName);
+                                    TfToken const &propertyName) override;
 
   // ---------------------------------------------------------------------- //
   /// \name Parallel Setup and Resolve

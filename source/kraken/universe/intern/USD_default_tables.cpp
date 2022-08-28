@@ -43,7 +43,7 @@
  * file format defaults. */
 
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /* clang-format off */
 
@@ -143,4 +143,4 @@ void USD_default_table_scene_data(kContext *C)
 
 /* clang-format on */
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

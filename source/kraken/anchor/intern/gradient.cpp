@@ -26,22 +26,22 @@
 #include "ANCHOR_internal.h"
 #include "ANCHOR_gradient.h"
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 namespace AnchorGradient
 {
   static int DrawPoint(AnchorDrawList *draw_list,
-                       GfVec4f color,
-                       const GfVec2f size,
+                       wabi::GfVec4f color,
+                       const wabi::GfVec2f size,
                        bool editing,
-                       GfVec2f pos)
+                       wabi::GfVec2f pos)
   {
     AnchorIO &io = ANCHOR::GetIO();
 
-    GfVec2f p1 = AnchorLerp(pos, GfVec2f(pos + GfVec2f(size[0] - size[1], 0.f)), color[3]) +
-                 GfVec2f(3, 3);
-    GfVec2f p2 = AnchorLerp(pos + GfVec2f(size[1], size[1]), GfVec2f(pos + size), color[3]) -
-                 GfVec2f(3, 3);
+    wabi::GfVec2f p1 = AnchorLerp(pos, wabi::GfVec2f(pos + wabi::GfVec2f(size[0] - size[1], 0.f)), color[3]) +
+                 wabi::GfVec2f(3, 3);
+    wabi::GfVec2f p2 = AnchorLerp(pos + wabi::GfVec2f(size[1], size[1]), wabi::GfVec2f(pos + size), color[3]) -
+                 wabi::GfVec2f(3, 3);
     AnchorBBox rc(p1, p2);
 
     color[3] = 1.f;
@@ -59,23 +59,23 @@ namespace AnchorGradient
     return 0;
   }
 
-  bool Edit(Delegate &delegate, const GfVec2f &size, int &selection)
+  bool Edit(Delegate &delegate, const wabi::GfVec2f &size, int &selection)
   {
     bool ret = false;
     AnchorIO &io = ANCHOR::GetIO();
-    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(0, 0));
     ANCHOR::BeginChildFrame(137, size);
 
     AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
-    const GfVec2f offset = ANCHOR::GetCursorScreenPos();
+    const wabi::GfVec2f offset = ANCHOR::GetCursorScreenPos();
 
-    const GfVec4f *pts = delegate.GetPoints();
+    const wabi::GfVec4f *pts = delegate.GetPoints();
     static int currentSelection = -1;
     static int movingPt = -1;
     if (currentSelection >= int(delegate.GetPointCount()))
       currentSelection = -1;
     if (movingPt != -1) {
-      GfVec4f current = pts[movingPt];
+      wabi::GfVec4f current = pts[movingPt];
       current[3] += io.MouseDelta[0] / size[0];
       current[3] = AnchorClamp(current[3], 0.f, 1.f);
       delegate.EditPoint(movingPt, current);

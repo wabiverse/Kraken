@@ -48,11 +48,11 @@
 #include "ED_defines.h"
 #include "ED_screen.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 WorkSpace *ED_workspace_add(kContext *C, const char *name)
 {
   return KKE_workspace_add(C, name);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

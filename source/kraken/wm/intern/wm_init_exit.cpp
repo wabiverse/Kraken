@@ -52,7 +52,7 @@
 
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 void WM_init(kContext *C, int argc, const char **argv)
@@ -286,4 +286,4 @@ void WM_exit(kContext *C)
   exit(G.is_break == true);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -29,7 +29,7 @@
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  * Refactor and hash these in so we're not creating 19 billion strings. */
@@ -170,4 +170,4 @@ std::string KLI_icon(eKrakenIcon icon_id)
   }
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

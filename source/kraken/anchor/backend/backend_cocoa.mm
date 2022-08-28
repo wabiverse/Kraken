@@ -27,11 +27,12 @@
 #include "ANCHOR_BACKEND_cocoa.h"
 #include "ANCHOR_BACKEND_metal.h"
 
-#import "ANCHOR_BACKEND_notice.h"
+// #import "Anchor.h"
+#include "mtl_context.hh"
 
-#import "Anchor.h"
-#import <kraken_anchor-Swift.h>
-
+#include <simd/simd.h>
+#include <AppKit/AppKit.h>
+#include <MetalKit/MetalKit.h>
 #include <Carbon/Carbon.h>
 
 #include <sys/sysctl.h>
@@ -40,7 +41,7 @@
 
 #include <mach/mach_time.h>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 #pragma mark Utility functions
 
@@ -62,6 +63,40 @@ int ANCHOR_HACK_getFirstFile(char buf[FIRSTFILEBUFLG])
   }
 }
 
+AnchorSystemCocoa::AnchorSystemCocoa()
+{
+  int mib[2];
+  struct timeval boottime;
+  size_t len;
+  char *rstring = NULL;
+
+  m_modifierMask = 0;
+  m_outsideLoopEventProcessed = false;
+  m_needDelayedEventProcessing = false;
+
+  // NSEvent timeStamp is given in system uptime, state start date is boot time
+  mib[0] = CTL_KERN;
+  mib[1] = KERN_BOOTTIME;
+  len = sizeof(struct timeval);
+
+  sysctl(mib, 2, &boottime, &len, NULL, 0);
+  m_start_time = ((boottime.tv_sec * 1000) + (boottime.tv_usec / 1000));
+
+  /* Detect multi-touch track-pad. */
+  mib[0] = CTL_HW;
+  mib[1] = HW_MODEL;
+  sysctl(mib, 2, NULL, &len, NULL, 0);
+  rstring = (char *)malloc(len);
+  sysctl(mib, 2, rstring, &len, NULL, 0);
+
+  free(rstring);
+  rstring = NULL;
+
+  m_ignoreWindowSizedMessages = false;
+  m_ignoreMomentumScroll = false;
+  m_multiTouchScroll = false;
+  m_last_warp_timestamp = 0;
+}
 
 eAnchorStatus AnchorSystemCocoa::init()
 {
@@ -69,14 +104,26 @@ eAnchorStatus AnchorSystemCocoa::init()
   if (success) {
     @autoreleasepool {
       /* cxx system: sets this system instance pointer inside of CocoaAppDelegate. */
-      CocoaAppDelegate *cxxDelegate = [[CocoaAppDelegate alloc] init];
-      [cxxDelegate setSystemCocoa:(void *)this];
+      // CocoaAppDelegate *cxxDelegate = [[CocoaAppDelegate alloc] init];
+      // [cxxDelegate setSystemCocoa:(void *)this];
 
       /* swift system: recieves this system instance, so it can call into this class. */
-      [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
+      // [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
     }
   }
   return success;
+}
+
+AnchorU64 AnchorSystemCocoa::getMilliSeconds() const
+{
+  // Cocoa equivalent exists in 10.6 ([[NSProcessInfo processInfo] systemUptime])
+  struct timeval currentTime;
+
+  gettimeofday(&currentTime, NULL);
+
+  // Return timestamp of system uptime
+
+  return ((currentTime.tv_sec * 1000) + (currentTime.tv_usec / 1000) - m_start_time);
 }
 
 eAnchorStatus AnchorSystemCocoa::exit()
@@ -105,8 +152,8 @@ AnchorISystemWindow *AnchorSystemCocoa::createWindow(const char *title,
     ANCHOR_ASSERT(m_windowManager);
     m_windowManager->addWindow(window);
     m_windowManager->setActiveWindow(window);
-    pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowActivate, window));
-    pushEvent(new AnchorEvent(ANCHOR::GetTime(), AnchorEventTypeWindowSize, window));
+    pushEvent(new AnchorEvent(getMilliSeconds(), AnchorEventTypeWindowActivate, window));
+    pushEvent(new AnchorEvent(getMilliSeconds(), AnchorEventTypeWindowSize, window));
   } else {
     /* don't destroy this until the metal context is fully implemented and expected. */
     //delete window;
@@ -123,11 +170,6 @@ AnchorU64 AnchorSystemCocoa::performanceCounterToMillis(int perf_ticks) const
 
 
 AnchorU64 AnchorSystemCocoa::tickCountToMillis(int ticks) const
-{
-  return 0;
-}
-
-AnchorU64 AnchorSystemCocoa::getMilliSeconds() const
 {
   return 0;
 }
@@ -179,10 +221,10 @@ eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
 {
   for (AnchorISystemWindow *iwindow : m_windowManager->getWindows()) {
     AnchorAppleMetal *window = (AnchorAppleMetal *)iwindow;
-    AnchorWindowApple *cocoaWindow = window->getWindow();
-    if ([cocoaWindow getIsDialog]) {
-      [[cocoaWindow getCocoaWindow] makeKeyAndOrderFront:nil];
-    }
+    // void *cocoaWindow = window->getWindow();
+  //   if ([cocoaWindow getIsDialog]) {
+  //     [[cocoaWindow getCocoaWindow] makeKeyAndOrderFront:nil];
+  //   }
   }
 
   unsigned long modifiers;
@@ -199,7 +241,7 @@ eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
   modifiers = [[[NSApplication sharedApplication] currentEvent] modifierFlags];
 
   if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
-    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+    pushEvent(new AnchorEventKey(getMilliSeconds(),
                                  (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown :
                                                                           AnchorEventTypeKeyUp,
                                  window,
@@ -207,7 +249,7 @@ eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
                                  false));
   }
   if ((modifiers & NSEventModifierFlagControl) != (m_modifierMask & NSEventModifierFlagControl)) {
-    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+    pushEvent(new AnchorEventKey(getMilliSeconds(),
                                  (modifiers & NSEventModifierFlagControl) ? AnchorEventTypeKeyDown :
                                                                             AnchorEventTypeKeyUp,
                                  window,
@@ -215,7 +257,7 @@ eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
                                  false));
   }
   if ((modifiers & NSEventModifierFlagOption) != (m_modifierMask & NSEventModifierFlagOption)) {
-    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+    pushEvent(new AnchorEventKey(getMilliSeconds(),
                                  (modifiers & NSEventModifierFlagOption) ? AnchorEventTypeKeyDown :
                                                                            AnchorEventTypeKeyUp,
                                  window,
@@ -223,7 +265,7 @@ eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
                                  false));
   }
   if ((modifiers & NSEventModifierFlagCommand) != (m_modifierMask & NSEventModifierFlagCommand)) {
-    pushEvent(new AnchorEventKey(ANCHOR::GetTime(),
+    pushEvent(new AnchorEventKey(getMilliSeconds(),
                                  (modifiers & NSEventModifierFlagCommand) ? AnchorEventTypeKeyDown :
                                                                             AnchorEventTypeKeyUp,
                                  window,
@@ -561,33 +603,10 @@ bool AnchorSystemCocoa::handleOpenDocumentRequest(void *filepathStr)
   strncpy(temp_buff, [filepath cStringUsingEncoding:NSUTF8StringEncoding], filenameTextSize);
   temp_buff[filenameTextSize] = '\0';
 
-  pushEvent(new AnchorEventString(ANCHOR::GetTime(), AnchorEventTypeOpenMainFile, window, (AnchorEventDataPtr)temp_buff));
+  pushEvent(new AnchorEventString(getMilliSeconds(), AnchorEventTypeOpenMainFile, window, (AnchorEventDataPtr)temp_buff));
 
   return YES;
 }
-
-@implementation CocoaAppDelegate : NSObject
-
-- (bool)handleOpenDocumentRequest:(NSString *)filename
-{
-  AnchorSystemCocoa *system = (AnchorSystemCocoa *)systemCocoa;
-
-  return system->handleOpenDocumentRequest(filename);
-}
-
-- (bool)handleApplicationBecomeActiveEvent
-{
-  AnchorSystemCocoa *system = (AnchorSystemCocoa *)systemCocoa;
-
-  return system->handleApplicationBecomeActiveEvent();
-}
-
-- (void)setSystemCocoa:(void *)sysCocoa
-{
-  systemCocoa = sysCocoa;
-}
-
-@end
 
 
 static void anchor_fatal_error_dialog(const char *msg)
@@ -622,59 +641,36 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
     m_cursor(0),
     m_immediateDraw(false),
     m_debug_context(false),
-    m_is_dialog(dialog)
+    m_is_dialog(dialog),
+    m_time(mach_absolute_time())
 {
   /* convert the title string for swift. */
   NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
 
-  /* convert the cxx enum to the swift enum. */
-  AnchorWindowState nsstate = AnchorWindowStateWindowStateNormal;
-  switch (state) {
-    case AnchorWindowStateNormal:
-      nsstate = AnchorWindowStateWindowStateNormal;
-      break;
-    case AnchorWindowStateMaximized:
-      nsstate = AnchorWindowStateWindowStateMaximized;
-      break;
-    case AnchorWindowStateMinimized:
-      nsstate = AnchorWindowStateWindowStateMinimized;
-      break;
-    case AnchorWindowStateFullScreen:
-      nsstate = AnchorWindowStateWindowStateFullScreen;
-      break;
-    case AnchorWindowStateEmbedded:
-      nsstate = AnchorWindowStateWindowStateEmbedded;
-      break;
-    default:
-      nsstate = AnchorWindowStateWindowStateNormal;
-      break;
-  }
-
   /* create the window on metal with swift. */
-  m_window = [AnchorSystemApple createWindowWithTitle:titleutf left:left top:top width:width height:height state:nsstate isDialog:dialog];
-  m_metalView = [m_window getMetalView];
-  m_metalLayer = [m_window getMetalLayer];
+  // m_window = [AnchorSystemApple createWindowWithTitle:titleutf left:left top:top width:width height:height state:state isDialog:dialog];
+  // m_metalKitView = [m_window getMetalView];
 
   /* now we're ready for it. */
   newDrawingContext(ANCHOR_DrawingContextTypeMetal);
   activateDrawingContext();
 
-  [[m_window getCocoaWindow] setAcceptsMouseMovedEvents:YES];
+  // [[m_window getCocoaWindow] setAcceptsMouseMovedEvents:YES];
 
-  NSView *contentview = [[m_window getCocoaWindow] contentView];
-  [contentview setAllowedTouchTypes:(NSTouchTypeMaskDirect | NSTouchTypeMaskIndirect)];
+  // NSView *contentview = [[m_window getCocoaWindow] contentView];
+  // [contentview setAllowedTouchTypes:(NSTouchTypeMaskDirect | NSTouchTypeMaskIndirect)];
 
-  [[m_window getCocoaWindow] registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType,
-                                                      NSStringPboardType,
-                                                      NSTIFFPboardType,
-                                                      nil]];
+  // [[m_window getCocoaWindow] registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType,
+                                                      // NSStringPboardType,
+                                                      // NSTIFFPboardType,
+                                                      // nil]];
 
   if (/*dialog && parentWindow*/false) {
     // [parentWindow->getCocoaWindow() addChildWindow:m_window ordered:NSWindowAbove];
     // [m_window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
   }
   else {
-    [[m_window getCocoaWindow] setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+    // [[m_window getCocoaWindow] setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
   }
 
   if (state == AnchorWindowStateFullScreen)
@@ -690,30 +686,25 @@ AnchorAppleMetal::~AnchorAppleMetal()
     m_cursor = nil;
   }
 
-  if (m_metalView) {
-    [m_metalView release];
-    m_metalView = nil;
+  if (m_metalKitView) {
+    [m_metalKitView release];
+    m_metalKitView = nil;
   }
 
-  if (m_metalLayer) {
-    [m_metalLayer release];
-    m_metalLayer = nil;
-  }
-
-  if (m_window) {
-    [m_window closeCocoaWindow];
-  }
+  // if (m_window) {
+  //   [m_window closeCocoaWindow];
+  // }
 
   /* Check for other kraken opened windows and make the front-most key
    * NOTE: for some reason the closed window is still in the list. */
 
-  NSArray *windowsList = [NSApp orderedWindows];
-  for (int a = 0; a < [windowsList count]; a++) {
-    if ([m_window getCocoaWindow] != (NSWindow *)[windowsList objectAtIndex:a]) {
-      [[windowsList objectAtIndex:a] makeKeyWindow];
-      break;
-    }
-  }
+  // NSArray *windowsList = [NSApp orderedWindows];
+  // for (int a = 0; a < [windowsList count]; a++) {
+  //   if ([m_window getCocoaWindow] != (NSWindow *)[windowsList objectAtIndex:a]) {
+  //     [[windowsList objectAtIndex:a] makeKeyWindow];
+  //     break;
+  //   }
+  // }
 
   m_window = nil;
 }
@@ -721,7 +712,7 @@ AnchorAppleMetal::~AnchorAppleMetal()
 /* called for event, when window leaves monitor to another */
 void AnchorAppleMetal::setNativePixelSize(void)
 {
-  NSRect backingBounds = [m_metalView convertRectToBacking:[m_metalView bounds]];
+  NSRect backingBounds = [m_metalKitView convertRectToBacking:[m_metalKitView bounds]];
 
   AnchorRect rect;
   getClientBounds(rect);
@@ -734,105 +725,53 @@ void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
   NSRect rect;
   ANCHOR_ASSERT(getValid());
 
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  // NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  NSRect screenSize = [[m_window getScreen] visibleFrame];
+  // NSRect screenSize = [[m_window getScreen] visibleFrame];
 
   // Max window contents as screen size (excluding title bar...)
-  NSRect contentRect = [NSWindow contentRectForFrameRect:screenSize
-                                               styleMask:[[m_window getCocoaWindow] styleMask]];
+  // NSRect contentRect = [NSWindow contentRectForFrameRect:screenSize
+                                              //  styleMask:[[m_window getCocoaWindow] styleMask]];
 
-  rect = [[m_window getCocoaWindow] contentRectForFrameRect:[[m_window getCocoaWindow] frame]];
+  // rect = [[m_window getCocoaWindow] contentRectForFrameRect:[[m_window getCocoaWindow] frame]];
 
-  bounds.m_b = contentRect.size.height - (rect.origin.y - contentRect.origin.y);
-  bounds.m_l = rect.origin.x - contentRect.origin.x;
-  bounds.m_r = rect.origin.x - contentRect.origin.x + rect.size.width;
-  bounds.m_t = contentRect.size.height - (rect.origin.y + rect.size.height - contentRect.origin.y);
+  // bounds.m_b = contentRect.size.height - (rect.origin.y - contentRect.origin.y);
+  // bounds.m_l = rect.origin.x - contentRect.origin.x;
+  // bounds.m_r = rect.origin.x - contentRect.origin.x + rect.size.width;
+  // bounds.m_t = contentRect.size.height - (rect.origin.y + rect.size.height - contentRect.origin.y);
 
-  [pool drain];
+  // [pool drain];
 }
 
 #pragma mark Swift Accessors
 
-AnchorWindowApple *AnchorAppleMetal::getWindow()
+void *AnchorAppleMetal::getWindow()
 {
   return m_window;
 }
 
 #pragma mark Drawing context
 
-static const MTLPixelFormat METAL_FRAMEBUFFERPIXEL_FORMAT = MTLPixelFormatBGRA8Unorm;
-static const OSType METAL_CORE_VIDEO_PIXEL_FORMAT = kCVPixelFormatType_32BGRA;
 
 void AnchorAppleMetal::SetupMetal()
 {
-  m_hgi = new HgiMetal(m_metalLayer.device);
+  m_hgi = new wabi::HgiMetal(m_metalKitView.device);
 
-  /* clang-format off */
-  @autoreleasepool {
-    /* clang-format on */
-    id<MTLDevice> device = m_metalLayer.device;
+  /**
+  * Setup ANCHOR context. */
 
-    /* Create a command queue for blit/present operation. */
-    m_metalCmdQueue = (MTLCommandQueue *)m_hgi->GetQueue();
+  ANCHOR_CHECKVERSION();
+  ANCHOR::CreateContext();
 
-    /* Create shaders for blit operation. */
-    NSString *source = @R"msl(
-      using namespace metal;
+  AnchorIO &io = ANCHOR::GetIO();
 
-      struct Vertex {
-        float4 position [[position]];
-        float2 texCoord [[attribute(0)]];
-      };
+  id<MTLDevice> device = m_metalKitView.device;
 
-      vertex Vertex vertex_shader(uint v_id [[vertex_id]]) {
-        Vertex vtx;
+  m_metalCmdQueue = (MTLCommandQueue *)m_hgi->GetQueue();
 
-        vtx.position.x = float(v_id & 1) * 4.0 - 1.0;
-        vtx.position.y = float(v_id >> 1) * 4.0 - 1.0;
-        vtx.position.z = 0.0;
-        vtx.position.w = 1.0;
+  ANCHOR::StyleColorsDefault();
 
-        vtx.texCoord = vtx.position.xy * 0.5 + 0.5;
-
-        return vtx;
-      }
-
-      constexpr sampler s {};
-
-      fragment float4 fragment_shader(Vertex v [[stage_in]],
-                      texture2d<float> t [[texture(0)]]) {
-        return t.sample(s, v.texCoord);
-      }
-
-      )msl";
-
-    MTLCompileOptions *options = [[[MTLCompileOptions alloc] init] autorelease];
-    options.languageVersion = MTLLanguageVersion2_2;
-
-    NSError *error = nil;
-    id<MTLLibrary> library = [device newLibraryWithSource:source options:options error:&error];
-    if (error) {
-      anchor_fatal_error_dialog(
-          "AnchorAppleMetal::SetupMetal: newLibraryWithSource:options:error: failed!");
-    }
-
-    /* Create a render pipeline for blit operation. */
-    MTLRenderPipelineDescriptor *desc = [[[MTLRenderPipelineDescriptor alloc] init] autorelease];
-
-    desc.fragmentFunction = [library newFunctionWithName:@"fragment_shader"];
-    desc.vertexFunction = [library newFunctionWithName:@"vertex_shader"];
-
-    [desc.colorAttachments objectAtIndexedSubscript:0].pixelFormat = METAL_FRAMEBUFFERPIXEL_FORMAT;
-
-    m_metalRenderPipeline = (MTLRenderPipelineState *)[device
-        newRenderPipelineStateWithDescriptor:desc
-                                       error:&error];
-    if (error) {
-      anchor_fatal_error_dialog(
-          "AnchorAppleMetal::SetupMetal: newRenderPipelineStateWithDescriptor:error: failed!");
-    }
-  }
+  kraken::gpu::InitContext(m_metalKitView.device);
 }
 
 static void SetFont()
@@ -853,12 +792,6 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
     SetupMetal();
 
     /**
-     * Setup ANCHOR context. */
-
-    ANCHOR_CHECKVERSION();
-    ANCHOR::CreateContext();
-
-    /**
      * Setup Keyboard & Gamepad controls. */
 
     AnchorIO &io = ANCHOR::GetIO();
@@ -866,29 +799,12 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
     io.ConfigFlags |= AnchorConfigFlags_NavEnableGamepad;
 
     /**
-     * Setup Default Kraken theme.
-     *   Themes::
-     *     - ANCHOR::StyleColorsDefault()
-     *     - ANCHOR::StyleColorsLight()
-     *     - ANCHOR::StyleColorsDark() */
-
-    ANCHOR::StyleColorsDefault();
-
-    ANCHOR_ASSERT(io.BackendPlatformUserData == NULL && "Already initialized a platform backend!");
-
-    io.BackendPlatformUserData = (void *)[m_window getCocoaWindow];
-    io.BackendRendererUserData = (void *)m_metalLayer;
-    io.BackendPlatformName = "AnchorBackendApple";
-    io.BackendFlags |= AnchorBackendFlags_HasMouseCursors;
-    io.BackendFlags |= AnchorBackendFlags_HasSetMousePos;
-
-    /**
      * Create Pixar Hydra Graphics Interface. */
 
-    HdDriver driver;
-    HgiUniquePtr hgi = HgiUniquePtr(m_hgi);
-    driver.name = HgiTokens->renderDriver;
-    driver.driver = VtValue(hgi.get());
+    wabi::HdDriver driver;
+    wabi::HgiUniquePtr hgi = wabi::HgiUniquePtr(m_hgi);
+    driver.name = wabi::HgiTokens->renderDriver;
+    driver.driver = wabi::VtValue(hgi.get());
 
     /**
      * Setup Pixar Driver & Engine. */
@@ -896,14 +812,10 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
     ANCHOR::GetPixarDriver().name = driver.name;
     ANCHOR::GetPixarDriver().driver = driver.driver;
 
+    /**
+     * Set default fonts. */
+
     SetFont();
-
-    /* ------ */
-
-    unsigned char *pixels;
-    int width, height;
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-    size_t upload_size = width * height * 4 * sizeof(char);
   }
 }
 
@@ -917,17 +829,53 @@ eAnchorStatus AnchorAppleMetal::activateDrawingContext()
 
 eAnchorStatus AnchorAppleMetal::swapBuffers()
 {
-  if (ANCHOR::GetCurrentContext() == NULL) {
-    return ANCHOR_FAILURE;
+  AnchorIO &io = ANCHOR::GetIO();
+  io.DisplaySize[0] = m_metalKitView.bounds.size.width;
+  io.DisplaySize[1] = m_metalKitView.bounds.size.height;
+  m_metalKitView.drawableSize = CGSizeMake(io.DisplaySize[0], io.DisplaySize[1]);
+
+#if TARGET_OS_OSX
+  CGFloat framebufferScale = m_metalKitView.window.screen.backingScaleFactor ?: NSScreen.mainScreen.backingScaleFactor;
+#else
+  CGFloat framebufferScale = m_metalKitView.window.screen.scale ?: UIScreen.mainScreen.scale;
+#endif
+  io.DisplayFramebufferScale = wabi::GfVec2f(framebufferScale, framebufferScale);
+
+  id<MTLCommandBuffer> commandBuffer = [m_metalCmdQueue commandBuffer];
+
+  MTLRenderPassDescriptor* renderPassDescriptor = m_metalKitView.currentRenderPassDescriptor;
+  if (renderPassDescriptor == nil)
+  {
+    [commandBuffer commit];
+    return;
   }
+
+  kraken::gpu::NewFrame(renderPassDescriptor);
 
   ANCHOR::NewFrame();
 
+  static wabi::GfVec4f clear_color = wabi::GfVec4f(0.45f, 0.55f, 0.60f, 1.00f);
+  
   ANCHOR::Begin("Kraken");
   ANCHOR::Text("Computer Graphics of the Modern Age.");
   ANCHOR::End();
 
   ANCHOR::Render();
+
+  AnchorDrawData *drawData = ANCHOR::GetDrawData();
+
+  renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clear_color[0] * clear_color[3], 
+                                                                          clear_color[1] * clear_color[3], 
+                                                                          clear_color[2] * clear_color[3], 
+                                                                          clear_color[3]);
+  id<MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+  [renderEncoder pushDebugGroup:@"Anchor is Rendering..."];
+  kraken::gpu::ViewDraw(drawData, commandBuffer, renderEncoder);
+  [renderEncoder popDebugGroup];
+  [renderEncoder endEncoding];
+
+  [commandBuffer presentDrawable:m_metalKitView.currentDrawable]; 
+  [commandBuffer commit];
 
   return ANCHOR_SUCCESS;
 }
@@ -954,12 +902,12 @@ void AnchorAppleMetal::setIcon(const char *icon)
 
 bool AnchorAppleMetal::getValid() const
 {
-  return AnchorSystemWindow::getValid() && m_window != NULL && m_metalView != NULL;
+  return AnchorSystemWindow::getValid() && m_window != NULL && m_metalKitView != NULL;
 }
 
 void *AnchorAppleMetal::getOSWindow() const
 {
-  return (void *)[m_window getCocoaWindow];
+  return (void *)m_window;
 }
 
 void AnchorAppleMetal::setTitle(const char *title)
@@ -967,21 +915,17 @@ void AnchorAppleMetal::setTitle(const char *title)
   /* convert the title string for swift. */
   NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
 
-  [m_window setCocoaTitleWithTitle:titleutf];
+  // [m_window setCocoaTitleWithTitle:titleutf];
 }
 
 std::string AnchorAppleMetal::getTitle() const
 {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-  NSString *windowTitle = [m_window getCocoaTitle];
+  // NSString *windowTitle = [m_window getCocoaTitle];
 
   std::string title;
-  if (windowTitle != nil) {
-    title = [windowTitle UTF8String];
-  }
-
-  [pool drain];
+  // if (windowTitle != nil) {
+  //   title = [windowTitle UTF8String];
+  // }
 
   return title;
 }
@@ -998,60 +942,37 @@ eAnchorStatus AnchorAppleMetal::setClientSize(AnchorU32 width, AnchorU32 height)
 
 eAnchorStatus AnchorAppleMetal::setState(eAnchorWindowState state)
 {
-  /* convert cxx enum to swift enum. */
-  AnchorWindowState nsstate = AnchorWindowStateWindowStateNormal;
-  switch (state) {
-    case AnchorWindowStateNormal:
-      nsstate = AnchorWindowStateWindowStateNormal;
-      break;
-    case AnchorWindowStateMaximized:
-      nsstate = AnchorWindowStateWindowStateMaximized;
-      break;
-    case AnchorWindowStateMinimized:
-      nsstate = AnchorWindowStateWindowStateMinimized;
-      break;
-    case AnchorWindowStateFullScreen:
-      nsstate = AnchorWindowStateWindowStateFullScreen;
-      break;
-    case AnchorWindowStateEmbedded:
-      nsstate = AnchorWindowStateWindowStateEmbedded;
-      break;
-    default:
-      nsstate = AnchorWindowStateWindowStateNormal;
-      break;
-  }
-
-  [m_window setCocoaState:nsstate];
+  // [m_window setCocoaState:nsstate];
 
   return ANCHOR_SUCCESS;
 }
 
 eAnchorWindowState AnchorAppleMetal::getState() const
 {
-  eAnchorWindowState state;
+  eAnchorWindowState state = AnchorWindowStateNormal;
 
   /* convert swift enum to cxx enum. */
-  AnchorWindowState nsstate = [m_window getCocoaState];
-  switch (nsstate) {
-    case AnchorWindowStateWindowStateNormal:
-      state = AnchorWindowStateNormal;
-      break;
-    case AnchorWindowStateWindowStateMaximized:
-      state = AnchorWindowStateMaximized;
-      break;
-    case AnchorWindowStateWindowStateMinimized:
-      state = AnchorWindowStateMinimized;
-      break;
-    case AnchorWindowStateWindowStateFullScreen:
-      state = AnchorWindowStateFullScreen;
-      break;
-    case AnchorWindowStateWindowStateEmbedded:
-      state = AnchorWindowStateEmbedded;
-      break;
-    default:
-      state = AnchorWindowStateNormal;
-      break;
-  }
+  // AnchorWindowState nsstate = [m_window getCocoaState];
+  // switch (nsstate) {
+  //   case AnchorWindowStateWindowStateNormal:
+  //     state = AnchorWindowStateNormal;
+  //     break;
+  //   case AnchorWindowStateWindowStateMaximized:
+  //     state = AnchorWindowStateMaximized;
+  //     break;
+  //   case AnchorWindowStateWindowStateMinimized:
+  //     state = AnchorWindowStateMinimized;
+  //     break;
+  //   case AnchorWindowStateWindowStateFullScreen:
+  //     state = AnchorWindowStateFullScreen;
+  //     break;
+  //   case AnchorWindowStateWindowStateEmbedded:
+  //     state = AnchorWindowStateEmbedded;
+  //     break;
+  //   default:
+  //     state = AnchorWindowStateNormal;
+  //     break;
+  // }
   return state;
 }
 

@@ -27,5 +27,5 @@
 #include "KPY_api.h"
 #include "KKE_context.h"
 
-bool KPY_run_string_exec(struct wabi::kContext *C, const char *imports[], const char *expr);
-bool KPY_run_string_eval(struct wabi::kContext *C, const char *imports[], const char *expr);
+bool KPY_run_string_exec(struct kraken::kContext *C, const char *imports[], const char *expr);
+bool KPY_run_string_eval(struct kraken::kContext *C, const char *imports[], const char *expr);

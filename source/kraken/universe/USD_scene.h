@@ -23,10 +23,10 @@
 
 #pragma once
 
+#include "kraken/kraken.h"
+
 #include "USD_api.h"
 #include "USD_object.h"
-
-#include "KKE_version.h"
 
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/base/gf/vec4d.h>
@@ -39,7 +39,7 @@
 #include <wabi/usd/usdLux/domeLight.h>
 #include <wabi/imaging/hdx/tokens.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  * ---------------------------------------------------------------------
@@ -115,13 +115,13 @@ enum eSceneLoadSet
 
 struct Scene
 {
-  explicit Scene(const UsdStageRefPtr &stage);
-  explicit Scene(const std::string &identifier, const UsdPrim &prim = UsdPrim());
-  explicit Scene(const std::string &identifier, const UsdSchemaBase &schemaObj);
+  explicit Scene(const wabi::UsdStageRefPtr &stage);
+  explicit Scene(const std::string &identifier, const wabi::UsdPrim &prim = wabi::UsdPrim());
+  explicit Scene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj);
   virtual ~Scene();
 
   /** This scenes active stage. */
-  UsdStageRefPtr stage;
+  wabi::UsdStageRefPtr stage;
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -33,7 +33,7 @@
 
 #include <wabi/base/arch/attributes.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 #ifdef _WIN32
 #  define MAXPATHLEN MAX_PATH
@@ -142,4 +142,4 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen);
 #  define KLI_ISDIR(x) fs::is_directory(x)
 #endif
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

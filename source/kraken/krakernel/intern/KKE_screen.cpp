@@ -40,7 +40,7 @@
 
 #include <wabi/usd/usd/tokens.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 /* keep global; this has to be accessible outside of windowmanager */
@@ -145,4 +145,4 @@ void KKE_screen_sort_scrvert(ScrVert **v1, ScrVert **v2)
   }
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

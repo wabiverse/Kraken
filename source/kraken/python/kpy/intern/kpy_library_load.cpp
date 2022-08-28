@@ -54,7 +54,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 #define INDEX_ID_MAX 41
 
@@ -188,7 +188,7 @@ PyDoc_STRVAR(
 static PyObject *kpy_lib_load(KPy_KrakenStage *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
-  Main *kmain = (Main *)self->ptr.data; /* Typically #G_MAIN */
+  Main *kmain = (Main *)self->data; /* Typically #G_MAIN */
   KPy_Library *ret;
   const char *filename = NULL;
   bool is_rel = false, is_link = false, use_assets_only = false;

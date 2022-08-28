@@ -38,7 +38,7 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 struct wmRegionListenerParams
@@ -174,4 +174,4 @@ bool KKE_screen_is_used(const kScreen *screen);
 void KKE_screen_sort_scrvert(struct ScrVert **v1, struct ScrVert **v2);
 ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const short min);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

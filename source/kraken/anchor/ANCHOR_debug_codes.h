@@ -24,8 +24,6 @@
  * Bare Metal.
  */
 
-#pragma once
-
 #include "ANCHOR_api.h"
 
 #include <wabi/base/tf/debug.h>

@@ -26,7 +26,7 @@
 
 #include "KLI_api.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 enum eKrakenIcon
 {
@@ -98,4 +98,4 @@ enum eKrakenIcon
 
 std::string KLI_icon(eKrakenIcon icon_id);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

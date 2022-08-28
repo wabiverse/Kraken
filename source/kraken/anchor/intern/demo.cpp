@@ -104,7 +104,7 @@
 #  endif
 #endif
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 // Forward Declarations
 static void ShowExampleAppDocuments(bool *p_open);
@@ -300,9 +300,9 @@ void ANCHOR::ShowDemoWindow(bool *p_open)
   // required.
   const AnchorViewport *main_viewport = ANCHOR::GetMainViewport();
   ANCHOR::SetNextWindowPos(
-    GfVec2f(main_viewport->WorkPos[0] + 650, main_viewport->WorkPos[1] + 20),
+    wabi::GfVec2f(main_viewport->WorkPos[0] + 650, main_viewport->WorkPos[1] + 20),
     AnchorCond_FirstUseEver);
-  ANCHOR::SetNextWindowSize(GfVec2f(550, 680), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(wabi::GfVec2f(550, 680), AnchorCond_FirstUseEver);
 
   // Main body of the Demo window starts here.
   if (!ANCHOR::Begin("Kraken on Vulkan", p_open, window_flags)) {
@@ -948,8 +948,8 @@ static void ShowDemoWindowWidgets()
   if (ANCHOR::TreeNode("Text")) {
     if (ANCHOR::TreeNode("Colorful Text")) {
       // Using shortcut. You can use PushStyleColor()/PopStyleColor() for more flexibility.
-      ANCHOR::TextColored(GfVec4f(1.0f, 0.0f, 1.0f, 1.0f), "Pink");
-      ANCHOR::TextColored(GfVec4f(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
+      ANCHOR::TextColored(wabi::GfVec4f(1.0f, 0.0f, 1.0f, 1.0f), "Pink");
+      ANCHOR::TextColored(wabi::GfVec4f(1.0f, 1.0f, 0.0f, 1.0f), "Yellow");
       ANCHOR::TextDisabled("Disabled");
       ANCHOR::SameLine();
       HelpMarker("The TextDisabled color is stored in AnchorStyle.");
@@ -971,9 +971,9 @@ static void ShowDemoWindowWidgets()
       AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
       for (int n = 0; n < 2; n++) {
         ANCHOR::Text("Test paragraph %d:", n);
-        GfVec2f pos = ANCHOR::GetCursorScreenPos();
-        GfVec2f marker_min = GfVec2f(pos[0] + wrap_width, pos[1]);
-        GfVec2f marker_max = GfVec2f(pos[0] + wrap_width + 10,
+        wabi::GfVec2f pos = ANCHOR::GetCursorScreenPos();
+        wabi::GfVec2f marker_min = wabi::GfVec2f(pos[0] + wrap_width, pos[1]);
+        wabi::GfVec2f marker_max = wabi::GfVec2f(pos[0] + wrap_width + 10,
                                      pos[1] + ANCHOR::GetTextLineHeight());
         ANCHOR::PushTextWrapPos(ANCHOR::GetCursorPos()[0] + wrap_width);
         if (n == 0)
@@ -1064,12 +1064,12 @@ static void ShowDemoWindowWidgets()
     float my_tex_h = (float)io.Fonts->TexHeight;
     {
       ANCHOR::Text("%.0fx%.0f", my_tex_w, my_tex_h);
-      GfVec2f pos = ANCHOR::GetCursorScreenPos();
-      GfVec2f uv_min = GfVec2f(0.0f, 0.0f);                  // Top-left
-      GfVec2f uv_max = GfVec2f(1.0f, 1.0f);                  // Lower-right
-      GfVec4f tint_col = GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);    // No tint
-      GfVec4f border_col = GfVec4f(1.0f, 1.0f, 1.0f, 0.5f);  // 50% opaque white
-      ANCHOR::Image(my_tex_id, GfVec2f(my_tex_w, my_tex_h), uv_min, uv_max, tint_col, border_col);
+      wabi::GfVec2f pos = ANCHOR::GetCursorScreenPos();
+      wabi::GfVec2f uv_min = wabi::GfVec2f(0.0f, 0.0f);                  // Top-left
+      wabi::GfVec2f uv_max = wabi::GfVec2f(1.0f, 1.0f);                  // Lower-right
+      wabi::GfVec4f tint_col = wabi::GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);    // No tint
+      wabi::GfVec4f border_col = wabi::GfVec4f(1.0f, 1.0f, 1.0f, 0.5f);  // 50% opaque white
+      ANCHOR::Image(my_tex_id, wabi::GfVec2f(my_tex_w, my_tex_h), uv_min, uv_max, tint_col, border_col);
       if (ANCHOR::IsItemHovered()) {
         ANCHOR::BeginTooltip();
         float region_sz = 32.0f;
@@ -1088,11 +1088,11 @@ static void ShowDemoWindowWidgets()
         }
         ANCHOR::Text("Min: (%.2f, %.2f)", region_x, region_y);
         ANCHOR::Text("Max: (%.2f, %.2f)", region_x + region_sz, region_y + region_sz);
-        GfVec2f uv0 = GfVec2f((region_x) / my_tex_w, (region_y) / my_tex_h);
-        GfVec2f uv1 = GfVec2f((region_x + region_sz) / my_tex_w,
+        wabi::GfVec2f uv0 = wabi::GfVec2f((region_x) / my_tex_w, (region_y) / my_tex_h);
+        wabi::GfVec2f uv1 = wabi::GfVec2f((region_x + region_sz) / my_tex_w,
                               (region_y + region_sz) / my_tex_h);
         ANCHOR::Image(my_tex_id,
-                      GfVec2f(region_sz * zoom, region_sz * zoom),
+                      wabi::GfVec2f(region_sz * zoom, region_sz * zoom),
                       uv0,
                       uv1,
                       tint_col,
@@ -1105,12 +1105,12 @@ static void ShowDemoWindowWidgets()
     for (int i = 0; i < 8; i++) {
       ANCHOR::PushID(i);
       int frame_padding = -1 + i;            // -1 == uses default padding (style.FramePadding)
-      GfVec2f size = GfVec2f(32.0f, 32.0f);  // Size of the image we want to make visible
-      GfVec2f uv0 = GfVec2f(0.0f, 0.0f);     // UV coordinates for lower-left
-      GfVec2f uv1 = GfVec2f(32.0f / my_tex_w,
+      wabi::GfVec2f size = wabi::GfVec2f(32.0f, 32.0f);  // Size of the image we want to make visible
+      wabi::GfVec2f uv0 = wabi::GfVec2f(0.0f, 0.0f);     // UV coordinates for lower-left
+      wabi::GfVec2f uv1 = wabi::GfVec2f(32.0f / my_tex_w,
                             32.0f / my_tex_h);  // UV coordinates for (32,32) in our texture
-      GfVec4f bg_col = GfVec4f(0.0f, 0.0f, 0.0f, 1.0f);    // Black background
-      GfVec4f tint_col = GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);  // No tint
+      wabi::GfVec4f bg_col = wabi::GfVec4f(0.0f, 0.0f, 0.0f, 1.0f);    // Black background
+      wabi::GfVec4f tint_col = wabi::GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);  // No tint
       if (ANCHOR::ImageButton(my_tex_id, size, uv0, uv1, frame_padding, bg_col, tint_col))
         pressed_count += 1;
       ANCHOR::PopID();
@@ -1232,7 +1232,7 @@ static void ShowDemoWindowWidgets()
     // Custom size: use all width, 5 items tall
     ANCHOR::Text("Full-width:");
     if (ANCHOR::BeginListBox("##listbox 2",
-                             GfVec2f(-FLT_MIN, 5 * ANCHOR::GetTextLineHeightWithSpacing()))) {
+                             wabi::GfVec2f(-FLT_MIN, 5 * ANCHOR::GetTextLineHeightWithSpacing()))) {
       for (int n = 0; n < ANCHOR_ARRAYSIZE(items); n++) {
         const bool is_selected = (item_current_idx == n);
         if (ANCHOR::Selectable(items[n], is_selected))
@@ -1357,14 +1357,14 @@ static void ShowDemoWindowWidgets()
       if (winning_state)
         ANCHOR::PushStyleVar(
           AnchorStyleVar_SelectableTextAlign,
-          GfVec2f(0.5f + 0.5f * cosf(time * 2.0f), 0.5f + 0.5f * sinf(time * 3.0f)));
+          wabi::GfVec2f(0.5f + 0.5f * cosf(time * 2.0f), 0.5f + 0.5f * sinf(time * 3.0f)));
 
       for (int y = 0; y < 4; y++)
         for (int x = 0; x < 4; x++) {
           if (x > 0)
             ANCHOR::SameLine();
           ANCHOR::PushID(y * 4 + x);
-          if (ANCHOR::Selectable("Sailor", selected[y][x] != 0, 0, GfVec2f(50, 50))) {
+          if (ANCHOR::Selectable("Sailor", selected[y][x] != 0, 0, wabi::GfVec2f(50, 50))) {
             // Toggle clicked cell + toggle neighbors
             selected[y][x] ^= 1;
             if (x > 0) {
@@ -1397,7 +1397,7 @@ static void ShowDemoWindowWidgets()
       static bool selected[3 * 3] = {true, false, true, false, true, false, true, false, true};
       for (int y = 0; y < 3; y++) {
         for (int x = 0; x < 3; x++) {
-          GfVec2f alignment = GfVec2f((float)x / 2.0f, (float)y / 2.0f);
+          wabi::GfVec2f alignment = wabi::GfVec2f((float)x / 2.0f, (float)y / 2.0f);
           char name[32];
           sprintf(name, "(%.1f,%.1f)", alignment[0], alignment[1]);
           if (x > 0)
@@ -1406,7 +1406,7 @@ static void ShowDemoWindowWidgets()
           ANCHOR::Selectable(name,
                              &selected[3 * y + x],
                              AnchorSelectableFlags_None,
-                             GfVec2f(80, 80));
+                             wabi::GfVec2f(80, 80));
           ANCHOR::PopStyleVar();
         }
       }
@@ -1453,7 +1453,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::InputTextMultiline("##source",
                                  text,
                                  ANCHOR_ARRAYSIZE(text),
-                                 GfVec2f(-FLT_MIN, ANCHOR::GetTextLineHeight() * 16),
+                                 wabi::GfVec2f(-FLT_MIN, ANCHOR::GetTextLineHeight() * 16),
                                  flags);
       ANCHOR::TreePop();
     }
@@ -1608,7 +1608,7 @@ static void ShowDemoWindowWidgets()
         // label, MyString* my_str)'
         static bool MyInputTextMultiline(const char *label,
                                          AnchorVector<char> *my_str,
-                                         const GfVec2f &size = GfVec2f(0, 0),
+                                         const wabi::GfVec2f &size = wabi::GfVec2f(0, 0),
                                          AnchorInputTextFlags flags = 0)
         {
           ANCHOR_ASSERT((flags & AnchorInputTextFlags_CallbackResize) == 0);
@@ -1630,7 +1630,7 @@ static void ShowDemoWindowWidgets()
         my_str.push_back(0);
       Funcs::MyInputTextMultiline("##MyStr",
                                   &my_str,
-                                  GfVec2f(-FLT_MIN, ANCHOR::GetTextLineHeight() * 16));
+                                  wabi::GfVec2f(-FLT_MIN, ANCHOR::GetTextLineHeight() * 16));
       ANCHOR::Text("Data: %p\nSize: %d\nCapacity: %d",
                    (void *)my_str.begin(),
                    my_str.size(),
@@ -1841,7 +1841,7 @@ static void ShowDemoWindowWidgets()
                         overlay,
                         -1.0f,
                         1.0f,
-                        GfVec2f(0, 80.0f));
+                        wabi::GfVec2f(0, 80.0f));
     }
     ANCHOR::PlotHistogram("Histogram",
                           arr,
@@ -1850,7 +1850,7 @@ static void ShowDemoWindowWidgets()
                           NULL,
                           0.0f,
                           1.0f,
-                          GfVec2f(0, 80.0f));
+                          wabi::GfVec2f(0, 80.0f));
 
     // Use functions to generate output
     // FIXME: This is rather awkward because current plot API only pass in indices.
@@ -1873,7 +1873,7 @@ static void ShowDemoWindowWidgets()
     ANCHOR::SameLine();
     ANCHOR::SliderInt("Sample count", &display_count, 1, 400);
     float (*func)(void *, int) = (func_type == 0) ? Funcs::Sin : Funcs::Saw;
-    ANCHOR::PlotLines("Lines", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, GfVec2f(0, 80));
+    ANCHOR::PlotLines("Lines", func, NULL, display_count, 0, NULL, -1.0f, 1.0f, wabi::GfVec2f(0, 80));
     ANCHOR::PlotHistogram("Histogram",
                           func,
                           NULL,
@@ -1882,7 +1882,7 @@ static void ShowDemoWindowWidgets()
                           NULL,
                           -1.0f,
                           1.0f,
-                          GfVec2f(0, 80));
+                          wabi::GfVec2f(0, 80));
     ANCHOR::Separator();
 
     // Animate a simple progress bar
@@ -1899,21 +1899,21 @@ static void ShowDemoWindowWidgets()
       }
     }
 
-    // Typically we would use GfVec2f(-1.0f,0.0f) or GfVec2f(-FLT_MIN,0.0f) to use all available
-    // width, or GfVec2f(width,0.0f) for a specified width. GfVec2f(0.0f,0.0f) uses ItemWidth.
-    ANCHOR::ProgressBar(progress, GfVec2f(0.0f, 0.0f));
+    // Typically we would use wabi::GfVec2f(-1.0f,0.0f) or wabi::GfVec2f(-FLT_MIN,0.0f) to use all available
+    // width, or wabi::GfVec2f(width,0.0f) for a specified width. wabi::GfVec2f(0.0f,0.0f) uses ItemWidth.
+    ANCHOR::ProgressBar(progress, wabi::GfVec2f(0.0f, 0.0f));
     ANCHOR::SameLine(0.0f, ANCHOR::GetStyle().ItemInnerSpacing[0]);
     ANCHOR::Text("Progress Bar");
 
     float progress_saturated = ANCHOR_CLAMP(progress, 0.0f, 1.0f);
     char buf[32];
     sprintf(buf, "%d/%d", (int)(progress_saturated * 1753), 1753);
-    ANCHOR::ProgressBar(progress, GfVec2f(0.f, 0.f), buf);
+    ANCHOR::ProgressBar(progress, wabi::GfVec2f(0.f, 0.f), buf);
     ANCHOR::TreePop();
   }
 
   if (ANCHOR::TreeNode("Color/Picker Widgets")) {
-    static GfVec4f color = GfVec4f(114.0f / 255.0f,
+    static wabi::GfVec4f color = wabi::GfVec4f(114.0f / 255.0f,
                                    144.0f / 255.0f,
                                    154.0f / 255.0f,
                                    200.0f / 255.0f);
@@ -1969,7 +1969,7 @@ static void ShowDemoWindowWidgets()
 
     // Generate a default palette. The palette will persist and can be edited.
     static bool saved_palette_init = true;
-    static GfVec4f saved_palette[32] = {};
+    static wabi::GfVec4f saved_palette[32] = {};
     if (saved_palette_init) {
       for (int n = 0; n < ANCHOR_ARRAYSIZE(saved_palette); n++) {
         ANCHOR::ColorConvertHSVtoRGB(n / 31.0f,
@@ -1983,7 +1983,7 @@ static void ShowDemoWindowWidgets()
       saved_palette_init = false;
     }
 
-    static GfVec4f backup_color;
+    static wabi::GfVec4f backup_color;
     bool open_popup = ANCHOR::ColorButton("MyColor##3b", color, misc_flags);
     ANCHOR::SameLine(0, ANCHOR::GetStyle().ItemInnerSpacing[0]);
     open_popup |= ANCHOR::Button("Palette");
@@ -2005,13 +2005,13 @@ static void ShowDemoWindowWidgets()
       ANCHOR::ColorButton("##current",
                           color,
                           AnchorColorEditFlags_NoPicker | AnchorColorEditFlags_AlphaPreviewHalf,
-                          GfVec2f(60, 40));
+                          wabi::GfVec2f(60, 40));
       ANCHOR::Text("Previous");
       if (ANCHOR::ColorButton("##previous",
                               backup_color,
                               AnchorColorEditFlags_NoPicker |
                                 AnchorColorEditFlags_AlphaPreviewHalf,
-                              GfVec2f(60, 40)))
+                              wabi::GfVec2f(60, 40)))
         color = backup_color;
       ANCHOR::Separator();
       ANCHOR::Text("Palette");
@@ -2026,8 +2026,8 @@ static void ShowDemoWindowWidgets()
         if (ANCHOR::ColorButton("##palette",
                                 saved_palette[n],
                                 palette_button_flags,
-                                GfVec2f(20, 20)))
-          color = GfVec4f(saved_palette[n][0],
+                                wabi::GfVec2f(20, 20)))
+          color = wabi::GfVec4f(saved_palette[n][0],
                           saved_palette[n][1],
                           saved_palette[n][2],
                           color[3]);  // Preserve alpha!
@@ -2054,16 +2054,16 @@ static void ShowDemoWindowWidgets()
     static bool no_border = false;
     ANCHOR::Checkbox("AnchorColorEditFlags_NoBorder", &no_border);
     ANCHOR::ColorButton("MyColor##3c",
-                        *(GfVec4f *)&color,
+                        *(wabi::GfVec4f *)&color,
                         misc_flags | (no_border ? AnchorColorEditFlags_NoBorder : 0),
-                        GfVec2f(80, 80));
+                        wabi::GfVec2f(80, 80));
 
     ANCHOR::Text("Color picker:");
     static bool alpha = true;
     static bool alpha_bar = true;
     static bool side_preview = true;
     static bool ref_color = false;
-    static GfVec4f ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+    static wabi::GfVec4f ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
     static int display_mode = 0;
     static int picker_mode = 0;
     ANCHOR::Checkbox("With Alpha", &alpha);
@@ -2133,7 +2133,7 @@ static void ShowDemoWindowWidgets()
                                   AnchorColorEditFlags_PickerHueWheel);
 
     // HSV encoded support (to avoid RGB<>HSV round trips and singularities when S==0 or V==0)
-    static GfVec4f color_hsv(0.23f, 1.0f, 1.0f, 1.0f);  // Stored as HSV!
+    static wabi::GfVec4f color_hsv(0.23f, 1.0f, 1.0f, 1.0f);  // Stored as HSV!
     ANCHOR::Spacing();
     ANCHOR::Text("HSV encoded colors");
     ANCHOR::SameLine();
@@ -2612,10 +2612,10 @@ static void ShowDemoWindowWidgets()
 
   if (ANCHOR::TreeNode("Vertical Sliders")) {
     const float spacing = 4;
-    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(spacing, spacing));
+    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, wabi::GfVec2f(spacing, spacing));
 
     static int int_value = 0;
-    ANCHOR::VSliderInt("##int", GfVec2f(18, 160), &int_value, 0, 5);
+    ANCHOR::VSliderInt("##int", wabi::GfVec2f(18, 160), &int_value, 0, 5);
     ANCHOR::SameLine();
 
     static float values[7] = {0.0f, 0.60f, 0.35f, 0.9f, 0.70f, 0.20f, 0.0f};
@@ -2630,7 +2630,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::PushStyleColor(AnchorCol_FrameBgActive,
                              AnchorColor::HSV(i / 7.0f, 0.7f, 0.5f).Value);
       ANCHOR::PushStyleColor(AnchorCol_SliderGrab, AnchorColor::HSV(i / 7.0f, 0.9f, 0.9f).Value);
-      ANCHOR::VSliderFloat("##v", GfVec2f(18, 160), &values[i], 0.0f, 1.0f, "");
+      ANCHOR::VSliderFloat("##v", wabi::GfVec2f(18, 160), &values[i], 0.0f, 1.0f, "");
       if (ANCHOR::IsItemActive() || ANCHOR::IsItemHovered())
         ANCHOR::SetTooltip("%.3f", values[i]);
       ANCHOR::PopStyleColor(4);
@@ -2642,7 +2642,7 @@ static void ShowDemoWindowWidgets()
     ANCHOR::PushID("set2");
     static float values2[4] = {0.20f, 0.80f, 0.40f, 0.25f};
     const int rows = 3;
-    const GfVec2f small_slider_size(18, (float)(int)((160.0f - (rows - 1) * spacing) / rows));
+    const wabi::GfVec2f small_slider_size(18, (float)(int)((160.0f - (rows - 1) * spacing) / rows));
     for (int nx = 0; nx < 4; nx++) {
       if (nx > 0)
         ANCHOR::SameLine();
@@ -2665,7 +2665,7 @@ static void ShowDemoWindowWidgets()
         ANCHOR::SameLine();
       ANCHOR::PushID(i);
       ANCHOR::PushStyleVar(AnchorStyleVar_GrabMinSize, 40);
-      ANCHOR::VSliderFloat("##v", GfVec2f(40, 160), &values[i], 0.0f, 1.0f, "%.2f\nsec");
+      ANCHOR::VSliderFloat("##v", wabi::GfVec2f(40, 160), &values[i], 0.0f, 1.0f, "%.2f\nsec");
       ANCHOR::PopStyleVar();
       ANCHOR::PopID();
     }
@@ -2713,7 +2713,7 @@ static void ShowDemoWindowWidgets()
         ANCHOR::PushID(n);
         if ((n % 3) != 0)
           ANCHOR::SameLine();
-        ANCHOR::Button(names[n], GfVec2f(60, 60));
+        ANCHOR::Button(names[n], wabi::GfVec2f(60, 60));
 
         // Our buttons are both drag sources and drag targets here!
         if (ANCHOR::BeginDragDropSource(AnchorDragDropFlags_None)) {
@@ -2926,7 +2926,7 @@ static void ShowDemoWindowWidgets()
     ANCHOR::Checkbox("Embed everything inside a child window (for additional testing)",
                      &embed_all_inside_a_child_window);
     if (embed_all_inside_a_child_window)
-      ANCHOR::BeginChild("outer_child", GfVec2f(0, ANCHOR::GetFontSize() * 20.0f), true);
+      ANCHOR::BeginChild("outer_child", wabi::GfVec2f(0, ANCHOR::GetFontSize() * 20.0f), true);
 
     // Testing IsWindowFocused() function with its various flags.
     // Note that the AnchorFocusedFlags_XXX flags can be combined.
@@ -2963,7 +2963,7 @@ static void ShowDemoWindowWidgets()
       ANCHOR::IsWindowHovered(AnchorHoveredFlags_RootWindow),
       ANCHOR::IsWindowHovered(AnchorHoveredFlags_AnyWindow));
 
-    ANCHOR::BeginChild("child", GfVec2f(0, 50), true);
+    ANCHOR::BeginChild("child", wabi::GfVec2f(0, 50), true);
     ANCHOR::Text("This is another child window for testing the _ChildWindows flag.");
     ANCHOR::EndChild();
     if (embed_all_inside_a_child_window)
@@ -3022,7 +3022,7 @@ static void ShowDemoWindowLayout()
       if (disable_mouse_wheel)
         window_flags |= AnchorWindowFlags_NoScrollWithMouse;
       ANCHOR::BeginChild("ChildL",
-                         GfVec2f(ANCHOR::GetWindowContentRegionWidth() * 0.5f, 260),
+                         wabi::GfVec2f(ANCHOR::GetWindowContentRegionWidth() * 0.5f, 260),
                          false,
                          window_flags);
       for (int i = 0; i < 100; i++)
@@ -3040,7 +3040,7 @@ static void ShowDemoWindowLayout()
       if (!disable_menu)
         window_flags |= AnchorWindowFlags_MenuBar;
       ANCHOR::PushStyleVar(AnchorStyleVar_ChildRounding, 5.0f);
-      ANCHOR::BeginChild("ChildR", GfVec2f(0, 260), true, window_flags);
+      ANCHOR::BeginChild("ChildR", wabi::GfVec2f(0, 260), true, window_flags);
       if (!disable_menu && ANCHOR::BeginMenuBar()) {
         if (ANCHOR::BeginMenu("Menu")) {
           ShowExampleMenuFile();
@@ -3055,7 +3055,7 @@ static void ShowDemoWindowLayout()
           char buf[32];
           sprintf(buf, "%03d", i);
           ANCHOR::TableNextColumn();
-          ANCHOR::Button(buf, GfVec2f(-FLT_MIN, 0.0f));
+          ANCHOR::Button(buf, wabi::GfVec2f(-FLT_MIN, 0.0f));
         }
         ANCHOR::EndTable();
       }
@@ -3082,13 +3082,13 @@ static void ShowDemoWindowLayout()
 
       ANCHOR::SetCursorPosX(ANCHOR::GetCursorPosX() + (float)offset_x);
       ANCHOR::PushStyleColor(AnchorCol_ChildBg, ANCHOR_COL32(255, 0, 0, 100));
-      ANCHOR::BeginChild("Red", GfVec2f(200, 100), true, AnchorWindowFlags_None);
+      ANCHOR::BeginChild("Red", wabi::GfVec2f(200, 100), true, AnchorWindowFlags_None);
       for (int n = 0; n < 50; n++)
         ANCHOR::Text("Some test %d", n);
       ANCHOR::EndChild();
       bool child_is_hovered = ANCHOR::IsItemHovered();
-      GfVec2f child_rect_min = ANCHOR::GetItemRectMin();
-      GfVec2f child_rect_max = ANCHOR::GetItemRectMax();
+      wabi::GfVec2f child_rect_min = ANCHOR::GetItemRectMin();
+      wabi::GfVec2f child_rect_max = ANCHOR::GetItemRectMax();
       ANCHOR::PopStyleColor();
       ANCHOR::Text("Hovered: %d", child_is_hovered);
       ANCHOR::Text("Rect of child window is: (%.0f,%.0f) (%.0f,%.0f)",
@@ -3183,12 +3183,12 @@ static void ShowDemoWindowLayout()
     // Text
     ANCHOR::Text("Two items: Hello");
     ANCHOR::SameLine();
-    ANCHOR::TextColored(GfVec4f(1, 1, 0, 1), "Sailor");
+    ANCHOR::TextColored(wabi::GfVec4f(1, 1, 0, 1), "Sailor");
 
     // Adjust spacing
     ANCHOR::Text("More spacing: Hello");
     ANCHOR::SameLine(0, 20);
-    ANCHOR::TextColored(GfVec4f(1, 1, 0, 1), "Sailor");
+    ANCHOR::TextColored(wabi::GfVec4f(1, 1, 0, 1), "Sailor");
 
     // Button
     ANCHOR::AlignTextToFramePadding();
@@ -3257,7 +3257,7 @@ static void ShowDemoWindowLayout()
     ANCHOR::PopItemWidth();
 
     // Dummy
-    GfVec2f button_sz(40, 40);
+    wabi::GfVec2f button_sz(40, 40);
     ANCHOR::Button("A", button_sz);
     ANCHOR::SameLine();
     ANCHOR::Dummy(button_sz);
@@ -3308,15 +3308,15 @@ static void ShowDemoWindowLayout()
         ANCHOR::SetTooltip("First group hovered");
     }
     // Capture the group size and create widgets using the same size
-    GfVec2f size = ANCHOR::GetItemRectSize();
+    wabi::GfVec2f size = ANCHOR::GetItemRectSize();
     const float values[5] = {0.5f, 0.20f, 0.80f, 0.60f, 0.25f};
     ANCHOR::PlotHistogram("##values", values, ANCHOR_ARRAYSIZE(values), 0, NULL, 0.0f, 1.0f, size);
 
     ANCHOR::Button("ACTION",
-                   GfVec2f((size[0] - ANCHOR::GetStyle().ItemSpacing[0]) * 0.5f, size[1]));
+                   wabi::GfVec2f((size[0] - ANCHOR::GetStyle().ItemSpacing[0]) * 0.5f, size[1]));
     ANCHOR::SameLine();
     ANCHOR::Button("REACTION",
-                   GfVec2f((size[0] - ANCHOR::GetStyle().ItemSpacing[0]) * 0.5f, size[1]));
+                   wabi::GfVec2f((size[0] - ANCHOR::GetStyle().ItemSpacing[0]) * 0.5f, size[1]));
     ANCHOR::EndGroup();
     ANCHOR::SameLine();
 
@@ -3425,9 +3425,9 @@ static void ShowDemoWindowLayout()
 
       // SmallButton() sets FramePadding to zero. Text baseline is aligned to match baseline of
       // previous Button.
-      ANCHOR::Button("80x80", GfVec2f(80, 80));
+      ANCHOR::Button("80x80", wabi::GfVec2f(80, 80));
       ANCHOR::SameLine();
-      ANCHOR::Button("50x50", GfVec2f(50, 50));
+      ANCHOR::Button("50x50", wabi::GfVec2f(50, 50));
       ANCHOR::SameLine();
       ANCHOR::Button("Button()");
       ANCHOR::SameLine();
@@ -3522,7 +3522,7 @@ static void ShowDemoWindowLayout()
                                                                        0;
       const ANCHOR_ID child_id = ANCHOR::GetID((void *)(intptr_t)i);
       const bool child_is_visible = ANCHOR::BeginChild(child_id,
-                                                       GfVec2f(child_w, 200.0f),
+                                                       wabi::GfVec2f(child_w, 200.0f),
                                                        true,
                                                        child_flags);
       if (ANCHOR::BeginMenuBar()) {
@@ -3537,7 +3537,7 @@ static void ShowDemoWindowLayout()
       {
         for (int item = 0; item < 100; item++) {
           if (enable_track && item == track_item) {
-            ANCHOR::TextColored(GfVec4f(1, 1, 0, 1), "Item %d", item);
+            ANCHOR::TextColored(wabi::GfVec4f(1, 1, 0, 1), "Item %d", item);
             ANCHOR::SetScrollHereY(i * 0.25f);  // 0.0f:top, 0.5f:center, 1.0f:bottom
           } else {
             ANCHOR::Text("Item %d", item);
@@ -3569,7 +3569,7 @@ static void ShowDemoWindowLayout()
                                          0);
       ANCHOR_ID child_id = ANCHOR::GetID((void *)(intptr_t)i);
       bool child_is_visible = ANCHOR::BeginChild(child_id,
-                                                 GfVec2f(-100, child_height),
+                                                 wabi::GfVec2f(-100, child_height),
                                                  true,
                                                  child_flags);
       if (scroll_to_off)
@@ -3582,7 +3582,7 @@ static void ShowDemoWindowLayout()
           if (item > 0)
             ANCHOR::SameLine();
           if (enable_track && item == track_item) {
-            ANCHOR::TextColored(GfVec4f(1, 1, 0, 1), "Item %d", item);
+            ANCHOR::TextColored(wabi::GfVec4f(1, 1, 0, 1), "Item %d", item);
             ANCHOR::SetScrollHereX(i * 0.25f);  // 0.0f:left, 0.5f:center, 1.0f:right
           } else {
             ANCHOR::Text("Item %d", item);
@@ -3608,8 +3608,8 @@ static void ShowDemoWindowLayout()
     static int lines = 7;
     ANCHOR::SliderInt("Lines", &lines, 1, 15);
     ANCHOR::PushStyleVar(AnchorStyleVar_FrameRounding, 3.0f);
-    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(2.0f, 1.0f));
-    GfVec2f scrolling_child_size = GfVec2f(0, ANCHOR::GetFrameHeightWithSpacing() * 7 + 30);
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(2.0f, 1.0f));
+    wabi::GfVec2f scrolling_child_size = wabi::GfVec2f(0, ANCHOR::GetFrameHeightWithSpacing() * 7 + 30);
     ANCHOR::BeginChild("scrolling",
                        scrolling_child_size,
                        true,
@@ -3635,7 +3635,7 @@ static void ShowDemoWindowLayout()
         ANCHOR::PushStyleColor(AnchorCol_Button, AnchorColor::HSV(hue, 0.6f, 0.6f).Value);
         ANCHOR::PushStyleColor(AnchorCol_ButtonHovered, AnchorColor::HSV(hue, 0.7f, 0.7f).Value);
         ANCHOR::PushStyleColor(AnchorCol_ButtonActive, AnchorColor::HSV(hue, 0.8f, 0.8f).Value);
-        ANCHOR::Button(label, GfVec2f(40.0f + sinf((float)(line + n)) * 20.0f, 0.0f));
+        ANCHOR::Button(label, wabi::GfVec2f(40.0f + sinf((float)(line + n)) * 20.0f, 0.0f));
         ANCHOR::PopStyleColor(3);
         ANCHOR::PopID();
       }
@@ -3680,12 +3680,12 @@ static void ShowDemoWindowLayout()
       static bool explicit_content_size = false;
       static float contents_size_x = 300.0f;
       if (explicit_content_size)
-        ANCHOR::SetNextWindowContentSize(GfVec2f(contents_size_x, 0.0f));
+        ANCHOR::SetNextWindowContentSize(wabi::GfVec2f(contents_size_x, 0.0f));
       ANCHOR::Begin("Horizontal contents size demo window",
                     &show_horizontal_contents_size_demo_window,
                     show_h_scrollbar ? AnchorWindowFlags_HorizontalScrollbar : 0);
-      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(2, 0));
-      ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(2, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, wabi::GfVec2f(2, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(2, 0));
       HelpMarker(
         "Test of different widgets react and impact the work rectangle growing when horizontal "
         "scrolling is enabled.\n\nUse 'Metrics->Tools->Show windows rectangles' to visualize "
@@ -3710,19 +3710,19 @@ static void ShowDemoWindowLayout()
         ANCHOR::SameLine();
         ANCHOR::SetNextItemWidth(100);
         ANCHOR::DragFloat("##csx", &contents_size_x);
-        GfVec2f p = ANCHOR::GetCursorScreenPos();
+        wabi::GfVec2f p = ANCHOR::GetCursorScreenPos();
         ANCHOR::GetWindowDrawList()->AddRectFilled(p,
-                                                   GfVec2f(p[0] + 10, p[1] + 10),
+                                                   wabi::GfVec2f(p[0] + 10, p[1] + 10),
                                                    ANCHOR_COL32_WHITE);
-        ANCHOR::GetWindowDrawList()->AddRectFilled(GfVec2f(p[0] + contents_size_x - 10, p[1]),
-                                                   GfVec2f(p[0] + contents_size_x, p[1] + 10),
+        ANCHOR::GetWindowDrawList()->AddRectFilled(wabi::GfVec2f(p[0] + contents_size_x - 10, p[1]),
+                                                   wabi::GfVec2f(p[0] + contents_size_x, p[1] + 10),
                                                    ANCHOR_COL32_WHITE);
-        ANCHOR::Dummy(GfVec2f(0, 10));
+        ANCHOR::Dummy(wabi::GfVec2f(0, 10));
       }
       ANCHOR::PopStyleVar(2);
       ANCHOR::Separator();
       if (show_button) {
-        ANCHOR::Button("this is a 300-wide button", GfVec2f(300, 0));
+        ANCHOR::Button("this is a 300-wide button", wabi::GfVec2f(300, 0));
       }
       if (show_tree_nodes) {
         bool open = true;
@@ -3772,7 +3772,7 @@ static void ShowDemoWindowLayout()
         ANCHOR::EndTabBar();
       }
       if (show_child) {
-        ANCHOR::BeginChild("child", GfVec2f(0, 0), true);
+        ANCHOR::BeginChild("child", wabi::GfVec2f(0, 0), true);
         ANCHOR::EndChild();
       }
       ANCHOR::End();
@@ -3782,8 +3782,8 @@ static void ShowDemoWindowLayout()
   }
 
   if (ANCHOR::TreeNode("Clipping")) {
-    static GfVec2f size(100.0f, 100.0f);
-    static GfVec2f offset(30.0f, 30.0f);
+    static wabi::GfVec2f size(100.0f, 100.0f);
+    static wabi::GfVec2f offset(30.0f, 30.0f);
     ANCHOR::DragFloat2("size", (float *)&size, 0.5f, 1.0f, 200.0f, "%.0f");
     ANCHOR::TextWrapped("(Click and drag to scroll)");
 
@@ -3798,10 +3798,10 @@ static void ShowDemoWindowLayout()
         offset[0] += ANCHOR::GetIO().MouseDelta[0];
         offset[1] += ANCHOR::GetIO().MouseDelta[1];
       }
-      const GfVec2f p0 = ANCHOR::GetItemRectMin();
-      const GfVec2f p1 = ANCHOR::GetItemRectMax();
+      const wabi::GfVec2f p0 = ANCHOR::GetItemRectMin();
+      const wabi::GfVec2f p1 = ANCHOR::GetItemRectMax();
       const char *text_str = "Line 1 hello\nLine 2 clip me!";
-      const GfVec2f text_pos = GfVec2f(p0[0] + offset[0], p0[1] + offset[1]);
+      const wabi::GfVec2f text_pos = wabi::GfVec2f(p0[0] + offset[0], p0[1] + offset[1]);
       AnchorDrawList *draw_list = ANCHOR::GetWindowDrawList();
 
       switch (n) {
@@ -3831,10 +3831,10 @@ static void ShowDemoWindowLayout()
             "Will alter only this specific AnchorDrawList::AddText() rendering.\n"
             "(this is often used internally to avoid altering the clipping rectangle and "
             "minimize draw calls)");
-          GfVec4f clip_rect(p0[0],
+          wabi::GfVec4f clip_rect(p0[0],
                             p0[1],
                             p1[0],
-                            p1[1]);  // AddText() takes a GfVec4f* here so let's convert.
+                            p1[1]);  // AddText() takes a wabi::GfVec4f* here so let's convert.
           draw_list->AddRectFilled(p0, p1, ANCHOR_COL32(90, 90, 120, 255));
           draw_list->AddText(ANCHOR::GetFont(),
                              ANCHOR::GetFontSize(),
@@ -4056,8 +4056,8 @@ static void ShowDemoWindowPopups()
       ANCHOR::OpenPopup("Delete?");
 
     // Always center this window when appearing
-    GfVec2f center = ANCHOR::GetMainViewport()->GetCenter();
-    ANCHOR::SetNextWindowPos(center, AnchorCond_Appearing, GfVec2f(0.5f, 0.5f));
+    wabi::GfVec2f center = ANCHOR::GetMainViewport()->GetCenter();
+    ANCHOR::SetNextWindowPos(center, AnchorCond_Appearing, wabi::GfVec2f(0.5f, 0.5f));
 
     if (ANCHOR::BeginPopupModal("Delete?", NULL, AnchorWindowFlags_AlwaysAutoResize)) {
       ANCHOR::Text(
@@ -4068,16 +4068,16 @@ static void ShowDemoWindowPopups()
       // ANCHOR::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
 
       static bool dont_ask_me_next_time = false;
-      ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(0, 0));
       ANCHOR::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
       ANCHOR::PopStyleVar();
 
-      if (ANCHOR::Button("OK", GfVec2f(120, 0))) {
+      if (ANCHOR::Button("OK", wabi::GfVec2f(120, 0))) {
         ANCHOR::CloseCurrentPopup();
       }
       ANCHOR::SetItemDefaultFocus();
       ANCHOR::SameLine();
-      if (ANCHOR::Button("Cancel", GfVec2f(120, 0))) {
+      if (ANCHOR::Button("Cancel", wabi::GfVec2f(120, 0))) {
         ANCHOR::CloseCurrentPopup();
       }
       ANCHOR::EndPopup();
@@ -4234,9 +4234,9 @@ static void PushStyleCompact()
   AnchorStyle &style = ANCHOR::GetStyle();
   ANCHOR::PushStyleVar(
     AnchorStyleVar_FramePadding,
-    GfVec2f(style.FramePadding[0], (float)(int)(style.FramePadding[1] * 0.60f)));
+    wabi::GfVec2f(style.FramePadding[0], (float)(int)(style.FramePadding[1] * 0.60f)));
   ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing,
-                       GfVec2f(style.ItemSpacing[0], (float)(int)(style.ItemSpacing[1] * 0.60f)));
+                       wabi::GfVec2f(style.ItemSpacing[0], (float)(int)(style.ItemSpacing[1] * 0.60f)));
 }
 
 static void PopStyleCompact()
@@ -4517,7 +4517,7 @@ static void ShowDemoWindowTables()
           if (contents_type == CT_Text)
             ANCHOR::TextUnformatted(buf);
           else if (contents_type)
-            ANCHOR::Button(buf, GfVec2f(-FLT_MIN, 0.0f));
+            ANCHOR::Button(buf, wabi::GfVec2f(-FLT_MIN, 0.0f));
         }
       }
       ANCHOR::EndTable();
@@ -4688,7 +4688,7 @@ static void ShowDemoWindowTables()
     if (ANCHOR::BeginTable("table2",
                            3,
                            flags | AnchorTableFlags_SizingFixedFit,
-                           GfVec2f(0.0f, 0.0f))) {
+                           wabi::GfVec2f(0.0f, 0.0f))) {
       ANCHOR::TableSetupColumn("One");
       ANCHOR::TableSetupColumn("Two");
       ANCHOR::TableSetupColumn("Three");
@@ -4764,7 +4764,7 @@ static void ShowDemoWindowTables()
           } else {
             char buf[32];
             sprintf(buf, "Hello %d,%d", column, row);
-            ANCHOR::Button(buf, GfVec2f(-FLT_MIN, 0.0f));
+            ANCHOR::Button(buf, wabi::GfVec2f(-FLT_MIN, 0.0f));
           }
           // if (ANCHOR::TableGetColumnFlags() & AnchorTableColumnFlags_IsHovered)
           //    ANCHOR::TableSetBgColor(AnchorTableBGTarget_CellBg, ANCHOR_COL32(0, 100, 0, 255));
@@ -4777,7 +4777,7 @@ static void ShowDemoWindowTables()
     // FIXME-TABLE: Vertical border effectively not displayed the same way as horizontal one...
     HelpMarker("Setting style.CellPadding to (0,0) or a custom value.");
     static AnchorTableFlags flags2 = AnchorTableFlags_Borders | AnchorTableFlags_RowBg;
-    static GfVec2f cell_padding(0.0f, 0.0f);
+    static wabi::GfVec2f cell_padding(0.0f, 0.0f);
     static bool show_widget_frame_bg = true;
 
     PushStyleCompact();
@@ -4920,7 +4920,7 @@ static void ShowDemoWindowTables()
     ANCHOR::PopID();
     PopStyleCompact();
 
-    if (ANCHOR::BeginTable("table2", column_count, flags, GfVec2f(0.0f, TEXT_BASE_HEIGHT * 7))) {
+    if (ANCHOR::BeginTable("table2", column_count, flags, wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 7))) {
       for (int cell = 0; cell < 10 * column_count; cell++) {
         ANCHOR::TableNextColumn();
         int column = ANCHOR::TableGetColumnIndex();
@@ -4947,7 +4947,7 @@ static void ShowDemoWindowTables()
             ANCHOR::Button(label);
             break;
           case CT_FillButton:
-            ANCHOR::Button(label, GfVec2f(-FLT_MIN, 0.0f));
+            ANCHOR::Button(label, wabi::GfVec2f(-FLT_MIN, 0.0f));
             break;
           case CT_InputText:
             ANCHOR::SetNextItemWidth(-FLT_MIN);
@@ -4979,7 +4979,7 @@ static void ShowDemoWindowTables()
 
     // When using ScrollX or ScrollY we need to specify a size for our table container!
     // Otherwise by default the table will fit all available space, like a BeginChild() call.
-    GfVec2f outer_size = GfVec2f(0.0f, TEXT_BASE_HEIGHT * 8);
+    wabi::GfVec2f outer_size = wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 8);
     if (ANCHOR::BeginTable("table_scrolly", 3, flags, outer_size)) {
       ANCHOR::TableSetupScrollFreeze(0, 1);  // Make top row always visible
       ANCHOR::TableSetupColumn("One", AnchorTableColumnFlags_None);
@@ -5035,7 +5035,7 @@ static void ShowDemoWindowTables()
 
     // When using ScrollX or ScrollY we need to specify a size for our table container!
     // Otherwise by default the table will fit all available space, like a BeginChild() call.
-    GfVec2f outer_size = GfVec2f(0.0f, TEXT_BASE_HEIGHT * 8);
+    wabi::GfVec2f outer_size = wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 8);
     if (ANCHOR::BeginTable("table_scrollx", 7, flags, outer_size)) {
       ANCHOR::TableSetupScrollFreeze(freeze_cols, freeze_rows);
       ANCHOR::TableSetupColumn(
@@ -5151,7 +5151,7 @@ static void ShowDemoWindowTables()
                                    AnchorTableFlags_BordersOuter | AnchorTableFlags_BordersV |
                                    AnchorTableFlags_Resizable | AnchorTableFlags_Reorderable |
                                    AnchorTableFlags_Hideable | AnchorTableFlags_Sortable;
-    GfVec2f outer_size = GfVec2f(0.0f, TEXT_BASE_HEIGHT * 9);
+    wabi::GfVec2f outer_size = wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 9);
     if (ANCHOR::BeginTable("table_columns_flags", column_count, flags, outer_size)) {
       for (int column = 0; column < column_count; column++)
         ANCHOR::TableSetupColumn(column_names[column], column_flags[column]);
@@ -5353,7 +5353,7 @@ static void ShowDemoWindowTables()
       "be clipped and not visible.");
     PopStyleCompact();
 
-    GfVec2f outer_size = GfVec2f(0.0f, TEXT_BASE_HEIGHT * 5.5f);
+    wabi::GfVec2f outer_size = wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 5.5f);
     if (ANCHOR::BeginTable("table1", 3, flags, outer_size)) {
       for (int row = 0; row < 10; row++) {
         ANCHOR::TableNextRow();
@@ -5373,7 +5373,7 @@ static void ShowDemoWindowTables()
     if (ANCHOR::BeginTable("table2",
                            3,
                            AnchorTableFlags_Borders | AnchorTableFlags_RowBg,
-                           GfVec2f(TEXT_BASE_WIDTH * 30, 0.0f))) {
+                           wabi::GfVec2f(TEXT_BASE_WIDTH * 30, 0.0f))) {
       for (int row = 0; row < 5; row++) {
         ANCHOR::TableNextRow();
         for (int column = 0; column < 3; column++) {
@@ -5387,7 +5387,7 @@ static void ShowDemoWindowTables()
     if (ANCHOR::BeginTable("table3",
                            3,
                            AnchorTableFlags_Borders | AnchorTableFlags_RowBg,
-                           GfVec2f(TEXT_BASE_WIDTH * 30, 0.0f))) {
+                           wabi::GfVec2f(TEXT_BASE_WIDTH * 30, 0.0f))) {
       for (int row = 0; row < 3; row++) {
         ANCHOR::TableNextRow(0, TEXT_BASE_HEIGHT * 1.5f);
         for (int column = 0; column < 3; column++) {
@@ -5441,8 +5441,8 @@ static void ShowDemoWindowTables()
         if (row_bg_type != 0) {
           AnchorU32 row_bg_color = ANCHOR::GetColorU32(
             row_bg_type == 1 ?
-              GfVec4f(0.7f, 0.3f, 0.3f, 0.65f) :
-              GfVec4f(0.2f + row * 0.1f, 0.2f, 0.2f, 0.65f));  // Flat or Gradient?
+              wabi::GfVec4f(0.7f, 0.3f, 0.3f, 0.65f) :
+              wabi::GfVec4f(0.2f + row * 0.1f, 0.2f, 0.2f, 0.65f));  // Flat or Gradient?
           ANCHOR::TableSetBgColor(AnchorTableBGTarget_RowBg0 + row_bg_target, row_bg_color);
         }
 
@@ -5457,7 +5457,7 @@ static void ShowDemoWindowTables()
           // blended over the RowBg and ColumnBg colors) We can also pass a column number as a
           // third parameter to TableSetBgColor() and do this outside the column loop.
           if (row >= 1 && row <= 2 && column >= 1 && column <= 2 && cell_bg_type == 1) {
-            AnchorU32 cell_bg_color = ANCHOR::GetColorU32(GfVec4f(0.3f, 0.3f, 0.7f, 0.65f));
+            AnchorU32 cell_bg_color = ANCHOR::GetColorU32(wabi::GfVec4f(0.3f, 0.3f, 0.7f, 0.65f));
             ANCHOR::TableSetBgColor(AnchorTableBGTarget_CellBg, cell_bg_color);
           }
         }
@@ -5604,7 +5604,7 @@ static void ShowDemoWindowTables()
         const char *column_name = ANCHOR::TableGetColumnName(
           column);  // Retrieve name passed to TableSetupColumn()
         ANCHOR::PushID(column);
-        ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
+        ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(0, 0));
         ANCHOR::Checkbox("##checkall", &column_selected[column]);
         ANCHOR::PopStyleVar();
         ANCHOR::SameLine(0.0f, ANCHOR::GetStyle().ItemInnerSpacing[0]);
@@ -5824,7 +5824,7 @@ static void ShowDemoWindowTables()
     if (ANCHOR::BeginTable("table_sorting",
                            4,
                            flags,
-                           GfVec2f(0.0f, TEXT_BASE_HEIGHT * 15),
+                           wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 15),
                            0.0f)) {
       // Declare columns
       // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be
@@ -5922,7 +5922,7 @@ static void ShowDemoWindowTables()
     static int freeze_cols = 1;
     static int freeze_rows = 1;
     static int items_count = ANCHOR_ARRAYSIZE(template_items_names) * 2;
-    static GfVec2f outer_size_value = GfVec2f(0.0f, TEXT_BASE_HEIGHT * 12);
+    static wabi::GfVec2f outer_size_value = wabi::GfVec2f(0.0f, TEXT_BASE_HEIGHT * 12);
     static float row_min_height = 0.0f;           // Auto
     static float inner_width_with_scroll = 0.0f;  // Auto-extend
     static bool outer_size_enabled = true;
@@ -6130,7 +6130,7 @@ static void ShowDemoWindowTables()
 
     const AnchorDrawList *parent_draw_list = ANCHOR::GetWindowDrawList();
     const int parent_draw_list_draw_cmd_count = parent_draw_list->CmdBuffer.Size;
-    GfVec2f table_scroll_cur, table_scroll_max;    // For debug display
+    wabi::GfVec2f table_scroll_cur, table_scroll_max;    // For debug display
     const AnchorDrawList *table_draw_list = NULL;  // "
 
     // Submit table
@@ -6139,7 +6139,7 @@ static void ShowDemoWindowTables()
     if (ANCHOR::BeginTable("table_advanced",
                            6,
                            flags,
-                           outer_size_enabled ? outer_size_value : GfVec2f(0, 0),
+                           outer_size_enabled ? outer_size_value : wabi::GfVec2f(0, 0),
                            inner_width_to_use)) {
       // Declare columns
       // We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be
@@ -6229,7 +6229,7 @@ static void ShowDemoWindowTables()
           else if (contents_type == CT_SmallButton)
             ANCHOR::SmallButton(label);
           else if (contents_type == CT_FillButton)
-            ANCHOR::Button(label, GfVec2f(-FLT_MIN, 0.0f));
+            ANCHOR::Button(label, wabi::GfVec2f(-FLT_MIN, 0.0f));
           else if (contents_type == CT_Selectable || contents_type == CT_SelectableSpanRow) {
             AnchorSelectableFlags selectable_flags = (contents_type == CT_SelectableSpanRow) ?
                                                        AnchorSelectableFlags_SpanAllColumns |
@@ -6238,7 +6238,7 @@ static void ShowDemoWindowTables()
             if (ANCHOR::Selectable(label,
                                    item_is_selected,
                                    selectable_flags,
-                                   GfVec2f(0, row_min_height))) {
+                                   wabi::GfVec2f(0, row_min_height))) {
               if (ANCHOR::GetIO().KeyCtrl) {
                 if (item_is_selected)
                   selection.find_erase_unsorted(item->ID);
@@ -6293,8 +6293,8 @@ static void ShowDemoWindowTables()
       ANCHOR::PopButtonRepeat();
 
       // Store some info to display debug details below
-      table_scroll_cur = GfVec2f(ANCHOR::GetScrollX(), ANCHOR::GetScrollY());
-      table_scroll_max = GfVec2f(ANCHOR::GetScrollMaxX(), ANCHOR::GetScrollMaxY());
+      table_scroll_cur = wabi::GfVec2f(ANCHOR::GetScrollX(), ANCHOR::GetScrollY());
+      table_scroll_max = wabi::GfVec2f(ANCHOR::GetScrollMaxX(), ANCHOR::GetScrollMaxY());
       table_draw_list = ANCHOR::GetWindowDrawList();
       ANCHOR::EndTable();
     }
@@ -6347,7 +6347,7 @@ static void ShowDemoWindowColumns()
       sprintf(label, "Item %d", n);
       if (ANCHOR::Selectable(label)) {
       }
-      // if (ANCHOR::Button(label, GfVec2f(-FLT_MIN,0.0f))) {}
+      // if (ANCHOR::Button(label, wabi::GfVec2f(-FLT_MIN,0.0f))) {}
       ANCHOR::NextColumn();
     }
     ANCHOR::Columns(1);
@@ -6410,7 +6410,7 @@ static void ShowDemoWindowColumns()
       ANCHOR::Text("Avail %.2f", ANCHOR::GetContentRegionAvail()[0]);
       ANCHOR::Text("Offset %.2f", ANCHOR::GetColumnOffset());
       ANCHOR::Text("Long text that is likely to clip");
-      ANCHOR::Button("Button", GfVec2f(-FLT_MIN, 0.0f));
+      ANCHOR::Button("Button", wabi::GfVec2f(-FLT_MIN, 0.0f));
       ANCHOR::NextColumn();
     }
     ANCHOR::Columns(1);
@@ -6473,8 +6473,8 @@ static void ShowDemoWindowColumns()
   }
 
   if (ANCHOR::TreeNode("Horizontal Scrolling")) {
-    ANCHOR::SetNextWindowContentSize(GfVec2f(1500.0f, 0.0f));
-    GfVec2f child_size = GfVec2f(0, ANCHOR::GetFontSize() * 20.0f);
+    ANCHOR::SetNextWindowContentSize(wabi::GfVec2f(1500.0f, 0.0f));
+    wabi::GfVec2f child_size = wabi::GfVec2f(0, ANCHOR::GetFontSize() * 20.0f);
     ANCHOR::BeginChild("##ScrollingRegion",
                        child_size,
                        false,
@@ -6747,9 +6747,9 @@ static void ShowDemoWindowMisc()
       // Drag operations gets "unlocked" when the mouse has moved past a certain threshold
       // (the default threshold is stored in io.MouseDragThreshold). You can request a lower or
       // higher threshold using the second parameter of IsMouseDragging() and GetMouseDragDelta().
-      GfVec2f value_raw = ANCHOR::GetMouseDragDelta(0, 0.0f);
-      GfVec2f value_with_lock_threshold = ANCHOR::GetMouseDragDelta(0);
-      GfVec2f mouse_delta = io.MouseDelta;
+      wabi::GfVec2f value_raw = ANCHOR::GetMouseDragDelta(0, 0.0f);
+      wabi::GfVec2f value_with_lock_threshold = ANCHOR::GetMouseDragDelta(0);
+      wabi::GfVec2f mouse_delta = io.MouseDelta;
       ANCHOR::Text("GetMouseDragDelta(0):");
       ANCHOR::Text("  w/ default threshold: (%.1f, %.1f)",
                    value_with_lock_threshold[0],
@@ -6812,7 +6812,7 @@ void ANCHOR::ShowAboutWindow(bool *p_open)
     AnchorStyle &style = ANCHOR::GetStyle();
 
     bool copy_to_clipboard = ANCHOR::Button("Copy to clipboard");
-    GfVec2f child_size = GfVec2f(0, ANCHOR::GetTextLineHeightWithSpacing() * 18);
+    wabi::GfVec2f child_size = wabi::GfVec2f(0, ANCHOR::GetTextLineHeightWithSpacing() * 18);
     ANCHOR::BeginChildFrame(ANCHOR::GetID("cfg_infos"), child_size, AnchorWindowFlags_NoMove);
     if (copy_to_clipboard) {
       ANCHOR::LogToClipboard();
@@ -7156,13 +7156,13 @@ void ANCHOR::ShowStyleEditor(AnchorStyle *ref)
           ANCHOR::LogToClipboard();
         else
           ANCHOR::LogToTTY();
-        ANCHOR::LogText("GfVec4f* colors = ANCHOR::GetStyle().Colors;" ANCHOR_NEWLINE);
+        ANCHOR::LogText("wabi::GfVec4f* colors = ANCHOR::GetStyle().Colors;" ANCHOR_NEWLINE);
         for (int i = 0; i < AnchorCol_COUNT; i++) {
-          const GfVec4f &col = style.Colors[i];
+          const wabi::GfVec4f &col = style.Colors[i];
           const char *name = ANCHOR::GetStyleColorName(i);
-          if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(GfVec4f)) != 0)
+          if (!output_only_modified || memcmp(&col, &ref->Colors[i], sizeof(wabi::GfVec4f)) != 0)
             ANCHOR::LogText(
-              "colors[AnchorCol_%s]%*s= GfVec4f(%.2ff, %.2ff, %.2ff, %.2ff);" ANCHOR_NEWLINE,
+              "colors[AnchorCol_%s]%*s= wabi::GfVec4f(%.2ff, %.2ff, %.2ff, %.2ff);" ANCHOR_NEWLINE,
               name,
               23 - (int)strlen(name),
               "",
@@ -7201,7 +7201,7 @@ void ANCHOR::ShowStyleEditor(AnchorStyle *ref)
         "Right-click to open edit options menu.");
 
       ANCHOR::BeginChild("##colors",
-                         GfVec2f(0, 0),
+                         wabi::GfVec2f(0, 0),
                          true,
                          AnchorWindowFlags_AlwaysVerticalScrollbar |
                            AnchorWindowFlags_AlwaysHorizontalScrollbar |
@@ -7215,7 +7215,7 @@ void ANCHOR::ShowStyleEditor(AnchorStyle *ref)
         ANCHOR::ColorEdit4("##color",
                            (float *)&style.Colors[i],
                            AnchorColorEditFlags_AlphaBar | alpha_flags);
-        if (memcmp(&style.Colors[i], &ref->Colors[i], sizeof(GfVec4f)) != 0) {
+        if (memcmp(&style.Colors[i], &ref->Colors[i], sizeof(wabi::GfVec4f)) != 0) {
           // Tips: in a real user application, you may want to merge and use an icon font into the
           // main font, so instead of "Save"/"Revert" you'd use icons! Read the FAQ and
           // docs/FONTS.md about using icon fonts. It's really easy and super convenient!
@@ -7331,16 +7331,16 @@ void ANCHOR::ShowStyleEditor(AnchorStyle *ref)
           const float offset_x = floorf(canvas_width * 0.5f);
           const float offset_y = floorf(RAD_MAX);
 
-          const GfVec2f p1 = ANCHOR::GetCursorScreenPos();
-          draw_list->AddCircle(GfVec2f(p1[0] + offset_x, p1[1] + offset_y),
+          const wabi::GfVec2f p1 = ANCHOR::GetCursorScreenPos();
+          draw_list->AddCircle(wabi::GfVec2f(p1[0] + offset_x, p1[1] + offset_y),
                                rad,
                                ANCHOR::GetColorU32(AnchorCol_Text));
-          ANCHOR::Dummy(GfVec2f(canvas_width, RAD_MAX * 2));
+          ANCHOR::Dummy(wabi::GfVec2f(canvas_width, RAD_MAX * 2));
 
           /*
-          const GfVec2f p2 = ANCHOR::GetCursorScreenPos();
-          draw_list->AddCircleFilled(GfVec2f(p2[0] + offset_x, p2[1] + offset_y), rad,
-          ANCHOR::GetColorU32(AnchorCol_Text)); ANCHOR::Dummy(GfVec2f(canvas_width, RAD_MAX * 2));
+          const wabi::GfVec2f p2 = ANCHOR::GetCursorScreenPos();
+          draw_list->AddCircleFilled(wabi::GfVec2f(p2[0] + offset_x, p2[1] + offset_y), rad,
+          ANCHOR::GetColorU32(AnchorCol_Text)); ANCHOR::Dummy(wabi::GfVec2f(canvas_width, RAD_MAX * 2));
           */
 
           ANCHOR::EndGroup();
@@ -7443,7 +7443,7 @@ static void ShowExampleMenuFile()
   if (ANCHOR::BeginMenu("Options")) {
     static bool enabled = true;
     ANCHOR::MenuItem("Enabled", "", &enabled);
-    ANCHOR::BeginChild("child", GfVec2f(0, 60), true);
+    ANCHOR::BeginChild("child", wabi::GfVec2f(0, 60), true);
     for (int i = 0; i < 10; i++)
       ANCHOR::Text("Scrolling Text %d", i);
     ANCHOR::EndChild();
@@ -7459,11 +7459,11 @@ static void ShowExampleMenuFile()
     float sz = ANCHOR::GetTextLineHeight();
     for (int i = 0; i < AnchorCol_COUNT; i++) {
       const char *name = ANCHOR::GetStyleColorName((AnchorCol)i);
-      GfVec2f p = ANCHOR::GetCursorScreenPos();
+      wabi::GfVec2f p = ANCHOR::GetCursorScreenPos();
       ANCHOR::GetWindowDrawList()->AddRectFilled(p,
-                                                 GfVec2f(p[0] + sz, p[1] + sz),
+                                                 wabi::GfVec2f(p[0] + sz, p[1] + sz),
                                                  ANCHOR::GetColorU32((AnchorCol)i));
-      ANCHOR::Dummy(GfVec2f(sz, sz));
+      ANCHOR::Dummy(wabi::GfVec2f(sz, sz));
       ANCHOR::SameLine();
       ANCHOR::MenuItem(name);
     }
@@ -7589,7 +7589,7 @@ struct ExampleAppConsole
 
   void Draw(const char *title, bool *p_open)
   {
-    ANCHOR::SetNextWindowSize(GfVec2f(520, 600), AnchorCond_FirstUseEver);
+    ANCHOR::SetNextWindowSize(wabi::GfVec2f(520, 600), AnchorCond_FirstUseEver);
     if (!ANCHOR::Begin(title, p_open)) {
       ANCHOR::End();
       return;
@@ -7650,7 +7650,7 @@ struct ExampleAppConsole
     const float footer_height_to_reserve = ANCHOR::GetStyle().ItemSpacing[1] +
                                            ANCHOR::GetFrameHeightWithSpacing();
     ANCHOR::BeginChild("ScrollingRegion",
-                       GfVec2f(0, -footer_height_to_reserve),
+                       wabi::GfVec2f(0, -footer_height_to_reserve),
                        false,
                        AnchorWindowFlags_HorizontalScrollbar);
     if (ANCHOR::BeginPopupContextWindow()) {
@@ -7684,7 +7684,7 @@ struct ExampleAppConsole
     // list.
     // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your
     // items.
-    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(4, 1));  // Tighten spacing
+    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, wabi::GfVec2f(4, 1));  // Tighten spacing
     if (copy_to_clipboard)
       ANCHOR::LogToClipboard();
     for (int i = 0; i < Items.Size; i++) {
@@ -7694,13 +7694,13 @@ struct ExampleAppConsole
 
       // Normally you would store more information in your item than just a string.
       // (e.g. make Items[] an array of structure, store color/type etc.)
-      GfVec4f color;
+      wabi::GfVec4f color;
       bool has_color = false;
       if (strstr(item, "[error]")) {
-        color = GfVec4f(1.0f, 0.4f, 0.4f, 1.0f);
+        color = wabi::GfVec4f(1.0f, 0.4f, 0.4f, 1.0f);
         has_color = true;
       } else if (strncmp(item, "# ", 2) == 0) {
-        color = GfVec4f(1.0f, 0.8f, 0.6f, 1.0f);
+        color = wabi::GfVec4f(1.0f, 0.8f, 0.6f, 1.0f);
         has_color = true;
       }
       if (has_color)
@@ -7949,14 +7949,14 @@ struct ExampleAppLog
     Filter.Draw("Filter", -100.0f);
 
     ANCHOR::Separator();
-    ANCHOR::BeginChild("scrolling", GfVec2f(0, 0), false, AnchorWindowFlags_HorizontalScrollbar);
+    ANCHOR::BeginChild("scrolling", wabi::GfVec2f(0, 0), false, AnchorWindowFlags_HorizontalScrollbar);
 
     if (clear)
       Clear();
     if (copy)
       ANCHOR::LogToClipboard();
 
-    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(0, 0));
+    ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, wabi::GfVec2f(0, 0));
     const char *buf = Buf.begin();
     const char *buf_end = Buf.end();
     if (Filter.IsActive()) {
@@ -8019,7 +8019,7 @@ static void ShowExampleAppLog(bool *p_open)
   // For the demo: add a debug button _BEFORE_ the normal log window contents
   // We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to
   // the _same_ window. Most of the contents of the window will be added by the log.Draw() call.
-  ANCHOR::SetNextWindowSize(GfVec2f(500, 400), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(wabi::GfVec2f(500, 400), AnchorCond_FirstUseEver);
   ANCHOR::Begin("Example: Log", p_open);
   if (ANCHOR::SmallButton("[Debug] Add 5 entries")) {
     static int counter = 0;
@@ -8056,7 +8056,7 @@ static void ShowExampleAppLog(bool *p_open)
 // Demonstrate create a window with multiple child windows.
 static void ShowExampleAppLayout(bool *p_open)
 {
-  ANCHOR::SetNextWindowSize(GfVec2f(500, 440), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(wabi::GfVec2f(500, 440), AnchorCond_FirstUseEver);
   if (ANCHOR::Begin("Example: Simple layout", p_open, AnchorWindowFlags_MenuBar)) {
     if (ANCHOR::BeginMenuBar()) {
       if (ANCHOR::BeginMenu("File")) {
@@ -8070,7 +8070,7 @@ static void ShowExampleAppLayout(bool *p_open)
     // Left
     static int selected = 0;
     {
-      ANCHOR::BeginChild("left pane", GfVec2f(150, 0), true);
+      ANCHOR::BeginChild("left pane", wabi::GfVec2f(150, 0), true);
       for (int i = 0; i < 100; i++) {
         char label[128];
         sprintf(label, "MyObject %d", i);
@@ -8086,7 +8086,7 @@ static void ShowExampleAppLayout(bool *p_open)
       ANCHOR::BeginGroup();
       ANCHOR::BeginChild(
         "item view",
-        GfVec2f(0, -ANCHOR::GetFrameHeightWithSpacing()));  // Leave room for 1 line below us
+        wabi::GfVec2f(0, -ANCHOR::GetFrameHeightWithSpacing()));  // Leave room for 1 line below us
       ANCHOR::Text("MyObject: %d", selected);
       ANCHOR::Separator();
       if (ANCHOR::BeginTabBar("##Tabs", AnchorTabBarFlags_None)) {
@@ -8167,7 +8167,7 @@ static void ShowPlaceholderObject(const char *prefix, int uid)
 // Demonstrate create a simple property editor.
 static void ShowExampleAppPropertyEditor(bool *p_open)
 {
-  ANCHOR::SetNextWindowSize(GfVec2f(430, 450), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(wabi::GfVec2f(430, 450), AnchorCond_FirstUseEver);
   if (!ANCHOR::Begin("Example: Property editor", p_open)) {
     ANCHOR::End();
     return;
@@ -8179,7 +8179,7 @@ static void ShowExampleAppPropertyEditor(bool *p_open)
     "Remember that in many simple cases, you can use ANCHOR::SameLine(xxx) to position\n"
     "your cursor horizontally instead of using the Columns() API.");
 
-  ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(2, 2));
+  ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(2, 2));
   if (ANCHOR::BeginTable("split", 2, AnchorTableFlags_BordersOuter | AnchorTableFlags_Resizable)) {
     // Iterate placeholder objects (all the same data)
     for (int obj_i = 0; obj_i < 4; obj_i++) {
@@ -8199,7 +8199,7 @@ static void ShowExampleAppPropertyEditor(bool *p_open)
 // Demonstrate/test rendering huge amount of text, and the incidence of clipping.
 static void ShowExampleAppLongText(bool *p_open)
 {
-  ANCHOR::SetNextWindowSize(GfVec2f(520, 600), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowSize(wabi::GfVec2f(520, 600), AnchorCond_FirstUseEver);
   if (!ANCHOR::Begin("Example: Long text display", p_open)) {
     ANCHOR::End();
     return;
@@ -8234,7 +8234,7 @@ static void ShowExampleAppLongText(bool *p_open)
     case 1: {
       // Multiple calls to Text(), manually coarsely clipped - demonstrate how to use the
       // AnchorListClipper helper.
-      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(0, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, wabi::GfVec2f(0, 0));
       AnchorListClipper clipper;
       clipper.Begin(lines);
       while (clipper.Step())
@@ -8245,7 +8245,7 @@ static void ShowExampleAppLongText(bool *p_open)
     }
     case 2:
       // Multiple calls to Text(), not clipped (slow)
-      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, GfVec2f(0, 0));
+      ANCHOR::PushStyleVar(AnchorStyleVar_ItemSpacing, wabi::GfVec2f(0, 0));
       for (int i = 0; i < lines; i++)
         ANCHOR::Text("%i The quick brown fox jumps over the lazy dog", i);
       ANCHOR::PopStyleVar();
@@ -8301,7 +8301,7 @@ static void ShowExampleAppConstrainedResize(bool *p_open)
     static void Step(AnchorSizeCallbackData *data)
     {
       float step = (float)(int)(intptr_t)data->UserData;
-      data->DesiredSize = GfVec2f((int)(data->DesiredSize[0] / step + 0.5f) * step,
+      data->DesiredSize = wabi::GfVec2f((int)(data->DesiredSize[0] / step + 0.5f) * step,
                                   (int)(data->DesiredSize[1] / step + 0.5f) * step);
     }
   };
@@ -8320,38 +8320,38 @@ static void ShowExampleAppConstrainedResize(bool *p_open)
   static int type = 0;
   static int display_lines = 10;
   if (type == 0)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(-1, 0), GfVec2f(-1, FLT_MAX));  // Vertical only
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(-1, 0), wabi::GfVec2f(-1, FLT_MAX));  // Vertical only
   if (type == 1)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(0, -1), GfVec2f(FLT_MAX, -1));  // Horizontal only
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(0, -1), wabi::GfVec2f(FLT_MAX, -1));  // Horizontal only
   if (type == 2)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(100, 100),
-                                         GfVec2f(FLT_MAX, FLT_MAX));  // Width > 100, Height > 100
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(100, 100),
+                                         wabi::GfVec2f(FLT_MAX, FLT_MAX));  // Width > 100, Height > 100
   if (type == 3)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(400, -1), GfVec2f(500, -1));  // Width 400-500
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(400, -1), wabi::GfVec2f(500, -1));  // Width 400-500
   if (type == 4)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(-1, 400), GfVec2f(-1, 500));  // Height 400-500
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(-1, 400), wabi::GfVec2f(-1, 500));  // Height 400-500
   if (type == 5)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(0, 0),
-                                         GfVec2f(FLT_MAX, FLT_MAX),
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(0, 0),
+                                         wabi::GfVec2f(FLT_MAX, FLT_MAX),
                                          CustomConstraints::Square);  // Always Square
   if (type == 6)
-    ANCHOR::SetNextWindowSizeConstraints(GfVec2f(0, 0),
-                                         GfVec2f(FLT_MAX, FLT_MAX),
+    ANCHOR::SetNextWindowSizeConstraints(wabi::GfVec2f(0, 0),
+                                         wabi::GfVec2f(FLT_MAX, FLT_MAX),
                                          CustomConstraints::Step,
                                          (void *)(intptr_t)100);  // Fixed Step
 
   AnchorWindowFlags flags = auto_resize ? AnchorWindowFlags_AlwaysAutoResize : 0;
   if (ANCHOR::Begin("Example: Constrained Resize", p_open, flags)) {
     if (ANCHOR::Button("200x200")) {
-      ANCHOR::SetWindowSize(GfVec2f(200, 200));
+      ANCHOR::SetWindowSize(wabi::GfVec2f(200, 200));
     }
     ANCHOR::SameLine();
     if (ANCHOR::Button("500x500")) {
-      ANCHOR::SetWindowSize(GfVec2f(500, 500));
+      ANCHOR::SetWindowSize(wabi::GfVec2f(500, 500));
     }
     ANCHOR::SameLine();
     if (ANCHOR::Button("800x200")) {
-      ANCHOR::SetWindowSize(GfVec2f(800, 200));
+      ANCHOR::SetWindowSize(wabi::GfVec2f(800, 200));
     }
     ANCHOR::SetNextItemWidth(200);
     ANCHOR::Combo("Constraint", &type, test_desc, ANCHOR_ARRAYSIZE(test_desc));
@@ -8381,9 +8381,9 @@ static void ShowExampleAppSimpleOverlay(bool *p_open)
                                    AnchorWindowFlags_NoFocusOnAppearing | AnchorWindowFlags_NoNav;
   if (corner != -1) {
     const AnchorViewport *viewport = ANCHOR::GetMainViewport();
-    GfVec2f work_pos = viewport->WorkPos;  // Use work area to avoid menu-bar/task-bar, if any!
-    GfVec2f work_size = viewport->WorkSize;
-    GfVec2f window_pos, window_pos_pivot;
+    wabi::GfVec2f work_pos = viewport->WorkPos;  // Use work area to avoid menu-bar/task-bar, if any!
+    wabi::GfVec2f work_size = viewport->WorkSize;
+    wabi::GfVec2f window_pos, window_pos_pivot;
     window_pos[0] = (corner & 1) ? (work_pos[0] + work_size[0] - PAD) : (work_pos[0] + PAD);
     window_pos[1] = (corner & 2) ? (work_pos[1] + work_size[1] - PAD) : (work_pos[1] + PAD);
     window_pos_pivot[0] = (corner & 1) ? 1.0f : 0.0f;
@@ -8474,19 +8474,19 @@ static void ShowExampleAppFullscreen(bool *p_open)
 static void ShowExampleAppWindowTitles(bool *)
 {
   const AnchorViewport *viewport = ANCHOR::GetMainViewport();
-  const GfVec2f base_pos = viewport->Pos;
+  const wabi::GfVec2f base_pos = viewport->Pos;
 
   // By default, Windows are uniquely identified by their title.
   // You can use the "##" and "###" markers to manipulate the display/ID.
 
   // Using "##" to display same title but have unique identifier.
-  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 100), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowPos(wabi::GfVec2f(base_pos[0] + 100, base_pos[1] + 100), AnchorCond_FirstUseEver);
   ANCHOR::Begin("Same title as another window##1");
   ANCHOR::Text(
     "This is window 1.\nMy title is the same as window 2, but my identifier is unique.");
   ANCHOR::End();
 
-  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 200), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowPos(wabi::GfVec2f(base_pos[0] + 100, base_pos[1] + 200), AnchorCond_FirstUseEver);
   ANCHOR::Begin("Same title as another window##2");
   ANCHOR::Text(
     "This is window 2.\nMy title is the same as window 1, but my identifier is unique.");
@@ -8498,7 +8498,7 @@ static void ShowExampleAppWindowTitles(bool *)
           "Animated title %c %d###AnimatedTitle",
           "|/-\\"[(int)(ANCHOR::GetTime() / 0.25f) & 3],
           ANCHOR::GetFrameCount());
-  ANCHOR::SetNextWindowPos(GfVec2f(base_pos[0] + 100, base_pos[1] + 300), AnchorCond_FirstUseEver);
+  ANCHOR::SetNextWindowPos(wabi::GfVec2f(base_pos[0] + 100, base_pos[1] + 300), AnchorCond_FirstUseEver);
   ANCHOR::Begin(buf);
   ANCHOR::Text("This window has a changing title.");
   ANCHOR::End();
@@ -8519,7 +8519,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
 
   // Tip: If you do a lot of custom rendering, you probably want to use your own geometrical types
   // and benefit of overloaded operators, etc. Define IM_VEC2_CLASS_EXTRA in ANCHOR_config.h to
-  // create implicit conversions between your types and GfVec2f/GfVec4f. ANCHOR defines overloaded
+  // create implicit conversions between your types and wabi::GfVec2f/wabi::GfVec4f. ANCHOR defines overloaded
   // operators but they are internal to ANCHOR.cpp and not exposed outside (to avoid messing with
   // your types) In this example we are not using the maths operators!
 
@@ -8533,18 +8533,18 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       // Calling ANCHOR::GetColorU32() multiplies the given colors by the current Style Alpha, but
       // you may pass the ANCHOR_COL32() directly as well..
       ANCHOR::Text("Gradients");
-      GfVec2f gradient_size = GfVec2f(ANCHOR::CalcItemWidth(), ANCHOR::GetFrameHeight());
+      wabi::GfVec2f gradient_size = wabi::GfVec2f(ANCHOR::CalcItemWidth(), ANCHOR::GetFrameHeight());
       {
-        GfVec2f p0 = ANCHOR::GetCursorScreenPos();
-        GfVec2f p1 = GfVec2f(p0[0] + gradient_size[0], p0[1] + gradient_size[1]);
+        wabi::GfVec2f p0 = ANCHOR::GetCursorScreenPos();
+        wabi::GfVec2f p1 = wabi::GfVec2f(p0[0] + gradient_size[0], p0[1] + gradient_size[1]);
         AnchorU32 col_a = ANCHOR::GetColorU32(ANCHOR_COL32(0, 0, 0, 255));
         AnchorU32 col_b = ANCHOR::GetColorU32(ANCHOR_COL32(255, 255, 255, 255));
         draw_list->AddRectFilledMultiColor(p0, p1, col_a, col_b, col_b, col_a);
         ANCHOR::InvisibleButton("##gradient1", gradient_size);
       }
       {
-        GfVec2f p0 = ANCHOR::GetCursorScreenPos();
-        GfVec2f p1 = GfVec2f(p0[0] + gradient_size[0], p0[1] + gradient_size[1]);
+        wabi::GfVec2f p0 = ANCHOR::GetCursorScreenPos();
+        wabi::GfVec2f p1 = wabi::GfVec2f(p0[0] + gradient_size[0], p0[1] + gradient_size[1]);
         AnchorU32 col_a = ANCHOR::GetColorU32(ANCHOR_COL32(0, 255, 0, 255));
         AnchorU32 col_b = ANCHOR::GetColorU32(ANCHOR_COL32(255, 0, 0, 255));
         draw_list->AddRectFilledMultiColor(p0, p1, col_a, col_b, col_b, col_a);
@@ -8560,7 +8560,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       static int circle_segments_override_v = 12;
       static bool curve_segments_override = false;
       static int curve_segments_override_v = 8;
-      static GfVec4f colf = GfVec4f(1.0f, 1.0f, 0.4f, 1.0f);
+      static wabi::GfVec4f colf = wabi::GfVec4f(1.0f, 1.0f, 0.4f, 1.0f);
       ANCHOR::DragFloat("Size", &sz, 0.2f, 2.0f, 100.0f, "%.0f");
       ANCHOR::DragFloat("Thickness", &thickness, 0.05f, 1.0f, 8.0f, "%.02f");
       ANCHOR::SliderInt("N-gon sides", &ngon_sides, 3, 12);
@@ -8578,7 +8578,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
                                                    40);
       ANCHOR::ColorEdit4("Color", &colf[0]);
 
-      const GfVec2f p = ANCHOR::GetCursorScreenPos();
+      const wabi::GfVec2f p = ANCHOR::GetCursorScreenPos();
       const AnchorU32 col = AnchorColor(colf);
       const float spacing = 10.0f;
       const AnchorDrawFlags corners_tl_br = AnchorDrawFlags_RoundCornersTopLeft |
@@ -8591,102 +8591,102 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       for (int n = 0; n < 2; n++) {
         // First line uses a thickness of 1.0f, second line uses the configurable thickness
         float th = (n == 0) ? 1.0f : thickness;
-        draw_list->AddNgon(GfVec2f(x + sz * 0.5f, y + sz * 0.5f), sz * 0.5f, col, ngon_sides, th);
+        draw_list->AddNgon(wabi::GfVec2f(x + sz * 0.5f, y + sz * 0.5f), sz * 0.5f, col, ngon_sides, th);
         x += sz + spacing;  // N-gon
-        draw_list->AddCircle(GfVec2f(x + sz * 0.5f, y + sz * 0.5f),
+        draw_list->AddCircle(wabi::GfVec2f(x + sz * 0.5f, y + sz * 0.5f),
                              sz * 0.5f,
                              col,
                              circle_segments,
                              th);
         x += sz + spacing;  // Circle
         draw_list
-          ->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, 0.0f, AnchorDrawFlags_None, th);
+          ->AddRect(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + sz), col, 0.0f, AnchorDrawFlags_None, th);
         x += sz + spacing;  // Square
-        draw_list->AddRect(GfVec2f(x, y),
-                           GfVec2f(x + sz, y + sz),
+        draw_list->AddRect(wabi::GfVec2f(x, y),
+                           wabi::GfVec2f(x + sz, y + sz),
                            col,
                            rounding,
                            AnchorDrawFlags_None,
                            th);
         x += sz + spacing;  // Square with all rounded corners
         draw_list
-          ->AddRect(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, rounding, corners_tl_br, th);
+          ->AddRect(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + sz), col, rounding, corners_tl_br, th);
         x += sz + spacing;  // Square with two rounded corners
-        draw_list->AddTriangle(GfVec2f(x + sz * 0.5f, y),
-                               GfVec2f(x + sz, y + sz - 0.5f),
-                               GfVec2f(x, y + sz - 0.5f),
+        draw_list->AddTriangle(wabi::GfVec2f(x + sz * 0.5f, y),
+                               wabi::GfVec2f(x + sz, y + sz - 0.5f),
+                               wabi::GfVec2f(x, y + sz - 0.5f),
                                col,
                                th);
         x += sz + spacing;  // Triangle
-        // draw_list->AddTriangle(GfVec2f(x+sz*0.2f,y), GfVec2f(x, y+sz-0.5f), GfVec2f(x+sz*0.4f,
+        // draw_list->AddTriangle(wabi::GfVec2f(x+sz*0.2f,y), wabi::GfVec2f(x, y+sz-0.5f), wabi::GfVec2f(x+sz*0.4f,
         // y+sz-0.5f), col, th);x+= sz*0.4f + spacing; // Thin triangle
-        draw_list->AddLine(GfVec2f(x, y), GfVec2f(x + sz, y), col, th);
+        draw_list->AddLine(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y), col, th);
         x += sz + spacing;  // Horizontal line (note: drawing a filled rectangle will be faster!)
-        draw_list->AddLine(GfVec2f(x, y), GfVec2f(x, y + sz), col, th);
+        draw_list->AddLine(wabi::GfVec2f(x, y), wabi::GfVec2f(x, y + sz), col, th);
         x += spacing;  // Vertical line (note: drawing a filled rectangle will be faster!)
-        draw_list->AddLine(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, th);
+        draw_list->AddLine(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + sz), col, th);
         x += sz + spacing;  // Diagonal line
 
         // Quadratic Bezier Curve (3 control points)
-        GfVec2f cp3[3] = {GfVec2f(x, y + sz * 0.6f),
-                          GfVec2f(x + sz * 0.5f, y - sz * 0.4f),
-                          GfVec2f(x + sz, y + sz)};
+        wabi::GfVec2f cp3[3] = {wabi::GfVec2f(x, y + sz * 0.6f),
+                          wabi::GfVec2f(x + sz * 0.5f, y - sz * 0.4f),
+                          wabi::GfVec2f(x + sz, y + sz)};
         draw_list->AddBezierQuadratic(cp3[0], cp3[1], cp3[2], col, th, curve_segments);
         x += sz + spacing;
 
         // Cubic Bezier Curve (4 control points)
-        GfVec2f cp4[4] = {GfVec2f(x, y),
-                          GfVec2f(x + sz * 1.3f, y + sz * 0.3f),
-                          GfVec2f(x + sz - sz * 1.3f, y + sz - sz * 0.3f),
-                          GfVec2f(x + sz, y + sz)};
+        wabi::GfVec2f cp4[4] = {wabi::GfVec2f(x, y),
+                          wabi::GfVec2f(x + sz * 1.3f, y + sz * 0.3f),
+                          wabi::GfVec2f(x + sz - sz * 1.3f, y + sz - sz * 0.3f),
+                          wabi::GfVec2f(x + sz, y + sz)};
         draw_list->AddBezierCubic(cp4[0], cp4[1], cp4[2], cp4[3], col, th, curve_segments);
 
         x = p[0] + 4;
         y += sz + spacing;
       }
-      draw_list->AddNgonFilled(GfVec2f(x + sz * 0.5f, y + sz * 0.5f), sz * 0.5f, col, ngon_sides);
+      draw_list->AddNgonFilled(wabi::GfVec2f(x + sz * 0.5f, y + sz * 0.5f), sz * 0.5f, col, ngon_sides);
       x += sz + spacing;  // N-gon
-      draw_list->AddCircleFilled(GfVec2f(x + sz * 0.5f, y + sz * 0.5f),
+      draw_list->AddCircleFilled(wabi::GfVec2f(x + sz * 0.5f, y + sz * 0.5f),
                                  sz * 0.5f,
                                  col,
                                  circle_segments);
       x += sz + spacing;  // Circle
-      draw_list->AddRectFilled(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col);
+      draw_list->AddRectFilled(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + sz), col);
       x += sz + spacing;  // Square
-      draw_list->AddRectFilled(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, 10.0f);
+      draw_list->AddRectFilled(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + sz), col, 10.0f);
       x += sz + spacing;  // Square with all rounded corners
-      draw_list->AddRectFilled(GfVec2f(x, y), GfVec2f(x + sz, y + sz), col, 10.0f, corners_tl_br);
+      draw_list->AddRectFilled(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + sz), col, 10.0f, corners_tl_br);
       x += sz + spacing;  // Square with two rounded corners
-      draw_list->AddTriangleFilled(GfVec2f(x + sz * 0.5f, y),
-                                   GfVec2f(x + sz, y + sz - 0.5f),
-                                   GfVec2f(x, y + sz - 0.5f),
+      draw_list->AddTriangleFilled(wabi::GfVec2f(x + sz * 0.5f, y),
+                                   wabi::GfVec2f(x + sz, y + sz - 0.5f),
+                                   wabi::GfVec2f(x, y + sz - 0.5f),
                                    col);
       x += sz + spacing;  // Triangle
-      // draw_list->AddTriangleFilled(GfVec2f(x+sz*0.2f,y), GfVec2f(x, y+sz-0.5f),
-      // GfVec2f(x+sz*0.4f, y+sz-0.5f), col); x += sz*0.4f + spacing; // Thin triangle
-      draw_list->AddRectFilled(GfVec2f(x, y), GfVec2f(x + sz, y + thickness), col);
+      // draw_list->AddTriangleFilled(wabi::GfVec2f(x+sz*0.2f,y), wabi::GfVec2f(x, y+sz-0.5f),
+      // wabi::GfVec2f(x+sz*0.4f, y+sz-0.5f), col); x += sz*0.4f + spacing; // Thin triangle
+      draw_list->AddRectFilled(wabi::GfVec2f(x, y), wabi::GfVec2f(x + sz, y + thickness), col);
       x += sz +
            spacing;  // Horizontal line (faster than AddLine, but only handle integer thickness)
-      draw_list->AddRectFilled(GfVec2f(x, y), GfVec2f(x + thickness, y + sz), col);
+      draw_list->AddRectFilled(wabi::GfVec2f(x, y), wabi::GfVec2f(x + thickness, y + sz), col);
       x += spacing *
            2.0f;  // Vertical line (faster than AddLine, but only handle integer thickness)
-      draw_list->AddRectFilled(GfVec2f(x, y), GfVec2f(x + 1, y + 1), col);
+      draw_list->AddRectFilled(wabi::GfVec2f(x, y), wabi::GfVec2f(x + 1, y + 1), col);
       x += sz;  // Pixel (faster than AddLine)
-      draw_list->AddRectFilledMultiColor(GfVec2f(x, y),
-                                         GfVec2f(x + sz, y + sz),
+      draw_list->AddRectFilledMultiColor(wabi::GfVec2f(x, y),
+                                         wabi::GfVec2f(x + sz, y + sz),
                                          ANCHOR_COL32(0, 0, 0, 255),
                                          ANCHOR_COL32(255, 0, 0, 255),
                                          ANCHOR_COL32(255, 255, 0, 255),
                                          ANCHOR_COL32(0, 255, 0, 255));
 
-      ANCHOR::Dummy(GfVec2f((sz + spacing) * 10.2f, (sz + spacing) * 3.0f));
+      ANCHOR::Dummy(wabi::GfVec2f((sz + spacing) * 10.2f, (sz + spacing) * 3.0f));
       ANCHOR::PopItemWidth();
       ANCHOR::EndTabItem();
     }
 
     if (ANCHOR::BeginTabItem("Canvas")) {
-      static AnchorVector<GfVec2f> points;
-      static GfVec2f scrolling(0.0f, 0.0f);
+      static AnchorVector<wabi::GfVec2f> points;
+      static wabi::GfVec2f scrolling(0.0f, 0.0f);
       static bool opt_enable_grid = true;
       static bool opt_enable_context_menu = true;
       static bool adding_line = false;
@@ -8700,23 +8700,23 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       // own scrolling. Here we demonstrate that this can be replaced by simple offsetting + custom
       // drawing + PushClipRect/PopClipRect() calls. To use a child window instead we could use,
       // e.g:
-      //      ANCHOR::PushStyleVar(AnchorStyleVar_WindowPadding, GfVec2f(0, 0));      // Disable
+      //      ANCHOR::PushStyleVar(AnchorStyleVar_WindowPadding, wabi::GfVec2f(0, 0));      // Disable
       //      padding ANCHOR::PushStyleColor(AnchorCol_ChildBg, ANCHOR_COL32(50, 50, 50, 255)); //
-      //      Set a background color ANCHOR::BeginChild("canvas", GfVec2f(0.0f, 0.0f), true,
+      //      Set a background color ANCHOR::BeginChild("canvas", wabi::GfVec2f(0.0f, 0.0f), true,
       //      AnchorWindowFlags_NoMove); ANCHOR::PopStyleColor(); ANCHOR::PopStyleVar();
       //      [...]
       //      ANCHOR::EndChild();
 
       // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2)
       // allows us to use IsItemHovered()/IsItemActive()
-      GfVec2f canvas_p0 =
+      wabi::GfVec2f canvas_p0 =
         ANCHOR::GetCursorScreenPos();  // AnchorDrawList API uses screen coordinates!
-      GfVec2f canvas_sz = ANCHOR::GetContentRegionAvail();  // Resize canvas to what's available
+      wabi::GfVec2f canvas_sz = ANCHOR::GetContentRegionAvail();  // Resize canvas to what's available
       if (canvas_sz[0] < 50.0f)
         canvas_sz[0] = 50.0f;
       if (canvas_sz[1] < 50.0f)
         canvas_sz[1] = 50.0f;
-      GfVec2f canvas_p1 = GfVec2f(canvas_p0[0] + canvas_sz[0], canvas_p0[1] + canvas_sz[1]);
+      wabi::GfVec2f canvas_p1 = wabi::GfVec2f(canvas_p0[0] + canvas_sz[0], canvas_p0[1] + canvas_sz[1]);
 
       // Draw border and background color
       AnchorIO &io = ANCHOR::GetIO();
@@ -8731,9 +8731,9 @@ static void ShowExampleAppCustomRendering(bool *p_open)
                                 AnchorButtonFlags_MouseButtonRight);
       const bool is_hovered = ANCHOR::IsItemHovered();  // Hovered
       const bool is_active = ANCHOR::IsItemActive();    // Held
-      const GfVec2f origin(canvas_p0[0] + scrolling[0],
+      const wabi::GfVec2f origin(canvas_p0[0] + scrolling[0],
                            canvas_p0[1] + scrolling[1]);  // Lock scrolled origin
-      const GfVec2f mouse_pos_in_canvas(io.MousePos[0] - origin[0], io.MousePos[1] - origin[1]);
+      const wabi::GfVec2f mouse_pos_in_canvas(io.MousePos[0] - origin[0], io.MousePos[1] - origin[1]);
 
       // Add first and second point
       if (is_hovered && !adding_line && ANCHOR::IsMouseClicked(AnchorMouseButton_Left)) {
@@ -8757,7 +8757,7 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       }
 
       // Context menu (under default mouse threshold)
-      GfVec2f drag_delta = ANCHOR::GetMouseDragDelta(AnchorMouseButton_Right);
+      wabi::GfVec2f drag_delta = ANCHOR::GetMouseDragDelta(AnchorMouseButton_Right);
       if (opt_enable_context_menu && ANCHOR::IsMouseReleased(AnchorMouseButton_Right) &&
           drag_delta[0] == 0.0f && drag_delta[1] == 0.0f)
         ANCHOR::OpenPopupOnItemClick("context");
@@ -8779,17 +8779,17 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       if (opt_enable_grid) {
         const float GRID_STEP = 64.0f;
         for (float x = fmodf(scrolling[0], GRID_STEP); x < canvas_sz[0]; x += GRID_STEP)
-          draw_list->AddLine(GfVec2f(canvas_p0[0] + x, canvas_p0[1]),
-                             GfVec2f(canvas_p0[0] + x, canvas_p1[1]),
+          draw_list->AddLine(wabi::GfVec2f(canvas_p0[0] + x, canvas_p0[1]),
+                             wabi::GfVec2f(canvas_p0[0] + x, canvas_p1[1]),
                              ANCHOR_COL32(200, 200, 200, 40));
         for (float y = fmodf(scrolling[1], GRID_STEP); y < canvas_sz[1]; y += GRID_STEP)
-          draw_list->AddLine(GfVec2f(canvas_p0[0], canvas_p0[1] + y),
-                             GfVec2f(canvas_p1[0], canvas_p0[1] + y),
+          draw_list->AddLine(wabi::GfVec2f(canvas_p0[0], canvas_p0[1] + y),
+                             wabi::GfVec2f(canvas_p1[0], canvas_p0[1] + y),
                              ANCHOR_COL32(200, 200, 200, 40));
       }
       for (int n = 0; n < points.Size; n += 2)
-        draw_list->AddLine(GfVec2f(origin[0] + points[n][0], origin[1] + points[n][1]),
-                           GfVec2f(origin[0] + points[n + 1][0], origin[1] + points[n + 1][1]),
+        draw_list->AddLine(wabi::GfVec2f(origin[0] + points[n][0], origin[1] + points[n][1]),
+                           wabi::GfVec2f(origin[0] + points[n + 1][0], origin[1] + points[n + 1][1]),
                            ANCHOR_COL32(255, 255, 0, 255),
                            2.0f);
       draw_list->PopClipRect();
@@ -8806,9 +8806,9 @@ static void ShowExampleAppCustomRendering(bool *p_open)
       ANCHOR::Checkbox("Draw in Foreground draw list", &draw_fg);
       ANCHOR::SameLine();
       HelpMarker("The Foreground draw list will be rendered over every ANCHOR windows.");
-      GfVec2f window_pos = ANCHOR::GetWindowPos();
-      GfVec2f window_size = ANCHOR::GetWindowSize();
-      GfVec2f window_center = GfVec2f(window_pos[0] + window_size[0] * 0.5f,
+      wabi::GfVec2f window_pos = ANCHOR::GetWindowPos();
+      wabi::GfVec2f window_size = ANCHOR::GetWindowSize();
+      wabi::GfVec2f window_center = wabi::GfVec2f(window_pos[0] + window_size[0] * 0.5f,
                                       window_pos[1] + window_size[1] * 0.5f);
       if (draw_bg)
         ANCHOR::GetBackgroundDrawList()->AddCircle(window_center,
@@ -8843,11 +8843,11 @@ struct MyDocument
   bool OpenPrev;   // Copy of Open from last update.
   bool Dirty;      // Set when the document has been modified
   bool WantClose;  // Set when the document
-  GfVec4f Color;   // An arbitrary variable associated to the document
+  wabi::GfVec4f Color;   // An arbitrary variable associated to the document
 
   MyDocument(const char *name,
              bool open = true,
-             const GfVec4f &color = GfVec4f(1.0f, 1.0f, 1.0f, 1.0f))
+             const wabi::GfVec4f &color = wabi::GfVec4f(1.0f, 1.0f, 1.0f, 1.0f))
   {
     Name = name;
     Open = OpenPrev = open;
@@ -8883,10 +8883,10 @@ struct MyDocument
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor "
       "incididunt ut labore et dolore magna aliqua.");
     ANCHOR::PopStyleColor();
-    if (ANCHOR::Button("Modify", GfVec2f(100, 0)))
+    if (ANCHOR::Button("Modify", wabi::GfVec2f(100, 0)))
       doc->Dirty = true;
     ANCHOR::SameLine();
-    if (ANCHOR::Button("Save", GfVec2f(100, 0)))
+    if (ANCHOR::Button("Save", wabi::GfVec2f(100, 0)))
       doc->DoSave();
     ANCHOR::ColorEdit3(
       "color",
@@ -8916,10 +8916,10 @@ struct ExampleAppDocuments
 
   ExampleAppDocuments()
   {
-    Documents.push_back(MyDocument("Lettuce", true, GfVec4f(0.4f, 0.8f, 0.4f, 1.0f)));
-    Documents.push_back(MyDocument("Eggplant", true, GfVec4f(0.8f, 0.5f, 1.0f, 1.0f)));
-    Documents.push_back(MyDocument("Carrot", true, GfVec4f(1.0f, 0.8f, 0.5f, 1.0f)));
-    Documents.push_back(MyDocument("Tomato", false, GfVec4f(1.0f, 0.3f, 0.4f, 1.0f)));
+    Documents.push_back(MyDocument("Lettuce", true, wabi::GfVec4f(0.4f, 0.8f, 0.4f, 1.0f)));
+    Documents.push_back(MyDocument("Eggplant", true, wabi::GfVec4f(0.8f, 0.5f, 1.0f, 1.0f)));
+    Documents.push_back(MyDocument("Carrot", true, wabi::GfVec4f(1.0f, 0.8f, 0.5f, 1.0f)));
+    Documents.push_back(MyDocument("Tomato", false, wabi::GfVec4f(1.0f, 0.3f, 0.4f, 1.0f)));
     Documents.push_back(MyDocument("A Rather Long Title", false));
     Documents.push_back(MyDocument("Some Document", false));
   }
@@ -9072,14 +9072,14 @@ void ShowExampleAppDocuments(bool *p_open)
         ANCHOR::Text("Save change to the following items?");
         float item_height = ANCHOR::GetTextLineHeightWithSpacing();
         if (ANCHOR::BeginChildFrame(ANCHOR::GetID("frame"),
-                                    GfVec2f(-FLT_MIN, 6.25f * item_height))) {
+                                    wabi::GfVec2f(-FLT_MIN, 6.25f * item_height))) {
           for (int n = 0; n < close_queue.Size; n++)
             if (close_queue[n]->Dirty)
               ANCHOR::Text("%s", close_queue[n]->Name);
           ANCHOR::EndChildFrame();
         }
 
-        GfVec2f button_size(ANCHOR::GetFontSize() * 7.0f, 0.0f);
+        wabi::GfVec2f button_size(ANCHOR::GetFontSize() * 7.0f, 0.0f);
         if (ANCHOR::Button("Yes", button_size)) {
           for (int n = 0; n < close_queue.Size; n++) {
             if (close_queue[n]->Dirty)

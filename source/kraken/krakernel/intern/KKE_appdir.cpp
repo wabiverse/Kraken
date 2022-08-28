@@ -27,6 +27,8 @@
 #include <string.h>
 #include <filesystem>
 
+#include "kraken/kraken.h"
+
 #include "KLI_assert.h"
 #include "KLI_path_utils.h"
 #include "KLI_string_utils.h"
@@ -35,7 +37,6 @@
 #include "KKE_api.h"
 #include "KKE_appdir.h" /* own include */
 #include "KKE_main.h"
-#include "KKE_version.h"
 
 #include "USD_api.h"
 
@@ -65,7 +66,7 @@ namespace fs = std::filesystem;
 static const char _str_null[] = "(null)";
 #define STR_OR_FALLBACK(a) ((a) ? (a) : _str_null)
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct AppDir
 {
@@ -1191,4 +1192,4 @@ void KKE_tempdir_session_purge(void)
 /** \} */
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -84,7 +84,8 @@ function(_get_python_module_name LIBRARY_FILENAME MODULE_NAME)
     # Library names are either something like tf.so for shared libraries
     # or _tf.so for Python module libraries. We want to strip the leading
     # "_" off.
-    string(REPLACE "_" "" LIBNAME ${LIBRARY_FILENAME})
+    set(LIBNAME ${LIBRARY_FILENAME})
+    string(REGEX REPLACE "^_" "" LIBNAME ${LIBNAME})
     string(SUBSTRING ${LIBNAME} 0 1 LIBNAME_FL)
     string(TOUPPER ${LIBNAME_FL} LIBNAME_FL)
     string(SUBSTRING ${LIBNAME} 1 -1 LIBNAME_SUFFIX)
@@ -143,25 +144,22 @@ function(_install_python LIBRARY_NAME)
             # Preserve any directory prefix, just strip the extension. This
             # directory needs to exist in the binary dir for the COMMAND below
             # to work.
-            # get_filename_component(dir ${file} PATH)
-            # if(${dir} STREQUAL "python")
-            #   string(REPLACE "python" "" fixed_dir ${dir})
-            # endif()
-            # if (dir)
-            #     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${fixed_dir})
-            #     set(file_we ${fixed_dir}/${file_we})
-            #     set(installDest ${installDest}/${fixed_dir})
-            # endif()
+            get_filename_component(dir ${file} PATH)
+            if(dir)
+              file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir})
+              set(file_we ${dir}/${file_we})
+              set(installDest ${installDest}/${dir})
+            endif()
 
             set(outfile ${CMAKE_CURRENT_BINARY_DIR}/${file_we}.pyc)
             list(APPEND files_copied ${outfile})
             add_custom_command(OUTPUT ${outfile}
-                COMMAND
-                    ${PYTHON_EXECUTABLE}
-                    ${CMAKE_SOURCE_DIR}/build_files/cmake/scripts/compilePython.py
-                    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-                    ${CMAKE_CURRENT_BINARY_DIR}/${file_we}.pyc
+              COMMAND
+                ${PYTHON_EXECUTABLE}
+                ${CMAKE_SOURCE_DIR}/build_files/cmake/scripts/compilePython.py
+                ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+                ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+                ${CMAKE_CURRENT_BINARY_DIR}/${file_we}.pyc
             )
             list(APPEND filesToInstall ${CMAKE_CURRENT_SOURCE_DIR}/${file})
             list(APPEND filesToInstall ${CMAKE_CURRENT_BINARY_DIR}/${file_we}.pyc)
@@ -172,28 +170,28 @@ function(_install_python LIBRARY_NAME)
             message(FATAL_ERROR "Cannot have non-Python file ${file} in PYTHON_FILES.")
         endif()
 
-        # Note that we always install under ${TARGETDIR_VER}/python/lib/python3.10/site-packages,
-        # even if we are in the third_party project. This means the import will always
-        # look like 'from wabi import X'. We need to do this per-loop iteration because
+        # Note that we always install under lib/python/pxr, even if we are in
+        # the third_party project. This means the import will always look like
+        # 'from pxr import X'. We need to do this per-loop iteration because
         # the installDest may be different due to the presence of subdirs.
-        # install(
-        #     FILES
-        #         ${filesToInstall}
-        #     DESTINATION
-        #         "${installDest}"
-        # )
+        install(
+          FILES
+            ${filesToInstall}
+          DESTINATION
+            "${installDest}"
+        )
     endforeach()
 
     # Add the target.
     add_custom_target(${LIBRARY_NAME}_pythonfiles
-        DEPENDS ${files_copied}
+      DEPENDS ${files_copied}
     )
     add_dependencies(python ${LIBRARY_NAME}_pythonfiles)
 
     _get_folder("_python" folder)
     set_target_properties(${LIBRARY_NAME}_pythonfiles
-        PROPERTIES
-            FOLDER "${folder}"
+      PROPERTIES
+        FOLDER "${folder}"
     )
 endfunction() #_install_python
 
@@ -273,17 +271,21 @@ endfunction() # _install_resource_files
 
 function(_install_pyside_ui_files LIBRARY_NAME)
     set(uiFiles "")
-    # Note - PySide is a horrendous sack of garbage, I think someone compiled it wrong and it only executes if you 
-    # copy the homebrew python to this propsterous hardcoded location the binary seems stuck on expecting to exist.
-    # cp /opt/homebrew/bin/python3 /private/tmp/pyside-20220319-61429-o8b1up/pyside-setup-opensource-src-6.2.4/venv/bin/python3
     foreach(uiFile ${ARGN})
         get_filename_component(outFileName ${uiFile} NAME_WE)
         get_filename_component(uiFilePath ${uiFile} ABSOLUTE)
         set(outFilePath "${CMAKE_CURRENT_BINARY_DIR}/${outFileName}.py")
+        get_filename_component(pysideUicBinName ${PYSIDEUICBINARY} NAME_WLE)
+        if("${pysideUicBinName}" STREQUAL "uic")
+          # Newer versions of Qt have deprecated pyside2-uic. It
+          # has been replaced by "uic" which needs extra arg for
+          # generating python output (instead of default C++ ).
+          set(PYSIDEUIC_EXTRA_ARGS -g python)
+        endif()
         add_custom_command(
             OUTPUT ${outFilePath}
             COMMAND "${PYSIDEUICBINARY}"
-            ARGS -o ${outFilePath} ${uiFilePath}
+            ARGS -o ${PYSIDEUIC_EXTRA_ARGS} ${outFilePath} ${uiFilePath}
             MAIN_DEPENDENCY "${uiFilePath}"
             COMMENT "Generating Python for ${uiFilePath} ..."
             VERBATIM
@@ -1204,6 +1206,7 @@ function(_wabi_library NAME)
     # Where do we install to?
     _get_install_dir("include" headerInstallDir)
     _get_install_dir("include/${WABI_PREFIX}/${NAME}" headerInstallPrefix)
+    _get_install_dir("include/${WABI_PREFIX}/plugin/${NAME}" headerInstallPluginPrefix)
     _get_install_dir("lib" libInstallPrefix)
     if(isPlugin)
         _get_install_dir("plugin" pluginInstallPrefix)
@@ -1335,12 +1338,20 @@ function(_wabi_library NAME)
     )
     # Copy headers to the build directory and include from there and from
     # external packages.
+
+    set(CORRECTED_PLUGIN_HEADER_PATH "${WABI_PREFIX}")
+    if(isPlugin)
+      set(CORRECTED_PLUGIN_HEADER_PATH "${WABI_PREFIX}/plugin/${NAME}")
+    else()
+      set(CORRECTED_PLUGIN_HEADER_PATH "${WABI_PREFIX}")
+    endif()
+
     _copy_headers(${NAME}
         FILES
             ${args_PUBLIC_HEADERS}
             ${args_PRIVATE_HEADERS}
         PREFIX
-            ${WABI_PREFIX}
+            ${CORRECTED_PLUGIN_HEADER_PATH}
     )
 
     target_include_directories(${NAME}
@@ -1431,7 +1442,7 @@ function(_wabi_library NAME)
                 LIBRARY DESTINATION ${libInstallPrefix}
                 ARCHIVE DESTINATION ${libInstallPrefix}
                 RUNTIME DESTINATION ${libInstallPrefix}
-                PUBLIC_HEADER DESTINATION ${headerInstallPrefix}
+                PUBLIC_HEADER DESTINATION ${headerInstallPluginPrefix}
             )
             if(WIN32)
                 install(
@@ -1458,14 +1469,25 @@ function(_wabi_library NAME)
                 )
             endif()
         else()
+          if(isPlugin)
             install(
-                TARGETS ${NAME}
-                EXPORT wabiTargets
-                LIBRARY DESTINATION ${libInstallPrefix}
-                ARCHIVE DESTINATION ${libInstallPrefix}
-                RUNTIME DESTINATION ${libInstallPrefix}
-                PUBLIC_HEADER DESTINATION ${headerInstallPrefix}
+              TARGETS ${NAME}
+              EXPORT wabiTargets
+              LIBRARY DESTINATION ${libInstallPrefix}
+              ARCHIVE DESTINATION ${libInstallPrefix}
+              RUNTIME DESTINATION ${libInstallPrefix}
+              PUBLIC_HEADER DESTINATION ${headerInstallPluginPrefix}
             )
+          else()
+            install(
+              TARGETS ${NAME}
+              EXPORT wabiTargets
+              LIBRARY DESTINATION ${libInstallPrefix}
+              ARCHIVE DESTINATION ${libInstallPrefix}
+              RUNTIME DESTINATION ${libInstallPrefix}
+              PUBLIC_HEADER DESTINATION ${headerInstallPrefix}
+            )
+          endif()
         endif()
 
         if(NOT isPlugin)

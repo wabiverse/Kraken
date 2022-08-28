@@ -70,7 +70,7 @@ wabi_plugin(hdRpr
         rprUsd
         murmurhash
         ${RIF_LIBRARY}
-        ${OPENEXR_LIBRARIES}
+        ${ALL_IMAGING_LIBS}
         ${IMATH_LIBRARY}
         ${PRORENDER_LIBRARIES}
         ${MATERIALX_LIBRARIES}

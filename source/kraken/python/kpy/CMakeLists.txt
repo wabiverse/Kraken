@@ -2,6 +2,7 @@ set(INC
   .
   ./intern/.
   ../../../../. # Pixar USD
+  ../../../../source
   ../editors/include
   ../../luxo
   ../../krakernel

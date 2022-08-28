@@ -31,7 +31,7 @@
 #include "USD_screen.h"
 #include "USD_workspace.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /* clang-format off */
 #define GETTER_ATTRS ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT
@@ -71,4 +71,4 @@ WorkSpace *KKE_workspace_active_get(WorkSpaceInstanceHook *hook);
 WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid);
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

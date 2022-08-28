@@ -29,7 +29,7 @@
 
 #include "ANCHOR_api.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_init_default_styles()
 {
@@ -42,4 +42,4 @@ void WM_init_default_styles()
   style.WindowMenuButtonPosition = AnchorDir_Left;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

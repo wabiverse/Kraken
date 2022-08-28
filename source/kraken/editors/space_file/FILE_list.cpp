@@ -34,7 +34,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 const char *imb_ext_image[] = {
   ".png",  ".tga",  ".bmp", ".jpg", ".jpeg", ".sgi", ".rgb", ".rgba",

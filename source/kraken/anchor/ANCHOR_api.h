@@ -24,6 +24,8 @@
  * Bare Metal.
  */
 
+#include "kraken/kraken.h"
+
 #include "ANCHOR_version.h"
 
 #include <float.h>
@@ -31,17 +33,16 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "wabi/usd/ar/resolverContext.h"
+
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/base/gf/vec2h.h>
 #include <wabi/base/gf/vec4f.h>
-#include <wabi/base/tf/refPtr.h>
-#include <wabi/base/tf/tf.h>
 
 #include <wabi/imaging/hd/driver.h>
 #include <wabi/imaging/hd/engine.h>
 
 #include <wabi/usdImaging/usdImagingGL/engine.h>
-#include <wabi/usdImaging/usdImaging/primAdapter.h>
 
 #ifndef ANCHOR_API
 #  define ANCHOR_API
@@ -723,11 +724,11 @@ typedef signed long long AnchorS64;    // 64-bit signed integer (post C++11)
 typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
 #endif
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
-using UsdImagingGLEngineSharedPtr = std::shared_ptr<class UsdImagingGLEngine>;
+using UsdImagingGLEngineSharedPtr = std::shared_ptr<class wabi::UsdImagingGLEngine>;
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END
 
 /**
  * ----- ANCHOR STRUCTS ----- */
@@ -1170,7 +1171,7 @@ namespace ANCHOR
    *      - Game Engine (RTX)
    *      - Misc. */
   ANCHOR_API
-  wabi::UsdImagingGLEngineSharedPtr GetEngineGL();
+  kraken::UsdImagingGLEngineSharedPtr GetEngineGL();
 
   /**
    * Access the IO structure.

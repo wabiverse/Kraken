@@ -35,7 +35,7 @@
 #include <wabi/base/gf/vec2i.h>
 #include <wabi/usd/usdUI/screen.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 #define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->verts)
 
@@ -135,4 +135,4 @@ struct wmRegionMessageSubscribeParams
 };
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

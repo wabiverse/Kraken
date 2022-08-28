@@ -39,13 +39,15 @@
 #include <wabi/usd/usd/typed.h>
 #include <wabi/usd/usd/collectionAPI.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
-struct KrakenPROP : UsdProperty
+struct KrakenPROP : public wabi::UsdProperty
 {
-  KrakenPROP(const UsdProperty &prop = UsdProperty()) : UsdProperty(prop) {}
+  KrakenPROP(const wabi::UsdProperty &prop = wabi::UsdProperty()) 
+    : wabi::UsdProperty(prop)
+  {}
 
-  TfToken name;
+  wabi::TfToken name;
   PropertyType type;
 };
 
@@ -101,31 +103,30 @@ struct KrakenFUNC
   KrakenPRIM *c_ret;
 };
 
-struct KrakenPRIM : public UsdPrim
+struct KrakenPRIM : public wabi::UsdPrim
 {
-  KrakenPRIM(const UsdPrim &prim = UsdPrim())
-    : UsdPrim(prim),
+  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim())
+    : wabi::UsdPrim(prim),
       owner_id(IsValid() ? GetParent().GetName().GetText() : NULL),
       identifier(!GetName().IsEmpty() ? GetName().GetText() : NULL),
-      collection(UsdCollectionAPI())
+      collection(wabi::UsdCollectionAPI())
   {}
 
   const char *owner_id;
+  const char *identifier;
+  wabi::UsdCollectionAPI collection;
+  KrakenPRIM *type;
 
   /**
    * context (C) */
   void *data;
-
-  KrakenPRIM *type;
+  
   KrakenPRIM *base;
   StructRefineFunc refine;
-
-  const char *identifier;
 
   void *py_type;
 
   PropertyVectorLUXO props;
-  UsdCollectionAPI collection;
 
   ObjectRegisterFunc reg;
   ObjectUnregisterFunc unreg;
@@ -134,4 +135,4 @@ struct KrakenPRIM : public UsdPrim
   std::vector<KrakenPRIM *> functions;
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

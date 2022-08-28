@@ -26,8 +26,9 @@
 
 #include "wabi/imaging/garch/glApi.h"
 
-#include <Metal/Metal.h>
-#include <AppKit/AppKit.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
 
 #include "wabi/wabi.h"
 #include "wabi/base/gf/vec4i.h"

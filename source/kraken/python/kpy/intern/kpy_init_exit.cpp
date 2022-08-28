@@ -47,7 +47,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 
 /* ------ */
@@ -57,7 +57,7 @@ WABI_NAMESPACE_USING
  *  -----  Python Init & Exit. ----- */
 
 
-void KPY_python_init(wabi::kContext *C)
+void KPY_python_init(kraken::kContext *C)
 {
   Main *kmain = CTX_data_main(C);
 

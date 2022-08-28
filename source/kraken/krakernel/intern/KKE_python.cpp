@@ -31,7 +31,7 @@
 #include <wabi/base/tf/stringUtils.h>
 #include <wabi/wabi.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 void KKE_kraken_python_init(kContext *C)
@@ -40,4 +40,4 @@ void KKE_kraken_python_init(kContext *C)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

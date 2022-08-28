@@ -1,6 +1,7 @@
 set(INC
   .
   ../../../. # Pixar USD
+  ../../../source
   ../anchor
   ../anchor/intern
   ../anchor/backend
@@ -42,7 +43,6 @@ set(SRC
   KKE_space.h
   KKE_workspace.h
   KKE_utils.h
-  KKE_version.h
 )
 
 set(INC_SYS

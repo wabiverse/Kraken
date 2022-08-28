@@ -50,7 +50,7 @@
 #include "ED_defines.h"
 #include "ED_screen.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 struct RegionTypeAlignInfo
@@ -210,4 +210,4 @@ int ED_area_global_size_y(const ScrArea *area)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -61,7 +61,7 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/stage.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 static void decode_kraken_header(FileData *fd)
 {
@@ -195,4 +195,4 @@ KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadRep
   return kh;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

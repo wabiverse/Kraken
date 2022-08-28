@@ -38,7 +38,7 @@
  *  -----  Python Init & Exit. ----- */
 
 
-void KPY_python_init(wabi::kContext *C);
+void KPY_python_init(kraken::kContext *C);
 void KPY_python_exit(void);
 
 

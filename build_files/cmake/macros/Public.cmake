@@ -932,11 +932,15 @@ function(wabi_maelstrom_prologue)
     # wabi.h, at the top level of wabi.
 
     configure_file(${CMAKE_SOURCE_DIR}/wabi/wabi.h
+                   ${CMAKE_BINARY_DIR}/bin/include/wabi/wabi.h COPYONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/wabi/wabi.h
                    ${CMAKE_BINARY_DIR}/include/wabi/wabi.h COPYONLY)
-    install(
-        FILES ${CMAKE_SOURCE_DIR}/wabi/wabi.h
-        DESTINATION ${INCLUDE_WABI}
-    )
+    install(FILES ${CMAKE_SOURCE_DIR}/wabi/wabi.h
+            DESTINATION ${INCLUDE_WABI})
+    # to bind the entirety of Pixar USD to Swift.
+    # and make it usable via "import Pixar"...
+    configure_file(${CMAKE_SOURCE_DIR}/build_files/cmake/config/modules.in
+                   ${CMAKE_BINARY_DIR}/bin/include/wabi/module.map COPYONLY)
 
     # Create a monolithic shared library target if we should import one
     # or create one.

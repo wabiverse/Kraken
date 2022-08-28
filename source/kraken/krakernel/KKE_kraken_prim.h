@@ -46,7 +46,7 @@
 #include <tbb/queuing_rw_mutex.h>
 #include <unordered_map>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

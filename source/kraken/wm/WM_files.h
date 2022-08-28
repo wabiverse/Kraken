@@ -31,9 +31,9 @@
 
 #include "KKE_context.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_file_operators_register(void);
 void WM_files_init(kContext *C);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

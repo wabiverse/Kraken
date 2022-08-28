@@ -65,6 +65,8 @@ using namespace boost::python;
 
 WABI_NAMESPACE_USING
 
+KRAKEN_NAMESPACE_USING
+
 KPy_KrakenStage *kpy_context_module = NULL; /* for fast access */
 
 // PyTypeObject pystage_struct_meta_idprop_Type;
@@ -491,7 +493,7 @@ int LUXO_property_collection_lookup_token_index(KrakenPRIM *ptr,
   for (const KrakenPRIM &prim : iter) {
 
     if (prim.GetName() == key) {
-      *r_ptr = prim;
+      r_ptr = new KrakenPRIM(prim.GetPrim());
       found = 1;
     }
 
@@ -558,8 +560,7 @@ static PyObject *kpy_types_module_dir(PyObject *self)
 
   root = &state->ptr;
   for (const KrakenPRIM &prim : root->GetStage()->Traverse()) {
-    KrakenPRIM dat = prim;
-    PyList_APPEND(ret, PyUnicode_FromString(LUXO_struct_identifier(&dat)));
+    PyList_APPEND(ret, PyUnicode_FromString(LUXO_struct_identifier(&prim)));
   }
 
   /* Include the modules `__dict__` for Python only types. */
@@ -718,7 +719,7 @@ KrakenPRIM *pystage_struct_as_srna(PyObject *self, const bool parent, const char
     return NULL;
   }
 
-  if (py_srna->ptr.type != &LUXO_Struct) {
+  if (!py_srna->ptr->GetPseudoRoot().IsValid()) {
     PyErr_Format(PyExc_TypeError,
                  "%.200s, bl_rna attribute not a RNA_Struct, on '%.200s'' instance",
                  error_prefix,
@@ -727,7 +728,7 @@ KrakenPRIM *pystage_struct_as_srna(PyObject *self, const bool parent, const char
     return NULL;
   }
 
-  srna = (KrakenPRIM *)py_srna->ptr.data;
+  srna = new KrakenPRIM(py_srna->ptr->GetPseudoRoot());
   Py_DECREF(py_srna);
 
   return srna;
@@ -1175,7 +1176,7 @@ static PyObject *pystage_unregister_class(PyObject *UNUSED(self), PyObject *py_c
 
 
 /* 'kpy.data' from Python. */
-static KrakenPRIM *stage_module_ptr = NULL;
+static UsdStageWeakPtr stage_module_ptr = TfNullPtr;
 PyObject *KPY_stage_module(void)
 {
   KPy_KrakenStage *pystage;
@@ -1185,14 +1186,14 @@ PyObject *KPY_stage_module(void)
   LUXO_main_pointer_create(G.main, &ptr);
   pystage = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ptr);
 
-  stage_module_ptr = &pystage->ptr;
+  stage_module_ptr = pystage->ptr;
   return (PyObject *)pystage;
 }
 
 void KPY_update_stage_module(void)
 {
   if (stage_module_ptr) {
-    stage_module_ptr->data = G.main;
+    stage_module_ptr->Open(G.main->stage_id);
   }
 }
 
@@ -1243,7 +1244,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
     pystage = (KPy_KrakenStage *)*instance;
 
     /* Refine may have changed types after the first instance was created. */
-    if (ptr->type == pystage->ptr.type) {
+    if (ptr->type->GetPrim() == pystage->ptr->GetPrimAtPath(ptr->type->GetPath())) {
       Py_INCREF(pystage);
       return (PyObject *)pystage;
     }
@@ -1271,7 +1272,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
 #endif
       Py_DECREF(tp); /* srna owns, can't hold a reference. */
     } else {
-      TF_WARN("kpy: could not make type '%s'", LUXO_struct_identifier(ptr->type));
+      TF_WARN("kpy: could not make type '%s'", LUXO_struct_identifier(ptr));
 
 #ifdef USE_PYRNA_STRUCT_REFERENCE
       pystage = (KPyKPy_KrakenStage_StructLUXO *)PyObject_GC_New(KPy_KrakenStage,
@@ -1299,7 +1300,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
     Py_INCREF(pystage);
   }
 
-  pystage->ptr = *ptr;
+  pystage->ptr = ptr->GetStage();
 #ifdef PYRNA_FREE_SUPPORT
   pystage->freeptr = false;
 #endif

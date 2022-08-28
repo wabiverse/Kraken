@@ -47,7 +47,7 @@
 
 #include <wabi/base/tf/stringUtils.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *reference)
@@ -991,11 +991,6 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
   op->type = ot;
   op->idname = ot->idname;
 
-  /* Set authored properties. */
-  if (properties->IsValid()) {
-    op->ptr = properties;
-  }
-
   /* Initialize error reports. */
   if (reports) {
     op->reports = reports;
@@ -1581,4 +1576,4 @@ void WM_event_do_handlers(kContext *C)
 static int wm_handler_fileselect() {}
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

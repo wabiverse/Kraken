@@ -30,6 +30,9 @@
 #  include <cstdlib>
 #endif /*__GNUC__ */
 
+/* KRAKEN */
+#include "kraken/kraken.h"
+
 /* UNIVERSE */
 #include "USD_area.h"
 #include "USD_context.h"
@@ -52,7 +55,6 @@
 #include "KKE_main.h"
 #include "KKE_screen.h"
 #include "KKE_utils.h"
-#include "KKE_version.h"
 
 /* ANCHOR */
 #include "ANCHOR_api.h"
@@ -73,8 +75,9 @@
 #include <wabi/usd/usd/stage.h>
 #include <wabi/wabi.h>
 
+WABI_NAMESPACE_USING
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 Global G;
 
@@ -265,4 +268,4 @@ void KKE_kraken_atexit(void)
   g_atexit = NULL;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -33,7 +33,7 @@
 
 #include "WM_operators.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct ARegion;
 struct ScrArea;
@@ -100,4 +100,4 @@ int WM_operator_name_call(kContext *C,
 
 void WM_event_do_refresh_wm(kContext *C);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

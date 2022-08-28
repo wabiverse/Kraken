@@ -34,7 +34,7 @@
 
 #include "ANCHOR_api.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y)
 {
@@ -87,4 +87,4 @@ void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4])
   }
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

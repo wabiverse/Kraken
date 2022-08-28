@@ -62,7 +62,7 @@
 #include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 /* handle to anchor system. */
@@ -1523,4 +1523,4 @@ void WM_window_operators_register()
   /* ------ */
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

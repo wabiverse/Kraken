@@ -10,6 +10,7 @@ set(INC
   ./zep/mcommon/utf8
   ../include/.
   ../../../../. # Pixar USD
+  ../../../../source
   ../../anchor
   ../../kraklib
   ../../krakernel

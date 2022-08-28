@@ -26,7 +26,7 @@
 
 #include "USD_api.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  * In order of preferred
@@ -111,4 +111,4 @@ FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *repo
  * @return A handle on success, or NULL on failure. */
 KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadReport *reports);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

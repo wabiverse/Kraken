@@ -15,37 +15,29 @@
  */
 
 import Foundation
-import Darwin
-import Cocoa
+import MetalKit
 import AppKit
-import Metal
-import QuartzCore
+import IOKit
 
-@objc
-public enum AnchorWindowState: Int {
-  case WindowStateNormal = 0
-  case WindowStateMaximized = 1
-  case WindowStateMinimized = 2
-  case WindowStateFullScreen = 3
-  case WindowStateEmbedded = 4
-}
+/* Pixar USD. */
+import Pixar
 
-open class AnchorSystemApple : NSObject
+/* Kraken Anchor. */
+import Anchor
+
+public struct AnchorSystemApple
 {
   let app = NSApplication.shared
   let strongDelegate = AppDelegate()
   let menu = AppMenu()
 
-  @objc 
-  public init(cocoa: CocoaAppDelegate) 
+  public init() 
   {
-    super.init()
-
     /** 
      * @UNIFIED Anchor System.
      * recieves cocoa instance, so swift can use 
      * the same instanced cxx anchor system. */
-    self.strongDelegate.cocoa = cocoa
+    // self.strongDelegate.cocoa = cocoa
 
     self.app.delegate = self.strongDelegate
     self.app.mainMenu = self.menu
@@ -54,13 +46,13 @@ open class AnchorSystemApple : NSObject
     self.app.finishLaunching()
   }
 
-  @objc 
-  public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: AnchorWindowState, isDialog: Bool) -> AnchorWindowApple?
+  public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: eAnchorWindowState, isDialog: Bool) -> AnchorWindowApple?
   {
     var window: AnchorWindowApple?
 
     let frame = (NSScreen.main?.visibleFrame)!
-    let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
+    // let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
+    let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskTitled + NSWindowStyleMaskClosable + NSWindowStyleMaskMiniaturizable))
 
     var bottom = (contentRect.size.height - 1) - height - top
 
@@ -99,20 +91,20 @@ class AppMenu: NSMenu
     mainMenu.submenu?.items = [
       NSMenuItem(title: "About Kraken", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Hide Kraken", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h", modifier: [.command]),
-      NSMenuItem(title: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h", modifier: [.option, .command]),
+      NSMenuItem(title: "Hide Kraken", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand),
+      NSMenuItem(title: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand + NSEventModifierFlagOption),
       NSMenuItem(title: "Show All", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Quit Kraken", action: #selector(NSApplication.shared.terminate(_:)), keyEquivalent: "q", modifier: [.command])
+      NSMenuItem(title: "Quit Kraken", action: #selector(NSApplication.shared.terminate(_:)), keyEquivalent: "q", modifier: NSEventModifierFlagCommand)
     ]
 
     let windowMenu = NSMenuItem()
     windowMenu.submenu = NSMenu(title: "Window")
     windowMenu.submenu?.items = [
-      NSMenuItem(title: "Minimize", action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: [.command]),
+      NSMenuItem(title: "Minimize", action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
       NSMenuItem(title: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
-      NSMenuItem(title: "Enter Full Screen", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: [.control, .command]),
-      NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: [.command])
+      NSMenuItem(title: "Enter Full Screen", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: NSEventModifierFlagCommand + NSEventModifierFlagControl),
+      NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: NSEventModifierFlagCommand)
     ]
 
     items = [mainMenu, windowMenu]
@@ -123,16 +115,18 @@ class AppMenu: NSMenu
   }
 }
 
-extension NSMenuItem 
+extension NSMenuItem : @unchecked Sendable
 {
   convenience init(title string: String, 
-                   target: AnyObject = self as AnyObject, 
+                   target: AnyObject = NSMenuItem.self as AnyObject, 
                    action selector: Selector?, 
                    keyEquivalent charCode: String, 
-                   modifier: NSEvent.ModifierFlags = .command)
+                   modifier: NSEventModifierFlags)
   {
     self.init(title: string, action: selector, keyEquivalent: charCode)
-    keyEquivalentModifierMask = modifier
+
+    // keyEquivalentModifierMask = .command
+
     self.target = target
   }
 
@@ -148,10 +142,9 @@ open class AnchorWindowApple : NSObject
 {
   var window: NSWindow
   var metalDevice: MTLDevice!
-  var metalLayer: CAMetalLayer!
-  var metalView: NSView
+  var metalView: MTKView!
   var dialog: Bool = false
-  var state: AnchorWindowState
+  var state: eAnchorWindowState
   var windowDelegate: CocoaWindowDelegate
 
   init(title: String, 
@@ -159,7 +152,7 @@ open class AnchorWindowApple : NSObject
        bottom: CGFloat, 
        width: CGFloat, 
        height: CGFloat, 
-       state: AnchorWindowState, 
+       state: eAnchorWindowState, 
        dialog: Bool,
        parent: AnchorWindowApple?) 
   {
@@ -169,9 +162,9 @@ open class AnchorWindowApple : NSObject
     let rect = NSRect(origin: CGPoint(x: left, y: bottom), size: CGSize(width: width, height: height))
     let minSize = NSSize(width: 320, height: 240)
 
-    var styleMask: NSWindow.StyleMask = [.titled, .closable, .resizable]
+    var styleMask: NSWindowStyleMask = NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskTitled + NSWindowStyleMaskClosable + NSWindowStyleMaskResizable)
     if (!dialog) {
-      styleMask.insert(.miniaturizable)
+      styleMask += NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskMiniaturizable)
     }
 
     self.window = NSWindow(contentRect: rect, styleMask: styleMask, backing: .buffered, defer: false)
@@ -179,21 +172,10 @@ open class AnchorWindowApple : NSObject
 
     /* setup metal device. */
     self.metalDevice = MTLCreateSystemDefaultDevice()
-    
-    /* setup metal layer. */
-    self.metalLayer = CAMetalLayer()
-    self.metalLayer.edgeAntialiasingMask = CAEdgeAntialiasingMask(rawValue: 0)
-    self.metalLayer.masksToBounds = false
-    self.metalLayer.isOpaque = true
-    self.metalLayer.framebufferOnly = true
-    self.metalLayer.presentsWithTransaction = false
-    self.metalLayer.removeAllAnimations()
-    self.metalLayer.device = self.metalDevice
 
     /* setup metal view. */
-    self.metalView = NSView(frame: rect)
+    self.metalView = MTKView(frame: rect, device: self.metalDevice)
     self.metalView.wantsLayer = true
-    self.metalView.layer = self.metalLayer
 
     /* attach to window. */
     self.window.contentView = self.metalView
@@ -210,61 +192,46 @@ open class AnchorWindowApple : NSObject
     self.window.delegate = self.windowDelegate
   }
 
-  @objc
-  public func getMetalView() -> NSView
+  public func getMetalView() -> MTKView
   {
     return self.metalView
   }
 
-  @objc
-  public func getMetalLayer() -> CAMetalLayer
-  {
-    return self.metalLayer
-  }
-
-  @objc
   public func getCocoaWindow() -> NSWindow
   {
     return self.window
   }
 
-  @objc
   public func setCocoaTitle(title: String) -> Void
   {
     self.window.title = title
   }
 
-  @objc
   public func getCocoaTitle() -> String
   {
     return self.window.title
   }
 
-  @objc 
   public func closeCocoaWindow() -> Void
   {
     self.window.close()
   }
 
-  @objc 
-  public func getCocoaState() -> AnchorWindowState
+  public func getCocoaState() -> eAnchorWindowState
   {
     return self.state
   }
 
-  @objc 
-  public func setCocoaState(newState: AnchorWindowState)
+  public func setCocoaState(newState: eAnchorWindowState)
   {
     self.state = newState
   }
 
-  @objc 
   public func getScreen() -> NSScreen
   {
     return self.window.screen!
   }
 
-  @objc 
   public func getIsDialog() -> Bool
   {
     return self.dialog
@@ -286,16 +253,15 @@ class CocoaWindowDelegate : NSObject, NSWindowDelegate
 class AppDelegate : NSObject, NSApplicationDelegate
 {
   private var m_windowFocus = true
-  var cocoa: CocoaAppDelegate!
+  // var cocoa: CocoaAppDelegate!
 
   override init() 
   {
     super.init()
-    NotificationCenter.default.addObserver(self, selector: #selector(self.windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
+    // NotificationCenter.default.addObserver(self, selector: #selector(self.windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
     fputs("Kraken is LIVE.\n", stderr)
   }
 
-  @objc
   func windowWillClose(_ notification: Notification)
   {
     let closingWindow = notification.object as! NSWindow
@@ -316,8 +282,8 @@ class AppDelegate : NSObject, NSApplicationDelegate
         return
       }
     }
-      
-    if let windowNumbers = NSWindow.windowNumbers(options: .init(rawValue: 0)) {
+    
+    if let windowNumbers = NSWindow.windowNumbers(withOptions: .init(0)) {
       for windowNumber in windowNumbers {
         if let currentWindow = NSApp.window(withWindowNumber: windowNumber.intValue) {
 
@@ -353,12 +319,13 @@ class AppDelegate : NSObject, NSApplicationDelegate
   func applicationWillBecomeActive(_ notification: Notification) 
   {
     /* calls instanced cxx anchor system function. */
-    self.cocoa.handleApplicationBecomeActiveEvent()
+    // self.cocoa.handleApplicationBecomeActiveEvent()
   }
 
   func application(_ sender: NSApplication, openFile filename: String) -> Bool
   { 
     /* calls instanced cxx anchor system function. */
-    return self.cocoa.handleOpenDocumentRequest(filename)
+    // return self.cocoa.handleOpenDocumentRequest(filename)
+    return true
   }
 }

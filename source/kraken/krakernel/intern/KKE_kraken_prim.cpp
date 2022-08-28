@@ -29,7 +29,7 @@
 #include "KKE_main.h"
 #include "KKE_scene.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  *  -------------------------------------- The Kraken Prim Registry. ----- */
@@ -212,4 +212,4 @@ WABI_NAMESPACE_BEGIN
 // }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

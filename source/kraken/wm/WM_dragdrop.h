@@ -28,7 +28,7 @@
 
 #include "KKE_context.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_drag_free(wmDrag *drag);
 void WM_drag_free_list(std::vector<wmDrag *> &drags);
@@ -41,4 +41,4 @@ wmDrag *WM_event_start_drag(kContext *C,
                             unsigned int flags);
 void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

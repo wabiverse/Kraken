@@ -46,7 +46,7 @@
 
 #include "ED_screen.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 static kScreen *screen_fullscreen_find_associated_normal_screen(const Main *kmain, kScreen *screen)
@@ -117,4 +117,4 @@ WorkSpaceLayout *ED_workspace_layout_add(kContext *C,
   return KKE_workspace_layout_add(C, kmain, workspace, screen, name);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

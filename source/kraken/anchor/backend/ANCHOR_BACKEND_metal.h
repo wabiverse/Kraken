@@ -35,11 +35,13 @@
 # include <wabi/imaging/hgiMetal/capabilities.h>
 #endif /* WITH_METAL */
 
-@class AnchorWindowApple;
 @class CAMetalLayer;
+@class MTLBuffer;
 @class MTLCommandQueue;
+@class MTLRenderCommandEncoder;
 @class MTLRenderPipelineState;
 @class MTLTexture;
+@class MTKView;
 @class NSCursor;
 @class NSObject;
 @class NSView;
@@ -64,6 +66,8 @@ class AnchorAppleMetal : public AnchorSystemWindow
   bool getValid() const;
 
   eAnchorStatus activateDrawingContext();
+
+  void SetupRenderState(MTLRenderCommandEncoder *enc, MTLBuffer *vertexBuffer, AnchorDrawData *draw_data, size_t vertexBufferOffset);
 
   eAnchorStatus swapBuffers();
 
@@ -113,7 +117,7 @@ class AnchorAppleMetal : public AnchorSystemWindow
     return ANCHOR_FAILURE;
   }
 
-  AnchorWindowApple *getWindow();
+  void *getWindow();
 
   void setNativePixelSize(void);
 
@@ -123,11 +127,10 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
  protected:
   /* The swift window which holds the metal view. */
-  AnchorWindowApple *m_window;
+  void *m_window;
 
   /* The Metal view. */
-  NSView *m_metalView;
-  CAMetalLayer *m_metalLayer;
+  MTKView *m_metalKitView;
   MTLCommandQueue *m_metalCmdQueue;
   MTLRenderPipelineState *m_metalRenderPipeline;
   MTLTexture *m_defaultFramebufferMetalTexture;
@@ -143,4 +146,9 @@ class AnchorAppleMetal : public AnchorSystemWindow
   bool m_is_dialog;
 
   wabi::HgiMetal *m_hgi;
+
+  AnchorU64 m_time;
+
+  /* test buffer. */
+  MTLTexture *m_font_tex;
 };

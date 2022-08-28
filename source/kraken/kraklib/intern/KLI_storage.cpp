@@ -36,7 +36,7 @@
 
 #include <filesystem>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 bool KLI_exists(const fs::path &path)
 {
@@ -132,4 +132,4 @@ bool KLI_is_file(const char *path)
   return (KLI_exists(path) && !KLI_ISDIR(KLI_type(path)));
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

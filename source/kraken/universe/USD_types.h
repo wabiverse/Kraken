@@ -24,30 +24,25 @@
  * Set the Stage.
  */
 
+#include "kraken/kraken.h"
+
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/primRange.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct Main;
 struct ReportList;
 struct kContext;
 
-/**
- * Macro to use absolute paths to system prims. */
-#define WABI_ROOT_NS "WabiAnimationStudios"
-#define STAGE(x, ...) SdfPath("/" WABI_ROOT_NS "/" x)
-#define STAGE_WABI SdfPath("/" WABI_ROOT_NS)
+typedef std::vector<wabi::UsdCollectionAPI> UsdCollectionsVector;
+typedef std::vector<wabi::UsdProperty> UsdPropertyVector;
 
-
-typedef std::vector<UsdCollectionAPI> UsdCollectionsVector;
-typedef std::vector<UsdProperty> UsdPropertyVector;
-
-typedef int (*ObjectValidateFunc)(const UsdPrim &ptr, void *data, int *have_function);
+typedef int (*ObjectValidateFunc)(const wabi::UsdPrim &ptr, void *data, int *have_function);
 typedef int (*ObjectCallbackFunc)(struct kContext *C,
-                                  const UsdPrim &ptr,
+                                  const wabi::UsdPrim &ptr,
                                   void *func,
                                   UsdPropertyVector list);
 typedef void (*ObjectFreeFunc)(void *data);
@@ -58,7 +53,7 @@ typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
                                                  ObjectValidateFunc validate,
                                                  ObjectCallbackFunc call,
                                                  ObjectFreeFunc free);
-typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const UsdPrim &type);
+typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const wabi::UsdPrim &type);
 typedef void **(*ObjectInstanceFunc)(struct KrakenPRIM *ptr);
 
 typedef enum PropertyType
@@ -120,11 +115,11 @@ typedef enum eStringPropertySearchFlag
   PROP_STRING_SEARCH_SUGGESTION = (1 << 2),
 } eStringPropertySearchFlag;
 
-struct KrakenSTAGE : public UsdStageRefPtr
+struct KrakenSTAGE : public wabi::UsdStageRefPtr
 {
   KrakenSTAGE();
 
   std::vector<struct KrakenPRIM *> structs;
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

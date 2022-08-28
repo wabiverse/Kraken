@@ -46,10 +46,10 @@ set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest
 set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
 set(KRAKEN_NUGET_CONFIG ${CMAKE_BINARY_DIR}/NuGet.config)
 
-file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/Release/*.dll")
+file(GLOB out_inst_dll "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/*.dll")
 foreach(dlls ${out_inst_dll})
   get_filename_component(ffdll ${dlls} NAME)
-  list(APPEND RELEASE_CONTENT_FILES ${CMAKE_BINARY_DIR}/bin/Release/${ffdll})
+  list(APPEND RELEASE_CONTENT_FILES ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/${ffdll})
 endforeach()
 
 file(GLOB out_inst_ico "${CMAKE_SOURCE_DIR}/release/windows/icons/*.png")
@@ -61,27 +61,27 @@ endforeach()
 function(kraken_chaosengine_metadata_hotfix)
   # TODO: Fix this binary path inception weirdness.
   # I really do wonder why MSVC is looking for files
-  # in kraken.dir/Release/kraken.dir/Release ...
-  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd)
+  # in kraken.dir/${CMAKE_BUILD_TYPE}/kraken.dir/${CMAKE_BUILD_TYPE} ...
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged/App.winmd)
     file(
       COPY
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/App.winmd
-        # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainWindow.winmd
-        # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/MainPage.winmd
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged/XamlMetaDataProvider.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged/App.winmd
+        # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged/MainWindow.winmd
+        # ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged/MainPage.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged/XamlMetaDataProvider.winmd
       DESTINATION
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Unmerged
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged
     )
   endif()
-  if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged)
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Unmerged)
+  if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Unmerged)
   endif()
-  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Merged/Kraken.winmd)
+  if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Merged/Kraken.winmd)
     file(
       COPY
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/Merged/Kraken.winmd
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/Merged/Kraken.winmd
       DESTINATION
-        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/Release/kraken.dir/Release/Merged
+        ${CMAKE_CURRENT_BINARY_DIR}/kraken.dir/${CMAKE_BUILD_TYPE}/kraken.dir/${CMAKE_BUILD_TYPE}/Merged
     )
   endif()
 endfunction()

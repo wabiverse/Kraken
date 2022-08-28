@@ -24,10 +24,10 @@
 
 #define PY_SSIZE_T_CLEAN
 
+#include "kraken/kraken.h"
+
 #include "kpy_capi_packarray.h"
 #include "kpy_utildefines.h"
-
-#include "KKE_version.h"
 
 /* -------------------------------------------------------------------- */
 /** \name Typed Tuple Packing

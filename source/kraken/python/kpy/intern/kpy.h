@@ -42,7 +42,7 @@ typedef enum eSDFPathForeachFlag
 
 struct kContext;
 
-void KPy_init_modules(struct wabi::kContext *C);
+void KPy_init_modules(struct kraken::kContext *C);
 extern PyObject *kpy_package_py;
 
 /* kpy_interface_atexit.cpp */

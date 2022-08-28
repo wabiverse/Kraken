@@ -61,7 +61,7 @@
 #endif /* WIN32 */
 
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct BuildDirCtx
 {
@@ -291,4 +291,4 @@ void KLI_filelist_free(struct direntry *filelist, const unsigned int nrentries)
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

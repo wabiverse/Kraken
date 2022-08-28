@@ -62,7 +62,7 @@
 #include <wabi/base/plug/plugin.h>
 #include <wabi/base/plug/registry.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void USD_create_stage(kContext *C)
 {
@@ -141,4 +141,4 @@ void USD_set_defaults(kContext *C)
   // USD_default_table_scene_data(C);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

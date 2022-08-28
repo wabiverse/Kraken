@@ -33,7 +33,7 @@
 #include "KKE_main.h"
 #include "KKE_report.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 const char *KKE_report_type_str(eReportType type)
 {
@@ -176,4 +176,4 @@ void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...
   }
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

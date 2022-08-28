@@ -24,7 +24,7 @@
 #include "KLI_fileops.h"
 #include "KLI_path_utils.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 const char *KLI_expand_tilde(const char *path_with_tilde)
 {
@@ -43,4 +43,4 @@ const char *KLI_expand_tilde(const char *path_with_tilde)
   return path_expanded;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

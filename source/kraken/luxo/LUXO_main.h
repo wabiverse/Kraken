@@ -35,8 +35,8 @@
 #include "USD_wm_types.h"
 #include "USD_object.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
-void LUXO_main(KrakenSTAGE kstage);
+void LUXO_main(const Stage &kstage);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -46,7 +46,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 /* In case a python script triggers another python
  * call, stop kpy_context_clear from invalidating. */
@@ -57,7 +57,7 @@ static bool py_use_system_env = false;
 
 
 /* use for updating while a python script runs - in case of file load */
-void KPY_context_update(wabi::kContext *C)
+void KPY_context_update(kraken::kContext *C)
 {
   if (!KLI_thread_is_main()) {
     return;
@@ -67,7 +67,7 @@ void KPY_context_update(wabi::kContext *C)
   KPY_modules_update();
 }
 
-void kpy_context_set(wabi::kContext *C, PyGILState_STATE *gilstate)
+void kpy_context_set(kraken::kContext *C, PyGILState_STATE *gilstate)
 {
   py_call_level++;
 
@@ -80,7 +80,7 @@ void kpy_context_set(wabi::kContext *C, PyGILState_STATE *gilstate)
   }
 }
 
-void kpy_context_clear(wabi::kContext *UNUSED(C), const PyGILState_STATE *gilstate)
+void kpy_context_clear(kraken::kContext *UNUSED(C), const PyGILState_STATE *gilstate)
 {
   py_call_level--;
 
@@ -118,18 +118,18 @@ static void pystatus_exit_on_error(PyStatus status)
 }
 #endif
 
-void KPY_context_set(wabi::kContext *C)
+void KPY_context_set(kraken::kContext *C)
 {
-  kpy_context_module->ptr.data = (void *)C;
+  kpy_context_module->data = (void *)C;
 }
 
-wabi::kContext *KPY_context_get(void)
+kraken::kContext *KPY_context_get(void)
 {
-  return (wabi::kContext *)kpy_context_module->ptr.data;
+  return (kraken::kContext *)kpy_context_module->data;
 }
 
 /* call KPY_context_set first */
-void KPY_python_start(wabi::kContext *C, int argc, const char **argv)
+void KPY_python_start(kraken::kContext *C, int argc, const char **argv)
 {
 #ifndef WITH_PYTHON_MODULE
   /* #PyPreConfig (early-configuration). */
@@ -294,7 +294,7 @@ void KPY_python_start(wabi::kContext *C, int argc, const char **argv)
 #endif
 }
 
-static void kpy_context_end(wabi::kContext *C)
+static void kpy_context_end(kraken::kContext *C)
 {
   if (ARCH_UNLIKELY(C == NULL)) {
     return;
@@ -333,7 +333,7 @@ void KPY_python_end(void)
 #endif
 }
 
-int KPY_context_member_get(wabi::kContext *C, const char *member, wabi::kContextDataResult *result)
+int KPY_context_member_get(kraken::kContext *C, const char *member, kraken::kContextDataResult *result)
 {
   PyGILState_STATE gilstate;
   const bool use_gil = !PyC_IsInterpreterActive();
@@ -357,7 +357,7 @@ int KPY_context_member_get(wabi::kContext *C, const char *member, wabi::kContext
     done = true;
 
   } else if (KPy_KrakenStage_Check(item)) {
-    ptr = &(((KPy_KrakenStage *)item)->ptr);
+    ptr = new KrakenPRIM(((KPy_KrakenStage *)item)->ptr->GetPseudoRoot());
 
     // result->ptr = ((KPy_StructRNA *)item)->ptr;
     CTX_data_pointer_set_ptr(result, ptr);
@@ -386,7 +386,7 @@ int KPY_context_member_get(wabi::kContext *C, const char *member, wabi::kContext
           link->ptr = ((KPy_StructRNA *)item)->ptr;
           BLI_addtail(&result->list, link);
 #endif
-          ptr = &(((KPy_KrakenStage *)list_item)->ptr);
+          ptr = new KrakenPRIM(((KPy_KrakenStage *)list_item)->ptr->GetPseudoRoot());
           CTX_data_list_add_ptr(result, ptr);
         } else {
           // TF_WARN("'%s' list item not a valid type in sequence type '%s'", member,
@@ -416,7 +416,7 @@ int KPY_context_member_get(wabi::kContext *C, const char *member, wabi::kContext
   return done;
 }
 
-void KPY_python_reset(wabi::kContext *C)
+void KPY_python_reset(kraken::kContext *C)
 {
   /* unrelated security stuff */
   G.f &= ~(G_FLAG_SCRIPT_AUTOEXEC_FAIL | G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET);

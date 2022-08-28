@@ -36,7 +36,7 @@
 
 #include <wabi/usd/usdUI/area.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 enum GlobalAreaAlign
@@ -118,4 +118,4 @@ ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
     regions(EMPTY)
 {}
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

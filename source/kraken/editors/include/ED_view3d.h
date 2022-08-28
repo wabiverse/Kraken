@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "kraken/kraken.h"
+
 #include "ED_defines.h"
 
 #include <wabi/base/gf/frustum.h>
@@ -79,7 +81,7 @@
 /** Figure out why this is the magical timecode multiplier value. */
 #define MAGIC_TIMECODE_MULTIPLIER 0.2
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /** Use with #View3D.shading.mode */
 enum eView3DShadingMode
@@ -95,7 +97,7 @@ struct View3DShading
   eView3DShadingMode mode;
 
   /** Viewport background color. */
-  GfVec4f background_color;
+  wabi::GfVec4f background_color;
 
   /** HDR dome light texture settings. */
   char studiolight_texture[VIEW3D_MAXNAME];
@@ -105,7 +107,7 @@ struct View3DShading
   float studiolight_blur;
 
   /** Selection outline color. */
-  GfVec4f object_outline_color;
+  wabi::GfVec4f object_outline_color;
 
   /** Alpha transparency for xray'd objects. */
   float xray_alpha;
@@ -142,7 +144,7 @@ struct View3DStatus
   eView3DStatusFlag redraw_flag;
 
   /** Animation timecode. */
-  UsdTimeCode timecode;
+  wabi::UsdTimeCode timecode;
 };
 
 struct View3DOverlay
@@ -187,7 +189,7 @@ struct View3DOverlay
 struct View3D
 {
   /** Viewport camera settings. */
-  UsdGeomCamera camera;
+  wabi::UsdGeomCamera camera;
   float lens;
   float clip_start, clip_end;
 
@@ -214,13 +216,13 @@ struct View3D
   View3DStatus status;
 
   /** Hydra Engine Params. */
-  UsdImagingGLRenderParams render_params;
+  wabi::UsdImagingGLRenderParams render_params;
 };
 
 VIEW3D_EDITOR_API
-void ED_view3d_init_engine(const SdfPath &root, bool &reset);
+void ED_view3d_init_engine(const wabi::SdfPath &root, bool &reset);
 
 VIEW3D_EDITOR_API
 void ED_view3d_run(bool *show = NULL);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

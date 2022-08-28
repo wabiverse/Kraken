@@ -31,13 +31,12 @@
 include(CXXHelpers)
 include(Options)
 
-# --- Require (C++17-20 Hybrid) ---
-# Our Standard is now -- CXX/WinRT
-set(CMAKE_CXX_STANDARD 17)
+# --- Require (C++23) ---
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
     include(gccdefaults)
 elseif(APPLE)
     include(clangdefaults)
@@ -52,7 +51,7 @@ _add_define(GLX_GLXEXT_PROTOTYPES)
 # Python bindings for tf require this define.
 _add_define(BOOST_PYTHON_NO_PY_SIGNATURES)
 
-if(NOT KRAKEN_RELEASE_MODE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   _add_define(BUILD_OPTLEVEL_DEV)
 endif()
 
@@ -82,3 +81,5 @@ else()
     set(WABI_USE_NAMESPACES "0")
     message(STATUS "C++ namespaces disabled.")
 endif()
+
+set(CMAKE_MESSAGE_LOG_LEVEL "WARNING" CACHE STRING "Remove excessive cmake logging." FORCE)

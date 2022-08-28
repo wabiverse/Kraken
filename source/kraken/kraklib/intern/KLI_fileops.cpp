@@ -60,7 +60,7 @@
 
 #include <wabi/base/tf/diagnostic.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 #ifdef WIN32
@@ -501,4 +501,4 @@ int KLI_delete(const char *file, bool dir, bool recursive)
 #endif /* Linux & Apple */
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

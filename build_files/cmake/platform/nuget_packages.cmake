@@ -499,7 +499,7 @@ cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
 string(TOUPPER ${_host_name} UPPER_HOSTNAME)
 set(WINDOWS_MACHINE_HOSTNAME ${UPPER_HOSTNAME})
 set(WINDOWS_USER_NAME $ENV{USERNAME})
-if(KRAKEN_RELEASE_MODE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
   set(WINDOWS_CONFIG_MODE "Release")
 else()
   set(WINDOWS_CONFIG_MODE "Debug")
@@ -507,7 +507,7 @@ endif()
 file(TIMESTAMP ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in GEN_TIME "%Y-%m-%dT%H:%M:%S")
 
 file(SHA256 ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in _current_hash)
-if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/kraken.build.appxrecipe)
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/kraken.build.appxrecipe)
   set(APPX_RECIPE_CHECKSUM_HASH ${_current_hash})
   set(DEPENDENT_DLLS "    
     <!-- ARNOLD RENDER ENGINE -->
@@ -913,15 +913,15 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/kraken.build.appxrecipe)
   set(APPX_RECIPE_CHECKSUM_HASH ${_new_hash} PARENT_SCOPE)
 endif()
 
-if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/AppxManifest.xml)
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/AppxManifest.xml)
   configure_file(
     ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
     ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/AppxManifest.xml @ONLY
   )
 endif()
 
-# if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/Release/resources.pri)
-# execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& MakePri.exe new /cf ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/Release/priconfig.xml /pr ${CMAKE_BINARY_DIR}/source/creator/ /in Kraken"
+# if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/resources.pri)
+# execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& MakePri.exe new /cf ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/${CMAKE_BUILD_TYPE}/priconfig.xml /pr ${CMAKE_BINARY_DIR}/source/creator/ /in Kraken"
 #                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 # file(RENAME
 #   ${CMAKE_BINARY_DIR}/resources.pri

@@ -62,7 +62,7 @@
 #include <wabi/wabi.h>
 #include <wabi/base/tf/tf.h>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 //-------------------------------------------------------------------------
 // Data
@@ -451,8 +451,8 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   // Clear atlas
   atlas->TexID = (AnchorTextureID)NULL;
   atlas->TexWidth = atlas->TexHeight = 0;
-  atlas->TexUvScale = GfVec2f(0.0f, 0.0f);
-  atlas->TexUvWhitePixel = GfVec2f(0.0f, 0.0f);
+  atlas->TexUvScale = wabi::GfVec2f(0.0f, 0.0f);
+  atlas->TexUvWhitePixel = wabi::GfVec2f(0.0f, 0.0f);
   atlas->ClearTexData();
 
   // Temporary storage for building
@@ -678,7 +678,7 @@ bool AnchorFontAtlasBuildWithFreeTypeEx(FT_Library ft_library,
   atlas->TexHeight = (atlas->Flags & AnchorFontAtlasFlags_NoPowerOfTwoHeight) ?
                        (atlas->TexHeight + 1) :
                        ImUpperPowerOfTwo(atlas->TexHeight);
-  atlas->TexUvScale = GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
+  atlas->TexUvScale = wabi::GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
   if (src_load_color) {
     atlas->TexPixelsRGBA32 = (unsigned int *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight * 4);
     memset(atlas->TexPixelsRGBA32, 0, atlas->TexWidth * atlas->TexHeight * 4);

@@ -33,7 +33,7 @@
 
 #include <wabi/usd/usdUI/workspace.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 struct WorkSpaceLayout
 {
@@ -96,4 +96,4 @@ WorkSpace::WorkSpace(kContext *C, const SdfPath &stagepath)
     hook_layout_relations(EMPTY)
 {}
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

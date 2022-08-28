@@ -24,10 +24,13 @@
  * Set the Stage.
  */
 
+#include "kraken/kraken.h"
+
 #include <wabi/base/tf/token.h>
 
+WABI_NAMESPACE_USING
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /**
  * These are the default Kraken data  structure  locations
@@ -67,4 +70,4 @@ struct KRAKEN_PATH_DEFAULTS
     "/WabiAnimationStudios/Structs/Workspaces");
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

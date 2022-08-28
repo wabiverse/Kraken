@@ -24,11 +24,12 @@
 
 #include <Python.h>
 
+#include "kraken/kraken.h"
+
 #include "KLI_utildefines.h"
 #include "KLI_string_utils.h"
 
 #include "KKE_appdir.h"
-#include "KKE_version.h"
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_robinhood.h"
@@ -59,6 +60,8 @@
 using namespace boost::python;
 
 WABI_NAMESPACE_USING
+
+KRAKEN_NAMESPACE_USING
 
 struct KPy_DataContext
 {
@@ -226,9 +229,9 @@ static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
 
 static PyObject *kpy_pixar_data_context_exit(KPy_DataContext *self, PyObject *UNUSED(args))
 {
-  KKE_main_free((Main *)self->data_luxo->ptr.data);
-  self->data_luxo->ptr.type = NULL;
-  self->data_luxo->ptr.owner_id = NULL;
+  self->data_luxo->ptr->Unload(self->data_luxo->ptr->GetPseudoRoot().GetPath());
+  KKE_main_free((Main *)self->data_luxo->data);
+  self->data_luxo->ptr.Reset();
   Py_RETURN_NONE;
 }
 

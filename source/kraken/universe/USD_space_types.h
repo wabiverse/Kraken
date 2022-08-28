@@ -27,7 +27,7 @@
 #include "USD_api.h"
 #include "USD_region.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 enum eFileSelectFileTypes
 {
@@ -95,4 +95,4 @@ struct SpaceLink
   SpaceLink() : regions(EMPTY), spacetype(VALUE_ZERO), link_flag(VALUE_ZERO) {}
 };
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

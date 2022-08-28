@@ -33,7 +33,7 @@
 #include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usdUI/userPref.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 enum eUserprefUIFlag
 {
@@ -124,4 +124,4 @@ UserDef::UserDef(kContext *C, const SdfPath &stagepath)
     uiflag(VALUE_ZERO)
 {}
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

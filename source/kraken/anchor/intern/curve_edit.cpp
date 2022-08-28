@@ -38,7 +38,7 @@
 #  define _freea(x)
 #endif
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 namespace AnchorCurveEdit
 {
@@ -80,25 +80,25 @@ namespace AnchorCurveEdit
   }
 
   static int DrawPoint(AnchorDrawList *draw_list,
-                       GfVec2f pos,
-                       const GfVec2f size,
-                       const GfVec2f offset,
+                       wabi::GfVec2f pos,
+                       const wabi::GfVec2f size,
+                       const wabi::GfVec2f offset,
                        bool edited)
   {
     int ret = 0;
     AnchorIO &io = ANCHOR::GetIO();
 
-    static const GfVec2f localOffsets[4] = {GfVec2f(1, 0),
-                                            GfVec2f(0, 1),
-                                            GfVec2f(-1, 0),
-                                            GfVec2f(0, -1)};
-    GfVec2f offsets[4];
+    static const wabi::GfVec2f localOffsets[4] = {wabi::GfVec2f(1, 0),
+                                            wabi::GfVec2f(0, 1),
+                                            wabi::GfVec2f(-1, 0),
+                                            wabi::GfVec2f(0, -1)};
+    wabi::GfVec2f offsets[4];
     for (int i = 0; i < 4; i++) {
-      offsets[i] = GfVec2f(pos * size) + localOffsets[i] * 4.5f + offset;
+      offsets[i] = wabi::GfVec2f(pos * size) + localOffsets[i] * 4.5f + offset;
     }
 
-    const GfVec2f center = GfVec2f(pos * size) + offset;
-    const AnchorBBox anchor(center - GfVec2f(5, 5), center + GfVec2f(5, 5));
+    const wabi::GfVec2f center = wabi::GfVec2f(pos * size) + offset;
+    const AnchorBBox anchor(center - wabi::GfVec2f(5, 5), center + wabi::GfVec2f(5, 5));
     draw_list->AddConvexPolyFilled(offsets, 4, 0xFF000000);
     if (anchor.Contains(io.MousePos)) {
       ret = 1;
@@ -116,13 +116,13 @@ namespace AnchorCurveEdit
   }
 
   int Edit(Delegate &delegate,
-           const GfVec2f &size,
+           const wabi::GfVec2f &size,
            unsigned int id,
            const AnchorBBox *clippingRect,
            std::vector<EditPoint> *selectedPoints)
   {
     static bool selectingQuad = false;
-    static GfVec2f quadSelection;
+    static wabi::GfVec2f quadSelection;
     static int overCurve = -1;
     static int movingCurve = -1;
     static bool scrollingV = false;
@@ -132,7 +132,7 @@ namespace AnchorCurveEdit
     int ret = 0;
 
     AnchorIO &io = ANCHOR::GetIO();
-    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0, 0));
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(0, 0));
     ANCHOR::PushStyleColor(AnchorCol_Border, 0);
     ANCHOR::BeginChildFrame(id, size);
     delegate.focused = ANCHOR::IsWindowFocused();
@@ -140,11 +140,11 @@ namespace AnchorCurveEdit
     if (clippingRect)
       draw_list->PushClipRect(clippingRect->Min, clippingRect->Max, true);
 
-    const GfVec2f offset = ANCHOR::GetCursorScreenPos() + GfVec2f(0.f, size[1]);
-    const GfVec2f ssize(size[0], -size[1]);
-    const AnchorBBox container(offset + GfVec2f(0.f, ssize[1]), offset + GfVec2f(ssize[0], 0.f));
-    GfVec2f &d_min = delegate.GetMin();
-    GfVec2f &d_max = delegate.GetMax();
+    const wabi::GfVec2f offset = ANCHOR::GetCursorScreenPos() + wabi::GfVec2f(0.f, size[1]);
+    const wabi::GfVec2f ssize(size[0], -size[1]);
+    const AnchorBBox container(offset + wabi::GfVec2f(0.f, ssize[1]), offset + wabi::GfVec2f(ssize[0], 0.f));
+    wabi::GfVec2f &d_min = delegate.GetMin();
+    wabi::GfVec2f &d_max = delegate.GetMax();
 
     // handle zoom and VScroll
     if (container.Contains(io.MousePos)) {
@@ -164,10 +164,10 @@ namespace AnchorCurveEdit
         scrollingV = true;
       }
     }
-    GfVec2f range = d_max - d_min + GfVec2f(1.f, 0.f);  // +1 because of inclusive last frame
+    wabi::GfVec2f range = d_max - d_min + wabi::GfVec2f(1.f, 0.f);  // +1 because of inclusive last frame
 
-    const GfVec2f viewSize(size[0], -size[1]);
-    const GfVec2f sizeOfPixel = viewSize / 1.0;
+    const wabi::GfVec2f viewSize(size[0], -size[1]);
+    const wabi::GfVec2f sizeOfPixel = viewSize / 1.0;
     const size_t curveCount = delegate.GetCurveCount();
 
     if (scrollingV) {
@@ -180,15 +180,15 @@ namespace AnchorCurveEdit
 
     draw_list->AddRectFilled(offset, offset + ssize, delegate.GetBackgroundColor());
 
-    auto pointToRange = [&](GfVec2f pt) {
+    auto pointToRange = [&](wabi::GfVec2f pt) {
       return (pt - d_min) / range;
     };
-    auto rangeToPoint = [&](GfVec2f pt) {
-      return GfVec2f(pt * range) + d_min;
+    auto rangeToPoint = [&](wabi::GfVec2f pt) {
+      return wabi::GfVec2f(pt * range) + d_min;
     };
 
-    draw_list->AddLine(GfVec2f(GfVec2f(-1.f, -d_min[1] / range[1]) * viewSize) + offset,
-                       GfVec2f(GfVec2f(1.f, -d_min[1] / range[1]) * viewSize) + offset,
+    draw_list->AddLine(wabi::GfVec2f(wabi::GfVec2f(-1.f, -d_min[1] / range[1]) * viewSize) + offset,
+                       wabi::GfVec2f(wabi::GfVec2f(1.f, -d_min[1] / range[1]) * viewSize) + offset,
                        0xFF000000,
                        1.5f);
     bool overCurveOrPoint = false;
@@ -214,14 +214,14 @@ namespace AnchorCurveEdit
       CurveType curveType = delegate.GetCurveType(c);
       if (curveType == CurveNone)
         continue;
-      const GfVec2f *pts = delegate.GetPoints(c);
+      const wabi::GfVec2f *pts = delegate.GetPoints(c);
       uint32_t curveColor = delegate.GetCurveColor(c);
       if ((c == highLightedCurveIndex && selection.empty() && !selectingQuad) || movingCurve == c)
         curveColor = 0xFFFFFFFF;
 
       for (size_t p = 0; p < ptCount - 1; p++) {
-        const GfVec2f p1 = pointToRange(pts[p]);
-        const GfVec2f p2 = pointToRange(pts[p + 1]);
+        const wabi::GfVec2f p1 = pointToRange(pts[p]);
+        const wabi::GfVec2f p2 = pointToRange(pts[p + 1]);
 
         if (curveType == CurveSmooth || curveType == CurveLinear) {
           size_t subStepCount = (curveType == CurveSmooth) ? 20 : 2;
@@ -229,16 +229,16 @@ namespace AnchorCurveEdit
           for (size_t substep = 0; substep < subStepCount - 1; substep++) {
             float t = float(substep) * step;
 
-            const GfVec2f sp1 = AnchorLerp(p1, p2, t);
-            const GfVec2f sp2 = AnchorLerp(p1, p2, t + step);
+            const wabi::GfVec2f sp1 = AnchorLerp(p1, p2, t);
+            const wabi::GfVec2f sp2 = AnchorLerp(p1, p2, t + step);
 
             const float rt1 = smoothstep(p1[0], p2[0], sp1[0]);
             const float rt2 = smoothstep(p1[0], p2[0], sp2[0]);
 
-            const GfVec2f pos1 = GfVec2f(GfVec2f(sp1[0], AnchorLerp(p1[1], p2[1], rt1)) *
+            const wabi::GfVec2f pos1 = wabi::GfVec2f(wabi::GfVec2f(sp1[0], AnchorLerp(p1[1], p2[1], rt1)) *
                                          viewSize) +
                                  offset;
-            const GfVec2f pos2 = GfVec2f(GfVec2f(sp2[0], AnchorLerp(p1[1], p2[1], rt2)) *
+            const wabi::GfVec2f pos2 = wabi::GfVec2f(wabi::GfVec2f(sp2[0], AnchorLerp(p1[1], p2[1], rt2)) *
                                          viewSize) +
                                  offset;
 
@@ -253,9 +253,9 @@ namespace AnchorCurveEdit
             draw_list->AddLine(pos1, pos2, curveColor, 1.3f);
           }  // substep
         } else if (curveType == CurveDiscrete) {
-          GfVec2f dp1 = GfVec2f(p1 * viewSize) + offset;
-          GfVec2f dp2 = GfVec2f(GfVec2f(p2[0], p1[1]) * viewSize) + offset;
-          GfVec2f dp3 = GfCompMult(p2, GfVec2f(viewSize + offset));
+          wabi::GfVec2f dp1 = wabi::GfVec2f(p1 * viewSize) + offset;
+          wabi::GfVec2f dp2 = wabi::GfVec2f(wabi::GfVec2f(p2[0], p1[1]) * viewSize) + offset;
+          wabi::GfVec2f dp3 = GfCompMult(p2, wabi::GfVec2f(viewSize + offset));
           draw_list->AddLine(dp1, dp2, curveColor, 1.3f);
           draw_list->AddLine(dp2, dp3, curveColor, 1.3f);
 
@@ -294,8 +294,8 @@ namespace AnchorCurveEdit
 
     // move selection
     static bool pointsMoved = false;
-    static GfVec2f mousePosOrigin;
-    static std::vector<GfVec2f> originalPoints;
+    static wabi::GfVec2f mousePosOrigin;
+    static std::vector<wabi::GfVec2f> originalPoints;
     if (overSelectedPoint && io.MouseDown[0]) {
       if ((fabsf(io.MouseDelta[0]) > 0.f || fabsf(io.MouseDelta[1]) > 0.f) && !selection.empty()) {
         if (!pointsMoved) {
@@ -304,7 +304,7 @@ namespace AnchorCurveEdit
           originalPoints.resize(selection.size());
           int index = 0;
           for (auto &sel : selection) {
-            const GfVec2f *pts = delegate.GetPoints(sel.curveIndex);
+            const wabi::GfVec2f *pts = delegate.GetPoints(sel.curveIndex);
             originalPoints[index++] = pts[sel.pointIndex];
           }
         }
@@ -313,9 +313,9 @@ namespace AnchorCurveEdit
         auto prevSelection = selection;
         int originalIndex = 0;
         for (auto &sel : prevSelection) {
-          const GfVec2f mouseRange = pointToRange(originalPoints[originalIndex]) +
-                                     GfVec2f(io.MousePos - mousePosOrigin);
-          const GfVec2f p = rangeToPoint(GfVec2f(mouseRange * GfVec2f(sizeOfPixel)));
+          const wabi::GfVec2f mouseRange = pointToRange(originalPoints[originalIndex]) +
+                                     wabi::GfVec2f(io.MousePos - mousePosOrigin);
+          const wabi::GfVec2f p = rangeToPoint(wabi::GfVec2f(mouseRange * wabi::GfVec2f(sizeOfPixel)));
           const int newIndex = delegate.EditPoint(sel.curveIndex, sel.pointIndex, p);
           if (newIndex != sel.pointIndex) {
             selection.erase(sel);
@@ -336,7 +336,7 @@ namespace AnchorCurveEdit
 
     // add point
     if (overCurve != -1 && io.MouseDoubleClicked[0]) {
-      const GfVec2f np = rangeToPoint((io.MousePos - offset) / viewSize);
+      const wabi::GfVec2f np = rangeToPoint((io.MousePos - offset) / viewSize);
       delegate.BeginEdit(overCurve);
       delegate.AddPoint(overCurve, np);
       delegate.EndEdit();
@@ -347,7 +347,7 @@ namespace AnchorCurveEdit
 
     if (movingCurve != -1) {
       const size_t ptCount = delegate.GetPointCount(movingCurve);
-      const GfVec2f *pts = delegate.GetPoints(movingCurve);
+      const wabi::GfVec2f *pts = delegate.GetPoints(movingCurve);
       if (!pointsMoved) {
         mousePosOrigin = io.MousePos;
         pointsMoved = true;
@@ -360,8 +360,8 @@ namespace AnchorCurveEdit
         for (size_t p = 0; p < ptCount; p++) {
           delegate.EditPoint(movingCurve,
                              int(p),
-                             GfVec2f(rangeToPoint(pointToRange(originalPoints[p]) +
-                                                  GfVec2f(io.MousePos - mousePosOrigin)) *
+                             wabi::GfVec2f(rangeToPoint(pointToRange(originalPoints[p]) +
+                                                  wabi::GfVec2f(io.MousePos - mousePosOrigin)) *
                                      sizeOfPixel));
         }
         ret = 1;
@@ -380,8 +380,8 @@ namespace AnchorCurveEdit
 
     // quad selection
     if (selectingQuad) {
-      const GfVec2f bmin = AnchorMin(quadSelection, io.MousePos);
-      const GfVec2f bmax = AnchorMax(quadSelection, io.MousePos);
+      const wabi::GfVec2f bmin = AnchorMin(quadSelection, io.MousePos);
+      const wabi::GfVec2f bmax = AnchorMax(quadSelection, io.MousePos);
       draw_list->AddRectFilled(bmin, bmax, 0x40FF0000, 1.f);
       draw_list->AddRect(bmin, bmax, 0xFFFF0000, 1.f);
       const AnchorBBox selectionQuad(bmin, bmax);
@@ -397,9 +397,9 @@ namespace AnchorCurveEdit
           if (ptCount < 1)
             continue;
 
-          const GfVec2f *pts = delegate.GetPoints(c);
+          const wabi::GfVec2f *pts = delegate.GetPoints(c);
           for (size_t p = 0; p < ptCount; p++) {
-            const GfVec2f center = GfVec2f(pointToRange(pts[p]) * viewSize) + offset;
+            const wabi::GfVec2f center = wabi::GfVec2f(pointToRange(pts[p]) * viewSize) + offset;
             if (selectionQuad.Contains(center))
               selection.insert({int(c), int(p)});
           }

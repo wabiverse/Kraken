@@ -36,7 +36,11 @@
 #include "USD_types.h"
 #include "USD_scene.h"
 
-WABI_NAMESPACE_BEGIN
+#include <wabi/usd/ar/resolver.h>
+
+WABI_NAMESPACE_USING
+
+KRAKEN_NAMESPACE_BEGIN
 
 KrakenPRIM LUXO_StageData;
 KrakenPRIM LUXO_KrakenPixar;
@@ -52,7 +56,7 @@ KrakenSTAGE KRAKEN_STAGE = {};
 
 static void LUXO_struct_init(void)
 {
-  KrakenPRIM intern = KRAKEN_STAGE->DefinePrim(STAGE_WABI);
+  const UsdPrim &intern = KRAKEN_STAGE->DefinePrim(wabi::SdfPath("/WabiAnimationStudios"));
 
   UsdCollectionAPI capi = UsdCollectionAPI::Apply(intern, TfToken("structs"));
   capi.CreateIncludesRel().AddTarget(intern.GetPath().AppendPath(SdfPath("Structs")));
@@ -61,12 +65,17 @@ static void LUXO_struct_init(void)
 void LUXO_init(void)
 {
   LUXO_struct_init();
-  LUXO_main(KRAKEN_STAGE);
+  // LUXO_main(KRAKEN_STAGE->ptr);
 
-  KKE_tempdir_init(NULL);
+  // KKE_tempdir_init(NULL);
 
   /* remove this once we go back to UsdStage::CreateInMemory */
   LUXO_save_usd();
+}
+
+Stage &LUXO_get_stage()
+{
+  return KRAKEN_STAGE;
 }
 
 void LUXO_set_stage_ctx(kContext *C)
@@ -133,12 +142,12 @@ PropertyType LUXO_property_type_enum(KrakenPROP *prop)
   return rna_ensure_property(prop)->type;
 }
 
-const char *LUXO_property_type(KrakenPRIM *ptr)
+const char *LUXO_property_type(KrakenPROP *prop)
 {
-  return ptr->type->GetTypeName().GetText();
+  return prop->GetName().GetText();
 }
 
-bool USD_enum_identifier(TfEnum item, const int value, const char **r_identifier)
+bool USD_enum_identifier(wabi::TfEnum item, const int value, const char **r_identifier)
 {
   //   const int i = LUXO_enum_from_value(item, value);
   //   if (i != -1) {
@@ -191,7 +200,7 @@ void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr)
 
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
-  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios"));
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
@@ -238,7 +247,7 @@ void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
 {
   if (!r_ptr->IsValid()) {
-    *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
+    *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios"));
   }
   r_ptr->owner_id = r_ptr->GetParent().IsValid() ? r_ptr->GetParent().GetName().GetText() : NULL;
   r_ptr->type = type;
@@ -299,18 +308,16 @@ void LUXO_save_usd(void)
  * for now, this makes it easier to debug scene description - it
  * is located in the Kraken installation /1.50/startup.usda */
 KrakenSTAGE::KrakenSTAGE()
-  : UsdStageRefPtr(UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
+  : wabi::UsdStageRefPtr(wabi::UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
-{
-  G.main->kraken.stage = *this;
-}
+{}
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
-  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(STAGE_WABI);
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios"));
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = (void *&)KRAKEN_STAGE;
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

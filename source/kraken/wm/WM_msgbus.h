@@ -42,7 +42,7 @@
  *  -----  The Kraken WindowManager. ----- */
 
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 /* ------ */
@@ -73,7 +73,7 @@ struct MsgBusCallback : public TfWeakBase
   std::atomic<int> ref;
 
   /** Notify @ Subscribe MsgBus. */
-  TfNotice notice;
+  // TfNotice notice;
 
   wmNotifier *note;
 
@@ -85,4 +85,4 @@ struct MsgBusCallback : public TfWeakBase
 
 /* ------ */
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

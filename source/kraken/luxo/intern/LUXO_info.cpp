@@ -22,7 +22,7 @@
  * The Universe Gets Animated.
  */
 
-#include "KKE_version.h"
+#include "kraken/kraken.h"
 
 #include "LUXO_main.h"
 #include "LUXO_internal.h"
@@ -31,20 +31,20 @@
 #include <wabi/usd/usdGeom/tokens.h>
 #include <wabi/imaging/hdx/tokens.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /* not technically a prim, but meh. */
-void prim_def_config(KrakenSTAGE kstage)
+static void prim_def_config(const Stage &kstage)
 {
   kstage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
-  kstage->SetColorConfiguration(SdfAssetPath(G.main->ocio_cfg));
-  kstage->SetColorManagementSystem(HdxColorCorrectionTokens->openColorIO);
-  kstage->SetMetadata(UsdGeomTokens->upAxis, UsdGeomTokens->z);
+  kstage->SetColorConfiguration(wabi::SdfAssetPath(G.main->ocio_cfg));
+  kstage->SetColorManagementSystem(wabi::HdxColorCorrectionTokens->openColorIO);
+  kstage->SetMetadata(wabi::UsdGeomTokens->upAxis, wabi::UsdGeomTokens->z);
 }
 
-void PRIM_def_info(KrakenSTAGE kstage)
+void PRIM_def_info(const Stage &kstage)
 {
   prim_def_config(kstage);
 }
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

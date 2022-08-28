@@ -34,7 +34,7 @@
 #include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usd/timeCode.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 /* modifier */
 enum eWmModifierTypes
@@ -1013,4 +1013,4 @@ struct wmKeyConfig
 };
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

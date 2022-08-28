@@ -1,6 +1,7 @@
 set(INC
   .
   ../../../. # Pixar USD
+  ../../../source
   ../luxo
   ../anchor
   ../editors/include

@@ -22,11 +22,12 @@
  * Purple Underground.
  */
 
+#include "kraken/kraken.h"
+
 #include "KKE_utils.h"
 #include "KKE_main.h"
-#include "KKE_version.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 
 std::string kraken_exe_path_init()
@@ -109,4 +110,4 @@ std::string kraken_system_tempdir_path()
 }
 
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

@@ -32,7 +32,7 @@
 #include <wabi/base/tf/stringUtils.h>
 #include <wabi/base/tf/token.h>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 std::string kraken_exe_path_init(void);
 std::string kraken_system_tempdir_path(void);
@@ -49,4 +49,4 @@ typedef robin_hood::unordered_map<TfToken, void *, TfHash> RHash;
 void *KKE_rhash_lookup(RHash *rh, const TfToken &key);
 void KKE_rhash_insert(RHash *rh, const TfToken &key, void *value);
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

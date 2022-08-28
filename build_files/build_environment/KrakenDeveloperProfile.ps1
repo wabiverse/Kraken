@@ -34,15 +34,11 @@ if ($IsMacOS) {
     $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$INTEL_HOMEBREW_PATH
   }
 
-  # CMake workaround until brew is pulling in 3.24 where cmake is fixed.
-  # Otherwise it leaves you to a much-unhappy "WHY CAN'T IT FIND MY APPLECLANG".
-  # (We make the assumption that if it's in your App folder, it's latest. Is this
-  # safe? Well, this is powershell. So unless you're cool like me you're likely
-  # on zsh or bash anyway.)
-  $CMAKE_APPDIR_PATH_USER = "/Applications/CMake.app/Contents/bin"
-  if (Test-Path -Path $CMAKE_APPDIR_PATH_USER) {
-    $env:PATH = '{0}{1}{2}' -f $CMAKE_APPDIR_PATH_USER,[IO.Path]::PathSeparator,$env:PATH
-  }
+  # Using beta Swift for the latest and greatest CXX interop features.
+  # $SWIFT_BETA_DIR = "/Library/Developer/Toolchains/swift-5.6.2-RELEASE.xctoolchain/usr/bin"
+  # if (Test-Path -Path $SWIFT_BETA_DIR) {
+  #   $env:PATH = '{0}{1}{2}' -f $SWIFT_BETA_DIR,[IO.Path]::PathSeparator,$env:PATH
+  # }
 }
 
 # --------------------------------------- Powershell modules. -----
@@ -209,8 +205,8 @@ function BuildUnrealEngine5
         -sdk "macosx" `
         -configuration "Development Editor" `
         $buildaction `
-        CODE_SIGN_IDENTITY="Apple Development: Tyler Furreboe (R9Y958P7BA)" `
-        PROVISIONING_PROFILE="graphics.foundation.wabi.kraken" `
+        CODE_SIGN_IDENTITY="Developer ID Application: Wabi Animation Studios, Ltd. Co. (UQ9J5QT9DL)" `
+        PROVISIONING_PROFILE="foundation.wabi.kraken" `
         OTHER_CODE_SIGN_FLAGS="--keychain /Library/Keychains/System.keychain" `
         GENERATE_INFOPLIST_FILE="YES"
       }

@@ -24,6 +24,8 @@
 
 #include <Python.h>
 
+#include "kraken/kraken.h"
+
 #include "kpy_app.h"
 
 #include "kpy_capi_packarray.h"
@@ -36,7 +38,6 @@
 #include "kpy_stage.h"
 
 #include "KKE_appdir.h"
-#include "KKE_version.h"
 #include "KKE_main.h"
 
 #include "KLI_icons.h"
@@ -54,7 +55,7 @@
 
 using namespace boost::python;
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 #ifdef BUILD_DATE
 extern char build_date[];

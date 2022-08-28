@@ -34,7 +34,7 @@ wabi_plugin(hdCycles
         ${OSL_QUERY_LIBRARY}
         ${OPENIMAGEDENOISE_LIBRARIES}
         ${CYCLES_LIBRARIES}
-        ${OPENEXR_LIBRARIES}
+        ${ALL_IMAGING_LIBS}
         ${OPENVDB_LIBRARY}
         ${Boost_FILESYSTEM_LIBRARY}
  

@@ -43,7 +43,7 @@
 
 #include <deque>
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 typedef std::deque<wmEvent *> wmEventQueue;
 
@@ -172,7 +172,7 @@ struct wmNotifier
   unsigned int category, data, subtype, action;
   void *reference;
 
-  TfNotice notice;
+  // TfNotice notice;
 
   void Push();
 };
@@ -225,4 +225,4 @@ wmWindowManager::wmWindowManager()
     drags(EMPTY),
     file_saved(VALUE_ZERO)
 {}
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

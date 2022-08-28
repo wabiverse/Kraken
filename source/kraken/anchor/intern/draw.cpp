@@ -173,46 +173,46 @@ namespace ANCHOR_STB_NAMESPACE
 using namespace ANCHOR_STB_NAMESPACE;
 #endif
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 void ANCHOR::StyleColorsDark(AnchorStyle *dst)
 {
   AnchorStyle *style = dst ? dst : &ANCHOR::GetStyle();
-  GfVec4f *colors = style->Colors;
+  wabi::GfVec4f *colors = style->Colors;
 
-  colors[AnchorCol_Text] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
-  colors[AnchorCol_TextDisabled] = GfVec4f(0.50f, 0.50f, 0.50f, 1.00f);
-  colors[AnchorCol_WindowBg] = GfVec4f(0.06f, 0.06f, 0.06f, 0.94f);
-  colors[AnchorCol_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_PopupBg] = GfVec4f(0.08f, 0.08f, 0.08f, 0.94f);
-  colors[AnchorCol_Border] = GfVec4f(0.43f, 0.43f, 0.50f, 0.50f);
-  colors[AnchorCol_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_FrameBg] = GfVec4f(0.16f, 0.29f, 0.48f, 0.54f);
-  colors[AnchorCol_FrameBgHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[AnchorCol_FrameBgActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[AnchorCol_TitleBg] = GfVec4f(0.04f, 0.04f, 0.04f, 1.00f);
-  colors[AnchorCol_TitleBgActive] = GfVec4f(0.16f, 0.29f, 0.48f, 1.00f);
-  colors[AnchorCol_TitleBgCollapsed] = GfVec4f(0.00f, 0.00f, 0.00f, 0.51f);
-  colors[AnchorCol_MenuBarBg] = GfVec4f(0.14f, 0.14f, 0.14f, 1.00f);
-  colors[AnchorCol_ScrollbarBg] = GfVec4f(0.02f, 0.02f, 0.02f, 0.53f);
-  colors[AnchorCol_ScrollbarGrab] = GfVec4f(0.31f, 0.31f, 0.31f, 1.00f);
-  colors[AnchorCol_ScrollbarGrabHovered] = GfVec4f(0.41f, 0.41f, 0.41f, 1.00f);
-  colors[AnchorCol_ScrollbarGrabActive] = GfVec4f(0.51f, 0.51f, 0.51f, 1.00f);
-  colors[AnchorCol_CheckMark] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_SliderGrab] = GfVec4f(0.24f, 0.52f, 0.88f, 1.00f);
-  colors[AnchorCol_SliderGrabActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_Button] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[AnchorCol_ButtonHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_ButtonActive] = GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
-  colors[AnchorCol_Header] = GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
-  colors[AnchorCol_HeaderHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
-  colors[AnchorCol_HeaderActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_Text] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
+  colors[AnchorCol_TextDisabled] = wabi::GfVec4f(0.50f, 0.50f, 0.50f, 1.00f);
+  colors[AnchorCol_WindowBg] = wabi::GfVec4f(0.06f, 0.06f, 0.06f, 0.94f);
+  colors[AnchorCol_ChildBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_PopupBg] = wabi::GfVec4f(0.08f, 0.08f, 0.08f, 0.94f);
+  colors[AnchorCol_Border] = wabi::GfVec4f(0.43f, 0.43f, 0.50f, 0.50f);
+  colors[AnchorCol_BorderShadow] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_FrameBg] = wabi::GfVec4f(0.16f, 0.29f, 0.48f, 0.54f);
+  colors[AnchorCol_FrameBgHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_FrameBgActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_TitleBg] = wabi::GfVec4f(0.04f, 0.04f, 0.04f, 1.00f);
+  colors[AnchorCol_TitleBgActive] = wabi::GfVec4f(0.16f, 0.29f, 0.48f, 1.00f);
+  colors[AnchorCol_TitleBgCollapsed] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.51f);
+  colors[AnchorCol_MenuBarBg] = wabi::GfVec4f(0.14f, 0.14f, 0.14f, 1.00f);
+  colors[AnchorCol_ScrollbarBg] = wabi::GfVec4f(0.02f, 0.02f, 0.02f, 0.53f);
+  colors[AnchorCol_ScrollbarGrab] = wabi::GfVec4f(0.31f, 0.31f, 0.31f, 1.00f);
+  colors[AnchorCol_ScrollbarGrabHovered] = wabi::GfVec4f(0.41f, 0.41f, 0.41f, 1.00f);
+  colors[AnchorCol_ScrollbarGrabActive] = wabi::GfVec4f(0.51f, 0.51f, 0.51f, 1.00f);
+  colors[AnchorCol_CheckMark] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_SliderGrab] = wabi::GfVec4f(0.24f, 0.52f, 0.88f, 1.00f);
+  colors[AnchorCol_SliderGrabActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_Button] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_ButtonHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_ButtonActive] = wabi::GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
+  colors[AnchorCol_Header] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
+  colors[AnchorCol_HeaderHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
+  colors[AnchorCol_HeaderActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
   colors[AnchorCol_Separator] = colors[AnchorCol_Border];
-  colors[AnchorCol_SeparatorHovered] = GfVec4f(0.10f, 0.40f, 0.75f, 0.78f);
-  colors[AnchorCol_SeparatorActive] = GfVec4f(0.10f, 0.40f, 0.75f, 1.00f);
-  colors[AnchorCol_ResizeGrip] = GfVec4f(0.26f, 0.59f, 0.98f, 0.20f);
-  colors[AnchorCol_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[AnchorCol_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
+  colors[AnchorCol_SeparatorHovered] = wabi::GfVec4f(0.10f, 0.40f, 0.75f, 0.78f);
+  colors[AnchorCol_SeparatorActive] = wabi::GfVec4f(0.10f, 0.40f, 0.75f, 1.00f);
+  colors[AnchorCol_ResizeGrip] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.20f);
+  colors[AnchorCol_ResizeGripHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_ResizeGripActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
   colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header],
                                      colors[AnchorCol_TitleBgActive],
                                      0.80f);
@@ -226,67 +226,67 @@ void ANCHOR::StyleColorsDark(AnchorStyle *dst)
   colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(colors[AnchorCol_TabActive],
                                                     colors[AnchorCol_TitleBg],
                                                     0.40f);
-  colors[AnchorCol_PlotLines] = GfVec4f(0.61f, 0.61f, 0.61f, 1.00f);
-  colors[AnchorCol_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
-  colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[AnchorCol_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
-  colors[AnchorCol_TableHeaderBg] = GfVec4f(0.19f, 0.19f, 0.20f, 1.00f);
-  colors[AnchorCol_TableBorderStrong] = GfVec4f(0.31f,
+  colors[AnchorCol_PlotLines] = wabi::GfVec4f(0.61f, 0.61f, 0.61f, 1.00f);
+  colors[AnchorCol_PlotLinesHovered] = wabi::GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
+  colors[AnchorCol_PlotHistogram] = wabi::GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogramHovered] = wabi::GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
+  colors[AnchorCol_TableHeaderBg] = wabi::GfVec4f(0.19f, 0.19f, 0.20f, 1.00f);
+  colors[AnchorCol_TableBorderStrong] = wabi::GfVec4f(0.31f,
                                                 0.31f,
                                                 0.35f,
                                                 1.00f);  // Prefer using Alpha=1.0 here
-  colors[AnchorCol_TableBorderLight] = GfVec4f(0.23f,
+  colors[AnchorCol_TableBorderLight] = wabi::GfVec4f(0.23f,
                                                0.23f,
                                                0.25f,
                                                1.00f);  // Prefer using Alpha=1.0 here
-  colors[AnchorCol_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.06f);
-  colors[AnchorCol_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
-  colors[AnchorCol_DragDropTarget] = GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
-  colors[AnchorCol_NavHighlight] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_NavWindowingHighlight] = GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
-  colors[AnchorCol_NavWindowingDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
-  colors[AnchorCol_ModalWindowDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.35f);
+  colors[AnchorCol_TableRowBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_TableRowBgAlt] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.06f);
+  colors[AnchorCol_TextSelectedBg] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
+  colors[AnchorCol_DragDropTarget] = wabi::GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
+  colors[AnchorCol_NavHighlight] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_NavWindowingHighlight] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
+  colors[AnchorCol_NavWindowingDimBg] = wabi::GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
+  colors[AnchorCol_ModalWindowDimBg] = wabi::GfVec4f(0.80f, 0.80f, 0.80f, 0.35f);
 }
 
 void ANCHOR::StyleColorsDefault(AnchorStyle *dst)
 {
   AnchorStyle *style = dst ? dst : &ANCHOR::GetStyle();
-  GfVec4f *colors = style->Colors;
+  wabi::GfVec4f *colors = style->Colors;
 
-  colors[AnchorCol_Text] = GfVec4f(0.90f, 0.90f, 0.90f, 1.00f);
-  colors[AnchorCol_TextDisabled] = GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
-  colors[AnchorCol_WindowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.85f);
-  colors[AnchorCol_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_PopupBg] = GfVec4f(0.11f, 0.11f, 0.14f, 0.92f);
-  colors[AnchorCol_Border] = GfVec4f(0.50f, 0.50f, 0.50f, 0.50f);
-  colors[AnchorCol_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_FrameBg] = GfVec4f(0.43f, 0.43f, 0.43f, 0.39f);
-  colors[AnchorCol_FrameBgHovered] = GfVec4f(0.47f, 0.47f, 0.69f, 0.40f);
-  colors[AnchorCol_FrameBgActive] = GfVec4f(0.42f, 0.41f, 0.64f, 0.69f);
-  colors[AnchorCol_TitleBg] = GfVec4f(0.27f, 0.27f, 0.54f, 0.83f);
-  colors[AnchorCol_TitleBgActive] = GfVec4f(0.32f, 0.32f, 0.63f, 0.87f);
-  colors[AnchorCol_TitleBgCollapsed] = GfVec4f(0.40f, 0.40f, 0.80f, 0.20f);
-  colors[AnchorCol_MenuBarBg] = GfVec4f(0.40f, 0.40f, 0.55f, 0.80f);
-  colors[AnchorCol_ScrollbarBg] = GfVec4f(0.20f, 0.25f, 0.30f, 0.60f);
-  colors[AnchorCol_ScrollbarGrab] = GfVec4f(0.40f, 0.40f, 0.80f, 0.30f);
-  colors[AnchorCol_ScrollbarGrabHovered] = GfVec4f(0.40f, 0.40f, 0.80f, 0.40f);
-  colors[AnchorCol_ScrollbarGrabActive] = GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
-  colors[AnchorCol_CheckMark] = GfVec4f(0.90f, 0.90f, 0.90f, 0.50f);
-  colors[AnchorCol_SliderGrab] = GfVec4f(1.00f, 1.00f, 1.00f, 0.30f);
-  colors[AnchorCol_SliderGrabActive] = GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
-  colors[AnchorCol_Button] = GfVec4f(0.35f, 0.40f, 0.61f, 0.62f);
-  colors[AnchorCol_ButtonHovered] = GfVec4f(0.40f, 0.48f, 0.71f, 0.79f);
-  colors[AnchorCol_ButtonActive] = GfVec4f(0.46f, 0.54f, 0.80f, 1.00f);
-  colors[AnchorCol_Header] = GfVec4f(0.40f, 0.40f, 0.90f, 0.45f);
-  colors[AnchorCol_HeaderHovered] = GfVec4f(0.45f, 0.45f, 0.90f, 0.80f);
-  colors[AnchorCol_HeaderActive] = GfVec4f(0.53f, 0.53f, 0.87f, 0.80f);
-  colors[AnchorCol_Separator] = GfVec4f(0.50f, 0.50f, 0.50f, 0.60f);
-  colors[AnchorCol_SeparatorHovered] = GfVec4f(0.60f, 0.60f, 0.70f, 1.00f);
-  colors[AnchorCol_SeparatorActive] = GfVec4f(0.70f, 0.70f, 0.90f, 1.00f);
-  colors[AnchorCol_ResizeGrip] = GfVec4f(1.00f, 1.00f, 1.00f, 0.10f);
-  colors[AnchorCol_ResizeGripHovered] = GfVec4f(0.78f, 0.82f, 1.00f, 0.60f);
-  colors[AnchorCol_ResizeGripActive] = GfVec4f(0.78f, 0.82f, 1.00f, 0.90f);
+  colors[AnchorCol_Text] = wabi::GfVec4f(0.90f, 0.90f, 0.90f, 1.00f);
+  colors[AnchorCol_TextDisabled] = wabi::GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
+  colors[AnchorCol_WindowBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.85f);
+  colors[AnchorCol_ChildBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_PopupBg] = wabi::GfVec4f(0.11f, 0.11f, 0.14f, 0.92f);
+  colors[AnchorCol_Border] = wabi::GfVec4f(0.50f, 0.50f, 0.50f, 0.50f);
+  colors[AnchorCol_BorderShadow] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_FrameBg] = wabi::GfVec4f(0.43f, 0.43f, 0.43f, 0.39f);
+  colors[AnchorCol_FrameBgHovered] = wabi::GfVec4f(0.47f, 0.47f, 0.69f, 0.40f);
+  colors[AnchorCol_FrameBgActive] = wabi::GfVec4f(0.42f, 0.41f, 0.64f, 0.69f);
+  colors[AnchorCol_TitleBg] = wabi::GfVec4f(0.27f, 0.27f, 0.54f, 0.83f);
+  colors[AnchorCol_TitleBgActive] = wabi::GfVec4f(0.32f, 0.32f, 0.63f, 0.87f);
+  colors[AnchorCol_TitleBgCollapsed] = wabi::GfVec4f(0.40f, 0.40f, 0.80f, 0.20f);
+  colors[AnchorCol_MenuBarBg] = wabi::GfVec4f(0.40f, 0.40f, 0.55f, 0.80f);
+  colors[AnchorCol_ScrollbarBg] = wabi::GfVec4f(0.20f, 0.25f, 0.30f, 0.60f);
+  colors[AnchorCol_ScrollbarGrab] = wabi::GfVec4f(0.40f, 0.40f, 0.80f, 0.30f);
+  colors[AnchorCol_ScrollbarGrabHovered] = wabi::GfVec4f(0.40f, 0.40f, 0.80f, 0.40f);
+  colors[AnchorCol_ScrollbarGrabActive] = wabi::GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
+  colors[AnchorCol_CheckMark] = wabi::GfVec4f(0.90f, 0.90f, 0.90f, 0.50f);
+  colors[AnchorCol_SliderGrab] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.30f);
+  colors[AnchorCol_SliderGrabActive] = wabi::GfVec4f(0.41f, 0.39f, 0.80f, 0.60f);
+  colors[AnchorCol_Button] = wabi::GfVec4f(0.35f, 0.40f, 0.61f, 0.62f);
+  colors[AnchorCol_ButtonHovered] = wabi::GfVec4f(0.40f, 0.48f, 0.71f, 0.79f);
+  colors[AnchorCol_ButtonActive] = wabi::GfVec4f(0.46f, 0.54f, 0.80f, 1.00f);
+  colors[AnchorCol_Header] = wabi::GfVec4f(0.40f, 0.40f, 0.90f, 0.45f);
+  colors[AnchorCol_HeaderHovered] = wabi::GfVec4f(0.45f, 0.45f, 0.90f, 0.80f);
+  colors[AnchorCol_HeaderActive] = wabi::GfVec4f(0.53f, 0.53f, 0.87f, 0.80f);
+  colors[AnchorCol_Separator] = wabi::GfVec4f(0.50f, 0.50f, 0.50f, 0.60f);
+  colors[AnchorCol_SeparatorHovered] = wabi::GfVec4f(0.60f, 0.60f, 0.70f, 1.00f);
+  colors[AnchorCol_SeparatorActive] = wabi::GfVec4f(0.70f, 0.70f, 0.90f, 1.00f);
+  colors[AnchorCol_ResizeGrip] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.10f);
+  colors[AnchorCol_ResizeGripHovered] = wabi::GfVec4f(0.78f, 0.82f, 1.00f, 0.60f);
+  colors[AnchorCol_ResizeGripActive] = wabi::GfVec4f(0.78f, 0.82f, 1.00f, 0.90f);
   colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header],
                                      colors[AnchorCol_TitleBgActive],
                                      0.80f);
@@ -300,68 +300,68 @@ void ANCHOR::StyleColorsDefault(AnchorStyle *dst)
   colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(colors[AnchorCol_TabActive],
                                                     colors[AnchorCol_TitleBg],
                                                     0.40f);
-  colors[AnchorCol_PlotLines] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
-  colors[AnchorCol_PlotLinesHovered] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[AnchorCol_PlotHistogramHovered] = GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
-  colors[AnchorCol_TableHeaderBg] = GfVec4f(0.27f, 0.27f, 0.38f, 1.00f);
-  colors[AnchorCol_TableBorderStrong] = GfVec4f(0.31f,
+  colors[AnchorCol_PlotLines] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
+  colors[AnchorCol_PlotLinesHovered] = wabi::GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogram] = wabi::GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogramHovered] = wabi::GfVec4f(1.00f, 0.60f, 0.00f, 1.00f);
+  colors[AnchorCol_TableHeaderBg] = wabi::GfVec4f(0.27f, 0.27f, 0.38f, 1.00f);
+  colors[AnchorCol_TableBorderStrong] = wabi::GfVec4f(0.31f,
                                                 0.31f,
                                                 0.45f,
                                                 1.00f);  // Prefer using Alpha=1.0 here
-  colors[AnchorCol_TableBorderLight] = GfVec4f(0.26f,
+  colors[AnchorCol_TableBorderLight] = wabi::GfVec4f(0.26f,
                                                0.26f,
                                                0.28f,
                                                1.00f);  // Prefer using Alpha=1.0 here
-  colors[AnchorCol_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_TableRowBgAlt] = GfVec4f(1.00f, 1.00f, 1.00f, 0.07f);
-  colors[AnchorCol_TextSelectedBg] = GfVec4f(0.00f, 0.00f, 1.00f, 0.35f);
-  colors[AnchorCol_DragDropTarget] = GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
+  colors[AnchorCol_TableRowBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_TableRowBgAlt] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.07f);
+  colors[AnchorCol_TextSelectedBg] = wabi::GfVec4f(0.00f, 0.00f, 1.00f, 0.35f);
+  colors[AnchorCol_DragDropTarget] = wabi::GfVec4f(1.00f, 1.00f, 0.00f, 0.90f);
   colors[AnchorCol_NavHighlight] = colors[AnchorCol_HeaderHovered];
-  colors[AnchorCol_NavWindowingHighlight] = GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
-  colors[AnchorCol_NavWindowingDimBg] = GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
-  colors[AnchorCol_ModalWindowDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
+  colors[AnchorCol_NavWindowingHighlight] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.70f);
+  colors[AnchorCol_NavWindowingDimBg] = wabi::GfVec4f(0.80f, 0.80f, 0.80f, 0.20f);
+  colors[AnchorCol_ModalWindowDimBg] = wabi::GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 // Those light colors are better suited with a thicker font than the default one + FrameBorder
 void ANCHOR::StyleColorsLight(AnchorStyle *dst)
 {
   AnchorStyle *style = dst ? dst : &ANCHOR::GetStyle();
-  GfVec4f *colors = style->Colors;
+  wabi::GfVec4f *colors = style->Colors;
 
-  colors[AnchorCol_Text] = GfVec4f(0.00f, 0.00f, 0.00f, 1.00f);
-  colors[AnchorCol_TextDisabled] = GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
-  colors[AnchorCol_WindowBg] = GfVec4f(0.94f, 0.94f, 0.94f, 1.00f);
-  colors[AnchorCol_ChildBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_PopupBg] = GfVec4f(1.00f, 1.00f, 1.00f, 0.98f);
-  colors[AnchorCol_Border] = GfVec4f(0.00f, 0.00f, 0.00f, 0.30f);
-  colors[AnchorCol_BorderShadow] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_FrameBg] = GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
-  colors[AnchorCol_FrameBgHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[AnchorCol_FrameBgActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[AnchorCol_TitleBg] = GfVec4f(0.96f, 0.96f, 0.96f, 1.00f);
-  colors[AnchorCol_TitleBgActive] = GfVec4f(0.82f, 0.82f, 0.82f, 1.00f);
-  colors[AnchorCol_TitleBgCollapsed] = GfVec4f(1.00f, 1.00f, 1.00f, 0.51f);
-  colors[AnchorCol_MenuBarBg] = GfVec4f(0.86f, 0.86f, 0.86f, 1.00f);
-  colors[AnchorCol_ScrollbarBg] = GfVec4f(0.98f, 0.98f, 0.98f, 0.53f);
-  colors[AnchorCol_ScrollbarGrab] = GfVec4f(0.69f, 0.69f, 0.69f, 0.80f);
-  colors[AnchorCol_ScrollbarGrabHovered] = GfVec4f(0.49f, 0.49f, 0.49f, 0.80f);
-  colors[AnchorCol_ScrollbarGrabActive] = GfVec4f(0.49f, 0.49f, 0.49f, 1.00f);
-  colors[AnchorCol_CheckMark] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_SliderGrab] = GfVec4f(0.26f, 0.59f, 0.98f, 0.78f);
-  colors[AnchorCol_SliderGrabActive] = GfVec4f(0.46f, 0.54f, 0.80f, 0.60f);
-  colors[AnchorCol_Button] = GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
-  colors[AnchorCol_ButtonHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_ButtonActive] = GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
-  colors[AnchorCol_Header] = GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
-  colors[AnchorCol_HeaderHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
-  colors[AnchorCol_HeaderActive] = GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
-  colors[AnchorCol_Separator] = GfVec4f(0.39f, 0.39f, 0.39f, 0.62f);
-  colors[AnchorCol_SeparatorHovered] = GfVec4f(0.14f, 0.44f, 0.80f, 0.78f);
-  colors[AnchorCol_SeparatorActive] = GfVec4f(0.14f, 0.44f, 0.80f, 1.00f);
-  colors[AnchorCol_ResizeGrip] = GfVec4f(0.35f, 0.35f, 0.35f, 0.17f);
-  colors[AnchorCol_ResizeGripHovered] = GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
-  colors[AnchorCol_ResizeGripActive] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
+  colors[AnchorCol_Text] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 1.00f);
+  colors[AnchorCol_TextDisabled] = wabi::GfVec4f(0.60f, 0.60f, 0.60f, 1.00f);
+  colors[AnchorCol_WindowBg] = wabi::GfVec4f(0.94f, 0.94f, 0.94f, 1.00f);
+  colors[AnchorCol_ChildBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_PopupBg] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.98f);
+  colors[AnchorCol_Border] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.30f);
+  colors[AnchorCol_BorderShadow] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_FrameBg] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 1.00f);
+  colors[AnchorCol_FrameBgHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_FrameBgActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_TitleBg] = wabi::GfVec4f(0.96f, 0.96f, 0.96f, 1.00f);
+  colors[AnchorCol_TitleBgActive] = wabi::GfVec4f(0.82f, 0.82f, 0.82f, 1.00f);
+  colors[AnchorCol_TitleBgCollapsed] = wabi::GfVec4f(1.00f, 1.00f, 1.00f, 0.51f);
+  colors[AnchorCol_MenuBarBg] = wabi::GfVec4f(0.86f, 0.86f, 0.86f, 1.00f);
+  colors[AnchorCol_ScrollbarBg] = wabi::GfVec4f(0.98f, 0.98f, 0.98f, 0.53f);
+  colors[AnchorCol_ScrollbarGrab] = wabi::GfVec4f(0.69f, 0.69f, 0.69f, 0.80f);
+  colors[AnchorCol_ScrollbarGrabHovered] = wabi::GfVec4f(0.49f, 0.49f, 0.49f, 0.80f);
+  colors[AnchorCol_ScrollbarGrabActive] = wabi::GfVec4f(0.49f, 0.49f, 0.49f, 1.00f);
+  colors[AnchorCol_CheckMark] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_SliderGrab] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.78f);
+  colors[AnchorCol_SliderGrabActive] = wabi::GfVec4f(0.46f, 0.54f, 0.80f, 0.60f);
+  colors[AnchorCol_Button] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.40f);
+  colors[AnchorCol_ButtonHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_ButtonActive] = wabi::GfVec4f(0.06f, 0.53f, 0.98f, 1.00f);
+  colors[AnchorCol_Header] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.31f);
+  colors[AnchorCol_HeaderHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.80f);
+  colors[AnchorCol_HeaderActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 1.00f);
+  colors[AnchorCol_Separator] = wabi::GfVec4f(0.39f, 0.39f, 0.39f, 0.62f);
+  colors[AnchorCol_SeparatorHovered] = wabi::GfVec4f(0.14f, 0.44f, 0.80f, 0.78f);
+  colors[AnchorCol_SeparatorActive] = wabi::GfVec4f(0.14f, 0.44f, 0.80f, 1.00f);
+  colors[AnchorCol_ResizeGrip] = wabi::GfVec4f(0.35f, 0.35f, 0.35f, 0.17f);
+  colors[AnchorCol_ResizeGripHovered] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.67f);
+  colors[AnchorCol_ResizeGripActive] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
   colors[AnchorCol_Tab] = AnchorLerp(colors[AnchorCol_Header],
                                      colors[AnchorCol_TitleBgActive],
                                      0.90f);
@@ -375,27 +375,27 @@ void ANCHOR::StyleColorsLight(AnchorStyle *dst)
   colors[AnchorCol_TabUnfocusedActive] = AnchorLerp(colors[AnchorCol_TabActive],
                                                     colors[AnchorCol_TitleBg],
                                                     0.40f);
-  colors[AnchorCol_PlotLines] = GfVec4f(0.39f, 0.39f, 0.39f, 1.00f);
-  colors[AnchorCol_PlotLinesHovered] = GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
-  colors[AnchorCol_PlotHistogram] = GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
-  colors[AnchorCol_PlotHistogramHovered] = GfVec4f(1.00f, 0.45f, 0.00f, 1.00f);
-  colors[AnchorCol_TableHeaderBg] = GfVec4f(0.78f, 0.87f, 0.98f, 1.00f);
-  colors[AnchorCol_TableBorderStrong] = GfVec4f(0.57f,
+  colors[AnchorCol_PlotLines] = wabi::GfVec4f(0.39f, 0.39f, 0.39f, 1.00f);
+  colors[AnchorCol_PlotLinesHovered] = wabi::GfVec4f(1.00f, 0.43f, 0.35f, 1.00f);
+  colors[AnchorCol_PlotHistogram] = wabi::GfVec4f(0.90f, 0.70f, 0.00f, 1.00f);
+  colors[AnchorCol_PlotHistogramHovered] = wabi::GfVec4f(1.00f, 0.45f, 0.00f, 1.00f);
+  colors[AnchorCol_TableHeaderBg] = wabi::GfVec4f(0.78f, 0.87f, 0.98f, 1.00f);
+  colors[AnchorCol_TableBorderStrong] = wabi::GfVec4f(0.57f,
                                                 0.57f,
                                                 0.64f,
                                                 1.00f);  // Prefer using Alpha=1.0 here
-  colors[AnchorCol_TableBorderLight] = GfVec4f(0.68f,
+  colors[AnchorCol_TableBorderLight] = wabi::GfVec4f(0.68f,
                                                0.68f,
                                                0.74f,
                                                1.00f);  // Prefer using Alpha=1.0 here
-  colors[AnchorCol_TableRowBg] = GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
-  colors[AnchorCol_TableRowBgAlt] = GfVec4f(0.30f, 0.30f, 0.30f, 0.09f);
-  colors[AnchorCol_TextSelectedBg] = GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
-  colors[AnchorCol_DragDropTarget] = GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
+  colors[AnchorCol_TableRowBg] = wabi::GfVec4f(0.00f, 0.00f, 0.00f, 0.00f);
+  colors[AnchorCol_TableRowBgAlt] = wabi::GfVec4f(0.30f, 0.30f, 0.30f, 0.09f);
+  colors[AnchorCol_TextSelectedBg] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.35f);
+  colors[AnchorCol_DragDropTarget] = wabi::GfVec4f(0.26f, 0.59f, 0.98f, 0.95f);
   colors[AnchorCol_NavHighlight] = colors[AnchorCol_HeaderHovered];
-  colors[AnchorCol_NavWindowingHighlight] = GfVec4f(0.70f, 0.70f, 0.70f, 0.70f);
-  colors[AnchorCol_NavWindowingDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.20f);
-  colors[AnchorCol_ModalWindowDimBg] = GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
+  colors[AnchorCol_NavWindowingHighlight] = wabi::GfVec4f(0.70f, 0.70f, 0.70f, 0.70f);
+  colors[AnchorCol_NavWindowingDimBg] = wabi::GfVec4f(0.20f, 0.20f, 0.20f, 0.20f);
+  colors[AnchorCol_ModalWindowDimBg] = wabi::GfVec4f(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 //-----------------------------------------------------------------------------
@@ -407,7 +407,7 @@ AnchorDrawListSharedData::AnchorDrawListSharedData()
   memset(this, 0, sizeof(*this));
   for (int i = 0; i < ANCHOR_ARRAYSIZE(ArcFastVtx); i++) {
     const float a = ((float)i * 2 * IM_PI) / (float)ANCHOR_ARRAYSIZE(ArcFastVtx);
-    ArcFastVtx[i] = GfVec2f(AnchorCos(a), AnchorSin(a));
+    ArcFastVtx[i] = wabi::GfVec2f(AnchorCos(a), AnchorSin(a));
   }
   ArcFastRadiusCutoff = ANCHOR_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC_R(
     ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX,
@@ -440,9 +440,9 @@ void AnchorDrawList::_ResetForNewFrame()
   // (those should be IM_STATIC_ASSERT() in theory but with our pre C++11 setup the whole check
   // doesn't compile with GCC)
   ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, ClipRect) == 0);
-  ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, TextureId) == sizeof(GfVec4f));
+  ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, TextureId) == sizeof(wabi::GfVec4f));
   ANCHOR_ASSERT(ANCHOR_OFFSETOF(AnchorDrawCmd, VtxOffset) ==
-                sizeof(GfVec4f) + sizeof(AnchorTextureID));
+                sizeof(wabi::GfVec4f) + sizeof(AnchorTextureID));
 
   CmdBuffer.resize(0);
   IdxBuffer.resize(0);
@@ -540,7 +540,7 @@ void AnchorDrawList::_OnChangedClipRect()
   // If current command is used with different settings we need to add a new command
   AnchorDrawCmd *curr_cmd = &CmdBuffer.Data[CmdBuffer.Size - 1];
   if (curr_cmd->ElemCount != 0 &&
-      memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(GfVec4f)) != 0) {
+      memcmp(&curr_cmd->ClipRect, &_CmdHeader.ClipRect, sizeof(wabi::GfVec4f)) != 0) {
     AddDrawCmd();
     return;
   }
@@ -606,13 +606,13 @@ int AnchorDrawList::_CalcCircleAutoSegmentCount(float radius) const
 // Render-level scissoring. This is passed down to your render function but not used for CPU-side
 // coarse clipping. Prefer using higher-level ANCHOR::PushClipRect() to affect logic (hit-testing
 // and widget culling)
-void AnchorDrawList::PushClipRect(GfVec2f cr_min,
-                                  GfVec2f cr_max,
+void AnchorDrawList::PushClipRect(wabi::GfVec2f cr_min,
+                                  wabi::GfVec2f cr_max,
                                   bool intersect_with_current_clip_rect)
 {
-  GfVec4f cr(cr_min[0], cr_min[1], cr_max[0], cr_max[1]);
+  wabi::GfVec4f cr(cr_min[0], cr_min[1], cr_max[0], cr_max[1]);
   if (intersect_with_current_clip_rect) {
-    GfVec4f current = _CmdHeader.ClipRect;
+    wabi::GfVec4f current = _CmdHeader.ClipRect;
     if (cr[0] < current[0])
       cr[0] = current[0];
     if (cr[1] < current[1])
@@ -632,8 +632,8 @@ void AnchorDrawList::PushClipRect(GfVec2f cr_min,
 
 void AnchorDrawList::PushClipRectFullScreen()
 {
-  PushClipRect(GfVec2f(_Data->ClipRectFullscreen[0], _Data->ClipRectFullscreen[1]),
-               GfVec2f(_Data->ClipRectFullscreen[2], _Data->ClipRectFullscreen[3]));
+  PushClipRect(wabi::GfVec2f(_Data->ClipRectFullscreen[0], _Data->ClipRectFullscreen[1]),
+               wabi::GfVec2f(_Data->ClipRectFullscreen[2], _Data->ClipRectFullscreen[3]));
 }
 
 void AnchorDrawList::PopClipRect()
@@ -703,9 +703,9 @@ void AnchorDrawList::PrimUnreserve(int idx_count, int vtx_count)
 }
 
 // Fully unrolled with inline call to keep our debug builds decently fast.
-void AnchorDrawList::PrimRect(const GfVec2f &a, const GfVec2f &c, AnchorU32 col)
+void AnchorDrawList::PrimRect(const wabi::GfVec2f &a, const wabi::GfVec2f &c, AnchorU32 col)
 {
-  GfVec2f b(c[0], a[1]), d(a[0], c[1]), uv(_Data->TexUvWhitePixel);
+  wabi::GfVec2f b(c[0], a[1]), d(a[0], c[1]), uv(_Data->TexUvWhitePixel);
   AnchorDrawIdx idx = (AnchorDrawIdx)_VtxCurrentIdx;
   _IdxWritePtr[0] = idx;
   _IdxWritePtr[1] = (AnchorDrawIdx)(idx + 1);
@@ -730,13 +730,13 @@ void AnchorDrawList::PrimRect(const GfVec2f &a, const GfVec2f &c, AnchorU32 col)
   _IdxWritePtr += 6;
 }
 
-void AnchorDrawList::PrimRectUV(const GfVec2f &a,
-                                const GfVec2f &c,
-                                const GfVec2f &uv_a,
-                                const GfVec2f &uv_c,
+void AnchorDrawList::PrimRectUV(const wabi::GfVec2f &a,
+                                const wabi::GfVec2f &c,
+                                const wabi::GfVec2f &uv_a,
+                                const wabi::GfVec2f &uv_c,
                                 AnchorU32 col)
 {
-  GfVec2f b(c[0], a[1]), d(a[0], c[1]), uv_b(uv_c[0], uv_a[1]), uv_d(uv_a[0], uv_c[1]);
+  wabi::GfVec2f b(c[0], a[1]), d(a[0], c[1]), uv_b(uv_c[0], uv_a[1]), uv_d(uv_a[0], uv_c[1]);
   AnchorDrawIdx idx = (AnchorDrawIdx)_VtxCurrentIdx;
   _IdxWritePtr[0] = idx;
   _IdxWritePtr[1] = (AnchorDrawIdx)(idx + 1);
@@ -761,14 +761,14 @@ void AnchorDrawList::PrimRectUV(const GfVec2f &a,
   _IdxWritePtr += 6;
 }
 
-void AnchorDrawList::PrimQuadUV(const GfVec2f &a,
-                                const GfVec2f &b,
-                                const GfVec2f &c,
-                                const GfVec2f &d,
-                                const GfVec2f &uv_a,
-                                const GfVec2f &uv_b,
-                                const GfVec2f &uv_c,
-                                const GfVec2f &uv_d,
+void AnchorDrawList::PrimQuadUV(const wabi::GfVec2f &a,
+                                const wabi::GfVec2f &b,
+                                const wabi::GfVec2f &c,
+                                const wabi::GfVec2f &d,
+                                const wabi::GfVec2f &uv_a,
+                                const wabi::GfVec2f &uv_b,
+                                const wabi::GfVec2f &uv_c,
+                                const wabi::GfVec2f &uv_d,
                                 AnchorU32 col)
 {
   AnchorDrawIdx idx = (AnchorDrawIdx)_VtxCurrentIdx;
@@ -795,7 +795,7 @@ void AnchorDrawList::PrimQuadUV(const GfVec2f &a,
   _IdxWritePtr += 6;
 }
 
-// On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using GfVec2f and superfluous
+// On AddPolyline() and AddConvexPolyFilled() we intentionally avoid using wabi::GfVec2f and superfluous
 // function calls to optimize debug/non-inlined builds. Those macros expects l-values.
 #define IM_NORMALIZE2F_OVER_ZERO(VX, VY) \
   do {                                   \
@@ -820,9 +820,9 @@ void AnchorDrawList::PrimQuadUV(const GfVec2f &a,
   } while (0)
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
-// We avoid using the GfVec2f math operators here to reduce cost to a minimum for debug/non-inlined
+// We avoid using the wabi::GfVec2f math operators here to reduce cost to a minimum for debug/non-inlined
 // builds.
-void AnchorDrawList::AddPolyline(const GfVec2f *points,
+void AnchorDrawList::AddPolyline(const wabi::GfVec2f *points,
                                  const int points_count,
                                  AnchorU32 col,
                                  AnchorDrawFlags flags,
@@ -832,7 +832,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
     return;
 
   const bool closed = (flags & AnchorDrawFlags_Closed) != 0;
-  const GfVec2f opaque_uv = _Data->TexUvWhitePixel;
+  const wabi::GfVec2f opaque_uv = _Data->TexUvWhitePixel;
   const int count = closed ? points_count :
                              points_count - 1;  // The number of line segments we need to draw
   const bool thick_line = (thickness > _FringeScale);
@@ -868,9 +868,9 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
     // Temporary buffer
     // The first <points_count> items are normals at each line point, then after that there are
     // either 2 or 4 temp points for each line point
-    GfVec2f *temp_normals = (GfVec2f *)alloca(
-      points_count * ((use_texture || !thick_line) ? 3 : 5) * sizeof(GfVec2f));  //-V630
-    GfVec2f *temp_points = temp_normals + points_count;
+    wabi::GfVec2f *temp_normals = (wabi::GfVec2f *)alloca(
+      points_count * ((use_texture || !thick_line) ? 3 : 5) * sizeof(wabi::GfVec2f));  //-V630
+    wabi::GfVec2f *temp_points = temp_normals + points_count;
 
     // Calculate normals (tangents) for each line segment
     for (int i1 = 0; i1 < count; i1++) {
@@ -935,7 +935,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
         dm_y *= half_draw_size;
 
         // Add temporary vertexes for the outer edges
-        GfVec2f *out_vtx = &temp_points[i2 * 2];
+        wabi::GfVec2f *out_vtx = &temp_points[i2 * 2];
         out_vtx[0][0] = points[i2][0] + dm_x;
         out_vtx[0][1] = points[i2][1] + dm_y;
         out_vtx[1][0] = points[i2][0] - dm_x;
@@ -973,18 +973,18 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
       // Add vertexes for each point on the line
       if (use_texture) {
         // If we're using textures we only need to emit the left/right edge vertices
-        GfVec4f tex_uvs = _Data->TexUvLines[integer_thickness];
+        wabi::GfVec4f tex_uvs = _Data->TexUvLines[integer_thickness];
         /*if (fractional_thickness != 0.0f) // Currently always zero when use_texture==false!
         {
-            const GfVec4f tex_uvs_1 = _Data->TexUvLines[integer_thickness + 1];
+            const wabi::GfVec4f tex_uvs_1 = _Data->TexUvLines[integer_thickness + 1];
             tex_uvs[0] = tex_uvs[0] + (tex_uvs_1[0] - tex_uvs[0]) * fractional_thickness; //
         inlined AnchorLerp() tex_uvs[1] = tex_uvs[1] + (tex_uvs_1[1] - tex_uvs[1]) *
         fractional_thickness; tex_uvs[2] = tex_uvs[2] + (tex_uvs_1[2] - tex_uvs[2]) *
         fractional_thickness; tex_uvs[3] = tex_uvs[3] + (tex_uvs_1[3] - tex_uvs[3]) *
         fractional_thickness;
         }*/
-        GfVec2f tex_uv0(tex_uvs[0], tex_uvs[1]);
-        GfVec2f tex_uv1(tex_uvs[2], tex_uvs[3]);
+        wabi::GfVec2f tex_uv0(tex_uvs[0], tex_uvs[1]);
+        wabi::GfVec2f tex_uv1(tex_uvs[2], tex_uvs[3]);
         for (int i = 0; i < points_count; i++) {
           _VtxWritePtr[0].pos = temp_points[i * 2 + 0];
           _VtxWritePtr[0].uv = tex_uv0;
@@ -1058,7 +1058,7 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
         float dm_in_y = dm_y * half_inner_thickness;
 
         // Add temporary vertices
-        GfVec2f *out_vtx = &temp_points[i2 * 4];
+        wabi::GfVec2f *out_vtx = &temp_points[i2 * 4];
         out_vtx[0][0] = points[i2][0] + dm_out_x;
         out_vtx[0][1] = points[i2][1] + dm_out_y;
         out_vtx[1][0] = points[i2][0] + dm_in_x;
@@ -1118,8 +1118,8 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
 
     for (int i1 = 0; i1 < count; i1++) {
       const int i2 = (i1 + 1) == points_count ? 0 : i1 + 1;
-      const GfVec2f &p1 = points[i1];
-      const GfVec2f &p2 = points[i2];
+      const wabi::GfVec2f &p1 = points[i1];
+      const wabi::GfVec2f &p2 = points[i2];
 
       float dx = p2[0] - p1[0];
       float dy = p2[1] - p1[1];
@@ -1157,16 +1157,16 @@ void AnchorDrawList::AddPolyline(const GfVec2f *points,
   }
 }
 
-// We intentionally avoid using GfVec2f and its math operators here to reduce cost to a minimum for
+// We intentionally avoid using wabi::GfVec2f and its math operators here to reduce cost to a minimum for
 // debug/non-inlined builds.
-void AnchorDrawList::AddConvexPolyFilled(const GfVec2f *points,
+void AnchorDrawList::AddConvexPolyFilled(const wabi::GfVec2f *points,
                                          const int points_count,
                                          AnchorU32 col)
 {
   if (points_count < 3)
     return;
 
-  const GfVec2f uv = _Data->TexUvWhitePixel;
+  const wabi::GfVec2f uv = _Data->TexUvWhitePixel;
 
   if (Flags & AnchorDrawListFlags_AntiAliasedFill) {
     // Anti-aliased Fill
@@ -1187,10 +1187,10 @@ void AnchorDrawList::AddConvexPolyFilled(const GfVec2f *points,
     }
 
     // Compute normals
-    GfVec2f *temp_normals = (GfVec2f *)alloca(points_count * sizeof(GfVec2f));  //-V630
+    wabi::GfVec2f *temp_normals = (wabi::GfVec2f *)alloca(points_count * sizeof(wabi::GfVec2f));  //-V630
     for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
-      const GfVec2f &p0 = points[i0];
-      const GfVec2f &p1 = points[i1];
+      const wabi::GfVec2f &p0 = points[i0];
+      const wabi::GfVec2f &p1 = points[i1];
       float dx = p1[0] - p0[0];
       float dy = p1[1] - p0[1];
       IM_NORMALIZE2F_OVER_ZERO(dx, dy);
@@ -1200,8 +1200,8 @@ void AnchorDrawList::AddConvexPolyFilled(const GfVec2f *points,
 
     for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
       // Average normals
-      const GfVec2f &n0 = temp_normals[i0];
-      const GfVec2f &n1 = temp_normals[i1];
+      const wabi::GfVec2f &n0 = temp_normals[i0];
+      const wabi::GfVec2f &n1 = temp_normals[i1];
       float dm_x = (n0[0] + n1[0]) * 0.5f;
       float dm_y = (n0[1] + n1[1]) * 0.5f;
       IM_FIXNORMAL2F(dm_x, dm_y);
@@ -1250,7 +1250,7 @@ void AnchorDrawList::AddConvexPolyFilled(const GfVec2f *points,
   }
 }
 
-void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
+void AnchorDrawList::_PathArcToFastEx(const wabi::GfVec2f &center,
                                       float radius,
                                       int a_min_sample,
                                       int a_max_sample,
@@ -1289,7 +1289,7 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
   }
 
   _Path.resize(_Path.Size + samples);
-  GfVec2f *out_ptr = _Path.Data + (_Path.Size - samples);
+  wabi::GfVec2f *out_ptr = _Path.Data + (_Path.Size - samples);
 
   int sample_index = a_min_sample;
   if (sample_index < 0 || sample_index >= ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX) {
@@ -1306,7 +1306,7 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
       if (sample_index >= ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX)
         sample_index -= ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
-      const GfVec2f s = _Data->ArcFastVtx[sample_index];
+      const wabi::GfVec2f s = _Data->ArcFastVtx[sample_index];
       out_ptr->data()[0] = center[0] + s[0] * radius;
       out_ptr->data()[1] = center[1] + s[1] * radius;
       out_ptr++;
@@ -1319,7 +1319,7 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
       if (sample_index < 0)
         sample_index += ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
-      const GfVec2f s = _Data->ArcFastVtx[sample_index];
+      const wabi::GfVec2f s = _Data->ArcFastVtx[sample_index];
       out_ptr->data()[0] = center[0] + s[0] * radius;
       out_ptr->data()[1] = center[1] + s[1] * radius;
       out_ptr++;
@@ -1331,7 +1331,7 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
     if (normalized_max_sample < 0)
       normalized_max_sample += ANCHOR_DRAWLIST_ARCFAST_SAMPLE_MAX;
 
-    const GfVec2f s = _Data->ArcFastVtx[normalized_max_sample];
+    const wabi::GfVec2f s = _Data->ArcFastVtx[normalized_max_sample];
     out_ptr->data()[0] = center[0] + s[0] * radius;
     out_ptr->data()[1] = center[1] + s[1] * radius;
     out_ptr++;
@@ -1340,7 +1340,7 @@ void AnchorDrawList::_PathArcToFastEx(const GfVec2f &center,
   ANCHOR_ASSERT_PARANOID(_Path.Data + _Path.Size == out_ptr);
 }
 
-void AnchorDrawList::_PathArcToN(const GfVec2f &center,
+void AnchorDrawList::_PathArcToN(const wabi::GfVec2f &center,
                                  float radius,
                                  float a_min,
                                  float a_max,
@@ -1356,12 +1356,12 @@ void AnchorDrawList::_PathArcToN(const GfVec2f &center,
   _Path.reserve(_Path.Size + (num_segments + 1));
   for (int i = 0; i <= num_segments; i++) {
     const float a = a_min + ((float)i / (float)num_segments) * (a_max - a_min);
-    _Path.push_back(GfVec2f(center[0] + AnchorCos(a) * radius, center[1] + AnchorSin(a) * radius));
+    _Path.push_back(wabi::GfVec2f(center[0] + AnchorCos(a) * radius, center[1] + AnchorSin(a) * radius));
   }
 }
 
 // 0: East, 3: South, 6: West, 9: North, 12: East
-void AnchorDrawList::PathArcToFast(const GfVec2f &center,
+void AnchorDrawList::PathArcToFast(const wabi::GfVec2f &center,
                                    float radius,
                                    int a_min_of_12,
                                    int a_max_of_12)
@@ -1377,7 +1377,7 @@ void AnchorDrawList::PathArcToFast(const GfVec2f &center,
                    0);
 }
 
-void AnchorDrawList::PathArcTo(const GfVec2f &center,
+void AnchorDrawList::PathArcTo(const wabi::GfVec2f &center,
                                float radius,
                                float a_min,
                                float a_max,
@@ -1420,12 +1420,12 @@ void AnchorDrawList::PathArcTo(const GfVec2f &center,
                   (a_mid_samples + 1 + (a_emit_start ? 1 : 0) + (a_emit_end ? 1 : 0)));
     if (a_emit_start)
       _Path.push_back(
-        GfVec2f(center[0] + AnchorCos(a_min) * radius, center[1] + AnchorSin(a_min) * radius));
+        wabi::GfVec2f(center[0] + AnchorCos(a_min) * radius, center[1] + AnchorSin(a_min) * radius));
     if (a_mid_samples > 0)
       _PathArcToFastEx(center, radius, a_min_sample, a_max_sample, 0);
     if (a_emit_end)
       _Path.push_back(
-        GfVec2f(center[0] + AnchorCos(a_max) * radius, center[1] + AnchorSin(a_max) * radius));
+        wabi::GfVec2f(center[0] + AnchorCos(a_max) * radius, center[1] + AnchorSin(a_max) * radius));
   } else {
     const float arc_length = AnchorAbs(a_max - a_min);
     const int circle_segment_count = _CalcCircleAutoSegmentCount(radius);
@@ -1436,10 +1436,10 @@ void AnchorDrawList::PathArcTo(const GfVec2f &center,
   }
 }
 
-GfVec2f AnchorBezierCubicCalc(const GfVec2f &p1,
-                              const GfVec2f &p2,
-                              const GfVec2f &p3,
-                              const GfVec2f &p4,
+wabi::GfVec2f AnchorBezierCubicCalc(const wabi::GfVec2f &p1,
+                              const wabi::GfVec2f &p2,
+                              const wabi::GfVec2f &p3,
+                              const wabi::GfVec2f &p4,
                               float t)
 {
   float u = 1.0f - t;
@@ -1447,21 +1447,21 @@ GfVec2f AnchorBezierCubicCalc(const GfVec2f &p1,
   float w2 = 3 * u * u * t;
   float w3 = 3 * u * t * t;
   float w4 = t * t * t;
-  return GfVec2f(w1 * p1[0] + w2 * p2[0] + w3 * p3[0] + w4 * p4[0],
+  return wabi::GfVec2f(w1 * p1[0] + w2 * p2[0] + w3 * p3[0] + w4 * p4[0],
                  w1 * p1[1] + w2 * p2[1] + w3 * p3[1] + w4 * p4[1]);
 }
 
-GfVec2f AnchorBezierQuadraticCalc(const GfVec2f &p1, const GfVec2f &p2, const GfVec2f &p3, float t)
+wabi::GfVec2f AnchorBezierQuadraticCalc(const wabi::GfVec2f &p1, const wabi::GfVec2f &p2, const wabi::GfVec2f &p3, float t)
 {
   float u = 1.0f - t;
   float w1 = u * u;
   float w2 = 2 * u * t;
   float w3 = t * t;
-  return GfVec2f(w1 * p1[0] + w2 * p2[0] + w3 * p3[0], w1 * p1[1] + w2 * p2[1] + w3 * p3[1]);
+  return wabi::GfVec2f(w1 * p1[0] + w2 * p2[0] + w3 * p3[0], w1 * p1[1] + w2 * p2[1] + w3 * p3[1]);
 }
 
 // Closely mimics AnchorBezierCubicClosestPointCasteljau() in ANCHOR.cpp
-static void PathBezierCubicCurveToCasteljau(AnchorVector<GfVec2f> *path,
+static void PathBezierCubicCurveToCasteljau(AnchorVector<wabi::GfVec2f> *path,
                                             float x1,
                                             float y1,
                                             float x2,
@@ -1480,7 +1480,7 @@ static void PathBezierCubicCurveToCasteljau(AnchorVector<GfVec2f> *path,
   d2 = (d2 >= 0) ? d2 : -d2;
   d3 = (d3 >= 0) ? d3 : -d3;
   if ((d2 + d3) * (d2 + d3) < tess_tol * (dx * dx + dy * dy)) {
-    path->push_back(GfVec2f(x4, y4));
+    path->push_back(wabi::GfVec2f(x4, y4));
   } else if (level < 10) {
     float x12 = (x1 + x2) * 0.5f, y12 = (y1 + y2) * 0.5f;
     float x23 = (x2 + x3) * 0.5f, y23 = (y2 + y3) * 0.5f;
@@ -1513,7 +1513,7 @@ static void PathBezierCubicCurveToCasteljau(AnchorVector<GfVec2f> *path,
   }
 }
 
-static void PathBezierQuadraticCurveToCasteljau(AnchorVector<GfVec2f> *path,
+static void PathBezierQuadraticCurveToCasteljau(AnchorVector<wabi::GfVec2f> *path,
                                                 float x1,
                                                 float y1,
                                                 float x2,
@@ -1526,7 +1526,7 @@ static void PathBezierQuadraticCurveToCasteljau(AnchorVector<GfVec2f> *path,
   float dx = x3 - x1, dy = y3 - y1;
   float det = (x2 - x3) * dy - (y2 - y3) * dx;
   if (det * det * 4.0f < tess_tol * (dx * dx + dy * dy)) {
-    path->push_back(GfVec2f(x3, y3));
+    path->push_back(wabi::GfVec2f(x3, y3));
   } else if (level < 10) {
     float x12 = (x1 + x2) * 0.5f, y12 = (y1 + y2) * 0.5f;
     float x23 = (x2 + x3) * 0.5f, y23 = (y2 + y3) * 0.5f;
@@ -1536,12 +1536,12 @@ static void PathBezierQuadraticCurveToCasteljau(AnchorVector<GfVec2f> *path,
   }
 }
 
-void AnchorDrawList::PathBezierCubicCurveTo(const GfVec2f &p2,
-                                            const GfVec2f &p3,
-                                            const GfVec2f &p4,
+void AnchorDrawList::PathBezierCubicCurveTo(const wabi::GfVec2f &p2,
+                                            const wabi::GfVec2f &p3,
+                                            const wabi::GfVec2f &p4,
                                             int num_segments)
 {
-  GfVec2f p1 = _Path.back();
+  wabi::GfVec2f p1 = _Path.back();
   if (num_segments == 0) {
     PathBezierCubicCurveToCasteljau(&_Path,
                                     p1[0],
@@ -1561,11 +1561,11 @@ void AnchorDrawList::PathBezierCubicCurveTo(const GfVec2f &p2,
   }
 }
 
-void AnchorDrawList::PathBezierQuadraticCurveTo(const GfVec2f &p2,
-                                                const GfVec2f &p3,
+void AnchorDrawList::PathBezierQuadraticCurveTo(const wabi::GfVec2f &p2,
+                                                const wabi::GfVec2f &p3,
                                                 int num_segments)
 {
-  GfVec2f p1 = _Path.back();
+  wabi::GfVec2f p1 = _Path.back();
   if (num_segments == 0) {
     PathBezierQuadraticCurveToCasteljau(&_Path,
                                         p1[0],
@@ -1620,8 +1620,8 @@ static inline AnchorDrawFlags FixRectCornerFlags(AnchorDrawFlags flags)
   return flags;
 }
 
-void AnchorDrawList::PathRect(const GfVec2f &a,
-                              const GfVec2f &b,
+void AnchorDrawList::PathRect(const wabi::GfVec2f &a,
+                              const wabi::GfVec2f &b,
                               float rounding,
                               AnchorDrawFlags flags)
 {
@@ -1646,34 +1646,34 @@ void AnchorDrawList::PathRect(const GfVec2f &a,
   if (rounding <= 0.0f ||
       (flags & AnchorDrawFlags_RoundCornersMask_) == AnchorDrawFlags_RoundCornersNone) {
     PathLineTo(a);
-    PathLineTo(GfVec2f(b[0], a[1]));
+    PathLineTo(wabi::GfVec2f(b[0], a[1]));
     PathLineTo(b);
-    PathLineTo(GfVec2f(a[0], b[1]));
+    PathLineTo(wabi::GfVec2f(a[0], b[1]));
   } else {
     const float rounding_tl = (flags & AnchorDrawFlags_RoundCornersTopLeft) ? rounding : 0.0f;
     const float rounding_tr = (flags & AnchorDrawFlags_RoundCornersTopRight) ? rounding : 0.0f;
     const float rounding_br = (flags & AnchorDrawFlags_RoundCornersBottomRight) ? rounding : 0.0f;
     const float rounding_bl = (flags & AnchorDrawFlags_RoundCornersBottomLeft) ? rounding : 0.0f;
-    PathArcToFast(GfVec2f(a[0] + rounding_tl, a[1] + rounding_tl), rounding_tl, 6, 9);
-    PathArcToFast(GfVec2f(b[0] - rounding_tr, a[1] + rounding_tr), rounding_tr, 9, 12);
-    PathArcToFast(GfVec2f(b[0] - rounding_br, b[1] - rounding_br), rounding_br, 0, 3);
-    PathArcToFast(GfVec2f(a[0] + rounding_bl, b[1] - rounding_bl), rounding_bl, 3, 6);
+    PathArcToFast(wabi::GfVec2f(a[0] + rounding_tl, a[1] + rounding_tl), rounding_tl, 6, 9);
+    PathArcToFast(wabi::GfVec2f(b[0] - rounding_tr, a[1] + rounding_tr), rounding_tr, 9, 12);
+    PathArcToFast(wabi::GfVec2f(b[0] - rounding_br, b[1] - rounding_br), rounding_br, 0, 3);
+    PathArcToFast(wabi::GfVec2f(a[0] + rounding_bl, b[1] - rounding_bl), rounding_bl, 3, 6);
   }
 }
 
-void AnchorDrawList::AddLine(const GfVec2f &p1, const GfVec2f &p2, AnchorU32 col, float thickness)
+void AnchorDrawList::AddLine(const wabi::GfVec2f &p1, const wabi::GfVec2f &p2, AnchorU32 col, float thickness)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
-  PathLineTo(p1 + GfVec2f(0.5f, 0.5f));
-  PathLineTo(p2 + GfVec2f(0.5f, 0.5f));
+  PathLineTo(p1 + wabi::GfVec2f(0.5f, 0.5f));
+  PathLineTo(p2 + wabi::GfVec2f(0.5f, 0.5f));
   PathStroke(col, 0, thickness);
 }
 
 // p_min = upper-left, p_max = lower-right
 // Note we don't render 1 pixels sized rectangles properly.
-void AnchorDrawList::AddRect(const GfVec2f &p_min,
-                             const GfVec2f &p_max,
+void AnchorDrawList::AddRect(const wabi::GfVec2f &p_min,
+                             const wabi::GfVec2f &p_max,
                              AnchorU32 col,
                              float rounding,
                              AnchorDrawFlags flags,
@@ -1682,17 +1682,17 @@ void AnchorDrawList::AddRect(const GfVec2f &p_min,
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
   if (Flags & AnchorDrawListFlags_AntiAliasedLines)
-    PathRect(p_min + GfVec2f(0.50f, 0.50f), p_max - GfVec2f(0.50f, 0.50f), rounding, flags);
+    PathRect(p_min + wabi::GfVec2f(0.50f, 0.50f), p_max - wabi::GfVec2f(0.50f, 0.50f), rounding, flags);
   else
-    PathRect(p_min + GfVec2f(0.50f, 0.50f),
-             p_max - GfVec2f(0.49f, 0.49f),
+    PathRect(p_min + wabi::GfVec2f(0.50f, 0.50f),
+             p_max - wabi::GfVec2f(0.49f, 0.49f),
              rounding,
              flags);  // Better looking lower-right corner and rounded non-AA shapes.
   PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void AnchorDrawList::AddRectFilled(const GfVec2f &p_min,
-                                   const GfVec2f &p_max,
+void AnchorDrawList::AddRectFilled(const wabi::GfVec2f &p_min,
+                                   const wabi::GfVec2f &p_max,
                                    AnchorU32 col,
                                    float rounding,
                                    AnchorDrawFlags flags)
@@ -1710,8 +1710,8 @@ void AnchorDrawList::AddRectFilled(const GfVec2f &p_min,
 }
 
 // p_min = upper-left, p_max = lower-right
-void AnchorDrawList::AddRectFilledMultiColor(const GfVec2f &p_min,
-                                             const GfVec2f &p_max,
+void AnchorDrawList::AddRectFilledMultiColor(const wabi::GfVec2f &p_min,
+                                             const wabi::GfVec2f &p_max,
                                              AnchorU32 col_upr_left,
                                              AnchorU32 col_upr_right,
                                              AnchorU32 col_bot_right,
@@ -1720,7 +1720,7 @@ void AnchorDrawList::AddRectFilledMultiColor(const GfVec2f &p_min,
   if (((col_upr_left | col_upr_right | col_bot_right | col_bot_left) & ANCHOR_COL32_A_MASK) == 0)
     return;
 
-  const GfVec2f uv = _Data->TexUvWhitePixel;
+  const wabi::GfVec2f uv = _Data->TexUvWhitePixel;
   PrimReserve(6, 4);
   PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx));
   PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 1));
@@ -1729,15 +1729,15 @@ void AnchorDrawList::AddRectFilledMultiColor(const GfVec2f &p_min,
   PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 2));
   PrimWriteIdx((AnchorDrawIdx)(_VtxCurrentIdx + 3));
   PrimWriteVtx(p_min, uv, col_upr_left);
-  PrimWriteVtx(GfVec2f(p_max[0], p_min[1]), uv, col_upr_right);
+  PrimWriteVtx(wabi::GfVec2f(p_max[0], p_min[1]), uv, col_upr_right);
   PrimWriteVtx(p_max, uv, col_bot_right);
-  PrimWriteVtx(GfVec2f(p_min[0], p_max[1]), uv, col_bot_left);
+  PrimWriteVtx(wabi::GfVec2f(p_min[0], p_max[1]), uv, col_bot_left);
 }
 
-void AnchorDrawList::AddQuad(const GfVec2f &p1,
-                             const GfVec2f &p2,
-                             const GfVec2f &p3,
-                             const GfVec2f &p4,
+void AnchorDrawList::AddQuad(const wabi::GfVec2f &p1,
+                             const wabi::GfVec2f &p2,
+                             const wabi::GfVec2f &p3,
+                             const wabi::GfVec2f &p4,
                              AnchorU32 col,
                              float thickness)
 {
@@ -1751,10 +1751,10 @@ void AnchorDrawList::AddQuad(const GfVec2f &p1,
   PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void AnchorDrawList::AddQuadFilled(const GfVec2f &p1,
-                                   const GfVec2f &p2,
-                                   const GfVec2f &p3,
-                                   const GfVec2f &p4,
+void AnchorDrawList::AddQuadFilled(const wabi::GfVec2f &p1,
+                                   const wabi::GfVec2f &p2,
+                                   const wabi::GfVec2f &p3,
+                                   const wabi::GfVec2f &p4,
                                    AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
@@ -1767,9 +1767,9 @@ void AnchorDrawList::AddQuadFilled(const GfVec2f &p1,
   PathFillConvex(col);
 }
 
-void AnchorDrawList::AddTriangle(const GfVec2f &p1,
-                                 const GfVec2f &p2,
-                                 const GfVec2f &p3,
+void AnchorDrawList::AddTriangle(const wabi::GfVec2f &p1,
+                                 const wabi::GfVec2f &p2,
+                                 const wabi::GfVec2f &p3,
                                  AnchorU32 col,
                                  float thickness)
 {
@@ -1782,9 +1782,9 @@ void AnchorDrawList::AddTriangle(const GfVec2f &p1,
   PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void AnchorDrawList::AddTriangleFilled(const GfVec2f &p1,
-                                       const GfVec2f &p2,
-                                       const GfVec2f &p3,
+void AnchorDrawList::AddTriangleFilled(const wabi::GfVec2f &p1,
+                                       const wabi::GfVec2f &p2,
+                                       const wabi::GfVec2f &p3,
                                        AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
@@ -1796,7 +1796,7 @@ void AnchorDrawList::AddTriangleFilled(const GfVec2f &p1,
   PathFillConvex(col);
 }
 
-void AnchorDrawList::AddCircle(const GfVec2f &center,
+void AnchorDrawList::AddCircle(const wabi::GfVec2f &center,
                                float radius,
                                AnchorU32 col,
                                int num_segments,
@@ -1823,7 +1823,7 @@ void AnchorDrawList::AddCircle(const GfVec2f &center,
   PathStroke(col, AnchorDrawFlags_Closed, thickness);
 }
 
-void AnchorDrawList::AddCircleFilled(const GfVec2f &center,
+void AnchorDrawList::AddCircleFilled(const wabi::GfVec2f &center,
                                      float radius,
                                      AnchorU32 col,
                                      int num_segments)
@@ -1850,7 +1850,7 @@ void AnchorDrawList::AddCircleFilled(const GfVec2f &center,
 }
 
 // Guaranteed to honor 'num_segments'
-void AnchorDrawList::AddNgon(const GfVec2f &center,
+void AnchorDrawList::AddNgon(const wabi::GfVec2f &center,
                              float radius,
                              AnchorU32 col,
                              int num_segments,
@@ -1866,7 +1866,7 @@ void AnchorDrawList::AddNgon(const GfVec2f &center,
 }
 
 // Guaranteed to honor 'num_segments'
-void AnchorDrawList::AddNgonFilled(const GfVec2f &center,
+void AnchorDrawList::AddNgonFilled(const wabi::GfVec2f &center,
                                    float radius,
                                    AnchorU32 col,
                                    int num_segments)
@@ -1881,10 +1881,10 @@ void AnchorDrawList::AddNgonFilled(const GfVec2f &center,
 }
 
 // Cubic Bezier takes 4 controls points
-void AnchorDrawList::AddBezierCubic(const GfVec2f &p1,
-                                    const GfVec2f &p2,
-                                    const GfVec2f &p3,
-                                    const GfVec2f &p4,
+void AnchorDrawList::AddBezierCubic(const wabi::GfVec2f &p1,
+                                    const wabi::GfVec2f &p2,
+                                    const wabi::GfVec2f &p3,
+                                    const wabi::GfVec2f &p4,
                                     AnchorU32 col,
                                     float thickness,
                                     int num_segments)
@@ -1898,9 +1898,9 @@ void AnchorDrawList::AddBezierCubic(const GfVec2f &p1,
 }
 
 // Quadratic Bezier takes 3 controls points
-void AnchorDrawList::AddBezierQuadratic(const GfVec2f &p1,
-                                        const GfVec2f &p2,
-                                        const GfVec2f &p3,
+void AnchorDrawList::AddBezierQuadratic(const wabi::GfVec2f &p1,
+                                        const wabi::GfVec2f &p2,
+                                        const wabi::GfVec2f &p3,
                                         AnchorU32 col,
                                         float thickness,
                                         int num_segments)
@@ -1915,12 +1915,12 @@ void AnchorDrawList::AddBezierQuadratic(const GfVec2f &p1,
 
 void AnchorDrawList::AddText(const AnchorFont *font,
                              float font_size,
-                             const GfVec2f &pos,
+                             const wabi::GfVec2f &pos,
                              AnchorU32 col,
                              const char *text_begin,
                              const char *text_end,
                              float wrap_width,
-                             const GfVec4f *cpu_fine_clip_rect)
+                             const wabi::GfVec4f *cpu_fine_clip_rect)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
     return;
@@ -1940,7 +1940,7 @@ void AnchorDrawList::AddText(const AnchorFont *font,
                 _CmdHeader.TextureId);  // Use high-level ANCHOR::PushFont() or low-level
                                         // AnchorDrawList::PushTextureId() to change font.
 
-  GfVec4f clip_rect = _CmdHeader.ClipRect;
+  wabi::GfVec4f clip_rect = _CmdHeader.ClipRect;
   if (cpu_fine_clip_rect) {
     clip_rect[0] = AnchorMax(clip_rect[0], cpu_fine_clip_rect->data()[0]);
     clip_rect[1] = AnchorMax(clip_rect[1], cpu_fine_clip_rect->data()[1]);
@@ -1958,7 +1958,7 @@ void AnchorDrawList::AddText(const AnchorFont *font,
                    cpu_fine_clip_rect != NULL);
 }
 
-void AnchorDrawList::AddText(const GfVec2f &pos,
+void AnchorDrawList::AddText(const wabi::GfVec2f &pos,
                              AnchorU32 col,
                              const char *text_begin,
                              const char *text_end)
@@ -1967,10 +1967,10 @@ void AnchorDrawList::AddText(const GfVec2f &pos,
 }
 
 void AnchorDrawList::AddImage(AnchorTextureID user_texture_id,
-                              const GfVec2f &p_min,
-                              const GfVec2f &p_max,
-                              const GfVec2f &uv_min,
-                              const GfVec2f &uv_max,
+                              const wabi::GfVec2f &p_min,
+                              const wabi::GfVec2f &p_max,
+                              const wabi::GfVec2f &uv_min,
+                              const wabi::GfVec2f &uv_max,
                               AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
@@ -1988,14 +1988,14 @@ void AnchorDrawList::AddImage(AnchorTextureID user_texture_id,
 }
 
 void AnchorDrawList::AddImageQuad(AnchorTextureID user_texture_id,
-                                  const GfVec2f &p1,
-                                  const GfVec2f &p2,
-                                  const GfVec2f &p3,
-                                  const GfVec2f &p4,
-                                  const GfVec2f &uv1,
-                                  const GfVec2f &uv2,
-                                  const GfVec2f &uv3,
-                                  const GfVec2f &uv4,
+                                  const wabi::GfVec2f &p1,
+                                  const wabi::GfVec2f &p2,
+                                  const wabi::GfVec2f &p3,
+                                  const wabi::GfVec2f &p4,
+                                  const wabi::GfVec2f &uv1,
+                                  const wabi::GfVec2f &uv2,
+                                  const wabi::GfVec2f &uv3,
+                                  const wabi::GfVec2f &uv4,
                                   AnchorU32 col)
 {
   if ((col & ANCHOR_COL32_A_MASK) == 0)
@@ -2013,10 +2013,10 @@ void AnchorDrawList::AddImageQuad(AnchorTextureID user_texture_id,
 }
 
 void AnchorDrawList::AddImageRounded(AnchorTextureID user_texture_id,
-                                     const GfVec2f &p_min,
-                                     const GfVec2f &p_max,
-                                     const GfVec2f &uv_min,
-                                     const GfVec2f &uv_max,
+                                     const wabi::GfVec2f &p_min,
+                                     const wabi::GfVec2f &p_max,
+                                     const wabi::GfVec2f &uv_min,
+                                     const wabi::GfVec2f &uv_max,
                                      AnchorU32 col,
                                      float rounding,
                                      AnchorDrawFlags flags)
@@ -2244,13 +2244,13 @@ void AnchorDrawData::DeIndexAllBuffers()
 // Helper to scale the ClipRect field of each AnchorDrawCmd.
 // Use if your final output buffer is at a different scale than draw_data->DisplaySize,
 // or if there is a difference between your window resolution and framebuffer resolution.
-void AnchorDrawData::ScaleClipRects(const GfVec2f &fb_scale)
+void AnchorDrawData::ScaleClipRects(const wabi::GfVec2f &fb_scale)
 {
   for (int i = 0; i < CmdListsCount; i++) {
     AnchorDrawList *cmd_list = CmdLists[i];
     for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
       AnchorDrawCmd *cmd = &cmd_list->CmdBuffer[cmd_i];
-      cmd->ClipRect = GfVec4f(cmd->ClipRect[0] * fb_scale[0],
+      cmd->ClipRect = wabi::GfVec4f(cmd->ClipRect[0] * fb_scale[0],
                               cmd->ClipRect[1] * fb_scale[1],
                               cmd->ClipRect[2] * fb_scale[0],
                               cmd->ClipRect[3] * fb_scale[1]);
@@ -2266,12 +2266,12 @@ void AnchorDrawData::ScaleClipRects(const GfVec2f &fb_scale)
 void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(AnchorDrawList *draw_list,
                                                     int vert_start_idx,
                                                     int vert_end_idx,
-                                                    GfVec2f gradient_p0,
-                                                    GfVec2f gradient_p1,
+                                                    wabi::GfVec2f gradient_p0,
+                                                    wabi::GfVec2f gradient_p1,
                                                     AnchorU32 col0,
                                                     AnchorU32 col1)
 {
-  GfVec2f gradient_extent = gradient_p1 - gradient_p0;
+  wabi::GfVec2f gradient_extent = gradient_p1 - gradient_p0;
   float gradient_inv_length2 = 1.0f / AnchorLengthSqr(gradient_extent);
   AnchorDrawVert *vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
   AnchorDrawVert *vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
@@ -2296,30 +2296,30 @@ void ANCHOR::ShadeVertsLinearColorGradientKeepAlpha(AnchorDrawList *draw_list,
 void ANCHOR::ShadeVertsLinearUV(AnchorDrawList *draw_list,
                                 int vert_start_idx,
                                 int vert_end_idx,
-                                const GfVec2f &a,
-                                const GfVec2f &b,
-                                const GfVec2f &uv_a,
-                                const GfVec2f &uv_b,
+                                const wabi::GfVec2f &a,
+                                const wabi::GfVec2f &b,
+                                const wabi::GfVec2f &uv_a,
+                                const wabi::GfVec2f &uv_b,
                                 bool clamp)
 {
-  const GfVec2f size = b - a;
-  const GfVec2f uv_size = uv_b - uv_a;
-  const GfVec2f scale = GfVec2f(size[0] != 0.0f ? (uv_size[0] / size[0]) : 0.0f,
+  const wabi::GfVec2f size = b - a;
+  const wabi::GfVec2f uv_size = uv_b - uv_a;
+  const wabi::GfVec2f scale = wabi::GfVec2f(size[0] != 0.0f ? (uv_size[0] / size[0]) : 0.0f,
                                 size[1] != 0.0f ? (uv_size[1] / size[1]) : 0.0f);
 
   AnchorDrawVert *vert_start = draw_list->VtxBuffer.Data + vert_start_idx;
   AnchorDrawVert *vert_end = draw_list->VtxBuffer.Data + vert_end_idx;
   if (clamp) {
-    const GfVec2f min = AnchorMin(uv_a, uv_b);
-    const GfVec2f max = AnchorMax(uv_a, uv_b);
+    const wabi::GfVec2f min = AnchorMin(uv_a, uv_b);
+    const wabi::GfVec2f max = AnchorMax(uv_a, uv_b);
     for (AnchorDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
       vertex->uv = AnchorClamp(uv_a +
-                                 AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale),
+                                 AnchorMul(wabi::GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale),
                                min,
                                max);
   } else {
     for (AnchorDrawVert *vertex = vert_start; vertex < vert_end; ++vertex)
-      vertex->uv = uv_a + AnchorMul(GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale);
+      vertex->uv = uv_a + AnchorMul(wabi::GfVec2f(vertex->pos[0], vertex->pos[1]) - a, scale);
   }
 }
 
@@ -2405,16 +2405,16 @@ static const char FONT_ATLAS_DEFAULT_TEX_DATA_PIXELS[FONT_ATLAS_DEFAULT_TEX_DATA
   "                                                      -    XX           XX    -              "
   "               "};
 
-static const GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ANCHOR_StandardCursorNumCursors][3] = {
+static const wabi::GfVec2f FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[ANCHOR_StandardCursorNumCursors][3] = {
   // Pos ........ Size ......... Offset ......
-  {GfVec2f(0,  3),  GfVec2f(12, 19), GfVec2f(0,  0) }, // ANCHOR_StandardCursorDefault
-  {GfVec2f(13, 0),  GfVec2f(7,  16), GfVec2f(1,  8) }, // ANCHOR_StandardCursorText
-  {GfVec2f(31, 0),  GfVec2f(23, 23), GfVec2f(11, 11)}, // ANCHOR_StandardCursorNSEWScroll
-  {GfVec2f(21, 0),  GfVec2f(9,  23), GfVec2f(4,  11)}, // ANCHOR_StandardCursorNSScroll
-  {GfVec2f(55, 18), GfVec2f(23, 9),  GfVec2f(11, 4) }, // ANCHOR_StandardCursorEWScroll
-  {GfVec2f(73, 0),  GfVec2f(17, 17), GfVec2f(8,  8) }, // ANCHOR_StandardCursorBottomLeftCorner
-  {GfVec2f(55, 0),  GfVec2f(17, 17), GfVec2f(8,  8) }, // ANCHOR_StandardCursorBottomRightCorner
-  {GfVec2f(91, 0),  GfVec2f(17, 22), GfVec2f(5,  0) }, // ANCHOR_StandardCursorMove
+  {wabi::GfVec2f(0,  3),  wabi::GfVec2f(12, 19), wabi::GfVec2f(0,  0) }, // ANCHOR_StandardCursorDefault
+  {wabi::GfVec2f(13, 0),  wabi::GfVec2f(7,  16), wabi::GfVec2f(1,  8) }, // ANCHOR_StandardCursorText
+  {wabi::GfVec2f(31, 0),  wabi::GfVec2f(23, 23), wabi::GfVec2f(11, 11)}, // ANCHOR_StandardCursorNSEWScroll
+  {wabi::GfVec2f(21, 0),  wabi::GfVec2f(9,  23), wabi::GfVec2f(4,  11)}, // ANCHOR_StandardCursorNSScroll
+  {wabi::GfVec2f(55, 18), wabi::GfVec2f(23, 9),  wabi::GfVec2f(11, 4) }, // ANCHOR_StandardCursorEWScroll
+  {wabi::GfVec2f(73, 0),  wabi::GfVec2f(17, 17), wabi::GfVec2f(8,  8) }, // ANCHOR_StandardCursorBottomLeftCorner
+  {wabi::GfVec2f(55, 0),  wabi::GfVec2f(17, 17), wabi::GfVec2f(8,  8) }, // ANCHOR_StandardCursorBottomRightCorner
+  {wabi::GfVec2f(91, 0),  wabi::GfVec2f(17, 22), wabi::GfVec2f(5,  0) }, // ANCHOR_StandardCursorMove
 };
 
 AnchorFontAtlas::AnchorFontAtlas()
@@ -2732,7 +2732,7 @@ int AnchorFontAtlas::AddCustomRectFontGlyph(AnchorFont *font,
                                             int width,
                                             int height,
                                             float advance_x,
-                                            const GfVec2f &offset)
+                                            const wabi::GfVec2f &offset)
 {
 #ifdef ANCHOR_USE_WCHAR32
   ANCHOR_ASSERT(id <= IM_UNICODE_CODEPOINT_MAX);
@@ -2752,23 +2752,23 @@ int AnchorFontAtlas::AddCustomRectFontGlyph(AnchorFont *font,
 }
 
 void AnchorFontAtlas::CalcCustomRectUV(const AnchorFontAtlasCustomRect *rect,
-                                       GfVec2f *out_uv_min,
-                                       GfVec2f *out_uv_max) const
+                                       wabi::GfVec2f *out_uv_min,
+                                       wabi::GfVec2f *out_uv_max) const
 {
   ANCHOR_ASSERT(TexWidth > 0 &&
                 TexHeight >
                   0);  // Font atlas needs to be built before we can calculate UV coordinates
   ANCHOR_ASSERT(rect->IsPacked());  // Make sure the rectangle has been packed
-  *out_uv_min = GfVec2f((float)rect->X * TexUvScale[0], (float)rect->Y * TexUvScale[1]);
-  *out_uv_max = GfVec2f((float)(rect->X + rect->Width) * TexUvScale[0],
+  *out_uv_min = wabi::GfVec2f((float)rect->X * TexUvScale[0], (float)rect->Y * TexUvScale[1]);
+  *out_uv_max = wabi::GfVec2f((float)(rect->X + rect->Width) * TexUvScale[0],
                         (float)(rect->Y + rect->Height) * TexUvScale[1]);
 }
 
 bool AnchorFontAtlas::GetMouseCursorTexData(AnchorMouseCursor cursor_type,
-                                            GfVec2f *out_offset,
-                                            GfVec2f *out_size,
-                                            GfVec2f out_uv_border[2],
-                                            GfVec2f out_uv_fill[2])
+                                            wabi::GfVec2f *out_offset,
+                                            wabi::GfVec2f *out_size,
+                                            wabi::GfVec2f out_uv_border[2],
+                                            wabi::GfVec2f out_uv_fill[2])
 {
   if (cursor_type <= ANCHOR_StandardCursorNone || cursor_type >= ANCHOR_StandardCursorNumCursors)
     return false;
@@ -2777,19 +2777,19 @@ bool AnchorFontAtlas::GetMouseCursorTexData(AnchorMouseCursor cursor_type,
 
   ANCHOR_ASSERT(PackIdMouseCursors != -1);
   AnchorFontAtlasCustomRect *r = GetCustomRectByIndex(PackIdMouseCursors);
-  GfVec2f pos = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][0] +
-                GfVec2f((float)r->X, (float)r->Y);
-  GfVec2f size = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][1];
+  wabi::GfVec2f pos = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][0] +
+                wabi::GfVec2f((float)r->X, (float)r->Y);
+  wabi::GfVec2f size = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][1];
   *out_size = size;
   *out_offset = FONT_ATLAS_DEFAULT_TEX_CURSOR_DATA[cursor_type][2];
 
   /** todo::check_math */
-  out_uv_border[0] = GfVec2f((pos[0]) * TexUvScale[0], (pos[1]) * TexUvScale[1]);
-  out_uv_border[1] = GfVec2f((pos[0] + size[0]) * TexUvScale[0],
+  out_uv_border[0] = wabi::GfVec2f((pos[0]) * TexUvScale[0], (pos[1]) * TexUvScale[1]);
+  out_uv_border[1] = wabi::GfVec2f((pos[0] + size[0]) * TexUvScale[0],
                              (pos[1] + size[1]) * TexUvScale[1]);
   pos[0] += FONT_ATLAS_DEFAULT_TEX_DATA_W + 1;
-  out_uv_fill[0] = GfVec2f((pos[0]) * TexUvScale[0], (pos[1]) * TexUvScale[1]);
-  out_uv_fill[1] = GfVec2f((pos[0] + size[0]) * TexUvScale[0], (pos[1] + size[1]) * TexUvScale[1]);
+  out_uv_fill[0] = wabi::GfVec2f((pos[0]) * TexUvScale[0], (pos[1]) * TexUvScale[1]);
+  out_uv_fill[1] = wabi::GfVec2f((pos[0] + size[0]) * TexUvScale[0], (pos[1] + size[1]) * TexUvScale[1]);
   return true;
 }
 
@@ -2892,8 +2892,8 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
   // Clear atlas
   atlas->TexID = (AnchorTextureID)NULL;
   atlas->TexWidth = atlas->TexHeight = 0;
-  atlas->TexUvScale = GfVec2f(0.0f, 0.0f);
-  atlas->TexUvWhitePixel = GfVec2f(0.0f, 0.0f);
+  atlas->TexUvScale = wabi::GfVec2f(0.0f, 0.0f);
+  atlas->TexUvWhitePixel = wabi::GfVec2f(0.0f, 0.0f);
   atlas->ClearTexData();
 
   // Temporary storage for building
@@ -3085,7 +3085,7 @@ static bool AnchorFontAtlasBuildWithStbTruetype(AnchorFontAtlas *atlas)
   atlas->TexHeight = (atlas->Flags & AnchorFontAtlasFlags_NoPowerOfTwoHeight) ?
                        (atlas->TexHeight + 1) :
                        ImUpperPowerOfTwo(atlas->TexHeight);
-  atlas->TexUvScale = GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
+  atlas->TexUvScale = wabi::GfVec2f(1.0f / atlas->TexWidth, 1.0f / atlas->TexHeight);
   atlas->TexPixelsAlpha8 = (unsigned char *)ANCHOR_ALLOC(atlas->TexWidth * atlas->TexHeight);
   memset(atlas->TexPixelsAlpha8, 0, atlas->TexWidth * atlas->TexHeight);
   spc.pixels = atlas->TexPixelsAlpha8;
@@ -3336,7 +3336,7 @@ static void AnchorFontAtlasBuildRenderDefaultTexData(AnchorFontAtlas *atlas)
           ANCHOR_COL32_WHITE;
     }
   }
-  atlas->TexUvWhitePixel = GfVec2f((r->X + 0.5f) * atlas->TexUvScale[0],
+  atlas->TexUvWhitePixel = wabi::GfVec2f((r->X + 0.5f) * atlas->TexUvScale[0],
                                    (r->Y + 0.5f) * atlas->TexUvScale[1]);
 }
 
@@ -3387,19 +3387,19 @@ static void AnchorFontAtlasBuildRenderLinesTexData(AnchorFontAtlas *atlas)
 
     // Calculate UVs for this line
     /** todo::check_math */
-    GfVec2f uv0 = GfVec2f(
-      GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[0] * atlas->TexUvScale[0],
-      GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[1] * atlas->TexUvScale[1]);
+    wabi::GfVec2f uv0 = wabi::GfVec2f(
+      wabi::GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[0] * atlas->TexUvScale[0],
+      wabi::GfVec2f((float)(r->X + pad_left - 1), (float)(r->Y + y))[1] * atlas->TexUvScale[1]);
 
-    GfVec2f uv1 = GfVec2f(
-      GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[0] *
+    wabi::GfVec2f uv1 = wabi::GfVec2f(
+      wabi::GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[0] *
         atlas->TexUvScale[0],
-      GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[1] *
+      wabi::GfVec2f((float)(r->X + pad_left + line_width + 1), (float)(r->Y + y + 1))[1] *
         atlas->TexUvScale[1]);
     float half_v =
       (uv0[1] + uv1[1]) *
       0.5f;  // Calculate a constant V in the middle of the row to avoid sampling artifacts
-    atlas->TexUvLines[n] = GfVec4f(uv0[0], half_v, uv1[0], half_v);
+    atlas->TexUvLines[n] = wabi::GfVec4f(uv0[0], half_v, uv1[0], half_v);
   }
 }
 
@@ -3443,7 +3443,7 @@ void AnchorFontAtlasBuildFinish(AnchorFontAtlas *atlas)
     // Will ignore AnchorFontConfig settings: GlyphMinAdvanceX, GlyphMinAdvanceY,
     // GlyphExtraSpacing, PixelSnapH
     ANCHOR_ASSERT(r->Font->ContainerAtlas == atlas);
-    GfVec2f uv0, uv1;
+    wabi::GfVec2f uv0, uv1;
     atlas->CalcCustomRectUV(r, &uv0, &uv1);
     r->Font->AddGlyph(NULL,
                       (AnchorWChar)r->GlyphID,
@@ -4296,7 +4296,7 @@ const char *AnchorFont::CalcWordWrapPositionA(float scale,
   return s;
 }
 
-GfVec2f AnchorFont::CalcTextSizeA(float size,
+wabi::GfVec2f AnchorFont::CalcTextSizeA(float size,
                                   float max_width,
                                   float wrap_width,
                                   const char *text_begin,
@@ -4309,7 +4309,7 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
   const float line_height = size;
   const float scale = size / FontSize;
 
-  GfVec2f text_size = GfVec2f(0, 0);
+  wabi::GfVec2f text_size = wabi::GfVec2f(0, 0);
   float line_width = 0.0f;
 
   const bool word_wrap_enabled = (wrap_width > 0.0f);
@@ -4400,7 +4400,7 @@ GfVec2f AnchorFont::CalcTextSizeA(float size,
 // bound.
 void AnchorFont::RenderChar(AnchorDrawList *draw_list,
                             float size,
-                            GfVec2f pos,
+                            wabi::GfVec2f pos,
                             AnchorU32 col,
                             AnchorWChar c) const
 {
@@ -4413,10 +4413,10 @@ void AnchorFont::RenderChar(AnchorDrawList *draw_list,
   pos[0] = ANCHOR_FLOOR(pos[0]);
   pos[1] = ANCHOR_FLOOR(pos[1]);
   draw_list->PrimReserve(6, 4);
-  draw_list->PrimRectUV(GfVec2f(pos[0] + glyph->X0 * scale, pos[1] + glyph->Y0 * scale),
-                        GfVec2f(pos[0] + glyph->X1 * scale, pos[1] + glyph->Y1 * scale),
-                        GfVec2f(glyph->U0, glyph->V0),
-                        GfVec2f(glyph->U1, glyph->V1),
+  draw_list->PrimRectUV(wabi::GfVec2f(pos[0] + glyph->X0 * scale, pos[1] + glyph->Y0 * scale),
+                        wabi::GfVec2f(pos[0] + glyph->X1 * scale, pos[1] + glyph->Y1 * scale),
+                        wabi::GfVec2f(glyph->U0, glyph->V0),
+                        wabi::GfVec2f(glyph->U1, glyph->V1),
                         col);
 }
 
@@ -4424,9 +4424,9 @@ void AnchorFont::RenderChar(AnchorDrawList *draw_list,
 // bound.
 void AnchorFont::RenderText(AnchorDrawList *draw_list,
                             float size,
-                            GfVec2f pos,
+                            wabi::GfVec2f pos,
                             AnchorU32 col,
-                            const GfVec4f &clip_rect,
+                            const wabi::GfVec4f &clip_rect,
                             const char *text_begin,
                             const char *text_end,
                             float wrap_width,
@@ -4657,32 +4657,32 @@ void AnchorFont::RenderText(AnchorDrawList *draw_list,
 // Render an arrow aimed to be aligned with text (p_min is a position in the same space text would
 // be positioned). To e.g. denote expanded/collapsed state
 void ANCHOR::RenderArrow(AnchorDrawList *draw_list,
-                         GfVec2f pos,
+                         wabi::GfVec2f pos,
                          AnchorU32 col,
                          AnchorDir dir,
                          float scale)
 {
   const float h = draw_list->_Data->FontSize * 1.00f;
   float r = h * 0.40f * scale;
-  GfVec2f center = pos + GfVec2f(h * 0.50f, h * 0.50f * scale);
+  wabi::GfVec2f center = pos + wabi::GfVec2f(h * 0.50f, h * 0.50f * scale);
 
-  GfVec2f a, b, c;
+  wabi::GfVec2f a, b, c;
   switch (dir) {
     case AnchorDir_Up:
     case AnchorDir_Down:
       if (dir == AnchorDir_Up)
         r = -r;
-      a = GfVec2f(+0.000f, +0.750f) * r;
-      b = GfVec2f(-0.866f, -0.750f) * r;
-      c = GfVec2f(+0.866f, -0.750f) * r;
+      a = wabi::GfVec2f(+0.000f, +0.750f) * r;
+      b = wabi::GfVec2f(-0.866f, -0.750f) * r;
+      c = wabi::GfVec2f(+0.866f, -0.750f) * r;
       break;
     case AnchorDir_Left:
     case AnchorDir_Right:
       if (dir == AnchorDir_Left)
         r = -r;
-      a = GfVec2f(+0.750f, +0.000f) * r;
-      b = GfVec2f(-0.750f, +0.866f) * r;
-      c = GfVec2f(-0.750f, -0.866f) * r;
+      a = wabi::GfVec2f(+0.750f, +0.000f) * r;
+      b = wabi::GfVec2f(-0.750f, +0.866f) * r;
+      c = wabi::GfVec2f(-0.750f, -0.866f) * r;
       break;
     case AnchorDir_None:
     case AnchorDir_COUNT:
@@ -4692,28 +4692,28 @@ void ANCHOR::RenderArrow(AnchorDrawList *draw_list,
   draw_list->AddTriangleFilled(center + a, center + b, center + c, col);
 }
 
-void ANCHOR::RenderBullet(AnchorDrawList *draw_list, GfVec2f pos, AnchorU32 col)
+void ANCHOR::RenderBullet(AnchorDrawList *draw_list, wabi::GfVec2f pos, AnchorU32 col)
 {
   draw_list->AddCircleFilled(pos, draw_list->_Data->FontSize * 0.20f, col, 8);
 }
 
-void ANCHOR::RenderCheckMark(AnchorDrawList *draw_list, GfVec2f pos, AnchorU32 col, float sz)
+void ANCHOR::RenderCheckMark(AnchorDrawList *draw_list, wabi::GfVec2f pos, AnchorU32 col, float sz)
 {
   float thickness = AnchorMax(sz / 5.0f, 1.0f);
   sz -= thickness * 0.5f;
-  pos += GfVec2f(thickness * 0.25f, thickness * 0.25f);
+  pos += wabi::GfVec2f(thickness * 0.25f, thickness * 0.25f);
 
   float third = sz / 3.0f;
   float bx = pos[0] + third;
   float by = pos[1] + sz - third * 0.5f;
-  draw_list->PathLineTo(GfVec2f(bx - third, by - third));
-  draw_list->PathLineTo(GfVec2f(bx, by));
-  draw_list->PathLineTo(GfVec2f(bx + third * 2.0f, by - third * 2.0f));
+  draw_list->PathLineTo(wabi::GfVec2f(bx - third, by - third));
+  draw_list->PathLineTo(wabi::GfVec2f(bx, by));
+  draw_list->PathLineTo(wabi::GfVec2f(bx + third * 2.0f, by - third * 2.0f));
   draw_list->PathStroke(col, 0, thickness);
 }
 
 void ANCHOR::RenderMouseCursor(AnchorDrawList *draw_list,
-                               GfVec2f pos,
+                               wabi::GfVec2f pos,
                                float scale,
                                AnchorMouseCursor mouse_cursor,
                                AnchorU32 col_fill,
@@ -4726,20 +4726,20 @@ void ANCHOR::RenderMouseCursor(AnchorDrawList *draw_list,
                 mouse_cursor < ANCHOR_StandardCursorNumCursors);
 
   AnchorFontAtlas *font_atlas = draw_list->_Data->Font->ContainerAtlas;
-  GfVec2f offset, size, uv[4];
+  wabi::GfVec2f offset, size, uv[4];
   if (font_atlas->GetMouseCursorTexData(mouse_cursor, &offset, &size, &uv[0], &uv[2])) {
     pos -= offset;
     AnchorTextureID tex_id = font_atlas->TexID;
     draw_list->PushTextureID(tex_id);
     draw_list->AddImage(tex_id,
-                        pos + GfVec2f(1, 0) * scale,
-                        pos + (GfVec2f(1, 0) + size) * scale,
+                        pos + wabi::GfVec2f(1, 0) * scale,
+                        pos + (wabi::GfVec2f(1, 0) + size) * scale,
                         uv[2],
                         uv[3],
                         col_shadow);
     draw_list->AddImage(tex_id,
-                        pos + GfVec2f(2, 0) * scale,
-                        pos + (GfVec2f(2, 0) + size) * scale,
+                        pos + wabi::GfVec2f(2, 0) * scale,
+                        pos + (wabi::GfVec2f(2, 0) + size) * scale,
                         uv[2],
                         uv[3],
                         col_shadow);
@@ -4752,33 +4752,33 @@ void ANCHOR::RenderMouseCursor(AnchorDrawList *draw_list,
 // Render an arrow. 'pos' is position of the arrow tip. half_sz[0] is length from base to tip.
 // half_sz[1] is length on each side.
 void ANCHOR::RenderArrowPointingAt(AnchorDrawList *draw_list,
-                                   GfVec2f pos,
-                                   GfVec2f half_sz,
+                                   wabi::GfVec2f pos,
+                                   wabi::GfVec2f half_sz,
                                    AnchorDir direction,
                                    AnchorU32 col)
 {
   switch (direction) {
     case AnchorDir_Left:
-      draw_list->AddTriangleFilled(GfVec2f(pos[0] + half_sz[0], pos[1] - half_sz[1]),
-                                   GfVec2f(pos[0] + half_sz[0], pos[1] + half_sz[1]),
+      draw_list->AddTriangleFilled(wabi::GfVec2f(pos[0] + half_sz[0], pos[1] - half_sz[1]),
+                                   wabi::GfVec2f(pos[0] + half_sz[0], pos[1] + half_sz[1]),
                                    pos,
                                    col);
       return;
     case AnchorDir_Right:
-      draw_list->AddTriangleFilled(GfVec2f(pos[0] - half_sz[0], pos[1] + half_sz[1]),
-                                   GfVec2f(pos[0] - half_sz[0], pos[1] - half_sz[1]),
+      draw_list->AddTriangleFilled(wabi::GfVec2f(pos[0] - half_sz[0], pos[1] + half_sz[1]),
+                                   wabi::GfVec2f(pos[0] - half_sz[0], pos[1] - half_sz[1]),
                                    pos,
                                    col);
       return;
     case AnchorDir_Up:
-      draw_list->AddTriangleFilled(GfVec2f(pos[0] + half_sz[0], pos[1] + half_sz[1]),
-                                   GfVec2f(pos[0] - half_sz[0], pos[1] + half_sz[1]),
+      draw_list->AddTriangleFilled(wabi::GfVec2f(pos[0] + half_sz[0], pos[1] + half_sz[1]),
+                                   wabi::GfVec2f(pos[0] - half_sz[0], pos[1] + half_sz[1]),
                                    pos,
                                    col);
       return;
     case AnchorDir_Down:
-      draw_list->AddTriangleFilled(GfVec2f(pos[0] - half_sz[0], pos[1] - half_sz[1]),
-                                   GfVec2f(pos[0] + half_sz[0], pos[1] - half_sz[1]),
+      draw_list->AddTriangleFilled(wabi::GfVec2f(pos[0] - half_sz[0], pos[1] - half_sz[1]),
+                                   wabi::GfVec2f(pos[0] + half_sz[0], pos[1] - half_sz[1]),
                                    pos,
                                    col);
       return;
@@ -4812,8 +4812,8 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
   if (x_start_norm > x_end_norm)
     AnchorSwap(x_start_norm, x_end_norm);
 
-  GfVec2f p0 = GfVec2f(AnchorLerp(rect.Min[0], rect.Max[0], x_start_norm), rect.Min[1]);
-  GfVec2f p1 = GfVec2f(AnchorLerp(rect.Min[0], rect.Max[0], x_end_norm), rect.Max[1]);
+  wabi::GfVec2f p0 = wabi::GfVec2f(AnchorLerp(rect.Min[0], rect.Max[0], x_start_norm), rect.Min[1]);
+  wabi::GfVec2f p1 = wabi::GfVec2f(AnchorLerp(rect.Min[0], rect.Max[0], x_end_norm), rect.Max[1]);
   if (rounding == 0.0f) {
     draw_list->AddRectFilled(p0, p1, col, 0.0f);
     return;
@@ -4830,18 +4830,18 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
                                        // exact value AnchorAcos01 can return.
   const float x0 = AnchorMax(p0[0], rect.Min[0] + rounding);
   if (arc0_b == arc0_e) {
-    draw_list->PathLineTo(GfVec2f(x0, p1[1]));
-    draw_list->PathLineTo(GfVec2f(x0, p0[1]));
+    draw_list->PathLineTo(wabi::GfVec2f(x0, p1[1]));
+    draw_list->PathLineTo(wabi::GfVec2f(x0, p0[1]));
   } else if (arc0_b == 0.0f && arc0_e == half_pi) {
-    draw_list->PathArcToFast(GfVec2f(x0, p1[1] - rounding), rounding, 3, 6);  // BL
-    draw_list->PathArcToFast(GfVec2f(x0, p0[1] + rounding), rounding, 6, 9);  // TR
+    draw_list->PathArcToFast(wabi::GfVec2f(x0, p1[1] - rounding), rounding, 3, 6);  // BL
+    draw_list->PathArcToFast(wabi::GfVec2f(x0, p0[1] + rounding), rounding, 6, 9);  // TR
   } else {
-    draw_list->PathArcTo(GfVec2f(x0, p1[1] - rounding),
+    draw_list->PathArcTo(wabi::GfVec2f(x0, p1[1] - rounding),
                          rounding,
                          IM_PI - arc0_e,
                          IM_PI - arc0_b,
                          3);  // BL
-    draw_list->PathArcTo(GfVec2f(x0, p0[1] + rounding),
+    draw_list->PathArcTo(wabi::GfVec2f(x0, p0[1] + rounding),
                          rounding,
                          IM_PI + arc0_b,
                          IM_PI + arc0_e,
@@ -4852,14 +4852,14 @@ void ANCHOR::RenderRectFilledRangeH(AnchorDrawList *draw_list,
     const float arc1_e = AnchorAcos01(1.0f - (rect.Max[0] - p0[0]) * inv_rounding);
     const float x1 = AnchorMin(p1[0], rect.Max[0] - rounding);
     if (arc1_b == arc1_e) {
-      draw_list->PathLineTo(GfVec2f(x1, p0[1]));
-      draw_list->PathLineTo(GfVec2f(x1, p1[1]));
+      draw_list->PathLineTo(wabi::GfVec2f(x1, p0[1]));
+      draw_list->PathLineTo(wabi::GfVec2f(x1, p1[1]));
     } else if (arc1_b == 0.0f && arc1_e == half_pi) {
-      draw_list->PathArcToFast(GfVec2f(x1, p0[1] + rounding), rounding, 9, 12);  // TR
-      draw_list->PathArcToFast(GfVec2f(x1, p1[1] - rounding), rounding, 0, 3);   // BR
+      draw_list->PathArcToFast(wabi::GfVec2f(x1, p0[1] + rounding), rounding, 9, 12);  // TR
+      draw_list->PathArcToFast(wabi::GfVec2f(x1, p1[1] - rounding), rounding, 0, 3);   // BR
     } else {
-      draw_list->PathArcTo(GfVec2f(x1, p0[1] + rounding), rounding, -arc1_e, -arc1_b, 3);  // TR
-      draw_list->PathArcTo(GfVec2f(x1, p1[1] - rounding), rounding, +arc1_b, +arc1_e, 3);  // BR
+      draw_list->PathArcTo(wabi::GfVec2f(x1, p0[1] + rounding), rounding, -arc1_e, -arc1_b, 3);  // TR
+      draw_list->PathArcTo(wabi::GfVec2f(x1, p1[1] - rounding), rounding, +arc1_b, +arc1_e, 3);  // BR
     }
   }
   draw_list->PathFillConvex(col);
@@ -4876,54 +4876,54 @@ void ANCHOR::RenderRectFilledWithHole(AnchorDrawList *draw_list,
   const bool fill_U = (inner.Min[1] > outer.Min[1]);
   const bool fill_D = (inner.Max[1] < outer.Max[1]);
   if (fill_L)
-    draw_list->AddRectFilled(GfVec2f(outer.Min[0], inner.Min[1]),
-                             GfVec2f(inner.Min[0], inner.Max[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(outer.Min[0], inner.Min[1]),
+                             wabi::GfVec2f(inner.Min[0], inner.Max[1]),
                              col,
                              rounding,
                              (fill_U ? 0 : AnchorDrawFlags_RoundCornersTopLeft) |
                                (fill_D ? 0 : AnchorDrawFlags_RoundCornersBottomLeft));
   if (fill_R)
-    draw_list->AddRectFilled(GfVec2f(inner.Max[0], inner.Min[1]),
-                             GfVec2f(outer.Max[0], inner.Max[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(inner.Max[0], inner.Min[1]),
+                             wabi::GfVec2f(outer.Max[0], inner.Max[1]),
                              col,
                              rounding,
                              (fill_U ? 0 : AnchorDrawFlags_RoundCornersTopRight) |
                                (fill_D ? 0 : AnchorDrawFlags_RoundCornersBottomRight));
   if (fill_U)
-    draw_list->AddRectFilled(GfVec2f(inner.Min[0], outer.Min[1]),
-                             GfVec2f(inner.Max[0], inner.Min[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(inner.Min[0], outer.Min[1]),
+                             wabi::GfVec2f(inner.Max[0], inner.Min[1]),
                              col,
                              rounding,
                              (fill_L ? 0 : AnchorDrawFlags_RoundCornersTopLeft) |
                                (fill_R ? 0 : AnchorDrawFlags_RoundCornersTopRight));
   if (fill_D)
-    draw_list->AddRectFilled(GfVec2f(inner.Min[0], inner.Max[1]),
-                             GfVec2f(inner.Max[0], outer.Max[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(inner.Min[0], inner.Max[1]),
+                             wabi::GfVec2f(inner.Max[0], outer.Max[1]),
                              col,
                              rounding,
                              (fill_L ? 0 : AnchorDrawFlags_RoundCornersBottomLeft) |
                                (fill_R ? 0 : AnchorDrawFlags_RoundCornersBottomRight));
   if (fill_L && fill_U)
-    draw_list->AddRectFilled(GfVec2f(outer.Min[0], outer.Min[1]),
-                             GfVec2f(inner.Min[0], inner.Min[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(outer.Min[0], outer.Min[1]),
+                             wabi::GfVec2f(inner.Min[0], inner.Min[1]),
                              col,
                              rounding,
                              AnchorDrawFlags_RoundCornersTopLeft);
   if (fill_R && fill_U)
-    draw_list->AddRectFilled(GfVec2f(inner.Max[0], outer.Min[1]),
-                             GfVec2f(outer.Max[0], inner.Min[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(inner.Max[0], outer.Min[1]),
+                             wabi::GfVec2f(outer.Max[0], inner.Min[1]),
                              col,
                              rounding,
                              AnchorDrawFlags_RoundCornersTopRight);
   if (fill_L && fill_D)
-    draw_list->AddRectFilled(GfVec2f(outer.Min[0], inner.Max[1]),
-                             GfVec2f(inner.Min[0], outer.Max[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(outer.Min[0], inner.Max[1]),
+                             wabi::GfVec2f(inner.Min[0], outer.Max[1]),
                              col,
                              rounding,
                              AnchorDrawFlags_RoundCornersBottomLeft);
   if (fill_R && fill_D)
-    draw_list->AddRectFilled(GfVec2f(inner.Max[0], inner.Max[1]),
-                             GfVec2f(outer.Max[0], outer.Max[1]),
+    draw_list->AddRectFilled(wabi::GfVec2f(inner.Max[0], inner.Max[1]),
+                             wabi::GfVec2f(outer.Max[0], outer.Max[1]),
                              col,
                              rounding,
                              AnchorDrawFlags_RoundCornersBottomRight);
@@ -4937,11 +4937,11 @@ void ANCHOR::RenderRectFilledWithHole(AnchorDrawList *draw_list,
 // offsets, and eventually gave up... probably more reasonable to disable rounding altogether.
 // FIXME: uses ANCHOR::GetColorU32
 void ANCHOR::RenderColorRectWithAlphaCheckerboard(AnchorDrawList *draw_list,
-                                                  GfVec2f p_min,
-                                                  GfVec2f p_max,
+                                                  wabi::GfVec2f p_min,
+                                                  wabi::GfVec2f p_max,
                                                   AnchorU32 col,
                                                   float grid_step,
-                                                  GfVec2f grid_off,
+                                                  wabi::GfVec2f grid_off,
                                                   float rounding,
                                                   AnchorDrawFlags flags)
 {
@@ -4981,7 +4981,7 @@ void ANCHOR::RenderColorRectWithAlphaCheckerboard(AnchorDrawList *draw_list,
                       cell_flags == AnchorDrawFlags_RoundCornersNone) ?
                        AnchorDrawFlags_RoundCornersNone :
                        (cell_flags & flags);
-        draw_list->AddRectFilled(GfVec2f(x1, y1), GfVec2f(x2, y2), col_bg2, rounding, cell_flags);
+        draw_list->AddRectFilled(wabi::GfVec2f(x1, y1), wabi::GfVec2f(x2, y2), col_bg2, rounding, cell_flags);
       }
     }
   } else {

@@ -126,7 +126,7 @@
 // - TableSetupScrollFreeze()
 //-----------------------------------------------------------------------------
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 // Configuration
 static const int TABLE_DRAW_CHANNEL_BG0 = 0;
@@ -194,7 +194,7 @@ AnchorTable *ANCHOR::TableFindByID(ANCHOR_ID id)
 bool ANCHOR::BeginTable(const char *str_id,
                         int columns_count,
                         AnchorTableFlags flags,
-                        const GfVec2f &outer_size,
+                        const wabi::GfVec2f &outer_size,
                         float inner_width)
 {
   ANCHOR_ID id = GetID(str_id);
@@ -205,7 +205,7 @@ bool ANCHOR::BeginTableEx(const char *name,
                           ANCHOR_ID id,
                           int columns_count,
                           AnchorTableFlags flags,
-                          const GfVec2f &outer_size,
+                          const wabi::GfVec2f &outer_size,
                           float inner_width)
 {
   AnchorContext &g = *G_CTX;
@@ -224,8 +224,8 @@ bool ANCHOR::BeginTableEx(const char *name,
   // clipping rules may evolve.
   const bool use_child_window = (flags & (AnchorTableFlags_ScrollX | AnchorTableFlags_ScrollY)) !=
                                 0;
-  const GfVec2f avail_size = GetContentRegionAvail();
-  GfVec2f actual_outer_size = CalcItemSize(outer_size,
+  const wabi::GfVec2f avail_size = GetContentRegionAvail();
+  wabi::GfVec2f actual_outer_size = CalcItemSize(outer_size,
                                            AnchorMax(avail_size[0], 1.0f),
                                            use_child_window ? AnchorMax(avail_size[1], 1.0f) :
                                                               0.0f);
@@ -277,7 +277,7 @@ bool ANCHOR::BeginTableEx(const char *name,
     // Ensure no vertical scrollbar appears if we only want horizontal one, to make flag consistent
     // (we have no other way to disable vertical scrollbar of a window while keeping the horizontal
     // one showing)
-    GfVec2f override_content_size(FLT_MAX, FLT_MAX);
+    wabi::GfVec2f override_content_size(FLT_MAX, FLT_MAX);
     if ((flags & AnchorTableFlags_ScrollX) && !(flags & AnchorTableFlags_ScrollY))
       override_content_size[1] = FLT_MIN;
 
@@ -291,12 +291,12 @@ bool ANCHOR::BeginTableEx(const char *name,
 
     if (override_content_size[0] != FLT_MAX || override_content_size[1] != FLT_MAX)
       SetNextWindowContentSize(
-        GfVec2f(override_content_size[0] != FLT_MAX ? override_content_size[0] : 0.0f,
+        wabi::GfVec2f(override_content_size[0] != FLT_MAX ? override_content_size[0] : 0.0f,
                 override_content_size[1] != FLT_MAX ? override_content_size[1] : 0.0f));
 
     // Reset scroll if we are reactivating it
     if ((table_last_flags & (AnchorTableFlags_ScrollX | AnchorTableFlags_ScrollY)) == 0)
-      SetNextWindowScroll(GfVec2f(0.0f, 0.0f));
+      SetNextWindowScroll(wabi::GfVec2f(0.0f, 0.0f));
 
     // Create scrolling region (without border and zero window padding)
     AnchorWindowFlags child_flags = (flags & AnchorTableFlags_ScrollX) ?
@@ -333,7 +333,7 @@ bool ANCHOR::BeginTableEx(const char *name,
   temp_data->HostBackupCursorMaxPos = inner_window->DC.CursorMaxPos;
   temp_data->HostBackupItemWidth = outer_window->DC.ItemWidth;
   temp_data->HostBackupItemWidthStackSize = outer_window->DC.ItemWidthStack.Size;
-  inner_window->DC.PrevLineSize = inner_window->DC.CurrLineSize = GfVec2f(0.0f, 0.0f);
+  inner_window->DC.PrevLineSize = inner_window->DC.CurrLineSize = wabi::GfVec2f(0.0f, 0.0f);
 
   // Padding and Spacing
   // - None               ........Content..... Pad .....Content........
@@ -1377,7 +1377,7 @@ void ANCHOR::EndTable()
   PopID();
 
   // Restore window data that we modified
-  const GfVec2f backup_outer_max_pos = outer_window->DC.CursorMaxPos;
+  const wabi::GfVec2f backup_outer_max_pos = outer_window->DC.CursorMaxPos;
   inner_window->WorkRect = temp_data->HostBackupWorkRect;
   inner_window->ParentWorkRect = temp_data->HostBackupParentWorkRect;
   inner_window->SkipItems = table->HostSkipItems;
@@ -1887,16 +1887,16 @@ void ANCHOR::TableEndRow(AnchorTable *table)
 
     // Draw top border
     if (border_col && bg_y1 >= table->BgClipRect.Min[1] && bg_y1 < table->BgClipRect.Max[1])
-      window->DrawList->AddLine(GfVec2f(table->BorderX1, bg_y1),
-                                GfVec2f(table->BorderX2, bg_y1),
+      window->DrawList->AddLine(wabi::GfVec2f(table->BorderX1, bg_y1),
+                                wabi::GfVec2f(table->BorderX2, bg_y1),
                                 border_col,
                                 border_size);
 
     // Draw bottom border at the row unfreezing mark (always strong)
     if (draw_strong_bottom_border && bg_y2 >= table->BgClipRect.Min[1] &&
         bg_y2 < table->BgClipRect.Max[1])
-      window->DrawList->AddLine(GfVec2f(table->BorderX1, bg_y2),
-                                GfVec2f(table->BorderX2, bg_y2),
+      window->DrawList->AddLine(wabi::GfVec2f(table->BorderX1, bg_y2),
+                                wabi::GfVec2f(table->BorderX2, bg_y2),
                                 table->BorderColorStrong,
                                 border_size);
   }
@@ -2537,8 +2537,8 @@ void ANCHOR::TableMergeDrawChannels(AnchorTable *table)
                 continue;
             char buf[32];
             AnchorFormatString(buf, 32, "MG%d:%d", merge_group_n, merge_group->ChannelsCount);
-            GfVec2f text_pos = merge_group->ClipRect.Min + GfVec2f(4, 4);
-            GfVec2f text_size = CalcTextSize(buf, NULL);
+            wabi::GfVec2f text_pos = merge_group->ClipRect.Min + wabi::GfVec2f(4, 4);
+            wabi::GfVec2f text_size = CalcTextSize(buf, NULL);
             GetForegroundDrawList()->AddRectFilled(text_pos, text_pos + text_size, ANCHOR_COL32(0, 0, 0, 255));
             GetForegroundDrawList()->AddText(text_pos, ANCHOR_COL32(255, 255, 0, 255), buf, NULL);
             GetForegroundDrawList()->AddRect(merge_group->ClipRect.Min, merge_group->ClipRect.Max, ANCHOR_COL32(255, 255, 0, 255));
@@ -2708,8 +2708,8 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
       }
 
       if (draw_y2 > draw_y1)
-        inner_drawlist->AddLine(GfVec2f(column->MaxX, draw_y1),
-                                GfVec2f(column->MaxX, draw_y2),
+        inner_drawlist->AddLine(wabi::GfVec2f(column->MaxX, draw_y1),
+                                wabi::GfVec2f(column->MaxX, draw_y2),
                                 col,
                                 border_size);
     }
@@ -2730,19 +2730,19 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
       inner_drawlist->AddRect(outer_border.Min, outer_border.Max, outer_col, 0.0f, 0, border_size);
     } else if (table->Flags & AnchorTableFlags_BordersOuterV) {
       inner_drawlist->AddLine(outer_border.Min,
-                              GfVec2f(outer_border.Min[0], outer_border.Max[1]),
+                              wabi::GfVec2f(outer_border.Min[0], outer_border.Max[1]),
                               outer_col,
                               border_size);
-      inner_drawlist->AddLine(GfVec2f(outer_border.Max[0], outer_border.Min[1]),
+      inner_drawlist->AddLine(wabi::GfVec2f(outer_border.Max[0], outer_border.Min[1]),
                               outer_border.Max,
                               outer_col,
                               border_size);
     } else if (table->Flags & AnchorTableFlags_BordersOuterH) {
       inner_drawlist->AddLine(outer_border.Min,
-                              GfVec2f(outer_border.Max[0], outer_border.Min[1]),
+                              wabi::GfVec2f(outer_border.Max[0], outer_border.Min[1]),
                               outer_col,
                               border_size);
-      inner_drawlist->AddLine(GfVec2f(outer_border.Min[0], outer_border.Max[1]),
+      inner_drawlist->AddLine(wabi::GfVec2f(outer_border.Min[0], outer_border.Max[1]),
                               outer_border.Max,
                               outer_col,
                               border_size);
@@ -2753,8 +2753,8 @@ void ANCHOR::TableDrawBorders(AnchorTable *table)
     // Draw bottom-most row border
     const float border_y = table->RowPosY2;
     if (border_y >= table->BgClipRect.Min[1] && border_y < table->BgClipRect.Max[1])
-      inner_drawlist->AddLine(GfVec2f(table->BorderX1, border_y),
-                              GfVec2f(table->BorderX2, border_y),
+      inner_drawlist->AddLine(wabi::GfVec2f(table->BorderX1, border_y),
+                              wabi::GfVec2f(table->BorderX2, border_y),
                               table->BorderColorLight,
                               border_size);
   }
@@ -3033,7 +3033,7 @@ void ANCHOR::TableHeadersRow()
   }
 
   // Allow opening popup from the right-most section after the last column.
-  GfVec2f mouse_pos = ANCHOR::GetMousePos();
+  wabi::GfVec2f mouse_pos = ANCHOR::GetMousePos();
   if (IsMouseReleased(1) && TableGetHoveredColumn() == columns_count)
     if (mouse_pos[1] >= row_y1 && mouse_pos[1] < row_y1 + row_height)
       TableOpenContextMenu(-1);  // Will open a non-column-specific popup.
@@ -3060,8 +3060,8 @@ void ANCHOR::TableHeader(const char *label)
   if (label == NULL)
     label = "";
   const char *label_end = FindRenderedTextEnd(label);
-  GfVec2f label_size = CalcTextSize(label, label_end, true);
-  GfVec2f label_pos = window->DC.CursorPos;
+  wabi::GfVec2f label_size = CalcTextSize(label, label_end, true);
+  wabi::GfVec2f label_pos = window->DC.CursorPos;
 
   // If we already got a row height, there's use that.
   // FIXME-TABLE: Padding problem if the correct outer-padding CellBgRect strays off our ClipRect?
@@ -3100,7 +3100,7 @@ void ANCHOR::TableHeader(const char *label)
     cell_r.Min[1],
     cell_r.Max[0],
     AnchorMax(cell_r.Max[1], cell_r.Min[1] + label_height + g.Style.CellPadding[1] * 2.0f));
-  ItemSize(GfVec2f(
+  ItemSize(wabi::GfVec2f(
     0.0f,
     label_height));  // Don't declare unclipped width, it'll be fed ContentMaxPosHeadersIdeal
   if (!ItemAdd(bb, id))
@@ -3174,12 +3174,12 @@ void ANCHOR::TableHeader(const char *label)
       float y = label_pos[1];
       if (column->SortOrder > 0) {
         PushStyleColor(AnchorCol_Text, GetColorU32(AnchorCol_Text, 0.70f));
-        RenderText(GfVec2f(x + g.Style.ItemInnerSpacing[0], y), sort_order_suf);
+        RenderText(wabi::GfVec2f(x + g.Style.ItemInnerSpacing[0], y), sort_order_suf);
         PopStyleColor();
         x += w_sort_text;
       }
       RenderArrow(window->DrawList,
-                  GfVec2f(x, y),
+                  wabi::GfVec2f(x, y),
                   GetColorU32(AnchorCol_Text),
                   column->SortDirection == AnchorSortDirection_Ascending ? AnchorDir_Up :
                                                                            AnchorDir_Down,
@@ -3195,11 +3195,11 @@ void ANCHOR::TableHeader(const char *label)
 
   // Render clipped label. Clipping here ensure that in the majority of situations, all our header
   // cells will be merged into a single draw call.
-  // window->DrawList->AddCircleFilled(GfVec2f(ellipsis_max, label_pos[1]), 40,
+  // window->DrawList->AddCircleFilled(wabi::GfVec2f(ellipsis_max, label_pos[1]), 40,
   // ANCHOR_COL32_WHITE);
   RenderTextEllipsis(window->DrawList,
                      label_pos,
-                     GfVec2f(ellipsis_max, label_pos[1] + label_height + g.Style.FramePadding[1]),
+                     wabi::GfVec2f(ellipsis_max, label_pos[1] + label_height + g.Style.FramePadding[1]),
                      ellipsis_max,
                      ellipsis_max,
                      label,
@@ -3993,7 +3993,7 @@ void ANCHOR::DebugNodeTableSettings(AnchorTableSettings *) {}
 // subsequent single call to SetCurrentChannel() does it things once.
 void ANCHOR::SetWindowClipRectBeforeSetChannel(AnchorWindow *window, const AnchorBBox &clip_rect)
 {
-  GfVec4f clip_rect_vec4 = clip_rect.ToVec4();
+  wabi::GfVec4f clip_rect_vec4 = clip_rect.ToVec4();
   window->ClipRect = clip_rect;
   window->DrawList->_CmdHeader.ClipRect = clip_rect_vec4;
   window->DrawList->_ClipRectStack.Data[window->DrawList->_ClipRectStack.Size - 1] =
@@ -4319,7 +4319,7 @@ void ANCHOR::NextColumn()
   window->DC.CursorPos[0] = ANCHOR_FLOOR(window->Pos[0] + window->DC.Indent.x +
                                          window->DC.ColumnsOffset.x);
   window->DC.CursorPos[1] = columns->LineMinY;
-  window->DC.CurrLineSize = GfVec2f(0.0f, 0.0f);
+  window->DC.CurrLineSize = wabi::GfVec2f(0.0f, 0.0f);
   window->DC.CurrLineTextBaseOffset = 0.0f;
 
   // FIXME-COLUMNS: Share code with BeginColumns() - move code on columns setup.
@@ -4365,8 +4365,8 @@ void ANCHOR::EndColumns()
       float x = window->Pos[0] + GetColumnOffset(n);
       const ANCHOR_ID column_id = columns->ID + ANCHOR_ID(n);
       const float column_hit_hw = COLUMNS_HIT_RECT_HALF_WIDTH;
-      const AnchorBBox column_hit_rect(GfVec2f(x - column_hit_hw, y1),
-                                       GfVec2f(x + column_hit_hw, y2));
+      const AnchorBBox column_hit_rect(wabi::GfVec2f(x - column_hit_hw, y1),
+                                       wabi::GfVec2f(x + column_hit_hw, y2));
       KeepAliveID(column_id);
       if (IsClippedEx(column_hit_rect, column_id, false))
         continue;
@@ -4385,7 +4385,7 @@ void ANCHOR::EndColumns()
                                         hovered ? AnchorCol_SeparatorHovered :
                                                   AnchorCol_Separator);
       const float xi = ANCHOR_FLOOR(x);
-      window->DrawList->AddLine(GfVec2f(xi, y1 + 1.0f), GfVec2f(xi, y2), col);
+      window->DrawList->AddLine(wabi::GfVec2f(xi, y1 + 1.0f), wabi::GfVec2f(xi, y2), col);
     }
 
     // Apply dragging after drawing the column lines, so our rendered lines are in sync with how

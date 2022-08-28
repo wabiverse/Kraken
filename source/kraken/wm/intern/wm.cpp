@@ -49,7 +49,7 @@
 
 #include "ED_screen.h"
 
-WABI_NAMESPACE_BEGIN
+KRAKEN_NAMESPACE_BEGIN
 
 void WM_main(kContext *C)
 {
@@ -216,4 +216,4 @@ void WM_check(kContext *C)
 /* wait until every job ended */
 void WM_jobs_kill_all(wmWindowManager *wm) {}
 
-WABI_NAMESPACE_END
+KRAKEN_NAMESPACE_END

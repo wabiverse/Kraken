@@ -36,12 +36,12 @@
 #include <float.h>
 #include <array>
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 namespace AnchorGraphEditor
 {
 
-  static inline float Distance(const GfVec2f &a, const GfVec2f &b)
+  static inline float Distance(const wabi::GfVec2f &a, const wabi::GfVec2f &b)
   {
     return sqrtf((a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]));
   }
@@ -51,39 +51,39 @@ namespace AnchorGraphEditor
     return (v >= 0.f) ? 1.f : -1.f;
   }
 
-  static GfVec2f GetInputSlotPos(Delegate &delegate,
+  static wabi::GfVec2f GetInputSlotPos(Delegate &delegate,
                                  const Node &node,
                                  SlotIndex slotIndex,
                                  float factor)
   {
-    GfVec2f Size = node.mRect.GetSize() * factor;
+    wabi::GfVec2f Size = node.mRect.GetSize() * factor;
     size_t InputsCount = delegate.GetTemplate(node.mTemplateIndex).mInputCount;
-    return GfVec2f(node.mRect.Min[0] * factor,
+    return wabi::GfVec2f(node.mRect.Min[0] * factor,
                    node.mRect.Min[1] * factor +
                      Size[1] * ((float)slotIndex + 1) / ((float)InputsCount + 1) + 8.f);
   }
 
-  static GfVec2f GetOutputSlotPos(Delegate &delegate,
+  static wabi::GfVec2f GetOutputSlotPos(Delegate &delegate,
                                   const Node &node,
                                   SlotIndex slotIndex,
                                   float factor)
   {
-    GfVec2f Size = node.mRect.GetSize() * factor;
+    wabi::GfVec2f Size = node.mRect.GetSize() * factor;
     size_t OutputsCount = delegate.GetTemplate(node.mTemplateIndex).mOutputCount;
-    return GfVec2f(node.mRect.Min[0] * factor + Size[0],
+    return wabi::GfVec2f(node.mRect.Min[0] * factor + Size[0],
                    node.mRect.Min[1] * factor +
                      Size[1] * ((float)slotIndex + 1) / ((float)OutputsCount + 1) + 8.f);
   }
 
   static AnchorBBox GetNodeRect(const Node &node, float factor)
   {
-    GfVec2f Size = node.mRect.GetSize() * factor;
+    wabi::GfVec2f Size = node.mRect.GetSize() * factor;
     return AnchorBBox(node.mRect.Min * factor, node.mRect.Min * factor + Size);
   }
 
-  static GfVec2f editingNodeSource;
+  static wabi::GfVec2f editingNodeSource;
   static bool editingInput = false;
-  static GfVec2f captureOffset;
+  static wabi::GfVec2f captureOffset;
 
   enum NodeOperation
   {
@@ -110,14 +110,14 @@ namespace AnchorGraphEditor
       }
     }
 
-    GfVec2f mouseWPosPre = (io.MousePos - ANCHOR::GetCursorScreenPos()) / viewState.mFactor;
+    wabi::GfVec2f mouseWPosPre = (io.MousePos - ANCHOR::GetCursorScreenPos()) / viewState.mFactor;
     viewState.mFactorTarget = AnchorClamp(viewState.mFactorTarget,
                                           options.mMinZoom,
                                           options.mMaxZoom);
     viewState.mFactor = AnchorLerp(viewState.mFactor,
                                    viewState.mFactorTarget,
                                    options.mZoomLerpFactor);
-    GfVec2f mouseWPosPost = (io.MousePos - ANCHOR::GetCursorScreenPos()) / viewState.mFactor;
+    wabi::GfVec2f mouseWPosPost = (io.MousePos - ANCHOR::GetCursorScreenPos()) / viewState.mFactor;
     if (ANCHOR::IsMousePosValid()) {
       viewState.mPosition += mouseWPosPost - mouseWPosPre;
     }
@@ -130,7 +130,7 @@ namespace AnchorGraphEditor
 
   static void FitNodes(Delegate &delegate,
                        ViewState &viewState,
-                       const GfVec2f viewSize,
+                       const wabi::GfVec2f viewSize,
                        bool selectedNodesOnly)
   {
     const size_t nodeCount = delegate.GetNodeCount();
@@ -140,8 +140,8 @@ namespace AnchorGraphEditor
     }
 
     bool validNode = false;
-    GfVec2f mapmin(FLT_MAX, FLT_MAX);
-    GfVec2f mapmax(-FLT_MAX, -FLT_MAX);
+    wabi::GfVec2f mapmin(FLT_MAX, FLT_MAX);
+    wabi::GfVec2f mapmax(-FLT_MAX, -FLT_MAX);
     for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
       const Node &node = delegate.GetNode(nodeIndex);
 
@@ -162,20 +162,20 @@ namespace AnchorGraphEditor
 
     mapmin -= viewSize * 0.05f;
     mapmax += viewSize * 0.05f;
-    GfVec2f nodesSize = mapmax - mapmin;
-    GfVec2f nodeCenter = (mapmax + mapmin) * 0.5f;
+    wabi::GfVec2f nodesSize = mapmax - mapmin;
+    wabi::GfVec2f nodeCenter = (mapmax + mapmin) * 0.5f;
 
     float ratioY = viewSize[1] / nodesSize[1];
     float ratioX = viewSize[0] / nodesSize[0];
 
     viewState.mFactor = viewState.mFactorTarget = AnchorMin(AnchorMin(ratioY, ratioX), 1.f);
-    viewState.mPosition = GfVec2f(-nodeCenter[0], -nodeCenter[1]) +
+    viewState.mPosition = wabi::GfVec2f(-nodeCenter[0], -nodeCenter[1]) +
                           (viewSize * 0.5f) / viewState.mFactorTarget;
   }
 
   static void DisplayLinks(Delegate &delegate,
                            AnchorDrawList *drawList,
-                           const GfVec2f offset,
+                           const wabi::GfVec2f offset,
                            const float factor,
                            const AnchorBBox regionRect,
                            NodeIndex hoveredNode,
@@ -186,8 +186,8 @@ namespace AnchorGraphEditor
       const auto link = delegate.GetLink(linkIndex);
       const auto nodeInput = delegate.GetNode(link.mInputNodeIndex);
       const auto nodeOutput = delegate.GetNode(link.mOutputNodeIndex);
-      GfVec2f p1 = offset + GetOutputSlotPos(delegate, nodeInput, link.mInputSlotIndex, factor);
-      GfVec2f p2 = offset + GetInputSlotPos(delegate, nodeOutput, link.mOutputSlotIndex, factor);
+      wabi::GfVec2f p1 = offset + GetOutputSlotPos(delegate, nodeInput, link.mInputSlotIndex, factor);
+      wabi::GfVec2f p2 = offset + GetInputSlotPos(delegate, nodeOutput, link.mOutputSlotIndex, factor);
 
       // con. view clipping
       if ((p1[1] < 0.f && p2[1] < 0.f) ||
@@ -202,32 +202,32 @@ namespace AnchorGraphEditor
       if (options.mDisplayLinksAsCurves) {
         // curves
         drawList->AddBezierCurve(p1,
-                                 p1 + GfVec2f(50, 0) * factor,
-                                 p2 + GfVec2f(-50, 0) * factor,
+                                 p1 + wabi::GfVec2f(50, 0) * factor,
+                                 p2 + wabi::GfVec2f(-50, 0) * factor,
                                  p2,
                                  0xFF000000,
                                  options.mLineThickness * 1.5f * factor);
         drawList->AddBezierCurve(p1,
-                                 p1 + GfVec2f(50, 0) * factor,
-                                 p2 + GfVec2f(-50, 0) * factor,
+                                 p1 + wabi::GfVec2f(50, 0) * factor,
+                                 p2 + wabi::GfVec2f(-50, 0) * factor,
                                  p2,
                                  col,
                                  options.mLineThickness * 1.5f * factor);
         /*
-              GfVec2f p10 = p1 + GfVec2f(20.f * factor, 0.f);
-              GfVec2f p20 = p2 - GfVec2f(20.f * factor, 0.f);
+              wabi::GfVec2f p10 = p1 + wabi::GfVec2f(20.f * factor, 0.f);
+              wabi::GfVec2f p20 = p2 - wabi::GfVec2f(20.f * factor, 0.f);
 
-              GfVec2f dif = p20 - p10;
-              GfVec2f p1a, p1b;
+              wabi::GfVec2f dif = p20 - p10;
+              wabi::GfVec2f p1a, p1b;
               if (fabsf(dif[0]) > fabsf(dif[1]))
               {
-                  p1a = p10 + GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5 * sign(dif[0]),
-           0.f); p1b = p1a + GfVec2f(fabsf(dif[1]) * sign(dif[0]) , dif[1]);
+                  p1a = p10 + wabi::GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5 * sign(dif[0]),
+           0.f); p1b = p1a + wabi::GfVec2f(fabsf(dif[1]) * sign(dif[0]) , dif[1]);
               }
               else
               {
-                  p1a = p10 + GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5 *
-           sign(dif[1])); p1b = p1a + GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
+                  p1a = p10 + wabi::GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5 *
+           sign(dif[1])); p1b = p1a + wabi::GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
               }
               drawList->AddLine(p1,  p10, col, 3.f * factor);
               drawList->AddLine(p10, p1a, col, 3.f * factor);
@@ -237,19 +237,19 @@ namespace AnchorGraphEditor
               */
       } else {
         // straight lines
-        std::array<GfVec2f, 6> pts;
+        std::array<wabi::GfVec2f, 6> pts;
         int ptCount = 0;
-        GfVec2f dif = p2 - p1;
+        wabi::GfVec2f dif = p2 - p1;
 
-        GfVec2f p1a, p1b;
+        wabi::GfVec2f p1a, p1b;
         const float limitx = 12.f * factor;
         if (dif[0] < limitx) {
-          GfVec2f p10 = p1 + GfVec2f(limitx, 0.f);
-          GfVec2f p20 = p2 - GfVec2f(limitx, 0.f);
+          wabi::GfVec2f p10 = p1 + wabi::GfVec2f(limitx, 0.f);
+          wabi::GfVec2f p20 = p2 - wabi::GfVec2f(limitx, 0.f);
 
           dif = p20 - p10;
-          p1a = p10 + GfVec2f(0.f, dif[1] * 0.5f);
-          p1b = p1a + GfVec2f(dif[0], 0.f);
+          p1a = p10 + wabi::GfVec2f(0.f, dif[1] * 0.5f);
+          p1b = p1a + wabi::GfVec2f(dif[0], 0.f);
 
           pts = {p1, p10, p1a, p1b, p20, p2};
           ptCount = 6;
@@ -261,22 +261,22 @@ namespace AnchorGraphEditor
             if (fabsf(dif[1]) < 10.f) {
               if (fabsf(dif[0]) > fabsf(dif[1])) {
                 p1a = p1 +
-                      GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5f * sign(dif[0]), 0.f);
-                p1b = p1a + GfVec2f(fabsf(dif[1]) * sign(dif[0]), dif[1]);
+                      wabi::GfVec2f(fabsf(fabsf(dif[0]) - fabsf(dif[1])) * 0.5f * sign(dif[0]), 0.f);
+                p1b = p1a + wabi::GfVec2f(fabsf(dif[1]) * sign(dif[0]), dif[1]);
               } else {
                 p1a = p1 +
-                      GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5f * sign(dif[1]));
-                p1b = p1a + GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
+                      wabi::GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(dif[0])) * 0.5f * sign(dif[1]));
+                p1b = p1a + wabi::GfVec2f(dif[0], fabsf(dif[0]) * sign(dif[1]));
               }
             } else {
               if (fabsf(dif[0]) > fabsf(dif[1])) {
                 float d = fabsf(dif[1]) * sign(dif[0]) * 0.5f;
-                p1a = p1 + GfVec2f(d, dif[1] * 0.5f);
-                p1b = p1a + GfVec2f(fabsf(fabsf(dif[0]) - fabsf(d) * 2.f) * sign(dif[0]), 0.f);
+                p1a = p1 + wabi::GfVec2f(d, dif[1] * 0.5f);
+                p1b = p1a + wabi::GfVec2f(fabsf(fabsf(dif[0]) - fabsf(d) * 2.f) * sign(dif[0]), 0.f);
               } else {
                 float d = fabsf(dif[0]) * sign(dif[1]) * 0.5f;
-                p1a = p1 + GfVec2f(dif[0] * 0.5f, d);
-                p1b = p1a + GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(d) * 2.f) * sign(dif[1]));
+                p1a = p1 + wabi::GfVec2f(dif[0] * 0.5f, d);
+                p1b = p1a + wabi::GfVec2f(0.f, fabsf(fabsf(dif[1]) - fabsf(d) * 2.f) * sign(dif[1]));
               }
             }
             pts = {p1, p1a, p1b, p2};
@@ -298,7 +298,7 @@ namespace AnchorGraphEditor
 
   static void HandleQuadSelection(Delegate &delegate,
                                   AnchorDrawList *drawList,
-                                  const GfVec2f offset,
+                                  const wabi::GfVec2f offset,
                                   const float factor,
                                   AnchorBBox contentRect,
                                   const Options &options)
@@ -307,13 +307,13 @@ namespace AnchorGraphEditor
       return;
     }
     AnchorIO &io = ANCHOR::GetIO();
-    static GfVec2f quadSelectPos;
+    static wabi::GfVec2f quadSelectPos;
     // auto& nodes = delegate->GetNodes();
     auto nodeCount = delegate.GetNodeCount();
 
     if (nodeOperation == NO_QuadSelecting && ANCHOR::IsWindowFocused()) {
-      const GfVec2f bmin = AnchorMin(quadSelectPos, io.MousePos);
-      const GfVec2f bmax = AnchorMax(quadSelectPos, io.MousePos);
+      const wabi::GfVec2f bmin = AnchorMin(quadSelectPos, io.MousePos);
+      const wabi::GfVec2f bmax = AnchorMax(quadSelectPos, io.MousePos);
       drawList->AddRectFilled(bmin, bmax, options.mQuadSelection, 1.f);
       drawList->AddRect(bmin, bmax, options.mQuadSelectionBorder, 1.f);
       if (!io.MouseDown[0]) {
@@ -327,8 +327,8 @@ namespace AnchorGraphEditor
         AnchorBBox selectionRect(bmin, bmax);
         for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
           const auto node = delegate.GetNode(nodeIndex);
-          GfVec2f nodeRectangleMin = offset + node.mRect.Min * factor;
-          GfVec2f nodeRectangleMax = nodeRectangleMin + node.mRect.GetSize() * factor;
+          wabi::GfVec2f nodeRectangleMin = offset + node.mRect.Min * factor;
+          wabi::GfVec2f nodeRectangleMax = nodeRectangleMin + node.mRect.GetSize() * factor;
           if (selectionRect.Overlaps(AnchorBBox(nodeRectangleMin, nodeRectangleMax))) {
             if (io.KeyCtrl) {
               delegate.SelectNode(nodeIndex, false);
@@ -351,7 +351,7 @@ namespace AnchorGraphEditor
 
   static bool HandleConnections(AnchorDrawList *drawList,
                                 NodeIndex nodeIndex,
-                                const GfVec2f offset,
+                                const wabi::GfVec2f offset,
                                 const float factor,
                                 Delegate &delegate,
                                 const Options &options,
@@ -378,24 +378,24 @@ namespace AnchorGraphEditor
     for (int i = 0; i < 2; i++) {
       float closestDistance = FLT_MAX;
       SlotIndex closestConn = -1;
-      GfVec2f closestTextPos;
-      GfVec2f closestPos;
+      wabi::GfVec2f closestTextPos;
+      wabi::GfVec2f closestPos;
       const size_t slotCount[2] = {InputsCount, OutputsCount};
 
       for (SlotIndex slotIndex = 0; slotIndex < slotCount[i]; slotIndex++) {
         const char **con = i ? nodeTemplate.mOutputNames : nodeTemplate.mInputNames;
         const char *conText = (con && con[slotIndex]) ? con[slotIndex] : "";
 
-        GfVec2f p = offset + (i ? GetOutputSlotPos(delegate, node, slotIndex, factor) :
+        wabi::GfVec2f p = offset + (i ? GetOutputSlotPos(delegate, node, slotIndex, factor) :
                                   GetInputSlotPos(delegate, node, slotIndex, factor));
         float distance = Distance(p, io.MousePos);
         bool overCon = (nodeOperation == NO_None || nodeOperation == NO_EditingLink) &&
                        (distance < options.mNodeSlotRadius * 2.f) && (distance < closestDistance);
 
 
-        GfVec2f textSize;
+        wabi::GfVec2f textSize;
         textSize = ANCHOR::CalcTextSize(conText);
-        GfVec2f textPos = p + GfVec2f(-options.mNodeSlotRadius * (i ? -1.f : 1.f) *
+        wabi::GfVec2f textPos = p + wabi::GfVec2f(-options.mNodeSlotRadius * (i ? -1.f : 1.f) *
                                           (overCon ? 3.f : 2.f) -
                                         (i ? 0 : textSize[0]),
                                       -textSize[1] / 2);
@@ -424,7 +424,7 @@ namespace AnchorGraphEditor
           if (!options.mDrawIONameOnHover) {
             drawList->AddText(io.FontDefault,
                               14,
-                              textPos + GfVec2f(2, 2),
+                              textPos + wabi::GfVec2f(2, 2),
                               ANCHOR_COL32(0, 0, 0, 255),
                               conText);
             drawList->AddText(io.FontDefault,
@@ -452,7 +452,7 @@ namespace AnchorGraphEditor
                                   slotColor);
         drawList->AddText(io.FontDefault,
                           16,
-                          closestTextPos + GfVec2f(1, 1),
+                          closestTextPos + wabi::GfVec2f(1, 1),
                           ANCHOR_COL32(0, 0, 0, 255),
                           conText);
         drawList->AddText(io.FontDefault,
@@ -527,9 +527,9 @@ namespace AnchorGraphEditor
   }
 
   static void DrawGrid(AnchorDrawList *drawList,
-                       GfVec2f windowPos,
+                       wabi::GfVec2f windowPos,
                        const ViewState &viewState,
-                       const GfVec2f canvasSize,
+                       const wabi::GfVec2f canvasSize,
                        AnchorU32 gridColor,
                        AnchorU32 gridColor2,
                        float gridSize)
@@ -540,15 +540,15 @@ namespace AnchorGraphEditor
     for (float x = fmodf(viewState.mPosition[0] * viewState.mFactor, gridSpace); x < canvasSize[0];
          x += gridSpace, divx++) {
       bool tenth = !(divx % 10);
-      drawList->AddLine(GfVec2f(x, 0.0f) + windowPos,
-                        GfVec2f(x, canvasSize[1]) + windowPos,
+      drawList->AddLine(wabi::GfVec2f(x, 0.0f) + windowPos,
+                        wabi::GfVec2f(x, canvasSize[1]) + windowPos,
                         tenth ? gridColor2 : gridColor);
     }
     for (float y = fmodf(viewState.mPosition[1] * viewState.mFactor, gridSpace); y < canvasSize[1];
          y += gridSpace, divy++) {
       bool tenth = !(divy % 10);
-      drawList->AddLine(GfVec2f(0.0f, y) + windowPos,
-                        GfVec2f(canvasSize[0], y) + windowPos,
+      drawList->AddLine(wabi::GfVec2f(0.0f, y) + windowPos,
+                        wabi::GfVec2f(canvasSize[0], y) + windowPos,
                         tenth ? gridColor2 : gridColor);
     }
   }
@@ -556,7 +556,7 @@ namespace AnchorGraphEditor
   // return true if node is hovered
   static bool DrawNode(AnchorDrawList *drawList,
                        NodeIndex nodeIndex,
-                       const GfVec2f offset,
+                       const wabi::GfVec2f offset,
                        const float factor,
                        Delegate &delegate,
                        bool overInput,
@@ -567,11 +567,11 @@ namespace AnchorGraphEditor
     AnchorIO &io = ANCHOR::GetIO();
     const auto node = delegate.GetNode(nodeIndex);
     const auto nodeTemplate = delegate.GetTemplate(node.mTemplateIndex);
-    const GfVec2f nodeRectangleMin = offset + node.mRect.Min * factor;
+    const wabi::GfVec2f nodeRectangleMin = offset + node.mRect.Min * factor;
 
     const bool old_any_active = ANCHOR::IsAnyItemActive();
     ANCHOR::SetCursorScreenPos(nodeRectangleMin);
-    const GfVec2f nodeSize = node.mRect.GetSize() * factor;
+    const wabi::GfVec2f nodeSize = node.mRect.GetSize() * factor;
 
     // test nested IO
     drawList->ChannelsSetCurrent(1);  // Background
@@ -593,13 +593,13 @@ namespace AnchorGraphEditor
               }
               continue;
 
-              GfVec2f p = offset + (i ? GetOutputSlotPos(delegate, node, slotIndex, factor) :
+              wabi::GfVec2f p = offset + (i ? GetOutputSlotPos(delegate, node, slotIndex, factor) :
       GetInputSlotPos(delegate, node, slotIndex, factor)); const float arc = 28.f * (float(i) *
       0.3f + 1.0f)
       * (i ? 1.f : -1.f); const float ofs = 0.f;
 
-              GfVec2f pts[3] = {p + GfVec2f(arc + ofs, 0.f), p + GfVec2f(0.f + ofs, -arc), p +
-      GfVec2f(0.f + ofs, arc)}; drawList->AddTriangleFilled(pts[0], pts[1], pts[2], i ? 0xFFAA5030
+              wabi::GfVec2f pts[3] = {p + wabi::GfVec2f(arc + ofs, 0.f), p + wabi::GfVec2f(0.f + ofs, -arc), p +
+      wabi::GfVec2f(0.f + ofs, arc)}; drawList->AddTriangleFilled(pts[0], pts[1], pts[2], i ? 0xFFAA5030
       : 0xFF30AA50); drawList->AddTriangle(pts[0], pts[1], pts[2], 0xFF000000, 2.f);
           }
       }
@@ -610,13 +610,13 @@ namespace AnchorGraphEditor
                       nodeRectangleMin[1];
     float maxWidth = AnchorMin(viewPort.Max[0], nodeRectangleMin[0] + nodeSize[0]) -
                      nodeRectangleMin[0];
-    ANCHOR::InvisibleButton("node", GfVec2f(maxWidth, maxHeight));
+    ANCHOR::InvisibleButton("node", wabi::GfVec2f(maxWidth, maxHeight));
     // must be called right after creating the control we want to be able to move
     bool nodeMovingActive = ANCHOR::IsItemActive();
 
     // Save the size of what we have emitted and whether any of the widgets are being used
     bool nodeWidgetsActive = (!old_any_active && ANCHOR::IsAnyItemActive());
-    GfVec2f nodeRectangleMax = nodeRectangleMin + nodeSize;
+    wabi::GfVec2f nodeRectangleMax = nodeRectangleMin + nodeSize;
 
     bool nodeHovered = false;
     if (ANCHOR::IsItemHovered() && nodeOperation == NO_None && !overInput) {
@@ -654,30 +654,30 @@ namespace AnchorGraphEditor
       AnchorDrawFlags_RoundCornersAll,
       currentSelectedNode ? options.mBorderSelectionThickness : options.mBorderThickness);
 
-    GfVec2f imgPos = nodeRectangleMin + GfVec2f(14, 25);
-    GfVec2f imgSize = nodeRectangleMax + GfVec2f(-5, -5) - imgPos;
+    wabi::GfVec2f imgPos = nodeRectangleMin + wabi::GfVec2f(14, 25);
+    wabi::GfVec2f imgSize = nodeRectangleMax + wabi::GfVec2f(-5, -5) - imgPos;
     float imgSizeComp = std::min(imgSize[0], imgSize[1]);
 
     drawList->AddRectFilled(nodeRectangleMin, nodeRectangleMax, node_bg_color, options.mRounding);
     /*float progress = delegate->NodeProgress(nodeIndex);
       if (progress > FLT_EPSILON && progress < 1.f - FLT_EPSILON)
       {
-          GfVec2f progressLineA = nodeRectangleMax - GfVec2f(nodeSize[0] - 2.f, 3.f);
-          GfVec2f progressLineB = progressLineA + GfVec2f(nodeSize[0] * factor - 4.f, 0.f);
+          wabi::GfVec2f progressLineA = nodeRectangleMax - wabi::GfVec2f(nodeSize[0] - 2.f, 3.f);
+          wabi::GfVec2f progressLineB = progressLineA + wabi::GfVec2f(nodeSize[0] * factor - 4.f, 0.f);
           drawList->AddLine(progressLineA, progressLineB, 0xFF400000, 3.f);
           drawList->AddLine(progressLineA, AnchorLerp(progressLineA, progressLineB, progress),
       0xFFFF0000, 3.f);
       }*/
-    GfVec2f imgPosMax = imgPos + GfVec2f(imgSizeComp, imgSizeComp);
+    wabi::GfVec2f imgPosMax = imgPos + wabi::GfVec2f(imgSizeComp, imgSizeComp);
 
-    // GfVec2f imageSize = delegate->GetEvaluationSize(nodeIndex);
+    // wabi::GfVec2f imageSize = delegate->GetEvaluationSize(nodeIndex);
     /*float imageRatio = 1.f;
       if (imageSize[0] > 0.f && imageSize[1] > 0.f)
       {
           imageRatio = imageSize[1] / imageSize[0];
       }
-      GfVec2f quadSize = imgPosMax - imgPos;
-      GfVec2f marge(0.f, 0.f);
+      wabi::GfVec2f quadSize = imgPosMax - imgPos;
+      wabi::GfVec2f marge(0.f, 0.f);
       if (imageRatio > 1.f)
       {
           marge[0] = (quadSize[0] - quadSize[1] / imageRatio) * 0.5f;
@@ -690,19 +690,19 @@ namespace AnchorGraphEditor
     // delegate->DrawNodeImage(drawList, AnchorBBox(imgPos, imgPosMax), marge, nodeIndex);
 
     drawList->AddRectFilled(nodeRectangleMin,
-                            GfVec2f(nodeRectangleMax[0], nodeRectangleMin[1] + 20),
+                            wabi::GfVec2f(nodeRectangleMax[0], nodeRectangleMin[1] + 20),
                             nodeTemplate.mHeaderColor,
                             options.mRounding);
 
     drawList->PushClipRect(nodeRectangleMin,
-                           GfVec2f(nodeRectangleMax[0], nodeRectangleMin[1] + 20),
+                           wabi::GfVec2f(nodeRectangleMax[0], nodeRectangleMin[1] + 20),
                            true);
-    drawList->AddText(nodeRectangleMin + GfVec2f(2, 2), ANCHOR_COL32(0, 0, 0, 255), node.mName);
+    drawList->AddText(nodeRectangleMin + wabi::GfVec2f(2, 2), ANCHOR_COL32(0, 0, 0, 255), node.mName);
     drawList->PopClipRect();
 
     AnchorBBox customDrawRect(nodeRectangleMin +
-                                GfVec2f(options.mRounding, 20 + options.mRounding),
-                              nodeRectangleMax - GfVec2f(options.mRounding, options.mRounding));
+                                wabi::GfVec2f(options.mRounding, 20 + options.mRounding),
+                              nodeRectangleMax - wabi::GfVec2f(options.mRounding, options.mRounding));
     if (customDrawRect.Max[1] > customDrawRect.Min[1] &&
         customDrawRect.Max[0] > customDrawRect.Min[0]) {
       delegate.CustomDraw(drawList, customDrawRect, nodeIndex);
@@ -711,30 +711,30 @@ namespace AnchorGraphEditor
       const ImTextureID bmpInfo = (ImTextureID)(uint64_t)delegate->GetBitmapInfo(nodeIndex).idx;
       if (bmpInfo)
       {
-          GfVec2f bmpInfoPos(nodeRectangleMax - GfVec2f(26, 12));
-          GfVec2f bmpInfoSize(20, 20);
+          wabi::GfVec2f bmpInfoPos(nodeRectangleMax - wabi::GfVec2f(26, 12));
+          wabi::GfVec2f bmpInfoSize(20, 20);
           if (delegate->NodeIsCompute(nodeIndex))
           {
               drawList->AddImageQuad(bmpInfo,
                                      bmpInfoPos,
-                                     bmpInfoPos + GfVec2f(bmpInfoSize[0], 0.f),
+                                     bmpInfoPos + wabi::GfVec2f(bmpInfoSize[0], 0.f),
                                      bmpInfoPos + bmpInfoSize,
-                                     bmpInfoPos + GfVec2f(0., bmpInfoSize[1]));
+                                     bmpInfoPos + wabi::GfVec2f(0., bmpInfoSize[1]));
           }
           else if (delegate->NodeIs2D(nodeIndex))
           {
               drawList->AddImageQuad(bmpInfo,
                                      bmpInfoPos,
-                                     bmpInfoPos + GfVec2f(bmpInfoSize[0], 0.f),
+                                     bmpInfoPos + wabi::GfVec2f(bmpInfoSize[0], 0.f),
                                      bmpInfoPos + bmpInfoSize,
-                                     bmpInfoPos + GfVec2f(0., bmpInfoSize[1]));
+                                     bmpInfoPos + wabi::GfVec2f(0., bmpInfoSize[1]));
           }
           else if (delegate->NodeIsCubemap(nodeIndex))
           {
               drawList->AddImageQuad(bmpInfo,
-                                     bmpInfoPos + GfVec2f(0., bmpInfoSize[1]),
+                                     bmpInfoPos + wabi::GfVec2f(0., bmpInfoSize[1]),
                                      bmpInfoPos + bmpInfoSize,
-                                     bmpInfoPos + GfVec2f(bmpInfoSize[0], 0.f),
+                                     bmpInfoPos + wabi::GfVec2f(bmpInfoSize[0], 0.f),
                                      bmpInfoPos);
           }
       }*/
@@ -745,8 +745,8 @@ namespace AnchorGraphEditor
                    Delegate &delegate,
                    ViewState &viewState,
                    const Options &options,
-                   const GfVec2f windowPos,
-                   const GfVec2f canvasSize)
+                   const wabi::GfVec2f windowPos,
+                   const wabi::GfVec2f canvasSize)
   {
     if (Distance(options.mMinimap.Min, options.mMinimap.Max) <= FLT_EPSILON) {
       return false;
@@ -758,9 +758,9 @@ namespace AnchorGraphEditor
       return false;
     }
 
-    GfVec2f mapmin(FLT_MAX, FLT_MAX);
-    GfVec2f mapmax(-FLT_MAX, -FLT_MAX);
-    const GfVec2f margin(50, 50);
+    wabi::GfVec2f mapmin(FLT_MAX, FLT_MAX);
+    wabi::GfVec2f mapmax(-FLT_MAX, -FLT_MAX);
+    const wabi::GfVec2f margin(50, 50);
     for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
       const Node &node = delegate.GetNode(nodeIndex);
       mapmin = AnchorMin(mapmin, node.mRect.Min - margin);
@@ -770,17 +770,17 @@ namespace AnchorGraphEditor
     }
 
     // add view in world space
-    const GfVec2f worldSizeView = canvasSize / viewState.mFactor;
-    const GfVec2f viewMin(-viewState.mPosition[0], -viewState.mPosition[1]);
-    const GfVec2f viewMax = viewMin + worldSizeView;
+    const wabi::GfVec2f worldSizeView = canvasSize / viewState.mFactor;
+    const wabi::GfVec2f viewMin(-viewState.mPosition[0], -viewState.mPosition[1]);
+    const wabi::GfVec2f viewMax = viewMin + worldSizeView;
     mapmin = AnchorMin(mapmin, viewMin);
     mapmax = AnchorMax(mapmax, viewMax);
-    const GfVec2f nodesSize = mapmax - mapmin;
-    const GfVec2f middleWorld = (mapmin + mapmax) * 0.5f;
-    const GfVec2f minScreen = windowPos + GfVec2f(options.mMinimap.Min * canvasSize);
-    const GfVec2f maxScreen = windowPos + GfVec2f(options.mMinimap.Max * canvasSize);
-    const GfVec2f viewSize = maxScreen - minScreen;
-    const GfVec2f middleScreen = (minScreen + maxScreen) * 0.5f;
+    const wabi::GfVec2f nodesSize = mapmax - mapmin;
+    const wabi::GfVec2f middleWorld = (mapmin + mapmax) * 0.5f;
+    const wabi::GfVec2f minScreen = windowPos + wabi::GfVec2f(options.mMinimap.Min * canvasSize);
+    const wabi::GfVec2f maxScreen = windowPos + wabi::GfVec2f(options.mMinimap.Max * canvasSize);
+    const wabi::GfVec2f viewSize = maxScreen - minScreen;
+    const wabi::GfVec2f middleScreen = (minScreen + maxScreen) * 0.5f;
     const float ratioY = viewSize[1] / nodesSize[1];
     const float ratioX = viewSize[0] / nodesSize[0];
     const float factor = AnchorMin(AnchorMin(ratioY, ratioX), 1.f);
@@ -819,8 +819,8 @@ namespace AnchorGraphEditor
     }
 
     // add view
-    GfVec2f viewMinScreen = (viewMin - middleWorld) * factor + middleScreen;
-    GfVec2f viewMaxScreen = (viewMax - middleWorld) * factor + middleScreen;
+    wabi::GfVec2f viewMinScreen = (viewMin - middleWorld) * factor + middleScreen;
+    wabi::GfVec2f viewMaxScreen = (viewMax - middleWorld) * factor + middleScreen;
     drawList->AddRectFilled(viewMinScreen,
                             viewMaxScreen,
                             ANCHOR_COL32(255, 255, 255, 32),
@@ -835,12 +835,12 @@ namespace AnchorGraphEditor
     AnchorIO &io = ANCHOR::GetIO();
     const bool mouseInMinimap = AnchorBBox(minScreen, maxScreen).Contains(io.MousePos);
     if (mouseInMinimap && io.MouseClicked[0]) {
-      const GfVec2f clickedRatio = (io.MousePos - minScreen) / viewSize;
-      const GfVec2f worldPosCenter = GfVec2f(AnchorLerp(mapmin[0], mapmax[0], clickedRatio[0]),
+      const wabi::GfVec2f clickedRatio = (io.MousePos - minScreen) / viewSize;
+      const wabi::GfVec2f worldPosCenter = wabi::GfVec2f(AnchorLerp(mapmin[0], mapmax[0], clickedRatio[0]),
                                              AnchorLerp(mapmin[1], mapmax[1], clickedRatio[1]));
 
-      GfVec2f worldPosViewMin = worldPosCenter - worldSizeView * 0.5;
-      GfVec2f worldPosViewMax = worldPosCenter + worldSizeView * 0.5;
+      wabi::GfVec2f worldPosViewMin = worldPosCenter - worldSizeView * 0.5;
+      wabi::GfVec2f worldPosViewMax = worldPosCenter + worldSizeView * 0.5;
       if (worldPosViewMin[0] < mapmin[0]) {
         worldPosViewMin[0] = mapmin[0];
         worldPosViewMax[0] = worldPosViewMin[0] + worldSizeView[0];
@@ -857,7 +857,7 @@ namespace AnchorGraphEditor
         worldPosViewMax[1] = mapmax[1];
         worldPosViewMin[1] = worldPosViewMax[1] - worldSizeView[1];
       }
-      viewState.mPosition = GfVec2f(-worldPosViewMin[0], -worldPosViewMin[1]);
+      viewState.mPosition = wabi::GfVec2f(-worldPosViewMin[0], -worldPosViewMin[1]);
     }
     return mouseInMinimap;
   }
@@ -869,17 +869,17 @@ namespace AnchorGraphEditor
             FitOnScreen *fit)
   {
     ANCHOR::PushStyleVar(AnchorStyleVar_ChildBorderSize, 0.f);
-    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(0.f, 0.f));
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(0.f, 0.f));
     ANCHOR::PushStyleVar(AnchorStyleVar_FrameBorderSize, 0.f);
 
-    const GfVec2f windowPos = ANCHOR::GetCursorScreenPos();
-    const GfVec2f canvasSize = ANCHOR::GetContentRegionAvail();
-    const GfVec2f scrollRegionLocalPos(0, 0);
+    const wabi::GfVec2f windowPos = ANCHOR::GetCursorScreenPos();
+    const wabi::GfVec2f canvasSize = ANCHOR::GetContentRegionAvail();
+    const wabi::GfVec2f scrollRegionLocalPos(0, 0);
 
     AnchorBBox regionRect(windowPos, windowPos + canvasSize);
 
     HandleZoomScroll(regionRect, viewState, options);
-    GfVec2f offset = ANCHOR::GetCursorScreenPos() + viewState.mPosition * viewState.mFactor;
+    wabi::GfVec2f offset = ANCHOR::GetCursorScreenPos() + viewState.mPosition * viewState.mFactor;
     captureOffset = viewState.mPosition * viewState.mFactor;
 
     // ANCHOR::InvisibleButton("GraphEditorButton", canvasSize);
@@ -891,8 +891,8 @@ namespace AnchorGraphEditor
     AnchorIO &io = ANCHOR::GetIO();
 
     // Create our child canvas
-    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, GfVec2f(1, 1));
-    ANCHOR::PushStyleVar(AnchorStyleVar_WindowPadding, GfVec2f(0, 0));
+    ANCHOR::PushStyleVar(AnchorStyleVar_FramePadding, wabi::GfVec2f(1, 1));
+    ANCHOR::PushStyleVar(AnchorStyleVar_WindowPadding, wabi::GfVec2f(0, 0));
     ANCHOR::PushStyleColor(AnchorCol_ChildBg, ANCHOR_COL32(30, 30, 30, 200));
 
     AnchorDrawList *drawList = ANCHOR::GetWindowDrawList();
@@ -943,8 +943,8 @@ namespace AnchorGraphEditor
 
       // edit node link
       if (nodeOperation == NO_EditingLink) {
-        GfVec2f p1 = editingNodeSource;
-        GfVec2f p2 = io.MousePos;
+        wabi::GfVec2f p1 = editingNodeSource;
+        wabi::GfVec2f p2 = io.MousePos;
         drawList->AddLine(p1, p2, ANCHOR_COL32(200, 200, 200, 255), 3.0f);
       }
 
@@ -989,13 +989,13 @@ namespace AnchorGraphEditor
                                                              inMinimap);
 
 #ifdef WITH_ANCHOR_CURVE_EDIT_SHADOW
-          GfVec2f shadowOffset = GfVec2f(30, 30);
-          GfVec2f shadowPivot = (nodeRect.Min + nodeRect.Max) / 2.f;
-          GfVec2f shadowPointMiddle = shadowPivot + shadowOffset;
-          GfVec2f shadowPointTop = GfVec2f(shadowPivot[0], nodeRect.Min[1]) + shadowOffset;
-          GfVec2f shadowPointBottom = GfVec2f(shadowPivot[0], nodeRect.Max[1]) + shadowOffset;
-          GfVec2f shadowPointLeft = GfVec2f(nodeRect.Min[0], shadowPivot[1]) + shadowOffset;
-          GfVec2f shadowPointRight = GfVec2f(nodeRect.Max[0], shadowPivot[1]) + shadowOffset;
+          wabi::GfVec2f shadowOffset = wabi::GfVec2f(30, 30);
+          wabi::GfVec2f shadowPivot = (nodeRect.Min + nodeRect.Max) / 2.f;
+          wabi::GfVec2f shadowPointMiddle = shadowPivot + shadowOffset;
+          wabi::GfVec2f shadowPointTop = wabi::GfVec2f(shadowPivot[0], nodeRect.Min[1]) + shadowOffset;
+          wabi::GfVec2f shadowPointBottom = wabi::GfVec2f(shadowPivot[0], nodeRect.Max[1]) + shadowOffset;
+          wabi::GfVec2f shadowPointLeft = wabi::GfVec2f(nodeRect.Min[0], shadowPivot[1]) + shadowOffset;
+          wabi::GfVec2f shadowPointRight = wabi::GfVec2f(nodeRect.Max[0], shadowPivot[1]) + shadowOffset;
 
           /* top left */
           drawList->AddRectFilledMultiColor(nodeRect.Min + shadowOffset,
@@ -1067,7 +1067,7 @@ namespace AnchorGraphEditor
 
       if (nodeOperation == NO_MovingNodes) {
         if (ANCHOR::IsMouseDragging(0, 1)) {
-          GfVec2f delta = io.MouseDelta / viewState.mFactor;
+          wabi::GfVec2f delta = io.MouseDelta / viewState.mFactor;
           if (fabsf(delta[0]) >= 1.f || fabsf(delta[1]) >= 1.f) {
             delegate.MoveSelectedNodes(delta);
           }

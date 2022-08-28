@@ -184,7 +184,7 @@
   0  // Save additional comments in .ini file (particularly helps for Docking, but makes saving \
        // slower)
 
-WABI_NAMESPACE_USING
+KRAKEN_NAMESPACE_USING
 
 // When using CTRL+TAB (or Gamepad Square+L/R) we delay the visual a little in order to reduce
 // visual noise doing a fast switch.
@@ -211,7 +211,7 @@ static const float WINDOWS_MOUSE_WHEEL_SCROLL_LOCK_TIMER =
 static void SetCurrentWindow(AnchorWindow *window);
 static void FindHoveredWindow();
 static AnchorWindow *CreateNewWindow(const char *name, AnchorWindowFlags flags);
-static GfVec2f CalcNextScrollFromScrollTargetAndClamp(AnchorWindow *window);
+static wabi::GfVec2f CalcNextScrollFromScrollTargetAndClamp(AnchorWindow *window);
 
 static void AddDrawListToDrawData(AnchorVector<AnchorDrawList *> *out_list,
                                   AnchorDrawList *draw_list);
@@ -254,7 +254,7 @@ namespace ANCHOR
                                    ANCHOR_ID id,
                                    const AnchorBBox &nav_bb_rel);
   static void NavProcessItem(AnchorWindow *window, const AnchorBBox &nav_bb, ANCHOR_ID id);
-  static GfVec2f NavCalcPreferredRefPos();
+  static wabi::GfVec2f NavCalcPreferredRefPos();
   static void NavSaveLastChildNavWindowIntoParent(AnchorWindow *nav_window);
   static AnchorWindow *NavRestoreLastChildNavWindow(AnchorWindow *window);
   static void NavRestoreLayer(ANCHORNavLayer layer);
@@ -271,7 +271,7 @@ namespace ANCHOR
   static void UpdateTabFocus();
   static void UpdateDebugToolItemPicker();
   static bool UpdateWindowManualResize(AnchorWindow *window,
-                                       const GfVec2f &size_auto_fit,
+                                       const wabi::GfVec2f &size_auto_fit,
                                        int *border_held,
                                        int resize_grip_count,
                                        AnchorU32 resize_grip_col[4],
@@ -370,14 +370,14 @@ static void *GImAllocatorUserData = NULL;
 AnchorStyle::AnchorStyle()
 {
   Alpha = 1.0f;                   // Global alpha applies to everything in ANCHOR
-  WindowPadding = GfVec2f(8, 8);  // Padding within a window
+  WindowPadding = wabi::GfVec2f(8, 8);  // Padding within a window
   WindowRounding =
     0.0f;  // Radius of window corners rounding. Set to 0.0f to have rectangular windows.
            // Large values tend to lead to variety of artifacts and are not recommended.
   WindowBorderSize = 1.0f;  // Thickness of border around windows. Generally set to 0.0f or 1.0f.
                             // Other values not well tested.
-  WindowMinSize = GfVec2f(32, 32);         // Minimum window size
-  WindowTitleAlign = GfVec2f(0.0f, 0.5f);  // Alignment for title bar text
+  WindowMinSize = wabi::GfVec2f(32, 32);         // Minimum window size
+  WindowTitleAlign = wabi::GfVec2f(0.0f, 0.5f);  // Alignment for title bar text
   WindowMenuButtonPosition =
     AnchorDir_Left;        // Position of the collapsing/docking button in the title bar
                            // (left/right). Defaults to AnchorDir_Left.
@@ -389,16 +389,16 @@ AnchorStyle::AnchorStyle()
                            // rectangular child windows
   PopupBorderSize = 1.0f;  // Thickness of border around popup or tooltip windows. Generally set to
                            // 0.0f or 1.0f. Other values not well tested.
-  FramePadding = GfVec2f(4, 3);  // Padding within a framed rectangle (used by most widgets)
+  FramePadding = wabi::GfVec2f(4, 3);  // Padding within a framed rectangle (used by most widgets)
   FrameRounding = 0.0f;    // Radius of frame corners rounding. Set to 0.0f to have rectangular
                            // frames (used by most widgets).
   FrameBorderSize = 0.0f;  // Thickness of border around frames. Generally set to 0.0f or 1.0f.
                            // Other values not well tested.
-  ItemSpacing = GfVec2f(8, 4);       // Horizontal and vertical spacing between widgets/lines
-  ItemInnerSpacing = GfVec2f(4, 4);  // Horizontal and vertical spacing between within elements of
+  ItemSpacing = wabi::GfVec2f(8, 4);       // Horizontal and vertical spacing between widgets/lines
+  ItemInnerSpacing = wabi::GfVec2f(4, 4);  // Horizontal and vertical spacing between within elements of
                                      // a composed widget (e.g. a slider and its label)
-  CellPadding = GfVec2f(4, 2);       // Padding within a table cell
-  TouchExtraPadding = GfVec2f(
+  CellPadding = wabi::GfVec2f(4, 2);       // Padding within a table cell
+  TouchExtraPadding = wabi::GfVec2f(
     0,
     0);  // Expand reactive bounding box for touch-based system where touch position is not
          // accurate enough. Unfortunately we don't sort widgets so priority on overlap will
@@ -421,18 +421,18 @@ AnchorStyle::AnchorStyle()
                                      // set to FLT_MAX to never show close button unless selected.
   ColorButtonPosition = AnchorDir_Right;  // Side of the color button in the ColorEdit4 widget
                                           // (left/right). Defaults to AnchorDir_Right.
-  ButtonTextAlign = GfVec2f(0.5f,
+  ButtonTextAlign = wabi::GfVec2f(0.5f,
                             0.5f);  // Alignment of button text when button is larger than text.
-  SelectableTextAlign = GfVec2f(
+  SelectableTextAlign = wabi::GfVec2f(
     0.0f,
     0.0f);  // Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left
             // aligned). It's generally important to keep this left-aligned if
             // you want to lay multiple items on a same line.
-  DisplayWindowPadding = GfVec2f(
+  DisplayWindowPadding = wabi::GfVec2f(
     19,
     19);  // Window position are clamped to be visible within the display area or monitors by
           // at least this amount. Only applies to regular windows.
-  DisplaySafeAreaPadding = GfVec2f(
+  DisplaySafeAreaPadding = wabi::GfVec2f(
     3,
     3);  // If you cannot see the edge of your screen (e.g. on a TV) increase the safe area
          // padding. Covers popups/tooltips as well regular windows.
@@ -504,7 +504,7 @@ AnchorIO::AnchorIO()
   // Settings
   ConfigFlags = AnchorConfigFlags_None;
   BackendFlags = AnchorBackendFlags_None;
-  DisplaySize = GfVec2f(-1.0f, -1.0f);
+  DisplaySize = wabi::GfVec2f(-1.0f, -1.0f);
   DeltaTime = 1.0f / 60.0f;
   IniSavingRate = 5.0f;
   IniFilename = "ANCHOR.ini";
@@ -521,7 +521,7 @@ AnchorIO::AnchorIO()
   FontGlobalScale = 1.0f;
   FontDefault = NULL;
   FontAllowUserScaling = false;
-  DisplayFramebufferScale = GfVec2f(1.0f, 1.0f);
+  DisplayFramebufferScale = wabi::GfVec2f(1.0f, 1.0f);
 
   // Miscellaneous options
   MouseDrawCursor = false;
@@ -547,8 +547,8 @@ AnchorIO::AnchorIO()
   ImeWindowHandle = NULL;
 
   // Input (NB: we already have memset zero the entire structure!)
-  MousePos = GfVec2f(-FLT_MAX, -FLT_MAX);
-  MousePosPrev = GfVec2f(-FLT_MAX, -FLT_MAX);
+  MousePos = wabi::GfVec2f(-FLT_MAX, -FLT_MAX);
+  MousePosPrev = wabi::GfVec2f(-FLT_MAX, -FLT_MAX);
   MouseDragThreshold = 6.0f;
   for (int i = 0; i < ANCHOR_ARRAYSIZE(MouseDownDuration); i++)
     MouseDownDuration[i] = MouseDownDurationPrev[i] = -1.0f;
@@ -620,21 +620,21 @@ void AnchorIO::ClearInputCharacters()
 // [SECTION] MISC HELPERS/UTILITIES (Geometry functions)
 //-----------------------------------------------------------------------------
 
-GfVec2f AnchorBezierCubicClosestPoint(const GfVec2f &p1,
-                                      const GfVec2f &p2,
-                                      const GfVec2f &p3,
-                                      const GfVec2f &p4,
-                                      const GfVec2f &p,
+wabi::GfVec2f AnchorBezierCubicClosestPoint(const wabi::GfVec2f &p1,
+                                            const wabi::GfVec2f &p2,
+                                            const wabi::GfVec2f &p3,
+                                            const wabi::GfVec2f &p4,
+                                            const wabi::GfVec2f &p,
                                       int num_segments)
 {
   ANCHOR_ASSERT(num_segments > 0);  // Use AnchorBezierCubicClosestPointCasteljau()
-  GfVec2f p_last = p1;
-  GfVec2f p_closest;
+  wabi::GfVec2f p_last = p1;
+  wabi::GfVec2f p_closest;
   float p_closest_dist2 = FLT_MAX;
   float t_step = 1.0f / (float)num_segments;
   for (int i_step = 1; i_step <= num_segments; i_step++) {
-    GfVec2f p_current = AnchorBezierCubicCalc(p1, p2, p3, p4, t_step * i_step);
-    GfVec2f p_line = AnchorLineClosestPoint(p_last, p_current, p);
+    wabi::GfVec2f p_current = AnchorBezierCubicCalc(p1, p2, p3, p4, t_step * i_step);
+    wabi::GfVec2f p_line = AnchorLineClosestPoint(p_last, p_current, p);
     float dist2 = AnchorLengthSqr(p - p_line);
     if (dist2 < p_closest_dist2) {
       p_closest = p_line;
@@ -646,9 +646,9 @@ GfVec2f AnchorBezierCubicClosestPoint(const GfVec2f &p1,
 }
 
 // Closely mimics PathBezierToCasteljau() in ANCHOR_draw.cpp
-static void AnchorBezierCubicClosestPointCasteljauStep(const GfVec2f &p,
-                                                       GfVec2f &p_closest,
-                                                       GfVec2f &p_last,
+static void AnchorBezierCubicClosestPointCasteljauStep(const wabi::GfVec2f &p,
+                                                       wabi::GfVec2f &p_closest,
+                                                       wabi::GfVec2f &p_last,
                                                        float &p_closest_dist2,
                                                        float x1,
                                                        float y1,
@@ -668,8 +668,8 @@ static void AnchorBezierCubicClosestPointCasteljauStep(const GfVec2f &p,
   d2 = (d2 >= 0) ? d2 : -d2;
   d3 = (d3 >= 0) ? d3 : -d3;
   if ((d2 + d3) * (d2 + d3) < tess_tol * (dx * dx + dy * dy)) {
-    GfVec2f p_current(x4, y4);
-    GfVec2f p_line = AnchorLineClosestPoint(p_last, p_current, p);
+    wabi::GfVec2f p_current(x4, y4);
+    wabi::GfVec2f p_line = AnchorLineClosestPoint(p_last, p_current, p);
     float dist2 = AnchorLengthSqr(p - p_line);
     if (dist2 < p_closest_dist2) {
       p_closest = p_line;
@@ -717,16 +717,16 @@ static void AnchorBezierCubicClosestPointCasteljauStep(const GfVec2f &p,
 // tess_tol is generally the same value you would find in ANCHOR::GetStyle().CurveTessellationTol
 // Because those ImXXX functions are lower-level than ANCHOR:: we cannot access this value
 // automatically.
-GfVec2f AnchorBezierCubicClosestPointCasteljau(const GfVec2f &p1,
-                                               const GfVec2f &p2,
-                                               const GfVec2f &p3,
-                                               const GfVec2f &p4,
-                                               const GfVec2f &p,
+wabi::GfVec2f AnchorBezierCubicClosestPointCasteljau(const wabi::GfVec2f &p1,
+                                               const wabi::GfVec2f &p2,
+                                               const wabi::GfVec2f &p3,
+                                               const wabi::GfVec2f &p4,
+                                               const wabi::GfVec2f &p,
                                                float tess_tol)
 {
   ANCHOR_ASSERT(tess_tol > 0.0f);
-  GfVec2f p_last = p1;
-  GfVec2f p_closest;
+  wabi::GfVec2f p_last = p1;
+  wabi::GfVec2f p_closest;
   float p_closest_dist2 = FLT_MAX;
   AnchorBezierCubicClosestPointCasteljauStep(p,
                                              p_closest,
@@ -745,10 +745,10 @@ GfVec2f AnchorBezierCubicClosestPointCasteljau(const GfVec2f &p1,
   return p_closest;
 }
 
-GfVec2f AnchorLineClosestPoint(const GfVec2f &a, const GfVec2f &b, const GfVec2f &p)
+wabi::GfVec2f AnchorLineClosestPoint(const wabi::GfVec2f &a, const wabi::GfVec2f &b, const wabi::GfVec2f &p)
 {
-  GfVec2f ap = p - a;
-  GfVec2f ab_dir = b - a;
+  wabi::GfVec2f ap = p - a;
+  wabi::GfVec2f ab_dir = b - a;
   float dot = ap[0] * ab_dir[0] + ap[1] * ab_dir[1];
   if (dot < 0.0f)
     return a;
@@ -758,10 +758,10 @@ GfVec2f AnchorLineClosestPoint(const GfVec2f &a, const GfVec2f &b, const GfVec2f
   return a + ab_dir * dot / ab_len_sqr;
 }
 
-bool AnchorTriangleContainsPoint(const GfVec2f &a,
-                                 const GfVec2f &b,
-                                 const GfVec2f &c,
-                                 const GfVec2f &p)
+bool AnchorTriangleContainsPoint(const wabi::GfVec2f &a,
+                                 const wabi::GfVec2f &b,
+                                 const wabi::GfVec2f &c,
+                                 const wabi::GfVec2f &p)
 {
   bool b1 = ((p[0] - b[0]) * (a[1] - b[1]) - (p[1] - b[1]) * (a[0] - b[0])) < 0.0f;
   bool b2 = ((p[0] - c[0]) * (b[1] - c[1]) - (p[1] - c[1]) * (b[0] - c[0])) < 0.0f;
@@ -769,31 +769,31 @@ bool AnchorTriangleContainsPoint(const GfVec2f &a,
   return ((b1 == b2) && (b2 == b3));
 }
 
-void AnchorTriangleBarycentricCoords(const GfVec2f &a,
-                                     const GfVec2f &b,
-                                     const GfVec2f &c,
-                                     const GfVec2f &p,
+void AnchorTriangleBarycentricCoords(const wabi::GfVec2f &a,
+                                     const wabi::GfVec2f &b,
+                                     const wabi::GfVec2f &c,
+                                     const wabi::GfVec2f &p,
                                      float &out_u,
                                      float &out_v,
                                      float &out_w)
 {
-  GfVec2f v0 = b - a;
-  GfVec2f v1 = c - a;
-  GfVec2f v2 = p - a;
+  wabi::GfVec2f v0 = b - a;
+  wabi::GfVec2f v1 = c - a;
+  wabi::GfVec2f v2 = p - a;
   const float denom = v0[0] * v1[1] - v1[0] * v0[1];
   out_v = (v2[0] * v1[1] - v1[0] * v2[1]) / denom;
   out_w = (v0[0] * v2[1] - v2[0] * v0[1]) / denom;
   out_u = 1.0f - out_v - out_w;
 }
 
-GfVec2f AnchorTriangleClosestPoint(const GfVec2f &a,
-                                   const GfVec2f &b,
-                                   const GfVec2f &c,
-                                   const GfVec2f &p)
+wabi::GfVec2f AnchorTriangleClosestPoint(const wabi::GfVec2f &a,
+                                   const wabi::GfVec2f &b,
+                                   const wabi::GfVec2f &c,
+                                   const wabi::GfVec2f &p)
 {
-  GfVec2f proj_ab = AnchorLineClosestPoint(a, b, p);
-  GfVec2f proj_bc = AnchorLineClosestPoint(b, c, p);
-  GfVec2f proj_ca = AnchorLineClosestPoint(c, a, p);
+  wabi::GfVec2f proj_ab = AnchorLineClosestPoint(a, b, p);
+  wabi::GfVec2f proj_bc = AnchorLineClosestPoint(b, c, p);
+  wabi::GfVec2f proj_ca = AnchorLineClosestPoint(c, a, p);
   float dist2_ab = AnchorLengthSqr(p - proj_ab);
   float dist2_bc = AnchorLengthSqr(p - proj_bc);
   float dist2_ca = AnchorLengthSqr(p - proj_ca);
@@ -1378,16 +1378,16 @@ ANCHOR_API AnchorU32 ImAlphaBlendColors(AnchorU32 col_a, AnchorU32 col_b)
   return ANCHOR_COL32(r, g, b, 0xFF);
 }
 
-GfVec4f ANCHOR::ColorConvertU32ToFloat4(AnchorU32 in)
+wabi::GfVec4f ANCHOR::ColorConvertU32ToFloat4(AnchorU32 in)
 {
   float s = 1.0f / 255.0f;
-  return GfVec4f(((in >> ANCHOR_COL32_R_SHIFT) & 0xFF) * s,
+  return wabi::GfVec4f(((in >> ANCHOR_COL32_R_SHIFT) & 0xFF) * s,
                  ((in >> ANCHOR_COL32_G_SHIFT) & 0xFF) * s,
                  ((in >> ANCHOR_COL32_B_SHIFT) & 0xFF) * s,
                  ((in >> ANCHOR_COL32_A_SHIFT) & 0xFF) * s);
 }
 
-AnchorU32 ANCHOR::ColorConvertFloat4ToU32(const GfVec4f &in)
+AnchorU32 ANCHOR::ColorConvertFloat4ToU32(const wabi::GfVec4f &in)
 {
   AnchorU32 out;
   out = ((AnchorU32)IM_F32_TO_INT8_SAT(in[0])) << ANCHOR_COL32_R_SHIFT;
@@ -1838,7 +1838,7 @@ void ANCHOR::CalcListClipping(int items_count,
     unclipped_rect.Add(AnchorBBox(window->Pos + window->NavRectRel[0].Min,
                                   window->Pos + window->NavRectRel[0].Max));
 
-  const GfVec2f pos = window->DC.CursorPos;
+  const wabi::GfVec2f pos = window->DC.CursorPos;
   int start = (int)((unclipped_rect.Min[1] - pos[1]) / items_height);
   int end = (int)((unclipped_rect.Max[1] - pos[1]) / items_height);
 
@@ -2056,20 +2056,20 @@ AnchorStyle &ANCHOR::GetStyle()
 AnchorU32 ANCHOR::GetColorU32(AnchorCol idx, float alpha_mul)
 {
   AnchorStyle &style = G_CTX->Style;
-  GfVec4f c = style.Colors[idx];
+  wabi::GfVec4f c = style.Colors[idx];
   c[3] *= style.Alpha * alpha_mul;
   return ColorConvertFloat4ToU32(c);
 }
 
-AnchorU32 ANCHOR::GetColorU32(const GfVec4f &col)
+AnchorU32 ANCHOR::GetColorU32(const wabi::GfVec4f &col)
 {
   AnchorStyle &style = G_CTX->Style;
-  GfVec4f c = col;
+  wabi::GfVec4f c = col;
   c[3] *= style.Alpha;
   return ColorConvertFloat4ToU32(c);
 }
 
-const GfVec4f &ANCHOR::GetStyleColorVec4(AnchorCol idx)
+const wabi::GfVec4f &ANCHOR::GetStyleColorVec4(AnchorCol idx)
 {
   AnchorStyle &style = G_CTX->Style;
   return style.Colors[idx];
@@ -2098,7 +2098,7 @@ void ANCHOR::PushStyleColor(AnchorCol idx, AnchorU32 col)
   g.Style.Colors[idx] = ColorConvertU32ToFloat4(col);
 }
 
-void ANCHOR::PushStyleColor(AnchorCol idx, const GfVec4f &col)
+void ANCHOR::PushStyleColor(AnchorCol idx, const wabi::GfVec4f &col)
 {
   AnchorContext &g = *G_CTX;
   AnchorColorMod backup;
@@ -2203,17 +2203,17 @@ void ANCHOR::PushStyleVar(AnchorStyleVar idx, float val)
   ANCHOR_ASSERT(0 && "Called PushStyleVar() float variant but variable is not a float!");
 }
 
-void ANCHOR::PushStyleVar(AnchorStyleVar idx, const GfVec2f &val)
+void ANCHOR::PushStyleVar(AnchorStyleVar idx, const wabi::GfVec2f &val)
 {
   const AnchorStyleVarInfo *var_info = GetStyleVarInfo(idx);
   if (var_info->Type == AnchorDataType_Float && var_info->Count == 2) {
     AnchorContext &g = *G_CTX;
-    GfVec2f *pvar = (GfVec2f *)var_info->GetVarPtr(&g.Style);
+    wabi::GfVec2f *pvar = (wabi::GfVec2f *)var_info->GetVarPtr(&g.Style);
     g.StyleVarStack.push_back(AnchorStyleMod(idx, *pvar));
     *pvar = val;
     return;
   }
-  ANCHOR_ASSERT(0 && "Called PushStyleVar() GfVec2f variant but variable is not a GfVec2f!");
+  ANCHOR_ASSERT(0 && "Called PushStyleVar() wabi::GfVec2f variant but variable is not a wabi::GfVec2f!");
 }
 
 void ANCHOR::PopStyleVar(int count)
@@ -2374,7 +2374,7 @@ const char *ANCHOR::FindRenderedTextEnd(const char *text, const char *text_end)
 
 // Internal ANCHOR functions to render text
 // RenderText***() functions calls AnchorDrawList::AddText() calls AnchorBitmapFont::RenderText()
-void ANCHOR::RenderText(GfVec2f pos,
+void ANCHOR::RenderText(wabi::GfVec2f pos,
                         const char *text,
                         const char *text_end,
                         bool hide_text_after_hash)
@@ -2400,7 +2400,7 @@ void ANCHOR::RenderText(GfVec2f pos,
   }
 }
 
-void ANCHOR::RenderTextWrapped(GfVec2f pos,
+void ANCHOR::RenderTextWrapped(wabi::GfVec2f pos,
                                const char *text,
                                const char *text_end,
                                float wrap_width)
@@ -2423,21 +2423,21 @@ void ANCHOR::RenderTextWrapped(GfVec2f pos,
 // Handle clipping on CPU immediately (vs typically let the GPU clip the triangles that are
 // overlapping the clipping rectangle edges)
 void ANCHOR::RenderTextClippedEx(AnchorDrawList *draw_list,
-                                 const GfVec2f &pos_min,
-                                 const GfVec2f &pos_max,
+                                 const wabi::GfVec2f &pos_min,
+                                 const wabi::GfVec2f &pos_max,
                                  const char *text,
                                  const char *text_display_end,
-                                 const GfVec2f *text_size_if_known,
-                                 const GfVec2f &align,
+                                 const wabi::GfVec2f *text_size_if_known,
+                                 const wabi::GfVec2f &align,
                                  const AnchorBBox *clip_rect)
 {
   // Perform CPU side clipping for single clipped element to avoid using scissor state
-  GfVec2f pos = pos_min;
-  const GfVec2f text_size = text_size_if_known ? *text_size_if_known :
+  wabi::GfVec2f pos = pos_min;
+  const wabi::GfVec2f text_size = text_size_if_known ? *text_size_if_known :
                                                  CalcTextSize(text, text_display_end, false, 0.0f);
 
-  const GfVec2f *clip_min = clip_rect ? &clip_rect->Min : &pos_min;
-  const GfVec2f *clip_max = clip_rect ? &clip_rect->Max : &pos_max;
+  const wabi::GfVec2f *clip_min = clip_rect ? &clip_rect->Min : &pos_min;
+  const wabi::GfVec2f *clip_max = clip_rect ? &clip_rect->Max : &pos_max;
   bool need_clipping = (pos[0] + text_size[0] >= clip_max->GetArray()[0]) ||
                        (pos[1] + text_size[1] >= clip_max->GetArray()[1]);
   if (clip_rect)  // If we had no explicit clipping rectangle then pos==clip_min
@@ -2452,7 +2452,7 @@ void ANCHOR::RenderTextClippedEx(AnchorDrawList *draw_list,
 
   // Render
   if (need_clipping) {
-    GfVec4f fine_clip_rect(clip_min->GetArray()[0],
+    wabi::GfVec4f fine_clip_rect(clip_min->GetArray()[0],
                            clip_min->GetArray()[1],
                            clip_max->GetArray()[0],
                            clip_max->GetArray()[1]);
@@ -2470,12 +2470,12 @@ void ANCHOR::RenderTextClippedEx(AnchorDrawList *draw_list,
   }
 }
 
-void ANCHOR::RenderTextClipped(const GfVec2f &pos_min,
-                               const GfVec2f &pos_max,
+void ANCHOR::RenderTextClipped(const wabi::GfVec2f &pos_min,
+                               const wabi::GfVec2f &pos_max,
                                const char *text,
                                const char *text_end,
-                               const GfVec2f *text_size_if_known,
-                               const GfVec2f &align,
+                               const wabi::GfVec2f *text_size_if_known,
+                               const wabi::GfVec2f &align,
                                const AnchorBBox *clip_rect)
 {
   // Hide anything after a '##' string
@@ -2504,24 +2504,24 @@ void ANCHOR::RenderTextClipped(const GfVec2f &pos_min,
 // display. This is because in the context of tabs we selectively hide part of the text when the
 // Close Button appears, but we don't want the ellipsis to move.
 void ANCHOR::RenderTextEllipsis(AnchorDrawList *draw_list,
-                                const GfVec2f &pos_min,
-                                const GfVec2f &pos_max,
+                                const wabi::GfVec2f &pos_min,
+                                const wabi::GfVec2f &pos_max,
                                 float clip_max_x,
                                 float ellipsis_max_x,
                                 const char *text,
                                 const char *text_end_full,
-                                const GfVec2f *text_size_if_known)
+                                const wabi::GfVec2f *text_size_if_known)
 {
   AnchorContext &g = *G_CTX;
   if (text_end_full == NULL)
     text_end_full = FindRenderedTextEnd(text);
-  const GfVec2f text_size = text_size_if_known ? *text_size_if_known :
+  const wabi::GfVec2f text_size = text_size_if_known ? *text_size_if_known :
                                                  CalcTextSize(text, text_end_full, false, 0.0f);
 
-  // draw_list->AddLine(GfVec2f(pos_max[0], pos_min[1] - 4), GfVec2f(pos_max[0], pos_max[1] + 4),
-  // ANCHOR_COL32(0, 0, 255, 255)); draw_list->AddLine(GfVec2f(ellipsis_max_x, pos_min[1]-2),
-  // GfVec2f(ellipsis_max_x, pos_max[1]+2), ANCHOR_COL32(0, 255, 0, 255));
-  // draw_list->AddLine(GfVec2f(clip_max_x, pos_min[1]), GfVec2f(clip_max_x, pos_max[1]),
+  // draw_list->AddLine(wabi::GfVec2f(pos_max[0], pos_min[1] - 4), wabi::GfVec2f(pos_max[0], pos_max[1] + 4),
+  // ANCHOR_COL32(0, 0, 255, 255)); draw_list->AddLine(wabi::GfVec2f(ellipsis_max_x, pos_min[1]-2),
+  // wabi::GfVec2f(ellipsis_max_x, pos_max[1]+2), ANCHOR_COL32(0, 255, 0, 255));
+  // draw_list->AddLine(wabi::GfVec2f(clip_max_x, pos_min[1]), wabi::GfVec2f(clip_max_x, pos_max[1]),
   // ANCHOR_COL32(255, 0, 0, 255));
   // FIXME: We could technically remove (last_glyph->AdvanceX - last_glyph->X1) from text_size[0]
   // here and save a few pixels.
@@ -2585,17 +2585,17 @@ void ANCHOR::RenderTextEllipsis(AnchorDrawList *draw_list,
     // Render text, render ellipsis
     RenderTextClippedEx(draw_list,
                         pos_min,
-                        GfVec2f(clip_max_x, pos_max[1]),
+                        wabi::GfVec2f(clip_max_x, pos_max[1]),
                         text,
                         text_end_ellipsis,
                         &text_size,
-                        GfVec2f(0.0f, 0.0f));
+                        wabi::GfVec2f(0.0f, 0.0f));
     float ellipsis_x = pos_min[0] + text_size_clipped_x;
     if (ellipsis_x + ellipsis_total_width <= ellipsis_max_x)
       for (int i = 0; i < ellipsis_char_count; i++) {
         font->RenderChar(draw_list,
                          font_size,
-                         GfVec2f(ellipsis_x, pos_min[1]),
+                         wabi::GfVec2f(ellipsis_x, pos_min[1]),
                          GetColorU32(AnchorCol_Text),
                          ellipsis_char);
         ellipsis_x += ellipsis_glyph_width;
@@ -2603,11 +2603,11 @@ void ANCHOR::RenderTextEllipsis(AnchorDrawList *draw_list,
   } else {
     RenderTextClippedEx(draw_list,
                         pos_min,
-                        GfVec2f(clip_max_x, pos_max[1]),
+                        wabi::GfVec2f(clip_max_x, pos_max[1]),
                         text,
                         text_end_full,
                         &text_size,
-                        GfVec2f(0.0f, 0.0f));
+                        wabi::GfVec2f(0.0f, 0.0f));
   }
 
   if (g.LogEnabled)
@@ -2615,8 +2615,8 @@ void ANCHOR::RenderTextEllipsis(AnchorDrawList *draw_list,
 }
 
 // Render a rectangle shaped with optional rounding and borders
-void ANCHOR::RenderFrame(GfVec2f p_min,
-                         GfVec2f p_max,
+void ANCHOR::RenderFrame(wabi::GfVec2f p_min,
+                         wabi::GfVec2f p_max,
                          AnchorU32 fill_col,
                          bool border,
                          float rounding)
@@ -2626,8 +2626,8 @@ void ANCHOR::RenderFrame(GfVec2f p_min,
   window->DrawList->AddRectFilled(p_min, p_max, fill_col, rounding);
   const float border_size = g.Style.FrameBorderSize;
   if (border && border_size > 0.0f) {
-    window->DrawList->AddRect(p_min + GfVec2f(1, 1),
-                              p_max + GfVec2f(1, 1),
+    window->DrawList->AddRect(p_min + wabi::GfVec2f(1, 1),
+                              p_max + wabi::GfVec2f(1, 1),
                               GetColorU32(AnchorCol_BorderShadow),
                               rounding,
                               0,
@@ -2637,14 +2637,14 @@ void ANCHOR::RenderFrame(GfVec2f p_min,
   }
 }
 
-void ANCHOR::RenderFrameBorder(GfVec2f p_min, GfVec2f p_max, float rounding)
+void ANCHOR::RenderFrameBorder(wabi::GfVec2f p_min, wabi::GfVec2f p_max, float rounding)
 {
   AnchorContext &g = *G_CTX;
   AnchorWindow *window = g.CurrentWindow;
   const float border_size = g.Style.FrameBorderSize;
   if (border_size > 0.0f) {
-    window->DrawList->AddRect(p_min + GfVec2f(1, 1),
-                              p_max + GfVec2f(1, 1),
+    window->DrawList->AddRect(p_min + wabi::GfVec2f(1, 1),
+                              p_max + wabi::GfVec2f(1, 1),
                               GetColorU32(AnchorCol_BorderShadow),
                               rounding,
                               0,
@@ -2671,12 +2671,12 @@ void ANCHOR::RenderNavHighlight(const AnchorBBox &bb, ANCHOR_ID id, AnchorNavHig
   if (flags & AnchorNavHighlightFlags_TypeDefault) {
     const float THICKNESS = 2.0f;
     const float DISTANCE = 3.0f + THICKNESS * 0.5f;
-    display_rect.Expand(GfVec2f(DISTANCE, DISTANCE));
+    display_rect.Expand(wabi::GfVec2f(DISTANCE, DISTANCE));
     bool fully_visible = window->ClipRect.Contains(display_rect);
     if (!fully_visible)
       window->DrawList->PushClipRect(display_rect.Min, display_rect.Max);
-    window->DrawList->AddRect(display_rect.Min + GfVec2f(THICKNESS * 0.5f, THICKNESS * 0.5f),
-                              display_rect.Max - GfVec2f(THICKNESS * 0.5f, THICKNESS * 0.5f),
+    window->DrawList->AddRect(display_rect.Min + wabi::GfVec2f(THICKNESS * 0.5f, THICKNESS * 0.5f),
+                              display_rect.Max - wabi::GfVec2f(THICKNESS * 0.5f, THICKNESS * 0.5f),
                               GetColorU32(AnchorCol_NavHighlight),
                               rounding,
                               0,
@@ -2707,13 +2707,13 @@ AnchorWindow::AnchorWindow(AnchorContext *context, const char *name) : DrawListI
   ID = AnchorHashStr(name);
   IDStack.push_back(ID);
   MoveId = GetID("#MOVE");
-  ScrollTarget = GfVec2f(FLT_MAX, FLT_MAX);
-  ScrollTargetCenterRatio = GfVec2f(0.5f, 0.5f);
+  ScrollTarget = wabi::GfVec2f(FLT_MAX, FLT_MAX);
+  ScrollTargetCenterRatio = wabi::GfVec2f(0.5f, 0.5f);
   AutoFitFramesX = AutoFitFramesY = -1;
   AutoPosLastDirection = AnchorDir_None;
   SetWindowPosAllowFlags = SetWindowSizeAllowFlags = SetWindowCollapsedAllowFlags =
     AnchorCond_Always | AnchorCond_Once | AnchorCond_FirstUseEver | AnchorCond_Appearing;
-  SetWindowPosVal = SetWindowPosPivot = GfVec2f(FLT_MAX, FLT_MAX);
+  SetWindowPosVal = SetWindowPosPivot = wabi::GfVec2f(FLT_MAX, FLT_MAX);
   LastFrameActive = -1;
   LastTimeActive = -1.0f;
   FontWindowScale = 1.0f;
@@ -3125,7 +3125,7 @@ void ANCHOR::ItemFocusable(AnchorWindow *window, ANCHOR_ID id)
   }
 }
 
-float ANCHOR::CalcWrapWidthForPos(const GfVec2f &pos, float wrap_pos_x)
+float ANCHOR::CalcWrapWidthForPos(const wabi::GfVec2f &pos, float wrap_pos_x)
 {
   if (wrap_pos_x < 0.0f)
     return 0.0f;
@@ -3598,7 +3598,7 @@ wabi::HdDriver &ANCHOR::GetPixarDriver()
   return G_CTX->HydraDriver;
 }
 
-wabi::UsdImagingGLEngineSharedPtr ANCHOR::GetEngineGL()
+kraken::UsdImagingGLEngineSharedPtr ANCHOR::GetEngineGL()
 {
   return G_CTX->GLEngine;
 }
@@ -3721,7 +3721,7 @@ void ANCHOR::UpdateMouseMovingWindowNewFrame()
     ANCHOR_ASSERT(g.MovingWindow && g.MovingWindow->RootWindow);
     AnchorWindow *moving_window = g.MovingWindow->RootWindow;
     if (g.IO.MouseDown[0] && IsMousePosValid(&g.IO.MousePos)) {
-      GfVec2f pos = g.IO.MousePos - g.ActiveIdClickOffset;
+      wabi::GfVec2f pos = g.IO.MousePos - g.ActiveIdClickOffset;
       if (moving_window->Pos[0] != pos[0] || moving_window->Pos[1] != pos[1]) {
         MarkIniSettingsDirty(moving_window);
         SetWindowPos(moving_window, pos, AnchorCond_Always);
@@ -3816,7 +3816,7 @@ static void ANCHOR::UpdateMouseInputs()
   if (IsMousePosValid(&g.IO.MousePos) && IsMousePosValid(&g.IO.MousePosPrev))
     g.IO.MouseDelta = g.IO.MousePos - g.IO.MousePosPrev;
   else
-    g.IO.MouseDelta = GfVec2f(0.0f, 0.0f);
+    g.IO.MouseDelta = wabi::GfVec2f(0.0f, 0.0f);
   if (g.IO.MouseDelta[0] != 0.0f || g.IO.MouseDelta[1] != 0.0f)
     g.NavDisableMouseHover = false;
 
@@ -3833,9 +3833,9 @@ static void ANCHOR::UpdateMouseInputs()
     g.IO.MouseDoubleClicked[i] = false;
     if (g.IO.MouseClicked[i]) {
       if ((float)(g.Time - g.IO.MouseClickedTime[i]) < g.IO.MouseDoubleClickTime) {
-        GfVec2f delta_from_click_pos = IsMousePosValid(&g.IO.MousePos) ?
+        wabi::GfVec2f delta_from_click_pos = IsMousePosValid(&g.IO.MousePos) ?
                                          (g.IO.MousePos - g.IO.MouseClickedPos[i]) :
-                                         GfVec2f(0.0f, 0.0f);
+                                         wabi::GfVec2f(0.0f, 0.0f);
         if (AnchorLengthSqr(delta_from_click_pos) <
             g.IO.MouseDoubleClickMaxDist * g.IO.MouseDoubleClickMaxDist)
           g.IO.MouseDoubleClicked[i] = true;
@@ -3847,14 +3847,14 @@ static void ANCHOR::UpdateMouseInputs()
       }
       g.IO.MouseClickedPos[i] = g.IO.MousePos;
       g.IO.MouseDownWasDoubleClick[i] = g.IO.MouseDoubleClicked[i];
-      g.IO.MouseDragMaxDistanceAbs[i] = GfVec2f(0.0f, 0.0f);
+      g.IO.MouseDragMaxDistanceAbs[i] = wabi::GfVec2f(0.0f, 0.0f);
       g.IO.MouseDragMaxDistanceSqr[i] = 0.0f;
     } else if (g.IO.MouseDown[i]) {
       // Maintain the maximum distance we reaching from the initial click position, which is used
       // with dragging threshold
-      GfVec2f delta_from_click_pos = IsMousePosValid(&g.IO.MousePos) ?
+      wabi::GfVec2f delta_from_click_pos = IsMousePosValid(&g.IO.MousePos) ?
                                        (g.IO.MousePos - g.IO.MouseClickedPos[i]) :
-                                       GfVec2f(0.0f, 0.0f);
+                                       wabi::GfVec2f(0.0f, 0.0f);
       g.IO.MouseDragMaxDistanceSqr[i] = AnchorMax(g.IO.MouseDragMaxDistanceSqr[i],
                                                   AnchorLengthSqr(delta_from_click_pos));
       g.IO.MouseDragMaxDistanceAbs[i][0] = AnchorMax(
@@ -3921,7 +3921,7 @@ void ANCHOR::UpdateMouseWheel()
     window->FontWindowScale = new_font_scale;
     if (window == window->RootWindow) {
       /** todo::check_math */
-      const GfVec2f offset = GfVec2f(
+      const wabi::GfVec2f offset = wabi::GfVec2f(
         window->Size[0] * (1.0f - scale) * (g.IO.MousePos[0] - window->Pos[0]) / window->Size[0],
         window->Size[1] * (1.0f - scale) * (g.IO.MousePos[1] - window->Pos[1]) / window->Size[1]);
       SetWindowPos(window, window->Pos + offset, 0);
@@ -4022,7 +4022,7 @@ void ANCHOR::UpdateHoveredWindowAndCaptureFlags()
 {
   AnchorContext &g = *G_CTX;
   g.WindowsHoverPadding = AnchorMax(g.Style.TouchExtraPadding,
-                                    GfVec2f(WINDOWS_HOVER_PADDING, WINDOWS_HOVER_PADDING));
+                                    wabi::GfVec2f(WINDOWS_HOVER_PADDING, WINDOWS_HOVER_PADDING));
 
   // Find the window hovered by mouse:
   // - Child windows can extend beyond the limit of their parent so we need to derive
@@ -4268,7 +4268,7 @@ void ANCHOR::NewFrame()
 
   g.MouseCursor = ANCHOR_StandardCursorDefault;
   g.WantCaptureMouseNextFrame = g.WantCaptureKeyboardNextFrame = g.WantTextInputNextFrame = -1;
-  g.PlatformImePos = GfVec2f(
+  g.PlatformImePos = wabi::GfVec2f(
     1.0f,
     1.0f);  // OS Input Method Editor showing on top-left of our window by default
 
@@ -4332,7 +4332,7 @@ void ANCHOR::NewFrame()
   // with custom flags. This fallback is particularly important as it avoid ANCHOR:: calls from
   // crashing.
   g.WithinFrameScopeWithImplicitWindow = true;
-  SetNextWindowSize(GfVec2f(400, 400), AnchorCond_FirstUseEver);
+  SetNextWindowSize(wabi::GfVec2f(400, 400), AnchorCond_FirstUseEver);
   Begin("Debug##Default");
   ANCHOR_ASSERT(g.CurrentWindow->IsFallbackWindow == true);
 
@@ -4623,8 +4623,8 @@ static void SetupViewportDrawData(AnchorViewportP *viewport,
 //   some frequently called functions which to modify both channels and clipping simultaneously
 //   tend to use the more specialized SetWindowClipRectBeforeSetChannel() to avoid extraneous
 //   updates of underlying AnchorDrawCmds.
-void ANCHOR::PushClipRect(const GfVec2f &clip_rect_min,
-                          const GfVec2f &clip_rect_max,
+void ANCHOR::PushClipRect(const wabi::GfVec2f &clip_rect_min,
+                          const wabi::GfVec2f &clip_rect_max,
                           bool intersect_with_current_clip_rect)
 {
   AnchorWindow *window = GetCurrentWindow();
@@ -4800,8 +4800,8 @@ void ANCHOR::Render()
 }
 
 // Calculate text size. Text can be multi-line. Optionally ignore text after a ## marker.
-// CalcTextSize("") should return GfVec2f(0.0f, g.FontSize)
-GfVec2f ANCHOR::CalcTextSize(const char *text,
+// CalcTextSize("") should return wabi::GfVec2f(0.0f, g.FontSize)
+wabi::GfVec2f ANCHOR::CalcTextSize(const char *text,
                              const char *text_end,
                              bool hide_text_after_double_hash,
                              float wrap_width)
@@ -4817,8 +4817,8 @@ GfVec2f ANCHOR::CalcTextSize(const char *text,
   AnchorFont *font = g.Font;
   const float font_size = g.FontSize;
   if (text == text_display_end)
-    return GfVec2f(0.0f, font_size);
-  GfVec2f text_size =
+    return wabi::GfVec2f(0.0f, font_size);
+  wabi::GfVec2f text_size =
     font->CalcTextSizeA(font_size, FLT_MAX, wrap_width, text, text_display_end, NULL);
 
   // Round
@@ -4845,8 +4845,8 @@ static void FindHoveredWindow()
   if (g.MovingWindow && !(g.MovingWindow->Flags & AnchorWindowFlags_NoMouseInputs))
     hovered_window = g.MovingWindow;
 
-  GfVec2f padding_regular = g.Style.TouchExtraPadding;
-  GfVec2f padding_for_resize = g.IO.ConfigWindowsResizeFromEdges ? g.WindowsHoverPadding :
+  wabi::GfVec2f padding_regular = g.Style.TouchExtraPadding;
+  wabi::GfVec2f padding_for_resize = g.IO.ConfigWindowsResizeFromEdges ? g.WindowsHoverPadding :
                                                                    padding_regular;
   for (int i = g.Windows.Size - 1; i >= 0; i--) {
     AnchorWindow *window = g.Windows[i];
@@ -4870,9 +4870,9 @@ static void FindHoveredWindow()
     // FIXME: Consider generalizing hit-testing override (with more generic data, callback, etc.)
     // (#1512)
     if (window->HitTestHoleSize[0] != 0) {
-      GfVec2f hole_pos(window->Pos[0] + (float)window->HitTestHoleOffset[0],
+      wabi::GfVec2f hole_pos(window->Pos[0] + (float)window->HitTestHoleOffset[0],
                        window->Pos[1] + (float)window->HitTestHoleOffset[1]);
-      GfVec2f hole_size((float)window->HitTestHoleSize[0], (float)window->HitTestHoleSize[1]);
+      wabi::GfVec2f hole_size((float)window->HitTestHoleSize[0], (float)window->HitTestHoleSize[1]);
       if (AnchorBBox(hole_pos, hole_pos + hole_size).Contains(g.IO.MousePos))
         continue;
     }
@@ -4894,7 +4894,7 @@ static void FindHoveredWindow()
 // Test if mouse cursor is hovering given rectangle
 // NB- Rectangle is clipped by our current clip setting
 // NB- Expand the rectangle to be generous on imprecise inputs systems (g.Style.TouchExtraPadding)
-bool ANCHOR::IsMouseHoveringRect(const GfVec2f &r_min, const GfVec2f &r_max, bool clip)
+bool ANCHOR::IsMouseHoveringRect(const wabi::GfVec2f &r_min, const wabi::GfVec2f &r_max, bool clip)
 {
   AnchorContext &g = *G_CTX;
 
@@ -5042,7 +5042,7 @@ bool ANCHOR::IsMouseDragging(AnchorMouseButton button, float lock_threshold)
   return IsMouseDragPastThreshold(button, lock_threshold);
 }
 
-GfVec2f ANCHOR::GetMousePos()
+wabi::GfVec2f ANCHOR::GetMousePos()
 {
   AnchorContext &g = *G_CTX;
   return g.IO.MousePos;
@@ -5050,7 +5050,7 @@ GfVec2f ANCHOR::GetMousePos()
 
 // NB: prefer to call right after BeginPopup(). At the time Selectable/MenuItem is activated, the
 // popup is already closed!
-GfVec2f ANCHOR::GetMousePosOnOpeningCurrentPopup()
+wabi::GfVec2f ANCHOR::GetMousePosOnOpeningCurrentPopup()
 {
   AnchorContext &g = *G_CTX;
   if (g.BeginPopupStack.Size > 0)
@@ -5058,15 +5058,15 @@ GfVec2f ANCHOR::GetMousePosOnOpeningCurrentPopup()
   return g.IO.MousePos;
 }
 
-// We typically use GfVec2f(-FLT_MAX,-FLT_MAX) to denote an invalid mouse position.
-bool ANCHOR::IsMousePosValid(const GfVec2f *mouse_pos)
+// We typically use wabi::GfVec2f(-FLT_MAX,-FLT_MAX) to denote an invalid mouse position.
+bool ANCHOR::IsMousePosValid(const wabi::GfVec2f *mouse_pos)
 {
   // The assert is only to silence a false-positive in XCode Static Analysis.
   // Because G_CTX is not dereferenced in every code path, the static analyzer assume that it may
   // be NULL (which it doesn't for other functions).
   ANCHOR_ASSERT(G_CTX != NULL);
   const float MOUSE_INVALID = -256000.0f;
-  GfVec2f p = mouse_pos ? *mouse_pos : G_CTX->IO.MousePos;
+  wabi::GfVec2f p = mouse_pos ? *mouse_pos : G_CTX->IO.MousePos;
   return p[0] >= MOUSE_INVALID && p[1] >= MOUSE_INVALID;
 }
 
@@ -5083,7 +5083,7 @@ bool ANCHOR::IsAnyMouseDown()
 // just released. This is locked and return 0.0f until the mouse moves past a distance threshold at
 // least once. NB: This is only valid if IsMousePosValid(). backends in theory should always keep
 // mouse position valid when dragging even outside the client window.
-GfVec2f ANCHOR::GetMouseDragDelta(AnchorMouseButton button, float lock_threshold)
+wabi::GfVec2f ANCHOR::GetMouseDragDelta(AnchorMouseButton button, float lock_threshold)
 {
   AnchorContext &g = *G_CTX;
   ANCHOR_ASSERT(button >= 0 && button < ANCHOR_ARRAYSIZE(g.IO.MouseDown));
@@ -5093,7 +5093,7 @@ GfVec2f ANCHOR::GetMouseDragDelta(AnchorMouseButton button, float lock_threshold
     if (g.IO.MouseDragMaxDistanceSqr[button] >= lock_threshold * lock_threshold)
       if (IsMousePosValid(&g.IO.MousePos) && IsMousePosValid(&g.IO.MouseClickedPos[button]))
         return g.IO.MousePos - g.IO.MouseClickedPos[button];
-  return GfVec2f(0.0f, 0.0f);
+  return wabi::GfVec2f(0.0f, 0.0f);
 }
 
 void ANCHOR::ResetMouseDragDelta(AnchorMouseButton button)
@@ -5249,19 +5249,19 @@ void ANCHOR::SetItemUsingMouseWheel()
     g.ActiveIdUsingMouseWheel = true;
 }
 
-GfVec2f ANCHOR::GetItemRectMin()
+wabi::GfVec2f ANCHOR::GetItemRectMin()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->DC.LastItemRect.Min;
 }
 
-GfVec2f ANCHOR::GetItemRectMax()
+wabi::GfVec2f ANCHOR::GetItemRectMax()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->DC.LastItemRect.Max;
 }
 
-GfVec2f ANCHOR::GetItemRectSize()
+wabi::GfVec2f ANCHOR::GetItemRectSize()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->DC.LastItemRect.GetSize();
@@ -5269,7 +5269,7 @@ GfVec2f ANCHOR::GetItemRectSize()
 
 bool ANCHOR::BeginChildEx(const char *name,
                           ANCHOR_ID id,
-                          const GfVec2f &size_arg,
+                          const wabi::GfVec2f &size_arg,
                           bool border,
                           AnchorWindowFlags flags)
 {
@@ -5281,8 +5281,8 @@ bool ANCHOR::BeginChildEx(const char *name,
   flags |= (parent_window->Flags & AnchorWindowFlags_NoMove);  // Inherit the NoMove flag
 
   // Size
-  const GfVec2f content_avail = GetContentRegionAvail();
-  GfVec2f size = AnchorFloor(size_arg);
+  const wabi::GfVec2f content_avail = GetContentRegionAvail();
+  wabi::GfVec2f size = AnchorFloor(size_arg);
   const int auto_fit_axises = ((size[0] == 0.0f) ? (1 << ANCHOR_Axis_X) : 0x00) |
                               ((size[1] == 0.0f) ? (1 << ANCHOR_Axis_Y) : 0x00);
   if (size[0] <= 0.0f)
@@ -5336,7 +5336,7 @@ bool ANCHOR::BeginChildEx(const char *name,
 }
 
 bool ANCHOR::BeginChild(const char *str_id,
-                        const GfVec2f &size_arg,
+                        const wabi::GfVec2f &size_arg,
                         bool border,
                         AnchorWindowFlags extra_flags)
 {
@@ -5345,7 +5345,7 @@ bool ANCHOR::BeginChild(const char *str_id,
 }
 
 bool ANCHOR::BeginChild(ANCHOR_ID id,
-                        const GfVec2f &size_arg,
+                        const wabi::GfVec2f &size_arg,
                         bool border,
                         AnchorWindowFlags extra_flags)
 {
@@ -5366,7 +5366,7 @@ void ANCHOR::EndChild()
   if (window->BeginCount > 1) {
     End();
   } else {
-    GfVec2f sz = window->Size;
+    wabi::GfVec2f sz = window->Size;
     if (window->AutoFitChildAxises &
         (1 << ANCHOR_Axis_X))  // Arbitrary minimum zero-ish child size of 4.0f
                                // causes less trouble than a 0.0f
@@ -5386,7 +5386,7 @@ void ANCHOR::EndChild()
       // When browsing a window that has no activable items (scroll only) we keep a highlight on
       // the child
       if (window->DC.NavLayersActiveMask == 0 && window == g.NavWindow)
-        RenderNavHighlight(AnchorBBox(bb.Min - GfVec2f(2, 2), bb.Max + GfVec2f(2, 2)),
+        RenderNavHighlight(AnchorBBox(bb.Min - wabi::GfVec2f(2, 2), bb.Max + wabi::GfVec2f(2, 2)),
                            g.NavId,
                            AnchorNavHighlightFlags_TypeThin);
     } else {
@@ -5401,7 +5401,7 @@ void ANCHOR::EndChild()
 }
 
 // Helper to create a child window / scrolling region that looks like a normal widget frame.
-bool ANCHOR::BeginChildFrame(ANCHOR_ID id, const GfVec2f &size, AnchorWindowFlags extra_flags)
+bool ANCHOR::BeginChildFrame(ANCHOR_ID id, const wabi::GfVec2f &size, AnchorWindowFlags extra_flags)
 {
   AnchorContext &g = *G_CTX;
   const AnchorStyle &style = g.Style;
@@ -5448,9 +5448,9 @@ AnchorWindow *ANCHOR::FindWindowByName(const char *name)
 
 static void ApplyWindowSettings(AnchorWindow *window, AnchorWindowSettings *settings)
 {
-  window->Pos = AnchorFloor(GfVec2f(settings->Pos[0], settings->Pos[1]));
+  window->Pos = AnchorFloor(wabi::GfVec2f(settings->Pos[0], settings->Pos[1]));
   if (settings->Size[0] > 0 && settings->Size[1] > 0)
-    window->Size = window->SizeFull = AnchorFloor(GfVec2f(settings->Size[0], settings->Size[1]));
+    window->Size = window->SizeFull = AnchorFloor(wabi::GfVec2f(settings->Size[0], settings->Size[1]));
   window->Collapsed = settings->Collapsed;
 }
 
@@ -5467,7 +5467,7 @@ static AnchorWindow *CreateNewWindow(const char *name, AnchorWindowFlags flags)
   // Default/arbitrary window position. Use SetNextWindowPos() with the appropriate condition flag
   // to change the initial position of a window.
   const AnchorViewport *main_viewport = ANCHOR::GetMainViewport();
-  window->Pos = main_viewport->Pos + GfVec2f(60, 60);
+  window->Pos = main_viewport->Pos + wabi::GfVec2f(60, 60);
 
   // User can disable loading and saving of settings. Tooltip and child windows also don't store
   // settings.
@@ -5504,10 +5504,10 @@ static AnchorWindow *CreateNewWindow(const char *name, AnchorWindowFlags flags)
   return window;
 }
 
-static GfVec2f CalcWindowSizeAfterConstraint(AnchorWindow *window, const GfVec2f &size_desired)
+static wabi::GfVec2f CalcWindowSizeAfterConstraint(AnchorWindow *window, const wabi::GfVec2f &size_desired)
 {
   AnchorContext &g = *G_CTX;
-  GfVec2f new_size = size_desired;
+  wabi::GfVec2f new_size = size_desired;
   if (g.NextWindowData.Flags & AnchorNextWindowDataFlags_HasSizeConstraint) {
     // Using -1,-1 on either X/Y axis to preserve the current size.
     AnchorBBox cr = g.NextWindowData.SizeConstraintRect;
@@ -5546,8 +5546,8 @@ static GfVec2f CalcWindowSizeAfterConstraint(AnchorWindow *window, const GfVec2f
 }
 
 static void CalcWindowContentSizes(AnchorWindow *window,
-                                   GfVec2f *content_size_current,
-                                   GfVec2f *content_size_ideal)
+                                   wabi::GfVec2f *content_size_current,
+                                   wabi::GfVec2f *content_size_ideal)
 {
   bool preserve_old_content_sizes = false;
   if (window->Collapsed && window->AutoFitFramesX <= 0 && window->AutoFitFramesY <= 0)
@@ -5581,13 +5581,13 @@ static void CalcWindowContentSizes(AnchorWindow *window,
                                                  window->DC.CursorStartPos[1]);
 }
 
-static GfVec2f CalcWindowAutoFitSize(AnchorWindow *window, const GfVec2f &size_contents)
+static wabi::GfVec2f CalcWindowAutoFitSize(AnchorWindow *window, const wabi::GfVec2f &size_contents)
 {
   AnchorContext &g = *G_CTX;
   AnchorStyle &style = g.Style;
   const float decoration_up_height = window->TitleBarHeight() + window->MenuBarHeight();
-  GfVec2f size_pad = window->WindowPadding * 2.0f;
-  GfVec2f size_desired = size_contents + size_pad + GfVec2f(0.0f, decoration_up_height);
+  wabi::GfVec2f size_pad = window->WindowPadding * 2.0f;
+  wabi::GfVec2f size_desired = size_contents + size_pad + wabi::GfVec2f(0.0f, decoration_up_height);
   if (window->Flags & AnchorWindowFlags_Tooltip) {
     // Tooltip always resize
     return size_desired;
@@ -5595,16 +5595,16 @@ static GfVec2f CalcWindowAutoFitSize(AnchorWindow *window, const GfVec2f &size_c
     // Maximum window size is determined by the viewport size or monitor size
     const bool is_popup = (window->Flags & AnchorWindowFlags_Popup) != 0;
     const bool is_menu = (window->Flags & AnchorWindowFlags_ChildMenu) != 0;
-    GfVec2f size_min = style.WindowMinSize;
+    wabi::GfVec2f size_min = style.WindowMinSize;
     if (is_popup || is_menu)  // Popups and menus bypass style.WindowMinSize by default, but we
                               // give then a non-zero minimum size to facilitate understanding
                               // problematic cases (e.g. empty popups)
-      size_min = AnchorMin(size_min, GfVec2f(4.0f, 4.0f));
+      size_min = AnchorMin(size_min, wabi::GfVec2f(4.0f, 4.0f));
 
     // FIXME-VIEWPORT-WORKAREA: May want to use GetWorkSize() instead of Size depending on the type
     // of windows?
-    GfVec2f avail_size = ANCHOR::GetMainViewport()->Size;
-    GfVec2f size_auto_fit = AnchorClamp(
+    wabi::GfVec2f avail_size = ANCHOR::GetMainViewport()->Size;
+    wabi::GfVec2f size_auto_fit = AnchorClamp(
       size_desired,
       size_min,
       AnchorMax(size_min, avail_size - style.DisplaySafeAreaPadding * 2.0f));
@@ -5612,7 +5612,7 @@ static GfVec2f CalcWindowAutoFitSize(AnchorWindow *window, const GfVec2f &size_c
     // When the window cannot fit all contents (either because of constraints, either because
     // screen is too small), we are growing the size on the other axis to compensate for expected
     // scrollbar. FIXME: Might turn bigger than ViewportSize-WindowPadding.
-    GfVec2f size_auto_fit_after_constraint = CalcWindowSizeAfterConstraint(window, size_auto_fit);
+    wabi::GfVec2f size_auto_fit_after_constraint = CalcWindowSizeAfterConstraint(window, size_auto_fit);
     bool will_have_scrollbar_x = (size_auto_fit_after_constraint[0] - size_pad[0] - 0.0f <
                                     size_contents[0] &&
                                   !(window->Flags & AnchorWindowFlags_NoScrollbar) &&
@@ -5631,13 +5631,13 @@ static GfVec2f CalcWindowAutoFitSize(AnchorWindow *window, const GfVec2f &size_c
   }
 }
 
-GfVec2f ANCHOR::CalcWindowNextAutoFitSize(AnchorWindow *window)
+wabi::GfVec2f ANCHOR::CalcWindowNextAutoFitSize(AnchorWindow *window)
 {
-  GfVec2f size_contents_current;
-  GfVec2f size_contents_ideal;
+  wabi::GfVec2f size_contents_current;
+  wabi::GfVec2f size_contents_ideal;
   CalcWindowContentSizes(window, &size_contents_current, &size_contents_ideal);
-  GfVec2f size_auto_fit = CalcWindowAutoFitSize(window, size_contents_ideal);
-  GfVec2f size_final = CalcWindowSizeAfterConstraint(window, size_auto_fit);
+  wabi::GfVec2f size_auto_fit = CalcWindowAutoFitSize(window, size_contents_ideal);
+  wabi::GfVec2f size_final = CalcWindowSizeAfterConstraint(window, size_auto_fit);
   return size_final;
 }
 
@@ -5651,19 +5651,19 @@ static AnchorCol GetWindowBgColorIdxFromFlags(AnchorWindowFlags flags)
 }
 
 static void CalcResizePosSizeFromAnyCorner(AnchorWindow *window,
-                                           const GfVec2f &corner_target,
-                                           const GfVec2f &corner_norm,
-                                           GfVec2f *out_pos,
-                                           GfVec2f *out_size)
+                                           const wabi::GfVec2f &corner_target,
+                                           const wabi::GfVec2f &corner_norm,
+                                           wabi::GfVec2f *out_pos,
+                                           wabi::GfVec2f *out_size)
 {
-  GfVec2f pos_min = AnchorLerp(corner_target,
+  wabi::GfVec2f pos_min = AnchorLerp(corner_target,
                                window->Pos,
                                corner_norm);  // Expected window upper-left
-  GfVec2f pos_max = AnchorLerp(window->Pos + window->Size,
+  wabi::GfVec2f pos_max = AnchorLerp(window->Pos + window->Size,
                                corner_target,
                                corner_norm);  // Expected window lower-right
-  GfVec2f size_expected = pos_max - pos_min;
-  GfVec2f size_constrained = CalcWindowSizeAfterConstraint(window, size_expected);
+  wabi::GfVec2f size_expected = pos_max - pos_min;
+  wabi::GfVec2f size_constrained = CalcWindowSizeAfterConstraint(window, size_expected);
   *out_pos = pos_min;
   if (corner_norm[0] == 0.0f)
     out_pos->data()[0] -= (size_constrained[0] - size_expected[0]);
@@ -5675,29 +5675,29 @@ static void CalcResizePosSizeFromAnyCorner(AnchorWindow *window,
 // Data for resizing from corner
 struct ANCHORResizeGripDef
 {
-  GfVec2f CornerPosN;
-  GfVec2f InnerDir;
+  wabi::GfVec2f CornerPosN;
+  wabi::GfVec2f InnerDir;
   int AngleMin12, AngleMax12;
 };
 static const ANCHORResizeGripDef resize_grip_def[4] = {
-  {GfVec2f(1, 1), GfVec2f(-1, -1), 0, 3 }, // Lower-right
-  {GfVec2f(0, 1), GfVec2f(+1, -1), 3, 6 }, // Lower-left
-  {GfVec2f(0, 0), GfVec2f(+1, +1), 6, 9 }, // Upper-left (Unused)
-  {GfVec2f(1, 0), GfVec2f(-1, +1), 9, 12}  // Upper-right (Unused)
+  {wabi::GfVec2f(1, 1), wabi::GfVec2f(-1, -1), 0, 3 }, // Lower-right
+  {wabi::GfVec2f(0, 1), wabi::GfVec2f(+1, -1), 3, 6 }, // Lower-left
+  {wabi::GfVec2f(0, 0), wabi::GfVec2f(+1, +1), 6, 9 }, // Upper-left (Unused)
+  {wabi::GfVec2f(1, 0), wabi::GfVec2f(-1, +1), 9, 12}  // Upper-right (Unused)
 };
 
 // Data for resizing from borders
 struct ANCHORResizeBorderDef
 {
-  GfVec2f InnerDir;
-  GfVec2f SegmentN1, SegmentN2;
+  wabi::GfVec2f InnerDir;
+  wabi::GfVec2f SegmentN1, SegmentN2;
   float OuterAngle;
 };
 static const ANCHORResizeBorderDef resize_border_def[4] = {
-  {GfVec2f(+1, 0),  GfVec2f(0, 1), GfVec2f(0, 0), IM_PI * 1.00f}, // Left
-  {GfVec2f(-1, 0),  GfVec2f(1, 0), GfVec2f(1, 1), IM_PI * 0.00f}, // Right
-  {GfVec2f(0,  +1), GfVec2f(0, 0), GfVec2f(1, 0), IM_PI * 1.50f}, // Up
-  {GfVec2f(0,  -1), GfVec2f(1, 1), GfVec2f(0, 1), IM_PI * 0.50f}  // Down
+  {wabi::GfVec2f(+1, 0),  wabi::GfVec2f(0, 1), wabi::GfVec2f(0, 0), IM_PI * 1.00f}, // Left
+  {wabi::GfVec2f(-1, 0),  wabi::GfVec2f(1, 0), wabi::GfVec2f(1, 1), IM_PI * 0.00f}, // Right
+  {wabi::GfVec2f(0,  +1), wabi::GfVec2f(0, 0), wabi::GfVec2f(1, 0), IM_PI * 1.50f}, // Up
+  {wabi::GfVec2f(0,  -1), wabi::GfVec2f(1, 1), wabi::GfVec2f(0, 1), IM_PI * 0.50f}  // Down
 };
 
 static AnchorBBox GetResizeBorderRect(AnchorWindow *window,
@@ -5707,7 +5707,7 @@ static AnchorBBox GetResizeBorderRect(AnchorWindow *window,
 {
   AnchorBBox rect = window->Rect();
   if (thickness == 0.0f)
-    rect.Max -= GfVec2f(1, 1);
+    rect.Max -= wabi::GfVec2f(1, 1);
   if (border_n == AnchorDir_Left) {
     return AnchorBBox(rect.Min[0] - thickness,
                       rect.Min[1] + perp_padding,
@@ -5760,7 +5760,7 @@ ANCHOR_ID ANCHOR::GetWindowResizeBorderID(AnchorWindow *window, AnchorDir dir)
 // Handle resize for: Resize Grips, Borders, Gamepad
 // Return true when using auto-fit (double click on resize grip)
 static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
-                                             const GfVec2f &size_auto_fit,
+                                             const wabi::GfVec2f &size_auto_fit,
                                              int *border_held,
                                              int resize_grip_count,
                                              AnchorU32 resize_grip_col[4],
@@ -5784,8 +5784,8 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
   const float grip_hover_outer_size = g.IO.ConfigWindowsResizeFromEdges ? WINDOWS_HOVER_PADDING :
                                                                           0.0f;
 
-  GfVec2f pos_target(FLT_MAX, FLT_MAX);
-  GfVec2f size_target(FLT_MAX, FLT_MAX);
+  wabi::GfVec2f pos_target(FLT_MAX, FLT_MAX);
+  wabi::GfVec2f size_target(FLT_MAX, FLT_MAX);
 
   // Resize grips and borders are on layer 1
   window->DC.NavLayerCurrent = ANCHORNavLayer_Menu;
@@ -5794,7 +5794,7 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
   PushID("#RESIZE");
   for (int resize_grip_n = 0; resize_grip_n < resize_grip_count; resize_grip_n++) {
     const ANCHORResizeGripDef &def = resize_grip_def[resize_grip_n];
-    const GfVec2f corner = AnchorLerp(window->Pos, window->Pos + window->Size, def.CornerPosN);
+    const wabi::GfVec2f corner = AnchorLerp(window->Pos, window->Pos + window->Size, def.CornerPosN);
 
     // Using the FlattenChilds button flag we make the resize button accessible even if we are
     // hovering over a child window
@@ -5826,11 +5826,11 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
       // Resize from any of the four corners
       // We don't use an incremental MouseDelta but rather compute an absolute target size based on
       // mouse position
-      GfVec2f clamp_min = GfVec2f(def.CornerPosN[0] == 1.0f ? visibility_rect.Min[0] : -FLT_MAX,
+      wabi::GfVec2f clamp_min = wabi::GfVec2f(def.CornerPosN[0] == 1.0f ? visibility_rect.Min[0] : -FLT_MAX,
                                   def.CornerPosN[1] == 1.0f ? visibility_rect.Min[1] : -FLT_MAX);
-      GfVec2f clamp_max = GfVec2f(def.CornerPosN[0] == 0.0f ? visibility_rect.Max[0] : +FLT_MAX,
+      wabi::GfVec2f clamp_max = wabi::GfVec2f(def.CornerPosN[0] == 0.0f ? visibility_rect.Max[0] : +FLT_MAX,
                                   def.CornerPosN[1] == 0.0f ? visibility_rect.Max[1] : +FLT_MAX);
-      GfVec2f corner_target =
+      wabi::GfVec2f corner_target =
         g.IO.MousePos - g.ActiveIdClickOffset +
         AnchorLerp(def.InnerDir * grip_hover_outer_size,
                    def.InnerDir * -grip_hover_inner_size,
@@ -5871,11 +5871,11 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
         *border_held = border_n;
     }
     if (held) {
-      GfVec2f clamp_min(border_n == AnchorDir_Right ? visibility_rect.Min[0] : -FLT_MAX,
+      wabi::GfVec2f clamp_min(border_n == AnchorDir_Right ? visibility_rect.Min[0] : -FLT_MAX,
                         border_n == AnchorDir_Down ? visibility_rect.Min[1] : -FLT_MAX);
-      GfVec2f clamp_max(border_n == AnchorDir_Left ? visibility_rect.Max[0] : +FLT_MAX,
+      wabi::GfVec2f clamp_max(border_n == AnchorDir_Left ? visibility_rect.Max[0] : +FLT_MAX,
                         border_n == AnchorDir_Up ? visibility_rect.Max[1] : +FLT_MAX);
-      GfVec2f border_target = window->Pos;
+      wabi::GfVec2f border_target = window->Pos;
       border_target[axis] = g.IO.MousePos[axis] - g.ActiveIdClickOffset[axis] +
                             WINDOWS_HOVER_PADDING;
       border_target = AnchorClamp(border_target, clamp_min, clamp_max);
@@ -5893,7 +5893,7 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
 
   // Navigation resize (keyboard/gamepad)
   if (g.NavWindowingTarget && g.NavWindowingTarget->RootWindow == window) {
-    GfVec2f nav_resize_delta;
+    wabi::GfVec2f nav_resize_delta;
     if (g.NavInputSource == ANCHORInputSource_Keyboard && g.IO.KeyShift)
       nav_resize_delta = GetNavInputAmount2d(AnchorNavDirSourceFlags_Keyboard,
                                              ANCHOR_InputReadMode_Down);
@@ -5933,7 +5933,7 @@ static bool ANCHOR::UpdateWindowManualResize(AnchorWindow *window,
 static inline void ClampWindowRect(AnchorWindow *window, const AnchorBBox &visibility_rect)
 {
   AnchorContext &g = *G_CTX;
-  GfVec2f size_for_clamping = window->Size;
+  wabi::GfVec2f size_for_clamping = window->Size;
   if (g.IO.ConfigWindowsMoveFromTitleBarOnly && !(window->Flags & AnchorWindowFlags_NoTitleBar))
     size_for_clamping[1] = window->TitleBarHeight();
   window->Pos = AnchorClamp(window->Pos,
@@ -5959,12 +5959,12 @@ static void ANCHOR::RenderWindowOuterBorders(AnchorWindow *window)
     const ANCHORResizeBorderDef &def = resize_border_def[border_held];
     AnchorBBox border_r = GetResizeBorderRect(window, border_held, rounding, 0.0f);
     window->DrawList->PathArcTo(AnchorLerp(border_r.Min, border_r.Max, def.SegmentN1) +
-                                  GfVec2f(0.5f, 0.5f) + def.InnerDir * rounding,
+                                  wabi::GfVec2f(0.5f, 0.5f) + def.InnerDir * rounding,
                                 rounding,
                                 def.OuterAngle - IM_PI * 0.25f,
                                 def.OuterAngle);
     window->DrawList->PathArcTo(AnchorLerp(border_r.Min, border_r.Max, def.SegmentN2) +
-                                  GfVec2f(0.5f, 0.5f) + def.InnerDir * rounding,
+                                  wabi::GfVec2f(0.5f, 0.5f) + def.InnerDir * rounding,
                                 rounding,
                                 def.OuterAngle,
                                 def.OuterAngle + IM_PI * 0.25f);
@@ -5974,8 +5974,8 @@ static void ANCHOR::RenderWindowOuterBorders(AnchorWindow *window)
   }
   if (g.Style.FrameBorderSize > 0 && !(window->Flags & AnchorWindowFlags_NoTitleBar)) {
     float y = window->Pos[1] + window->TitleBarHeight() - 1;
-    window->DrawList->AddLine(GfVec2f(window->Pos[0] + border_size, y),
-                              GfVec2f(window->Pos[0] + window->Size[0] - border_size, y),
+    window->DrawList->AddLine(wabi::GfVec2f(window->Pos[0] + border_size, y),
+                              wabi::GfVec2f(window->Pos[0] + window->Size[0] - border_size, y),
                               GetColorU32(AnchorCol_Border),
                               g.Style.FrameBorderSize);
   }
@@ -6026,7 +6026,7 @@ void ANCHOR::RenderWindowDecorations(AnchorWindow *window,
         bg_col = (bg_col & ~ANCHOR_COL32_A_MASK) |
                  (IM_F32_TO_INT8_SAT(alpha) << ANCHOR_COL32_A_SHIFT);
       window->DrawList->AddRectFilled(
-        window->Pos + GfVec2f(0, window->TitleBarHeight()),
+        window->Pos + wabi::GfVec2f(0, window->TitleBarHeight()),
         window->Pos + window->Size,
         bg_col,
         window_rounding,
@@ -6050,8 +6050,8 @@ void ANCHOR::RenderWindowDecorations(AnchorWindow *window,
       menu_bar_rect.ClipWith(
         window->Rect());  // Soft clipping, in particular child window don't have minimum size
                           // covering the menu bar so this is useful for them.
-      window->DrawList->AddRectFilled(menu_bar_rect.Min + GfVec2f(window_border_size, 0),
-                                      menu_bar_rect.Max - GfVec2f(window_border_size, 0),
+      window->DrawList->AddRectFilled(menu_bar_rect.Min + wabi::GfVec2f(window_border_size, 0),
+                                      menu_bar_rect.Max - wabi::GfVec2f(window_border_size, 0),
                                       GetColorU32(AnchorCol_MenuBarBg),
                                       (flags & AnchorWindowFlags_NoTitleBar) ? window_rounding :
                                                                                0.0f,
@@ -6073,28 +6073,28 @@ void ANCHOR::RenderWindowDecorations(AnchorWindow *window,
     if (!(flags & AnchorWindowFlags_NoResize)) {
       for (int resize_grip_n = 0; resize_grip_n < resize_grip_count; resize_grip_n++) {
         const ANCHORResizeGripDef &grip = resize_grip_def[resize_grip_n];
-        const GfVec2f corner = AnchorLerp(window->Pos,
+        const wabi::GfVec2f corner = AnchorLerp(window->Pos,
                                           window->Pos + window->Size,
                                           grip.CornerPosN);
         /** todo::check_math */
-        window->DrawList->PathLineTo(GfVec2f(
+        window->DrawList->PathLineTo(wabi::GfVec2f(
           corner[0] + grip.InnerDir[0] * ((resize_grip_n & 1) ?
-                                            GfVec2f(window_border_size, resize_grip_draw_size)[0] :
-                                            GfVec2f(resize_grip_draw_size, window_border_size)[0]),
+                                            wabi::GfVec2f(window_border_size, resize_grip_draw_size)[0] :
+                                            wabi::GfVec2f(resize_grip_draw_size, window_border_size)[0]),
           corner[1] +
             grip.InnerDir[1] * ((resize_grip_n & 1) ?
-                                  GfVec2f(window_border_size, resize_grip_draw_size)[1] :
-                                  GfVec2f(resize_grip_draw_size, window_border_size)[1])));
-        window->DrawList->PathLineTo(GfVec2f(
+                                  wabi::GfVec2f(window_border_size, resize_grip_draw_size)[1] :
+                                  wabi::GfVec2f(resize_grip_draw_size, window_border_size)[1])));
+        window->DrawList->PathLineTo(wabi::GfVec2f(
           corner[0] + grip.InnerDir[0] * ((resize_grip_n & 1) ?
-                                            GfVec2f(resize_grip_draw_size, window_border_size)[0] :
-                                            GfVec2f(window_border_size, resize_grip_draw_size)[0]),
+                                            wabi::GfVec2f(resize_grip_draw_size, window_border_size)[0] :
+                                            wabi::GfVec2f(window_border_size, resize_grip_draw_size)[0]),
           corner[1] +
             grip.InnerDir[1] * ((resize_grip_n & 1) ?
-                                  GfVec2f(resize_grip_draw_size, window_border_size)[1] :
-                                  GfVec2f(window_border_size, resize_grip_draw_size)[1])));
+                                  wabi::GfVec2f(resize_grip_draw_size, window_border_size)[1] :
+                                  wabi::GfVec2f(window_border_size, resize_grip_draw_size)[1])));
         window->DrawList->PathArcToFast(
-          GfVec2f(corner[0] + grip.InnerDir[0] * (window_rounding + window_border_size),
+          wabi::GfVec2f(corner[0] + grip.InnerDir[0] * (window_rounding + window_border_size),
                   corner[1] + grip.InnerDir[1] * (window_rounding + window_border_size)),
           window_rounding,
           grip.AngleMin12,
@@ -6133,20 +6133,20 @@ void ANCHOR::RenderWindowTitleBarContents(AnchorWindow *window,
   float pad_l = style.FramePadding[0];
   float pad_r = style.FramePadding[0];
   float button_sz = g.FontSize;
-  GfVec2f close_button_pos;
-  GfVec2f collapse_button_pos;
+  wabi::GfVec2f close_button_pos;
+  wabi::GfVec2f collapse_button_pos;
   if (has_close_button) {
     pad_r += button_sz;
-    close_button_pos = GfVec2f(title_bar_rect.Max[0] - pad_r - style.FramePadding[0],
+    close_button_pos = wabi::GfVec2f(title_bar_rect.Max[0] - pad_r - style.FramePadding[0],
                                title_bar_rect.Min[1]);
   }
   if (has_collapse_button && style.WindowMenuButtonPosition == AnchorDir_Right) {
     pad_r += button_sz;
-    collapse_button_pos = GfVec2f(title_bar_rect.Max[0] - pad_r - style.FramePadding[0],
+    collapse_button_pos = wabi::GfVec2f(title_bar_rect.Max[0] - pad_r - style.FramePadding[0],
                                   title_bar_rect.Min[1]);
   }
   if (has_collapse_button && style.WindowMenuButtonPosition == AnchorDir_Left) {
-    collapse_button_pos = GfVec2f(title_bar_rect.Min[0] + pad_l - style.FramePadding[0],
+    collapse_button_pos = wabi::GfVec2f(title_bar_rect.Min[0] + pad_l - style.FramePadding[0],
                                   title_bar_rect.Min[1]);
     pad_l += button_sz;
   }
@@ -6174,7 +6174,7 @@ void ANCHOR::RenderWindowTitleBarContents(AnchorWindow *window,
   const float marker_size_x = (flags & AnchorWindowFlags_UnsavedDocument) ?
                                 CalcTextSize(UNSAVED_DOCUMENT_MARKER, NULL, false)[0] :
                                 0.0f;
-  const GfVec2f text_size = CalcTextSize(name, NULL, true) + GfVec2f(marker_size_x, 0.0f);
+  const wabi::GfVec2f text_size = CalcTextSize(name, NULL, true) + wabi::GfVec2f(marker_size_x, 0.0f);
 
   // As a nice touch we try to ensure that centered title text doesn't get affected by visibility
   // of Close/Collapse button, while uncentered title text will still reach edges correctly.
@@ -6211,19 +6211,19 @@ void ANCHOR::RenderWindowTitleBarContents(AnchorWindow *window,
                     style.WindowTitleAlign,
                     &clip_r);
   if (flags & AnchorWindowFlags_UnsavedDocument) {
-    GfVec2f marker_pos = GfVec2f(AnchorMax(layout_r.Min[0],
+    wabi::GfVec2f marker_pos = wabi::GfVec2f(AnchorMax(layout_r.Min[0],
                                            layout_r.Min[0] + (layout_r.GetWidth() - text_size[0]) *
                                                                style.WindowTitleAlign[0]) +
                                    text_size[0],
                                  layout_r.Min[1]) +
-                         GfVec2f(2 - marker_size_x, 0.0f);
-    GfVec2f off = GfVec2f(0.0f, ANCHOR_FLOOR(-g.FontSize * 0.25f));
+                         wabi::GfVec2f(2 - marker_size_x, 0.0f);
+    wabi::GfVec2f off = wabi::GfVec2f(0.0f, ANCHOR_FLOOR(-g.FontSize * 0.25f));
     RenderTextClipped(marker_pos + off,
                       layout_r.Max + off,
                       UNSAVED_DOCUMENT_MARKER,
                       NULL,
                       NULL,
-                      GfVec2f(0, style.WindowTitleAlign[1]),
+                      wabi::GfVec2f(0, style.WindowTitleAlign[1]),
                       &clip_r);
   }
 }
@@ -6390,7 +6390,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
   if (g.NextWindowData.Flags & AnchorNextWindowDataFlags_HasContentSize)
     window->ContentSizeExplicit = g.NextWindowData.ContentSizeVal;
   else if (first_begin_of_the_frame)
-    window->ContentSizeExplicit = GfVec2f(0.0f, 0.0f);
+    window->ContentSizeExplicit = wabi::GfVec2f(0.0f, 0.0f);
   if (g.NextWindowData.Flags & AnchorNextWindowDataFlags_HasCollapsed)
     SetWindowCollapsed(window, g.NextWindowData.CollapsedVal, g.NextWindowData.CollapsedCond);
   if (g.NextWindowData.Flags & AnchorNextWindowDataFlags_HasFocus)
@@ -6408,7 +6408,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
                                             // for pinned tooltip (#1345)
     window->Active = true;
     window->HasCloseButton = (p_open != NULL);
-    window->ClipRect = GfVec4f(-FLT_MAX, -FLT_MAX, +FLT_MAX, +FLT_MAX);
+    window->ClipRect = wabi::GfVec4f(-FLT_MAX, -FLT_MAX, +FLT_MAX, +FLT_MAX);
     window->IDStack.resize(1);
     window->DrawList->_ResetForNewFrame();
     window->DC.CurrentTableIdx = -1;
@@ -6459,7 +6459,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
           window->Size[0] = window->SizeFull[0] = 0.f;
         if (!window_size_y_set_by_api)
           window->Size[1] = window->SizeFull[1] = 0.f;
-        window->ContentSize = window->ContentSizeIdeal = GfVec2f(0.f, 0.f);
+        window->ContentSize = window->ContentSizeIdeal = wabi::GfVec2f(0.f, 0.f);
       }
     }
 
@@ -6483,7 +6483,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
     if ((flags & AnchorWindowFlags_ChildWindow) &&
         !(flags & (AnchorWindowFlags_AlwaysUseWindowPadding | AnchorWindowFlags_Popup)) &&
         window->WindowBorderSize == 0.0f)
-      window->WindowPadding = GfVec2f(
+      window->WindowPadding = wabi::GfVec2f(
         0.0f,
         (flags & AnchorWindowFlags_MenuBar) ? style.WindowPadding[1] : 0.0f);
 
@@ -6516,7 +6516,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
     // SIZE
 
     // Calculate auto-fit size, handle automatic resize
-    const GfVec2f size_auto_fit = CalcWindowAutoFitSize(window, window->ContentSizeIdeal);
+    const wabi::GfVec2f size_auto_fit = CalcWindowAutoFitSize(window, window->ContentSizeIdeal);
     bool use_current_size_for_scrollbar_x = window_just_created;
     bool use_current_size_for_scrollbar_y = window_just_created;
     if ((flags & AnchorWindowFlags_AlwaysAutoResize) && !window->Collapsed) {
@@ -6585,7 +6585,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
       // Position given a pivot (e.g. for centering)
       SetWindowPos(
         window,
-        GfVec2f(window->SetWindowPosVal[0] - window->Size[0] * window->SetWindowPosPivot[0],
+        wabi::GfVec2f(window->SetWindowPosVal[0] - window->Size[0] * window->SetWindowPosPivot[0],
                 window->SetWindowPosVal[1] - window->Size[1] * window->SetWindowPosPivot[1]));
     else if ((flags & AnchorWindowFlags_ChildMenu) != 0)
       window->Pos = FindBestWindowPosForPopup(window);
@@ -6602,7 +6602,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
     AnchorViewportP *viewport = (AnchorViewportP *)(void *)GetMainViewport();
     AnchorBBox viewport_rect(viewport->GetMainRect());
     AnchorBBox viewport_work_rect(viewport->GetWorkRect());
-    GfVec2f visibility_padding = AnchorMax(style.DisplayWindowPadding,
+    wabi::GfVec2f visibility_padding = AnchorMax(style.DisplayWindowPadding,
                                            style.DisplaySafeAreaPadding);
     AnchorBBox visibility_rect(viewport_work_rect.Min + visibility_padding,
                                viewport_work_rect.Max - visibility_padding);
@@ -6668,11 +6668,11 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
       // When reading the current size we need to read it after size constraints have been applied.
       // When we use InnerRect here we are intentionally reading last frame size, same for
       // ScrollbarSizes values before we set them again.
-      GfVec2f avail_size_from_current_frame = GfVec2f(window->SizeFull[0],
+      wabi::GfVec2f avail_size_from_current_frame = wabi::GfVec2f(window->SizeFull[0],
                                                       window->SizeFull[1] - decoration_up_height);
-      GfVec2f avail_size_from_last_frame = window->InnerRect.GetSize() + window->ScrollbarSizes;
-      GfVec2f needed_size_from_last_frame = window_just_created ?
-                                              GfVec2f(0, 0) :
+      wabi::GfVec2f avail_size_from_last_frame = window->InnerRect.GetSize() + window->ScrollbarSizes;
+      wabi::GfVec2f needed_size_from_last_frame = window_just_created ?
+                                              wabi::GfVec2f(0, 0) :
                                               window->ContentSize + window->WindowPadding * 2.0f;
       float size_x_for_scrollbars = use_current_size_for_scrollbar_x ?
                                       avail_size_from_current_frame[0] :
@@ -6694,7 +6694,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
       if (window->ScrollbarX && !window->ScrollbarY)
         window->ScrollbarY = (needed_size_from_last_frame[1] > size_y_for_scrollbars) &&
                              !(flags & AnchorWindowFlags_NoScrollbar);
-      window->ScrollbarSizes = GfVec2f(window->ScrollbarY ? style.ScrollbarSize : 0.0f,
+      window->ScrollbarSizes = wabi::GfVec2f(window->ScrollbarY ? style.ScrollbarSize : 0.0f,
                                        window->ScrollbarX ? style.ScrollbarSize : 0.0f);
     }
 
@@ -6773,7 +6773,7 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
 
     // Apply scrolling
     window->Scroll = CalcNextScrollFromScrollTargetAndClamp(window);
-    window->ScrollTarget = GfVec2f(FLT_MAX, FLT_MAX);
+    window->ScrollTarget = wabi::GfVec2f(FLT_MAX, FLT_MAX);
 
     // DRAWING
 
@@ -6923,14 +6923,14 @@ bool ANCHOR::Begin(const char *name, bool *p_open, AnchorWindowFlags flags)
     window->DC.GroupOffset.x = 0.0f;
     window->DC.ColumnsOffset.x = 0.0f;
     window->DC.CursorStartPos = window->Pos +
-                                GfVec2f(window->DC.Indent.x + window->DC.ColumnsOffset.x,
+                                wabi::GfVec2f(window->DC.Indent.x + window->DC.ColumnsOffset.x,
                                         decoration_up_height + window->WindowPadding[1] -
                                           window->Scroll[1]);
     window->DC.CursorPos = window->DC.CursorStartPos;
     window->DC.CursorPosPrevLine = window->DC.CursorPos;
     window->DC.CursorMaxPos = window->DC.CursorStartPos;
     window->DC.IdealMaxPos = window->DC.CursorStartPos;
-    window->DC.CurrLineSize = window->DC.PrevLineSize = GfVec2f(0.0f, 0.0f);
+    window->DC.CurrLineSize = window->DC.PrevLineSize = wabi::GfVec2f(0.0f, 0.0f);
     window->DC.CurrLineTextBaseOffset = window->DC.PrevLineTextBaseOffset = 0.0f;
 
     window->DC.NavLayerCurrent = ANCHORNavLayer_Main;
@@ -7433,14 +7433,14 @@ float ANCHOR::GetWindowHeight()
   return window->Size[1];
 }
 
-GfVec2f ANCHOR::GetWindowPos()
+wabi::GfVec2f ANCHOR::GetWindowPos()
 {
   AnchorContext &g = *G_CTX;
   AnchorWindow *window = g.CurrentWindow;
   return window->Pos;
 }
 
-void ANCHOR::SetWindowPos(AnchorWindow *window, const GfVec2f &pos, AnchorCond cond)
+void ANCHOR::SetWindowPos(AnchorWindow *window, const wabi::GfVec2f &pos, AnchorCond cond)
 {
   // Test condition (NB: bit 0 is always true) and clear flags for next time
   if (cond && (window->SetWindowPosAllowFlags & cond) == 0)
@@ -7452,12 +7452,12 @@ void ANCHOR::SetWindowPos(AnchorWindow *window, const GfVec2f &pos, AnchorCond c
       cond));  // Make sure the user doesn't attempt to combine multiple condition flags.
   window->SetWindowPosAllowFlags &= ~(AnchorCond_Once | AnchorCond_FirstUseEver |
                                       AnchorCond_Appearing);
-  window->SetWindowPosVal = GfVec2f(FLT_MAX, FLT_MAX);
+  window->SetWindowPosVal = wabi::GfVec2f(FLT_MAX, FLT_MAX);
 
   // Set
-  const GfVec2f old_pos = window->Pos;
+  const wabi::GfVec2f old_pos = window->Pos;
   window->Pos = AnchorFloor(pos);
-  GfVec2f offset = window->Pos - old_pos;
+  wabi::GfVec2f offset = window->Pos - old_pos;
   window->DC.CursorPos +=
     offset;  // As we happen to move the window while it is being appended to (which is
              // a bad idea - will smear) let's at least offset the cursor
@@ -7468,25 +7468,25 @@ void ANCHOR::SetWindowPos(AnchorWindow *window, const GfVec2f &pos, AnchorCond c
   window->DC.CursorStartPos += offset;
 }
 
-void ANCHOR::SetWindowPos(const GfVec2f &pos, AnchorCond cond)
+void ANCHOR::SetWindowPos(const wabi::GfVec2f &pos, AnchorCond cond)
 {
   AnchorWindow *window = GetCurrentWindowRead();
   SetWindowPos(window, pos, cond);
 }
 
-void ANCHOR::SetWindowPos(const char *name, const GfVec2f &pos, AnchorCond cond)
+void ANCHOR::SetWindowPos(const char *name, const wabi::GfVec2f &pos, AnchorCond cond)
 {
   if (AnchorWindow *window = FindWindowByName(name))
     SetWindowPos(window, pos, cond);
 }
 
-GfVec2f ANCHOR::GetWindowSize()
+wabi::GfVec2f ANCHOR::GetWindowSize()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->Size;
 }
 
-void ANCHOR::SetWindowSize(AnchorWindow *window, const GfVec2f &size, AnchorCond cond)
+void ANCHOR::SetWindowSize(AnchorWindow *window, const wabi::GfVec2f &size, AnchorCond cond)
 {
   // Test condition (NB: bit 0 is always true) and clear flags for next time
   if (cond && (window->SetWindowSizeAllowFlags & cond) == 0)
@@ -7516,12 +7516,12 @@ void ANCHOR::SetWindowSize(AnchorWindow *window, const GfVec2f &size, AnchorCond
   }
 }
 
-void ANCHOR::SetWindowSize(const GfVec2f &size, AnchorCond cond)
+void ANCHOR::SetWindowSize(const wabi::GfVec2f &size, AnchorCond cond)
 {
   SetWindowSize(G_CTX->CurrentWindow, size, cond);
 }
 
-void ANCHOR::SetWindowSize(const char *name, const GfVec2f &size, AnchorCond cond)
+void ANCHOR::SetWindowSize(const char *name, const wabi::GfVec2f &size, AnchorCond cond)
 {
   if (AnchorWindow *window = FindWindowByName(name))
     SetWindowSize(window, size, cond);
@@ -7539,12 +7539,12 @@ void ANCHOR::SetWindowCollapsed(AnchorWindow *window, bool collapsed, AnchorCond
   window->Collapsed = collapsed;
 }
 
-void ANCHOR::SetWindowHitTestHole(AnchorWindow *window, const GfVec2f &pos, const GfVec2f &size)
+void ANCHOR::SetWindowHitTestHole(AnchorWindow *window, const wabi::GfVec2f &pos, const wabi::GfVec2f &size)
 {
   ANCHOR_ASSERT(window->HitTestHoleSize[0] ==
                 0);  // We don't support multiple holes/hit test filters
-  window->HitTestHoleSize = GfVec2h(size);
-  window->HitTestHoleOffset = GfVec2h(pos - window->Pos);
+  window->HitTestHoleSize = wabi::GfVec2h(size);
+  window->HitTestHoleOffset = wabi::GfVec2h(pos - window->Pos);
 }
 
 void ANCHOR::SetWindowCollapsed(bool collapsed, AnchorCond cond)
@@ -7585,7 +7585,7 @@ void ANCHOR::SetWindowFocus(const char *name)
   }
 }
 
-void ANCHOR::SetNextWindowPos(const GfVec2f &pos, AnchorCond cond, const GfVec2f &pivot)
+void ANCHOR::SetNextWindowPos(const wabi::GfVec2f &pos, AnchorCond cond, const wabi::GfVec2f &pivot)
 {
   AnchorContext &g = *G_CTX;
   ANCHOR_ASSERT(
@@ -7598,7 +7598,7 @@ void ANCHOR::SetNextWindowPos(const GfVec2f &pos, AnchorCond cond, const GfVec2f
   g.NextWindowData.PosCond = cond ? cond : AnchorCond_Always;
 }
 
-void ANCHOR::SetNextWindowSize(const GfVec2f &size, AnchorCond cond)
+void ANCHOR::SetNextWindowSize(const wabi::GfVec2f &size, AnchorCond cond)
 {
   AnchorContext &g = *G_CTX;
   ANCHOR_ASSERT(
@@ -7610,8 +7610,8 @@ void ANCHOR::SetNextWindowSize(const GfVec2f &size, AnchorCond cond)
   g.NextWindowData.SizeCond = cond ? cond : AnchorCond_Always;
 }
 
-void ANCHOR::SetNextWindowSizeConstraints(const GfVec2f &size_min,
-                                          const GfVec2f &size_max,
+void ANCHOR::SetNextWindowSizeConstraints(const wabi::GfVec2f &size_min,
+                                          const wabi::GfVec2f &size_max,
                                           ANCHORSizeCallback custom_callback,
                                           void *custom_callback_user_data)
 {
@@ -7623,16 +7623,16 @@ void ANCHOR::SetNextWindowSizeConstraints(const GfVec2f &size_min,
 }
 
 // Content size = inner scrollable rectangle, padded with WindowPadding.
-// SetNextWindowContentSize(GfVec2f(100,100) + AnchorWindowFlags_AlwaysAutoResize will always
+// SetNextWindowContentSize(wabi::GfVec2f(100,100) + AnchorWindowFlags_AlwaysAutoResize will always
 // allow submitting a 100x100 item.
-void ANCHOR::SetNextWindowContentSize(const GfVec2f &size)
+void ANCHOR::SetNextWindowContentSize(const wabi::GfVec2f &size)
 {
   AnchorContext &g = *G_CTX;
   g.NextWindowData.Flags |= AnchorNextWindowDataFlags_HasContentSize;
   g.NextWindowData.ContentSizeVal = AnchorFloor(size);
 }
 
-void ANCHOR::SetNextWindowScroll(const GfVec2f &scroll)
+void ANCHOR::SetNextWindowScroll(const wabi::GfVec2f &scroll)
 {
   AnchorContext &g = *G_CTX;
   g.NextWindowData.Flags |= AnchorNextWindowDataFlags_HasScroll;
@@ -7680,7 +7680,7 @@ float ANCHOR::GetFontSize()
   return G_CTX->FontSize;
 }
 
-GfVec2f ANCHOR::GetFontTexUvWhitePixel()
+wabi::GfVec2f ANCHOR::GetFontTexUvWhitePixel()
 {
   return G_CTX->DrawListSharedData.TexUvWhitePixel;
 }
@@ -7839,13 +7839,13 @@ ANCHOR_ID ANCHOR::GetID(const void *ptr_id)
   return window->GetID(ptr_id);
 }
 
-bool ANCHOR::IsRectVisible(const GfVec2f &size)
+bool ANCHOR::IsRectVisible(const wabi::GfVec2f &size)
 {
   AnchorWindow *window = G_CTX->CurrentWindow;
   return window->ClipRect.Overlaps(AnchorBBox(window->DC.CursorPos, window->DC.CursorPos + size));
 }
 
-bool ANCHOR::IsRectVisible(const GfVec2f &rect_min, const GfVec2f &rect_max)
+bool ANCHOR::IsRectVisible(const wabi::GfVec2f &rect_min, const wabi::GfVec2f &rect_max)
 {
   AnchorWindow *window = G_CTX->CurrentWindow;
   return window->ClipRect.Overlaps(AnchorBBox(rect_min, rect_max));
@@ -7882,13 +7882,13 @@ bool ANCHOR::DebugCheckVersionAndDataLayout(const char *version,
     error = true;
     ANCHOR_ASSERT(sz_style == sizeof(AnchorStyle) && "Mismatched struct layout!");
   }
-  if (sz_vec2 != sizeof(GfVec2f)) {
+  if (sz_vec2 != sizeof(wabi::GfVec2f)) {
     error = true;
-    ANCHOR_ASSERT(sz_vec2 == sizeof(GfVec2f) && "Mismatched struct layout!");
+    ANCHOR_ASSERT(sz_vec2 == sizeof(wabi::GfVec2f) && "Mismatched struct layout!");
   }
-  if (sz_vec4 != sizeof(GfVec4f)) {
+  if (sz_vec4 != sizeof(wabi::GfVec4f)) {
     error = true;
-    ANCHOR_ASSERT(sz_vec4 == sizeof(GfVec4f) && "Mismatched struct layout!");
+    ANCHOR_ASSERT(sz_vec4 == sizeof(wabi::GfVec4f) && "Mismatched struct layout!");
   }
   if (sz_vert != sizeof(AnchorDrawVert)) {
     error = true;
@@ -8156,7 +8156,7 @@ void AnchorStackSizes::CompareWithCurrentState()
 // Register minimum needed size so it can extend the bounding box used for auto-fit calculation.
 // See comments in ItemAdd() about how/why the size provided to ItemSize() vs ItemAdd() may often
 // different.
-void ANCHOR::ItemSize(const GfVec2f &size, float text_baseline_y)
+void ANCHOR::ItemSize(const wabi::GfVec2f &size, float text_baseline_y)
 {
   AnchorContext &g = *G_CTX;
   AnchorWindow *window = g.CurrentWindow;
@@ -8175,7 +8175,7 @@ void ANCHOR::ItemSize(const GfVec2f &size, float text_baseline_y)
 
   // Always align ourselves on pixel boundaries
   // if (g.IO.KeyAlt) window->DrawList->AddRect(window->DC.CursorPos, window->DC.CursorPos +
-  // GfVec2f(size[0], line_height), ANCHOR_COL32(255,0,0,200)); // [DEBUG]
+  // wabi::GfVec2f(size[0], line_height), ANCHOR_COL32(255,0,0,200)); // [DEBUG]
   window->DC.CursorPosPrevLine[0] = window->DC.CursorPos[0] + size[0];
   window->DC.CursorPosPrevLine[1] = window->DC.CursorPos[1];
   window->DC.CursorPos[0] = ANCHOR_FLOOR(window->Pos[0] + window->DC.Indent.x +
@@ -8306,13 +8306,13 @@ void ANCHOR::SameLine(float offset_from_start_x, float spacing_w)
   window->DC.CurrLineTextBaseOffset = window->DC.PrevLineTextBaseOffset;
 }
 
-GfVec2f ANCHOR::GetCursorScreenPos()
+wabi::GfVec2f ANCHOR::GetCursorScreenPos()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->DC.CursorPos;
 }
 
-void ANCHOR::SetCursorScreenPos(const GfVec2f &pos)
+void ANCHOR::SetCursorScreenPos(const wabi::GfVec2f &pos)
 {
   AnchorWindow *window = GetCurrentWindow();
   window->DC.CursorPos = pos;
@@ -8323,7 +8323,7 @@ void ANCHOR::SetCursorScreenPos(const GfVec2f &pos)
 // screen coordinates because it is more convenient. Conversion happens as we pass the value to
 // user, but it makes our naming convention confusing because GetCursorPos() == (DC.CursorPos -
 // window.Pos). May want to rename 'DC.CursorPos'.
-GfVec2f ANCHOR::GetCursorPos()
+wabi::GfVec2f ANCHOR::GetCursorPos()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->DC.CursorPos - window->Pos + window->Scroll;
@@ -8341,7 +8341,7 @@ float ANCHOR::GetCursorPosY()
   return window->DC.CursorPos[1] - window->Pos[1] + window->Scroll[1];
 }
 
-void ANCHOR::SetCursorPos(const GfVec2f &local_pos)
+void ANCHOR::SetCursorPos(const wabi::GfVec2f &local_pos)
 {
   AnchorWindow *window = GetCurrentWindow();
   window->DC.CursorPos = window->Pos - window->Scroll + local_pos;
@@ -8362,7 +8362,7 @@ void ANCHOR::SetCursorPosY(float y)
   window->DC.CursorMaxPos[1] = AnchorMax(window->DC.CursorMaxPos[1], window->DC.CursorPos[1]);
 }
 
-GfVec2f ANCHOR::GetCursorStartPos()
+wabi::GfVec2f ANCHOR::GetCursorStartPos()
 {
   AnchorWindow *window = GetCurrentWindowRead();
   return window->DC.CursorStartPos - window->Pos;
@@ -8453,11 +8453,11 @@ float ANCHOR::CalcItemWidth()
 // CalcItemSize are awkwardly named because they are not fully symmetrical. Note that only
 // CalcItemWidth() is publicly exposed. The 4.0f here may be changed to match CalcItemWidth()
 // and/or BeginChild() (right now we have a mismatch which is harmless but undesirable)
-GfVec2f ANCHOR::CalcItemSize(GfVec2f size, float default_w, float default_h)
+wabi::GfVec2f ANCHOR::CalcItemSize(wabi::GfVec2f size, float default_w, float default_h)
 {
   AnchorWindow *window = G_CTX->CurrentWindow;
 
-  GfVec2f region_max;
+  wabi::GfVec2f region_max;
   if (size[0] < 0.0f || size[1] < 0.0f)
     region_max = GetContentRegionMaxAbs();
 
@@ -8502,11 +8502,11 @@ float ANCHOR::GetFrameHeightWithSpacing()
 // THEM WITH A NEW "WORK RECT" API. Thanks for your patience!
 
 // FIXME: This is in window space (not screen space!).
-GfVec2f ANCHOR::GetContentRegionMax()
+wabi::GfVec2f ANCHOR::GetContentRegionMax()
 {
   AnchorContext &g = *G_CTX;
   AnchorWindow *window = g.CurrentWindow;
-  GfVec2f mx = window->ContentRegionRect.Max - window->Pos;
+  wabi::GfVec2f mx = window->ContentRegionRect.Max - window->Pos;
   if (window->DC.CurrentColumns || g.CurrentTable)
     mx[0] = window->WorkRect.Max[0] - window->Pos[0];
   return mx;
@@ -8514,30 +8514,30 @@ GfVec2f ANCHOR::GetContentRegionMax()
 
 // [Internal] Absolute coordinate. Saner. This is not exposed until we finishing refactoring work
 // rect features.
-GfVec2f ANCHOR::GetContentRegionMaxAbs()
+wabi::GfVec2f ANCHOR::GetContentRegionMaxAbs()
 {
   AnchorContext &g = *G_CTX;
   AnchorWindow *window = g.CurrentWindow;
-  GfVec2f mx = window->ContentRegionRect.Max;
+  wabi::GfVec2f mx = window->ContentRegionRect.Max;
   if (window->DC.CurrentColumns || g.CurrentTable)
     mx[0] = window->WorkRect.Max[0];
   return mx;
 }
 
-GfVec2f ANCHOR::GetContentRegionAvail()
+wabi::GfVec2f ANCHOR::GetContentRegionAvail()
 {
   AnchorWindow *window = G_CTX->CurrentWindow;
   return GetContentRegionMaxAbs() - window->DC.CursorPos;
 }
 
 // In window space (not screen space!)
-GfVec2f ANCHOR::GetWindowContentRegionMin()
+wabi::GfVec2f ANCHOR::GetWindowContentRegionMin()
 {
   AnchorWindow *window = G_CTX->CurrentWindow;
   return window->ContentRegionRect.Min - window->Pos;
 }
 
-GfVec2f ANCHOR::GetWindowContentRegionMax()
+wabi::GfVec2f ANCHOR::GetWindowContentRegionMax()
 {
   AnchorWindow *window = G_CTX->CurrentWindow;
   return window->ContentRegionRect.Max - window->Pos;
@@ -8574,7 +8574,7 @@ void ANCHOR::BeginGroup()
   window->DC.GroupOffset.x = window->DC.CursorPos[0] - window->Pos[0] - window->DC.ColumnsOffset.x;
   window->DC.Indent = window->DC.GroupOffset;
   window->DC.CursorMaxPos = window->DC.CursorPos;
-  window->DC.CurrLineSize = GfVec2f(0.0f, 0.0f);
+  window->DC.CurrLineSize = wabi::GfVec2f(0.0f, 0.0f);
   if (g.LogEnabled)
     g.LogLinePosY = -FLT_MAX;  // To enforce a carriage return
 }
@@ -8672,9 +8672,9 @@ static float CalcScrollEdgeSnap(float target,
   return target;
 }
 
-static GfVec2f CalcNextScrollFromScrollTargetAndClamp(AnchorWindow *window)
+static wabi::GfVec2f CalcNextScrollFromScrollTargetAndClamp(AnchorWindow *window)
 {
-  GfVec2f scroll = window->Scroll;
+  wabi::GfVec2f scroll = window->Scroll;
   if (window->ScrollTarget[0] < FLT_MAX) {
     float decoration_total_width = window->ScrollbarSizes[0];
     float center_x_ratio = window->ScrollTargetCenterRatio[0];
@@ -8716,15 +8716,15 @@ static GfVec2f CalcNextScrollFromScrollTargetAndClamp(AnchorWindow *window)
 }
 
 // Scroll to keep newly navigated item fully into view
-GfVec2f ANCHOR::ScrollToBringRectIntoView(AnchorWindow *window, const AnchorBBox &item_rect)
+wabi::GfVec2f ANCHOR::ScrollToBringRectIntoView(AnchorWindow *window, const AnchorBBox &item_rect)
 {
   AnchorContext &g = *G_CTX;
-  AnchorBBox window_rect(window->InnerRect.Min - GfVec2f(1, 1),
-                         window->InnerRect.Max + GfVec2f(1, 1));
+  AnchorBBox window_rect(window->InnerRect.Min - wabi::GfVec2f(1, 1),
+                         window->InnerRect.Max + wabi::GfVec2f(1, 1));
   // GetForegroundDrawList(window)->AddRect(window_rect.Min, window_rect.Max, ANCHOR_COL32_WHITE);
   // // [DEBUG]
 
-  GfVec2f delta_scroll;
+  wabi::GfVec2f delta_scroll;
   if (!window_rect.Contains(item_rect)) {
     if (window->ScrollbarX && item_rect.Min[0] < window_rect.Min[0])
       SetScrollFromPosX(window, item_rect.Min[0] - window->Pos[0] - g.Style.ItemSpacing[0], 0.0f);
@@ -8735,7 +8735,7 @@ GfVec2f ANCHOR::ScrollToBringRectIntoView(AnchorWindow *window, const AnchorBBox
     else if (item_rect.Max[1] >= window_rect.Max[1])
       SetScrollFromPosY(window, item_rect.Max[1] - window->Pos[1] + g.Style.ItemSpacing[1], 1.0f);
 
-    GfVec2f next_scroll = CalcNextScrollFromScrollTargetAndClamp(window);
+    wabi::GfVec2f next_scroll = CalcNextScrollFromScrollTargetAndClamp(window);
     delta_scroll = next_scroll - window->Scroll;
   }
 
@@ -8902,9 +8902,9 @@ void ANCHOR::BeginTooltipEx(AnchorWindowFlags extra_flags, AnchorTooltipFlags to
     // try to reduce that offset and we enforce following the cursor. Whatever we do we want to
     // call SetNextWindowPos() to enforce a tooltip position and disable clipping the tooltip
     // without our display area, like regular tooltip do.
-    // GfVec2f tooltip_pos = g.IO.MousePos - g.ActiveIdClickOffset - g.Style.WindowPadding;
-    GfVec2f tooltip_pos = g.IO.MousePos +
-                          GfVec2f(16 * g.Style.MouseCursorScale, 8 * g.Style.MouseCursorScale);
+    // wabi::GfVec2f tooltip_pos = g.IO.MousePos - g.ActiveIdClickOffset - g.Style.WindowPadding;
+    wabi::GfVec2f tooltip_pos = g.IO.MousePos +
+                          wabi::GfVec2f(16 * g.Style.MouseCursorScale, 8 * g.Style.MouseCursorScale);
     SetNextWindowPos(tooltip_pos);
     SetNextWindowBgAlpha(g.Style.Colors[AnchorCol_PopupBg][3] * 0.60f);
     // PushStyleVar(AnchorStyleVar_Alpha, g.Style.Alpha * 0.60f); // This would be nice but e.g
@@ -9252,7 +9252,7 @@ bool ANCHOR::BeginPopupModal(const char *name, bool *p_open, AnchorWindowFlags f
   // FIXME: Should test for (PosCond & window->SetWindowPosAllowFlags) with the upcoming window.
   if ((g.NextWindowData.Flags & AnchorNextWindowDataFlags_HasPos) == 0) {
     const AnchorViewport *viewport = GetMainViewport();
-    SetNextWindowPos(viewport->GetCenter(), AnchorCond_FirstUseEver, GfVec2f(0.5f, 0.5f));
+    SetNextWindowPos(viewport->GetCenter(), AnchorCond_FirstUseEver, wabi::GfVec2f(0.5f, 0.5f));
   }
 
   flags |= AnchorWindowFlags_Popup | AnchorWindowFlags_Modal | AnchorWindowFlags_NoCollapse;
@@ -9383,14 +9383,14 @@ bool ANCHOR::BeginPopupContextVoid(const char *str_id, AnchorPopupFlags popup_fl
 //  information are available, it may represent the entire platform monitor from the frame of
 //  reference of the current viewport. this allows us to have tooltips/popups displayed out of the
 //  parent viewport.)
-GfVec2f ANCHOR::FindBestWindowPosForPopupEx(const GfVec2f &ref_pos,
-                                            const GfVec2f &size,
+wabi::GfVec2f ANCHOR::FindBestWindowPosForPopupEx(const wabi::GfVec2f &ref_pos,
+                                            const wabi::GfVec2f &size,
                                             AnchorDir *last_dir,
                                             const AnchorBBox &r_outer,
                                             const AnchorBBox &r_avoid,
                                             ANCHORPopupPositionPolicy policy)
 {
-  GfVec2f base_pos_clamped = AnchorClamp(ref_pos, r_outer.Min, r_outer.Max - size);
+  wabi::GfVec2f base_pos_clamped = AnchorClamp(ref_pos, r_outer.Min, r_outer.Max - size);
   // GetForegroundDrawList()->AddRect(r_avoid.Min, r_avoid.Max, ANCHOR_COL32(255,0,0,255));
   // GetForegroundDrawList()->AddRect(r_outer.Min, r_outer.Max, ANCHOR_COL32(0,255,0,255));
 
@@ -9404,15 +9404,15 @@ GfVec2f ANCHOR::FindBestWindowPosForPopupEx(const GfVec2f &ref_pos,
       const AnchorDir dir = (n == -1) ? *last_dir : dir_prefered_order[n];
       if (n != -1 && dir == *last_dir)  // Already tried this direction?
         continue;
-      GfVec2f pos;
+      wabi::GfVec2f pos;
       if (dir == AnchorDir_Down)
-        pos = GfVec2f(r_avoid.Min[0], r_avoid.Max[1]);  // Below, Toward Right (default)
+        pos = wabi::GfVec2f(r_avoid.Min[0], r_avoid.Max[1]);  // Below, Toward Right (default)
       if (dir == AnchorDir_Right)
-        pos = GfVec2f(r_avoid.Min[0], r_avoid.Min[1] - size[1]);  // Above, Toward Right
+        pos = wabi::GfVec2f(r_avoid.Min[0], r_avoid.Min[1] - size[1]);  // Above, Toward Right
       if (dir == AnchorDir_Left)
-        pos = GfVec2f(r_avoid.Max[0] - size[0], r_avoid.Max[1]);  // Below, Toward Left
+        pos = wabi::GfVec2f(r_avoid.Max[0] - size[0], r_avoid.Max[1]);  // Below, Toward Left
       if (dir == AnchorDir_Up)
-        pos = GfVec2f(r_avoid.Max[0] - size[0], r_avoid.Min[1] - size[1]);  // Above, Toward Left
+        pos = wabi::GfVec2f(r_avoid.Max[0] - size[0], r_avoid.Min[1] - size[1]);  // Above, Toward Left
       if (!r_outer.Contains(AnchorBBox(pos, pos + size)))
         continue;
       *last_dir = dir;
@@ -9444,7 +9444,7 @@ GfVec2f ANCHOR::FindBestWindowPosForPopupEx(const GfVec2f &ref_pos,
       if (avail_h < size[1] && (dir == AnchorDir_Up || dir == AnchorDir_Down))
         continue;
 
-      GfVec2f pos;
+      wabi::GfVec2f pos;
       pos[0] = (dir == AnchorDir_Left)  ? r_avoid.Min[0] - size[0] :
                (dir == AnchorDir_Right) ? r_avoid.Max[0] :
                                           base_pos_clamped[0];
@@ -9467,10 +9467,10 @@ GfVec2f ANCHOR::FindBestWindowPosForPopupEx(const GfVec2f &ref_pos,
   // For tooltip we prefer avoiding the cursor at all cost even if it means that part of the
   // tooltip won't be visible.
   if (policy == ANCHORPopupPositionPolicy_Tooltip)
-    return ref_pos + GfVec2f(2, 2);
+    return ref_pos + wabi::GfVec2f(2, 2);
 
   // Otherwise try to keep within display
-  GfVec2f pos = ref_pos;
+  wabi::GfVec2f pos = ref_pos;
   pos[0] = AnchorMax(AnchorMin(pos[0] + size[0], r_outer.Max[0]) - size[0], r_outer.Min[0]);
   pos[1] = AnchorMax(AnchorMin(pos[1] + size[1], r_outer.Max[1]) - size[1], r_outer.Min[1]);
   return pos;
@@ -9482,13 +9482,13 @@ AnchorBBox ANCHOR::GetPopupAllowedExtentRect(AnchorWindow *window)
   AnchorContext &g = *G_CTX;
   TF_UNUSED(window);
   AnchorBBox r_screen = ((AnchorViewportP *)(void *)GetMainViewport())->GetMainRect();
-  GfVec2f padding = g.Style.DisplaySafeAreaPadding;
-  r_screen.Expand(GfVec2f((r_screen.GetWidth() > padding[0] * 2) ? -padding[0] : 0.0f,
+  wabi::GfVec2f padding = g.Style.DisplaySafeAreaPadding;
+  r_screen.Expand(wabi::GfVec2f((r_screen.GetWidth() > padding[0] * 2) ? -padding[0] : 0.0f,
                           (r_screen.GetHeight() > padding[1] * 2) ? -padding[1] : 0.0f));
   return r_screen;
 }
 
-GfVec2f ANCHOR::FindBestWindowPosForPopup(AnchorWindow *window)
+wabi::GfVec2f ANCHOR::FindBestWindowPosForPopup(AnchorWindow *window)
 {
   AnchorContext &g = *G_CTX;
 
@@ -9540,7 +9540,7 @@ GfVec2f ANCHOR::FindBestWindowPosForPopup(AnchorWindow *window)
   if (window->Flags & AnchorWindowFlags_Tooltip) {
     // Position tooltip (always follows mouse)
     float sc = g.Style.MouseCursorScale;
-    GfVec2f ref_pos = NavCalcPreferredRefPos();
+    wabi::GfVec2f ref_pos = NavCalcPreferredRefPos();
     AnchorBBox r_avoid;
     if (!g.NavDisableHighlight && g.NavDisableMouseHover &&
         !(g.IO.ConfigFlags & AnchorConfigFlags_NavEnableSetMousePos))
@@ -9733,8 +9733,8 @@ static bool ANCHOR::NavScoreItem(AnchorNavItemData *result, AnchorBBox cand)
     AnchorDrawList *draw_list = GetForegroundDrawList(window);
     draw_list->AddRect(curr.Min, curr.Max, ANCHOR_COL32(255, 200, 0, 100));
     draw_list->AddRect(cand.Min, cand.Max, ANCHOR_COL32(255, 255, 0, 200));
-    draw_list->AddRectFilled(cand.Max - GfVec2f(4, 4),
-                             cand.Max + CalcTextSize(buf) + GfVec2f(4, 4),
+    draw_list->AddRectFilled(cand.Max - wabi::GfVec2f(4, 4),
+                             cand.Max + CalcTextSize(buf) + wabi::GfVec2f(4, 4),
                              ANCHOR_COL32(40, 0, 0, 150));
     draw_list->AddText(g.IO.FontDefault, 13.0f, cand.Max, ~0U, buf);
   } else if (g.IO.KeyCtrl)  // Hold to preview score in matching quadrant. Press C to rotate.
@@ -10002,7 +10002,7 @@ void ANCHOR::NavInitWindow(AnchorWindow *window, bool force_reinit)
   }
 }
 
-static GfVec2f ANCHOR::NavCalcPreferredRefPos()
+static wabi::GfVec2f ANCHOR::NavCalcPreferredRefPos()
 {
   AnchorContext &g = *G_CTX;
   if (g.NavDisableHighlight || !g.NavDisableMouseHover || !g.NavWindow) {
@@ -10014,8 +10014,8 @@ static GfVec2f ANCHOR::NavCalcPreferredRefPos()
     // When navigation is active and mouse is disabled, decide on an arbitrary position around the
     // bottom left of the currently navigated item.
     const AnchorBBox &rect_rel = g.NavWindow->NavRectRel[g.NavLayer];
-    GfVec2f pos = g.NavWindow->Pos +
-                  GfVec2f(
+    wabi::GfVec2f pos = g.NavWindow->Pos +
+                  wabi::GfVec2f(
                     rect_rel.Min[0] + AnchorMin(g.Style.FramePadding[0] * 4, rect_rel.GetWidth()),
                     rect_rel.Max[1] - AnchorMin(g.Style.FramePadding[1], rect_rel.GetHeight()));
     AnchorViewport *viewport = GetMainViewport();
@@ -10061,24 +10061,24 @@ float ANCHOR::GetNavInputAmount(AnchorNavInput n, ANCHOR_InputReadMode mode)
   return 0.0f;
 }
 
-GfVec2f ANCHOR::GetNavInputAmount2d(AnchorNavDirSourceFlags dir_sources,
+wabi::GfVec2f ANCHOR::GetNavInputAmount2d(AnchorNavDirSourceFlags dir_sources,
                                     ANCHOR_InputReadMode mode,
                                     float slow_factor,
                                     float fast_factor)
 {
-  GfVec2f delta(0.0f, 0.0f);
+  wabi::GfVec2f delta(0.0f, 0.0f);
   if (dir_sources & AnchorNavDirSourceFlags_Keyboard)
-    delta += GfVec2f(GetNavInputAmount(AnchorNavInput_KeyRight_, mode) -
+    delta += wabi::GfVec2f(GetNavInputAmount(AnchorNavInput_KeyRight_, mode) -
                        GetNavInputAmount(AnchorNavInput_KeyLeft_, mode),
                      GetNavInputAmount(AnchorNavInput_KeyDown_, mode) -
                        GetNavInputAmount(AnchorNavInput_KeyUp_, mode));
   if (dir_sources & AnchorNavDirSourceFlags_PadDPad)
-    delta += GfVec2f(GetNavInputAmount(AnchorNavInput_DpadRight, mode) -
+    delta += wabi::GfVec2f(GetNavInputAmount(AnchorNavInput_DpadRight, mode) -
                        GetNavInputAmount(AnchorNavInput_DpadLeft, mode),
                      GetNavInputAmount(AnchorNavInput_DpadDown, mode) -
                        GetNavInputAmount(AnchorNavInput_DpadUp, mode));
   if (dir_sources & AnchorNavDirSourceFlags_PadLStick)
-    delta += GfVec2f(GetNavInputAmount(AnchorNavInput_LStickRight, mode) -
+    delta += wabi::GfVec2f(GetNavInputAmount(AnchorNavInput_LStickRight, mode) -
                        GetNavInputAmount(AnchorNavInput_LStickLeft, mode),
                      GetNavInputAmount(AnchorNavInput_LStickDown, mode) -
                        GetNavInputAmount(AnchorNavInput_LStickUp, mode));
@@ -10363,7 +10363,7 @@ static void ANCHOR::NavUpdate()
     // *Normal* Manual scroll with NavScrollXXX keys
     // Next movement request will clamp the NavId reference rectangle to the visible area, so
     // navigation will resume within those bounds.
-    GfVec2f scroll_dir = GetNavInputAmount2d(AnchorNavDirSourceFlags_PadLStick,
+    wabi::GfVec2f scroll_dir = GetNavInputAmount2d(AnchorNavDirSourceFlags_PadLStick,
                                              ANCHOR_InputReadMode_Down,
                                              1.0f / 10.0f,
                                              10.0f);
@@ -10385,13 +10385,13 @@ static void ANCHOR::NavUpdate()
   if (g.NavMoveRequest && g.NavInputSource == ANCHORInputSource_Gamepad &&
       g.NavLayer == ANCHORNavLayer_Main) {
     AnchorWindow *window = g.NavWindow;
-    AnchorBBox window_rect_rel(window->InnerRect.Min - window->Pos - GfVec2f(1, 1),
-                               window->InnerRect.Max - window->Pos + GfVec2f(1, 1));
+    AnchorBBox window_rect_rel(window->InnerRect.Min - window->Pos - wabi::GfVec2f(1, 1),
+                               window->InnerRect.Max - window->Pos + wabi::GfVec2f(1, 1));
     if (!window_rect_rel.Contains(window->NavRectRel[g.NavLayer])) {
       ANCHOR_DEBUG_LOG_NAV("[nav] NavMoveRequest: clamp NavRectRel\n");
       float pad = window->CalcFontSize() * 0.5f;
       window_rect_rel.Expand(
-        GfVec2f(-AnchorMin(window_rect_rel.GetWidth(), pad),
+        wabi::GfVec2f(-AnchorMin(window_rect_rel.GetWidth(), pad),
                 -AnchorMin(window_rect_rel.GetHeight(),
                            pad)));  // Terrible approximation for the intent of starting
                                     // navigation from first fully visible item
@@ -10430,11 +10430,11 @@ static void ANCHOR::NavUpdate()
     if (1) {
       AnchorU32 col = (!g.NavWindow->Hidden) ? ANCHOR_COL32(255, 0, 255, 255) :
                                                ANCHOR_COL32(255, 0, 0, 255);
-      GfVec2f p = NavCalcPreferredRefPos();
+      wabi::GfVec2f p = NavCalcPreferredRefPos();
       char buf[32];
       AnchorFormatString(buf, 32, "%d", g.NavLayer);
       draw_list->AddCircleFilled(p, 3.0f, col);
-      draw_list->AddText(NULL, 13.0f, p + GfVec2f(8, -4), col, buf);
+      draw_list->AddText(NULL, 13.0f, p + wabi::GfVec2f(8, -4), col, buf);
     }
   }
 #endif
@@ -10499,7 +10499,7 @@ static void ANCHOR::NavUpdateMoveResult()
 
   // Scroll to keep newly navigated item fully into view.
   if (g.NavLayer == ANCHORNavLayer_Main) {
-    GfVec2f delta_scroll;
+    wabi::GfVec2f delta_scroll;
     if (g.NavMoveRequestFlags & AnchorNavMoveFlags_ScrollToEdge) {
       float scroll_target = (g.NavMoveDir == AnchorDir_Up) ? result->Window->ScrollMax[1] : 0.0f;
       delta_scroll[1] = result->Window->Scroll[1] - scroll_target;
@@ -10814,7 +10814,7 @@ static void ANCHOR::NavUpdateWindowing()
 
   // Move window
   if (g.NavWindowingTarget && !(g.NavWindowingTarget->Flags & AnchorWindowFlags_NoMove)) {
-    GfVec2f move_delta;
+    wabi::GfVec2f move_delta;
     if (g.NavInputSource == ANCHORInputSource_Keyboard && !g.IO.KeyShift)
       move_delta = GetNavInputAmount2d(AnchorNavDirSourceFlags_Keyboard,
                                        ANCHOR_InputReadMode_Down);
@@ -10912,9 +10912,9 @@ void ANCHOR::NavUpdateWindowingOverlay()
   if (g.NavWindowingListWindow == NULL)
     g.NavWindowingListWindow = FindWindowByName("###NavWindowingList");
   const AnchorViewport *viewport = GetMainViewport();
-  SetNextWindowSizeConstraints(GfVec2f(viewport->Size[0] * 0.20f, viewport->Size[1] * 0.20f),
-                               GfVec2f(FLT_MAX, FLT_MAX));
-  SetNextWindowPos(viewport->GetCenter(), AnchorCond_Always, GfVec2f(0.5f, 0.5f));
+  SetNextWindowSizeConstraints(wabi::GfVec2f(viewport->Size[0] * 0.20f, viewport->Size[1] * 0.20f),
+                               wabi::GfVec2f(FLT_MAX, FLT_MAX));
+  SetNextWindowPos(viewport->GetCenter(), AnchorCond_Always, wabi::GfVec2f(0.5f, 0.5f));
   PushStyleVar(AnchorStyleVar_WindowPadding, g.Style.WindowPadding * 2.0f);
   Begin("###NavWindowingList",
         NULL,
@@ -11230,7 +11230,7 @@ const AnchorPayload *ANCHOR::AcceptDragDropPayload(const char *type, AnchorDragD
     r.Expand(3.5f);
     bool push_clip_rect = !window->ClipRect.Contains(r);
     if (push_clip_rect)
-      window->DrawList->PushClipRect(r.Min - GfVec2f(1, 1), r.Max + GfVec2f(1, 1));
+      window->DrawList->PushClipRect(r.Min - wabi::GfVec2f(1, 1), r.Max + wabi::GfVec2f(1, 1));
     window->DrawList->AddRect(r.Min, r.Max, GetColorU32(AnchorCol_DragDropTarget), 0.0f, 0, 2.0f);
     if (push_clip_rect)
       window->DrawList->PopClipRect();
@@ -11307,7 +11307,7 @@ void ANCHOR::LogTextV(const char *fmt, va_list args)
 // Internal version that takes a position to decide on newline placement and pad items according to
 // their depth. We split text into individual lines to add current tree level padding
 // FIXME: This code is a little complicated perhaps, considering simplifying the whole system.
-void ANCHOR::LogRenderedText(const GfVec2f *ref_pos, const char *text, const char *text_end)
+void ANCHOR::LogRenderedText(const wabi::GfVec2f *ref_pos, const char *text, const char *text_end)
 {
   AnchorContext &g = *G_CTX;
   AnchorWindow *window = g.CurrentWindow;
@@ -11772,9 +11772,9 @@ static void WindowSettingsHandler_ReadLine(AnchorContext *,
   int x, y;
   int i;
   if (sscanf(line, "Pos=%i,%i", &x, &y) == 2) {
-    settings->Pos = GfVec2h((short)x, (short)y);
+    settings->Pos = wabi::GfVec2h((short)x, (short)y);
   } else if (sscanf(line, "Size=%i,%i", &x, &y) == 2) {
-    settings->Size = GfVec2h((short)x, (short)y);
+    settings->Size = wabi::GfVec2h((short)x, (short)y);
   } else if (sscanf(line, "Collapsed=%d", &i) == 1) {
     settings->Collapsed = (i != 0);
   }
@@ -11813,8 +11813,8 @@ static void WindowSettingsHandler_WriteAll(AnchorContext *ctx,
       window->SettingsOffset = g.SettingsWindows.offset_from_ptr(settings);
     }
     ANCHOR_ASSERT(settings->ID == window->ID);
-    settings->Pos = GfVec2h((short)window->Pos[0], (short)window->Pos[1]);
-    settings->Size = GfVec2h((short)window->SizeFull[0], (short)window->SizeFull[1]);
+    settings->Pos = wabi::GfVec2h((short)window->Pos[0], (short)window->Pos[1]);
+    settings->Size = wabi::GfVec2h((short)window->SizeFull[0], (short)window->SizeFull[1]);
     settings->Collapsed = window->Collapsed;
   }
 
@@ -11856,7 +11856,7 @@ static void ANCHOR::UpdateViewportsNewFrame()
   // aim to make this more consistent.
   AnchorViewportP *main_viewport = g.Viewports[0];
   main_viewport->Flags = AnchorViewportFlags_IsPlatformWindow | AnchorViewportFlags_OwnedByApp;
-  main_viewport->Pos = GfVec2f(0.0f, 0.0f);
+  main_viewport->Pos = wabi::GfVec2f(0.0f, 0.0f);
   main_viewport->Size = g.IO.DisplaySize;
 
   for (int n = 0; n < g.Viewports.Size; n++) {
@@ -11866,7 +11866,7 @@ static void ANCHOR::UpdateViewportsNewFrame()
     // BeginMainMenuBar() to alter them again.
     viewport->WorkOffsetMin = viewport->BuildWorkOffsetMin;
     viewport->WorkOffsetMax = viewport->BuildWorkOffsetMax;
-    viewport->BuildWorkOffsetMin = viewport->BuildWorkOffsetMax = GfVec2f(0.0f, 0.0f);
+    viewport->BuildWorkOffsetMin = viewport->BuildWorkOffsetMax = wabi::GfVec2f(0.0f, 0.0f);
     viewport->UpdateWorkRect();
   }
 }
@@ -12079,9 +12079,9 @@ void ANCHOR::DebugRenderViewportThumbnail(AnchorDrawList *draw_list,
   AnchorWindow *window = g.CurrentWindow;
 
   /** todo::check_math */
-  GfVec2f scale = GfVec2f(bb.GetSize()[0] / viewport->Size[0],
+  wabi::GfVec2f scale = wabi::GfVec2f(bb.GetSize()[0] / viewport->Size[0],
                           bb.GetSize()[1] / viewport->Size[1]);
-  GfVec2f off = GfVec2f(bb.Min[0] - viewport->Pos[0] * scale[0],
+  wabi::GfVec2f off = wabi::GfVec2f(bb.Min[0] - viewport->Pos[0] * scale[0],
                         bb.Min[1] - viewport->Pos[1] * scale[1]);
   float alpha_mul = 1.0f;
   window->DrawList->AddRectFilled(bb.Min,
@@ -12097,15 +12097,15 @@ void ANCHOR::DebugRenderViewportThumbnail(AnchorDrawList *draw_list,
 
     /** todo::check_math */
     thumb_r = AnchorBBox(
-      AnchorFloor(GfVec2f(off[0] + thumb_r.Min[0] * scale[0], off[1] + thumb_r.Min[1] * scale[1])),
+      AnchorFloor(wabi::GfVec2f(off[0] + thumb_r.Min[0] * scale[0], off[1] + thumb_r.Min[1] * scale[1])),
       AnchorFloor(
-        GfVec2f(off[0] + thumb_r.Max[0] * scale[0], off[1] + thumb_r.Max[1] * scale[1])));
+        wabi::GfVec2f(off[0] + thumb_r.Max[0] * scale[0], off[1] + thumb_r.Max[1] * scale[1])));
 
     title_r = AnchorBBox(
-      AnchorFloor(GfVec2f(off[0] + title_r.Min[0] * scale[0], off[1] + title_r.Min[1] * scale[1])),
-      AnchorFloor(GfVec2f(off[0] + GfVec2f(title_r.Max[0], title_r.Min[1])[0] * scale[0],
-                          off[1] + GfVec2f(title_r.Max[0], title_r.Min[1])[1] * scale[1]) +
-                  GfVec2f(0, 5)));  // Exaggerate title bar height
+      AnchorFloor(wabi::GfVec2f(off[0] + title_r.Min[0] * scale[0], off[1] + title_r.Min[1] * scale[1])),
+      AnchorFloor(wabi::GfVec2f(off[0] + wabi::GfVec2f(title_r.Max[0], title_r.Min[1])[0] * scale[0],
+                          off[1] + wabi::GfVec2f(title_r.Max[0], title_r.Min[1])[1] * scale[1]) +
+                  wabi::GfVec2f(0, 5)));  // Exaggerate title bar height
 
     thumb_r.ClipWithFull(bb);
     title_r.ClipWithFull(bb);
@@ -12140,8 +12140,8 @@ static void RenderViewportsThumbnails()
   AnchorBBox bb_full(FLT_MAX, FLT_MAX, -FLT_MAX, -FLT_MAX);
   for (int n = 0; n < g.Viewports.Size; n++)
     bb_full.Add(g.Viewports[n]->GetMainRect());
-  GfVec2f p = window->DC.CursorPos;
-  GfVec2f off = p - bb_full.Min * SCALE;
+  wabi::GfVec2f p = window->DC.CursorPos;
+  wabi::GfVec2f off = p - bb_full.Min * SCALE;
   for (int n = 0; n < g.Viewports.Size; n++) {
     AnchorViewportP *viewport = g.Viewports[n];
     AnchorBBox viewport_draw_bb(off + (viewport->Pos) * SCALE,
@@ -12323,10 +12323,10 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
       } else if (rect_type == WRT_WorkRect) {
         return window->WorkRect;
       } else if (rect_type == WRT_Content) {
-        GfVec2f min = window->InnerRect.Min - window->Scroll + window->WindowPadding;
+        wabi::GfVec2f min = window->InnerRect.Min - window->Scroll + window->WindowPadding;
         return AnchorBBox(min, min + window->ContentSize);
       } else if (rect_type == WRT_ContentIdeal) {
-        GfVec2f min = window->InnerRect.Min - window->Scroll + window->WindowPadding;
+        wabi::GfVec2f min = window->InnerRect.Min - window->Scroll + window->WindowPadding;
         return AnchorBBox(min, min + window->ContentSizeIdeal);
       } else if (rect_type == WRT_ContentRegionRect) {
         return window->ContentRegionRect;
@@ -12395,8 +12395,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
                    table->ColumnsCount,
                    table->OuterWindow->Name);
         if (IsItemHovered())
-          GetForegroundDrawList()->AddRect(table->OuterRect.Min - GfVec2f(1, 1),
-                                           table->OuterRect.Max + GfVec2f(1, 1),
+          GetForegroundDrawList()->AddRect(table->OuterRect.Min - wabi::GfVec2f(1, 1),
+                                           table->OuterRect.Max + wabi::GfVec2f(1, 1),
                                            ANCHOR_COL32(255, 255, 0, 255),
                                            0.0f,
                                            0,
@@ -12422,8 +12422,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
                                  trt_rects_names[rect_n]);
               Selectable(buf);
               if (IsItemHovered())
-                GetForegroundDrawList()->AddRect(r.Min - GfVec2f(1, 1),
-                                                 r.Max + GfVec2f(1, 1),
+                GetForegroundDrawList()->AddRect(r.Min - wabi::GfVec2f(1, 1),
+                                                 r.Max + wabi::GfVec2f(1, 1),
                                                  ANCHOR_COL32(255, 255, 0, 255),
                                                  0.0f,
                                                  0,
@@ -12443,8 +12443,8 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
                                trt_rects_names[rect_n]);
             Selectable(buf);
             if (IsItemHovered())
-              GetForegroundDrawList()->AddRect(r.Min - GfVec2f(1, 1),
-                                               r.Max + GfVec2f(1, 1),
+              GetForegroundDrawList()->AddRect(r.Min - wabi::GfVec2f(1, 1),
+                                               r.Max + wabi::GfVec2f(1, 1),
                                                ANCHOR_COL32(255, 255, 0, 255),
                                                0.0f,
                                                0,
@@ -12581,7 +12581,7 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
       InputTextMultiline("##Ini",
                          (char *)(void *)g.SettingsIniData.c_str(),
                          g.SettingsIniData.Buf.Size,
-                         GfVec2f(-FLT_MIN, GetTextLineHeight() * 20),
+                         wabi::GfVec2f(-FLT_MIN, GetTextLineHeight() * 20),
                          AnchorInputTextFlags_ReadOnly);
       TreePop();
     }
@@ -12659,7 +12659,7 @@ void ANCHOR::ShowMetricsWindow(bool *p_open)
         AnchorFormatString(buf, ANCHOR_ARRAYSIZE(buf), "%d", window->BeginOrderWithinContext);
         float font_size = GetFontSize();
         draw_list->AddRectFilled(window->Pos,
-                                 window->Pos + GfVec2f(font_size, font_size),
+                                 window->Pos + wabi::GfVec2f(font_size, font_size),
                                  ANCHOR_COL32(200, 100, 100, 255));
         draw_list->AddText(window->Pos, ANCHOR_COL32(255, 255, 255, 255), buf);
       }
@@ -12711,12 +12711,12 @@ void ANCHOR::ShowFontAtlas(AnchorFontAtlas *atlas)
                "Atlas texture (%dx%d pixels)",
                atlas->TexWidth,
                atlas->TexHeight)) {
-    GfVec4f tint_col = GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);
-    GfVec4f border_col = GfVec4f(1.0f, 1.0f, 1.0f, 0.5f);
+    wabi::GfVec4f tint_col = wabi::GfVec4f(1.0f, 1.0f, 1.0f, 1.0f);
+    wabi::GfVec4f border_col = wabi::GfVec4f(1.0f, 1.0f, 1.0f, 0.5f);
     Image(atlas->TexID,
-          GfVec2f((float)atlas->TexWidth, (float)atlas->TexHeight),
-          GfVec2f(0.0f, 0.0f),
-          GfVec2f(1.0f, 1.0f),
+          wabi::GfVec2f((float)atlas->TexWidth, (float)atlas->TexHeight),
+          wabi::GfVec2f(0.0f, 0.0f),
+          wabi::GfVec2f(1.0f, 1.0f),
           tint_col,
           border_col);
     TreePop();
@@ -12764,7 +12764,7 @@ void ANCHOR::DebugNodeDrawList(AnchorWindow *window,
                             cmd_count);
   if (draw_list == GetWindowDrawList()) {
     SameLine();
-    TextColored(GfVec4f(1.0f, 0.4f, 0.4f, 1.0f),
+    TextColored(wabi::GfVec4f(1.0f, 0.4f, 0.4f, 1.0f),
                 "CURRENTLY APPENDING");  // Can't display stats for active draw list! (we don't
                                          // have the data double-buffered)
     if (node_open)
@@ -12818,7 +12818,7 @@ void ANCHOR::DebugNodeDrawList(AnchorWindow *window,
     const AnchorDrawVert *vtx_buffer = draw_list->VtxBuffer.Data + pcmd->VtxOffset;
     float total_area = 0.0f;
     for (unsigned int idx_n = pcmd->IdxOffset; idx_n < pcmd->IdxOffset + pcmd->ElemCount;) {
-      GfVec2f triangle[3];
+      wabi::GfVec2f triangle[3];
       for (int n = 0; n < 3; n++, idx_n++)
         triangle[n] = vtx_buffer[idx_buffer ? idx_buffer[idx_n] : idx_n].pos;
       total_area += AnchorTriangleArea(triangle[0], triangle[1], triangle[2]);
@@ -12846,7 +12846,7 @@ void ANCHOR::DebugNodeDrawList(AnchorWindow *window,
            prim < clipper.DisplayEnd;
            prim++) {
         char *buf_p = buf, *buf_end = buf + ANCHOR_ARRAYSIZE(buf);
-        GfVec2f triangle[3];
+        wabi::GfVec2f triangle[3];
         for (int n = 0; n < 3; n++, idx_i++) {
           const AnchorDrawVert &v = vtx_buffer[idx_buffer ? idx_buffer[idx_i] : idx_i];
           triangle[n] = v.pos;
@@ -12901,7 +12901,7 @@ void ANCHOR::DebugNodeDrawCmdShowMeshAndBoundingBox(AnchorDrawList *out_draw_lis
                                             // readable for very large and thin triangles.
   for (unsigned int idx_n = draw_cmd->IdxOffset;
        idx_n < draw_cmd->IdxOffset + draw_cmd->ElemCount;) {
-    GfVec2f triangle[3];
+    wabi::GfVec2f triangle[3];
     for (int n = 0; n < 3; n++, idx_n++)
       vtxs_rect.Add((triangle[n] = vtx_buffer[idx_buffer ? idx_buffer[idx_n] : idx_n].pos));
     if (show_mesh)
@@ -13015,14 +13015,14 @@ void ANCHOR::DebugNodeFont(AnchorFont *font)
         continue;
 
       // Draw a 16x16 grid of glyphs
-      GfVec2f base_pos = GetCursorScreenPos();
+      wabi::GfVec2f base_pos = GetCursorScreenPos();
       for (unsigned int n = 0; n < 256; n++) {
         // We use AnchorFont::RenderChar as a shortcut because we don't have UTF-8 conversion
         // functions available here and thus cannot easily generate a zero-terminated UTF-8 encoded
         // string.
-        GfVec2f cell_p1(base_pos[0] + (n % 16) * (cell_size + cell_spacing),
+        wabi::GfVec2f cell_p1(base_pos[0] + (n % 16) * (cell_size + cell_spacing),
                         base_pos[1] + (n / 16) * (cell_size + cell_spacing));
-        GfVec2f cell_p2(cell_p1[0] + cell_size, cell_p1[1] + cell_size);
+        wabi::GfVec2f cell_p2(cell_p1[0] + cell_size, cell_p1[1] + cell_size);
         const AnchorFontGlyph *glyph = font->FindGlyphNoFallback((AnchorWChar)(base + n));
         draw_list->AddRect(cell_p1,
                            cell_p2,
@@ -13041,7 +13041,7 @@ void ANCHOR::DebugNodeFont(AnchorFont *font)
           EndTooltip();
         }
       }
-      Dummy(GfVec2f((cell_size + cell_spacing) * 16, (cell_size + cell_spacing) * 16));
+      Dummy(wabi::GfVec2f((cell_size + cell_spacing) * 16, (cell_size + cell_spacing) * 16));
       TreePop();
     }
     TreePop();
@@ -13095,11 +13095,11 @@ void ANCHOR::DebugNodeTabBar(AnchorTabBar *tab_bar, const char *label)
   if (is_active && IsItemHovered()) {
     AnchorDrawList *draw_list = GetForegroundDrawList();
     draw_list->AddRect(tab_bar->BarRect.Min, tab_bar->BarRect.Max, ANCHOR_COL32(255, 255, 0, 255));
-    draw_list->AddLine(GfVec2f(tab_bar->ScrollingRectMinX, tab_bar->BarRect.Min[1]),
-                       GfVec2f(tab_bar->ScrollingRectMinX, tab_bar->BarRect.Max[1]),
+    draw_list->AddLine(wabi::GfVec2f(tab_bar->ScrollingRectMinX, tab_bar->BarRect.Min[1]),
+                       wabi::GfVec2f(tab_bar->ScrollingRectMinX, tab_bar->BarRect.Max[1]),
                        ANCHOR_COL32(0, 255, 0, 255));
-    draw_list->AddLine(GfVec2f(tab_bar->ScrollingRectMaxX, tab_bar->BarRect.Min[1]),
-                       GfVec2f(tab_bar->ScrollingRectMaxX, tab_bar->BarRect.Max[1]),
+    draw_list->AddLine(wabi::GfVec2f(tab_bar->ScrollingRectMaxX, tab_bar->BarRect.Min[1]),
+                       wabi::GfVec2f(tab_bar->ScrollingRectMaxX, tab_bar->BarRect.Max[1]),
                        ANCHOR_COL32(0, 255, 0, 255));
   }
   if (open) {

@@ -34,6 +34,8 @@
 # below may wind up stomping over this value.
 
 set(BUILD_SHARED_LIBS OFF)
+
+add_definitions(-DBUILD_SHARED_LIBS=OFF)
 add_definitions(-DWABI_STATIC)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
@@ -53,16 +55,54 @@ if(WIN32)
     # update compilers my friend.
     set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/win64_vc15)
   endif()
-  set(LIB_OBJ_EXT "lib")
+  set(LIB_OBJ_EXT .lib .a)
 elseif(UNIX AND NOT APPLE)
   set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/linux_centos7_x86_64)
-  set(LIB_OBJ_EXT "so")
+  set(LIB_OBJ_EXT .a)
 elseif(APPLE)
   # set(LIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64)
   set(PYLIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/python)
   set(LIBPATH "/opt/homebrew")
-  set(LIB_OBJ_EXT "dylib")
+  set(LIB_OBJ_EXT .a)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/openimageio" STATIC_BLENDER_OIIO)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/opencolorio" STATIC_BLENDER_OCIO)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/embree" STATIC_BLENDER_EMBREE)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/alembic" STATIC_BLENDER_ALEMBIC)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/tiff" STATIC_BLENDER_TIFF)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/jpeg" STATIC_BLENDER_JPEG)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/openjpeg" STATIC_BLENDER_OPENJPEG)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/png" STATIC_BLENDER_PNG)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/webp" STATIC_BLENDER_WEBP)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/ffmpeg" STATIC_BLENDER_FFMPEG)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/pugixml" STATIC_BLENDER_PUGIXML)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/imath" STATIC_BLENDER_IMATH)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/openexr" STATIC_BLENDER_OPENEXR)
+  set(CMAKE_PREFIX_PATH 
+    ${STATIC_BLENDER_OIIO}
+    ${STATIC_BLENDER_OCIO}
+    ${STATIC_BLENDER_EMBREE}
+    ${STATIC_BLENDER_ALEMBIC}
+    ${STATIC_BLENDER_TIFF}
+    ${STATIC_BLENDER_JPEG}
+    ${STATIC_BLENDER_OPENJPEG}
+    ${STATIC_BLENDER_PNG}
+    ${STATIC_BLENDER_WEBP}
+    ${STATIC_BLENDER_FFMPEG}
+    ${STATIC_BLENDER_PUGIXML}
+    ${STATIC_BLENDER_IMATH}
+    ${STATIC_BLENDER_OPENEXR}
+    "/opt/homebrew")
+  list(TRANSFORM CMAKE_PREFIX_PATH 
+       APPEND "/include"
+       OUTPUT_VARIABLE CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES)
+  list(TRANSFORM CMAKE_PREFIX_PATH 
+       APPEND "/lib"
+       OUTPUT_VARIABLE CMAKE_CXX_STANDARD_LIBRARY_DIRECTORIES)
+  set(CMAKE_C_STANDARD_INCLUDE_DIRECTORIES "${CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES}")
+  set(CMAKE_C_STANDARD_LIBRARY_DIRECTORIES "${CMAKE_CXX_STANDARD_LIBRARY_DIRECTORIES}")
 endif()
+
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${LIB_OBJ_EXT})
 
 # ! Important
 # Convert the relative path to an absolute path.
@@ -152,6 +192,7 @@ else()
     list(APPEND CMAKE_PREFIX_PATH "${LIBDIR}/lib/cmake/${subdir}")
   endforeach()
 endif()
+
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Threads
 
@@ -165,6 +206,22 @@ if(WIN32)
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
+# Find ZLIB.
+
+if(APPLE)
+  set(ZLIB_ROOT /opt/homebrew/Cellar/zlib/1.2.12)
+  # link_directories(${ZLIB_ROOT}/lib)
+endif()
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+# Find ZSTD.
+
+if(APPLE)
+  set(ZSTD_ROOT /opt/homebrew/Cellar/zstd/1.5.2)
+  link_directories(${ZSTD_ROOT}/lib)
+endif()
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Python
 
 if(WIN32)
@@ -175,7 +232,7 @@ if(WIN32)
   set(PYTHON_INCLUDE_DIR ${LIBDIR}/python/${python_version_nodot}/include)
   set(PYTHON_LIBPATH ${LIBDIR}/python/${python_version_nodot}/lib)
 
-  if(KRAKEN_RELEASE_MODE)
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(PYTHON_EXECUTABLE ${LIBDIR}/python/${python_version_nodot}/bin/python.exe)
     set(PYTHON_LIBRARIES ${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib)
   else()
@@ -189,6 +246,7 @@ if(WIN32)
   link_libraries(
     $<$<CONFIG:Debug>:${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}_d.lib>
     $<$<CONFIG:Release>:${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib>
+    $<$<CONFIG:RelWithDebInfo>:${LIBDIR}/python/${python_version_nodot}/libs/python${python_version_nodot}.lib>
   )
 else()
   if (UNIX AND NOT APPLE)
@@ -207,16 +265,6 @@ else()
     set(PYTHON_LIBRARIES ${PYLIBDIR}/lib/libpython${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}.a)
     set(PYTHON_EXECUTABLE ${PYLIBDIR}/bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR})
   endif()
-endif()
-
-#-------------------------------------------------------------------------------------------------------------------------------------------
-# Find zstd.
-
-# macOS only, not entirely ruled out if this is local or a larger issue with a recent brew upgrade
-# but without this the linker can't seem to find zstd. We are running beta ventura on beta xcode
-# so everything is chaos, why not add more temporary chaos on top of chaos?
-if (APPLE)
-  link_directories(/opt/homebrew/Cellar/zstd/1.5.2/lib)
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
@@ -265,7 +313,7 @@ if(WITH_VULKAN)
     list(APPEND VULKAN_LIBS ${X11_LIBRARIES})
   elseif(WIN32)
     file(TO_CMAKE_PATH "$ENV{VULKAN_SDK}" VULKAN_DIR_PATH)
-    if(KRAKEN_RELEASE_MODE)
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
       list(APPEND VULKAN_LIBS
         ${VULKAN_DIR_PATH}/Lib/glslang.lib
         ${VULKAN_DIR_PATH}/Lib/OGLCompiler.lib
@@ -339,7 +387,7 @@ endif()
 if(WIN32)
   set(LIB_OBJ_EXT "lib")
   set(BOOST_VERSION_SCORE "1_79")
-  if(KRAKEN_RELEASE_MODE)
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_79")
   else()
     set(BOOST_LIBRARY_SUFFIX "vc143-mt-gd-x64-1_79")
@@ -365,7 +413,7 @@ if(WIN32)
   set(Boost_SYSTEM_LIBRARY         ${LIBDIR}/boost/lib/boost_system-${BOOST_LIBRARY_SUFFIX}.lib)
   set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.lib)
 
-elseif(UNIX)
+elseif(UNIX AND NOT APPLE)
   set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED
                COMPONENTS
@@ -388,6 +436,24 @@ elseif(UNIX)
   set(Boost_REGEX_LIBRARY          Boost::regex)
   set(Boost_SYSTEM_LIBRARY         Boost::system)
   set(Boost_THREAD_LIBRARY         Boost::thread)
+elseif(APPLE)
+  set(Boost_USE_STATIC_LIBS ON)
+  set(Boost_ROOT                     ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost)
+  set(Boost_INCLUDE_DIRS             ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/include)
+  set(Boost_ATOMIC_LIBRARY           ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_atomic.a)
+  set(Boost_CHRONO_LIBRARY           ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_chrono.a)
+  set(Boost_DATETIME_LIBRARY         ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_date_time.a)
+  set(Boost_FILESYSTEM_LIBRARY       ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_filesystem.a)
+  set(Boost_IOSTREAMS_LIBRARY        ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_iostreams.a)
+  set(Boost_PYTHON_LIBRARY           ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_python310.a)
+  set(Boost_NUMPY_LIBRARY            ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_numpy310.a)
+  set(Boost_PROGRAMOPTIONS_LIBRARY   ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_program_options.a)
+  set(Boost_REGEX_LIBRARY            ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_regex.a)
+  set(Boost_SERIALIZATION_LIBRARY    ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_serialization.a)
+  set(Boost_WSERIALIZATION_LIBRARY   ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_wserialization.a)
+  set(Boost_SYSTEM_LIBRARY           ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_system.a)
+  set(Boost_THREAD_LIBRARY           ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_thread.a)
+  set(Boost_WAVE_LIBRARY             ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/lib/libboost_wave.a)
 endif()
 
 list(APPEND BOOST_LIBRARIES
@@ -400,15 +466,18 @@ list(APPEND BOOST_LIBRARIES
   ${Boost_NUMPY_LIBRARY}
   ${Boost_PROGRAMOPTIONS_LIBRARY}
   ${Boost_REGEX_LIBRARY}
+  ${Boost_SERIALIZATION_LIBRARY}
+  ${Boost_WSERIALIZATION_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_THREAD_LIBRARY}
+  ${Boost_WAVE_LIBRARY}
 )
 
-if (APPLE)
-  # else, we get a linker error finding licudata
-  # when statically linking against boost above.
-  link_directories("/opt/homebrew/opt/icu4c/lib")
-endif()
+# if (APPLE)
+#   # else, we get a linker error finding licudata
+#   # when statically linking against boost above.
+#   link_directories("/opt/homebrew/opt/icu4c/lib")
+# endif()
 
 # Disable superfluous Boost Warnings
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
@@ -452,7 +521,7 @@ if(WIN32)
   set(TBB_ROOT "${LIBDIR}/tbb")
   find_package(TBB REQUIRED COMPONENTS tbb)
   add_definitions(${TBB_DEFINITIONS})
-  if(KRAKEN_RELEASE_MODE)
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     list(APPEND TBB_LIBRARIES
       "${LIBDIR}/tbb/lib/tbb.lib"
       "${LIBDIR}/tbb/lib/tbbmalloc.lib"
@@ -494,8 +563,8 @@ if(WIN32)
     ${LIBDIR}/mimalloc/lib/mimalloc.lib
     ${LIBDIR}/mimalloc/lib/mimalloc-static.lib)
 else()
-  find_package(Jemalloc REQUIRED)
-  set(WABI_MALLOC_LIBRARY ${JEMALLOC_LIBRARY})
+  # find_package(Jemalloc REQUIRED)
+  # set(WABI_MALLOC_LIBRARY ${JEMALLOC_LIBRARY})
 endif()
 
 if(WABI_VALIDATE_GENERATED_CODE)
@@ -514,12 +583,107 @@ endif()
 # ----------------------------------------------
 
 if(WABI_BUILD_IMAGING)
+  # -- Additional options for static libs.
+  set(OPENEXR_USE_STATIC_LIBS TRUE)
+
   # --OpenImageIO
   if(WITH_OPENIMAGEIO)
     if(UNIX)
-      find_package(OpenEXR REQUIRED)
+      find_package(TIFF REQUIRED)
+      find_package(JPEG REQUIRED)
+      find_package(OPENJPEG REQUIRED)
+      find_package(PNG REQUIRED)
+      find_package(PUGIXML REQUIRED)
+      # find_package(Imath REQUIRED)
+      # find_package(OpenEXR REQUIRED)
+      if(APPLE)
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+          list(APPEND TIFF_LIBRARY ${TIFF_LIBRARY_DEBUG})
+          list(APPEND JPEG_LIBRARY ${JPEG_LIBRARY_DEBUG})
+          list(APPEND OPENJPEG_LIBRARY ${OPENJPEG_LIBRARY_DEBUG})
+          list(APPEND PNG_LIBRARY ${PNG_LIBRARY_DEBUG})
+          list(APPEND FFMPEG_LIBRARY ${FFMPEG_LIBRARY_DEBUG})
+          list(APPEND WEBP_LIBRARY ${WebP_LIBRARY_DEBUG})
+        else()
+          list(APPEND TIFF_LIBRARY 
+            ${STATIC_BLENDER_TIFF}/lib/libtiff.a
+            ${STATIC_BLENDER_TIFF}/lib/libtiffxx.a)
+          list(APPEND JPEG_LIBRARY 
+            ${STATIC_BLENDER_JPEG}/lib/libjpeg.a)
+          list(APPEND OPENJPEG_LIBRARY 
+            ${STATIC_BLENDER_OPENJPEG}/lib/libopenjp2.a)
+          list(APPEND PNG_LIBRARY 
+            ${STATIC_BLENDER_PNG}/lib/libpng16.a)
+          list(APPEND FFMPEG_LIBRARY 
+            ${STATIC_BLENDER_FFMPEG}/lib/libaom.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libavcodec.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libavdevice.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libavformat.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libavutil.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libmp3lame.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libogg.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libopus.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libswresample.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libswscale.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libtheora.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libtheoradec.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libtheoraenc.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libvorbis.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libvorbisenc.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libvorbisfile.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libvpx.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libx264.a
+            ${STATIC_BLENDER_FFMPEG}/lib/libxvidcore.a)
+          list(APPEND PUGIXML_LIBRARY
+            ${STATIC_BLENDER_PUGIXML}/lib/libpugixml.a)
+          list(APPEND WEBP_LIBRARIES 
+            ${STATIC_BLENDER_WEBP}/lib/libwebp.a
+            ${STATIC_BLENDER_WEBP}/lib/libwebpdecoder.a
+            ${STATIC_BLENDER_WEBP}/lib/libwebpdemux.a
+            ${STATIC_BLENDER_WEBP}/lib/libwebpmux.a)
+          list(APPEND IMATH_LIBRARIES
+            ${STATIC_BLENDER_IMATH}/lib/libImath.a)
+          list(APPEND BZIP2_LIBRARIES
+            /opt/homebrew/Cellar/bzip2/1.0.8/lib/libbz2.a)
+          list(APPEND EXPAT_LIBRARIES
+            /opt/homebrew/Cellar/expat/2.4.8/lib/libexpat.a)
+          list(APPEND BLOSC_LIBRARIES
+            /opt/homebrew/Cellar/c-blosc/1.21.1/lib/libblosc.a
+          )
+          list(APPEND YAML_CXX_LIBRARIES
+            ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/yaml/lib/libyaml-cpp.a
+          )
+          list(APPEND PYSTRING_LIBRARIES
+            ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/pystring/lib/libpystring.a
+          )
+          set(IMATH_INCLUDE_DIR ${STATIC_BLENDER_IMATH}/include)
+          set(OPENEXR_INCLUDE_DIR ${STATIC_BLENDER_OPENEXR}/include)
+          list(APPEND ALL_IMAGING_LIBS
+            ${PYSTRING_LIBRARIES}
+            ${YAML_CXX_LIBRARIES}
+            ${BLOSC_LIBRARIES}
+            ${EXPAT_LIBRARIES}
+            ${BZIP2_LIBRARIES}
+            ${TIFF_LIBRARY}
+            ${JPEG_LIBRARY}
+            ${OPENJPEG_LIBRARY}
+            ${PNG_LIBRARY}
+            ${FFMPEG_LIBRARY}
+            ${PUGIXML_LIBRARY}
+            ${WEBP_LIBRARIES}
+            ${IMATH_LIBRARIES}
+            ${STATIC_BLENDER_OPENEXR}/lib/libIex.a
+            ${STATIC_BLENDER_OPENEXR}/lib/libIlmThread.a
+            ${STATIC_BLENDER_OPENEXR}/lib/libOpenEXR.a
+            ${STATIC_BLENDER_OPENEXR}/lib/libOpenEXRCore.a
+            ${STATIC_BLENDER_OPENEXR}/lib/libOpenEXRUtil.a)
+            set(ALL_IMAGING_LIBRARIES ${ALL_IMAGING_LIBS} CACHE STRING "All of the Imaging Libraries" FORCE)
+        endif()
+      endif()
+
     endif()
     find_package(OpenImageIO REQUIRED)
+
     add_definitions(-DWITH_OPENIMAGEIO)
   endif()
   # --OpenColorIO
@@ -545,8 +709,23 @@ if(WABI_BUILD_IMAGING)
   endif()
   # --Embree
   if(WITH_EMBREE)
-    find_package(Embree REQUIRED)
-    add_definitions(-DWITH_EMBREE)
+    if(APPLE)
+      add_definitions(-DWITH_EMBREE=0)
+      # Embree needs to be compiled with this version TBB.
+      # set(Embree_FOUND ON)
+      # set(EMBREE_INCLUDE_DIR ${STATIC_BLENDER_EMBREE}/include)
+      # set(EMBREE_LIBRARY
+      #   ${STATIC_BLENDER_EMBREE}/lib/libembree3.a
+      #   ${STATIC_BLENDER_EMBREE}/lib/liblexers.a
+      #   ${STATIC_BLENDER_EMBREE}/lib/libmath.a
+      #   ${STATIC_BLENDER_EMBREE}/lib/libsimd.a
+      #   ${STATIC_BLENDER_EMBREE}/lib/libsys.a
+      #   ${STATIC_BLENDER_EMBREE}/lib/libtasking.a)
+      set(Embree_FOUND OFF)
+    else()
+      find_package(Embree REQUIRED)
+      add_definitions(-DWITH_EMBREE)
+    endif()
   endif()
 endif()
 
@@ -619,7 +798,7 @@ if(WITH_ARNOLD)
   endif()
 endif()
 
-if(KRAKEN_RELEASE_MODE)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
   if(WITH_CYCLES)
     add_definitions(-DWITH_CYCLES)
     if(UNIX AND NOT APPLE)
@@ -629,7 +808,7 @@ if(KRAKEN_RELEASE_MODE)
     elseif(APPLE)
       set(WITH_CYCLES OFF)
     elseif(WIN32)
-      if(KRAKEN_RELEASE_MODE)
+      if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
         set(CYCLES_HOME ${LIBDIR}/Cycles)
       else()
         set(CYCLES_HOME ${LIBDIR}/Cycles/debug)
@@ -638,7 +817,7 @@ if(KRAKEN_RELEASE_MODE)
       find_package(OpenImageDenoise REQUIRED)
     endif()
     if(WIN32)
-      if(KRAKEN_RELEASE_MODE)
+      if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
         set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/include)
       else()
         set(CYCLES_INCLUDE_DIRS ${CYCLES_INCLUDE_DIRS} ${LIBDIR}/Cycles/debug/include)
@@ -702,14 +881,14 @@ if(WITH_OSL)
 endif()
 
 if(WIN32)
-  if(KRAKEN_RELEASE_MODE)
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     # Fix Debug vs Release Libraries.
     # Leave Release Libraies untouched
     # as they are properly found via
     # find_package(XXX) above. But
     # Override the libraries to link
     # with the debug libs if build not
-    # KRAKEN_RELEASE_MODE.
+    # a Release build.
   else()
     set(OPENSUBDIV_LIBRARIES 
       ${LIBDIR}/opensubdiv/lib/debug/osdCPU.lib

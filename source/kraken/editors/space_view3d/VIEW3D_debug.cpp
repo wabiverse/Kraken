@@ -22,6 +22,8 @@
  * Tools for Artists.
  */
 
+#include "kraken/kraken.h"
+
 #include "ED_debug_codes.h"
 
 #include <wabi/base/tf/registryManager.h>

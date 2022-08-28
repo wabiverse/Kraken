@@ -36,11 +36,11 @@
 void KPY_modules_update(void);
 
 /* wpy_interface.cpp */
-void KPY_python_start(wabi::kContext *C, int argc, const char **argv);
+void KPY_python_start(kraken::kContext *C, int argc, const char **argv);
 void KPY_python_end(void);
 
-void KPY_python_reset(wabi::kContext *C);
+void KPY_python_reset(kraken::kContext *C);
 
-int KPY_context_member_get(wabi::kContext *C,
+int KPY_context_member_get(kraken::kContext *C,
                            const char *member,
-                           wabi::kContextDataResult *result);
+                           kraken::kContextDataResult *result);
