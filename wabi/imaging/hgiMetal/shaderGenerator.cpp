@@ -333,44 +333,60 @@ namespace
            "}\n\n";
   }
 
-  std::string _ComputeHeader(id<MTLDevice> device, HgiShaderStage stage)
+  std::string _ComputeHeader(MTL::Device *device, HgiShaderStage stage)
   {
     std::stringstream header;
 
-    // Metal feature set defines
-    // Define all macOS 10.13 feature set enums onwards
-    if (@available(macos 10.13, ios 100.100, *)) {
+    /* ----- Metal feature set defines. ----- */
+
+#ifdef ARCH_OS_MACOS
+    /**
+     * Define all macOS 10.13 feature set enums onwards.
+     * @NOTE: Verify these are accurate with apple. */
+
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(10, 13))) {
       header << "#define ARCH_OS_MACOS\n";
-      if ([device supportsFeatureSet:MTLFeatureSet(10003)])
+      if (device->supportsFeatureSet(MTL::FeatureSet_macOS_GPUFamily1_v3))
         header << "#define METAL_FEATURESET_MACOS_GPUFAMILY1_v3\n";
     }
-    if (@available(macos 10.14, ios 100.100, *)) {
-      if ([device supportsFeatureSet:MTLFeatureSet(10004)])
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(10, 14))) {
+      if (device->supportsFeatureSet(MTL::FeatureSet_macOS_GPUFamily1_v4))
         header << "#define METAL_FEATURESET_MACOS_GPUFAMILY1_v4\n";
     }
-    if (@available(macos 10.14, ios 100.100, *)) {
-      if ([device supportsFeatureSet:MTLFeatureSet(10005)])
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(10, 14))) {
+      if (device->supportsFeatureSet(MTL::FeatureSet_macOS_GPUFamily2_v1))
         header << "#define METAL_FEATURESET_MACOS_GPUFAMILY2_v1\n";
     }
+#elif defined(ARCH_OS_IOS)
+    /**
+     * Define all iOS 12 feature set enums onwards.
+     * @NOTE: Should these really all be iOS 12?? */
 
-    if (@available(macos 100.100, ios 12.0, *)) {
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(12, 0))) {
       header << "#define ARCH_OS_IOS\n";
-      // Define all iOS 12 feature set enums onwards
-      if ([device supportsFeatureSet:MTLFeatureSet(12)])
+      if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily1_v5))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY1_v5\n";
     }
-    if (@available(macos 100.100, ios 12.0, *)) {
-      if ([device supportsFeatureSet:MTLFeatureSet(12)])
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(12, 0))) {
+      if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily2_v5))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY2_v5\n";
     }
-    if (@available(macos 100.100, ios 12.0, *)) {
-      if ([device supportsFeatureSet:MTLFeatureSet(13)])
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(12, 0))) {
+      if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily3_v4))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY3_v4\n";
     }
-    if (@available(macos 100.100, ios 12.0, *)) {
-      if ([device supportsFeatureSet:MTLFeatureSet(14)])
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(12, 0))) {
+      if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily4_v2))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY4_v2\n";
     }
+#endif /* ARCH_OS_MACOS */
 
     header << "#include <metal_stdlib>\n"
            << "#include <simd/simd.h>\n"
@@ -541,9 +557,9 @@ namespace
     return header.str();
   }
 
-  std::string const &_GetHeader(id<MTLDevice> device, HgiShaderStage stage)
+  std::string const &_GetHeader(MTL::Device *device, HgiShaderStage stage)
   {
-    // This assumes that there is only ever one MTLDevice.
+    // This assumes that there is only ever one MTL::Device.
     static std::string header = _ComputeHeader(device, stage);
     return header;
   }
@@ -1203,7 +1219,7 @@ std::unique_ptr<HgiMetalShaderStageEntryPoint> HgiMetalShaderGenerator::
 }
 
 HgiMetalShaderGenerator::HgiMetalShaderGenerator(const HgiShaderFunctionDesc &descriptor,
-                                                 id<MTLDevice> device)
+                                                 MTL::Device *device)
   : HgiShaderGenerator(descriptor),
     _generatorShaderSections(_BuildShaderStageEntryPoints(descriptor))
 {

@@ -61,7 +61,7 @@ class HgiMetalShaderGenerator final : public HgiShaderGenerator
  public:
 
   HGIMETAL_API
-  HgiMetalShaderGenerator(const HgiShaderFunctionDesc &descriptor, id<MTLDevice> device);
+  HgiMetalShaderGenerator(const HgiShaderFunctionDesc &descriptor, MTL::Device *device);
 
   HGIMETAL_API
   ~HgiMetalShaderGenerator() override;
