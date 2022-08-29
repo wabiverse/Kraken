@@ -15,10 +15,12 @@ if(WITH_VULKAN OR WITH_OPENGL OR WITH_METAL OR WITH_DIRECTX)
 endif()
 
 if(WITH_METAL)
-  add_compile_options(-x objective-c++)
-  FIND_LIBRARY(COREVIDEO_LIBRARY CoreVideo)
-  list(APPEND optionalLibraries ${COREVIDEO_LIBRARY} hgiMetal)
-  list(APPEND optionalCppFiles metal.mm)
+  list(APPEND optionalLibraries 
+    "-framework Foundation"
+    "-framework Metal"
+    "-framework QuartzCore"
+    hgiMetal)
+  list(APPEND optionalCppFiles metal.cpp)
   list(APPEND optionalPrivateHeaders metal.h)
 else()
   # No OpenGL-to-OpenGL interop when using Metal.

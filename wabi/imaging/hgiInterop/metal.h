@@ -26,9 +26,9 @@
 
 #include "wabi/imaging/garch/glApi.h"
 
-#include <Foundation/Foundation.hpp>
-#include <Metal/Metal.hpp>
-#include <QuartzCore/QuartzCore.hpp>
+#include "wabi/imaging/hgiMetal/Foundation/Foundation.hpp"
+#include "wabi/imaging/hgiMetal/Metal/Metal.hpp"
+#include "wabi/imaging/hgiMetal/QuartzCore/QuartzCore.hpp"
 
 #include "wabi/wabi.h"
 #include "wabi/base/gf/vec4i.h"
@@ -108,33 +108,32 @@ class HgiInteropMetal final
 
   HgiMetal *_hgiMetal;
 
-  id<MTLDevice> _device;
+  MTL::Device *_device;
+  MTL::CommandBuffer *_cmdBuffer;
 
-  id<MTLTexture> _mtlAliasedColorTexture;
-  id<MTLTexture> _mtlAliasedDepthRegularFloatTexture;
+  MTL::Texture *_mtlAliasedColorTexture;
+  MTL::Texture *_mtlAliasedDepthRegularFloatTexture;
 
-  id<MTLLibrary> _defaultLibrary;
-  id<MTLFunction> _computeDepthCopyProgram;
-  id<MTLFunction> _computeColorCopyProgram;
-  id<MTLComputePipelineState> _computePipelineStateColor;
-  id<MTLComputePipelineState> _computePipelineStateDepth;
+  MTL::Library *_defaultLibrary;
+  MTL::Function *_computeDepthCopyProgram;
+  MTL::Function *_computeColorCopyProgram;
+  MTL::ComputePipelineState *_computePipelineStateColor;
+  MTL::ComputePipelineState *_computePipelineStateDepth;
 
-  CVPixelBufferRef _pixelBuffer;
-  CVPixelBufferRef _depthBuffer;
-  CVMetalTextureCacheRef _cvmtlTextureCache;
-  CVMetalTextureRef _cvmtlColorTexture;
-  CVMetalTextureRef _cvmtlDepthTexture;
+  MTL::Buffer *_pixelBuffer;
+  MTL::Buffer *_depthBuffer;
+  MTL::Drawable *_cvmtlTextureCache;
+  MTL::Texture *_cvmtlColorTexture;
+  MTL::Texture *_cvmtlDepthTexture;
 
-  CVOpenGLTextureCacheRef _cvglTextureCache;
-  CVOpenGLTextureRef _cvglColorTexture;
-  CVOpenGLTextureRef _cvglDepthTexture;
+  MTL::Drawable *_cvglTextureCache;
+  MTL::Texture *_cvglColorTexture;
+  MTL::Texture *_cvglDepthTexture;
 
   uint32_t _glColorTexture;
   uint32_t _glDepthTexture;
 
   ShaderContext _shaderProgramContext[ShaderContextCount];
-
-  NSOpenGLContext *_currentOpenGLContext;
 
   int32_t _restoreDrawFbo;
   int32_t _restoreVao;
