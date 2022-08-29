@@ -41,19 +41,19 @@ WABI_NAMESPACE_BEGIN
 HGIMETAL_API
 bool HgiMetalDebugEnabled();
 
-#define HGIMETAL_DEBUG_LABEL(_obj, label) \
-  if (HgiMetalDebugEnabled()) {           \
-    [_obj setLabel:@(label)];             \
+#define HGIMETAL_DEBUG_LABEL(_obj, label)                              \
+  if (HgiMetalDebugEnabled()) {                                        \
+    _obj->setLabel(NS::String::string(label, NS::UTF8StringEncoding)); \
   }
 
-#define HGIMETAL_DEBUG_PUSH_GROUP(_obj, label) \
-  if (HgiMetalDebugEnabled()) {                \
-    [_obj pushDebugGroup:@(label)];            \
+#define HGIMETAL_DEBUG_PUSH_GROUP(_obj, label)                               \
+  if (HgiMetalDebugEnabled()) {                                              \
+    _obj->pushDebugGroup(NS::String::string(label, NS::UTF8StringEncoding)); \
   }
 
 #define HGIMETAL_DEBUG_POP_GROUP(_obj) \
   if (HgiMetalDebugEnabled()) {        \
-    [_obj popDebugGroup];              \
+    _obj->popDebugGroup();             \
   }
 
 /// Posts diagnostic errors for all Metal errors in the current context.

@@ -24,7 +24,9 @@
 #ifndef WABI_IMAGING_HGI_METAL_TEXTURE_H
 #define WABI_IMAGING_HGI_METAL_TEXTURE_H
 
-#include <Metal/Metal.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
 
 #include "wabi/wabi.h"
 #include "wabi/imaging/hgiMetal/api.h"
@@ -56,7 +58,7 @@ class HgiMetalTexture final : public HgiTexture
 
   /// Returns the handle to the Metal texture.
   HGIMETAL_API
-  id<MTLTexture> GetTextureId() const;
+  MTL::Texture *GetTextureId() const;
 
  protected:
 
@@ -74,7 +76,7 @@ class HgiMetalTexture final : public HgiTexture
   HgiMetalTexture &operator=(const HgiMetalTexture &) = delete;
   HgiMetalTexture(const HgiMetalTexture &) = delete;
 
-  id<MTLTexture> _textureId;
+  MTL::Texture *_textureId;
 };
 
 

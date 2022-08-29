@@ -24,7 +24,10 @@
 #ifndef WABI_IMAGING_HGI_METAL_CAPABILITIES_H
 #define WABI_IMAGING_HGI_METAL_CAPABILITIES_H
 
-#include <Metal/Metal.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
+
 #include "wabi/wabi.h"
 #include "wabi/imaging/hgiMetal/api.h"
 #include "wabi/imaging/hgi/capabilities.h"

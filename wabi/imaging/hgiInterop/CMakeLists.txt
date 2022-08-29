@@ -9,6 +9,7 @@ endif()
 set(optionalLibraries "")
 set(optionalCppFiles "")
 set(optionalPrivateHeaders "")
+set(optionalSystemIncludes "")
 
 if(WITH_VULKAN OR WITH_OPENGL OR WITH_METAL OR WITH_DIRECTX)
   list(APPEND optionalLibraries garch)
@@ -22,6 +23,7 @@ if(WITH_METAL)
     hgiMetal)
   list(APPEND optionalCppFiles metal.cpp)
   list(APPEND optionalPrivateHeaders metal.h)
+  list(APPEND optionalSystemIncludes ${APPLE_CXX_INCLUDE_DIR})
 else()
   # No OpenGL-to-OpenGL interop when using Metal.
   list(APPEND optionalCppFiles opengl.cpp)
@@ -52,6 +54,9 @@ wabi_library(hgiInterop
         hgi
         vt
         ${optionalLibraries}
+
+    INCLUDE_DIRS
+        ${optionalSystemIncludes}
 
     PUBLIC_HEADERS
         api.h

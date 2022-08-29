@@ -21,70 +21,48 @@
 // KIND, either express or implied. See the Apache License for the specific
 // language governing permissions and limitations under the Apache License.
 //
-#ifndef WABI_IMAGING_HGI_METAL_SHADERFUNCTION_H
-#define WABI_IMAGING_HGI_METAL_SHADERFUNCTION_H
+// Diagnostic.cpp
+//
 
-#include "wabi/imaging/hgi/shaderFunction.h"
-
-#include "wabi/imaging/hgiMetal/api.h"
 
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
 
+#include "wabi/imaging/hgiMetal/diagnostic.h"
+
+#include "wabi/base/tf/debug.h"
+#include "wabi/base/tf/diagnostic.h"
+#include "wabi/base/tf/envSetting.h"
+#include "wabi/base/tf/registryManager.h"
+#include "wabi/base/tf/stackTrace.h"
+#include "wabi/base/tf/stringUtils.h"
+
 WABI_NAMESPACE_BEGIN
 
-class HgiMetal;
+TF_DEFINE_ENV_SETTING(HGIMETAL_DEBUG, 0,
+                      "Enable Metal debugging for HgiMetal");
 
-///
-/// \class HgiMetalShaderFunction
-///
-/// Metal implementation of HgiShaderFunction
-///
-class HgiMetalShaderFunction final : public HgiShaderFunction
+TF_DEBUG_CODES(HGIMETAL_DEBUG_ERROR_STACKTRACE);
+
+TF_REGISTRY_FUNCTION(TfDebug)
 {
- public:
+  TF_DEBUG_ENVIRONMENT_SYMBOL(HGIMETAL_DEBUG_ERROR_STACKTRACE,
+                              "HgiMetal dump stack trace on Metal error");
+}
 
-  HGIMETAL_API
-  ~HgiMetalShaderFunction() override;
+bool HgiMetalDebugEnabled()
+{
+  static bool _v = TfGetEnvSetting(HGIMETAL_DEBUG) == 1;
+  return _v;
+}
 
-  HGIMETAL_API
-  bool IsValid() const override;
+void HgiMetalPostPendingMetalErrors(std::string const &where) {}
 
-  HGIMETAL_API
-  std::string const &GetCompileErrors() override;
-
-  HGIMETAL_API
-  size_t GetByteSizeOfResource() const override;
-
-  HGIMETAL_API
-  uint64_t GetRawResource() const override;
-
-  /// Returns the metal resource id of the shader.
-  HGIMETAL_API
-  id<MTLFunction> GetShaderId() const;
-
- protected:
-
-  friend class HgiMetal;
-
-  HGIMETAL_API
-  HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionDesc const &desc);
-
- private:
-
-  HgiMetalShaderFunction() = delete;
-  HgiMetalShaderFunction &operator=(const HgiMetalShaderFunction &) = delete;
-  HgiMetalShaderFunction(const HgiMetalShaderFunction &) = delete;
-
- private:
-
-  std::string _errors;
-
-  id<MTLFunction> _shaderId;
-};
-
+void HgiMetalSetupMetalDebug()
+{
+  if (!HgiMetalDebugEnabled())
+    return;
+}
 
 WABI_NAMESPACE_END
-
-#endif

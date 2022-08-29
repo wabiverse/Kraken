@@ -21,6 +21,9 @@ wabi_library(hgiMetal
         "-framework Metal"
         "-framework QuartzCore"
 
+    INCLUDE_DIRS
+        ${APPLE_CXX_INCLUDE_DIR}
+
     PUBLIC_HEADERS
         api.h
         capabilities.h
@@ -37,92 +40,6 @@ wabi_library(hgiMetal
         sampler.h
         shaderFunction.h
         shaderProgram.h
-        Foundation/Foundation.hpp
-        Foundation/NSArray.hpp
-        Foundation/NSAutoreleasePool.hpp
-        Foundation/NSBundle.hpp
-        Foundation/NSData.hpp
-        Foundation/NSDate.hpp
-        Foundation/NSDefines.hpp
-        Foundation/NSDictionary.hpp
-        Foundation/NSEnumerator.hpp
-        Foundation/NSError.hpp
-        Foundation/NSLock.hpp
-        Foundation/NSNotification.hpp
-        Foundation/NSNumber.hpp
-        Foundation/NSObjCRuntime.hpp
-        Foundation/NSObject.hpp
-        Foundation/NSPrivate.hpp
-        Foundation/NSProcessInfo.hpp
-        Foundation/NSRange.hpp
-        Foundation/NSSet.hpp
-        Foundation/NSSharedPtr.hpp
-        Foundation/NSString.hpp
-        Foundation/NSTypes.hpp
-        Foundation/NSURL.hpp
-        Metal/MTLAccelerationStructure.hpp
-        Metal/MTLAccelerationStructureCommandEncoder.hpp
-        Metal/MTLAccelerationStructureTypes.hpp
-        Metal/MTLArgument.hpp
-        Metal/MTLArgumentEncoder.hpp
-        Metal/MTLBinaryArchive.hpp
-        Metal/MTLBlitCommandEncoder.hpp
-        Metal/MTLBlitPass.hpp
-        Metal/MTLBuffer.hpp
-        Metal/MTLCaptureManager.hpp
-        Metal/MTLCaptureScope.hpp
-        Metal/MTLCommandBuffer.hpp
-        Metal/MTLCommandEncoder.hpp
-        Metal/MTLCommandQueue.hpp
-        Metal/MTLComputeCommandEncoder.hpp
-        Metal/MTLComputePass.hpp
-        Metal/MTLComputePipeline.hpp
-        Metal/MTLCounters.hpp
-        Metal/MTLDefines.hpp
-        Metal/MTLDepthStencil.hpp
-        Metal/MTLDevice.hpp
-        Metal/MTLDrawable.hpp
-        Metal/MTLDynamicLibrary.hpp
-        Metal/MTLEvent.hpp
-        Metal/MTLFence.hpp
-        Metal/MTLFunctionConstantValues.hpp
-        Metal/MTLFunctionDescriptor.hpp
-        Metal/MTLFunctionHandle.hpp
-        Metal/MTLFunctionLog.hpp
-        Metal/MTLFunctionStitching.hpp
-        Metal/MTLHeaderBridge.hpp
-        Metal/MTLHeap.hpp
-        Metal/MTLIOCommandBuffer.hpp
-        Metal/MTLIOCommandQueue.hpp
-        Metal/MTLIOCompressor.hpp
-        Metal/MTLIndirectCommandBuffer.hpp
-        Metal/MTLIndirectCommandEncoder.hpp
-        Metal/MTLIntersectionFunctionTable.hpp
-        Metal/MTLLibrary.hpp
-        Metal/MTLLinkedFunctions.hpp
-        Metal/MTLParallelRenderCommandEncoder.hpp
-        Metal/MTLPipeline.hpp
-        Metal/MTLPixelFormat.hpp
-        Metal/MTLPrivate.hpp
-        Metal/MTLRasterizationRate.hpp
-        Metal/MTLRenderCommandEncoder.hpp
-        Metal/MTLRenderPass.hpp
-        Metal/MTLRenderPipeline.hpp
-        Metal/MTLResource.hpp
-        Metal/MTLResourceStateCommandEncoder.hpp
-        Metal/MTLResourceStatePass.hpp
-        Metal/MTLSampler.hpp
-        Metal/MTLStageInputOutputDescriptor.hpp
-        Metal/MTLTexture.hpp
-        Metal/MTLTypes.hpp
-        Metal/MTLVertexDescriptor.hpp
-        Metal/MTLVisibleFunctionTable.hpp
-        Metal/Metal.hpp
-        QuartzCore/CADefines.hpp
-        QuartzCore/CAMetalDrawable.hpp
-        QuartzCore/CAMetalLayer.hpp
-        QuartzCore/CAPrivate.hpp
-        QuartzCore/QuartzCore.hpp
 
     PRIVATE_HEADERS
         conversions.h
@@ -130,24 +47,24 @@ wabi_library(hgiMetal
         shaderSection.h
 
     CPPFILES
-        blitCmds.mm
-        buffer.mm
-        capabilities.mm
-        computePipeline.mm
-        computeCmds.mm
-        conversions.mm
-        diagnostic.mm
-        graphicsCmds.mm
-        graphicsPipeline.mm
-        hgi.mm
+        blitCmds.cpp
+        buffer.cpp
+        capabilities.cpp
+        computePipeline.cpp
+        computeCmds.cpp
+        conversions.cpp
+        diagnostic.cpp
+        graphicsCmds.cpp
+        graphicsPipeline.cpp
+        hgi.cpp
         metal.cpp
-        resourceBindings.mm
-        sampler.mm
-        shaderFunction.mm
-        shaderGenerator.mm
-        shaderProgram.mm
-        shaderSection.mm
-        texture.mm
+        resourceBindings.cpp
+        sampler.cpp
+        shaderFunction.cpp
+        shaderGenerator.cpp
+        shaderProgram.cpp
+        shaderSection.cpp
+        texture.cpp
 
     RESOURCE_FILES
         resources/plugInfo.json

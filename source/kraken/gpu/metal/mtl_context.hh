@@ -24,10 +24,9 @@
 
 #include "kraken/kraken.h"
 
-#import <Cocoa/Cocoa.h>
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
-#import <QuartzCore/QuartzCore.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
 
 // A wrapper around a MTLBuffer object that knows the last time it was reused
 @interface MTLBackendBuffer : NSObject

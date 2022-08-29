@@ -30,7 +30,9 @@
 #include "wabi/imaging/hgi/graphicsCmds.h"
 #include <cstdint>
 
-#include <Metal/Metal.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
 
 WABI_NAMESPACE_BEGIN
 

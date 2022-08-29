@@ -28,11 +28,43 @@
 
 #if defined(__APPLE__)
 #  include "TargetConditionals.h"
+/**
+ * For further information regarding apple platform defines, the below reference 
+ * was taken directly from apple, from the file included above, TargetConditionals.
+ * +---------------------------------------------------------------------------+
+ * |                             TARGET_OS_MAC                                 |
+ * | +-----+ +-------------------------------------------------+ +-----------+ |
+ * | |     | |                  TARGET_OS_IPHONE               | |           | |
+ * | |     | | +-----------------+ +----+ +-------+ +--------+ | |           | |
+ * | |     | | |       IOS       | |    | |       | |        | | |           | |
+ * | | OSX | | | +-------------+ | | TV | | WATCH | | BRIDGE | | | DRIVERKIT | |
+ * | |     | | | | MACCATALYST | | |    | |       | |        | | |           | |
+ * | |     | | | +-------------+ | |    | |       | |        | | |           | |
+ * | |     | | +-----------------+ +----+ +-------+ +--------+ | |           | |
+ * | +-----+ +-------------------------------------------------+ +-----------+ |
+ * +---------------------------------------------------------------------------+ */
+
+/**
+ * Defined to encapsulate any Apple Inc. designed architecture. (same as ARCH_OS_DARWIN). */
+#  define ARCH_OS_APPLE
+/**
+ * Defined to encapsulate any Apple Inc. designed architecture. (same as ARCH_OS_APPLE). */
 #  define ARCH_OS_DARWIN
 #  if TARGET_OS_IPHONE
+/**
+ * Defined if we are targeting any of the following:
+ *  - iOS
+ *  - tvOS
+ *  - watchOS
+ *  - bridgeOS */
 #    define ARCH_OS_IOS
 #  else
+/**
+ * Defined if we are only targeting macOS and none of the iOS ecosystem. (same as ARCH_OS_MACOS) */
 #    define ARCH_OS_OSX
+/**
+ * Defined if we are only targeting macOS and none of the iOS ecosystem. (same as ARCH_OS_OSX) */
+#    define ARCH_OS_MACOS
 #  endif /* TARGET_OS_IPHONE */
 #endif
 
