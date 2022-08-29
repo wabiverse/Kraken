@@ -39,43 +39,52 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
     _shaderId(nil)
 {
   if (desc.shaderCode) {
-    id<MTLDevice> device = hgi->GetPrimaryDevice();
+    MTL::Device *device = hgi->GetPrimaryDevice();
 
     HgiMetalShaderGenerator shaderGenerator{desc, device};
     shaderGenerator.Execute();
     const char *shaderCode = shaderGenerator.GetGeneratedShaderCode();
 
-    MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
-    options.fastMathEnabled = YES;
+    MTL::CompileOptions *options = MTL::CompileOptions::alloc()->init();
+    options->setFastMathEnabled(YES);
 
-    if (@available(macOS 10.15, ios 13.0, *)) {
-      options.languageVersion = MTLLanguageVersion2_2;
+#ifdef ARCH_OS_MACOS
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(10, 15))) {
+#elif defined(ARCH_OS_IOS)
+    if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+          NS::OperatingSystemVersion(13, 0))) {
+#else  /* ARCH_OS_IOS */
+    if (false) {
+#endif /* ARCH_OS_MACOS */
+      options->setLanguageVersion(MTL::LanguageVersion2_2);
     } else {
-      options.languageVersion = MTLLanguageVersion2_1;
+      options->setLanguageVersion(MTL::LanguageVersion2_1);
     }
 
-    options.preprocessorMacros = @{
-      @"ARCH_GFX_METAL" : @1,
-    };
+    options->setPreprocessorMacros(
+      NS::Dictionary::dictionary(NS::String::string("ARCH_GFX_METAL", NS::UTF8StringEncoding),
+                                 NS::String::string("1", NS::UTF8StringEncoding)));
 
-    NSError *error = NULL;
-    id<MTLLibrary> library = [hgi->GetPrimaryDevice() newLibraryWithSource:@(shaderCode)
-                                                                   options:options
-                                                                     error:&error];
+    NS::Error *error = NULL;
+    MTL::Library *library = hgi->GetPrimaryDevice()->newLibrary(
+      NS::String::string(shaderCode, NS::UTF8StringEncoding),
+      options,
+      &error);
 
-    NSString *entryPoint = nullptr;
+    NS::String *entryPoint = nullptr;
     switch (_descriptor.shaderStage) {
       case HgiShaderStageVertex:
-        entryPoint = @"vertexEntryPoint";
+        entryPoint = NS::String::string("vertexEntryPoint", NS::UTF8StringEncoding);
         break;
       case HgiShaderStageFragment:
-        entryPoint = @"fragmentEntryPoint";
+        entryPoint = NS::String::string("fragmentEntryPoint", NS::UTF8StringEncoding);
         break;
       case HgiShaderStageCompute:
-        entryPoint = @"computeEntryPoint";
+        entryPoint = NS::String::string("computeEntryPoint", NS::UTF8StringEncoding);
         break;
       case HgiShaderStagePostTessellationVertex:
-        entryPoint = @"vertexEntryPoint";
+        entryPoint = NS::String::string("vertexEntryPoint", NS::UTF8StringEncoding);
         break;
       case HgiShaderStageTessellationControl:
       case HgiShaderStageTessellationEval:
@@ -85,15 +94,15 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
     }
 
     // Load the function into the library
-    _shaderId = [library newFunctionWithName:entryPoint];
+    _shaderId = library->newFunction(entryPoint);
     if (!_shaderId) {
-      NSString *err = [error localizedDescription];
-      _errors = [err UTF8String];
+      NS::String *err = error->localizedDescription();
+      _errors = err->utf8String();
     } else {
       HGIMETAL_DEBUG_LABEL(_shaderId, _descriptor.debugName.c_str());
     }
 
-    [library release];
+    library->release();
   }
 
   // Clear these pointers in our copy of the descriptor since we
@@ -105,7 +114,7 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
 
 HgiMetalShaderFunction::~HgiMetalShaderFunction()
 {
-  [_shaderId release];
+  _shaderId->release();
   _shaderId = nil;
 }
 
@@ -129,7 +138,7 @@ uint64_t HgiMetalShaderFunction::GetRawResource() const
   return (uint64_t)_shaderId;
 }
 
-id<MTLFunction> HgiMetalShaderFunction::GetShaderId() const
+MTL::Function *HgiMetalShaderFunction::GetShaderId() const
 {
   return _shaderId;
 }

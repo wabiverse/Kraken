@@ -54,13 +54,13 @@ HgiMetalResourceBindings::HgiMetalResourceBindings(HgiResourceBindingsDesc const
 HgiMetalResourceBindings::~HgiMetalResourceBindings() = default;
 
 void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
-                                             id<MTLRenderCommandEncoder> renderEncoder,
-                                             id<MTLBuffer> argBuffer)
+                                             MTL::RenderCommandEncoder *renderEncoder,
+                                             MTL::Buffer *argBuffer)
 {
-  id<MTLDevice> device = hgi->GetPrimaryDevice();
-  id<MTLArgumentEncoder> argEncoderBuffer = hgi->GetBufferArgumentEncoder();
-  id<MTLArgumentEncoder> argEncoderSampler = hgi->GetSamplerArgumentEncoder();
-  id<MTLArgumentEncoder> argEncoderTexture = hgi->GetTextureArgumentEncoder();
+  MTL::Device *device = hgi->GetPrimaryDevice();
+  MTL::ArgumentEncoder *argEncoderBuffer = hgi->GetBufferArgumentEncoder();
+  MTL::ArgumentEncoder *argEncoderSampler = hgi->GetSamplerArgumentEncoder();
+  MTL::ArgumentEncoder *argEncoderTexture = hgi->GetTextureArgumentEncoder();
 
   //
   // Bind Textures and Samplers
@@ -70,14 +70,14 @@ void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
     if (!TF_VERIFY(texDesc.textures.size() == 1))
       continue;
 
-    id<MTLTexture> metalTexture = nil;
+    MTL::Texture *metalTexture = nil;
     HgiTextureHandle const &texHandle = texDesc.textures.front();
     HgiMetalTexture *hgiMetalTexture = static_cast<HgiMetalTexture *>(texHandle.Get());
     if (hgiMetalTexture) {
       metalTexture = hgiMetalTexture->GetTextureId();
     }
 
-    id<MTLSamplerState> metalSampler = nil;
+    MTL::SamplerState *metalSampler = nil;
     if (texDesc.samplers.size()) {
       HgiSamplerHandle const &smpHandle = texDesc.samplers.front();
       HgiMetalSampler *hgiMetalSampler = static_cast<HgiMetalSampler *>(smpHandle.Get());
@@ -90,51 +90,50 @@ void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
         texDesc.stageUsage & HgiShaderStagePostTessellationVertex) {
       size_t offsetSampler = HgiMetalArgumentOffsetSamplerVS +
                              (texDesc.bindingIndex * sizeof(void *));
-      [argEncoderSampler setArgumentBuffer:argBuffer offset:offsetSampler];
-      [argEncoderSampler setSamplerState:metalSampler atIndex:0];
+      argEncoderSampler->setArgumentBuffer(argBuffer, offsetSampler);
+      argEncoderSampler->setSamplerState(metalSampler, 0);
 
       size_t offsetTexture = HgiMetalArgumentOffsetTextureVS +
                              (texDesc.bindingIndex * sizeof(void *));
-      [argEncoderTexture setArgumentBuffer:argBuffer offset:offsetTexture];
-      [argEncoderTexture setTexture:metalTexture atIndex:0];
+      argEncoderTexture->setArgumentBuffer(argBuffer, offsetTexture);
+      argEncoderTexture->setTexture(metalTexture, 0);
     }
 
     if (texDesc.stageUsage & HgiShaderStageFragment) {
       size_t offsetSampler = HgiMetalArgumentOffsetSamplerFS +
                              (texDesc.bindingIndex * sizeof(void *));
-      [argEncoderSampler setArgumentBuffer:argBuffer offset:offsetSampler];
-      [argEncoderSampler setSamplerState:metalSampler atIndex:0];
+      argEncoderSampler->setArgumentBuffer(argBuffer, offsetSampler);
+      argEncoderSampler->setSamplerState(metalSampler, 0);
 
       size_t offsetTexture = HgiMetalArgumentOffsetTextureFS +
                              (texDesc.bindingIndex * sizeof(void *));
-      [argEncoderTexture setArgumentBuffer:argBuffer offset:offsetTexture];
-      [argEncoderTexture setTexture:metalTexture atIndex:0];
+      argEncoderTexture->setArgumentBuffer(argBuffer, offsetTexture);
+      argEncoderTexture->setTexture(metalTexture, 0);
     }
     if (metalTexture) {
       if (metalSampler) {
-        [renderEncoder
-          useResource:metalTexture
-                usage:MTLResourceUsageSample | MTLResourceUsageRead | MTLResourceUsageWrite];
+        renderEncoder->useResource(metalTexture,
+                                   MTL::ResourceUsageSample | MTL::ResourceUsageRead |
+                                     MTL::ResourceUsageWrite);
       } else {
-        [renderEncoder useResource:metalTexture
-                             usage:MTLResourceUsageRead | MTLResourceUsageWrite];
+        renderEncoder->useResource(metalTexture, MTL::ResourceUsageRead | MTL::ResourceUsageWrite);
       }
     }
   }
 
-  [renderEncoder setVertexBuffer:argBuffer
-                          offset:HgiMetalArgumentOffsetSamplerVS
-                         atIndex:HgiMetalArgumentIndexSamplers];
-  [renderEncoder setVertexBuffer:argBuffer
-                          offset:HgiMetalArgumentOffsetTextureVS
-                         atIndex:HgiMetalArgumentIndexTextures];
+  renderEncoder->setVertexBuffer(argBuffer,
+                                 HgiMetalArgumentOffsetSamplerVS,
+                                 HgiMetalArgumentIndexSamplers);
+  renderEncoder->setVertexBuffer(argBuffer,
+                                 HgiMetalArgumentOffsetTextureVS,
+                                 HgiMetalArgumentIndexTextures);
 
-  [renderEncoder setFragmentBuffer:argBuffer
-                            offset:HgiMetalArgumentOffsetSamplerFS
-                           atIndex:HgiMetalArgumentIndexSamplers];
-  [renderEncoder setFragmentBuffer:argBuffer
-                            offset:HgiMetalArgumentOffsetTextureFS
-                           atIndex:HgiMetalArgumentIndexTextures];
+  renderEncoder->setFragmentBuffer(argBuffer,
+                                   HgiMetalArgumentOffsetSamplerFS,
+                                   HgiMetalArgumentIndexSamplers);
+  renderEncoder->setFragmentBuffer(argBuffer,
+                                   HgiMetalArgumentOffsetTextureFS,
+                                   HgiMetalArgumentIndexTextures);
 
   //
   // Bind Buffers
@@ -150,57 +149,57 @@ void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
     HgiBufferHandle const &bufHandle = bufDesc.buffers.front();
     HgiMetalBuffer *metalbuffer = static_cast<HgiMetalBuffer *>(bufHandle.Get());
 
-    id<MTLBuffer> bufferId = metalbuffer->GetBufferId();
-    NSUInteger offset = bufDesc.offsets.front();
+    MTL::Buffer *bufferId = metalbuffer->GetBufferId();
+    NS::UInteger offset = bufDesc.offsets.front();
 
     if ((bufDesc.stageUsage & HgiShaderStageVertex) ||
         (bufDesc.stageUsage & HgiShaderStagePostTessellationVertex)) {
-      NSUInteger argBufferOffset = HgiMetalArgumentOffsetBufferVS +
-                                   bufDesc.bindingIndex * sizeof(void *);
-      [argEncoderBuffer setArgumentBuffer:argBuffer offset:argBufferOffset];
-      [argEncoderBuffer setBuffer:bufferId offset:offset atIndex:0];
+      NS::UInteger argBufferOffset = HgiMetalArgumentOffsetBufferVS +
+                                     bufDesc.bindingIndex * sizeof(void *);
+      argEncoderBuffer->setArgumentBuffer(argBuffer, argBufferOffset);
+      argEncoderBuffer->setBuffer(bufferId, offset, 0);
     }
 
     if (bufDesc.stageUsage & HgiShaderStageFragment) {
-      NSUInteger argBufferOffset = HgiMetalArgumentOffsetBufferFS +
-                                   bufDesc.bindingIndex * sizeof(void *);
-      [argEncoderBuffer setArgumentBuffer:argBuffer offset:argBufferOffset];
-      [argEncoderBuffer setBuffer:bufferId offset:offset atIndex:0];
+      NS::UInteger argBufferOffset = HgiMetalArgumentOffsetBufferFS +
+                                     bufDesc.bindingIndex * sizeof(void *);
+      argEncoderBuffer->setArgumentBuffer(argBuffer, argBufferOffset);
+      argEncoderBuffer->setBuffer(bufferId, offset, 0);
     }
 
-    [renderEncoder useResource:bufferId usage:(MTLResourceUsageRead | MTLResourceUsageWrite)];
+    renderEncoder->useResource(bufferId, MTL::ResourceUsageRead | MTL::ResourceUsageWrite);
   }
 
 
-  [renderEncoder setVertexBuffer:argBuffer
-                          offset:HgiMetalArgumentOffsetBufferVS
-                         atIndex:HgiMetalArgumentIndexBuffers];
-  [renderEncoder setFragmentBuffer:argBuffer
-                            offset:HgiMetalArgumentOffsetBufferFS
-                           atIndex:HgiMetalArgumentIndexBuffers];
+  renderEncoder->setVertexBuffer(argBuffer,
+                                 HgiMetalArgumentOffsetBufferVS,
+                                 HgiMetalArgumentIndexBuffers);
+  renderEncoder->setFragmentBuffer(argBuffer,
+                                   HgiMetalArgumentOffsetBufferFS,
+                                   HgiMetalArgumentIndexBuffers);
 
   // Bind constants
 
   {
-    [argEncoderBuffer setArgumentBuffer:argBuffer offset:HgiMetalArgumentOffsetConstants];
+    argEncoderBuffer->setArgumentBuffer(argBuffer, HgiMetalArgumentOffsetConstants);
   }
 
-  [renderEncoder setVertexBuffer:argBuffer
-                          offset:HgiMetalArgumentOffsetConstants
-                         atIndex:HgiMetalArgumentIndexConstants];
-  [renderEncoder setFragmentBuffer:argBuffer
-                            offset:HgiMetalArgumentOffsetConstants
-                           atIndex:HgiMetalArgumentIndexConstants];
+  renderEncoder->setVertexBuffer(argBuffer,
+                                 HgiMetalArgumentOffsetConstants,
+                                 HgiMetalArgumentIndexConstants);
+  renderEncoder->setFragmentBuffer(argBuffer,
+                                   HgiMetalArgumentOffsetConstants,
+                                   HgiMetalArgumentIndexConstants);
 }
 
 void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
-                                             id<MTLComputeCommandEncoder> computeEncoder,
-                                             id<MTLBuffer> argBuffer)
+                                             MTL::ComputeCommandEncoder *computeEncoder,
+                                             MTL::Buffer *argBuffer)
 {
-  id<MTLDevice> device = hgi->GetPrimaryDevice();
-  id<MTLArgumentEncoder> argEncoderBuffer = hgi->GetBufferArgumentEncoder();
-  id<MTLArgumentEncoder> argEncoderSampler = hgi->GetSamplerArgumentEncoder();
-  id<MTLArgumentEncoder> argEncoderTexture = hgi->GetTextureArgumentEncoder();
+  MTL::Device *device = hgi->GetPrimaryDevice();
+  MTL::ArgumentEncoder *argEncoderBuffer = hgi->GetBufferArgumentEncoder();
+  MTL::ArgumentEncoder *argEncoderSampler = hgi->GetSamplerArgumentEncoder();
+  MTL::ArgumentEncoder *argEncoderTexture = hgi->GetTextureArgumentEncoder();
 
   //
   // Bind Textures and Samplers
@@ -219,30 +218,30 @@ void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
     if (texDesc.stageUsage & HgiShaderStageCompute) {
       size_t offsetSampler = HgiMetalArgumentOffsetSamplerCS +
                              (texDesc.bindingIndex * sizeof(void *));
-      [argEncoderSampler setArgumentBuffer:argBuffer offset:offsetSampler];
-      [argEncoderSampler setSamplerState:metalSmp->GetSamplerId() atIndex:0];
+      argEncoderSampler->setArgumentBuffer(argBuffer, offsetSampler);
+      argEncoderSampler->setSamplerState(metalSmp->GetSamplerId(), 0);
 
       size_t offsetTexture = HgiMetalArgumentOffsetTextureCS +
                              (texDesc.bindingIndex * sizeof(void *));
-      [argEncoderTexture setArgumentBuffer:argBuffer offset:offsetTexture];
-      [argEncoderTexture setTexture:metalTexture->GetTextureId() atIndex:0];
+      argEncoderTexture->setArgumentBuffer(argBuffer, offsetTexture);
+      argEncoderTexture->setTexture(metalTexture->GetTextureId(), 0);
       if (metalSmp) {
-        [computeEncoder
-          useResource:metalTexture->GetTextureId()
-                usage:MTLResourceUsageSample | MTLResourceUsageRead | MTLResourceUsageWrite];
+        computeEncoder->useResource(metalTexture->GetTextureId(),
+                                    MTL::ResourceUsageSample | MTL::ResourceUsageRead |
+                                      MTL::ResourceUsageWrite);
       } else {
-        [computeEncoder useResource:metalTexture->GetTextureId()
-                              usage:MTLResourceUsageRead | MTLResourceUsageWrite];
+        computeEncoder->useResource(metalTexture->GetTextureId(),
+                                    MTL::ResourceUsageRead | MTL::ResourceUsageWrite);
       }
     }
   }
 
-  [computeEncoder setBuffer:argBuffer
-                     offset:HgiMetalArgumentOffsetSamplerCS
-                    atIndex:HgiMetalArgumentIndexSamplers];
-  [computeEncoder setBuffer:argBuffer
-                     offset:HgiMetalArgumentOffsetTextureCS
-                    atIndex:HgiMetalArgumentIndexTextures];
+  computeEncoder->setBuffer(argBuffer,
+                            HgiMetalArgumentOffsetSamplerCS,
+                            HgiMetalArgumentIndexSamplers);
+  computeEncoder->setBuffer(argBuffer,
+                            HgiMetalArgumentOffsetTextureCS,
+                            HgiMetalArgumentIndexTextures);
 
   //
   // Bind Buffers
@@ -260,43 +259,43 @@ void HgiMetalResourceBindings::BindResources(HgiMetal *hgi,
     HgiBufferHandle const &bufHandle = bufDesc.buffers.front();
     HgiMetalBuffer *metalbuffer = static_cast<HgiMetalBuffer *>(bufHandle.Get());
 
-    id<MTLBuffer> bufferId = metalbuffer->GetBufferId();
-    NSUInteger offset = bufDesc.offsets.front();
+    MTL::Buffer *bufferId = metalbuffer->GetBufferId();
+    NS::UInteger offset = bufDesc.offsets.front();
     size_t argBufferOffset = HgiMetalArgumentOffsetBufferCS +
                              bufDesc.bindingIndex * sizeof(void *);
-    [argEncoderBuffer setArgumentBuffer:argBuffer offset:argBufferOffset];
-    [argEncoderBuffer setBuffer:bufferId offset:offset atIndex:0];
-    [computeEncoder useResource:bufferId usage:(MTLResourceUsageRead | MTLResourceUsageWrite)];
+    argEncoderBuffer->setArgumentBuffer(argBuffer, argBufferOffset);
+    argEncoderBuffer->setBuffer(bufferId, offset, 0);
+    computeEncoder->useResource(bufferId, MTL::ResourceUsageRead | MTL::ResourceUsageWrite);
   }
 
-  [computeEncoder setBuffer:argBuffer
-                     offset:HgiMetalArgumentOffsetBufferCS
-                    atIndex:HgiMetalArgumentIndexBuffers];
+  computeEncoder->setBuffer(argBuffer,
+                            HgiMetalArgumentOffsetBufferCS,
+                            HgiMetalArgumentIndexBuffers);
 
   //
   // Bind Constants
   //
 
   {
-    [argEncoderBuffer setArgumentBuffer:argBuffer offset:HgiMetalArgumentOffsetConstants];
+    argEncoderBuffer->setArgumentBuffer(argBuffer, HgiMetalArgumentOffsetConstants);
   }
 
-  [computeEncoder setBuffer:argBuffer
-                     offset:HgiMetalArgumentOffsetConstants
-                    atIndex:HgiMetalArgumentIndexConstants];
+  computeEncoder->setBuffer(argBuffer,
+                            HgiMetalArgumentOffsetConstants,
+                            HgiMetalArgumentIndexConstants);
 }
 
-void HgiMetalResourceBindings::SetConstantValues(id<MTLBuffer> argumentBuffer,
+void HgiMetalResourceBindings::SetConstantValues(MTL::Buffer *argumentBuffer,
                                                  HgiShaderStage stages,
                                                  uint32_t bindIndex,
                                                  uint32_t byteSize,
                                                  const void *data)
 {
-  if (argumentBuffer.length - HgiMetalArgumentOffsetConstants < byteSize) {
+  if (argumentBuffer->length() - HgiMetalArgumentOffsetConstants < byteSize) {
     TF_CODING_ERROR("Not enough space reserved for constants");
-    byteSize = argumentBuffer.length - HgiMetalArgumentOffsetConstants;
+    byteSize = argumentBuffer->length() - HgiMetalArgumentOffsetConstants;
   }
-  uint8_t *bufferContents = (uint8_t *)[argumentBuffer contents];
+  uint8_t *bufferContents = (uint8_t *)argumentBuffer->contents();
   memcpy(bufferContents + HgiMetalArgumentOffsetConstants, data, byteSize);
 }
 

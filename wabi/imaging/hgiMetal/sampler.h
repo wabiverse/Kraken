@@ -52,7 +52,7 @@ class HgiMetalSampler final : public HgiSampler
   uint64_t GetRawResource() const override;
 
   HGIMETAL_API
-  id<MTLSamplerState> GetSamplerId() const;
+  MTL::SamplerState *GetSamplerId() const;
 
  private:
 
@@ -62,8 +62,8 @@ class HgiMetalSampler final : public HgiSampler
 
  private:
 
-  id<MTLSamplerState> _samplerId;
-  NSString *_label;
+  MTL::SamplerState *_samplerId;
+  NS::String *_label;
 };
 
 

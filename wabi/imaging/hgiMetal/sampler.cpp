@@ -38,32 +38,32 @@ HgiMetalSampler::HgiMetalSampler(HgiMetal *hgi, HgiSamplerDesc const &desc)
     _samplerId(nil),
     _label(nil)
 {
-  MTLSamplerDescriptor *smpDesc = [MTLSamplerDescriptor new];
+  MTL::SamplerDescriptor *smpDesc = MTL::SamplerDescriptor::alloc()->init();
 
-  smpDesc.sAddressMode = HgiMetalConversions::GetSamplerAddressMode(desc.addressModeU);
-  smpDesc.tAddressMode = HgiMetalConversions::GetSamplerAddressMode(desc.addressModeV);
-  smpDesc.rAddressMode = HgiMetalConversions::GetSamplerAddressMode(desc.addressModeW);
-  smpDesc.minFilter = HgiMetalConversions::GetMinMagFilter(desc.magFilter);
-  smpDesc.magFilter = HgiMetalConversions::GetMinMagFilter(desc.minFilter);
-  smpDesc.mipFilter = HgiMetalConversions::GetMipFilter(desc.mipFilter);
-  smpDesc.supportArgumentBuffers = true;
-  smpDesc.borderColor = HgiMetalConversions::GetBorderColor(desc.borderColor);
-  smpDesc.compareFunction = HgiMetalConversions::GetCompareFunction(desc.compareFunction);
+  smpDesc->setSAddressMode(HgiMetalConversions::GetSamplerAddressMode(desc.addressModeU));
+  smpDesc->setTAddressMode(HgiMetalConversions::GetSamplerAddressMode(desc.addressModeV));
+  smpDesc->setRAddressMode(HgiMetalConversions::GetSamplerAddressMode(desc.addressModeW));
+  smpDesc->setMinFilter(HgiMetalConversions::GetMinMagFilter(desc.magFilter));
+  smpDesc->setMagFilter(HgiMetalConversions::GetMinMagFilter(desc.minFilter));
+  smpDesc->setMipFilter(HgiMetalConversions::GetMipFilter(desc.mipFilter));
+  smpDesc->setSupportArgumentBuffers(true);
+  smpDesc->setBorderColor(HgiMetalConversions::GetBorderColor(desc.borderColor));
+  smpDesc->setCompareFunction(HgiMetalConversions::GetCompareFunction(desc.compareFunction));
 
   HGIMETAL_DEBUG_LABEL(smpDesc, _descriptor.debugName.c_str());
 
-  _samplerId = [hgi->GetPrimaryDevice() newSamplerStateWithDescriptor:smpDesc];
+  _samplerId = hgi->GetPrimaryDevice()->newSamplerState(smpDesc);
 }
 
 HgiMetalSampler::~HgiMetalSampler()
 {
   if (_label) {
-    [_label release];
+    _label->release();
     _label = nil;
   }
 
   if (_samplerId != nil) {
-    [_samplerId release];
+    _samplerId->release();
     _samplerId = nil;
   }
 }
@@ -73,7 +73,7 @@ uint64_t HgiMetalSampler::GetRawResource() const
   return (uint64_t)_samplerId;
 }
 
-id<MTLSamplerState> HgiMetalSampler::GetSamplerId() const
+MTL::SamplerState *HgiMetalSampler::GetSamplerId() const
 {
   return _samplerId;
 }
