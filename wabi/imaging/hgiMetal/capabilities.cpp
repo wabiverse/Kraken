@@ -31,31 +31,25 @@
 
 WABI_NAMESPACE_BEGIN
 
-HgiMetalCapabilities::HgiMetalCapabilities(id<MTLDevice> device)
+HgiMetalCapabilities::HgiMetalCapabilities(MTL::Device *device)
 {
-  if (@available(macOS 10.14.5, ios 12.0, *)) {
-    _SetFlag(HgiDeviceCapabilitiesBitsConcurrentDispatch, true);
-  }
+  _SetFlag(HgiDeviceCapabilitiesBitsConcurrentDispatch, true);
 
-  defaultStorageMode = MTLResourceStorageModeShared;
+  defaultStorageMode = MTL::ResourceStorageModeShared;
   bool unifiedMemory = false;
   bool barycentrics = false;
   bool hasAppleSilicon = false;
-  if (@available(macOS 100.100, ios 12.0, *)) {
-    unifiedMemory = true;
-  } else if (@available(macOS 10.15, ios 13.0, *)) {
 #if defined(ARCH_OS_IOS) || (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_15)
-    unifiedMemory = [device hasUnifiedMemory];
+  unifiedMemory = device->hasUnifiedMemory();
 #else
-    unifiedMemory = [device isLowPower];
+  unifiedMemory = device->lowPower();
 #endif
-    // On macOS 10.15 and 11.0 the AMD drivers reported the wrong value for
-    // supportsShaderBarycentricCoordinates so check both flags.
-    barycentrics = [device supportsShaderBarycentricCoordinates] ||
-                   [device areBarycentricCoordsSupported];
+  // On macOS 10.15 and 11.0 the AMD drivers reported the wrong value for
+  // supportsShaderBarycentricCoordinates so check both flags.
+  barycentrics = device->supportsShaderBarycentricCoordinates() ||
+                 device->barycentricCoordsSupported();
 
-    hasAppleSilicon = [device hasUnifiedMemory] && ![device isLowPower];
-  }
+  hasAppleSilicon = device->hasUnifiedMemory() && !device->lowPower();
 
   _SetFlag(HgiDeviceCapabilitiesBitsUnifiedMemory, unifiedMemory);
 
@@ -83,7 +77,7 @@ HgiMetalCapabilities::HgiMetalCapabilities(id<MTLDevice> device)
   _SetFlag(HgiDeviceCapabilitiesBasePrimitiveOffset, requiresBasePrimitiveOffset);
 
   if (!unifiedMemory) {
-    defaultStorageMode = MTLResourceStorageModeManaged;
+    defaultStorageMode = MTL::ResourceStorageModeManaged;
   }
 
   _maxUniformBlockSize = 64 * 1024;
@@ -95,19 +89,24 @@ HgiMetalCapabilities::HgiMetalCapabilities(id<MTLDevice> device)
   // Apple Silicon only support memory barriers between vertex stages after
   // macOS 12.3.
   hasVertexMemoryBarrier = !hasAppleSilicon;
-  if (@available(macOS 12.3, *)) {
+
+#if defined(__MAC_12_3) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_12_3
+  if (hasAppleSilicon) {
     hasVertexMemoryBarrier = true;
   }
+#endif /* defined(__MAC_12_3) && __MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_12_3 */
 
   // Vega GPUs require a fix to the indirect draw before macOS 12.2
   requiresIndirectDrawFix = false;
-  if ([[device name] rangeOfString:@"Vega"].location != NSNotFound) {
-    if (@available(macOS 12.2, *)) {
-    } else {
-      requiresIndirectDrawFix = true;
-    }
-  }
 
+#if defined(__MAC_12_2) && __MAC_OS_X_VERSION_MAX_ALLOWED <= __MAC_12_2
+  if (device->name()
+        ->rangeOfString(NS::String::string("Vega", NS::UTF8StringEncoding),
+                        NS::CaseInsensitiveSearch)
+        .location != NS::NotFound) {
+    requiresIndirectDrawFix = true;
+  }
+#endif
   useParallelEncoder = true;
 }
 
@@ -115,12 +114,27 @@ HgiMetalCapabilities::~HgiMetalCapabilities() = default;
 
 int HgiMetalCapabilities::GetAPIVersion() const
 {
-  if (@available(macOS 10.15, ios 13.0, *)) {
+#ifdef ARCH_OS_MACOS
+  if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+        NS::OperatingSystemVersion{10, 15, 0})) {
     return APIVersion_Metal3_0;
   }
-  if (@available(macOS 10.13, ios 11.0, *)) {
+
+  if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+        NS::OperatingSystemVersion{10, 13, 0})) {
     return APIVersion_Metal2_0;
   }
+#elif defined(ARCH_OS_IOS)
+  if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+        NS::OperatingSystemVersion{13, 0, 0})) {
+    return APIVersion_Metal3_0;
+  }
+
+  if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
+        NS::OperatingSystemVersion{11, 0, 0})) {
+    return APIVersion_Metal2_0;
+  }
+#endif /* ARCH_OS_MACOS */
 
   return APIVersion_Metal1_0;
 }

@@ -52,7 +52,7 @@ class HgiMetalCapabilities final : public HgiCapabilities
   HGIMETAL_API
   int GetShaderVersion() const override;
 
-  MTLResourceOptions defaultStorageMode;
+  MTL::ResourceOptions defaultStorageMode;
   bool hasVertexMemoryBarrier;
   bool useParallelEncoder;
   bool requiresIndirectDrawFix;
@@ -62,7 +62,7 @@ class HgiMetalCapabilities final : public HgiCapabilities
   friend class HgiMetal;
 
   HGIMETAL_API
-  HgiMetalCapabilities(id<MTLDevice> device);
+  HgiMetalCapabilities(MTL::Device *device);
 };
 
 WABI_NAMESPACE_END

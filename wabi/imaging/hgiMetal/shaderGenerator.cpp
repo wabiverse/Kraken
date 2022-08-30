@@ -345,18 +345,18 @@ namespace
      * @NOTE: Verify these are accurate with apple. */
 
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(10, 13))) {
+          NS::OperatingSystemVersion{10, 13, 0})) {
       header << "#define ARCH_OS_MACOS\n";
       if (device->supportsFeatureSet(MTL::FeatureSet_macOS_GPUFamily1_v3))
         header << "#define METAL_FEATURESET_MACOS_GPUFAMILY1_v3\n";
     }
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(10, 14))) {
+          NS::OperatingSystemVersion{10, 14, 0})) {
       if (device->supportsFeatureSet(MTL::FeatureSet_macOS_GPUFamily1_v4))
         header << "#define METAL_FEATURESET_MACOS_GPUFAMILY1_v4\n";
     }
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(10, 14))) {
+          NS::OperatingSystemVersion{10, 14, 0})) {
       if (device->supportsFeatureSet(MTL::FeatureSet_macOS_GPUFamily2_v1))
         header << "#define METAL_FEATURESET_MACOS_GPUFAMILY2_v1\n";
     }
@@ -366,23 +366,23 @@ namespace
      * @NOTE: Should these really all be iOS 12?? */
 
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(12, 0))) {
+          NS::OperatingSystemVersion{12, 0, 0})) {
       header << "#define ARCH_OS_IOS\n";
       if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily1_v5))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY1_v5\n";
     }
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(12, 0))) {
+          NS::OperatingSystemVersion{12, 0, 0})) {
       if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily2_v5))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY2_v5\n";
     }
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(12, 0))) {
+          NS::OperatingSystemVersion{12, 0, 0})) {
       if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily3_v4))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY3_v4\n";
     }
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(12, 0))) {
+          NS::OperatingSystemVersion{12, 0, 0})) {
       if (device->supportsFeatureSet(MTL::FeatureSet_iOS_GPUFamily4_v2))
         header << "#define METAL_FEATURESET_IOS_GPUFAMILY4_v2\n";
     }

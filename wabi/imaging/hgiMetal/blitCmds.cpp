@@ -111,51 +111,52 @@ void HgiMetalBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
 
   HgiTextureDesc const &texDesc = srcTexture->GetDescriptor();
 
-  MTL::PixelFormat metalFormat = HgiMetalConversions::GetPixelFormat(texDesc.format, texDesc.usage);
+  MTL::PixelFormat metalFormat = HgiMetalConversions::GetPixelFormat(texDesc.format,
+                                                                     texDesc.usage);
 
-  if (metalFormat == MTLPixelFormatDepth32Float_Stencil8) {
+  if (metalFormat == MTL::PixelFormatDepth32Float_Stencil8) {
     TF_WARN("Cannot read back depth stencil on Metal.");
     return;
   }
 
-  id<MTLDevice> device = _hgi->GetPrimaryDevice();
+  MTL::Device *device = _hgi->GetPrimaryDevice();
 
-  MTLResourceOptions options = _hgi->GetCapabilities()->defaultStorageMode;
+  MTL::ResourceOptions options = _hgi->GetCapabilities()->defaultStorageMode;
 
   size_t bytesPerPixel = HgiGetDataSizeOfFormat(texDesc.format);
-  id<MTLBuffer> cpuBuffer = [device newBufferWithBytesNoCopy:copyOp.cpuDestinationBuffer
-                                                      length:copyOp.destinationBufferByteSize
-                                                     options:options
-                                                 deallocator:nil];
+  MTL::Buffer *cpuBuffer = device->newBuffer(copyOp.cpuDestinationBuffer,
+                                             copyOp.destinationBufferByteSize,
+                                             options,
+                                             nil);
 
   bool isTexArray = texDesc.layerCount > 1;
   int depthOffset = isTexArray ? 0 : copyOp.sourceTexelOffset[2];
 
-  MTLOrigin origin = MTLOriginMake(copyOp.sourceTexelOffset[0],
-                                   copyOp.sourceTexelOffset[1],
-                                   depthOffset);
-  MTLSize size = MTLSizeMake(texDesc.dimensions[0] - copyOp.sourceTexelOffset[0],
-                             texDesc.dimensions[1] - copyOp.sourceTexelOffset[1],
-                             texDesc.dimensions[2] - depthOffset);
+  MTL::Origin origin = MTL::Origin::Make(copyOp.sourceTexelOffset[0],
+                                         copyOp.sourceTexelOffset[1],
+                                         depthOffset);
+  MTL::Size size = MTL::Size::Make(texDesc.dimensions[0] - copyOp.sourceTexelOffset[0],
+                                   texDesc.dimensions[1] - copyOp.sourceTexelOffset[1],
+                                   texDesc.dimensions[2] - depthOffset);
 
-  MTLBlitOption blitOptions = MTLBlitOptionNone;
+  MTL::BlitOption blitOptions = MTL::BlitOptionNone;
 
   _CreateEncoder();
 
-  [_blitEncoder copyFromTexture:srcTexture->GetTextureId()
-                    sourceSlice:isTexArray ? copyOp.sourceTexelOffset[2] : 0
-                    sourceLevel:copyOp.mipLevel
-                   sourceOrigin:origin
-                     sourceSize:size
-                       toBuffer:cpuBuffer
-              destinationOffset:0
-         destinationBytesPerRow:(bytesPerPixel * texDesc.dimensions[0])
-       destinationBytesPerImage:(bytesPerPixel * texDesc.dimensions[0] * texDesc.dimensions[1])
-                        options:blitOptions];
+  _blitEncoder->copyFromTexture(srcTexture->GetTextureId(),
+                                isTexArray ? copyOp.sourceTexelOffset[2] : 0,
+                                copyOp.mipLevel,
+                                origin,
+                                size,
+                                cpuBuffer,
+                                0,
+                                (bytesPerPixel * texDesc.dimensions[0]),
+                                (bytesPerPixel * texDesc.dimensions[0] * texDesc.dimensions[1]),
+                                blitOptions);
 
-#if defined(ARCH_OS_OSX)
-  if ([cpuBuffer storageMode] == MTLStorageModeManaged) {
-    [_blitEncoder performSelector:@selector(synchronizeResource:) withObject:cpuBuffer];
+#if defined(ARCH_OS_MACOS)
+  if (cpuBuffer->storageMode() == MTL::StorageModeManaged) {
+    _blitEncoder->synchronizeResource(cpuBuffer);
   }
 #endif
 
@@ -165,11 +166,11 @@ void HgiMetalBlitCmds::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
   // bytes to copy
   size_t byteSize = copyOp.destinationBufferByteSize;
 
-  [_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-    const char *src = (const char *)[cpuBuffer contents];
+  _commandBuffer->addCompletedHandler([&](MTL::CommandBuffer *buffer) {
+    const char *src = (const char *)cpuBuffer->contents();
     memcpy(dst, src, byteSize);
-    [cpuBuffer release];
-  }];
+    cpuBuffer->release();
+  });
 }
 
 void HgiMetalBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
@@ -186,24 +187,26 @@ void HgiMetalBlitCmds::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
   GfVec3i const &offsets = copyOp.destinationTexelOffset;
   int depthOffset = isTexArray ? 0 : offsets[2];
   if (texDesc.type == HgiTextureType1D) {
-    [dstTexture->GetTextureId() replaceRegion:MTLRegionMake1D(offsets[0], width)
-                                  mipmapLevel:copyOp.mipLevel
-                                    withBytes:copyOp.cpuSourceBuffer
-                                  bytesPerRow:copyOp.bufferByteSize];
+    dstTexture->GetTextureId()->replaceRegion(MTL::Region::Make1D(offsets[0], width),
+                                              copyOp.mipLevel,
+                                              copyOp.cpuSourceBuffer,
+                                              copyOp.bufferByteSize);
+
   } else if (texDesc.type == HgiTextureType2D) {
-    [dstTexture->GetTextureId()
-      replaceRegion:MTLRegionMake2D(offsets[0], offsets[1], width, height)
-        mipmapLevel:copyOp.mipLevel
-          withBytes:copyOp.cpuSourceBuffer
-        bytesPerRow:copyOp.bufferByteSize / height];
+    dstTexture->GetTextureId()->replaceRegion(
+      MTL::Region::Make2D(offsets[0], offsets[1], width, height),
+      copyOp.mipLevel,
+      copyOp.cpuSourceBuffer,
+      copyOp.bufferByteSize / height);
+
   } else {
-    [dstTexture->GetTextureId()
-      replaceRegion:MTLRegionMake3D(offsets[0], offsets[1], depthOffset, width, height, depth)
-        mipmapLevel:copyOp.mipLevel
-              slice:isTexArray ? offsets[2] : 0
-          withBytes:copyOp.cpuSourceBuffer
-        bytesPerRow:copyOp.bufferByteSize / height / width
-      bytesPerImage:copyOp.bufferByteSize / depth];
+    dstTexture->GetTextureId()->replaceRegion(
+      MTL::Region::Make3D(offsets[0], offsets[1], depthOffset, width, height, depth),
+      copyOp.mipLevel,
+      isTexArray ? offsets[2] : 0,
+      copyOp.cpuSourceBuffer,
+      copyOp.bufferByteSize / height / width,
+      copyOp.bufferByteSize / depth);
   }
 }
 
@@ -230,11 +233,11 @@ void HgiMetalBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
 
   _CreateEncoder();
 
-  [_blitEncoder copyFromBuffer:srcBuffer->GetBufferId()
-                  sourceOffset:copyOp.sourceByteOffset
-                      toBuffer:dstBuffer->GetBufferId()
-             destinationOffset:copyOp.destinationByteOffset
-                          size:copyOp.byteSize];
+  _blitEncoder->copyFromBuffer(srcBuffer->GetBufferId(),
+                               copyOp.sourceByteOffset,
+                               dstBuffer->GetBufferId(),
+                               copyOp.destinationByteOffset,
+                               copyOp.byteSize);
 
 #if defined(ARCH_OS_OSX)
   // APPLE METAL: We need to do this copy host side, otherwise later
@@ -245,7 +248,7 @@ void HgiMetalBlitCmds::CopyBufferGpuToGpu(HgiBufferGpuToGpuOp const &copyOp)
 
   // We still need this for the staging buffer on AMD GPUs, so I'd like
   // to investigate further.
-  if ([srcBuffer->GetBufferId() storageMode] == MTLStorageModeManaged) {
+  if (srcBuffer->GetBufferId()->storageMode() == MTL::StorageModeManaged) {
     memcpy((char *)dstBuffer->GetCPUStagingAddress() + copyOp.destinationByteOffset,
            (char *)srcBuffer->GetCPUStagingAddress() + copyOp.sourceByteOffset,
            copyOp.byteSize);
@@ -260,9 +263,9 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
   }
 
   HgiMetalBuffer *metalBuffer = static_cast<HgiMetalBuffer *>(copyOp.gpuDestinationBuffer.Get());
-  bool sharedBuffer = [metalBuffer->GetBufferId() storageMode] == MTLStorageModeShared;
+  bool sharedBuffer = metalBuffer->GetBufferId()->storageMode() == MTL::StorageModeShared;
 
-  uint8_t *dst = static_cast<uint8_t *>([metalBuffer->GetBufferId() contents]);
+  uint8_t *dst = static_cast<uint8_t *>(metalBuffer->GetBufferId()->contents());
   size_t dstOffset = copyOp.destinationByteOffset;
 
   // If we used GetCPUStagingAddress as the cpuSourceBuffer when the copyOp
@@ -277,15 +280,9 @@ void HgiMetalBlitCmds::CopyBufferCpuToGpu(HgiBufferCpuToGpuOp const &copyOp)
     memcpy(dst + dstOffset, src, copyOp.byteSize);
   }
 
-  if (!sharedBuffer &&
-      [metalBuffer->GetBufferId() respondsToSelector:@selector(didModifyRange:)]) {
-    NSRange range = NSMakeRange(dstOffset, copyOp.byteSize);
-    id<MTLResource> resource = metalBuffer->GetBufferId();
-
-    ARCH_PRAGMA_PUSH
-    ARCH_PRAGMA_INSTANCE_METHOD_NOT_FOUND
-    [resource didModifyRange:range];
-    ARCH_PRAGMA_POP
+  if (!sharedBuffer) {
+    NS::Range range = NS::Range::Make(dstOffset, copyOp.byteSize);
+    metalBuffer->GetBufferId()->didModifyRange(range);
   }
 }
 
@@ -299,9 +296,8 @@ void HgiMetalBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
 
   _CreateEncoder();
 
-  if ([metalBuffer->GetBufferId() storageMode] == MTLStorageModeManaged) {
-    [_blitEncoder performSelector:@selector(synchronizeResource:)
-                       withObject:metalBuffer->GetBufferId()];
+  if (metalBuffer->GetBufferId()->storageMode() == MTL::StorageModeManaged) {
+    _blitEncoder->synchronizeResource(metalBuffer->GetBufferId());
   }
 
   // Offset into the dst buffer
@@ -313,9 +309,9 @@ void HgiMetalBlitCmds::CopyBufferGpuToCpu(HgiBufferGpuToCpuOp const &copyOp)
   // bytes to copy
   size_t size = copyOp.byteSize;
 
-  [_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
+  _commandBuffer->addCompletedHandler([&](MTL::CommandBuffer *buffer) {
     memcpy(dst, src, size);
-  }];
+  });
 }
 
 void HgiMetalBlitCmds::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
@@ -335,7 +331,7 @@ void HgiMetalBlitCmds::FillBuffer(HgiBufferHandle const &buffer, uint8_t value)
     _CreateEncoder();
 
     size_t length = metalBuf->GetDescriptor().byteSize;
-    [_blitEncoder fillBuffer:metalBuf->GetBufferId() range:NSMakeRange(0, length) value:value];
+    _blitEncoder->fillBuffer(metalBuf->GetBufferId(), NS::Range::Make(0, length), value);
   }
 }
 
@@ -345,7 +341,7 @@ void HgiMetalBlitCmds::GenerateMipMaps(HgiTextureHandle const &texture)
   if (metalTex) {
     _CreateEncoder();
 
-    [_blitEncoder generateMipmapsForTexture:metalTex->GetTextureId()];
+    _blitEncoder->generateMipmaps(metalTex->GetTextureId());
   }
 }
 
@@ -359,7 +355,7 @@ bool HgiMetalBlitCmds::_Submit(Hgi *hgi, HgiSubmitWaitType wait)
 {
   bool submittedWork = false;
   if (_blitEncoder) {
-    [_blitEncoder endEncoding];
+    _blitEncoder->endEncoding();
     _blitEncoder = nil;
     submittedWork = true;
 

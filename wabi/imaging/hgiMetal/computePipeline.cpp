@@ -37,7 +37,7 @@ WABI_NAMESPACE_BEGIN
 HgiMetalComputePipeline::HgiMetalComputePipeline(HgiMetal *hgi, HgiComputePipelineDesc const &desc)
   : HgiComputePipeline(desc)
 {
-  MTLComputePipelineDescriptor *stateDesc = [[MTLComputePipelineDescriptor alloc] init];
+  MTL::ComputePipelineDescriptor *stateDesc = MTL::ComputePipelineDescriptor::alloc()->init();
 
   // Create a new compute pipeline state object
   HGIMETAL_DEBUG_LABEL(stateDesc, _descriptor.debugName.c_str());
@@ -45,30 +45,26 @@ HgiMetalComputePipeline::HgiMetalComputePipeline(HgiMetal *hgi, HgiComputePipeli
   HgiMetalShaderProgram const *metalProgram = static_cast<HgiMetalShaderProgram *>(
     _descriptor.shaderProgram.Get());
 
-  stateDesc.computeFunction = metalProgram->GetComputeFunction();
+  stateDesc->setComputeFunction(metalProgram->GetComputeFunction());
 
-  NSError *error = NULL;
-  _computePipelineState = [hgi->GetPrimaryDevice()
-    newComputePipelineStateWithDescriptor:stateDesc
-                                  options:MTLPipelineOptionNone
-                               reflection:nil
-                                    error:&error];
-  [stateDesc release];
+  NS::Error *error = NULL;
+  _computePipelineState = hgi->GetPrimaryDevice()->newComputePipelineState(stateDesc, MTL::PipelineOptionNone, nil, &error);
+  stateDesc->release();
 
   if (!_computePipelineState) {
-    NSString *err = [error localizedDescription];
-    TF_WARN("Failed to create compute pipeline state, error %s", [err UTF8String]);
+    NS::String *err = error->localizedDescription();
+    TF_WARN("Failed to create compute pipeline state, error %s", err->utf8String());
   }
 }
 
 HgiMetalComputePipeline::~HgiMetalComputePipeline() {}
 
-void HgiMetalComputePipeline::BindPipeline(id<MTLComputeCommandEncoder> computeEncoder)
+void HgiMetalComputePipeline::BindPipeline(MTL::ComputeCommandEncoder *computeEncoder)
 {
-  [computeEncoder setComputePipelineState:_computePipelineState];
+  computeEncoder->setComputePipelineState(_computePipelineState);
 }
 
-id<MTLComputePipelineState> HgiMetalComputePipeline::GetMetalPipelineState()
+MTL::ComputePipelineState *HgiMetalComputePipeline::GetMetalPipelineState()
 {
   return _computePipelineState;
 }

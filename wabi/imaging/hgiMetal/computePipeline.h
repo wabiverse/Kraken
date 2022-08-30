@@ -50,10 +50,10 @@ class HgiMetalComputePipeline final : public HgiComputePipeline
 
   /// Apply pipeline state
   HGIMETAL_API
-  void BindPipeline(id<MTLComputeCommandEncoder> computeEncoder);
+  void BindPipeline(MTL::ComputeCommandEncoder *computeEncoder);
 
   HGIMETAL_API
-  id<MTLComputePipelineState> GetMetalPipelineState();
+  MTL::ComputePipelineState *GetMetalPipelineState();
 
  private:
 
@@ -61,7 +61,7 @@ class HgiMetalComputePipeline final : public HgiComputePipeline
   HgiMetalComputePipeline &operator=(const HgiMetalComputePipeline &) = delete;
   HgiMetalComputePipeline(const HgiMetalComputePipeline &) = delete;
 
-  id<MTLComputePipelineState> _computePipelineState;
+  MTL::ComputePipelineState *_computePipelineState;
 };
 
 

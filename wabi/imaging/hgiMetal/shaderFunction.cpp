@@ -50,10 +50,10 @@ HgiMetalShaderFunction::HgiMetalShaderFunction(HgiMetal *hgi, HgiShaderFunctionD
 
 #ifdef ARCH_OS_MACOS
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(10, 15))) {
+          NS::OperatingSystemVersion{10, 15, 0})) {
 #elif defined(ARCH_OS_IOS)
     if (NS::ProcessInfo::processInfo()->isOperatingSystemAtLeastVersion(
-          NS::OperatingSystemVersion(13, 0))) {
+          NS::OperatingSystemVersion{13, 0, 0})) {
 #else  /* ARCH_OS_IOS */
     if (false) {
 #endif /* ARCH_OS_MACOS */

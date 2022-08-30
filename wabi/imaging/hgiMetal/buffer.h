@@ -61,7 +61,7 @@ class HgiMetalBuffer final : public HgiBuffer
   HGIMETAL_API
   void *GetCPUStagingAddress() override;
 
-  id<MTLBuffer> GetBufferId() const
+  MTL::Buffer *GetBufferId() const
   {
     return _bufferId;
   }
@@ -72,7 +72,7 @@ class HgiMetalBuffer final : public HgiBuffer
   HgiMetalBuffer &operator=(const HgiMetalBuffer &) = delete;
   HgiMetalBuffer(const HgiMetalBuffer &) = delete;
 
-  id<MTLBuffer> _bufferId;
+  MTL::Buffer *_bufferId;
 };
 
 

@@ -133,9 +133,9 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
   HgiMetalGraphicsCmds(const HgiMetalGraphicsCmds &) = delete;
 
   uint32_t _GetNumEncoders();
-  id<MTLRenderCommandEncoder> _GetEncoder(uint32_t encoderIndex = 0);
+  MTL::RenderCommandEncoder *_GetEncoder(uint32_t encoderIndex = 0);
   void _SetNumberParallelEncoders(uint32_t numEncoders);
-  void _SetCachedEncoderState(id<MTLRenderCommandEncoder> encoder);
+  void _SetCachedEncoderState(MTL::RenderCommandEncoder *encoder);
   mutable std::mutex _encoderLock;
 
   void _CreateArgumentBuffer();
@@ -186,10 +186,10 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
   void _InitVertexBufferStepFunction(HgiGraphicsPipeline const *pipeline);
   void _BindVertexBufferStepFunction(uint32_t byteOffset, uint32_t bindingIndex);
 
-  void _SetVertexBufferStepFunctionOffsets(id<MTLRenderCommandEncoder> encoder,
+  void _SetVertexBufferStepFunctionOffsets(MTL::RenderCommandEncoder *encoder,
                                            uint32_t baseInstance);
 
-  void _SetPatchBaseVertexBufferStepFunctionOffsets(id<MTLRenderCommandEncoder> encoder,
+  void _SetPatchBaseVertexBufferStepFunctionOffsets(MTL::RenderCommandEncoder *encoder,
                                                     uint32_t baseVertex);
 
   struct CachedEncoderState
@@ -202,18 +202,18 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
 // But ideally we'd pick it up from a common header
 #define MAX_METAL_VERTEX_BUFFER_BINDINGS 64
 
-    void AddVertexBinding(uint32_t bindingIndex, id<MTLBuffer> buffer, uint32_t byteOffset);
+    void AddVertexBinding(uint32_t bindingIndex, MTL::Buffer *buffer, uint32_t byteOffset);
 
-    MTLViewport viewport;
-    MTLScissorRect scissorRect;
+    MTL::Viewport viewport;
+    MTL::ScissorRect scissorRect;
 
     HgiMetalResourceBindings *resourceBindings;
     HgiMetalGraphicsPipeline *graphicsPipeline;
-    id<MTLBuffer> argumentBuffer;
+    MTL::Buffer *argumentBuffer;
 
     struct
     {
-      id<MTLBuffer> vertexBuffer;
+      MTL::Buffer *vertexBuffer;
       uint32_t byteOffset;
     } VertexBufferBindingDesc[MAX_METAL_VERTEX_BUFFER_BINDINGS];
 
@@ -221,20 +221,20 @@ class HgiMetalGraphicsCmds final : public HgiGraphicsCmds
   } _CachedEncState;
 
   HgiMetal *_hgi;
-  MTLRenderPassDescriptor *_renderPassDescriptor;
-  id<MTLParallelRenderCommandEncoder> _parallelEncoder;
-  std::vector<id<MTLRenderCommandEncoder>> _encoders;
-  id<MTLBuffer> _argumentBuffer;
+  MTL::RenderPassDescriptor *_renderPassDescriptor;
+  MTL::ParallelRenderCommandEncoder *_parallelEncoder;
+  std::vector<MTL::RenderCommandEncoder *> _encoders;
+  MTL::Buffer *_argumentBuffer;
   HgiGraphicsCmdsDesc _descriptor;
   HgiPrimitiveType _primitiveType;
   uint32_t _primitiveIndexSize;
-  NSString *_debugLabel;
+  NS::String *_debugLabel;
   bool _hasWork;
   bool _viewportSet;
   bool _scissorRectSet;
   bool _enableParallelEncoder;
   bool _primitiveTypeChanged;
-  uint32 _maxNumEncoders;
+  uint32_t _maxNumEncoders;
 };
 
 WABI_NAMESPACE_END
