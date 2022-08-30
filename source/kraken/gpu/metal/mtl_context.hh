@@ -28,86 +28,127 @@
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
 
-// A wrapper around a MTLBuffer object that knows the last time it was reused
-@interface MTLBackendBuffer : NSObject
-@property (nonatomic, strong) id<MTLBuffer> buffer;
-@property (nonatomic, assign) double        lastReuseTime;
-- (instancetype)initWithBuffer:(id<MTLBuffer>)buffer;
-@end
-
-// An object that encapsulates the data necessary to uniquely identify a
-// render pipeline state. These are used as cache keys.
-@interface MTLBackendFramebufferDescriptor : NSObject<NSCopying>
-@property (nonatomic, assign) unsigned long  sampleCount;
-@property (nonatomic, assign) MTLPixelFormat colorPixelFormat;
-@property (nonatomic, assign) MTLPixelFormat depthPixelFormat;
-@property (nonatomic, assign) MTLPixelFormat stencilPixelFormat;
-- (instancetype)initWithRenderPassDescriptor:(MTLRenderPassDescriptor*)renderPassDescriptor;
-@end
-
-// A singleton that stores long-lived objects that are needed by the Metal
-// renderer backend. Stores the render pipeline state cache and the default
-// font texture, and manages the reusable buffer cache.
-@interface MTLBackend : NSObject
-@property (nonatomic, strong) id<MTLDevice>                      device;
-@property (nonatomic, strong) id<MTLDepthStencilState>           depthStencilState;
-@property (nonatomic, strong) MTLBackendFramebufferDescriptor*   framebufferDescriptor; // framebuffer descriptor for current frame; transient
-@property (nonatomic, strong) NSMutableDictionary*               renderPipelineStateCache; // pipeline cache; keyed on framebuffer descriptors
-@property (nonatomic, strong, nullable) id<MTLTexture>           fontTexture;
-@property (nonatomic, strong) NSMutableArray<MTLBackendBuffer*>* bufferCache;
-@property (nonatomic, assign) double                             lastBufferCachePurge;
-- (MTLBackendBuffer*)dequeueReusableBufferOfLength:(NSUInteger)length device:(id<MTLDevice>)device;
-- (id<MTLRenderPipelineState>)renderPipelineStateForFramebufferDescriptor:(MTLBackendFramebufferDescriptor*)descriptor device:(id<MTLDevice>)device;
-@end
-
 class AnchorDrawData;
 
 KRAKEN_NAMESPACE_BEGIN
 
 namespace gpu
 {
+  /**
+   * @METAL: Buffer.
+   * A wrapper around a Metal Buffer object that knows the last time it was
+   * reused. */
+  class MTLBackendBuffer
+  {
+   public:
+
+    MTLBackendBuffer *init(MTL::Buffer *buffer);
+
+    MTL::Buffer *buffer;
+    double lastReuseTime;
+  };
+
+  /**
+   * @METAL: Framebuffer.
+   * An object that encapsulates the data necessary to uniquely identify a
+   * render pipeline state. These are used as cache keys. */
+  class MTLBackendFramebufferDescriptor
+  {
+   public:
+
+    MTLBackendFramebufferDescriptor *init(MTL::RenderPassDescriptor *desc);
+
+    unsigned long sampleCount;
+    MTL::PixelFormat colorPixelFormat;
+    MTL::PixelFormat depthPixelFormat;
+    MTL::PixelFormat stencilPixelFormat;
+  };
+
+  /**
+   * @METAL: Backend.
+   * A lazy evaluated, correctly destroyed, thread-safe singleton that stores
+   * long-lived objects that are needed by the Metal renderer backend. Stores
+   * the render pipeline state cache and the default font texture, and manages
+   * the reusable buffer cache. */
+  class MTLBackend
+  {
+   public:
+
+    typedef std::vector<MTLBackendBuffer *> MTLBackendBufferCache;
+    typedef wabi::TfHashMap<MTLBackendFramebufferDescriptor *, MTL::RenderPipelineState *> MTLRenderPipelineStateCache;
+
+    static MTLBackend &getInstance()
+    {
+      static MTLBackend instance;
+      return instance;
+    }
+
+    MTLBackendBuffer *dequeueReusableBuffer(NS::UInteger length, MTL::Device *device);
+    MTL::RenderPipelineState *newRenderPipelineState(MTLBackendFramebufferDescriptor *descriptor,
+                                                     MTL::Device *device);
+
+   private:
+
+    MTLBackend();
+
+   public:
+
+    MTLBackend(MTLBackend const &) = delete;
+    void operator=(MTLBackend const &) = delete;
+
+    MTL::Device *device;
+    MTL::DepthStencilState *depthStencilState;
+
+    // framebuffer descriptor for current frame; transient
+    MTLBackendFramebufferDescriptor *framebufferDescriptor;
+    // pipeline cache; keyed on framebuffer descriptors
+    MTLRenderPipelineStateCache renderPipelineStateCache;
+    MTL::Texture *fontTexture;
+    MTLBackendBufferCache bufferCache;
+    double lastBufferCachePurge;
+  };
+
   struct MTLContext
   {
     MTLContext();
-
-    MTLBackend* Shared;
   };
 
-  MTLContext* CreateContext();
+  MTLContext *CreateContext();
 
-  MTLContext* GetContext();
+  MTLContext *GetContext();
 
   void DestroyContext();
 
-  static inline CFTimeInterval GetMachAbsoluteTimeInSeconds()       
-  { 
-    return static_cast<CFTimeInterval>(static_cast<double>(clock_gettime_nsec_np(CLOCK_UPTIME_RAW)) / 1e9); 
+  static inline CFTimeInterval GetMachAbsoluteTimeInSeconds()
+  {
+    return static_cast<CFTimeInterval>(
+      static_cast<double>(clock_gettime_nsec_np(CLOCK_UPTIME_RAW)) / 1e9);
   }
 
-  bool InitContext(id<MTLDevice> device);
+  bool InitContext(MTL::Device *device);
 
   void FreeContext();
 
-  void NewFrame(MTLRenderPassDescriptor *desc);
+  void NewFrame(MTL::RenderPassDescriptor *desc);
 
-  void ViewUpdate(AnchorDrawData* drawData,
-                  id<MTLCommandBuffer> commandBuffer,
-                  id<MTLRenderCommandEncoder> commandEncoder, 
-                  id<MTLRenderPipelineState> renderPipelineState,
-                  MTLBackendBuffer* vertexBuffer, 
+  void ViewUpdate(AnchorDrawData *drawData,
+                  MTL::CommandBuffer *commandBuffer,
+                  MTL::RenderCommandEncoder *commandEncoder,
+                  MTL::RenderPipelineState *renderPipelineState,
+                  MTLBackendBuffer *vertexBuffer,
                   size_t vertexBufferOffset);
 
-  void ViewDraw(AnchorDrawData* drawData, 
-                id<MTLCommandBuffer> commandBuffer, 
-                id<MTLRenderCommandEncoder> commandEncoder);
+  void ViewDraw(AnchorDrawData *drawData,
+                MTL::CommandBuffer *commandBuffer,
+                MTL::RenderCommandEncoder *commandEncoder);
 
-  bool CreateFonts(id<MTLDevice> device);
+  bool CreateFonts(MTL::Device *device);
 
   void DestroyFonts();
 
-  bool CreateResources(id<MTLDevice> device);
+  bool CreateResources(MTL::Device *device);
 
   void DestroyResources();
-}
+}  // namespace gpu
 
 KRAKEN_NAMESPACE_END

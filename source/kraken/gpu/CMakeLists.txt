@@ -23,7 +23,7 @@ set(SRC "")
 set(OPENGL_SRC "")
 
 set(METAL_SRC
-  metal/mtl_context.mm
+  metal/mtl_context.cpp
 
   metal/mtl_context.hh
 )

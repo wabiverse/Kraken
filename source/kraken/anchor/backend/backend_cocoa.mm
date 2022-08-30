@@ -755,7 +755,7 @@ void *AnchorAppleMetal::getWindow()
 
 void AnchorAppleMetal::SetupMetal()
 {
-  m_hgi = new wabi::HgiMetal(m_metalKitView.device);
+  m_hgi = new wabi::HgiMetal((__bridge MTL::Device *)m_metalKitView.device);
 
   /**
   * Setup ANCHOR context. */
@@ -771,7 +771,7 @@ void AnchorAppleMetal::SetupMetal()
 
   ANCHOR::StyleColorsDefault();
 
-  kraken::gpu::InitContext(m_metalKitView.device);
+  kraken::gpu::InitContext((__bridge MTL::Device *)m_metalKitView.device);
 }
 
 static void SetFont()
@@ -850,7 +850,7 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
     return;
   }
 
-  kraken::gpu::NewFrame(renderPassDescriptor);
+  kraken::gpu::NewFrame((__bridge MTL::RenderPassDescriptor *)renderPassDescriptor);
 
   ANCHOR::NewFrame();
 
@@ -870,7 +870,7 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
                                                                           clear_color[3]);
   id<MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
   [renderEncoder pushDebugGroup:@"Anchor is Rendering..."];
-  kraken::gpu::ViewDraw(drawData, commandBuffer, renderEncoder);
+  kraken::gpu::ViewDraw(drawData, (__bridge MTL::CommandBuffer *)commandBuffer, (__bridge MTL::RenderCommandEncoder *)renderEncoder);
   [renderEncoder popDebugGroup];
   [renderEncoder endEncoding];
 
