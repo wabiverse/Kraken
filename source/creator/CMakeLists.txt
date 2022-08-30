@@ -1436,8 +1436,11 @@ if(APPLE)
   set(ADDITIONAL_FRAMEWORKS 
     "-framework IOKit"
     "-framework Foundation"
+    "-framework AppKit"
     "-framework Metal"
     "-framework QuartzCore"
+    "-framework ColorSync"
+    "-framework CoreGraphics"
   )
 endif()
 target_link_libraries(kraken ${LIB} ${ADDITIONAL_FRAMEWORKS})
