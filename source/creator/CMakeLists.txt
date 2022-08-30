@@ -1453,6 +1453,16 @@ setup_platform_linker_flags(kraken)
 setup_platform_linker_libs(kraken)
 
 if(APPLE)
+  # Probably overkill. But we need it signed. This should do it.
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER foundation.wabi.kraken)
+  set(CMAKE_MACOSX_BUNDLE YES)
+  set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application: Wabi Animation Studios, Ltd. Co. (UQ9J5QT9DL)")
+  set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "UQ9J5QT9DL")
+  set_target_properties(kraken PROPERTIES
+    XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application: Wabi Animation Studios, Ltd. Co. (UQ9J5QT9DL)"
+    XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "UQ9J5QT9DL"
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "foundation.wabi.kraken"
+    XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS "NO") # Will need to fumble with this value...
   # set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
 elseif(UNIX AND NOT APPLE)
   set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kraken.map)
