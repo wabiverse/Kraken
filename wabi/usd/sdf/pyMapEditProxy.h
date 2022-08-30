@@ -344,7 +344,7 @@ template<class T> class SdfPyWrapMapEditProxy
     using namespace boost::python;
 
     std::vector<pair_type> values;
-    for (int i = 0, n = len(pairs); i != n; ++i) {
+    for (int i = 0, n = (int)len(pairs); i != n; ++i) {
       values.push_back(
         pair_type(extract<key_type>(pairs[i][0])(), extract<mapped_type>(pairs[i][1])()));
     }

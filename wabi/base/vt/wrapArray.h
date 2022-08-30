@@ -308,8 +308,8 @@ namespace Vt_WrapArray
   BOOST_PP_SEQ_FOR_EACH(MAKE_STREAM_FUNC, ~, VT_FLOATING_POINT_BUILTIN_VALUE_TYPES)
 #undef MAKE_STREAM_FUNC
 
-  static unsigned int Vt_ComputeEffectiveRankAndLastDimSize(Vt_ShapeData const *sd,
-                                                            size_t *lastDimSize)
+  static inline unsigned int Vt_ComputeEffectiveRankAndLastDimSize(Vt_ShapeData const *sd,
+                                                                   size_t *lastDimSize)
   {
     unsigned int rank = sd->GetRank();
     if (rank == 1)

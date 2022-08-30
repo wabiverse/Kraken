@@ -467,7 +467,7 @@ void HgiMetalGraphicsCmds::BindVertexBuffers(uint32_t firstBinding,
     HgiBufferDesc const &desc = buf->GetDescriptor();
 
     uint32_t const byteOffset = byteOffsets[i];
-    uint32_t const bindingIndex = firstBinding + i;
+    uint32_t const bindingIndex = firstBinding + (uint32_t)i;
 
     TF_VERIFY(desc.usage & HgiBufferUsageVertex);
 

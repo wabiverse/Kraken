@@ -246,7 +246,7 @@ template<class _View> class SdfPyChildrenProxy
 
   mapped_type _GetItemByIndex(int index) const
   {
-    index = TfPyNormalizeIndex(index, _proxy.size(), true /*throwError*/);
+    index = (int)TfPyNormalizeIndex((int64_t)index, _proxy.size(), true /*throwError*/);
     return _GetView()[index];
   }
 
@@ -291,7 +291,7 @@ template<class _View> class SdfPyChildrenProxy
   {
     // Note that -1 below means to insert at end for the _proxy._Insert API.
     index = index < (int)_proxy.size() ?
-              TfPyNormalizeIndex(index, _proxy.size(), false /*throwError*/) :
+              (int)TfPyNormalizeIndex((int64_t)index, _proxy.size(), false /*throwError*/) :
               -1;
 
     _proxy._Insert(value, index);
@@ -363,13 +363,13 @@ template<class _View> class SdfPyChildrenProxy
   int _FindIndexByKey(const key_type &key) const
   {
     size_t i = std::distance(_GetView().begin(), _GetView().find(key));
-    return i == _GetView().size() ? -1 : i;
+    return i == _GetView().size() ? -1 : (int)i;
   }
 
   int _FindIndexByValue(const mapped_type &value) const
   {
     size_t i = std::distance(_GetView().begin(), _GetView().find(value));
-    return i == _GetView().size() ? -1 : i;
+    return i == _GetView().size() ? -1 : (int)i;
   }
 
  private:

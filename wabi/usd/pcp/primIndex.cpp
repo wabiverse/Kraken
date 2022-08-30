@@ -2562,7 +2562,7 @@ static void _AddClassBasedArcs(PcpPrimIndex *index,
                       /* parent = */ node,
                       /* origin = */ node,
                       mapExpr,
-                      arcNum,
+                      (int)arcNum,
                       /* ignoreIfSameAsSite = */ PcpLayerStackSite(),
                       indexer);
   }
@@ -3647,7 +3647,7 @@ static void _EvalNodeVariantSets(PcpPrimIndex *index,
   std::vector<std::string> vsetNames;
   PcpComposeSiteVariantSets(node, &vsetNames);
 
-  for (int vsetNum = 0, numVsets = vsetNames.size(); vsetNum < numVsets; ++vsetNum) {
+  for (int vsetNum = 0, numVsets = (int)vsetNames.size(); vsetNum < numVsets; ++vsetNum) {
     indexer->AddTask(
       Task(Task::Type::EvalNodeVariantAuthored, node, std::move(vsetNames[vsetNum]), vsetNum));
   }

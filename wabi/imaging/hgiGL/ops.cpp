@@ -113,7 +113,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureGpuToCpu(HgiTextureGpuToCpuOp const &copyOp)
                          texDesc.dimensions[2],        // layerCnt or depth
                          glFormat,
                          glPixelType,
-                         copyOp.destinationBufferByteSize,
+                         (GLsizei)copyOp.destinationBufferByteSize,
                          copyOp.cpuDestinationBuffer);
 
     HGIGL_POST_PENDING_GL_ERRORS();
@@ -149,7 +149,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                         dimensions[0],
                                         dimensions[1],
                                         format,
-                                        copyOp.bufferByteSize,
+                                        (GLsizei)copyOp.bufferByteSize,
                                         copyOp.cpuSourceBuffer);
         } else {
           glTextureSubImage2D(dstTexture->GetTextureId(),
@@ -174,7 +174,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureCpuToGpu(HgiTextureCpuToGpuOp const &copyOp)
                                         dimensions[1],
                                         dimensions[2],
                                         format,
-                                        copyOp.bufferByteSize,
+                                        (GLsizei)copyOp.bufferByteSize,
                                         copyOp.cpuSourceBuffer);
         } else {
           glTextureSubImage3D(dstTexture->GetTextureId(),
@@ -324,7 +324,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
     if (HgiIsCompressed(texDesc.format)) {
       glGetCompressedTextureImage(srcTexture->GetTextureId(),
                                   copyOp.mipLevel,
-                                  copyOp.byteSize,
+                                  (GLsizei)copyOp.byteSize,
                                   byteOffset);
     } else {
       GLenum format = 0;
@@ -334,7 +334,7 @@ HgiGLOpsFn HgiGLOps::CopyTextureToBuffer(HgiTextureToBufferOp const &copyOp)
                         copyOp.mipLevel,
                         format,
                         type,
-                        copyOp.byteSize,
+                        (GLsizei)copyOp.byteSize,
                         byteOffset);
     }
     glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
@@ -396,7 +396,7 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
                                         dimensions[0],
                                         dimensions[1],
                                         format,
-                                        copyOp.byteSize,
+                                        (GLsizei)copyOp.byteSize,
                                         byteOffset);
         } else {
           glTextureSubImage2D(dstTexture->GetTextureId(),
@@ -421,7 +421,7 @@ HgiGLOpsFn HgiGLOps::CopyBufferToTexture(HgiBufferToTextureOp const &copyOp)
                                         dimensions[1],
                                         dimensions[2],
                                         format,
-                                        copyOp.byteSize,
+                                        (GLsizei)copyOp.byteSize,
                                         byteOffset);
         } else {
           glTextureSubImage3D(dstTexture->GetTextureId(),
@@ -552,7 +552,7 @@ HgiGLOpsFn HgiGLOps::BindVertexBuffers(uint32_t firstBinding,
 
       TF_VERIFY(desc.usage & HgiBufferUsageVertex);
 
-      glBindVertexBuffer(firstBinding + i, buf->GetBufferId(), byteOffsets[i], desc.vertexStride);
+      glBindVertexBuffer((GLuint)(firstBinding + (uint32_t)i), buf->GetBufferId(), byteOffsets[i], desc.vertexStride);
     }
 
     HGIGL_POST_PENDING_GL_ERRORS();
@@ -734,7 +734,7 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
       }
 
       if (colorAttachment.loadOp == HgiAttachmentLoadOpClear) {
-        glClearBufferfv(GL_COLOR, i, colorAttachment.clearValue.data());
+        glClearBufferfv(GL_COLOR, (GLint)i, colorAttachment.clearValue.data());
       }
 
       blendEnabled |= colorAttachment.blendEnabled;
@@ -748,8 +748,8 @@ HgiGLOpsFn HgiGLOps::BindFramebufferOp(HgiGLDevice *device, HgiGraphicsCmdsDesc 
       GLenum colorOp = HgiGLConversions::GetBlendEquation(colorAttachment.colorBlendOp);
       GLenum alphaOp = HgiGLConversions::GetBlendEquation(colorAttachment.alphaBlendOp);
 
-      glBlendFuncSeparatei(i, srcColor, dstColor, srcAlpha, dstAlpha);
-      glBlendEquationSeparatei(i, colorOp, alphaOp);
+      glBlendFuncSeparatei((GLuint)i, srcColor, dstColor, srcAlpha, dstAlpha);
+      glBlendEquationSeparatei((GLuint)i, colorOp, alphaOp);
       glBlendColor(colorAttachment.blendConstantColor[0],
                    colorAttachment.blendConstantColor[1],
                    colorAttachment.blendConstantColor[2],
@@ -862,8 +862,8 @@ HgiGLOpsFn HgiGLOps::ResolveFramebuffer(HgiGLDevice *device,
     glGetIntegerv(GL_DRAW_BUFFER, &restoreDrawBuffer);
 
     for (size_t i = 0; i < numResolvesRequired; i++) {
-      glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
-      glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
+      glReadBuffer((GLenum)(GL_COLOR_ATTACHMENT0 + i));
+      glDrawBuffer((GLenum)(GL_COLOR_ATTACHMENT0 + i));
       glBlitFramebuffer(0,
                         0,
                         dim[0],

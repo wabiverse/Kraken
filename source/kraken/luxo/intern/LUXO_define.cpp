@@ -67,11 +67,11 @@ void PRIM_def_struct_ptr(const Stage &kstage,
   // KrakenPROP prop;
   // KrakenPRIMDEF *kpdef = NULL, *kpdefrom = NULL;
 
-  r_ptr = new KrakenPRIM(kstage->GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier)));
+  *r_ptr = KrakenPRIM(kstage->GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier)));
 
   if (!r_ptr->IsValid()) {
     /* This prim doesn't exist yet. */
-    r_ptr = new KrakenPRIM(kstage->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier), from));
+    *r_ptr = KrakenPRIM(kstage->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier), from));
   }
 
   r_ptr->identifier = identifier.GetAsString().c_str();
@@ -89,7 +89,7 @@ void PRIM_def_struct(const Stage &kstage,
   /**
    * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
-  r_ptr = new KrakenPRIM(kstage->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier), from));
+  *r_ptr = KrakenPRIM(kstage->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier), from));
 
   if (!r_ptr->IsValid()) {
 

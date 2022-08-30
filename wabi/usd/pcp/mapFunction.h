@@ -210,7 +210,7 @@ class PcpMapFunction
     _Data(){};
 
     _Data(PathPair const *begin, PathPair const *end, bool hasRootIdentity)
-      : numPairs(end - begin),
+      : numPairs((int)(end - begin)),
         hasRootIdentity(hasRootIdentity)
     {
       if (numPairs == 0)

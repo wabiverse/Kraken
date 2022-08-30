@@ -920,7 +920,7 @@ struct UsdImaging_PointInstancerIndicesStrategy
       }
 
       if (mask.size() == 0 || mask[instanceId]) {
-        v[protoIndex].push_back(instanceId);
+        v[protoIndex].push_back((int)instanceId);
       }
     }
 

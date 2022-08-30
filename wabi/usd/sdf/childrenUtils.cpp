@@ -315,7 +315,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::InsertChild(const SdfLayerHandle &layer,
 
   // If the index is -1, insert the child at the end.
   if (index == -1) {
-    index = childNames.size();
+    index = (int)childNames.size();
   }
 
   if ((size_t)index > childNames.size()) {
@@ -446,7 +446,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::MoveChildForBatchNamespaceEdit(
     index = std::find(childNames.begin(), childNames.end(), oldKey) - childNames.begin();
   } else if ((size_t)index > childNames.size()) {
     // This catches all negative indexes.
-    index = childNames.size();
+    index = (int)childNames.size();
   }
 
   // Get the old sibling names and find the value.
@@ -575,7 +575,7 @@ bool Sdf_ChildrenUtils<ChildPolicy>::CanMoveChildForBatchNamespaceEdit(
 
   // If the index is AtEnd, insert the child at the end.
   if (index == SdfNamespaceEdit::AtEnd) {
-    index = childNames.size();
+    index = (int)childNames.size();
   }
 
   // Any index not in the child name range other than Same is invalid.

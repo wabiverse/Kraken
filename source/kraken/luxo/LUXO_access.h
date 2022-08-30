@@ -97,6 +97,6 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 
 void LUXO_set_stage_ctx(kContext *C);
 
-Stage &LUXO_get_stage();
+wabi::UsdStageRefPtr &LUXO_get_stage();
 
 KRAKEN_NAMESPACE_END

@@ -137,11 +137,18 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
     return ptr && ptr == get_pointer(p);
   }
 
+  #if !(__cplusplus >= 202002L)
   template<class T> bool operator!=(TfRefPtr<T> const &p) const
   {
     return !(*this == p);
   }
 
+  /** 
+   * @WOAH: THIS IS A CATASTROPHIC FAILURE ON C++20.
+   * keep this out of the compilation, period.
+   * 
+   * Reference:
+   * https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1614r2.html */
   template<class T> friend bool operator==(const TfRefPtr<T> &p1, Derived const &p2)
   {
     return p2 == p1;
@@ -151,6 +158,7 @@ class TfWeakPtrFacade : public TfWeakPtrFacadeBase
   {
     return !(p1 == p2);
   }
+  #endif /* __cplusplus >= 202002L */
 
   template<class Other> bool operator<(PtrTemplate<Other> const &p) const
   {

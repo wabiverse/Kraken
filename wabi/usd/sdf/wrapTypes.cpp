@@ -124,7 +124,7 @@ namespace
       dict d = dictProxy();
 
       list keys = d.keys();
-      for (int i = 0, numKeys = len(d); i < numKeys; ++i) {
+      for (int i = 0, numKeys = (int)len(d); i < numKeys; ++i) {
         object pyKey = keys[i];
         extract<std::string> keyProxy(pyKey);
         if (!keyProxy.check()) {
@@ -204,7 +204,7 @@ namespace
     static void UpdateList(Type &x, const boost::python::list &pairs)
     {
       std::vector<pair_type> values;
-      for (int i = 0, n = len(pairs); i != n; ++i) {
+      for (int i = 0, n = (int)len(pairs); i != n; ++i) {
         values.push_back(
           pair_type(extract<key_type>(pairs[i][0]), extract<mapped_type>(pairs[i][1])));
       }
@@ -266,9 +266,9 @@ namespace
   {
     const VtValue &value = self.GetValue();
     if (value.IsHolding<VtDictionary>()) {
-      return VtDictionaryHash()(value.Get<VtDictionary>());
+      return (int)VtDictionaryHash()(value.Get<VtDictionary>());
     } else if (value.IsHolding<std::string>()) {
-      return TfHash()(value.Get<std::string>());
+      return (int)TfHash()(value.Get<std::string>());
     } else {
       return 0;
     }
@@ -281,7 +281,7 @@ namespace
 
   static int _SdfValueBlockHash(const SdfValueBlock &self)
   {
-    return boost::hash<SdfValueBlock>()(self);
+    return (int)boost::hash<SdfValueBlock>()(self);
   }
 
   SdfValueTypeName _FindType(const std::string &typeName)

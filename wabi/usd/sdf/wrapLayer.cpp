@@ -148,7 +148,7 @@ namespace
 
       for (size_t i = 0; i < values.size(); ++i) {
         if (values[i] == val) {
-          return i;
+          return (int)i;
         }
       }
 
@@ -160,7 +160,7 @@ namespace
       SdfSubLayerProxy paths = GetLayer()->GetSubLayerPaths();
       for (size_t i = 0, n = paths.size(); i < n; ++i) {
         if (paths[i] == path) {
-          return i;
+          return (int)i;
         }
       }
       return -1;
@@ -169,7 +169,7 @@ namespace
     SdfLayerOffset _GetItemByIndex(int index) const
     {
       size_t size = GetLayer()->GetNumSubLayerPaths();
-      index = TfPyNormalizeIndex(index, size, true);
+      index = (int)TfPyNormalizeIndex((uint64_t)index, (uint64_t)size, true);
       return GetLayer()->GetSubLayerOffset(index);
     }
 
@@ -186,7 +186,7 @@ namespace
 
     void _SetItemByIndex(int index, const SdfLayerOffset &value)
     {
-      int size = GetLayer()->GetNumSubLayerPaths();
+      int size = (int)GetLayer()->GetNumSubLayerPaths();
       if (index == -1) {
         index = size;
       }
@@ -210,7 +210,7 @@ namespace
     int _Count(const SdfLayerOffset &val)
     {
       SdfLayerOffsetVector values = _GetValues();
-      return std::count(values.begin(), values.end(), val);
+      return (int)std::count(values.begin(), values.end(), val);
     }
 
     std::string _GetRepr() const

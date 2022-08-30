@@ -269,13 +269,13 @@ template<class _View> class SdfPyWrapChildrenView
   static int _FindIndexByKey(const View &x, const key_type &key)
   {
     size_t i = std::distance(x.begin(), x.find(key));
-    return i == x.size() ? -1 : i;
+    return i == x.size() ? -1 : (int)i;
   }
 
   static int _FindIndexByValue(const View &x, const value_type &value)
   {
     size_t i = std::distance(x.begin(), x.find(value));
-    return i == x.size() ? -1 : i;
+    return i == x.size() ? -1 : (int)i;
   }
 };
 

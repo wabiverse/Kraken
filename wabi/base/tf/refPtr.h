@@ -962,6 +962,7 @@ template<class T> class TfRefPtr
     return _refBase >= p._refBase;
   }
 
+#if !(__cplusplus >= 202002L)
   /// Returns true if \c *this and \c p do not point to the same object.
   ///
   /// The comparison is legal only if a \c T* and a \c U* are comparable.
@@ -975,6 +976,7 @@ template<class T> class TfRefPtr
 
     return _refBase != p._refBase;
   }
+#endif /* __cplusplus >= 202002L */
 
   /// Accessor to \c T's public members.
   T *operator->() const

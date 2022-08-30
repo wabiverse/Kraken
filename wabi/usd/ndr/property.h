@@ -124,7 +124,7 @@ class NdrProperty
   NDR_API
   int GetArraySize() const
   {
-    return _arraySize;
+    return (int)_arraySize;
   }
 
   /// Gets a string with basic information about this property. Helpful for

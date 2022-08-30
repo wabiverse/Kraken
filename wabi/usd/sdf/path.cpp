@@ -495,8 +495,8 @@ bool SdfPath::HasPrefix(const SdfPath &prefix) const
 
     Sdf_PathNode const *prefixPrimNode = prefix._primPart.get();
 
-    int prefixDepth = prefixPrimNode->GetElementCount();
-    int curDepth = primNode->GetElementCount();
+    int prefixDepth = (int)prefixPrimNode->GetElementCount();
+    int curDepth = (int)primNode->GetElementCount();
 
     if (curDepth < prefixDepth) {
       return false;
@@ -1114,8 +1114,8 @@ SdfPath SdfPath::_ReplacePrimPrefix(SdfPath const &oldPrefix, SdfPath const &new
   Sdf_PathNodeConstPtr primNode = _primPart.get();
   Sdf_PathNodeConstPtr prefixPrimNode = oldPrefix._primPart.get();
 
-  int prefixDepth = prefixPrimNode->GetElementCount();
-  int curDepth = primNode->GetElementCount();
+  int prefixDepth = (int)prefixPrimNode->GetElementCount();
+  int curDepth = (int)primNode->GetElementCount();
 
   if (curDepth < prefixDepth) {
     return *this;

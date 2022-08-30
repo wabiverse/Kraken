@@ -56,7 +56,7 @@ KrakenSTAGE KRAKEN_STAGE = {};
 
 static void LUXO_struct_init(void)
 {
-  const UsdPrim &intern = KRAKEN_STAGE->DefinePrim(wabi::SdfPath("/WabiAnimationStudios"));
+  UsdPrim intern = KRAKEN_STAGE->DefinePrim(wabi::SdfPath("/WabiAnimationStudios"));
 
   UsdCollectionAPI capi = UsdCollectionAPI::Apply(intern, TfToken("structs"));
   capi.CreateIncludesRel().AddTarget(intern.GetPath().AppendPath(SdfPath("Structs")));
@@ -65,15 +65,14 @@ static void LUXO_struct_init(void)
 void LUXO_init(void)
 {
   LUXO_struct_init();
-  // LUXO_main(KRAKEN_STAGE->ptr);
+  LUXO_main(KRAKEN_STAGE);
 
-  // KKE_tempdir_init(NULL);
+  KKE_tempdir_init(NULL);
 
-  /* remove this once we go back to UsdStage::CreateInMemory */
   LUXO_save_usd();
 }
 
-Stage &LUXO_get_stage()
+wabi::UsdStageRefPtr &LUXO_get_stage()
 {
   return KRAKEN_STAGE;
 }

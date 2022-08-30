@@ -118,7 +118,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
       // area->type->exit = area_exit;
     }
 
-    SpaceType *st = KKE_spacetype_from_id(type.Hash());
+    SpaceType *st = KKE_spacetype_from_id((int)type.Hash());
 
     FormFactory(area->spacetype, type);
     area->type = st;

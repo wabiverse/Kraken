@@ -233,11 +233,11 @@ struct Tf_PyEnumWrapper : public Tf_PyEnum, boost::totally_ordered<Tf_PyEnumWrap
   }
   friend TfEnum operator|(Tf_PyEnumWrapper const &lhs, long rhs)
   {
-    return TfEnum(lhs.value.GetType(), lhs.value.GetValueAsInt() | rhs);
+    return TfEnum(lhs.value.GetType(), lhs.value.GetValueAsInt() | (int)rhs);
   }
   friend TfEnum operator|(long lhs, Tf_PyEnumWrapper const &rhs)
   {
-    return TfEnum(rhs.value.GetType(), lhs | rhs.value.GetValueAsInt());
+    return TfEnum(rhs.value.GetType(), (int)lhs | rhs.value.GetValueAsInt());
   }
 
   friend TfEnum operator&(Tf_PyEnumWrapper const &lhs, Tf_PyEnumWrapper const &rhs)
@@ -250,11 +250,11 @@ struct Tf_PyEnumWrapper : public Tf_PyEnum, boost::totally_ordered<Tf_PyEnumWrap
   }
   friend TfEnum operator&(Tf_PyEnumWrapper const &lhs, long rhs)
   {
-    return TfEnum(lhs.value.GetType(), lhs.value.GetValueAsInt() & rhs);
+    return TfEnum(lhs.value.GetType(), lhs.value.GetValueAsInt() & (int)rhs);
   }
   friend TfEnum operator&(long lhs, Tf_PyEnumWrapper const &rhs)
   {
-    return TfEnum(rhs.value.GetType(), lhs & rhs.value.GetValueAsInt());
+    return TfEnum(rhs.value.GetType(), (int)lhs & rhs.value.GetValueAsInt());
   }
 
   friend TfEnum operator^(Tf_PyEnumWrapper const &lhs, Tf_PyEnumWrapper const &rhs)
@@ -267,11 +267,11 @@ struct Tf_PyEnumWrapper : public Tf_PyEnum, boost::totally_ordered<Tf_PyEnumWrap
   }
   friend TfEnum operator^(Tf_PyEnumWrapper const &lhs, long rhs)
   {
-    return TfEnum(lhs.value.GetType(), lhs.value.GetValueAsInt() ^ rhs);
+    return TfEnum(lhs.value.GetType(), lhs.value.GetValueAsInt() ^ (int)rhs);
   }
   friend TfEnum operator^(long lhs, Tf_PyEnumWrapper const &rhs)
   {
-    return TfEnum(rhs.value.GetType(), lhs ^ rhs.value.GetValueAsInt());
+    return TfEnum(rhs.value.GetType(), (int)lhs ^ rhs.value.GetValueAsInt());
   }
 
   friend TfEnum operator~(Tf_PyEnumWrapper const &rhs)

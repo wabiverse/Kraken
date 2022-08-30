@@ -273,7 +273,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
       case TraceEvent::EventType::CounterDelta: {
         boost::optional<double> value = _JsGetValue<double>(js, "value");
         if (ts && value) {
-          TraceEvent event(TraceEvent::CounterDelta, list.CacheKey(*keyStr), *value, *category);
+          TraceEvent event(TraceEvent::CounterDelta, list.CacheKey(*keyStr), *value, (uint32_t)*category);
           event.SetTimeStamp(*ts);
           unorderedEvents.emplace_back(std::move(event));
           ;
@@ -282,7 +282,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
       case TraceEvent::EventType::CounterValue: {
         boost::optional<double> value = _JsGetValue<double>(js, "value");
         if (ts && value) {
-          TraceEvent event(TraceEvent::CounterValue, list.CacheKey(*keyStr), *value, *category);
+          TraceEvent event(TraceEvent::CounterValue, list.CacheKey(*keyStr), *value, (uint32_t)*category);
           event.SetTimeStamp(*ts);
           unorderedEvents.emplace_back(std::move(event));
           ;
@@ -295,7 +295,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
               TraceEvent event(TraceEvent::Data,
                                list.CacheKey(*keyStr),
                                dataValue->Get<bool>(),
-                               *category);
+                               (uint32_t)*category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
@@ -303,7 +303,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
               TraceEvent event(TraceEvent::Data,
                                list.CacheKey(*keyStr),
                                dataValue->Get<double>(),
-                               *category);
+                               (uint32_t)*category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
@@ -311,7 +311,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
               TraceEvent event(TraceEvent::Data,
                                list.CacheKey(*keyStr),
                                dataValue->Get<uint64_t>(),
-                               *category);
+                               (uint32_t)*category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
@@ -319,7 +319,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
               TraceEvent event(TraceEvent::Data,
                                list.CacheKey(*keyStr),
                                dataValue->Get<int64_t>(),
-                               *category);
+                               (uint32_t)*category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
@@ -327,7 +327,7 @@ void _TraceEventFromJSON(const JsValue &jsValue, EventListConstructionData &even
               TraceEvent event(TraceEvent::Data,
                                list.CacheKey(*keyStr),
                                list.StoreData(dataValue->GetString().c_str()),
-                               *category);
+                               (uint32_t)*category);
               event.SetTimeStamp(*ts);
               unorderedEvents.emplace_back(std::move(event));
               ;
