@@ -312,7 +312,30 @@ else()
       set_source_files_properties(${rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
       list(APPEND ${SRC} rfile)
     endforeach()
+    add_library(Creator STATIC "${CMAKE_SOURCE_DIR}/source/creator/apple/creator_main.swift")
+    target_include_directories(kraken_anchor PUBLIC
+      ${XCODE_SDK_DIR}/MacOSX13.0.sdk/usr/include/c++/v1
+      ${TBB_INCLUDE_DIRS}
+      ${PYTHON_INCLUDE_DIRS}
+      ${Boost_INCLUDE_DIRS}
+      ${CMAKE_BINARY_DIR}/bin/include/wabi)
+    target_link_libraries(Creator kraken_anchor_apple kraken_anchor
+      maelstrom
+      maelstrom_static
+      ${BOOST_LIBRARIES}
+      ${TBB_LIBRARIES}
+      ${PYTHON_LIBRARIES}
+      ${FREETYPE_LIBRARIES}
+      ${FREETYPE_LIBRARY})
+    target_compile_options(Creator PUBLIC
+      "-static"
+      "-emit-dependencies"
+      "-emit-library"
+      "-enable-experimental-cxx-interop")
     add_executable(kraken MACOSX_BUNDLE ${SRC})
+    add_dependencies(kraken Creator)
+    target_link_libraries(kraken Creator)
+    target_include_directories(kraken PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/Kraken.build/${CMAKE_BUILD_TYPE}/Creator.build/DerivedSources)
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)

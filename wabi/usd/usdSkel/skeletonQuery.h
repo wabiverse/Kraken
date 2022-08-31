@@ -87,17 +87,17 @@ class UsdSkelSkeletonQuery
 
   /// Equality comparison.  Return true if \a lhs and \a rhs represent the
   /// same UsdSkelSkeletonQuery, false otherwise.
-  friend bool operator==(const UsdSkelSkeletonQuery &lhs, const UsdSkelSkeletonQuery &rhs)
+  bool operator==(const UsdSkelSkeletonQuery &other) const
   {
-    return lhs._definition == rhs._definition && lhs._animQuery == rhs._animQuery;
+    return _definition == other._definition && _animQuery == other._animQuery;
   }
 
   /// Inequality comparison. Return false if \a lhs and \a rhs represent the
   /// same UsdSkelSkeletonQuery, true otherwise.
-  friend bool operator!=(const UsdSkelSkeletonQuery &lhs, const UsdSkelSkeletonQuery &rhs)
-  {
-    return !(lhs == rhs);
-  }
+  // bool operator!=(const UsdSkelSkeletonQuery &lhs, const UsdSkelSkeletonQuery &rhs)
+  // {
+  //   return !(lhs == rhs);
+  // }
 
   /// Returns \c true if the size of the array returned by
   /// skeleton::GetBindTransformsAttr() matches the number of joints in the skeleton.

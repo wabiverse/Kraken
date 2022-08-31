@@ -88,6 +88,11 @@ void CREATOR_kraken_main(int argc, const char **argv)
   }
 #endif
 
+#ifdef __APPLE__
+  /* initialize swift from main thread. */
+  Creator::CreatorMain();
+#endif /* __APPLE__ */
+
   /* Initialize path to executable. */
   KKE_appdir_program_path_init(argv[0]);
 

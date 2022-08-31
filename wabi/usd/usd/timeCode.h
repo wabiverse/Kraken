@@ -160,17 +160,17 @@ class UsdTimeCode
   }
 
   /// Equality comparison.
-  friend bool operator==(const UsdTimeCode &lhs, const UsdTimeCode &rhs)
+  bool operator==(const UsdTimeCode &other) const
   {
-    return lhs.IsDefault() == rhs.IsDefault() &&
-           (lhs.IsDefault() || (lhs.GetValue() == rhs.GetValue()));
+    return IsDefault() == other.IsDefault() &&
+           (IsDefault() || (GetValue() == other.GetValue()));
   }
 
   /// Inequality comparison.
-  friend bool operator!=(const UsdTimeCode &lhs, const UsdTimeCode &rhs)
-  {
-    return !(lhs == rhs);
-  }
+  // friend bool operator!=(const UsdTimeCode &lhs, const UsdTimeCode &rhs)
+  // {
+  //   return !(lhs == rhs);
+  // }
 
   /// Less-than.  Default() times are less than all numeric times,
   /// \em including EarliestTime()

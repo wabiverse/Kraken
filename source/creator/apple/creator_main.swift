@@ -16,37 +16,19 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
-/**
- * @file
- * Creator.
- * Creating Chaos.
- */
+import Foundation
+import MetalKit
+import AppKit
 
-#pragma once
+/* Pixar USD. */
+import Pixar
 
-#if defined(__APPLE__)
-#  include <Foundation/Foundation.hpp>
-#  include "Creator-Swift.h"
-namespace Creator
-{
-  SWIFT_EXTERN NS::Integer CreatorMain(void) SWIFT_WARN_UNUSED_RESULT;
+/* Kraken Anchor. */
+import Anchor
+
+@_cdecl("CreatorMain") 
+public func CreatorMain() -> Int
+{ 
+  fputs("hello from swift.\n", stderr)
+  return 0
 }
-#endif /* __APPLE__ */
-
-#include <wabi/base/arch/defines.h>
-
-#include "KLI_utildefines.h"
-
-/**
- *  -----  Kraken's Main Startup. ----- */
-
-void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
-
-/**
- *  -----  Creator's Args. ----- */
-
-void CREATOR_setup_args(int argc, const char **argv);
-
-int CREATOR_parse_args(int argc, const char **argv);
-
-/* ------ */

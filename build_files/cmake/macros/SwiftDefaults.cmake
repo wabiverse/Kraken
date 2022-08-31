@@ -6,3 +6,7 @@ set(CMAKE_Swift_FLAGS "${CMAKE_Swift_FLAGS} -enable-experimental-cxx-interop")
 
 # Static linkage.
 set(CMAKE_Swift_FLAGS "${CMAKE_Swift_FLAGS} -static")
+
+# Output of swift modules.
+set(CMAKE_Swift_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/swift CACHE STRING "Output directory of compiled Swift modules." FORCE)
+set(Swift_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/swift CACHE STRING "Output directory of compiled Swift modules." FORCE)
