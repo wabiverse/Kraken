@@ -313,13 +313,15 @@ else()
       list(APPEND ${SRC} rfile)
     endforeach()
     add_library(Creator STATIC "${CMAKE_SOURCE_DIR}/source/creator/apple/creator_main.swift")
-    target_include_directories(kraken_anchor PUBLIC
+    target_include_directories(Creator PUBLIC
       ${XCODE_SDK_DIR}/MacOSX13.0.sdk/usr/include/c++/v1
       ${TBB_INCLUDE_DIRS}
       ${PYTHON_INCLUDE_DIRS}
       ${Boost_INCLUDE_DIRS}
       ${CMAKE_BINARY_DIR}/bin/include/wabi)
-    target_link_libraries(Creator kraken_anchor_apple kraken_anchor
+    target_link_libraries(Creator 
+      kraken_anchor_apple 
+      kraken_anchor
       maelstrom
       maelstrom_static
       ${BOOST_LIBRARIES}
