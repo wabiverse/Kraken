@@ -88,11 +88,6 @@ void CREATOR_kraken_main(int argc, const char **argv)
   }
 #endif
 
-#ifdef __APPLE__
-  /* initialize swift from main thread. */
-  Creator::CreatorMain();
-#endif /* __APPLE__ */
-
   /* Initialize path to executable. */
   KKE_appdir_program_path_init(argv[0]);
 
@@ -126,6 +121,11 @@ void CREATOR_kraken_main(int argc, const char **argv)
 
   /* This sets the context stage. */
   LUXO_set_stage_ctx(C);
+
+#ifdef __APPLE__
+  /* initialize swift from main thread. */
+  Creator::CreatorMain();
+#endif /* __APPLE__ */
 
   /* Initialize main Runtime. */
   WM_init(C);
