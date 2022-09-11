@@ -474,12 +474,12 @@ endif()
 if(WIN32)
 
   file(TO_CMAKE_PATH 
-    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
     MICROSOFT_VC143_CRT
   )
 
   file(TO_CMAKE_PATH 
-    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
     MICROSOFT_VC143_APP_CRT
   )
 
