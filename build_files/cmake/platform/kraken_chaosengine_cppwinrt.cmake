@@ -188,7 +188,7 @@ function(target_cppwinrt
             COMMAND
                     # open the generated module.g.cpp and strip all the includes (lines) containing excluded headers
                     # write the new file out to module.g.excl.cpp.
-                    powershell -Command "& { \
+                    pwsh -Command "& { \
                         $exclusions = get-content '${CPPWINRT_COMPONENT_EXCLUSION_LIST}'; \
                         (get-content '${module_g_cpp_back_slash}') \
                         | where { \

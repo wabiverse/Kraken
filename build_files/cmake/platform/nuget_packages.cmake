@@ -70,28 +70,28 @@ file(TO_CMAKE_PATH
   MICROSOFT_NETCORE_PLATFORMS
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.211028.7/build/native/Microsoft.Windows.CppWinRT"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.220912.1/build/native/Microsoft.Windows.CppWinRT"
   MICROSOFT_CPP_WINRT_PROJECT
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.0.0/build/native/Microsoft.WindowsAppSDK"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.1.5/build/native/Microsoft.WindowsAppSDK"
   MICROSOFT_APP_SDK
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.7.1-prerelease.211026002/build/native/Microsoft.UI.Xaml"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.8.2-prerelease.220830001/build/native/Microsoft.UI.Xaml"
   MICROSOFT_UI_XAML
 )
 file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.1083-prerelease/build/native/Microsoft.Web.WebView2"
+  "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.1369-prerelease/build/native/Microsoft.Web.WebView2"
   MICROSOFT_WEB_WEBVIEW
 )
 
 file(TO_CMAKE_PATH 
-  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.32.31326\\x64\\Microsoft.VC143.CRT"
   MICROSOFT_VC143_CRT
 )
 file(TO_CMAKE_PATH 
-  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.30.30704\\x64\\Microsoft.VC143.CRT"
+  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.32.31326\\x64\\Microsoft.VC143.CRT"
   MICROSOFT_VC143_APP_CRT
 )
 file(TO_CMAKE_PATH
@@ -113,9 +113,9 @@ if(${proj_path} STREQUAL "source/creator/kraken")
 <Project ToolsVersion=\"15.0\" DefaultTargets=\"Build\" xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <ItemGroup>
-    <PackageReference Include=\"Microsoft.Windows.CppWinRT\" Version=\"2.0.211028.7\" />
-    <PackageReference Include=\"Microsoft.UI.Xaml\" Version=\"2.7.1-prerelease.211026002\" />
-    <PackageReference Include=\"Microsoft.Web.WebView2\" Version=\"1.0.1083-prerelease\" />
+    <PackageReference Include=\"Microsoft.Windows.CppWinRT\" Version=\"2.0.220912.1\" />
+    <PackageReference Include=\"Microsoft.UI.Xaml\" Version=\"2.8.2-prerelease.220830001\" />
+    <PackageReference Include=\"Microsoft.Web.WebView2\" Version=\"1.0.1369-prerelease\" />
     <Manifest Include=\"$(ApplicationManifest)\" />
   </ItemGroup>
   <PropertyGroup Label=\"Globals\">
@@ -945,14 +945,16 @@ endmacro()
 function(kraken_config_nuget)
   # In case NuGet packages get cleaned out.
   SUBDIRLIST(NUGET_PACKAGES_DIRLIST ${CMAKE_BINARY_DIR}/packages)
-  if(NOT ${NUGET_PACKAGES_DIRLIST})
-    if(EXISTS ${CMAKE_BINARY_DIR}/packages.config)
-      file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
+  foreach(_apkg ${NUGET_PACKAGES_DIRLIST})
+    if(NOT EXISTS ${CMAKE_BINARY_DIR}/packages/${_apkg})
+      if(EXISTS ${CMAKE_BINARY_DIR}/packages.config)
+        file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
+      endif()
+      if(EXISTS ${CMAKE_BINARY_DIR}/NuGet.config)
+        file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
+      endif()
     endif()
-    if(EXISTS ${CMAKE_BINARY_DIR}/NuGet.config)
-      file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
-    endif()
-  endif()
+  endforeach()
 
   _run_nuget_config()
 endfunction()

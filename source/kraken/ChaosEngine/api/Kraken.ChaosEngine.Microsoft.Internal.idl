@@ -1,0 +1,15 @@
+// Copyright © 2022 Wabi Animation Studios, Ltd. Co. All rights reserved.
+
+namespace Kraken
+{
+  namespace ChaosEngine
+  {
+    namespace Microsoft
+    {
+      namespace Internal
+      {
+        // Internal API
+      }
+    }
+  }
+}

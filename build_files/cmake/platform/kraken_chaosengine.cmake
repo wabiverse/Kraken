@@ -1,18 +1,20 @@
+set(UNIVERSE_ROOT ${CMAKE_SOURCE_DIR}/source/kraken/ChaosEngine)
+
 # get the current nuget sdk kit directory
 get_sdk(sdk_folder sdk_version)
 get_sdk_include_folder(${sdk_folder} ${sdk_version} sdk_include_folder)
 set(dxcore_header "${sdk_include_folder}/um/dxcore.h")
 set(target_folder WABIAnimation/UniversalGraphicsFramework)
-set(universe_plugin_dir ${UNIVERSE_ROOT}/universe/plugin)
-set(universe_api_root ${UNIVERSE_ROOT}/universe/api)
-set(universe_dll_dir ${UNIVERSE_ROOT}/universe/dll)
-set(universe_lib_dir ${UNIVERSE_ROOT}/universe/lib)
-set(universe_lib_api_dir ${UNIVERSE_ROOT}/universe/lib/api)
-set(universe_lib_api_experimental_dir ${UNIVERSE_ROOT}/universe/lib/api.x)
-set(universe_lib_api_image_dir ${UNIVERSE_ROOT}/universe/lib/api.image)
-set(universe_lib_api_runtime_dir ${UNIVERSE_ROOT}/universe/lib/api.runtime)
-set(universe_lib_common_dir ${UNIVERSE_ROOT}/universe/lib/common)
-set(universe_lib_telemetry_dir ${UNIVERSE_ROOT}/universe/lib/telemetry)
+set(universe_plugin_dir ${UNIVERSE_ROOT}/plugin)
+set(universe_api_root ${UNIVERSE_ROOT}/api)
+set(universe_dll_dir ${UNIVERSE_ROOT}/dll)
+set(universe_lib_dir ${UNIVERSE_ROOT}/lib)
+set(universe_lib_api_dir ${UNIVERSE_ROOT}/lib/api)
+set(universe_lib_api_experimental_dir ${UNIVERSE_ROOT}/lib/api.x)
+set(universe_lib_api_image_dir ${UNIVERSE_ROOT}/lib/api.image)
+set(universe_lib_api_runtime_dir ${UNIVERSE_ROOT}/lib/api.runtime)
+set(universe_lib_common_dir ${UNIVERSE_ROOT}/lib/common)
+set(universe_lib_telemetry_dir ${UNIVERSE_ROOT}/lib/telemetry)
 
 # Retrieve the version of cppwinrt nuget
 package_version(
@@ -43,10 +45,10 @@ if(kraken_CHAOSENGINE_NAMESPACE_OVERRIDE)
 
   # The Pixar Universe. AKA. UNIVERSAL GRAPHICS FRAMEWORK. (UGF)
 
-  set(output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.Universe.ChaosEngine")
-  set(experimental_output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.Universe.ChaosEngine.X")
-  set(idl_native_output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.Universe.ChaosEngine.Microsoft")
-  set(idl_native_internal_output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.Universe.ChaosEngine.Microsoft.Internal")
+  set(output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.ChaosEngine")
+  set(experimental_output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.ChaosEngine.X")
+  set(idl_native_output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.ChaosEngine.Microsoft")
+  set(idl_native_internal_output_name "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.ChaosEngine.Microsoft.Internal")
 
   if(kraken_CHAOSENGINE_NAMESPACE_OVERRIDE STREQUAL "Pixar")
     set(universe_midl_defines "/DBUILD_INBOX=1")
@@ -54,19 +56,19 @@ if(kraken_CHAOSENGINE_NAMESPACE_OVERRIDE)
   endif()
 
   set(universe_root_ns "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}")
-  set(BINARY_NAME "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.Universe.ChaosEngine.dll")
+  set(BINARY_NAME "${kraken_CHAOSENGINE_NAMESPACE_OVERRIDE}.ChaosEngine.dll")
   set(universe_api_use_ns_prefix false)
 else()
 
   # The Kraken Universe. AKA. KRAKEN GRAPHICS FRAMEWORK. (KGF)
 
-  set(output_name "Kraken.Universe.ChaosEngine")
-  set(experimental_output_name "Kraken.Universe.ChaosEngine.X")
-  set(idl_native_output_name "Kraken.Universe.ChaosEngine.Microsoft")
-  set(idl_native_internal_output_name "Kraken.Universe.ChaosEngine.Microsoft.Internal")
+  set(output_name "Kraken.ChaosEngine")
+  set(experimental_output_name "Kraken.ChaosEngine.X")
+  set(idl_native_output_name "Kraken.ChaosEngine.Microsoft")
+  set(idl_native_internal_output_name "Kraken.ChaosEngine.Microsoft.Internal")
   set(universe_midl_defines "/DROOT_NS=Kraken")
   set(universe_root_ns "Kraken")
-  set(BINARY_NAME "Kraken.Universe.ChaosEngine.dll")
+  set(BINARY_NAME "Kraken.ChaosEngine.dll")
   set(universe_api_use_ns_prefix true)
 endif()
 
@@ -75,18 +77,18 @@ convert_forward_slashes_to_back(${exclusions} CPPWINRT_COMPONENT_EXCLUSION_LIST)
 
 # For winrt idl files:
 # 1) the file name must match the casing of the file on disk.
-# 2) for winrt idls the casing must match the namespaces within exactly (Pixar.Universe.ChaosEngine).
+# 2) for winrt idls the casing must match the namespaces within exactly (Pixar.ChaosEngine).
 # target_cppwinrt will attempt to create a winmd with the name and same casing as the supplied
 # idl file. If the name of the winmd file does not match the contained namespaces, cppwinrt.exe
 # will generate component template files with fully qualified names, which will not match the existing
 # generated component files.
 #
 # For native (Microsoft Windows) idl files there are no casing restrictions.
-get_filename_component(winrt_idl "${universe_api_root}/${universe_root_ns}.Universe.ChaosEngine.idl" ABSOLUTE)
-get_filename_component(winrt_experimental_idl "${universe_api_root}/${universe_root_ns}.Universe.ChaosEngine.X.idl" ABSOLUTE)
-get_filename_component(idl_native "${universe_api_root}/${universe_root_ns}.Universe.ChaosEngine.Microsoft.idl" ABSOLUTE)
-get_filename_component(idl_native_internal "${universe_api_root}/${universe_root_ns}.Universe.ChaosEngine.Microsoft.Internal.idl" ABSOLUTE)
-get_filename_component(winrt_winmd "${CMAKE_CURRENT_BINARY_DIR}/${universe_root_ns}.Universe.ChaosEngine.winmd" ABSOLUTE)
+get_filename_component(winrt_idl "${universe_api_root}/${universe_root_ns}.ChaosEngine.idl" ABSOLUTE)
+get_filename_component(winrt_experimental_idl "${universe_api_root}/${universe_root_ns}.ChaosEngine.X.idl" ABSOLUTE)
+get_filename_component(idl_native "${universe_api_root}/${universe_root_ns}.ChaosEngine.Microsoft.idl" ABSOLUTE)
+get_filename_component(idl_native_internal "${universe_api_root}/${universe_root_ns}.ChaosEngine.Microsoft.Internal.idl" ABSOLUTE)
+get_filename_component(winrt_winmd "${CMAKE_CURRENT_BINARY_DIR}/${universe_root_ns}.ChaosEngine.winmd" ABSOLUTE)
 
 
 
@@ -182,7 +184,7 @@ add_dependencies(UNIVERSAL_GRAPHICS_FRAMEWORK_MICROSOFT_INTERNAL RESTORE_NUGET_P
 
 
 # Add static library that will be archived/linked for both static/dynamic libraries
-kraken_add_lib(UNIVERSAL_GRAPHICS_FRAMEWORK_TELEMETRY_LIBRARY
+kraken_add_lib(UNIVERSAL_GRAPHICS_FRAMEWORK_PIXAR_NOTIFIER_LIBRARY
   ${universe_lib_telemetry_dir}/notifier.h
   ${CMAKE_SOURCE_DIR}/wabi/base/tf/diagnosticMgr.h
   ${universe_lib_telemetry_dir}/notifier.cpp
@@ -200,7 +202,7 @@ target_compile_definitions(UNIVERSAL_GRAPHICS_FRAMEWORK_PIXAR_NOTIFIER_LIBRARY P
 target_compile_definitions(UNIVERSAL_GRAPHICS_FRAMEWORK_PIXAR_NOTIFIER_LIBRARY PRIVATE BINARY_NAME=\"${BINARY_NAME}\")
 
 # Specify the usage of a precompiled header
-target_precompiled_header(UNIVERSAL_GRAPHICS_FRAMEWORK_PIXAR_NOTIFIER_LIBRARY lib/telemetry/pch.h)
+target_precompile_headers(UNIVERSAL_GRAPHICS_FRAMEWORK_PIXAR_NOTIFIER_LIBRARY PUBLIC lib/telemetry/pch.h)
 
 # Includes
 target_include_directories(UNIVERSAL_GRAPHICS_FRAMEWORK_PIXAR_NOTIFIER_LIBRARY PRIVATE ${CMAKE_CURRENT_BINARY_DIR})                                # universal graphics generated component headers
@@ -243,7 +245,7 @@ list(APPEND UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_SRC
 )
 
 # Add static library that will be archived/linked for both static/dynamic library
-kraken_add_lib(UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_LIBRARY ${UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_SRC})
+kraken_add_lib(UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_LIBRARY ${UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_SRC} "" "" "")
 
 # Compiler options
 target_compile_features(UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_LIBRARY PRIVATE cxx_std_20)
@@ -258,7 +260,7 @@ if (kraken_CHAOSENGINE_NAMESPACE_OVERRIDE STREQUAL "Pixar")
 endif()
 
 # Specify the usage of a precompiled header
-target_precompiled_header(UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_LIBRARY lib/api.runtime/pch.h)
+target_precompile_headers(UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_LIBRARY PUBLIC lib/api.runtime/pch.h)
 
 # Includes
 target_include_directories(UNIVERSAL_GRAPHICS_FRAMEWORK_RUNTIME_LIBRARY PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/universal/api)                  # universal graphics generated component headers
@@ -306,7 +308,7 @@ list(APPEND UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_SRC
   ${universe_plugin_dir}/universe_plugin.cpp
 )
 
-kraken_add_lib(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY ${UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_SRC})
+kraken_add_lib(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY ${UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_SRC} "" "" "")
 
 if (kraken_CHAOSENGINE_NAMESPACE_OVERRIDE STREQUAL "Windows")
   target_compile_definitions(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PRIVATE "BUILD_INBOX=1")
@@ -322,7 +324,7 @@ target_include_directories(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PRIVATE $
 add_dependencies(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY maelstrom)
 
 # Specify the usage of a precompiled header
-target_precompiled_header(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY plugin/pch.h)
+target_precompile_headers(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PUBLIC plugin/pch.h)
 
 # Includes
 target_include_directories(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PRIVATE ${UNIVERSE_ROOT}/universe)
