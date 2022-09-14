@@ -196,6 +196,12 @@ endif()
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Threads
 
+if(WIN32)
+  set(PTHREADS_LIBPATH ${LIBDIR}/pthreads/lib)
+  link_directories(${LIBDIR}/pthreads/lib)
+  include_directories(${LIBDIR}/pthreads/include)
+endif()
+
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads REQUIRED)
 set(WABI_THREAD_LIBS "${CMAKE_THREAD_LIBS_INIT}")

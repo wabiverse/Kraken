@@ -276,16 +276,10 @@ function(_install_pyside_ui_files LIBRARY_NAME)
         get_filename_component(uiFilePath ${uiFile} ABSOLUTE)
         set(outFilePath "${CMAKE_CURRENT_BINARY_DIR}/${outFileName}.py")
         get_filename_component(pysideUicBinName ${PYSIDEUICBINARY} NAME_WLE)
-        if("${pysideUicBinName}" STREQUAL "uic")
-          # Newer versions of Qt have deprecated pyside2-uic. It
-          # has been replaced by "uic" which needs extra arg for
-          # generating python output (instead of default C++ ).
-          set(PYSIDEUIC_EXTRA_ARGS -g python)
-        endif()
         add_custom_command(
             OUTPUT ${outFilePath}
             COMMAND "${PYSIDEUICBINARY}"
-            ARGS -o ${PYSIDEUIC_EXTRA_ARGS} ${outFilePath} ${uiFilePath}
+            ARGS ${uiFilePath} -o ${outFilePath}
             MAIN_DEPENDENCY "${uiFilePath}"
             COMMENT "Generating Python for ${uiFilePath} ..."
             VERBATIM

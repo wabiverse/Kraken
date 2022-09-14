@@ -62,7 +62,7 @@ if(UNIX AND NOT APPLE)
 elseif(APPLE)
   get_filename_component(PYSIDEUICBINARY "${PYLIBPATH}/bin/pyside6-uic" ABSOLUTE)
 else()
-  find_program(PYSIDEUICBINARY NAMES ${pySideUIC} HINTS ${PYSIDE_BIN_DIR})
+  get_filename_component(PYSIDEUICBINARY "${LIBDIR}/python/310/lib/site-packages/PySide6/uic.exe" ABSOLUTE)
 endif()
 
 if (pySideImportResult)
