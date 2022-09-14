@@ -348,7 +348,7 @@ function ReloadDeveloperProfile {
 
 function RunKrakenPythonOfficialRelease {
   if($IsWindows) {
-    & "$env:ProgramFiles/Wabi Animation/Kraken $KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
+    & ~/dev/lib/win64_vc17/python/310/bin/python.exe $args
   }
   if($IsMacOS) {
     & ~/dev/lib/apple_darwin_arm64/python/bin/python3.10 $args
