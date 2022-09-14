@@ -395,9 +395,9 @@ if(WIN32)
   set(LIB_OBJ_EXT "lib")
   set(BOOST_VERSION_SCORE "1_78")
   if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(BOOST_LIBRARY_SUFFIX "vc143-mt-x64-1_78")
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-s-x64-1_78")
   else()
-    set(BOOST_LIBRARY_SUFFIX "vc143-mt-gd-x64-1_78")
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-sgd-x64-1_78")
   endif()
   # set(Boost_USE_STATIC_RUNTIME ON) # prefix lib
   # set(Boost_USE_MULTITHREADED ON) # suffix -mt
