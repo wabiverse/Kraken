@@ -1008,19 +1008,22 @@ function(wabi_maelstrom_prologue)
                     IMPORT_PREFIX "${WABI_LIB_PREFIX}"
             )
             _get_install_dir("lib" libInstallPrefix)
-            # nope.
-            # install(
-            #     TARGETS maelstrom
-            #     LIBRARY DESTINATION ${libInstallPrefix}
-            #     ARCHIVE DESTINATION ${libInstallPrefix}
-            #     RUNTIME DESTINATION ${libInstallPrefix}
-            # )
-            if(WIN32)
-                install(
-                    FILES $<TARGET_PDB_FILE:maelstrom>
-                    DESTINATION ${libInstallPrefix}
-                    OPTIONAL
-                )
+            # This is only necessary if we are building USD
+            # as a shared library, which we are not.
+            if(BUILD_SHARED_LIBS)
+              install(
+                  TARGETS maelstrom
+                  LIBRARY DESTINATION ${libInstallPrefix}
+                  ARCHIVE DESTINATION ${libInstallPrefix}
+                  RUNTIME DESTINATION ${libInstallPrefix}
+              )
+              if(WIN32)
+                  install(
+                      FILES $<TARGET_PDB_FILE:maelstrom>
+                      DESTINATION ${libInstallPrefix}
+                      OPTIONAL
+                  )
+              endif()
             endif()
         endif()
     endif()

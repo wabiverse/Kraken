@@ -22,11 +22,19 @@ set(SRC "")
 
 set(OPENGL_SRC "")
 
+set(DX3D_SRC
+  dx3d/dx3d_stub.cpp
+)
+
 set(METAL_SRC
   metal/mtl_context.cpp
 
   metal/mtl_context.hh
 )
+
+if(WITH_DIRECTX)
+  list(APPEND SRC ${DX3D_SRC})
+endif()
 
 if(WITH_METAL)
   list(APPEND SRC ${METAL_SRC})
