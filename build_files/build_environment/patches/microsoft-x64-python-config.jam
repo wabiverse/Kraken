@@ -1,0 +1,4 @@
+using python : 3.10 : "C:/Users/wabif/dev/lib/win64_vc17/python/310/bin/python.exe"
+ : "C:/Users/wabif/dev/lib/win64_vc17/python/310/include"
+ : "C:/Users/wabif/dev/lib/win64_vc17/python/310/libs"
+;
