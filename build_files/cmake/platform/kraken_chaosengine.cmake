@@ -18,7 +18,7 @@ set(universe_lib_telemetry_dir ${UNIVERSE_ROOT}/universe/lib/telemetry)
 package_version(
   Microsoft.Windows.CppWinRT
   MICROSOFT_WINDOWS_CXX_WINRT_VERSION
-  ${CMAKE_SOURCE_DIR}/packages.config
+  ${CMAKE_SOURCE_DIR}/release/windows/packages.config
 )
 
 # Override and use the cppwinrt from NuGet package as opposed to the one in the SDK.
@@ -317,7 +317,7 @@ set_target_properties(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PROPERTIES CXX
 set_target_properties(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 # Compiler definitions
-kraken_add_include_to_target(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY maelstrom #TODO: kraken incs too)
+kraken_add_include_to_target(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY maelstrom) #TODO: kraken incs too
 target_include_directories(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY PRIVATE ${CMAKE_SOURCE_DIR})
 add_dependencies(UNIVERSAL_GRAPHICS_FRAMEWORK_PLUGIN_LIBRARY maelstrom)
 

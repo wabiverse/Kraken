@@ -541,6 +541,7 @@ if(WIN32)
       "${LIBDIR}/tbb/lib/tbbmalloc_proxy_debug.lib"
     )    
   endif()
+  set(TBB_INCLUDE_DIRS ${TBB_ROOT}/include)
 elseif(UNIX)
   # Enable TBBs Ability to wait for the completion
   # of worker threads.
@@ -856,6 +857,16 @@ endif()
 if(WITH_ALEMBIC)
   find_package(HDF5 REQUIRED)
   find_package(Alembic REQUIRED)
+
+  # temp stub this out for now on microsoft
+  # since we are using the blender static
+  # alembic library & it is not built with
+  # hdf5 enabled. Alembic is not really
+  # used yet in Kraken, so this is fine
+  # for now...
+  if(WIN32)
+    set(WITH_ALEMBIC_HDF5 OFF)
+  endif()
 
   if(WITH_ALEMBIC_HDF5)
     find_package(HDF5 REQUIRED COMPONENTS HL REQUIRED)

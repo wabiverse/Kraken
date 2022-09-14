@@ -26,19 +26,19 @@ endif()
 # for local deployments. Command 'GenerateKrakenAssets' is defined within the
 # KrakenDeveloperProfile.ps1 pwsh profile.
 macro(gen_app_icons)
-  configure_file(
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/kraken.svg
-    ${CMAKE_BINARY_DIR}/release/windows/appx/assets COPYONLY)
-
   execute_process(
-    COMMAND pwsh -ExecutionPolicy Unrestricted -Command "GenerateKrakenAssets -Path \"${CMAKE_SOURCE_DIR}/release/windows/appx/assets/kraken.svg\" -Destination \"${CMAKE_BINARY_DIR}/release/windows/appx/assets\""
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
-  file(GLOB GENERATED_APP_ICONS "${CMAKE_BINARY_DIR}/release/windows/appx/assets/*.png")
-  foreach(app_icon_file ${GENERATED_APP_ICONS})
-    get_filename_component(icon_name ${app_icon_file} NAME)
-    list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/release/windows/appx/assets/${icon_name})
-  endforeach()
+    COMMAND pwsh -ExecutionPolicy Unrestricted -Command "GenerateKrakenAssets -Path ${CMAKE_SOURCE_DIR}/release/windows/appx/assets/kraken.svg -Destination ./release/windows/appx/assets"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    RESULT_VARIABLE icongen_success)
+    if(icongen_success EQUAL "1")
+      message(FATAL_ERROR "Icons assets could not be generated.")
+    else()
+      file(GLOB GENERATED_APP_ICONS "${CMAKE_BINARY_DIR}/release/windows/appx/assets/*.png")
+      foreach(app_icon_file ${GENERATED_APP_ICONS})
+        get_filename_component(icon_name ${app_icon_file} NAME)
+        list(APPEND ASSET_FILES ${CMAKE_BINARY_DIR}/release/windows/appx/assets/${icon_name})
+      endforeach()
+    endif()
 endmacro()
 
 # Application Manifest & Nuget Dependencies.

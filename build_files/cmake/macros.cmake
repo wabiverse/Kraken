@@ -1057,7 +1057,7 @@ function(svg_to_png
 
     add_custom_command(
       OUTPUT  ${_file_to}
-      COMMAND ${INKSCAPE_EXE} ${_file_from} --export-dpi=${dpi}  --without-gui --export-png=${_file_to}
+      COMMAND ${INKSCAPE_EXE} ${_file_from} --export-dpi=${dpi} --export-png=${_file_to}
       DEPENDS ${_file_from} ${INKSCAPE_EXE}
     )
   else()

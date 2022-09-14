@@ -88,7 +88,7 @@ if(WIN32)
   kraken_config_nuget()
 
   # Fixup WinRT generated metadata location.
-  kraken_chaosengine_metadata_hotfix()
+  # kraken_chaosengine_metadata_hotfix()
 
   set(WINDOWS_PACKAGE_SRC
     # foundation.
@@ -1543,7 +1543,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
   # Call this a second time just to be
   # sure the metadata is where MSVC is
   # attempting to look for it.
-  kraken_chaosengine_metadata_hotfix()
+  # kraken_chaosengine_metadata_hotfix()
 
 endif()
 

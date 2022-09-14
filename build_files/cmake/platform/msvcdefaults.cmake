@@ -41,10 +41,10 @@ mark_as_advanced(WITH_WINDOWS_PDB)
 option(WITH_WINDOWS_STRIPPED_PDB "Use a stripped PDB file" On)
 mark_as_advanced(WITH_WINDOWS_STRIPPED_PDB)
 
-include(build_files/cmake/platform/kraken_chaosengine_sdk_helpers.cmake)
-include(build_files/cmake/platform/kraken_chaosengine_cppwinrt.cmake)
-include(build_files/cmake/platform/kraken_chaosengine.cmake)
 include(build_files/cmake/platform/nuget_packages.cmake)
+# include(build_files/cmake/platform/kraken_chaosengine_sdk_helpers.cmake)
+# include(build_files/cmake/platform/kraken_chaosengine_cppwinrt.cmake)
+# include(build_files/cmake/platform/kraken_chaosengine.cmake)
 include(build_files/cmake/platform/microsoft_package.cmake)
 
 # -----------------------------------------------------------------------------

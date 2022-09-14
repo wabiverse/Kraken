@@ -525,7 +525,7 @@ function GenerateKrakenAssets {
     $intermediateStandardWsl = "$destinationWsl/_intermediate.standard.$($sz).png"
 
     If (($using:UseExistingIntermediates -Eq $false) -Or (-Not (Test-Path $intermediateStandardNt))) {
-      wsl inkscape -z -e "$intermediateStandardWsl" -w $sz -h $sz $svgStandardWsl 
+      wsl inkscape -z --export-filename="$intermediateStandardWsl" -w $sz -h $sz $svgStandardWsl 
     } Else {
       Write-Host "Using existing $intermediateStandardNt"
     }
@@ -544,7 +544,7 @@ function GenerateKrakenAssets {
       $intermediateWhiteWsl = "$destinationWsl/_intermediate.white.$($sz).png"
 
       If (($using:UseExistingIntermediates -Eq $false) -Or (-Not (Test-Path $intermediateBlackNt))) {
-        wsl inkscape -z -e "$intermediateBlackWsl" -w $sz -h $sz $svgContrastWsl 
+        wsl inkscape -z --export-filename="$intermediateBlackWsl" -w $sz -h $sz $svgContrastWsl 
       } Else {
         Write-Host "Using existing $intermediateBlackNt"
       }
@@ -585,7 +585,9 @@ function GenerateKrakenAssets {
     $asset = $_
     If ($asset.W -Eq $asset.H -And $asset.IconSize -eq $asset.W) {
       Write-Host "Copying base icon for size=$($asset.IconSize), contrast=$($asset.Contrast) to $($asset.Name)"
-      Copy-Item "${using:Destination}\_intermediate.$($asset.Contrast).$($asset.IconSize).png" "${using:Destination}\$($asset.Name).png" -Force
+      if(Test-Path -Path "${using:Destination}\_intermediate.$($asset.Contrast).$($asset.IconSize).png") {
+        Copy-Item "${using:Destination}\_intermediate.$($asset.Contrast).$($asset.IconSize).png" "${using:Destination}\$($asset.Name).png" -Force
+      }
     } Else {
       wsl convert "$($using:TranslatedOutDir)/_intermediate.$($asset.Contrast).$($asset.IconSize).png" -gravity center -background transparent -extent "$($asset.W)x$($asset.H)" "$($using:TranslatedOutDir)/$($asset.Name).png"
     }
@@ -594,7 +596,9 @@ function GenerateKrakenAssets {
   If ($KeepIntermediates -Eq $false) {
     $intermediateFiles | ForEach-Object {
       Write-Host "Cleaning up intermediate file $_"
-      Remove-Item $_
+      if(Test-Path -Path $_) {
+        Remove-Item $_
+      }
     }
   }
 }

@@ -37,7 +37,7 @@ function(
     include(ExternalProject)
     ExternalProject_Add(nuget_exe
     PREFIX nuget_exe
-    URL "https://dist.nuget.org/win-x86-commandline/v6.0.0/nuget.exe"
+    URL "https://dist.nuget.org/win-x86-commandline/v6.3.0/nuget.exe"
     DOWNLOAD_NO_EXTRACT 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
