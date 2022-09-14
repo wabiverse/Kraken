@@ -13,7 +13,7 @@ exit /b 1
 @REM echo found doxygen (%CF_PATH%)
 
 if EXIST %PYTHON% (
-    set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
+    set PYTHON=%BUILD_VS_LIBDIR%\python\310\bin\python.exe
     goto detect_python_done
 )
 

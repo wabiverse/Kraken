@@ -1,11 +1,11 @@
 if EXIST %PYTHON% (
-    set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
+    set PYTHON=%BUILD_VS_LIBDIR%\python\310\bin\python.exe
     goto detect_python_done
 ) else (
     if NOT exist "%BUILD_VS_LIBDIR%\python" mkdir "%BUILD_VS_LIBDIR%\python"
     cd "%BUILD_VS_LIBDIR%\python"
     call svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/python/39/
-    set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
+    set PYTHON=%BUILD_VS_LIBDIR%\python\310\bin\python.exe
     @REM Install required pip dependencies for our
     @REM dependency installation script. Really,
     @REM just rarfile since github .zip's like to

@@ -119,11 +119,11 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <Manifest Include=\"$(ApplicationManifest)\" />
   </ItemGroup>
   <PropertyGroup Label=\"Globals\">
-    <WindowsSdkPackageVersion>10.0.22509.0-preview</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22621.0</WindowsSdkPackageVersion>
     <AppxPackage>true</AppxPackage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
-    <TargetFramework>net6.0-windows10.0.22509.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
@@ -132,7 +132,7 @@ if(${proj_path} STREQUAL "source/creator/kraken")
     <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-    <WindowsTargetPlatformVersion>10.0.22509.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0/WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.22000.0</WindowsTargetPlatformMinVersion>
     <UseWinUI>true</UseWinUI>
     <WindowsAppContainer>true</WindowsAppContainer>
@@ -453,7 +453,7 @@ else()
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK}.props\')\" />
   <PropertyGroup Label=\"Globals\">
-    <WindowsSdkPackageVersion>10.0.22509.0-preview</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22621.0</WindowsSdkPackageVersion>
     <CompileAsWinRT>false</CompileAsWinRT>
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <MinimalCoreWin>true</MinimalCoreWin>
@@ -461,7 +461,7 @@ else()
     <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
-    <TargetFramework>net6.0-windows10.0.22509.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <UseWindowsSdkPreview>true</UseWindowsSdkPreview>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>

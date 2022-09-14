@@ -14,7 +14,7 @@ exit /b 1
 :detect_done
 echo found clang-format in %CF_PATH%
 
-set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
+set PYTHON=%BUILD_VS_LIBDIR%\python\310\bin\python.exe
 
 set FORMAT_PATHS=%KRAKEN_DIR%\source\tools\utils_maintenance\clang_format_paths.py
 

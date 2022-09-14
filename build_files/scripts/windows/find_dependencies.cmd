@@ -2,7 +2,7 @@ for %%X in (svn.exe) do (set SVN=%%~$PATH:X)
 for %%X in (cmake.exe) do (set CMAKE=%%~$PATH:X)
 for %%X in (ctest.exe) do (set CTEST=%%~$PATH:X)
 for %%X in (git.exe) do (set GIT=%%~$PATH:X)
-set PYTHON=%BUILD_VS_LIBDIR%\python\39\bin\python.exe
+set PYTHON=%BUILD_VS_LIBDIR%\python\310\bin\python.exe
 if NOT "%verbose%" == "" (
 	echo svn    : "%SVN%"
 	echo cmake  : "%CMAKE%"
