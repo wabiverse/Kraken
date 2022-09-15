@@ -75,7 +75,7 @@ std::string ArchStrSysError(unsigned long errorCode)
                              nullptr,
                              errorCode,
                              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                             (LPWSTR)&buffer[0],
+                             (LPWSTR)&buffer,
                              0,
                              nullptr);
 
