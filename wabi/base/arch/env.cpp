@@ -45,7 +45,8 @@ WABI_NAMESPACE_BEGIN
 bool ArchHasEnv(const std::string &name)
 {
 #if defined(ARCH_OS_WINDOWS)
-  const DWORD size = GetEnvironmentVariable(name.c_str(), nullptr, 0);
+  std::wstring stemp(std::wstring(name.begin(), name.end()));
+  const DWORD size = GetEnvironmentVariable(stemp.c_str(), nullptr, 0);
   return size != 0 && size != ERROR_ENVVAR_NOT_FOUND;
 #else
   return static_cast<bool>(getenv(name.c_str()));
@@ -55,11 +56,13 @@ bool ArchHasEnv(const std::string &name)
 std::string ArchGetEnv(const std::string &name)
 {
 #if defined(ARCH_OS_WINDOWS)
-  const DWORD size = GetEnvironmentVariable(name.c_str(), nullptr, 0);
+  std::wstring stemp(std::wstring(name.begin(), name.end()));
+  const DWORD size = GetEnvironmentVariable(stemp.c_str(), nullptr, 0);
   if (size != 0) {
-    std::unique_ptr<char[]> buffer(new char[size]);
-    GetEnvironmentVariable(name.c_str(), buffer.get(), size);
-    return std::string(buffer.get());
+    std::wstring buffer;
+    buffer.resize(size);
+    GetEnvironmentVariable(stemp.c_str(), &buffer[0], size);
+    return std::string(buffer.begin(), buffer.end());
   }
 
 #else
@@ -77,14 +80,16 @@ bool ArchSetEnv(const std::string &name, const std::string &value, bool overwrit
   //       with other sets and gets to avoid race conditions.
 
 #if defined(ARCH_OS_WINDOWS)
+  std::wstring stemp(std::wstring(name.begin(), name.end()));
   if (!overwrite) {
-    const DWORD size = GetEnvironmentVariable(name.c_str(), nullptr, 0);
+    const DWORD size = GetEnvironmentVariable(stemp.c_str(), nullptr, 0);
     if (size == 0 || size != ERROR_ENVVAR_NOT_FOUND) {
       // Already exists or error.
       return true;
     }
   }
-  return SetEnvironmentVariable(name.c_str(), value.c_str()) != 0;
+  std::wstring vtemp(std::wstring(value.begin(), value.end()));
+  return SetEnvironmentVariable(stemp.c_str(), vtemp.c_str()) != 0;
 #else
   return setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0) == 0;
 #endif
@@ -93,7 +98,8 @@ bool ArchSetEnv(const std::string &name, const std::string &value, bool overwrit
 bool ArchRemoveEnv(const std::string &name)
 {
 #if defined(ARCH_OS_WINDOWS)
-  return SetEnvironmentVariable(name.c_str(), nullptr) != 0;
+  std::wstring stemp(std::wstring(name.begin(), name.end()));
+  return SetEnvironmentVariable(stemp.c_str(), nullptr) != 0;
 #else
   return unsetenv(name.c_str()) == 0;
 #endif

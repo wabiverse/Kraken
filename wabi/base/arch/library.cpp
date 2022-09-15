@@ -28,6 +28,9 @@
 
 #if defined(ARCH_OS_WINDOWS)
 #  include <Windows.h>
+#  include <string>
+#  include <codecvt>
+#  include <locale>
 #else
 #  include <dlfcn.h>
 #endif
@@ -45,7 +48,8 @@ void *ArchLibraryOpen(const std::string &filename, int flag)
 {
 #if defined(ARCH_OS_WINDOWS)
   arch_lastLibraryError = 0;
-  if (void *result = LoadLibrary(filename.c_str())) {
+  std::wstring stemp = std::wstring(filename.begin(), filename.end());
+  if (void *result = LoadLibrary(stemp.c_str())) {
     return result;
   } else {
     arch_lastLibraryError = GetLastError();

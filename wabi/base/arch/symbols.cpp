@@ -34,6 +34,8 @@
 #  include <Windows.h>
 #  include <DbgHelp.h>
 #  include <Psapi.h>
+#  include <vector>
+#  include <locale>
 #endif
 
 WABI_NAMESPACE_BEGIN
@@ -79,17 +81,24 @@ bool ArchGetAddressInfo(void *address,
   }
 
   HMODULE module = nullptr;
+  std::string stemp(reinterpret_cast<LPCSTR>(address));
+  std::wstring atemp(stemp.begin(), stemp.end());
+
   if (!::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
                              GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                           reinterpret_cast<LPCSTR>(address),
+                           reinterpret_cast<LPCWSTR>(atemp.c_str()),
                            &module)) {
     return false;
   }
 
   if (objectPath) {
-    char modName[MAX_PATH] = {0};
-    if (GetModuleFileName(module, modName, MAX_PATH)) {
-      objectPath->assign(modName);
+    wchar_t buffer[MAX_PATH] = {0};
+    if (GetModuleFileName(module, buffer, MAX_PATH)) {
+      int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &buffer[0], sizeof(buffer), NULL, 0, NULL, NULL);
+      std::string strTo(sizeNeeded, 0);
+      WideCharToMultiByte(CP_UTF8, 0, &buffer[0], sizeof(buffer), &strTo[0], sizeNeeded, NULL, NULL);
+
+      objectPath->assign(strTo.c_str());
     }
   }
 

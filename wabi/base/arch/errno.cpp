@@ -28,6 +28,8 @@
 #include <cstring>
 #if defined(ARCH_OS_WINDOWS)
 #  include <Windows.h>
+#  include <locale>
+#  include <codecvt>
 #endif
 
 WABI_NAMESPACE_BEGIN
@@ -67,16 +69,20 @@ std::string ArchStrSysError(unsigned long errorCode)
   if (errorCode == 0)
     return std::string();
 
-  LPSTR buffer = nullptr;
+  LPWSTR buffer = nullptr;
   size_t len = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
                                FORMAT_MESSAGE_IGNORE_INSERTS,
                              nullptr,
                              errorCode,
                              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                             (LPSTR)&buffer,
+                             (LPWSTR)&buffer[0],
                              0,
                              nullptr);
-  std::string message(buffer, len);
+
+  using convert_type = std::codecvt_utf8<wchar_t>;
+  std::wstring_convert<convert_type, wchar_t> converter;
+
+  std::string message(converter.to_bytes(buffer));
   LocalFree(buffer);
 
   return message;
