@@ -742,25 +742,25 @@ const char *KKE_appdir_program_dir(void)
 /**
  * Recursively copies all files and folders from src_id to target_id and overwrites existing files
  * in target. */
-const char *KKE_appdir_copy_recursive(const int src_id, const int target_id) noexcept
+std::string KKE_appdir_copy_recursive(const int src_id, const int target_id)
 {
   fs::path src = KKE_appdir_folder_id(src_id, NULL);
   fs::path target = KKE_appdir_folder_id_create(target_id, NULL);
 
   if (!fs::exists(src) || !fs::exists(target)) {
-    return NULL;
+    return std::string();
   }
 
   try {
     fs::copy(src, target, fs::copy_options::overwrite_existing | fs::copy_options::recursive);
-    return target.c_str();
+    return target;
   }
 
   catch (std::exception &e) {
     std::cout << e.what();
   }
 
-  return NULL;
+  return std::string();
 }
 
 bool KKE_appdir_program_python_search(char *fullpath,

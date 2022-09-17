@@ -54,14 +54,14 @@ static int wm_user_datafiles_write_exec(kContext *C, wmOperator *op)
   Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  const char *const appdir = KKE_appdir_copy_recursive(KRAKEN_SYSTEM_DATAFILES,
+  const std::string appdir = KKE_appdir_copy_recursive(KRAKEN_SYSTEM_DATAFILES,
                                                        KRAKEN_USER_DATAFILES);
-  if (appdir == NULL) {
+  if (appdir.empty()) {
     KKE_report(op->reports, RPT_ERROR, "Unable to create user datafiles path");
     return OPERATOR_CANCELLED;
   }
 
-  TF_STATUS("Writing user datafiles: '%s' ", appdir);
+  TF_STATUS("Writing user datafiles: '%s' ", appdir.c_str());
 
   TF_MSG_SUCCESS("ok");
   KKE_report(op->reports, RPT_INFO, "User datafiles created");
