@@ -36,7 +36,7 @@ class AnchorSystemCocoa : public AnchorSystem
 {
  public:
 
-  AnchorSystemCocoa();
+  AnchorSystemCocoa(void *shared = nullptr);
 
   /**
    * This method converts performance counter measurements into milliseconds since the start of the
@@ -240,4 +240,7 @@ class AnchorSystemCocoa : public AnchorSystem
   /** To prevent multiple warp, we store the time of the last warp event
    * and ignore mouse moved events generated before that. */
   double m_last_warp_timestamp;
+  
+  /* pointer to the shared swift system. */
+  void *m_swift;
 };

@@ -55,9 +55,9 @@
 KRAKEN_NAMESPACE_BEGIN
 
 
-void WM_init(kContext *C, int argc, const char **argv)
+void WM_init(kContext *C, void *shared, int argc, const char **argv)
 {
-  WM_anchor_init(C);
+  WM_anchor_init(C, shared);
   WM_init_cursor_data();
 
   ANCHOR_CreateSystemPaths();

@@ -314,7 +314,7 @@ else()
     endforeach()
     add_library(Creator STATIC "${CMAKE_SOURCE_DIR}/source/creator/apple/creator_main.swift")
     target_link_libraries(Creator 
-      kraken_anchor_apple 
+      AnchorSystem 
       kraken_anchor
       maelstrom
       maelstrom_static

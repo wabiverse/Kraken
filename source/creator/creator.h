@@ -29,7 +29,7 @@
 #  include "Creator-Swift.h"
 namespace Creator
 {
-  SWIFT_EXTERN NS::Integer CreatorMain(void) SWIFT_WARN_UNUSED_RESULT;
+  SWIFT_EXTERN void* CreatorMain(void) SWIFT_WARN_UNUSED_RESULT;
 }
 #endif /* __APPLE__ */
 

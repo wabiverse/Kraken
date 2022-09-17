@@ -160,14 +160,14 @@ if (APPLE)
     ${PYTHON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/bin/include/wabi)
-  kraken_add_lib(kraken_anchor_apple "${SRC_APPLE_BACKEND}" "${INC}" "${INC_SYS}" "${LIB}")
-  target_compile_options(kraken_anchor_apple PRIVATE
+  kraken_add_lib(AnchorSystem "${SRC_APPLE_BACKEND}" "${INC}" "${INC_SYS}" "${LIB}")
+  target_compile_options(AnchorSystem PRIVATE
     "-static"
     "-emit-dependencies"
     "-emit-library"
     "SHELL:-enable-experimental-cxx-interop")
-  add_dependencies(kraken_anchor_apple kraken_anchor)
-  target_link_libraries(kraken_anchor_apple PRIVATE kraken_anchor)
+  add_dependencies(AnchorSystem kraken_anchor)
+  target_link_libraries(AnchorSystem PRIVATE kraken_anchor)
 endif()
 if(WIN32)
   kraken_precompile_headers(kraken_anchor pch.cpp pch.h)

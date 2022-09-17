@@ -69,7 +69,7 @@ void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win);
 void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win);
 bool WM_window_is_temp_screen(const wmWindow *win);
 
-void WM_anchor_init(kContext *C);
+void WM_anchor_init(kContext *C, void* shared = nullptr);
 void WM_anchor_exit(void);
 
 void WM_window_process_events(kContext *C);

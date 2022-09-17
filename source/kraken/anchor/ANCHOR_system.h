@@ -36,7 +36,7 @@ class AnchorISystem
   /**
    * Creates the one and only system.
    * @return An indication of success. */
-  static eAnchorStatus createSystem();
+  static eAnchorStatus createSystem(void *shared = nullptr);
 
   /**
    * Destroys the one and only system.
@@ -418,4 +418,4 @@ inline AnchorWindowManager *AnchorSystem::getWindowManager() const
 }
 
 ANCHOR_API
-AnchorSystemHandle ANCHOR_CreateSystem();
+AnchorSystemHandle ANCHOR_CreateSystem(void *shared = nullptr);

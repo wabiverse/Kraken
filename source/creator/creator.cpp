@@ -123,12 +123,12 @@ void CREATOR_kraken_main(int argc, const char **argv)
   LUXO_set_stage_ctx(C);
 
 #ifdef __APPLE__
-  /* initialize swift from main thread. */
-  Creator::CreatorMain();
-#endif /* __APPLE__ */
-
+  /* initialize main runtime with swift. */
+  WM_init(C, Creator::CreatorMain());
+#else /* __APPLE__ */
   /* Initialize main Runtime. */
   WM_init(C);
+#endif /* ARCH_OS_WINDOWS || ARCH_OS_LINUX */
 
   /* Initialize kraken python module. */
   CTX_py_init_set(C, true);

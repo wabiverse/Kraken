@@ -63,8 +63,10 @@ int ANCHOR_HACK_getFirstFile(char buf[FIRSTFILEBUFLG])
   }
 }
 
-AnchorSystemCocoa::AnchorSystemCocoa()
+AnchorSystemCocoa::AnchorSystemCocoa(void *shared)
 {
+  m_swift = shared;
+
   int mib[2];
   struct timeval boottime;
   size_t len;
@@ -102,14 +104,15 @@ eAnchorStatus AnchorSystemCocoa::init()
 {
   eAnchorStatus success = AnchorSystem::init();
   if (success) {
-    @autoreleasepool {
+    
+    // @autoreleasepool {
       /* cxx system: sets this system instance pointer inside of CocoaAppDelegate. */
       // CocoaAppDelegate *cxxDelegate = [[CocoaAppDelegate alloc] init];
       // [cxxDelegate setSystemCocoa:(void *)this];
 
       /* swift system: recieves this system instance, so it can call into this class. */
       // [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
-    }
+    // }
   }
   return success;
 }

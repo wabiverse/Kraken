@@ -23,12 +23,15 @@ import AppKit
 /* Pixar USD. */
 import Pixar
 
-/* Kraken Anchor. */
-import Anchor
+/* Anchor System. */
+import AnchorSystem
 
 @_cdecl("CreatorMain") 
-public func CreatorMain() -> Int
+public func CreatorMain() -> UnsafeMutablePointer<Void>
 { 
   fputs("hello from swift.\n", stderr)
-  return 0
+
+  var anchor = AnchorSystemApple()
+
+  return UnsafeMutablePointer<Void>(&anchor)
 }
