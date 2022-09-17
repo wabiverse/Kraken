@@ -215,15 +215,22 @@ endif()
 # Find ZLIB.
 
 if(APPLE)
-  set(ZLIB_ROOT /opt/homebrew/Cellar/zlib/1.2.12)
-  # link_directories(${ZLIB_ROOT}/lib)
+  # so we dont' have to hardcode the version.
+  SUBDIRLIST(subdir_list "/opt/homebrew/Cellar/zlib")
+  foreach(subdir ${subdir_list})
+    set(ZLIB_ROOT "/opt/homebrew/Cellar/zlib/${subdir}")
+  endforeach()
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find ZSTD.
 
 if(APPLE)
-  set(ZSTD_ROOT /opt/homebrew/Cellar/zstd/1.5.2)
+  # so we dont' have to hardcode the version.
+  SUBDIRLIST(subdir_list "/opt/homebrew/Cellar/zstd")
+  foreach(subdir ${subdir_list})
+    set(ZSTD_ROOT "/opt/homebrew/Cellar/zstd/${subdir}")
+  endforeach()
   link_directories(${ZSTD_ROOT}/lib)
 endif()
 
@@ -603,11 +610,15 @@ if(WABI_BUILD_IMAGING)
   # --OpenImageIO
   if(WITH_OPENIMAGEIO)
     if(UNIX)
-      find_package(TIFF REQUIRED)
-      find_package(JPEG REQUIRED)
-      find_package(OPENJPEG REQUIRED)
-      find_package(PNG REQUIRED)
-      find_package(PUGIXML REQUIRED)
+      if(NOT APPLE)
+        # Apple is set below manually.
+        # Brew does not offer statics which we need.
+        find_package(TIFF REQUIRED)
+        find_package(JPEG REQUIRED)
+        find_package(OPENJPEG REQUIRED)
+        find_package(PNG REQUIRED)
+        find_package(PUGIXML REQUIRED)
+      endif()
       # find_package(Imath REQUIRED)
       # find_package(OpenEXR REQUIRED)
       if(APPLE)
