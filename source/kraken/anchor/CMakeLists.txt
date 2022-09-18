@@ -32,6 +32,7 @@ endif()
 if (APPLE)
   list(APPEND SRC_APPLE_BACKEND
     apple/anchor_system.swift
+    ${CMAKE_SOURCE_DIR}/source/creator/kraken.docc
   )
   list(APPEND SRC_PLATFORM_BACKENDS
     intern/system_paths.mm
@@ -155,17 +156,19 @@ if (APPLE)
   # to bind the entirety of Pixar USD to Swift.
   # and make it usable via "import Pixar"...
   target_include_directories(kraken_anchor PUBLIC
-    ${XCODE_SDK_DIR}/MacOSX13.0.sdk/usr/include/c++/v1
     ${TBB_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/bin/include/wabi)
+  set_property(SOURCE ${CMAKE_SOURCE_DIR}/source/creator/kraken.docc PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
   kraken_add_lib(AnchorSystem "${SRC_APPLE_BACKEND}" "${INC}" "${INC_SYS}" "${LIB}")
   target_compile_options(AnchorSystem PRIVATE
     "-static"
     "-emit-dependencies"
     "-emit-library"
-    "SHELL:-enable-experimental-cxx-interop")
+    "-emit-module"
+    "-enable-experimental-cxx-interop"
+    "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
   add_dependencies(AnchorSystem kraken_anchor)
   target_link_libraries(AnchorSystem PRIVATE kraken_anchor)
 endif()

@@ -29,7 +29,7 @@ set(DX3D_SRC
 set(METAL_SRC
   metal/mtl_context.cpp
 
-  metal/mtl_context.hh
+  metal/mtl_context.h
 )
 
 if(WITH_DIRECTX)

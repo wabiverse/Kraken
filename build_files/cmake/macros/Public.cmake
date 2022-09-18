@@ -935,6 +935,10 @@ function(wabi_maelstrom_prologue)
                    ${CMAKE_BINARY_DIR}/bin/include/wabi/wabi.h COPYONLY)
     configure_file(${CMAKE_SOURCE_DIR}/wabi/wabi.h
                    ${CMAKE_BINARY_DIR}/include/wabi/wabi.h COPYONLY)
+    # configure_file(${CMAKE_SOURCE_DIR}/build_files/cmake/config/Package.in
+    #                ${CMAKE_BINARY_DIR}/bin/include/Package.swift COPYONLY)  
+    # configure_file(${CMAKE_SOURCE_DIR}/build_files/cmake/config/SwiftLink.in
+    #                ${CMAKE_BINARY_DIR}/bin/include/PixarLink.swift COPYONLY)                   
     install(FILES ${CMAKE_SOURCE_DIR}/wabi/wabi.h
             DESTINATION ${INCLUDE_WABI})
     # to bind the entirety of Pixar USD to Swift.

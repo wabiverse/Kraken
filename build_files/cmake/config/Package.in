@@ -1,0 +1,25 @@
+// swift-tools-version: 5.7
+
+import PackageDescription
+
+let package = Package(
+  name: "Pixar",
+  products: [
+    .library(
+      name: "Pixar",
+      targets: ["Pixar"]),
+  ],
+  dependencies: [],
+  targets: [
+    .target(
+      name: "Pixar",
+      dependencies: [],
+      path: "",
+      sources: [ "PixarLink.swift" ],
+      swiftSettings: [
+        .unsafeFlags([
+          "-I", ".",
+          "-enable-experimental-cxx-interop"])
+      ])
+  ]
+)

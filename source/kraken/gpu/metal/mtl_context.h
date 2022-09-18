@@ -22,11 +22,15 @@
  * Pixel Magic.
  */
 
+#pragma once
+
 #include "kraken/kraken.h"
 
-#include <Foundation/Foundation.hpp>
-#include <Metal/Metal.hpp>
-#include <QuartzCore/QuartzCore.hpp>
+#ifdef __cplusplus
+#  include <Foundation/Foundation.hpp>
+#  include <Metal/Metal.hpp>
+#  include <QuartzCore/QuartzCore.hpp>
+#endif /* __cplusplus */
 
 class AnchorDrawData;
 

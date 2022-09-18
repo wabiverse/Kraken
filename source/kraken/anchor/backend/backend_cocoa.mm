@@ -28,7 +28,7 @@
 #include "ANCHOR_BACKEND_metal.h"
 
 // #import "Anchor.h"
-#include "mtl_context.hh"
+#include "mtl_context.h"
 
 #include <simd/simd.h>
 #include <AppKit/AppKit.h>

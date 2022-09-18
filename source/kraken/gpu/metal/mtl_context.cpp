@@ -25,7 +25,7 @@
 #include "ANCHOR_api.h"
 #include "wabi/base/tf/tf.h"
 
-#include "mtl_context.hh"
+#include "mtl_context.h"
 
 KRAKEN_NAMESPACE_BEGIN
 

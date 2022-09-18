@@ -4,6 +4,8 @@
 <dict>
   <key>LSMinimumSystemVersion</key>
   <string>13.0</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
   <key>CFBundleDocumentTypes</key>
   <array>
     <dict>

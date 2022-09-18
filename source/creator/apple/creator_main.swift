@@ -26,12 +26,23 @@ import Pixar
 /* Anchor System. */
 import AnchorSystem
 
+/** 
+ The main entry point for swift. 
+ 
+ As apart of the main startup sequence in CXX, this is the entry for
+ Swift. This function gets called and injects a Swift instance of the
+ single underlying Anchor System, in addition to both Python and CXX.
+ Meaning tools, libraries, and plugins that makeup the Kraken platform
+ are language agnostic and unified by design. */
 @_cdecl("CreatorMain") 
-public func CreatorMain() -> UnsafeMutablePointer<Void>
-{ 
+public func CreatorMain() -> UnsafeMutableRawPointer
+{
   fputs("hello from swift.\n", stderr)
 
-  var anchor = AnchorSystemApple()
+  var anchor: AnchorSystemApple = AnchorSystemApple()
 
-  return UnsafeMutablePointer<Void>(&anchor)
+  return withUnsafeMutablePointer(to: &anchor) { inst in
+    let shared = UnsafeMutableRawPointer(inst)
+    return shared
+  }
 }

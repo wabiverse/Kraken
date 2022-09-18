@@ -24,6 +24,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if defined(__APPLE__)
 #  include <Foundation/Foundation.hpp>
 #  include "Creator-Swift.h"
@@ -50,3 +52,7 @@ void CREATOR_setup_args(int argc, const char **argv);
 int CREATOR_parse_args(int argc, const char **argv);
 
 /* ------ */
+
+#else /* C */
+  
+#endif /* __cplusplus */

@@ -14,7 +14,7 @@ wabi_plugin(${WABI_PACKAGE}
         ${RENDERMAN_INCLUDE_DIR}
 
     CPPFILES
-        main.cpp 
+        glfimage.cpp 
 
     PRIVATE_HEADERS
 

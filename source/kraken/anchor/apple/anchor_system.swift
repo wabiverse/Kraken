@@ -62,13 +62,13 @@ public struct AnchorSystemApple
     bottom = bottom > contentRect.origin.y ? bottom + contentRect.origin.y : contentRect.origin.y
 
     window = AnchorWindowApple(title: title, 
-                                left: leftC, 
-                                bottom: bottom, 
-                                width: width, 
-                                height: height, 
-                                state: state, 
-                                dialog: isDialog,
-                                parent: nil)
+                               left: leftC, 
+                               bottom: bottom, 
+                               width: width, 
+                               height: height, 
+                               state: state, 
+                               dialog: isDialog,
+                               parent: nil)
 
     if let window = window {
       /* proceed... */

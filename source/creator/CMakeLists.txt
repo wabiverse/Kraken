@@ -140,10 +140,16 @@ if(WIN32)
   )
 endif()
 
+if(APPLE)
+  set(KRAKEN_MACOS_DOCC_DIR kraken.docc)
+  set_property(SOURCE ${KRAKEN_MACOS_DOCC_DIR} PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
+endif()
+
 # Setup the exe sources and buildinfo
 set(SRC
   creator.cpp
   creator_args.cpp
+  ${KRAKEN_MACOS_DOCC_DIR}
   ${KRAKEN_FRAMEWORK}
   ${WINDOWS_PACKAGE_SRC}
 
@@ -312,7 +318,7 @@ else()
       set_source_files_properties(${rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
       list(APPEND ${SRC} rfile)
     endforeach()
-    add_library(Creator STATIC "${CMAKE_SOURCE_DIR}/source/creator/apple/creator_main.swift")
+    add_library(Creator STATIC "${CMAKE_SOURCE_DIR}/source/creator/apple/creator_main.swift" ${KRAKEN_MACOS_DOCC_DIR})
     target_link_libraries(Creator 
       AnchorSystem 
       kraken_anchor
@@ -327,11 +333,14 @@ else()
       "-static"
       "-emit-dependencies"
       "-emit-library"
-      "-enable-experimental-cxx-interop")
+      "-emit-module"
+      "-enable-experimental-cxx-interop"
+      "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
     add_executable(kraken MACOSX_BUNDLE ${SRC})
     add_dependencies(kraken Creator)
     target_link_libraries(kraken Creator)
     target_include_directories(kraken PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/Kraken.build/${CMAKE_BUILD_TYPE}/Creator.build/DerivedSources)
+    target_include_directories(kraken PUBLIC ${CMAKE_BINARY_DIR}/source/kraken/anchor/Kraken.build/${CMAKE_BUILD_TYPE}/AnchorSystem.build/DerivedSources)
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)
@@ -1477,14 +1486,16 @@ if(APPLE)
   set(CMAKE_MACOSX_BUNDLE YES)
   set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application: Wabi Animation Studios, Ltd. Co. (UQ9J5QT9DL)")
   set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "UQ9J5QT9DL")
+  set(CMAKE_XCODE_ATTRIBUTE_RUN_DOCUMENTATION_COMPILER YES)
   set_target_properties(kraken PROPERTIES
     XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application: Wabi Animation Studios, Ltd. Co. (UQ9J5QT9DL)"
     XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "UQ9J5QT9DL"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "foundation.wabi.kraken"
+    XCODE_ATTRIBUTE_RUN_DOCUMENTATION_COMPILER YES
     XCODE_ATTRIBUTE_CODE_SIGN_INJECT_BASE_ENTITLEMENTS "NO") # Will need to fumble with this value...
-  # set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
+  set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/symbols_apple.map)
 elseif(UNIX AND NOT APPLE)
-  set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/kraken.map)
+  set_target_properties(kraken PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/symbols_unix.map)
 endif()
 
 if(WIN32)
