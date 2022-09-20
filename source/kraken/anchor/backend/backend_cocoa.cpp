@@ -463,35 +463,20 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
     m_is_dialog(dialog),
     m_time(mach_absolute_time())
 {
-  /* convert the title string for swift. */
-  // NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
-
   /* create the window on metal with swift. */
-  m_window = KRKN::Window::alloc()->init();
-  // m_window = [AnchorSystemApple createWindowWithTitle:titleutf left:left top:top width:width height:height state:state isDialog:dialog];
+  m_window = KRKN::CreateWindow(NS::String::string(title, NS::UTF8StringEncoding),
+                                (CGFloat)left,
+                                (CGFloat)top,
+                                (CGFloat)width,
+                                (CGFloat)height,
+                                dialog,
+                                nil);
+
   // m_metalKitView = [m_window getMetalView];
 
   /* now we're ready for it. */
   newDrawingContext(ANCHOR_DrawingContextTypeMetal);
   activateDrawingContext();
-
-  // [[m_window getCocoaWindow] setAcceptsMouseMovedEvents:YES];
-
-  // NSView *contentview = [[m_window getCocoaWindow] contentView];
-  // [contentview setAllowedTouchTypes:(NSTouchTypeMaskDirect | NSTouchTypeMaskIndirect)];
-
-  // [[m_window getCocoaWindow] registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType,
-                                                      // NSStringPboardType,
-                                                      // NSTIFFPboardType,
-                                                      // nil]];//
-
-  if (/*dialog && parentWindow*/false) {
-    // [parentWindow->getCocoaWindow() addChildWindow:m_window ordered:NSWindowAbove];
-    // [m_window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
-  }
-  else {
-    // [[m_window getCocoaWindow] setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
-  }
 
   if (state == AnchorWindowStateFullScreen)
     setState(AnchorWindowStateFullScreen);

@@ -47,6 +47,14 @@ namespace KRKN
 
     NS::String *title() const;
   };
+
+  KRKN::Window *CreateWindow(NS::String *title,
+                             CGFloat left,
+                             CGFloat top,
+                             CGFloat width,
+                             CGFloat height,
+                             bool dialog,
+                             KRKN::Window *parent);
 }  // namespace KRKN
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -68,6 +76,29 @@ KRKN_INLINE NS::String *KRKN::Window::title() const
 {
   return Object::sendMessage<NS::String*>(this, KRKN_PRIVATE_SEL(title));
 }
+
+#if defined(KRKN_PRIVATE_IMPLEMENTATION)
+
+extern "C" KRKN::Window *KRKNCreateWindow(NS::String *title,
+                                          CGFloat left,
+                                          CGFloat top,
+                                          CGFloat width,
+                                          CGFloat height,
+                                          bool dialog,
+                                          KRKN::Window *parent);
+
+_NS_EXPORT KRKN::Window *KRKN::CreateWindow(NS::String *title,
+                                            CGFloat left,
+                                            CGFloat top,
+                                            CGFloat width,
+                                            CGFloat height,
+                                            bool dialog,
+                                            KRKN::Window *parent)
+{
+  return ::KRKNCreateWindow(title, left, top, width, height, dialog, parent);
+}
+
+#endif /* KRKN_PRIVATE_IMPLEMENTATION */
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 

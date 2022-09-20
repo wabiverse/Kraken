@@ -34,7 +34,7 @@ open class KRKNSystem : NSObject
 {
   let app = NSApplication.shared
   let strongDelegate = KRKNAppDelegate()
-  let menu = KRKNAppMenu()
+  let menu = KRKNAppMenu(title: "Kraken", app: NSApplication.shared)
 
   @objc
   public override init() 
@@ -42,37 +42,40 @@ open class KRKNSystem : NSObject
     self.app.delegate = self.strongDelegate
     self.app.mainMenu = self.menu
 
-    self.app.setActivationPolicy(.regular)
+    self.app.setActivationPolicy(NSApplication.ActivationPolicy.regular)
     self.app.finishLaunching()
   }
 
   @objc
   public func processEvents() -> Bool
-  {
+  { 
+    var receivedEvent = false
     var anyProcessed = false
 
     repeat {
-        if let event: NSEvent = NSApp.nextEvent(matchingMask: NSEventMaskAny, until: NSDate.distantPast, inMode: RunLoop.Mode.default, dequeue: true) {
+      if let event: NSEvent = self.app.nextEvent(matchingMask: NSEventMaskAny, until: NSDate.distantPast, inMode: RunLoop.Mode.default, dequeue: true) {
 
-          anyProcessed = true
+        anyProcessed = true
+        receivedEvent = true
 
-          if (event.type == .keyDown && 
-              event.keyCode == kVK_Tab && 
-              event.modifierFlags == NSEventModifierFlagControl) {
+        if (event.type == .keyDown && 
+            event.keyCode == kVK_Tab && 
+            event.modifierFlags == NSEventModifierFlagControl) {
+          handleEvent(keyEvent: event)
+        } else {
+          if (event.type == .keyUp &&
+              (event.modifierFlags == (NSEventModifierFlagCommand | NSEventModifierFlagOption))) {
             handleEvent(keyEvent: event)
-          } else {
-            if (event.type == .keyUp &&
-               (event.modifierFlags == (NSEventModifierFlagCommand + NSEventModifierFlagOption))) {
-              handleEvent(keyEvent: event)
-            }
-
-            NSApp.sendEvent(event)
           }
 
-          anyProcessed = false
+          self.app.sendEvent(event)
         }
 
-    } while (anyProcessed == false)
+      } else {
+        receivedEvent = false
+      }
+
+    } while (receivedEvent)
 
     return anyProcessed
   }
@@ -207,29 +210,30 @@ open class KRKNSystem : NSObject
 
 class KRKNAppMenu: NSMenu
 {
-  override init(title: String) {
+  init(title: String, app: NSApplication) {
     super.init(title: title)
 
     let mainMenu = NSMenuItem()
     mainMenu.submenu = NSMenu(title: "Kraken")
     mainMenu.submenu?.items = [
-      NSMenuItem(title: "About Kraken", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "About Kraken", target: app, action: #selector(app.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Hide Kraken", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand + NSEventModifierFlagOption),
-      NSMenuItem(title: "Show All", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "Hide Kraken", target: app, action: #selector(app.hide(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand),
+      NSMenuItem(title: "Hide Others", target: app, action: #selector(app.hideOtherApplications(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagOption | NSEventModifierFlagCommand),
+      NSMenuItem(title: "Show All", target: app, action: #selector(app.unhideAllApplications(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Quit Kraken", action: #selector(NSApplication.shared.terminate(_:)), keyEquivalent: "q", modifier: NSEventModifierFlagCommand)
+      NSMenuItem(title: "Quit Kraken", target: app, action: #selector(app.terminate(_:)), keyEquivalent: "q", modifier: NSEventModifierFlagCommand)
     ]
 
     let windowMenu = NSMenuItem()
     windowMenu.submenu = NSMenu(title: "Window")
     windowMenu.submenu?.items = [
-      NSMenuItem(title: "Minimize", action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
-      NSMenuItem(title: "Enter Full Screen", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: NSEventModifierFlagCommand + NSEventModifierFlagControl),
-      NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: NSEventModifierFlagCommand)
+      NSMenuItem(title: "Minimize", target: app, action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
+      NSMenuItem(title: "Zoom", target: app, action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "Enter Full Screen", target: app, action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: NSEventModifierFlagControl | NSEventModifierFlagCommand),
+      NSMenuItem(title: "Close", target: app, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: NSEventModifierFlagCommand)
     ]
+    app.windowsMenu = windowMenu.submenu
 
     items = [mainMenu, windowMenu]
   }
@@ -239,17 +243,17 @@ class KRKNAppMenu: NSMenu
   }
 }
 
-extension NSMenuItem : @unchecked Sendable
+extension NSMenuItem
 {
   convenience init(title string: String, 
-                   target: AnyObject = NSMenuItem.self as AnyObject, 
+                   target: AnyObject = NSMenuItem.self, 
                    action selector: Selector?, 
                    keyEquivalent charCode: String, 
-                   modifier: NSEventModifierFlags)
+                   modifier: Int = cmdKeyBit)
   {
     self.init(title: string, action: selector, keyEquivalent: charCode)
 
-    // keyEquivalentModifierMask = .command
+    self.keyEquivalentModifierMask = modifier
 
     self.target = target
   }

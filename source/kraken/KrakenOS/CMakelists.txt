@@ -91,7 +91,6 @@ if (APPLE)
     "-emit-dependencies"
     "-emit-library"
     "-emit-module"
-    "-enable-experimental-cxx-interop"
     "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
 endif()
 
