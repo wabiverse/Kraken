@@ -30,13 +30,15 @@
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
+#include "KrakenOS/Kraken.OS.hpp"
+
 class AnchorAppleMetal;
 
 class AnchorSystemCocoa : public AnchorSystem
 {
  public:
 
-  AnchorSystemCocoa(void *shared = nullptr);
+  AnchorSystemCocoa();
 
   /**
    * This method converts performance counter measurements into milliseconds since the start of the
@@ -242,5 +244,5 @@ class AnchorSystemCocoa : public AnchorSystem
   double m_last_warp_timestamp;
   
   /* pointer to the shared swift system. */
-  void *m_swift;
+  KRKN::System *m_swift;
 };

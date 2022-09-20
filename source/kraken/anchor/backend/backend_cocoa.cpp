@@ -27,13 +27,12 @@
 #include "ANCHOR_BACKEND_cocoa.h"
 #include "ANCHOR_BACKEND_metal.h"
 
-// #import "Anchor.h"
 #include "mtl_context.h"
 
 #include <simd/simd.h>
-#include <AppKit/AppKit.h>
-#include <MetalKit/MetalKit.h>
-#include <Carbon/Carbon.h>
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
+#include <QuartzCore/QuartzCore.hpp>
 
 #include <sys/sysctl.h>
 #include <sys/time.h>
@@ -58,19 +57,16 @@ int ANCHOR_HACK_getFirstFile(char buf[FIRSTFILEBUFLG])
     buf[FIRSTFILEBUFLG - 1] = '\0';
     return 1;
   }
-  else {
-    return 0;
-  }
+
+  return 0;
 }
 
-AnchorSystemCocoa::AnchorSystemCocoa(void *shared)
+AnchorSystemCocoa::AnchorSystemCocoa()
 {
-  m_swift = shared;
-
   int mib[2];
   struct timeval boottime;
   size_t len;
-  char *rstring = NULL;
+  char *rstring = nullptr;
 
   m_modifierMask = 0;
   m_outsideLoopEventProcessed = false;
@@ -81,18 +77,18 @@ AnchorSystemCocoa::AnchorSystemCocoa(void *shared)
   mib[1] = KERN_BOOTTIME;
   len = sizeof(struct timeval);
 
-  sysctl(mib, 2, &boottime, &len, NULL, 0);
+  sysctl(mib, 2, &boottime, &len, nullptr, 0);
   m_start_time = ((boottime.tv_sec * 1000) + (boottime.tv_usec / 1000));
 
   /* Detect multi-touch track-pad. */
   mib[0] = CTL_HW;
   mib[1] = HW_MODEL;
-  sysctl(mib, 2, NULL, &len, NULL, 0);
+  sysctl(mib, 2, nullptr, &len, nullptr, 0);
   rstring = (char *)malloc(len);
-  sysctl(mib, 2, rstring, &len, NULL, 0);
+  sysctl(mib, 2, rstring, &len, nullptr, 0);
 
   free(rstring);
-  rstring = NULL;
+  rstring = nullptr;
 
   m_ignoreWindowSizedMessages = false;
   m_ignoreMomentumScroll = false;
@@ -104,15 +100,7 @@ eAnchorStatus AnchorSystemCocoa::init()
 {
   eAnchorStatus success = AnchorSystem::init();
   if (success) {
-    
-    // @autoreleasepool {
-      /* cxx system: sets this system instance pointer inside of CocoaAppDelegate. */
-      // CocoaAppDelegate *cxxDelegate = [[CocoaAppDelegate alloc] init];
-      // [cxxDelegate setSystemCocoa:(void *)this];
-
-      /* swift system: recieves this system instance, so it can call into this class. */
-      // [[AnchorSystemApple alloc] initWithCocoa:cxxDelegate];
-    // }
+    m_swift = KRKN::CreateSystem();
   }
   return success;
 }
@@ -122,7 +110,7 @@ AnchorU64 AnchorSystemCocoa::getMilliSeconds() const
   // Cocoa equivalent exists in 10.6 ([[NSProcessInfo processInfo] systemUptime])
   struct timeval currentTime;
 
-  gettimeofday(&currentTime, NULL);
+  gettimeofday(&currentTime, nullptr);
 
   // Return timestamp of system uptime
 
@@ -147,7 +135,7 @@ AnchorISystemWindow *AnchorSystemCocoa::createWindow(const char *title,
                                                      const bool is_dialog,
                                                      const AnchorISystemWindow *parentWindow)
 {
-  AnchorISystemWindow *window = NULL;
+  AnchorISystemWindow *window = nullptr;
 
   window = new AnchorAppleMetal(this, title, left, top, width, height, state, is_dialog);
   if (window->getValid()) {
@@ -159,8 +147,8 @@ AnchorISystemWindow *AnchorSystemCocoa::createWindow(const char *title,
     pushEvent(new AnchorEvent(getMilliSeconds(), AnchorEventTypeWindowSize, window));
   } else {
     /* don't destroy this until the metal context is fully implemented and expected. */
-    //delete window;
-    //window = NULL;
+    // delete window;
+    // window = nullptr;
   }
 
   return window;
@@ -179,237 +167,79 @@ AnchorU64 AnchorSystemCocoa::tickCountToMillis(int ticks) const
 
 bool AnchorSystemCocoa::processEvents(bool waitForEvent)
 {
-  bool anyProcessed = false;
-  NSEvent *event;
-  do {
-    @autoreleasepool {
-      event = [NSApp nextEventMatchingMask:NSEventMaskAny
-                                 untilDate:[NSDate distantPast]
-                                    inMode:NSDefaultRunLoopMode
-                                   dequeue:YES];
-      if (event == nil) {
-        break;
-      }
-
-      anyProcessed = true;
-
-      if ([event type] == NSEventTypeKeyDown && [event keyCode] == kVK_Tab &&
-          ([event modifierFlags] & NSEventModifierFlagControl)) {
-        handleKeyEvent(event);
-      }
-      else {
-        if ([event type] == NSEventTypeKeyUp &&
-            ([event modifierFlags] & (NSEventModifierFlagCommand | NSEventModifierFlagOption)))
-          handleKeyEvent(event);
-
-        [NSApp sendEvent:event];
-      }
-    }
-  } while (event != nil);
-
-  if (m_needDelayedEventProcessing)
-    handleApplicationBecomeActiveEvent();
-
-  if (m_outsideLoopEventProcessed) {
-    m_outsideLoopEventProcessed = false;
-    return true;
-  }
-
-  m_ignoreWindowSizedMessages = false;
-
-  return anyProcessed;
+  return m_swift->processEvents();
 }
 
 eAnchorStatus AnchorSystemCocoa::handleApplicationBecomeActiveEvent()
 {
-  for (AnchorISystemWindow *iwindow : m_windowManager->getWindows()) {
-    AnchorAppleMetal *window = (AnchorAppleMetal *)iwindow;
-    // void *cocoaWindow = window->getWindow();
-  //   if ([cocoaWindow getIsDialog]) {
-  //     [[cocoaWindow getCocoaWindow] makeKeyAndOrderFront:nil];
-  //   }
-  }
+  // for (AnchorISystemWindow *iwindow : m_windowManager->getWindows()) {
+  //   AnchorAppleMetal *window = (AnchorAppleMetal *)iwindow;
+  //   // void *cocoaWindow = window->getWindow();
+  // //   if ([cocoaWindow getIsDialog]) {
+  // //     [[cocoaWindow getCocoaWindow] makeKeyAndOrderFront:nil];
+  // //   }
+  // }
 
-  unsigned long modifiers;
-  AnchorISystemWindow *window = m_windowManager->getActiveWindow();
+  // unsigned long modifiers;
+  // AnchorISystemWindow *window = m_windowManager->getActiveWindow();
 
-  if (!window) {
-    m_needDelayedEventProcessing = true;
-    return ANCHOR_FAILURE;
-  }
-  else {
-    m_needDelayedEventProcessing = false;
-  }
+  // if (!window) {
+  //   m_needDelayedEventProcessing = true;
+  //   return ANCHOR_FAILURE;
+  // }
+  // else {
+  //   m_needDelayedEventProcessing = false;
+  // }
 
-  modifiers = [[[NSApplication sharedApplication] currentEvent] modifierFlags];
+  // modifiers = [[[NSApplication sharedApplication] currentEvent] modifierFlags];
 
-  if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
-    pushEvent(new AnchorEventKey(getMilliSeconds(),
-                                 (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown :
-                                                                          AnchorEventTypeKeyUp,
-                                 window,
-                                 AnchorKeyLeftShift,
-                                 false));
-  }
-  if ((modifiers & NSEventModifierFlagControl) != (m_modifierMask & NSEventModifierFlagControl)) {
-    pushEvent(new AnchorEventKey(getMilliSeconds(),
-                                 (modifiers & NSEventModifierFlagControl) ? AnchorEventTypeKeyDown :
-                                                                            AnchorEventTypeKeyUp,
-                                 window,
-                                 AnchorKeyLeftControl,
-                                 false));
-  }
-  if ((modifiers & NSEventModifierFlagOption) != (m_modifierMask & NSEventModifierFlagOption)) {
-    pushEvent(new AnchorEventKey(getMilliSeconds(),
-                                 (modifiers & NSEventModifierFlagOption) ? AnchorEventTypeKeyDown :
-                                                                           AnchorEventTypeKeyUp,
-                                 window,
-                                 AnchorKeyLeftAlt,
-                                 false));
-  }
-  if ((modifiers & NSEventModifierFlagCommand) != (m_modifierMask & NSEventModifierFlagCommand)) {
-    pushEvent(new AnchorEventKey(getMilliSeconds(),
-                                 (modifiers & NSEventModifierFlagCommand) ? AnchorEventTypeKeyDown :
-                                                                            AnchorEventTypeKeyUp,
-                                 window,
-                                 AnchorKeyOS,
-                                 false));
-  }
+  // if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
+  //   pushEvent(new AnchorEventKey(getMilliSeconds(),
+  //                                (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown
+  //                                :
+  //                                                                         AnchorEventTypeKeyUp,
+  //                                window,
+  //                                AnchorKeyLeftShift,
+  //                                false));
+  // }
+  // if ((modifiers & NSEventModifierFlagControl) != (m_modifierMask & NSEventModifierFlagControl))
+  // {
+  //   pushEvent(new AnchorEventKey(getMilliSeconds(),
+  //                                (modifiers & NSEventModifierFlagControl) ?
+  //                                AnchorEventTypeKeyDown :
+  //                                                                           AnchorEventTypeKeyUp,
+  //                                window,
+  //                                AnchorKeyLeftControl,
+  //                                false));
+  // }
+  // if ((modifiers & NSEventModifierFlagOption) != (m_modifierMask & NSEventModifierFlagOption)) {
+  //   pushEvent(new AnchorEventKey(getMilliSeconds(),
+  //                                (modifiers & NSEventModifierFlagOption) ?
+  //                                AnchorEventTypeKeyDown :
+  //                                                                          AnchorEventTypeKeyUp,
+  //                                window,
+  //                                AnchorKeyLeftAlt,
+  //                                false));
+  // }
+  // if ((modifiers & NSEventModifierFlagCommand) != (m_modifierMask & NSEventModifierFlagCommand))
+  // {
+  //   pushEvent(new AnchorEventKey(getMilliSeconds(),
+  //                                (modifiers & NSEventModifierFlagCommand) ?
+  //                                AnchorEventTypeKeyDown :
+  //                                                                           AnchorEventTypeKeyUp,
+  //                                window,
+  //                                AnchorKeyOS,
+  //                                false));
+  // }
 
-  m_modifierMask = modifiers;
+  // m_modifierMask = modifiers;
 
-  m_outsideLoopEventProcessed = true;
+  // m_outsideLoopEventProcessed = true;
   return ANCHOR_SUCCESS;
 }
 
 eAnchorStatus AnchorSystemCocoa::handleKeyEvent(void *eventPtr)
 {
-  NSEvent *event = (NSEvent *)eventPtr;
-  AnchorISystemWindow *window;
-  unsigned long modifiers;
-  NSString *characters;
-  NSData *convertedCharacters;
-  eAnchorKey keyCode;
-  NSString *charsIgnoringModifiers;
-
-  window = m_windowManager->getWindowAssociatedWithOSWindow((void *)[event window]);
-  if (!window) {
-    // printf("\nW failure for event 0x%x",[event type]);
-    return ANCHOR_FAILURE;
-  }
-
-  char utf8_buf[6] = {'\0'};
-
-  switch ([event type]) {
-
-    case NSEventTypeKeyDown:
-    case NSEventTypeKeyUp:
-      charsIgnoringModifiers = [event charactersIgnoringModifiers];
-      if ([charsIgnoringModifiers length] > 0) {
-        keyCode = convertKey([event keyCode],
-                             [charsIgnoringModifiers characterAtIndex:0],
-                             [event type] == NSEventTypeKeyDown ? kUCKeyActionDown :
-                                                                  kUCKeyActionUp);
-      }
-      else {
-        keyCode = convertKey([event keyCode],
-                             0,
-                             [event type] == NSEventTypeKeyDown ? kUCKeyActionDown :
-                                                                  kUCKeyActionUp);
-      }
-
-      characters = [event characters];
-      if ([characters length] > 0) {
-        convertedCharacters = [characters dataUsingEncoding:NSUTF8StringEncoding];
-
-        for (int x = 0; x < [convertedCharacters length]; x++) {
-          utf8_buf[x] = ((char *)[convertedCharacters bytes])[x];
-        }
-      }
-
-      /* arrow keys should not have utf8 */
-      if ((keyCode >= AnchorKeyLeftArrow) && (keyCode <= AnchorKeyDownArrow)) {
-        utf8_buf[0] = '\0';
-      }
-
-      /* F keys should not have utf8 */
-      if ((keyCode >= AnchorKeyF1) && (keyCode <= AnchorKeyF20))
-        utf8_buf[0] = '\0';
-
-      /* no text with command key pressed */
-      if (m_modifierMask & NSEventModifierFlagCommand)
-        utf8_buf[0] = '\0';
-
-      if ((keyCode == AnchorKeyQ) && (m_modifierMask & NSEventModifierFlagCommand))
-        break;  // Cmd-Q is directly handled by Cocoa
-
-      if ([event type] == NSEventTypeKeyDown) {
-        pushEvent(new AnchorEventKey([event timestamp] * 1000,
-                                     AnchorEventTypeKeyDown,
-                                     window,
-                                     (eAnchorKey)keyCode,
-                                     [event isARepeat],
-                                     utf8_buf));
-      }
-      else {
-        pushEvent(new AnchorEventKey([event timestamp] * 1000, 
-                                     AnchorEventTypeKeyUp, 
-                                     window, 
-                                     keyCode, 
-                                     false, 
-                                     NULL));
-      }
-      m_ignoreMomentumScroll = true;
-      break;
-
-    case NSEventTypeFlagsChanged:
-      modifiers = [event modifierFlags];
-
-      if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
-        pushEvent(new AnchorEventKey([event timestamp] * 1000,
-                                     (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown :
-                                                                              AnchorEventTypeKeyUp,
-                                     window,
-                                     AnchorKeyLeftShift,
-                                     false));
-      }
-      if ((modifiers & NSEventModifierFlagControl) !=
-          (m_modifierMask & NSEventModifierFlagControl)) {
-        pushEvent(new AnchorEventKey(
-            [event timestamp] * 1000,
-            (modifiers & NSEventModifierFlagControl) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
-            window,
-            AnchorKeyLeftControl,
-            false));
-      }
-      if ((modifiers & NSEventModifierFlagOption) !=
-          (m_modifierMask & NSEventModifierFlagOption)) {
-        pushEvent(new AnchorEventKey(
-            [event timestamp] * 1000,
-            (modifiers & NSEventModifierFlagOption) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
-            window,
-            AnchorKeyLeftAlt,
-            false));
-      }
-      if ((modifiers & NSEventModifierFlagCommand) !=
-          (m_modifierMask & NSEventModifierFlagCommand)) {
-        pushEvent(new AnchorEventKey(
-            [event timestamp] * 1000,
-            (modifiers & NSEventModifierFlagCommand) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
-            window,
-            AnchorKeyOS,
-            false));
-      }
-
-      m_modifierMask = modifiers;
-      m_ignoreMomentumScroll = true;
-      break;
-
-    default:
-      return ANCHOR_FAILURE;
-      break;
-  }
-
   return ANCHOR_SUCCESS;
 }
 
@@ -417,38 +247,40 @@ eAnchorStatus AnchorSystemCocoa::handleKeyEvent(void *eventPtr)
 
 char *AnchorSystemCocoa::getClipboard(bool selection) const
 {
-  char *temp_buff;
-  size_t pastedTextSize;
+  // char *temp_buff;
+  // size_t pastedTextSize;
 
-  @autoreleasepool {
+  // @autoreleasepool {
 
-    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+  // NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
 
-    NSString *textPasted = [pasteBoard stringForType:NSPasteboardTypeString];
+  // NSString *textPasted = [pasteBoard stringForType:NSPasteboardTypeString];
 
-    if (textPasted == nil) {
-      return NULL;
-    }
+  // if (textPasted == nil) {
+  //   return nullptr;
+  // }
 
-    pastedTextSize = [textPasted lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+  // pastedTextSize = [textPasted lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 
-    temp_buff = (char *)malloc(pastedTextSize + 1);
+  // temp_buff = (char *)malloc(pastedTextSize + 1);
 
-    if (temp_buff == NULL) {
-      return NULL;
-    }
+  // if (temp_buff == nullptr) {
+  //   return nullptr;
+  // }
 
-    strncpy(temp_buff, [textPasted cStringUsingEncoding:NSUTF8StringEncoding], pastedTextSize);
+  // strncpy(temp_buff, [textPasted cStringUsingEncoding:NSUTF8StringEncoding], pastedTextSize);
 
-    temp_buff[pastedTextSize] = '\0';
+  // temp_buff[pastedTextSize] = '\0';
 
-    if (temp_buff) {
-      return temp_buff;
-    }
-    else {
-      return NULL;
-    }
-  }
+  // if (temp_buff) {
+  //   return temp_buff;
+  // }
+  // else {
+  //   return nullptr;
+  // }
+  // }
+
+  return nullptr;
 }
 
 eAnchorStatus AnchorSystemCocoa::getModifierKeys(AnchorModifierKeys &keys) const
@@ -576,58 +408,40 @@ eAnchorKey AnchorSystemCocoa::processSpecialKey(short vKey, short scanCode) cons
 
 bool AnchorSystemCocoa::handleOpenDocumentRequest(void *filepathStr)
 {
-  NSString *filepath = (NSString *)filepathStr;
-  NSArray *windowsList;
-  char *temp_buff;
-  size_t filenameTextSize;
+  // NSString *filepath = (NSString *)filepathStr;
+  // NSArray *windowsList;
+  // char *temp_buff;
+  // size_t filenameTextSize;
 
-  windowsList = [NSApp orderedWindows];
-  if ([windowsList count]) {
-    [[windowsList objectAtIndex:0] makeKeyAndOrderFront:nil];
-  }
+  // windowsList = [NSApp orderedWindows];
+  // if ([windowsList count]) {
+  //   [[windowsList objectAtIndex:0] makeKeyAndOrderFront:nil];
+  // }
 
-  AnchorSystemWindow *window = (AnchorSystemWindow *)m_windowManager->getActiveWindow();
+  // AnchorSystemWindow *window = (AnchorSystemWindow *)m_windowManager->getActiveWindow();
 
-  if (!window) {
-    return NO;
-  }
+  // if (!window) {
+  //   return NO;
+  // }
 
-  if (window && window->getCursorGrabModeIsWarp()) {
-    return NO;
-  }
+  // if (window && window->getCursorGrabModeIsWarp()) {
+  //   return NO;
+  // }
 
-  filenameTextSize = [filepath lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-  temp_buff = (char *)malloc(filenameTextSize + 1);
+  // filenameTextSize = [filepath lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+  // temp_buff = (char *)malloc(filenameTextSize + 1);
 
-  if (temp_buff == NULL) {
-    return ANCHOR_FAILURE;
-  }
+  // if (temp_buff == nullptr) {
+  //   return ANCHOR_FAILURE;
+  // }
 
-  strncpy(temp_buff, [filepath cStringUsingEncoding:NSUTF8StringEncoding], filenameTextSize);
-  temp_buff[filenameTextSize] = '\0';
+  // strncpy(temp_buff, [filepath cStringUsingEncoding:NSUTF8StringEncoding], filenameTextSize);
+  // temp_buff[filenameTextSize] = '\0';
 
-  pushEvent(new AnchorEventString(getMilliSeconds(), AnchorEventTypeOpenMainFile, window, (AnchorEventDataPtr)temp_buff));
+  // pushEvent(new AnchorEventString(getMilliSeconds(), AnchorEventTypeOpenMainFile, window,
+  // (AnchorEventDataPtr)temp_buff));
 
   return YES;
-}
-
-
-static void anchor_fatal_error_dialog(const char *msg)
-{
-  /* clang-format off */
-  @autoreleasepool {
-    /* clang-format on */
-    NSString *message = [NSString stringWithFormat:@"Error opening window:\n%s", msg];
-
-    NSAlert *alert = [[NSAlert alloc] init];
-    [alert addButtonWithTitle:@"Quit"];
-    [alert setMessageText:@"Kraken"];
-    [alert setInformativeText:message];
-    [alert setAlertStyle:NSAlertStyleCritical];
-    [alert runModal];
-  }
-
-  exit(1);
 }
 
 
@@ -640,17 +454,20 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
                                    eAnchorWindowState state,
                                    bool dialog)
   : AnchorSystemWindow(width, height, state, false, false),
+    m_metalKitView(nil),
+    m_device(nil),
     m_systemCocoa(systemCocoa),
-    m_cursor(0),
+    m_cursor(nullptr),
     m_immediateDraw(false),
     m_debug_context(false),
     m_is_dialog(dialog),
     m_time(mach_absolute_time())
 {
   /* convert the title string for swift. */
-  NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
+  // NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
 
   /* create the window on metal with swift. */
+  m_window = KRKN::Window::alloc()->init();
   // m_window = [AnchorSystemApple createWindowWithTitle:titleutf left:left top:top width:width height:height state:state isDialog:dialog];
   // m_metalKitView = [m_window getMetalView];
 
@@ -666,7 +483,7 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
   // [[m_window getCocoaWindow] registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType,
                                                       // NSStringPboardType,
                                                       // NSTIFFPboardType,
-                                                      // nil]];
+                                                      // nil]];//
 
   if (/*dialog && parentWindow*/false) {
     // [parentWindow->getCocoaWindow() addChildWindow:m_window ordered:NSWindowAbove];
@@ -685,12 +502,12 @@ AnchorAppleMetal::AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
 AnchorAppleMetal::~AnchorAppleMetal()
 {
   if (m_cursor) {
-    [m_cursor release];
+    // m_cursor->release();
     m_cursor = nil;
   }
 
   if (m_metalKitView) {
-    [m_metalKitView release];
+    m_metalKitView->release();
     m_metalKitView = nil;
   }
 
@@ -715,17 +532,17 @@ AnchorAppleMetal::~AnchorAppleMetal()
 /* called for event, when window leaves monitor to another */
 void AnchorAppleMetal::setNativePixelSize(void)
 {
-  NSRect backingBounds = [m_metalKitView convertRectToBacking:[m_metalKitView bounds]];
+  // CGSize size = m_metalKitView->drawableSize();
 
   AnchorRect rect;
   getClientBounds(rect);
 
-  m_nativePixelSize = (float)backingBounds.size.width / (float)rect.getWidth();
+  // m_nativePixelSize = (float)size.width / (float)rect.getWidth();
 }
 
 void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
 {
-  NSRect rect;
+  CGSize rect;
   ANCHOR_ASSERT(getValid());
 
   // NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -748,7 +565,7 @@ void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
 
 #pragma mark Swift Accessors
 
-void *AnchorAppleMetal::getWindow()
+KRKN::Window *AnchorAppleMetal::getWindow()
 {
   return m_window;
 }
@@ -758,7 +575,9 @@ void *AnchorAppleMetal::getWindow()
 
 void AnchorAppleMetal::SetupMetal()
 {
-  m_hgi = new wabi::HgiMetal((__bridge MTL::Device *)m_metalKitView.device);
+  m_device = MTL::CreateSystemDefaultDevice();
+
+  m_hgi = new wabi::HgiMetal(m_device);
 
   /**
   * Setup ANCHOR context. */
@@ -766,15 +585,11 @@ void AnchorAppleMetal::SetupMetal()
   ANCHOR_CHECKVERSION();
   ANCHOR::CreateContext();
 
-  AnchorIO &io = ANCHOR::GetIO();
-
-  id<MTLDevice> device = m_metalKitView.device;
-
-  m_metalCmdQueue = (MTLCommandQueue *)m_hgi->GetQueue();
+  m_metalCmdQueue = m_hgi->GetQueue();
 
   ANCHOR::StyleColorsDefault();
 
-  kraken::gpu::InitContext((__bridge MTL::Device *)m_metalKitView.device);
+  kraken::gpu::InitContext(m_device);
 }
 
 static void SetFont()
@@ -824,36 +639,37 @@ void AnchorAppleMetal::newDrawingContext(eAnchorDrawingContextType type)
 
 eAnchorStatus AnchorAppleMetal::activateDrawingContext()
 {
-  if (ANCHOR::GetCurrentContext() != NULL)
+  if (ANCHOR::GetCurrentContext() != nullptr) {
     return ANCHOR_SUCCESS;
-  else
-    return ANCHOR_FAILURE;
+  }
+
+  return ANCHOR_FAILURE;
 }
 
 eAnchorStatus AnchorAppleMetal::swapBuffers()
 {
   AnchorIO &io = ANCHOR::GetIO();
-  io.DisplaySize[0] = m_metalKitView.bounds.size.width;
-  io.DisplaySize[1] = m_metalKitView.bounds.size.height;
-  m_metalKitView.drawableSize = CGSizeMake(io.DisplaySize[0], io.DisplaySize[1]);
+  // io.DisplaySize[0] = m_metalKitView->drawableSize().width;
+  // io.DisplaySize[1] = m_metalKitView->drawableSize().height;
+  // m_metalKitView->setDrawableSize(CGSizeMake((CGFloat)io.DisplaySize[0], (CGFloat)io.DisplaySize[1]));
 
 #if TARGET_OS_OSX
-  CGFloat framebufferScale = m_metalKitView.window.screen.backingScaleFactor ?: NSScreen.mainScreen.backingScaleFactor;
+  CGFloat framebufferScale = CGFloat(1);
 #else
   CGFloat framebufferScale = m_metalKitView.window.screen.scale ?: UIScreen.mainScreen.scale;
 #endif
   io.DisplayFramebufferScale = wabi::GfVec2f(framebufferScale, framebufferScale);
 
-  id<MTLCommandBuffer> commandBuffer = [m_metalCmdQueue commandBuffer];
+  MTL::CommandBuffer *commandBuffer = m_metalCmdQueue->commandBuffer();
 
-  MTLRenderPassDescriptor* renderPassDescriptor = m_metalKitView.currentRenderPassDescriptor;
+  MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::alloc()->init();
   if (renderPassDescriptor == nil)
   {
-    [commandBuffer commit];
-    return;
+    commandBuffer->commit();
+    return ANCHOR_FAILURE;
   }
 
-  kraken::gpu::NewFrame((__bridge MTL::RenderPassDescriptor *)renderPassDescriptor);
+  kraken::gpu::NewFrame(renderPassDescriptor);
 
   ANCHOR::NewFrame();
 
@@ -867,18 +683,18 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
 
   AnchorDrawData *drawData = ANCHOR::GetDrawData();
 
-  renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clear_color[0] * clear_color[3], 
-                                                                          clear_color[1] * clear_color[3], 
-                                                                          clear_color[2] * clear_color[3], 
-                                                                          clear_color[3]);
-  id<MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
-  [renderEncoder pushDebugGroup:@"Anchor is Rendering..."];
-  kraken::gpu::ViewDraw(drawData, (__bridge MTL::CommandBuffer *)commandBuffer, (__bridge MTL::RenderCommandEncoder *)renderEncoder);
-  [renderEncoder popDebugGroup];
-  [renderEncoder endEncoding];
+  renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor::Make(clear_color[0] * clear_color[3], 
+                                                                     clear_color[1] * clear_color[3], 
+                                                                     clear_color[2] * clear_color[3], 
+                                                                     clear_color[3]));
+  MTL::RenderCommandEncoder *renderEncoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
+  renderEncoder->pushDebugGroup(NS::String::string("Anchor is Rendering...", NS::UTF8StringEncoding));
+  kraken::gpu::ViewDraw(drawData, commandBuffer, renderEncoder);
+  renderEncoder->popDebugGroup();
+  renderEncoder->endEncoding();
 
-  [commandBuffer presentDrawable:m_metalKitView.currentDrawable]; 
-  [commandBuffer commit];
+  // commandBuffer->presentDrawable(m_metalKitView->nextDrawable()); 
+  commandBuffer->commit();
 
   return ANCHOR_SUCCESS;
 }
@@ -905,7 +721,7 @@ void AnchorAppleMetal::setIcon(const char *icon)
 
 bool AnchorAppleMetal::getValid() const
 {
-  return AnchorSystemWindow::getValid() && m_window != NULL && m_metalKitView != NULL;
+  return AnchorSystemWindow::getValid() && m_window != nil/* && m_metalKitView != nil*/;
 }
 
 void *AnchorAppleMetal::getOSWindow() const
@@ -916,7 +732,7 @@ void *AnchorAppleMetal::getOSWindow() const
 void AnchorAppleMetal::setTitle(const char *title)
 {
   /* convert the title string for swift. */
-  NSString *titleutf = [[[NSString alloc] initWithUTF8String:title] autorelease];
+  NS::String *titleutf = NS::String::string(title, NS::UTF8StringEncoding);
 
   // [m_window setCocoaTitleWithTitle:titleutf];
 }
@@ -994,111 +810,124 @@ eAnchorStatus AnchorAppleMetal::setOrder(eAnchorWindowOrder order)
   return ANCHOR_SUCCESS;
 }
 
-static NSCursor *getImageCursor(eAnchorStandardCursor shape, NSString *name, NSPoint hotspot)
+static void *getImageCursor(eAnchorStandardCursor shape, NS::String *name)
 {
-  static NSCursor *cursors[(int)ANCHOR_StandardCursorNumCursors] = {0};
-  static bool loaded[(int)ANCHOR_StandardCursorNumCursors] = {false};
+  // static void *cursors[(int)ANCHOR_StandardCursorNumCursors] = {0};
+  // static bool loaded[(int)ANCHOR_StandardCursorNumCursors] = {false};
 
-  const int index = (int)shape;
-  if (!loaded[index]) {
-    /* Load image from file in application Resources folder. */
-    /* clang-format off */
-    @autoreleasepool {
-      /* clang-format on */
-      NSImage *image = [NSImage imageNamed:name];
-      if (image != NULL) {
-        cursors[index] = [[NSCursor alloc] initWithImage:image hotSpot:hotspot];
-      }
-    }
+  // const int index = (int)shape;
+  // if (!loaded[index]) {
+  //   /* Load image from file in application Resources folder. */
+  //   /* clang-format off */
+  //   // @autoreleasepool {
+  //     /* clang-format on */
+  //     NS::Image *image = [NSImage imageNamed:name];
+  //     if (image != nullptr) {
+  //       cursors[index] = [[NSCursor alloc] initWithImage:image hotSpot:hotspot];
+  //     }
+  //   // }
 
-    loaded[index] = true;
-  }
+  //   loaded[index] = true;
+  // }
 
-  return cursors[index];
+  // return cursors[index];
+  return nullptr;
 }
 
-NSCursor *AnchorAppleMetal::getStandardCursor(eAnchorStandardCursor shape) const
+void *AnchorAppleMetal::getStandardCursor(eAnchorStandardCursor shape) const
 {
   switch (shape) {
     case ANCHOR_StandardCursorCustom:
       if (m_cursor) {
         return m_cursor;
-      }
-      else {
-        return NULL;
+      } else {
+        return nullptr;
       }
     case ANCHOR_StandardCursorDestroy:
-      return [NSCursor disappearingItemCursor];
+      // return NSCursor->disappearingItemCursor();
+      return nullptr;
     case ANCHOR_StandardCursorText:
-      return [NSCursor IBeamCursor];
+      // return NSCursor->IBeamCursor();
+      return nullptr;
     case ANCHOR_StandardCursorCrosshair:
-      return [NSCursor crosshairCursor];
+      // return NSCursor->crosshairCursor();
+      return nullptr;
     case ANCHOR_StandardCursorUpDown:
-      return [NSCursor resizeUpDownCursor];
+      // return NSCursor->resizeUpDownCursor();
+      return nullptr;
     case ANCHOR_StandardCursorLeftRight:
-      return [NSCursor resizeLeftRightCursor];
+      // return NSCursor->resizeLeftRightCursor();
+      return nullptr;
     case ANCHOR_StandardCursorTopSide:
-      return [NSCursor resizeUpCursor];
+      // return NSCursor->resizeUpCursor();
+      return nullptr;
     case ANCHOR_StandardCursorBottomSide:
-      return [NSCursor resizeDownCursor];
+      // return NSCursor->resizeDownCursor();
+      return nullptr;
     case ANCHOR_StandardCursorLeftSide:
-      return [NSCursor resizeLeftCursor];
+      // return NSCursor->resizeLeftCursor();
+      return nullptr;
     case ANCHOR_StandardCursorRightSide:
-      return [NSCursor resizeRightCursor];
+      // return NSCursor->resizeRightCursor();
+      return nullptr;
     case ANCHOR_StandardCursorCopy:
-      return [NSCursor dragCopyCursor];
+      // return NSCursor->dragCopyCursor();
+      return nullptr;
     case ANCHOR_StandardCursorStop:
-      return [NSCursor operationNotAllowedCursor];
+      // return NSCursor->operationNotAllowedCursor();
+      return nullptr;
     case ANCHOR_StandardCursorMove:
-      return [NSCursor pointingHandCursor];
+      // return NSCursor->pointingHandCursor();
+      return nullptr;
     case ANCHOR_StandardCursorDefault:
-      return [NSCursor arrowCursor];
+      // return NSCursor->arrowCursor();
+      return nullptr;
     case ANCHOR_StandardCursorKnife:
-      return getImageCursor(shape, @"knife.pdf", NSMakePoint(6, 24));
+      return getImageCursor(shape, NS::String::string("knife.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorEraser:
-      return getImageCursor(shape, @"eraser.pdf", NSMakePoint(6, 24));
+      return getImageCursor(shape, NS::String::string("eraser.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorPencil:
-      return getImageCursor(shape, @"pen.pdf", NSMakePoint(6, 24));
+      return getImageCursor(shape, NS::String::string("pen.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorEyedropper:
-      return getImageCursor(shape, @"eyedropper.pdf", NSMakePoint(6, 24));
+      return getImageCursor(shape, NS::String::string("eyedropper.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorZoomIn:
-      return getImageCursor(shape, @"zoomin.pdf", NSMakePoint(8, 7));
+      return getImageCursor(shape, NS::String::string("zoomin.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorZoomOut:
-      return getImageCursor(shape, @"zoomout.pdf", NSMakePoint(8, 7));
+      return getImageCursor(shape, NS::String::string("zoomout.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorNSEWScroll:
-      return getImageCursor(shape, @"scrollnsew.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("scrollnsew.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorNSScroll:
-      return getImageCursor(shape, @"scrollns.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("scrollns.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorEWScroll:
-      return getImageCursor(shape, @"scrollew.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("scrollew.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorUpArrow:
-      return getImageCursor(shape, @"arrowup.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("arrowup.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorDownArrow:
-      return getImageCursor(shape, @"arrowdown.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("arrowdown.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorLeftArrow:
-      return getImageCursor(shape, @"arrowleft.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("arrowleft.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorRightArrow:
-      return getImageCursor(shape, @"arrowright.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("arrowright.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorVerticalSplit:
-      return getImageCursor(shape, @"splitv.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("splitv.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorHorizontalSplit:
-      return getImageCursor(shape, @"splith.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("splith.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorCrosshairA:
-      return getImageCursor(shape, @"paint_cursor_cross.pdf", NSMakePoint(16, 15));
+      return getImageCursor(shape, NS::String::string("paint_cursor_cross.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorCrosshairB:
-      return getImageCursor(shape, @"paint_cursor_dot.pdf", NSMakePoint(16, 15));
+      return getImageCursor(shape, NS::String::string("paint_cursor_dot.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorCrosshairC:
-      return getImageCursor(shape, @"crossc.pdf", NSMakePoint(16, 16));
+      return getImageCursor(shape, NS::String::string("crossc.pdf", NS::UTF8StringEncoding));
     default:
-      return NULL;
+      return nullptr;
   }
 }
 
 eAnchorStatus AnchorAppleMetal::hasCursorShape(eAnchorStandardCursor shape)
 {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
   eAnchorStatus success = (getStandardCursor(shape)) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
-  [pool drain];
+  pool->drain();
   return success;
 }
 
@@ -1107,21 +936,20 @@ void AnchorAppleMetal::loadCursor(bool visible, eAnchorStandardCursor cursorShap
   static bool systemCursorVisible = true;
   if (visible != systemCursorVisible) {
     if (visible) {
-      [NSCursor unhide];
+      // [NSCursor unhide];
       systemCursorVisible = true;
-    }
-    else {
-      [NSCursor hide];
+    } else {
+      // [NSCursor hide];
       systemCursorVisible = false;
     }
   }
 
-  NSCursor *cursor = getStandardCursor(cursorShape);
-  if (cursor == NULL) {
-    cursor = getStandardCursor(ANCHOR_StandardCursorDefault);
-  }
+  // NSCursor *cursor = getStandardCursor(cursorShape);
+  // if (cursor == nullptr) {
+  //   cursor = getStandardCursor(ANCHOR_StandardCursorDefault);
+  // }
 
-  [cursor set];
+  // [cursor set];
 }
 
 bool AnchorAppleMetal::isDialog() const

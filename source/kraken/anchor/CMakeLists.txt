@@ -2,6 +2,7 @@ set(INC
   .
   ../../../. # Pixar USD
   ../../../source
+  ../../../source/kraken
   ./apple
   ./interop
   ./backend
@@ -36,7 +37,7 @@ if (APPLE)
   )
   list(APPEND SRC_PLATFORM_BACKENDS
     intern/system_paths.mm
-    backend/backend_cocoa.mm
+    backend/backend_cocoa.cpp
     backend/ANCHOR_BACKEND_cocoa.h
     backend/ANCHOR_BACKEND_metal.h
   )
@@ -124,6 +125,7 @@ set(INC_SYS
 set(LIB
   maelstrom
   maelstrom_static
+  kraken_os
   kraken_gpu
   kraken_kernel
   ${BOOST_LIBRARIES}

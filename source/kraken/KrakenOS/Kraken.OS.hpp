@@ -1,4 +1,8 @@
 /*
+ * KrakenOS/Kraken.OS.hpp
+ *
+ * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,48 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
-#pragma once
+#ifndef KRAKEN_OS_HPP
+#define KRAKEN_OS_HPP
 
-/**
- * @file
- * Window Manager.
- * Making GUI Fly.
- */
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "WM_api.h"
+#include "Kraken.OS.Defines.hpp"
+#include "Kraken.OS.HeaderBridge.hpp"
+#include "Kraken.OS.Private.hpp"
+#include "Kraken.OS.System.hpp"
+#include "Kraken.OS.Window.hpp"
 
-KRAKEN_NAMESPACE_BEGIN
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void WM_init(kContext *C, int argc = 0, const char **argv = NULL);
-void WM_exit(kContext *C);
-void WM_exit_ex(kContext *C, const bool do_python);
-
-void WM_init_manager(kContext *C);
-
-void WM_init_default_styles();
-void WM_jobs_kill_all(wmWindowManager *wm);
-void WM_main(kContext *C);
-void wm_add_default(struct Main *kmain, kContext *C);
-void WM_check(kContext *C);
-
-enum eWmModes
-{
-  KRAKEN_NORMAL_MODE = 0,
-  KRAKEN_DEBUG_MODE
-};
-
-enum eWmKernelPaths
-{
-  EXE_PATH = 0,
-  DATAFILES_PATH,
-  ICONS_PATH,
-  PROJECT_FILE,
-
-  VERSION_DECIMAL
-};
-
-KRAKEN_NAMESPACE_END
+#endif /* KRAKEN_OS_HPP */

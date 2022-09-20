@@ -1326,7 +1326,7 @@ static int wm_window_new_exec(kContext *C, wmOperator *UNUSED(op))
 }
 
 
-void WM_anchor_init(kContext *C, void* shared)
+void WM_anchor_init(kContext *C)
 {
   if (!anchor_system) {
     AnchorEventConsumerHandle consumer = nullptr;
@@ -1335,7 +1335,7 @@ void WM_anchor_init(kContext *C, void* shared)
       consumer = ANCHOR_CreateEventConsumer(anchor_event_proc, C);
     }
 
-    anchor_system = ANCHOR_CreateSystem(shared);
+    anchor_system = ANCHOR_CreateSystem();
 
     if (C != NULL) {
       ANCHOR::AddEventConsumer(anchor_system, consumer);

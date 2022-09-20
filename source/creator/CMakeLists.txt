@@ -17,6 +17,7 @@ kraken_include_dirs(
   ${KRAKEN_FRAMEWORK}
   ../../.
   ../../source/.
+  ../../source/kraken/.
   ../kraken/anchor
   ../kraken/editors/include
   ../kraken/kraklib
@@ -318,29 +319,7 @@ else()
       set_source_files_properties(${rfile} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
       list(APPEND ${SRC} rfile)
     endforeach()
-    add_library(Creator STATIC "${CMAKE_SOURCE_DIR}/source/creator/apple/creator_main.swift" ${KRAKEN_MACOS_DOCC_DIR})
-    target_link_libraries(Creator 
-      AnchorSystem 
-      kraken_anchor
-      maelstrom
-      maelstrom_static
-      ${BOOST_LIBRARIES}
-      ${TBB_LIBRARIES}
-      ${PYTHON_LIBRARIES}
-      ${FREETYPE_LIBRARIES}
-      ${FREETYPE_LIBRARY})
-    target_compile_options(Creator PUBLIC
-      "-static"
-      "-emit-dependencies"
-      "-emit-library"
-      "-emit-module"
-      "-enable-experimental-cxx-interop"
-      "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
     add_executable(kraken MACOSX_BUNDLE ${SRC})
-    add_dependencies(kraken Creator)
-    target_link_libraries(kraken Creator)
-    target_include_directories(kraken PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/Kraken.build/${CMAKE_BUILD_TYPE}/Creator.build/DerivedSources)
-    target_include_directories(kraken PUBLIC ${CMAKE_BINARY_DIR}/source/kraken/anchor/Kraken.build/${CMAKE_BUILD_TYPE}/AnchorSystem.build/DerivedSources)
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)

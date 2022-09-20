@@ -1,3 +1,4 @@
+add_subdirectory(KrakenOS)
 add_subdirectory(anchor)
 add_subdirectory(editors)
 add_subdirectory(gpu)

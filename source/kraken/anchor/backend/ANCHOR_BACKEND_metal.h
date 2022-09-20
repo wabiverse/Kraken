@@ -31,20 +31,11 @@
 #include "ANCHOR_window.h"
 
 #if WITH_METAL
+# include <Metal/Metal.hpp>
+# include <KrakenOS/Kraken.OS.hpp>
 # include <wabi/imaging/hgiMetal/hgi.h>
 # include <wabi/imaging/hgiMetal/capabilities.h>
 #endif /* WITH_METAL */
-
-@class CAMetalLayer;
-@class MTLBuffer;
-@class MTLCommandQueue;
-@class MTLRenderCommandEncoder;
-@class MTLRenderPipelineState;
-@class MTLTexture;
-@class MTKView;
-@class NSCursor;
-@class NSObject;
-@class NSView;
 
 class AnchorSystemCocoa;
 
@@ -67,7 +58,7 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   eAnchorStatus activateDrawingContext();
 
-  void SetupRenderState(MTLRenderCommandEncoder *enc, MTLBuffer *vertexBuffer, AnchorDrawData *draw_data, size_t vertexBufferOffset);
+  void SetupRenderState(MTL::RenderCommandEncoder *enc, MTL::Buffer *vertexBuffer, AnchorDrawData *draw_data, size_t vertexBufferOffset);
 
   eAnchorStatus swapBuffers();
 
@@ -98,7 +89,7 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   eAnchorStatus setOrder(eAnchorWindowOrder order);
 
-  NSCursor *getStandardCursor(eAnchorStandardCursor shape) const;
+  void *getStandardCursor(eAnchorStandardCursor shape) const;
   eAnchorStatus hasCursorShape(eAnchorStandardCursor shape);
   void loadCursor(bool visible, eAnchorStandardCursor cursorShape) const;
 
@@ -117,7 +108,7 @@ class AnchorAppleMetal : public AnchorSystemWindow
     return ANCHOR_FAILURE;
   }
 
-  void *getWindow();
+  KRKN::Window *getWindow();
 
   void setNativePixelSize(void);
 
@@ -125,21 +116,21 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   void SetupMetal();
 
- protected:
   /* The swift window which holds the metal view. */
-  void *m_window;
+  KRKN::Window *m_window;
 
   /* The Metal view. */
-  MTKView *m_metalKitView;
-  MTLCommandQueue *m_metalCmdQueue;
-  MTLRenderPipelineState *m_metalRenderPipeline;
-  MTLTexture *m_defaultFramebufferMetalTexture;
+  CA::MetalLayer *m_metalKitView;
+  MTL::CommandQueue *m_metalCmdQueue;
+  MTL::RenderPipelineState *m_metalRenderPipeline;
+  MTL::Texture *m_defaultFramebufferMetalTexture;
+  MTL::Device *m_device;
 
   /* The SystemCocoa class to send events. */
   AnchorSystemCocoa *m_systemCocoa;
 
   /* To set the cursor. */
-  NSCursor *m_cursor;
+  void *m_cursor;
 
   bool m_immediateDraw;
   bool m_debug_context;
@@ -150,5 +141,5 @@ class AnchorAppleMetal : public AnchorSystemWindow
   AnchorU64 m_time;
 
   /* test buffer. */
-  MTLTexture *m_font_tex;
+  MTL::Texture *m_font_tex;
 };

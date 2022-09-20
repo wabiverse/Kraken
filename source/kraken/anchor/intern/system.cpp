@@ -248,9 +248,9 @@ eAnchorTabletAPI AnchorSystem::getTabletAPI(void)
   return m_tabletAPI;
 }
 
-AnchorSystemHandle ANCHOR_CreateSystem(void *shared)
+AnchorSystemHandle ANCHOR_CreateSystem()
 {
-  AnchorISystem::createSystem(shared);
+  AnchorISystem::createSystem();
   AnchorISystem *system = AnchorISystem::getSystem();
 
   return (AnchorSystemHandle)system;

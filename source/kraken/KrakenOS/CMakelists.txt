@@ -1,0 +1,105 @@
+set(INC
+  .
+  ../../../. # Pixar USD
+  ../../../source/kraken
+  ./apple
+  ../krakernel
+  ../kraklib
+  ../universe
+  ../gpu/metal
+)
+
+# --------------------------------- OS DEPENDENT IMPLEMENTATION -----
+set(SRC_OS_FOUNDATION "")
+
+# ------------------------------------- LINUX OS IMPLEMENTATION -----
+if(UNIX AND NOT APPLE)
+  list(APPEND SRC_OS_FOUNDATION)
+endif()
+
+# ------------------------------------- APPLE OS IMPLEMENTATION -----
+if (APPLE)
+  list(APPEND SRC_OS_FOUNDATION
+    apple/krkn_system.swift
+    apple/krkn_window.swift
+  )
+endif()
+
+# --------------------------------- MICROSOFT OS IMPLEMENTATION -----
+if(WIN32)
+  list(APPEND SRC_OS_FOUNDATION)
+endif()
+
+set(SRC
+  # shared OS library.
+  intern/os.cpp
+
+  # shared OS headers.
+  Kraken.OS.hpp
+  Kraken.OS.Defines.hpp
+  Kraken.OS.HeaderBridge.hpp
+  Kraken.OS.Private.hpp
+  Kraken.OS.System.hpp
+  Kraken.OS.Window.hpp
+)
+
+set(INC_SYS
+  ${Boost_INCLUDE_DIRS}
+  ${TBB_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIRS}
+  ${SDL2_INCLUDE_DIR}
+  ${Vulkan_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+)
+
+set(LIB
+  maelstrom
+  maelstrom_static
+  kraken_gpu
+  kraken_kernel
+  ${BOOST_LIBRARIES}
+  ${TBB_LIBRARIES}
+  ${PYTHON_LIBRARIES}
+  ${SDL2_LIBRARIES}
+  ${VULKAN_LIBRARIES}
+  ${FREETYPE_LIBRARIES}
+  ${FREETYPE_LIBRARY}
+)
+
+if(WIN32)
+  list(APPEND INC
+    ../../../intern/utfconv
+  )
+
+  list(APPEND LIB
+    kraken_intern_utfconv
+    comctl32
+    shcore
+    shlwapi
+    d3d12
+    d3dcompiler
+    dxgi
+  )
+endif()
+
+if (APPLE)
+  # Kraken CXX OS is kraken_os.
+  # Kraken Swift OS is KrakenOS.
+  kraken_add_lib(KrakenOS "${SRC_OS_FOUNDATION}" "${INC}" "${INC_SYS}" "${LIB}")
+  target_compile_options(KrakenOS PRIVATE
+    "-static"
+    "-emit-dependencies"
+    "-emit-library"
+    "-emit-module"
+    "-enable-experimental-cxx-interop"
+    "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
+endif()
+
+# shared os library.
+kraken_add_lib(kraken_os "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+if (APPLE)
+  # Kraken CXX/OS depends on Swift implementation.
+  add_dependencies(kraken_os KrakenOS)
+  target_link_libraries(kraken_os PRIVATE KrakenOS)
+endif()

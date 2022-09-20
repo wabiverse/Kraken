@@ -34,7 +34,7 @@
 
 AnchorISystem *AnchorISystem::m_system = NULL;
 
-eAnchorStatus AnchorISystem::createSystem(void *shared)
+eAnchorStatus AnchorISystem::createSystem()
 {
   eAnchorStatus success;
   if (!m_system) {
@@ -43,7 +43,7 @@ eAnchorStatus AnchorISystem::createSystem(void *shared)
 #elif defined(WIN32)
     m_system = new AnchorSystemWin32();
 #elif defined(__APPLE__)
-    m_system = new AnchorSystemCocoa(shared);
+    m_system = new AnchorSystemCocoa();
 #endif
     success = (m_system != NULL) ? ANCHOR_SUCCESS : ANCHOR_FAILURE;
   } else {

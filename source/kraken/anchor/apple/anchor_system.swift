@@ -27,25 +27,6 @@ import Anchor
 
 public struct AnchorSystemApple
 {
-  let app = NSApplication.shared
-  let strongDelegate = AppDelegate()
-  let menu = AppMenu()
-
-  public init() 
-  {
-    /** 
-     * @UNIFIED Anchor System.
-     * recieves cocoa instance, so swift can use 
-     * the same instanced cxx anchor system. */
-    // self.strongDelegate.cocoa = cocoa
-
-    self.app.delegate = self.strongDelegate
-    self.app.mainMenu = self.menu
-
-    self.app.setActivationPolicy(.regular)
-    self.app.finishLaunching()
-  }
-
   public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: eAnchorWindowState, isDialog: Bool) -> AnchorWindowApple?
   {
     var window: AnchorWindowApple?
@@ -81,63 +62,6 @@ public struct AnchorSystemApple
   }
 }
 
-class AppMenu: NSMenu
-{
-  override init(title: String) {
-    super.init(title: title)
-
-    let mainMenu = NSMenuItem()
-    mainMenu.submenu = NSMenu(title: "Kraken")
-    mainMenu.submenu?.items = [
-      NSMenuItem(title: "About Kraken", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
-      NSMenuItem.separator(),
-      NSMenuItem(title: "Hide Kraken", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand + NSEventModifierFlagOption),
-      NSMenuItem(title: "Show All", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: ""),
-      NSMenuItem.separator(),
-      NSMenuItem(title: "Quit Kraken", action: #selector(NSApplication.shared.terminate(_:)), keyEquivalent: "q", modifier: NSEventModifierFlagCommand)
-    ]
-
-    let windowMenu = NSMenuItem()
-    windowMenu.submenu = NSMenu(title: "Window")
-    windowMenu.submenu?.items = [
-      NSMenuItem(title: "Minimize", action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
-      NSMenuItem(title: "Enter Full Screen", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: NSEventModifierFlagCommand + NSEventModifierFlagControl),
-      NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: NSEventModifierFlagCommand)
-    ]
-
-    items = [mainMenu, windowMenu]
-  }
-
-  required init(coder: NSCoder) {
-    super.init(coder: coder)
-  }
-}
-
-extension NSMenuItem : @unchecked Sendable
-{
-  convenience init(title string: String, 
-                   target: AnyObject = NSMenuItem.self as AnyObject, 
-                   action selector: Selector?, 
-                   keyEquivalent charCode: String, 
-                   modifier: NSEventModifierFlags)
-  {
-    self.init(title: string, action: selector, keyEquivalent: charCode)
-
-    // keyEquivalentModifierMask = .command
-
-    self.target = target
-  }
-
-  convenience init(title string: String, submenuItems: [NSMenuItem])
-  {
-    self.init(title: string, action: nil, keyEquivalent: "")
-    self.submenu = NSMenu()
-    self.submenu?.items = submenuItems
-  }
-}
-
 open class AnchorWindowApple : NSObject
 {
   var window: NSWindow
@@ -147,14 +71,14 @@ open class AnchorWindowApple : NSObject
   var state: eAnchorWindowState
   var windowDelegate: CocoaWindowDelegate
 
-  init(title: String, 
-       left: CGFloat, 
-       bottom: CGFloat, 
-       width: CGFloat, 
-       height: CGFloat, 
-       state: eAnchorWindowState, 
-       dialog: Bool,
-       parent: AnchorWindowApple?) 
+  public init(title: String, 
+              left: CGFloat, 
+              bottom: CGFloat, 
+              width: CGFloat, 
+              height: CGFloat, 
+              state: eAnchorWindowState, 
+              dialog: Bool,
+              parent: AnchorWindowApple?)
   {
     self.state = state
     self.dialog = dialog
@@ -247,85 +171,5 @@ class CocoaWindowDelegate : NSObject, NSWindowDelegate
 
   func windowDidMove(_ notification: Notification) {
     fputs("Window moved\n", stderr)
-  }
-}
-
-class AppDelegate : NSObject, NSApplicationDelegate
-{
-  private var m_windowFocus = true
-  // var cocoa: CocoaAppDelegate!
-
-  override init() 
-  {
-    super.init()
-    // NotificationCenter.default.addObserver(self, selector: #selector(self.windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
-    fputs("Kraken is LIVE.\n", stderr)
-  }
-
-  func windowWillClose(_ notification: Notification)
-  {
-    let closingWindow = notification.object as! NSWindow
-
-    if let index = NSApp.orderedWindows.firstIndex(of: closingWindow) {
-      if (index != NSNotFound) {
-        return
-      }
-    }
-
-    for currentWindow in NSApp.orderedWindows {
-      if (currentWindow == closingWindow) {
-        continue
-      }
-
-      if (currentWindow.isOnActiveSpace && currentWindow.canBecomeMain) {
-        currentWindow.makeKeyAndOrderFront(nil)
-        return
-      }
-    }
-    
-    if let windowNumbers = NSWindow.windowNumbers(withOptions: .init(0)) {
-      for windowNumber in windowNumbers {
-        if let currentWindow = NSApp.window(withWindowNumber: windowNumber.intValue) {
-
-          if (currentWindow == closingWindow) {
-            continue
-          }
-
-          if (currentWindow.canBecomeKey) {
-            currentWindow.makeKeyAndOrderFront(nil)
-            return
-          }
-        }
-      }
-    }
-  }
-
-  func applicationDidFinishLaunching(_ notification: Notification)
-  {
-    fputs("Kraken launched successfully.\n", stderr)
-
-    if (self.m_windowFocus) {
-      NSApp.activate(ignoringOtherApps: true)
-    }
-
-    NSEvent.isMouseCoalescingEnabled = false
-  }
-
-  /**
-   * @NOTE: Event processing is handled & dispatched in the central Anchor System.
-   * This is so all platforms can share the same underlying system, vs rewriting
-   * it all for swift. */
-
-  func applicationWillBecomeActive(_ notification: Notification) 
-  {
-    /* calls instanced cxx anchor system function. */
-    // self.cocoa.handleApplicationBecomeActiveEvent()
-  }
-
-  func application(_ sender: NSApplication, openFile filename: String) -> Bool
-  { 
-    /* calls instanced cxx anchor system function. */
-    // return self.cocoa.handleOpenDocumentRequest(filename)
-    return true
   }
 }
