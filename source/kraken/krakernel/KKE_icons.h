@@ -69,6 +69,24 @@ struct Icon
   DrawInfoFreeFP drawinfo_free;
 };
 
-void KKE_icon_changed(const int icon_id);
+/** Used for #ICON_DATA_GEOM, assigned to #Icon.obj. */
+struct Icon_Geom {
+  int icon_id;
+  int coords_len;
+  int coords_range[2];
+  unsigned char (*coords)[2];
+  unsigned char (*colors)[4];
+  /* when not NULL, the memory of coords and colors is a sub-region of this pointer. */
+  const void *mem;
+};
+
+void KKE_icons_init(int first_dyn_id);
+
+/**
+ * Retrieve icon for id.
+ */
+struct Icon *KKE_icon_get(int icon_id);
+
+// void KKE_icon_changed(const int icon_id);
 
 KRAKEN_NAMESPACE_END

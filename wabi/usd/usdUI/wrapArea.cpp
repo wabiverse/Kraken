@@ -74,6 +74,12 @@ namespace
                                writeSparsely);
   }
 
+  static UsdAttribute _CreateCoordsAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
+  {
+    return self.CreateCoordsAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Int4),
+                                 writeSparsely);
+  }
+
   static UsdAttribute _CreatePosAttr(UsdUIArea &self, object defaultVal, bool writeSparsely)
   {
     return self.CreatePosAttr(UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2),
@@ -137,6 +143,11 @@ void wrapUsdUIArea()
     .def("GetIconAttr", &This::GetIconAttr)
     .def("CreateIconAttr",
          &_CreateIconAttr,
+         (arg("defaultValue") = object(), arg("writeSparsely") = false))
+
+    .def("GetCoordsAttr", &This::GetCoordsAttr)
+    .def("CreateCoordsAttr",
+         &_CreateCoordsAttr,
          (arg("defaultValue") = object(), arg("writeSparsely") = false))
 
     .def("GetPosAttr", &This::GetPosAttr)

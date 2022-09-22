@@ -45,6 +45,8 @@ namespace KRKN
 
     class System *init();
 
+    CGRect &getMainDisplayDimensions();
+    
     bool processEvents() const;
   };
 
@@ -63,6 +65,12 @@ KRKN_INLINE KRKN::System *KRKN::System::alloc()
 KRKN_INLINE KRKN::System *KRKN::System::init()
 {
   return NS::Object::init<KRKN::System>();
+}
+
+/** method: processEvents */
+KRKN_INLINE CGRect &KRKN::System::getMainDisplayDimensions()
+{
+  return Object::sendMessage<CGRect&>(this, KRKN_PRIVATE_SEL(getMainDisplayDimensions));
 }
 
 /** method: processEvents */

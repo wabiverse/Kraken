@@ -41,9 +41,25 @@ open class KRKNSystem : NSObject
   {
     self.app.delegate = self.strongDelegate
     self.app.mainMenu = self.menu
+    self.app.windowsMenu = self.menu.items[1].submenu
+
+    NSWindow.allowsAutomaticWindowTabbing = false
 
     self.app.setActivationPolicy(NSApplication.ActivationPolicy.regular)
     self.app.finishLaunching()
+  }
+
+  @objc
+  public func getMainDisplayDimensions() -> NSRect
+  {
+    fputs("got called\n", stderr)
+
+    let frame = (NSScreen.main?.visibleFrame)!
+
+    // Returns max window contents (excluding title bar...)
+    let contentRect: NSRect = NSWindow.contentRect(forFrameRect: frame, styleMask: (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable))
+
+    return contentRect
   }
 
   @objc
@@ -219,7 +235,7 @@ class KRKNAppMenu: NSMenu
       NSMenuItem(title: "About Kraken", target: app, action: #selector(app.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
       NSMenuItem(title: "Hide Kraken", target: app, action: #selector(app.hide(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Hide Others", target: app, action: #selector(app.hideOtherApplications(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagOption | NSEventModifierFlagCommand),
+      NSMenuItem(title: "Hide Others", target: app, action: #selector(app.hideOtherApplications(_:)), keyEquivalent: "h", modifier: (NSEventModifierFlagOption | NSEventModifierFlagCommand)),
       NSMenuItem(title: "Show All", target: app, action: #selector(app.unhideAllApplications(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
       NSMenuItem(title: "Quit Kraken", target: app, action: #selector(app.terminate(_:)), keyEquivalent: "q", modifier: NSEventModifierFlagCommand)
@@ -228,12 +244,11 @@ class KRKNAppMenu: NSMenu
     let windowMenu = NSMenuItem()
     windowMenu.submenu = NSMenu(title: "Window")
     windowMenu.submenu?.items = [
-      NSMenuItem(title: "Minimize", target: app, action: #selector(NSWindow.miniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
+      NSMenuItem(title: "Minimize", target: app, action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
       NSMenuItem(title: "Zoom", target: app, action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
-      NSMenuItem(title: "Enter Full Screen", target: app, action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: NSEventModifierFlagControl | NSEventModifierFlagCommand),
+      NSMenuItem(title: "Enter Full Screen", target: app, action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: (NSEventModifierFlagControl | NSEventModifierFlagCommand)),
       NSMenuItem(title: "Close", target: app, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: NSEventModifierFlagCommand)
     ]
-    app.windowsMenu = windowMenu.submenu
 
     items = [mainMenu, windowMenu]
   }
@@ -244,16 +259,18 @@ class KRKNAppMenu: NSMenu
 }
 
 extension NSMenuItem
-{
+{ 
   convenience init(title string: String, 
                    target: AnyObject = NSMenuItem.self, 
                    action selector: Selector?, 
                    keyEquivalent charCode: String, 
-                   modifier: Int = cmdKeyBit)
+                   modifier: NSEventModifierFlags = 0)
   {
     self.init(title: string, action: selector, keyEquivalent: charCode)
 
-    self.keyEquivalentModifierMask = modifier
+    if (modifier != 0) {
+      self.keyEquivalentModifierMask = modifier
+    }
 
     self.target = target
   }

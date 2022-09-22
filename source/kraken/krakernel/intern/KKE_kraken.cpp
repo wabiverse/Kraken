@@ -82,6 +82,7 @@ KRAKEN_NAMESPACE_BEGIN
 Global G;
 
 /** User Prefs modifies this value globally. */
+int UI_FACTOR_DISPLAY_TYPE = USER_FACTOR_AS_FACTOR;
 float UI_DPI_FAC = float(1.0f);
 float UI_PRESSURE_SOFTNESS = float(1.0f);
 float UI_PRESSURE_THRESHOLD_MAX = float(0.0f);
@@ -151,7 +152,7 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 {
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||
-      G.main->stage_id.string().find("startup.usda") != std::string::npos) {
+      G.main->stage_id.string().find("userpref.usda") != std::string::npos) {
     G.factory_startup = true;
   }
 

@@ -309,6 +309,16 @@ class Area "Area" (
             token apiName = "icon"
         }       
     )
+    uniform int4 ui:area:coords (
+        doc = """
+        This attribute specifies the rectangle coordinates of the region.
+        In the form of (Xmax - Xmin) it define the size of the width, and
+        in the horizontal, (Ymax - Ymin) to define the height.
+        """
+        customData = {
+            token apiName = "coords"
+        }
+    )
     uniform float2 ui:area:pos (
         doc = """
         This attribute specifies the position relative to the window.

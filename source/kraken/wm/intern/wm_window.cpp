@@ -58,6 +58,7 @@
 
 #include "ED_fileselect.h"
 #include "ED_screen.h"
+#include "UI_interface.h"
 
 #include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
@@ -597,7 +598,7 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     ANCHOR_DrawingContextTypeDX12,
 #elif defined(ARCH_OS_DARWIN)
     ANCHOR_DrawingContextTypeMetal,
-#else /* ARCH_OS_LINUX */
+#else  /* ARCH_OS_LINUX */
     ANCHOR_DrawingContextTypeOpenGL,
 #endif /* ARCH_OS_WIN32 */
     0);
@@ -703,7 +704,7 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
       }
 
       if (win_icon.GetAssetPath().empty()) {
-        FormFactory(win->icon, SdfAssetPath(KLI_icon(ICON_KRAKEN)));
+        // FormFactory(win->icon, SdfAssetPath(KLI_icon(ICON_KRAKEN)));
       }
     }
 
@@ -744,6 +745,10 @@ static void wm_get_screensize(int *r_width, int *r_height)
   ANCHOR::GetMainDisplayDimensions(anchor_system, &uiwidth, &uiheight);
   *r_width = uiwidth;
   *r_height = uiheight;
+
+  printf("Recieved Main Display Dimensions:\n");
+  printf("Width: %u\n", uiwidth);
+  printf("Height: %u\n", uiheight);
 }
 
 
@@ -1002,9 +1007,11 @@ static void WM_generic_callback_free(wmGenericCallback *callback)
 
 static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)
 {
-  if (/*!UI_popup_block_name_exists(CTX_wm_screen(C), close_file_dialog_name)*/ false) {
-    // UI_popup_block_invoke(C, block_create__close_file_dialog, post_action,
-    // free_post_file_close_action);
+  if (!UI_popup_block_name_exists(CTX_wm_screen(C), UI_ID(UI_POPUP_file_close))) {
+    UI_popup_block_invoke(C,
+                          block_create__close_file_dialog,
+                          post_action,
+                          free_post_file_close_action);
   } else {
     WM_generic_callback_free(post_action);
   }
@@ -1025,7 +1032,7 @@ void WM_exit_schedule_delayed(const kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
 
-  WM_event_add_ui_handler(C, win->modalhandlers, wm_exit_handler, NULL, NULL, 0);
+  WM_event_add_ui_handler(C, win->modalhandlers, wm_exit_handler, nullptr, nullptr, 0);
   WM_event_add_mousemove(win);
 }
 
@@ -1139,7 +1146,7 @@ void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
 
   if (show_save) {
     Stage stage = CTX_data_stage(C);
-    if (stage->GetRootLayer()->IsDirty()) {
+    if (stage->GetPseudoRoot().IsValid()) {
       wm_window_raise(win);
       wm_confirm_quit(C);
     } else {
@@ -1378,6 +1385,59 @@ void WM_window_swap_buffers(wmWindow *win)
   ANCHOR::SwapChain((AnchorSystemWindowHandle)win->anchorwin);
 }
 
+wmTimer *WM_event_add_timer(wmWindowManager *wm, wmWindow *win, int event_type, double timestep)
+{
+  wmTimer *wt = new wmTimer();
+  KLI_assert(timestep >= 0.0f);
+
+  wt->event_type = event_type;
+  wt->ltime = PIL_check_seconds_timer();
+  wt->ntime = wt->ltime + timestep;
+  wt->stime = wt->ltime;
+  wt->timestep = timestep;
+  wt->win = win;
+
+  wm->timers.push_back(wt);
+
+  return wt;
+}
+
+void WM_event_remove_timer(wmWindowManager *wm, wmWindow *UNUSED(win), wmTimer *timer)
+{
+  /* extra security check */
+  wmTimer *wt = NULL;
+  for (auto &timer_iter : wm->timers) {
+    if (timer_iter == timer) {
+      wt = timer_iter;
+    }
+  }
+  if (wt == NULL) {
+    return;
+  }
+
+  if (wm->reports.reporttimer == wt) {
+    wm->reports.reporttimer = NULL;
+  }
+
+  wm->timers.erase(std::remove(wm->timers.begin(), wm->timers.end(), wt), wm->timers.end());
+  if (wt->customdata != NULL && (wt->flags & WM_TIMER_NO_FREE_CUSTOM_DATA) == 0) {
+    delete wt->customdata;
+  }
+  delete wt;
+
+  /* there might be events in queue with this timer as customdata */
+  for(auto &win : wm->windows)
+  {
+    for(auto &event : win.second->event_queue)
+    {
+      if (event->customdata == wt) {
+        event->customdata = NULL;
+        /* Timer users customdata, don't want `NULL == NULL`. */
+        event->type = EVENT_NONE;
+      }
+    }
+  }
+}
 
 /**
  *  -----  The Window Operators. ----- */

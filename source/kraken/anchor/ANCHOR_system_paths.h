@@ -28,6 +28,10 @@
 
 #include "ANCHOR_api.h"
 
+#ifdef __APPLE__
+#  include <Foundation/Foundation.hpp>
+#endif /* __APPLE__ */
+
 class AnchorISystemPaths
 {
  public:
@@ -250,6 +254,11 @@ class AnchorSystemPathsCocoa : public AnchorSystemPaths
    * Destructor.
    */
   ~AnchorSystemPathsCocoa();
+
+  static const char *GetApplicationSupportDir(const char *versionstr,
+                                              const NS::UInteger mask,
+                                              char *tempPath,
+                                              const std::size_t len_tempPath);
 
   /**
    * Determine the base dir in which shared resources are located. It will first try to use

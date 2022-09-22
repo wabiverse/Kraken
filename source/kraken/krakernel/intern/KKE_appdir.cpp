@@ -560,8 +560,8 @@ static bool get_path_local_ex(char *targetpath,
 #ifdef __APPLE__
   /* Due new code-sign situation in OSX > 10.9.5
    * we must move the kraken_version dir with contents to Resources. */
-  char osx_resourses[FILE_MAX];
-  KLI_snprintf(osx_resourses, sizeof(osx_resourses), "%s../Resources", g_app.program_dirname);
+  char osx_resourses[FILE_MAX + 4 + 9];
+  KLI_path_join(osx_resourses, sizeof(osx_resourses), g_app.program_dirname, "..", "Resources", NULL);
   /* Remove the '/../' added above. */
   KLI_path_normalize(NULL, osx_resourses);
   path_base = osx_resourses;

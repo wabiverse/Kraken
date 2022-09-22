@@ -31,10 +31,10 @@
 #include "ANCHOR_window.h"
 
 #if WITH_METAL
-# include <Metal/Metal.hpp>
-# include <KrakenOS/Kraken.OS.hpp>
-# include <wabi/imaging/hgiMetal/hgi.h>
-# include <wabi/imaging/hgiMetal/capabilities.h>
+#  include <Metal/Metal.hpp>
+#  include <KrakenOS/Kraken.OS.hpp>
+#  include <wabi/imaging/hgiMetal/hgi.h>
+#  include <wabi/imaging/hgiMetal/capabilities.h>
 #endif /* WITH_METAL */
 
 class AnchorSystemCocoa;
@@ -44,13 +44,13 @@ class AnchorAppleMetal : public AnchorSystemWindow
  public:
 
   AnchorAppleMetal(AnchorSystemCocoa *systemCocoa,
-                    const char *title,
-                    AnchorS32 left,
-                    AnchorS32 top,
-                    AnchorU32 width,
-                    AnchorU32 height,
-                    eAnchorWindowState state,
-                    bool dialog = false);
+                   const char *title,
+                   AnchorS32 left,
+                   AnchorS32 top,
+                   AnchorU32 width,
+                   AnchorU32 height,
+                   eAnchorWindowState state,
+                   bool dialog = false);
 
   ~AnchorAppleMetal();
 
@@ -58,7 +58,16 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   eAnchorStatus activateDrawingContext();
 
-  void SetupRenderState(MTL::RenderCommandEncoder *enc, MTL::Buffer *vertexBuffer, AnchorDrawData *draw_data, size_t vertexBufferOffset);
+  /**
+   * Sets the cursor visibility on the window using
+   * native window system calls.
+   */
+  eAnchorStatus setWindowCursorVisibility(bool visible);
+
+  void SetupRenderState(MTL::RenderCommandEncoder *enc,
+                        MTL::Buffer *vertexBuffer,
+                        AnchorDrawData *draw_data,
+                        size_t vertexBufferOffset);
 
   eAnchorStatus swapBuffers();
 
@@ -88,6 +97,18 @@ class AnchorAppleMetal : public AnchorSystemWindow
   void clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const;
 
   eAnchorStatus setOrder(eAnchorWindowOrder order);
+
+  /**
+   * Sets the cursor shape on the window using
+   * native window system calls.
+   */
+  eAnchorStatus setWindowCustomCursorShape(uint8_t *bitmap,
+                                           uint8_t *mask,
+                                           int sizex,
+                                           int sizey,
+                                           int hotX,
+                                           int hotY,
+                                           bool canInvertColor);
 
   void *getStandardCursor(eAnchorStandardCursor shape) const;
   eAnchorStatus hasCursorShape(eAnchorStandardCursor shape);

@@ -31,6 +31,7 @@
 #include "KKE_kraken_prim.h"
 
 #include "wabi/base/tf/registryManager.h"
+#include "wabi/usd/usdGeom/metrics.h"
 
 KRAKEN_NAMESPACE_BEGIN
 
@@ -39,6 +40,45 @@ KRAKEN_NAMESPACE_BEGIN
 //   TfType::Define<Scene, TfType::Bases<KrakenPrim>>();
 //   TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
 // }
+
+double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value, const wabi::UsdStageRefPtr &stage)
+{
+  if (unit->system == USER_UNIT_NONE) {
+    /* Never apply scale_length when not using a unit setting! */
+    if (UsdGeomStageHasAuthoredMetersPerUnit(stage)) {
+      /* Use existing stage meters if present. */
+      return UsdGeomGetStageMetersPerUnit(stage);
+    }
+
+    /* Good luck. */
+    return value;
+  }
+
+  switch (unit_type) {
+    case K_UNIT_LENGTH:
+    case K_UNIT_VELOCITY:
+    case K_UNIT_ACCELERATION:
+      const double metersPerUnit = value * (double)unit->scale_length;
+      wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
+      return metersPerUnit;
+    case K_UNIT_AREA:
+    case K_UNIT_POWER:
+      const double metersPerUnit = value * pow(unit->scale_length, 2);
+      wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
+      return metersPerUnit;
+    case K_UNIT_VOLUME:
+      const double metersPerUnit = value * pow(unit->scale_length, 3);
+      wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
+      return metersPerUnit;
+    case K_UNIT_MASS:
+      const double metersPerUnit = value * pow(unit->scale_length, 3);
+      wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
+      return metersPerUnit;
+    case K_UNIT_CAMERA: /* *Do not* use scene's unit scale for camera focal lens! See T42026. */
+    default:
+      return value;
+  }
+}
 
 Scene::Scene(const wabi::UsdStageRefPtr &stage)
   : stage(stage)

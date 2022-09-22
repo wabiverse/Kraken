@@ -65,6 +65,30 @@ void *AnchorSystemWindow::getOSWindow() const
   return NULL;
 }
 
+eAnchorStatus AnchorSystemWindow::setCustomCursorShape(uint8_t *bitmap, 
+                                                       uint8_t *mask, 
+                                                       int sizex, 
+                                                       int sizey, 
+                                                       int hotX, 
+                                                       int hotY, 
+                                                       bool canInvertColor)
+{
+  if (setWindowCustomCursorShape(bitmap, mask, sizex, sizey, hotX, hotY, canInvertColor)) {
+    m_cursorShape = ANCHOR_StandardCursorCustom;
+    return ANCHOR_SUCCESS;
+  }
+  return ANCHOR_FAILURE;
+}
+
+eAnchorStatus AnchorSystemWindow::setCursorVisibility(bool visible)
+{
+  if (setWindowCursorVisibility(visible)) {
+    m_cursorVisible = visible;
+    return ANCHOR_SUCCESS;
+  }
+  return ANCHOR_FAILURE;
+}
+
 eAnchorStatus AnchorSystemWindow::setDrawingContextType(eAnchorDrawingContextType type)
 {
   if (type != m_drawingContextType) {

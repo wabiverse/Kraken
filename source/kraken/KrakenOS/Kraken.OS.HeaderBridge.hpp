@@ -38,6 +38,7 @@ namespace KRKN::Private::Protocol
 
 namespace KRKN::Private::Selector
 {
+  KRKN_PRIVATE_DEF_SEL(getMainDisplayDimensions, "getMainDisplayDimensions");
   KRKN_PRIVATE_DEF_SEL(processEvents, "processEvents");
   KRKN_PRIVATE_DEF_SEL(title, "title");
 }

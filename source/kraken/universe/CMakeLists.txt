@@ -24,7 +24,9 @@ set(SRC
 
   USD_api.h
   USD_area.h
+  USD_color_types.h
   USD_context.h
+  USD_curveprofile_types.h
   USD_default_tables.h
   USD_factory.h
   USD_file.h
@@ -36,6 +38,7 @@ set(SRC
   USD_scene.h
   USD_screen.h
   USD_system.h
+  USD_texture_types.h
   USD_types.h
   USD_userpref.h
   USD_wm_types.h

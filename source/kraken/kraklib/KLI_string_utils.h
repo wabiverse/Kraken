@@ -66,6 +66,7 @@ size_t KLI_strncpy_rlen(char *__restrict dst,
 size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t maxncpy)
   ATTR_NONNULL();
 
+char *KLI_strncpy_utf8(char *__restrict dst, const char *__restrict src, size_t maxncpy);
 
 size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
                                  const wchar_t *__restrict src,
@@ -77,7 +78,15 @@ int KLI_str_utf8_size_safe(const char *p) ATTR_NONNULL();
 
 size_t KLI_str_utf8_from_unicode(uint c, char *outbuf, const size_t outbuf_len);
 
+size_t KLI_strnlen_utf8(const char *strc, const size_t maxlen);
+
+size_t KLI_strnlen_utf8_ex(const char *strc, const size_t maxlen, size_t *r_len_bytes);
+
 size_t KLI_strnlen(const char *s, const size_t maxlen) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
+
+size_t KLI_strcpy_rlen(char *__restrict dst, const char *__restrict src);
+
+size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const size_t maxncpy);
 
 size_t KLI_vsnprintf(char *__restrict buffer,
                      size_t maxncpy,

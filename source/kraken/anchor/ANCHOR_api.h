@@ -1047,6 +1047,27 @@ namespace ANCHOR
   eAnchorStatus SwapChain(AnchorSystemWindowHandle windowhandle);
 
   ANCHOR_API
+  eAnchorStatus SetCustomCursorShape(AnchorSystemWindowHandle windowhandle,
+                                     uint8_t *bitmap,
+                                     uint8_t *mask,
+                                     int sizex,
+                                     int sizey,
+                                     int hotX,
+                                     int hotY,
+                                     bool canInvertColor);
+
+  ANCHOR_API
+  eAnchorStatus SetCursorShape(AnchorSystemWindowHandle windowhandle,
+                               eAnchorStandardCursor cursorshape);
+
+  ANCHOR_API
+  eAnchorStatus HasCursorShape(AnchorSystemWindowHandle windowhandle,
+                               eAnchorStandardCursor cursorshape);
+
+  ANCHOR_API
+  eAnchorStatus SetCursorVisibility(AnchorSystemWindowHandle windowhandle, bool visible);
+
+  ANCHOR_API
   eAnchorStatus ActivateWindowDrawingContext(AnchorSystemWindowHandle windowhandle);
 
   /**
@@ -1666,7 +1687,7 @@ namespace ANCHOR
   ANCHOR_API float GetFrameHeight();                // ~ FontSize + style.FramePadding[1] * 2
   ANCHOR_API float GetFrameHeightWithSpacing();     // ~ FontSize + style.FramePadding[1] * 2 +
                                                     // style.ItemSpacing[1] (distance in pixels
-                                                 // between 2 consecutive lines of framed widgets)
+  // between 2 consecutive lines of framed widgets)
 
   // ID stack/scopes
   // - Read the FAQ for more details about how ID are handled in ANCHOR. If you are creating

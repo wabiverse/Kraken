@@ -589,6 +589,9 @@ enum eReportType
 
 struct wmTimer
 {
+  /** Window this timer is attached to (optional). */
+  struct wmWindow *win;
+
   /** Set by timer user. */
   UsdTimeCode timestep;
   /** Set by timer user, goes to event system. */
@@ -613,7 +616,8 @@ struct wmTimer
   bool sleep;
 
   wmTimer()
-    : timestep(TIMECODE_DEFAULT),
+    : win(POINTER_ZERO),
+      timestep(TIMECODE_DEFAULT),
       event_type(VALUE_ZERO),
       flags(WM_TIMER_NO_FREE_CUSTOM_DATA),
       customdata(POINTER_ZERO),
@@ -667,6 +671,16 @@ struct wmTabletData
   float y_tilt;
   /** Interpret mouse motion as absolute as typical for tablets. */
   bool is_motion_absolute;
+};
+
+/**
+ * Wrapper to reference a #wmOperatorType together with some set properties and other relevant
+ * information to invoke the operator in a customizable way.
+ */
+struct wmOperatorCallParams {
+  struct wmOperatorType *optype;
+  struct KrakenPRIM *opptr;
+  eWmOperatorContext opcontext;
 };
 
 struct wmEvent
@@ -1012,5 +1026,32 @@ struct wmKeyConfig
   {}
 };
 
+
+/**
+ * Struct to store tool-tip timer and possible creation if the time is reached.
+ * Allows UI code to call #WM_tooltip_timer_init without each user having to handle the timer.
+ */
+struct wmTooltipState {
+  /** Create tooltip on this event. */
+  struct wmTimer *timer;
+  /** The area the tooltip is created in. */
+  struct ScrArea *area_from;
+  /** The region the tooltip is created in. */
+  struct ARegion *region_from;
+  /** The tooltip region. */
+  struct ARegion *region;
+  /** Create the tooltip region (assign to 'region'). */
+  struct ARegion *(*init)(struct kContext *C,
+                          struct ARegion *region,
+                          int *pass,
+                          double *pass_delay,
+                          bool *r_exit_on_event);
+  /** Exit on any event, not needed for buttons since their highlight state is used. */
+  bool exit_on_event;
+  /** Cursor location at the point of tooltip creation. */
+  int event_xy[2];
+  /** Pass, use when we want multiple tips, count down to zero. */
+  int pass;
+};
 
 KRAKEN_NAMESPACE_END

@@ -56,7 +56,7 @@ typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
 typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const wabi::UsdPrim &type);
 typedef void **(*ObjectInstanceFunc)(struct KrakenPRIM *ptr);
 
-typedef enum PropertyType
+enum PropertyType
 {
   PROP_BOOLEAN = 0,
   PROP_INT = 1,
@@ -65,9 +65,9 @@ typedef enum PropertyType
   PROP_ENUM = 4,
   PROP_POINTER = 5,
   PROP_COLLECTION = 6,
-} PropertyType;
+};
 
-typedef enum FunctionFlag
+enum FunctionFlag
 {
   FUNC_USE_SELF_ID = (1 << 11),
   FUNC_NO_SELF = (1 << 0),
@@ -79,7 +79,7 @@ typedef enum FunctionFlag
   FUNC_REGISTER_OPTIONAL = FUNC_REGISTER | (1 << 6),
   FUNC_ALLOW_WRITE = (1 << 12),
   FUNC_RUNTIME = (1 << 9),
-} FunctionFlag;
+};
 
 typedef void (*PropStringGetFunc)(struct KrakenPRIM *ptr, char *value);
 typedef int (*PropStringLengthFunc)(struct KrakenPRIM *ptr);

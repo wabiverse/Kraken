@@ -23,17 +23,126 @@
  */
 
 #include "KKE_icons.h"
+#include "KKE_ID.h"
 #include "KKE_utils.h"
+
+#include "KLI_threads.h"
+#include "KLI_assert.h"
+
+#include <wabi/base/tf/hash.h>
 
 KRAKEN_NAMESPACE_BEGIN
 
+/**
+ * Only allow non-managed icons to be removed (by Python for eg).
+ * Previews & ID's have their own functions to remove icons.
+ */
+enum
+{
+  ICON_FLAG_MANAGED = (1 << 0),
+};
+
+/* Protected by gIconMutex. */
 static RHash *gIcons = nullptr;
+
+/* Protected by gIconMutex. */
+static int gNextIconId = 1;
+
+/* Protected by gIconMutex. */
+static int gFirstIconId = 1;
+
 static std::mutex gIconMutex;
 
-static Icon *icon_ghash_lookup(const std::string &icon_id)
+/* Not mutex-protected! */
+static RHash *gCachedPreviews = nullptr;
+
+/* Queue of icons for deferred deletion. */
+struct DeferredIconDeleteNode {
+  struct DeferredIconDeleteNode *next;
+  int icon_id;
+};
+
+/* Protected by gIconMutex. */
+static LockfreeLinkList g_icon_delete_queue;
+
+static void icon_free(void *val)
+{
+  Icon *icon = (Icon *)val;
+
+  if (icon) {
+    if (icon->obj_type == ICON_DATA_GEOM) {
+      struct Icon_Geom *obj = (struct Icon_Geom *)icon->obj;
+      if (obj->mem) {
+        /* coords & colors are part of this memory. */
+        delete obj->mem;
+      } else {
+        delete obj->coords;
+        delete obj->colors;
+      }
+      delete icon->obj;
+    }
+
+    if (icon->drawinfo_free) {
+      icon->drawinfo_free(icon->drawinfo);
+    } else if (icon->drawinfo) {
+      delete icon->drawinfo;
+    }
+    delete icon;
+  }
+}
+
+static void icon_free_data(int icon_id, Icon *icon)
+{
+  switch (icon->obj_type) {
+    case ICON_DATA_ID:
+      ((ID *)(icon->obj))->icon_id = 0;
+      break;
+    case ICON_DATA_IMBUF: {
+      // ImBuf *imbuf = (ImBuf *)icon->obj;
+      // if (imbuf) {
+      //   IMB_freeImBuf(imbuf);
+      // }
+      break;
+    }
+    case ICON_DATA_PREVIEW:
+      // ((PreviewImage *)(icon->obj))->icon_id = 0;
+      break;
+    case ICON_DATA_GEOM:
+      ((struct Icon_Geom *)(icon->obj))->icon_id = 0;
+      break;
+    case ICON_DATA_STUDIOLIGHT: {
+      // StudioLight *sl = (StudioLight *)icon->obj;
+      // if (sl != nullptr) {
+        // KKE_studiolight_unset_icon_id(sl, icon_id);
+      // }
+      break;
+    }
+    default:
+      KLI_assert_unreachable();
+  }
+}
+
+static Icon *icon_rhash_lookup(int icon_id)
 {
   std::scoped_lock lock(gIconMutex);
-  return (Icon *)KKE_rhash_lookup(gIcons, FIND_TOKEN(icon_id));
+  return (Icon *)KKE_rhash_lookup(gIcons, POINTER_FROM_INT(icon_id));
+}
+
+void KKE_icons_init(int first_dyn_id)
+{
+  KLI_assert(KLI_thread_is_main());
+
+  gNextIconId = first_dyn_id;
+  gFirstIconId = first_dyn_id;
+
+  if (!gIcons) {
+    gIcons = KKE_rhash_int_new(__func__);
+    KKE_linklist_lockfree_init(&g_icon_delete_queue);
+  }
+
+  if (!gCachedPreviews) {
+    gCachedPreviews = KKE_rhash_str_new(__func__);
+  }
 }
 
 KRAKEN_NAMESPACE_END

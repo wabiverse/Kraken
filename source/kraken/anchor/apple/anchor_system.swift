@@ -25,43 +25,6 @@ import Pixar
 /* Kraken Anchor. */
 import Anchor
 
-public struct AnchorSystemApple
-{
-  public static func createWindow(title: String, left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, state: eAnchorWindowState, isDialog: Bool) -> AnchorWindowApple?
-  {
-    var window: AnchorWindowApple?
-
-    let frame = (NSScreen.main?.visibleFrame)!
-    // let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
-    let contentRect = NSWindow.contentRect(forFrameRect: frame, styleMask: NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskTitled + NSWindowStyleMaskClosable + NSWindowStyleMaskMiniaturizable))
-
-    var bottom = (contentRect.size.height - 1) - height - top
-
-    /* Ensures window top left is inside this available rect. */
-    let leftC = left > contentRect.origin.x ? left : contentRect.origin.x
-    /* Add contentRect.origin.y to respect docksize. */
-    bottom = bottom > contentRect.origin.y ? bottom + contentRect.origin.y : contentRect.origin.y
-
-    window = AnchorWindowApple(title: title, 
-                               left: leftC, 
-                               bottom: bottom, 
-                               width: width, 
-                               height: height, 
-                               state: state, 
-                               dialog: isDialog,
-                               parent: nil)
-
-    if let window = window {
-      /* proceed... */
-    } else {
-      fputs("AnchorWindowApple::createWindow(): window invalid\n", stderr)
-      window = nil
-    }
-
-    return window
-  }
-}
-
 open class AnchorWindowApple : NSObject
 {
   var window: NSWindow

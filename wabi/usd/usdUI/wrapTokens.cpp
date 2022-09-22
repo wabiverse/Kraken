@@ -123,6 +123,7 @@ void wrapUsdUITokens()
   _AddToken(cls, "top", UsdUITokens->top);
   _AddToken(cls, "uiAreaIcon", UsdUITokens->uiAreaIcon);
   _AddToken(cls, "uiAreaName", UsdUITokens->uiAreaName);
+  _AddToken(cls, "uiAreaCoords", UsdUITokens->uiAreaCoords);
   _AddToken(cls, "uiAreaPos", UsdUITokens->uiAreaPos);
   _AddToken(cls, "uiAreaSize", UsdUITokens->uiAreaSize);
   _AddToken(cls, "uiAreaSpacetype", UsdUITokens->uiAreaSpacetype);

@@ -65,7 +65,7 @@ def "WabiAnimationStudios" (
                 custom bool display_file_selector = 1 (
                     displayName = "Display File Selector"
                 )
-                custom asset filepath = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/startup.usda@ (
+                custom asset filepath = @/Users/furby/Library/Application Support/Kraken/1.50/config/userpref.usda@ (
                     displayName = "File Path"
                     doc = "The path to a .usd file path to open"
                 )
@@ -85,9 +85,9 @@ def "WabiAnimationStudios" (
             uniform asset ui:window:icon = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/icons/kraken-desktop.png@
             uniform float ui:window:linewidth = 1
             uniform float ui:window:pixelsz = 2
-            uniform float2 ui:window:pos = (0, 18466944)
+            uniform float2 ui:window:pos = (0, 0)
             uniform float ui:window:scale = 1
-            uniform float2 ui:window:size = (1920, 1080)
+            uniform float2 ui:window:size = (0, 0)
             uniform token ui:window:state = "normal"
             uniform token ui:window:title = "Kraken"
             uniform token ui:window:type = "normal"

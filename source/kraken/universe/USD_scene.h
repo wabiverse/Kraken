@@ -47,6 +47,37 @@ KRAKEN_NAMESPACE_BEGIN
  * ---------------------------------------------------------------------
  */
 
+/* UnitSettings */
+
+#define USER_UNIT_ADAPTIVE 0xFF
+/** #UnitSettings.system */
+#define USER_UNIT_NONE 0
+#define USER_UNIT_METRIC 1
+#define USER_UNIT_IMPERIAL 2
+/** #UnitSettings.flag */
+#define USER_UNIT_OPT_SPLIT 1
+#define USER_UNIT_ROT_RADIANS 2
+
+#define FRA2TIME(a) ((((double)scene->stage->GetTimeCodesPerSecond()) * (double)(a)) / (double)scene->stage->GetFramesPerSecond())
+#define TIME2FRA(a) ((((double)scene->stage->GetFramesPerSecond() * (double)(a)) / (double)scene->stage->GetTimeCodesPerSecond())
+#define FPS (((double)scene->stage->GetFramesPerSecond()) / (double)scene->stage->GetTimeCodesPerSecond())
+
+struct UnitSettings {
+  /* Display/Editing unit options for each scene */
+  /** Maybe have other unit conversions? */
+  float scale_length;
+  /** Imperial, metric etc. */
+  char system;
+  /** Not implemented as a proper unit system yet. */
+  char system_rotation;
+  short flag;
+
+  char length_unit;
+  char mass_unit;
+  char time_unit;
+  char temperature_unit;
+};
+
 enum eSceneDrawMode
 {
   DRAW_POINTS,

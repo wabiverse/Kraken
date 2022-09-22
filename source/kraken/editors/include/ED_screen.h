@@ -51,6 +51,11 @@ void ED_area_newspace(kContext *C,
 bool ED_screen_change(kContext *C, kScreen *screen);
 void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen);
 
+void ED_region_exit(kContext *C, ARegion *region);
+
+void ED_region_tag_redraw_no_rebuild(struct ARegion *region);
+void ED_region_tag_refresh_ui(struct ARegion *region);
+
 WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(
   Main *kmain,
   WorkSpace *workspace,

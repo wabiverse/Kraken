@@ -13,10 +13,10 @@ AnchorSystemPathsCocoa::~AnchorSystemPathsCocoa() {}
 
 #pragma mark Base directories retrieval
 
-static const char *GetApplicationSupportDir(const char *versionstr,
-                                            const NSSearchPathDomainMask mask,
-                                            char *tempPath,
-                                            const std::size_t len_tempPath)
+const char *AnchorSystemPathsCocoa::GetApplicationSupportDir(const char *versionstr,
+                                                             const NSUInteger mask,
+                                                             char *tempPath,
+                                                             const std::size_t len_tempPath)
 {
   @autoreleasepool {
     const NSArray *const paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,

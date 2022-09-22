@@ -72,10 +72,26 @@ bool WM_window_is_temp_screen(const wmWindow *win);
 void WM_anchor_init(kContext *C);
 void WM_anchor_exit(void);
 
+typedef struct ARegion *(*wmTooltipInitFn)(struct kContext *C,
+                                           struct ARegion *region,
+                                           int *pass,
+                                           double *r_pass_delay,
+                                           bool *r_exit_on_event);
+
+void WM_tooltip_timer_init(kContext *C, wmWindow *win, ScrArea *area, ARegion *region, wmTooltipInitFn init);
+void WM_tooltip_timer_init_ex(kContext *C, wmWindow *win, ScrArea *area, ARegion *region, wmTooltipInitFn init, double delay);
+
+struct PanelType *WM_paneltype_find(const char *idname, bool quiet);
+
 void WM_window_process_events(kContext *C);
 void WM_window_swap_buffers(wmWindow *win);
 
 void WM_window_anchorwindows_ensure(wmWindowManager *wm);
+
+wmTimer *WM_event_add_timer(wmWindowManager *wm, wmWindow *win, int event_type, double timestep);
+void WM_event_remove_timer(wmWindowManager *wm, wmWindow *win, wmTimer *timer);
+
+void WM_tooltip_clear(kContext *C, wmWindow *win);
 
 /** Operators :: Register */
 void WM_window_operators_register();

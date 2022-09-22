@@ -33,8 +33,10 @@ set(SRC
   intern/wm_init_exit.cpp
   intern/wm_msgbus.cpp
   intern/wm_operators.cpp
+  intern/wm_panel_type.cpp
   intern/wm_styles.cpp
   intern/wm_tokens.cpp
+  intern/wm_tooltip.cpp
   intern/wm_window.cpp
   intern/wm.cpp
 
@@ -51,6 +53,7 @@ set(SRC
   WM_msgbus.h
   WM_operators.h
   WM_tokens.h
+  WM_tooltip.h
   WM_window.h
 )
 
@@ -58,6 +61,7 @@ set(LIB
   maelstrom
   maelstrom_static
   kraken_anchor
+  kraken_editor_interface
   kraken_editor_spacefile
   kraken_editor_screen
   kraken_editor_spaceview3d

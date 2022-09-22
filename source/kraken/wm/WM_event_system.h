@@ -18,8 +18,8 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * Window Manager.
+ * Making GUI Fly.
  */
 
 #pragma once

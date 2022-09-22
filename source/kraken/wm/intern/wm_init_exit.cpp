@@ -40,17 +40,19 @@
 #include "USD_userpref.h"
 #include "USD_factory.h"
 
-#include "KLI_icons.h"
-
-#include "KKE_context.h"
-#include "KKE_main.h"
 #include "KKE_appdir.h"
+#include "KKE_context.h"
+#include "KKE_icons.h"
+#include "KKE_main.h"
 
 #include "KPY_extern_python.h"
 #include "KPY_extern_run.h"
 
 #include "ED_debug_codes.h"
 #include "ED_screen.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
 
 #include <wabi/base/tf/stringUtils.h>
 
@@ -69,6 +71,10 @@ void WM_init(kContext *C, int argc, const char **argv)
 
   WM_init_manager(C);
   WM_files_init(C);
+
+  // ED_spacetypes_init();
+
+  KKE_icons_init(KIFICONID_LAST);
 
   KPY_python_start(C, argc, argv);
   KPY_python_reset(C);

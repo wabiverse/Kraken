@@ -86,6 +86,27 @@ static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_al
   }
 }
 
+/* -------------------------------------------------------------------- */
+/** \name Region Tag Redraws
+ * \{ */
+
+void ED_region_tag_redraw_no_rebuild(ARegion *region)
+{
+  if (region && !(region->do_draw & (RGN_DRAWING | RGN_DRAW))) {
+    region->do_draw &= ~(RGN_DRAW_PARTIAL | RGN_DRAW_EDITOR_OVERLAYS);
+    region->do_draw |= RGN_DRAW_NO_REBUILD;
+    memset(&region->drawrct, 0, sizeof(region->drawrct));
+  }
+}
+
+void ED_region_tag_refresh_ui(ARegion *region)
+{
+  if (region) {
+    region->do_draw |= RGN_REFRESH_UI;
+  }
+}
+
+/** \} */
 
 void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const bool skip_region_exit)
 {

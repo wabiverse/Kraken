@@ -298,9 +298,18 @@ AnchorU8 AnchorSystemCocoa::getNumDisplays() const
   return 0;
 }
 
-void AnchorSystemCocoa::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const {}
+void AnchorSystemCocoa::getMainDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+{
+  CGRect contentRect = m_swift->getMainDisplayDimensions();
 
-void AnchorSystemCocoa::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const {}
+  width = (AnchorU32)contentRect.size.width;
+  height = (AnchorU32)contentRect.size.height;
+}
+
+void AnchorSystemCocoa::getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const
+{
+  getMainDisplayDimensions(width, height);
+}
 
 /**
  * Creates a window event.
@@ -536,14 +545,15 @@ void AnchorAppleMetal::getClientBounds(AnchorRect &bounds) const
 
   // Max window contents as screen size (excluding title bar...)
   // NSRect contentRect = [NSWindow contentRectForFrameRect:screenSize
-                                              //  styleMask:[[m_window getCocoaWindow] styleMask]];
+  //  styleMask:[[m_window getCocoaWindow] styleMask]];
 
   // rect = [[m_window getCocoaWindow] contentRectForFrameRect:[[m_window getCocoaWindow] frame]];
 
   // bounds.m_b = contentRect.size.height - (rect.origin.y - contentRect.origin.y);
   // bounds.m_l = rect.origin.x - contentRect.origin.x;
   // bounds.m_r = rect.origin.x - contentRect.origin.x + rect.size.width;
-  // bounds.m_t = contentRect.size.height - (rect.origin.y + rect.size.height - contentRect.origin.y);
+  // bounds.m_t = contentRect.size.height - (rect.origin.y + rect.size.height -
+  // contentRect.origin.y);
 
   // [pool drain];
 }
@@ -565,7 +575,7 @@ void AnchorAppleMetal::SetupMetal()
   m_hgi = new wabi::HgiMetal(m_device);
 
   /**
-  * Setup ANCHOR context. */
+   * Setup ANCHOR context. */
 
   ANCHOR_CHECKVERSION();
   ANCHOR::CreateContext();
@@ -636,7 +646,8 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
   AnchorIO &io = ANCHOR::GetIO();
   // io.DisplaySize[0] = m_metalKitView->drawableSize().width;
   // io.DisplaySize[1] = m_metalKitView->drawableSize().height;
-  // m_metalKitView->setDrawableSize(CGSizeMake((CGFloat)io.DisplaySize[0], (CGFloat)io.DisplaySize[1]));
+  // m_metalKitView->setDrawableSize(CGSizeMake((CGFloat)io.DisplaySize[0],
+  // (CGFloat)io.DisplaySize[1]));
 
 #if TARGET_OS_OSX
   CGFloat framebufferScale = CGFloat(1);
@@ -647,9 +658,8 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
 
   MTL::CommandBuffer *commandBuffer = m_metalCmdQueue->commandBuffer();
 
-  MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::alloc()->init();
-  if (renderPassDescriptor == nil)
-  {
+  MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::alloc()->init();
+  if (renderPassDescriptor == nil) {
     commandBuffer->commit();
     return ANCHOR_FAILURE;
   }
@@ -659,7 +669,7 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
   ANCHOR::NewFrame();
 
   static wabi::GfVec4f clear_color = wabi::GfVec4f(0.45f, 0.55f, 0.60f, 1.00f);
-  
+
   ANCHOR::Begin("Kraken");
   ANCHOR::Text("Computer Graphics of the Modern Age.");
   ANCHOR::End();
@@ -668,17 +678,20 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
 
   AnchorDrawData *drawData = ANCHOR::GetDrawData();
 
-  renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor::Make(clear_color[0] * clear_color[3], 
-                                                                     clear_color[1] * clear_color[3], 
-                                                                     clear_color[2] * clear_color[3], 
-                                                                     clear_color[3]));
-  MTL::RenderCommandEncoder *renderEncoder = commandBuffer->renderCommandEncoder(renderPassDescriptor);
-  renderEncoder->pushDebugGroup(NS::String::string("Anchor is Rendering...", NS::UTF8StringEncoding));
+  renderPassDescriptor->colorAttachments()->object(0)->setClearColor(
+    MTL::ClearColor::Make(clear_color[0] * clear_color[3],
+                          clear_color[1] * clear_color[3],
+                          clear_color[2] * clear_color[3],
+                          clear_color[3]));
+  MTL::RenderCommandEncoder *renderEncoder = commandBuffer->renderCommandEncoder(
+    renderPassDescriptor);
+  renderEncoder->pushDebugGroup(
+    NS::String::string("Anchor is Rendering...", NS::UTF8StringEncoding));
   kraken::gpu::ViewDraw(drawData, commandBuffer, renderEncoder);
   renderEncoder->popDebugGroup();
   renderEncoder->endEncoding();
 
-  // commandBuffer->presentDrawable(m_metalKitView->nextDrawable()); 
+  // commandBuffer->presentDrawable(m_metalKitView->nextDrawable());
   commandBuffer->commit();
 
   return ANCHOR_SUCCESS;
@@ -699,14 +712,11 @@ bool AnchorAppleMetal::getModifiedState()
   return false;
 }
 
-void AnchorAppleMetal::setIcon(const char *icon)
-{
-
-}
+void AnchorAppleMetal::setIcon(const char *icon) {}
 
 bool AnchorAppleMetal::getValid() const
 {
-  return AnchorSystemWindow::getValid() && m_window != nil/* && m_metalKitView != nil*/;
+  return AnchorSystemWindow::getValid() && m_window != nil /* && m_metalKitView != nil*/;
 }
 
 void *AnchorAppleMetal::getOSWindow() const
@@ -734,10 +744,7 @@ std::string AnchorAppleMetal::getTitle() const
   return title;
 }
 
-void AnchorAppleMetal::getWindowBounds(AnchorRect &bounds) const
-{
-
-}
+void AnchorAppleMetal::getWindowBounds(AnchorRect &bounds) const {}
 
 eAnchorStatus AnchorAppleMetal::setClientSize(AnchorU32 width, AnchorU32 height)
 {
@@ -780,15 +787,17 @@ eAnchorWindowState AnchorAppleMetal::getState() const
   return state;
 }
 
-void AnchorAppleMetal::screenToClient(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
-{
+void AnchorAppleMetal::screenToClient(AnchorS32 inX,
+                                      AnchorS32 inY,
+                                      AnchorS32 &outX,
+                                      AnchorS32 &outY) const
+{}
 
-}
-
-void AnchorAppleMetal::clientToScreen(AnchorS32 inX, AnchorS32 inY, AnchorS32 &outX, AnchorS32 &outY) const
-{
-
-}
+void AnchorAppleMetal::clientToScreen(AnchorS32 inX,
+                                      AnchorS32 inY,
+                                      AnchorS32 &outX,
+                                      AnchorS32 &outY) const
+{}
 
 eAnchorStatus AnchorAppleMetal::setOrder(eAnchorWindowOrder order)
 {
@@ -817,6 +826,18 @@ static void *getImageCursor(eAnchorStandardCursor shape, NS::String *name)
 
   // return cursors[index];
   return nullptr;
+}
+
+eAnchorStatus AnchorAppleMetal::setWindowCursorVisibility(bool visible)
+{
+  NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
+
+  if (/*m_window->isVisible()*/ m_window) {
+    loadCursor(visible, getCursorShape());
+  }
+
+  pool->drain();
+  return ANCHOR_SUCCESS;
 }
 
 void *AnchorAppleMetal::getStandardCursor(eAnchorStandardCursor shape) const
@@ -898,14 +919,101 @@ void *AnchorAppleMetal::getStandardCursor(eAnchorStandardCursor shape) const
     case ANCHOR_StandardCursorHorizontalSplit:
       return getImageCursor(shape, NS::String::string("splith.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorCrosshairA:
-      return getImageCursor(shape, NS::String::string("paint_cursor_cross.pdf", NS::UTF8StringEncoding));
+      return getImageCursor(shape,
+                            NS::String::string("paint_cursor_cross.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorCrosshairB:
-      return getImageCursor(shape, NS::String::string("paint_cursor_dot.pdf", NS::UTF8StringEncoding));
+      return getImageCursor(shape,
+                            NS::String::string("paint_cursor_dot.pdf", NS::UTF8StringEncoding));
     case ANCHOR_StandardCursorCrosshairC:
       return getImageCursor(shape, NS::String::string("crossc.pdf", NS::UTF8StringEncoding));
     default:
       return nullptr;
   }
+}
+
+/** Reverse the bits in a uint16_t */
+static uint16_t uns16ReverseBits(uint16_t shrt)
+{
+  shrt = ((shrt >> 1) & 0x5555) | ((shrt << 1) & 0xAAAA);
+  shrt = ((shrt >> 2) & 0x3333) | ((shrt << 2) & 0xCCCC);
+  shrt = ((shrt >> 4) & 0x0F0F) | ((shrt << 4) & 0xF0F0);
+  shrt = ((shrt >> 8) & 0x00FF) | ((shrt << 8) & 0xFF00);
+  return shrt;
+}
+
+eAnchorStatus AnchorAppleMetal::setWindowCustomCursorShape(uint8_t *bitmap,
+                                                           uint8_t *mask,
+                                                           int sizex,
+                                                           int sizey,
+                                                           int hotX,
+                                                           int hotY,
+                                                           bool canInvertColor)
+{
+// todo: rewrite for cxx/swift.
+//   int y, nbUns16;
+//   NS::Point hotSpotPoint;
+//   NS::BitmapImageRep *cursorImageRep;
+//   NS::Image *cursorImage;
+//   NS::Size imSize;
+//   uint16_t *cursorBitmap;
+
+//   NS::AutoreleasePool *pool = NS::AutoreleasePool->alloc()->init();
+
+//   if (m_customCursor) {
+//     [m_customCursor release];
+//     m_customCursor = nil;
+//   }
+
+//   cursorImageRep = [[NSBitmapImageRep alloc]
+//     initWithBitmapDataPlanes:nil
+//                   pixelsWide:sizex
+//                   pixelsHigh:sizey
+//                bitsPerSample:1
+//              samplesPerPixel:2
+//                     hasAlpha:YES
+//                     isPlanar:YES
+//               colorSpaceName:NSDeviceWhiteColorSpace
+//                  bytesPerRow:(sizex / 8 + (sizex % 8 > 0 ? 1 : 0))
+//                 bitsPerPixel:1];
+
+//   cursorBitmap = (uint16_t *)[cursorImageRep bitmapData];
+//   nbUns16 = [cursorImageRep bytesPerPlane] / 2;
+
+//   for (y = 0; y < nbUns16; y++) {
+// #if !defined(__LITTLE_ENDIAN__)
+//     cursorBitmap[y] = uns16ReverseBits((bitmap[2 * y] << 0) | (bitmap[2 * y + 1] << 8));
+//     cursorBitmap[nbUns16 + y] = uns16ReverseBits((mask[2 * y] << 0) | (mask[2 * y + 1] << 8));
+// #else
+//     cursorBitmap[y] = uns16ReverseBits((bitmap[2 * y + 1] << 0) | (bitmap[2 * y] << 8));
+//     cursorBitmap[nbUns16 + y] = uns16ReverseBits((mask[2 * y + 1] << 0) | (mask[2 * y] << 8));
+// #endif
+
+//     /* Flip white cursor with black outline to black cursor with white outline
+//      * to match macOS platform conventions. */
+//     if (canInvertColor) {
+//       cursorBitmap[y] = ~cursorBitmap[y];
+//     }
+//   }
+
+//   imSize.width = sizex;
+//   imSize.height = sizey;
+//   cursorImage = [[NSImage alloc] initWithSize:imSize];
+//   [cursorImage addRepresentation:cursorImageRep];
+
+//   hotSpotPoint.x = hotX;
+//   hotSpotPoint.y = hotY;
+
+//   // foreground and background color parameter is not handled for now (10.6)
+//   m_customCursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:hotSpotPoint];
+
+//   [cursorImageRep release];
+//   [cursorImage release];
+
+//   if ([m_window isVisible]) {
+//     loadCursor(getCursorVisibility(), ANCHOR_StandardCursorCustom);
+//   }
+//   [pool drain];
+  return ANCHOR_SUCCESS;
 }
 
 eAnchorStatus AnchorAppleMetal::hasCursorShape(eAnchorStandardCursor shape)

@@ -174,4 +174,7 @@ bool KKE_screen_is_used(const kScreen *screen);
 void KKE_screen_sort_scrvert(struct ScrVert **v1, struct ScrVert **v2);
 ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const short min);
 
+ARegionType *KKE_regiontype_from_id(const SpaceType *st, int regionid);
+void KKE_area_region_free(SpaceType *st, ARegion *region);
+
 KRAKEN_NAMESPACE_END

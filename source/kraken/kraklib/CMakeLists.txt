@@ -15,6 +15,7 @@ set(SRC
   intern/KLI_math.c
   intern/KLI_numaapi.cpp
   intern/KLI_path_utils.cpp
+  intern/KLI_rect.cpp
   intern/KLI_storage.cpp
   intern/KLI_string_utils.cpp
   intern/KLI_time.cpp
@@ -29,6 +30,7 @@ set(SRC
   KLI_math_inline.h
   KLI_numaapi.h
   KLI_path_utils.h
+  KLI_rect.h
   KLI_string_utils.h
   KLI_threads.h
   KLI_time.h

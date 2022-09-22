@@ -79,6 +79,7 @@ struct ScrArea : UsdUIArea
   UsdAttribute name;
   UsdAttribute spacetype;
   UsdAttribute icon;
+  UsdAttribute coords;
   UsdAttribute pos;
   UsdAttribute size;
 
@@ -108,7 +109,8 @@ ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
     v4(POINTER_ZERO),
     name(CreateNameAttr(DEFAULT_TOKEN("Area"))),
     spacetype(CreateSpacetypeAttr(DEFAULT_VALUE(UsdUITokens->spaceEmpty))),
-    icon(CreateIconAttr(DEFAULT_ASSET(KLI_icon(ICON_KRAKEN)))),
+    // icon(CreateIconAttr(DEFAULT_ASSET(KLI_icon(ICON_KRAKEN)))),
+    coords(CreatePosAttr(DEFAULT_VEC4I(0, 0, 0, 0))),
     pos(CreatePosAttr(DEFAULT_VEC2F(0, 0))),
     size(CreateSizeAttr(DEFAULT_VEC2F(1, 1))),
     type(POINTER_ZERO),

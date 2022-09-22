@@ -85,6 +85,7 @@ struct ARegion : public UsdUIArea
   UsdAttribute name;
   UsdAttribute spacetype;
   UsdAttribute icon;
+  UsdAttribute coords;
   UsdAttribute pos;
   UsdAttribute size;
 
@@ -93,6 +94,22 @@ struct ARegion : public UsdUIArea
   short alignment;
 
   struct ARegionType *type;
+
+  void *regiondata;
+
+  /** Private, cached notifier events. */
+  short do_draw;
+  /** Private, cached notifier events. */
+  short do_draw_paintcursor;
+  /** Private, set for indicate drawing overlapped. */
+  short overlap;
+  /** Temporary copy of flag settings for clean full-screen. */
+  short flagfullscreen;
+
+  /** Runtime for partial redraw, same or smaller than coords. */
+  wabi::GfVec4i drawrct;
+
+  std::vector<struct uiBlock*> uiblocks;
 
   inline ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath);
 };
@@ -103,11 +120,19 @@ ARegion::ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath)
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),
     icon(CreateIconAttr()),
+    coords(CreatePosAttr(DEFAULT_VEC4I(0, 0, 0, 0))),
     pos(CreatePosAttr()),
     size(CreateSizeAttr()),
     regiontype(RGN_TYPE_WINDOW),
     flag(VALUE_ZERO),
-    alignment(VALUE_ZERO)
+    alignment(VALUE_ZERO),
+    type(POINTER_ZERO),
+    regiondata(POINTER_ZERO),
+    do_draw(0),
+    do_draw_paintcursor(0),
+    overlap(0),
+    flagfullscreen(0),
+    drawrct(0, 0, 0, 0)
 {}
 
 KRAKEN_NAMESPACE_END

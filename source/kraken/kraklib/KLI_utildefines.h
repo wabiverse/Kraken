@@ -54,6 +54,104 @@ typedef unsigned __int64 size_t;
 
 namespace fs = std::filesystem;
 
+
+#pragma once
+
+
+/** @file
+ * @ingroup kli
+ *
+ * Use to help with cross platform portability.
+ */
+
+/* Causes warning:
+ * incompatible types when assigning to type 'Foo' from type 'Bar'
+ * ... the compiler optimizes away the temp var */
+#ifdef __GNUC__
+#  define CHECK_TYPE(var, type) \
+    { \
+      typeof(var) *__tmp; \
+      __tmp = (type *)NULL; \
+      (void)__tmp; \
+    } \
+    (void)0
+
+#  define CHECK_TYPE_PAIR(var_a, var_b) \
+    { \
+      const typeof(var_a) *__tmp; \
+      __tmp = (typeof(var_b) *)NULL; \
+      (void)__tmp; \
+    } \
+    (void)0
+
+#  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) \
+    ((void)({ \
+      const typeof(var_a) *__tmp; \
+      __tmp = (typeof(var_b) *)NULL; \
+      (void)__tmp; \
+    }))
+
+#else
+#  define CHECK_TYPE(var, type) \
+    { \
+      EXPR_NOP(var); \
+    } \
+    (void)0
+#  define CHECK_TYPE_PAIR(var_a, var_b) \
+    { \
+      (EXPR_NOP(var_a), EXPR_NOP(var_b)); \
+    } \
+    (void)0
+#  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) (EXPR_NOP(var_a), EXPR_NOP(var_b))
+#endif
+
+/* can be used in simple macros */
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+#  define CHECK_TYPE_INLINE(val, type) \
+    (void)((void)(((type)0) != (0 ? (val) : ((type)0))), _Generic((val), type : 0, const type : 0))
+#else
+#  define CHECK_TYPE_INLINE(val, type) ((void)(((type)0) != (0 ? (val) : ((type)0))))
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+#  define CHECK_TYPE_NONCONST(var) \
+    __extension__({ \
+      void *non_const = 0 ? (var) : NULL; \
+      (void)non_const; \
+    })
+#else
+#  define CHECK_TYPE_NONCONST(var) EXPR_NOP(var)
+#endif
+
+#if defined(_MSC_VER)
+#  define alloca _alloca
+#endif
+
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__cplusplus)
+extern "C++" {
+/** Some magic to be sure we don't have reference in the type. */
+template<typename T> static inline T decltype_helper(T x)
+{
+  return x;
+}
+#  define typeof(x) decltype(decltype_helper(x))
+}
+#endif
+
+/* little macro so inline keyword works */
+#if defined(_MSC_VER)
+#  define KLI_INLINE static __forceinline
+#else
+#  define KLI_INLINE static inline __attribute__((always_inline)) __attribute__((__unused__))
+#endif
+
+#if defined(__GNUC__)
+#  define KLI_NOINLINE __attribute__((noinline))
+#else
+#  define KLI_NOINLINE
+#endif
+
+
 /* -------------------------------------------------------------------- */
 /** \name Min/Max Macros
  * \{ */

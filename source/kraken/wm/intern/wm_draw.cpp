@@ -39,10 +39,17 @@ void WM_draw_update(kContext *C)
   Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  UNIVERSE_FOR_ALL (win, wm->windows) {
+  for (auto &win : wm->windows) {
     CTX_wm_window_set(C, VALUE(win));
     WM_window_swap_buffers(VALUE(win));
   }
 }
+
+void wm_draw_region_clear(wmWindow *win, ARegion *UNUSED(region))
+{
+  kScreen *screen = WM_window_get_active_screen(win);
+  screen->do_draw = true;
+}
+
 
 KRAKEN_NAMESPACE_END

@@ -34,6 +34,7 @@ set(SRC
   KKE_appdir.h
   KKE_context.h
   KKE_icons.h
+  KKE_ID.h
   KKE_kraken_prim.h
   KKE_main.h
   KKE_report.h

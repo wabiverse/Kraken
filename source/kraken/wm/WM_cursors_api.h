@@ -37,6 +37,8 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
+void WM_cursor_set(wmWindow *win, int curs);
+void WM_cursor_modal_restore(wmWindow *win);
 void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4]);
 
 void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y);

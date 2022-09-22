@@ -249,6 +249,35 @@ class UsdUIArea : public UsdTyped
  public:
 
   // --------------------------------------------------------------------- //
+  // COORDS
+  // --------------------------------------------------------------------- //
+  ///
+  /// This attribute specifies the rectangle coordinates of the region.
+  /// In the form of (Xmax - Xmin) it define the size of the width, and
+  /// in the horizontal, (Ymax - Ymin) to define the height.
+  ///
+  ///
+  /// | ||
+  /// | -- | -- |
+  /// | Declaration | `uniform int4 ui:area:coords` |
+  /// | C++ Type | GfVec4i |
+  /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Int4 |
+  /// | \ref SdfVariability "Variability" | SdfVariabilityUniform |
+  USDUI_API
+  UsdAttribute GetCoordsAttr() const;
+
+  /// See GetCoordsAttr(), and also
+  /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+  /// If specified, author \p defaultValue as the attribute's default,
+  /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+  /// the default for \p writeSparsely is \c false.
+  USDUI_API
+  UsdAttribute CreateCoordsAttr(VtValue const &defaultValue = VtValue(),
+                                bool writeSparsely = false) const;
+
+ public:
+
+  // --------------------------------------------------------------------- //
   // POS
   // --------------------------------------------------------------------- //
   ///

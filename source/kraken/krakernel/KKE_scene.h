@@ -41,5 +41,6 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
+double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value, const wabi::UsdStageRefPtr &stage);
 
 KRAKEN_NAMESPACE_END

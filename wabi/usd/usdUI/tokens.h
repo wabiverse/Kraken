@@ -290,6 +290,10 @@ struct UsdUITokensType
   ///
   /// UsdUIArea
   const TfToken uiAreaName;
+  /// \brief "ui:area:coords"
+  ///
+  /// UsdUIArea
+  const TfToken uiAreaCoords;
   /// \brief "ui:area:pos"
   ///
   /// UsdUIArea

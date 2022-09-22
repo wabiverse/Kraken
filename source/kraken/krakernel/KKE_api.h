@@ -55,4 +55,6 @@
 #  define MAKE_ID2(c, d) ((d) << 8 | (c))
 #endif
 
+#define KKE_UNDO_STR_MAX 64
+
 #endif /* KRAKEN_KERNEL_API_H */

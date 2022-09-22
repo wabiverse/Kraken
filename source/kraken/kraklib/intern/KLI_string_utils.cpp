@@ -400,6 +400,47 @@ size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const 
   return srclen;
 }
 
+size_t KLI_strnlen_utf8_ex(const char *strc, const size_t maxlen, size_t *r_len_bytes)
+{
+  size_t len = 0;
+  const char *strc_orig = strc;
+  const char *strc_end = strc + maxlen;
+
+  while (true) {
+    size_t step = (size_t)KLI_str_utf8_size_safe(strc);
+    if (!*strc || strc + step > strc_end) {
+      break;
+    }
+    strc += step;
+    len++;
+  }
+
+  *r_len_bytes = (size_t)(strc - strc_orig);
+  return len;
+}
+
+size_t KLI_strnlen_utf8(const char *strc, const size_t maxlen)
+{
+  size_t len_bytes;
+  return KLI_strnlen_utf8_ex(strc, maxlen, &len_bytes);
+}
+
+char *KLI_strncpy_utf8(char *__restrict dst, const char *__restrict src, size_t maxncpy)
+{
+  char *r_dst = dst;
+
+  KLI_assert(maxncpy != 0);
+
+#ifdef DEBUG_STRSIZE
+  memset(dst, 0xff, sizeof(*dst) * maxncpy);
+#endif
+
+  /* NOTE: currently we don't attempt to deal with invalid utf8 chars. */
+  KLI_STR_UTF8_CPY(dst, src, maxncpy);
+
+  return r_dst;
+}
+
 /**
  * Like strncpy but for utf8 and ensures dst is always '\0' terminated.
  *
@@ -567,6 +608,27 @@ size_t KLI_strnlen(const char *s, const size_t maxlen)
     }
   }
   return len;
+}
+
+size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const size_t maxncpy)
+{
+  size_t srclen = KLI_strnlen(src, maxncpy - 1);
+  KLI_assert(maxncpy != 0);
+
+#ifdef DEBUG_STRSIZE
+  memset(dst, 0xff, sizeof(*dst) * maxncpy);
+#endif
+
+  memcpy(dst, src, srclen);
+  dst[srclen] = '\0';
+  return srclen;
+}
+
+size_t KLI_strcpy_rlen(char *__restrict dst, const char *__restrict src)
+{
+  size_t srclen = strlen(src);
+  memcpy(dst, src, srclen + 1);
+  return srclen;
 }
 
 /**

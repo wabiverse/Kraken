@@ -171,9 +171,41 @@ class AnchorISystemWindow
   virtual void getWindowBounds(AnchorRect &bounds) const = 0;
 
   /**
+   * Shows or hides the cursor.
+   * @param visible: The new visibility state of the cursor.
+   * @return Indication of success. */
+  virtual eAnchorStatus setCursorVisibility(bool visible) = 0;
+
+  /**
    * Returns the visibility state of the cursor.
    * @return The visibility state of the cursor. */
   virtual bool getCursorVisibility() const = 0;
+
+  /**
+   * Set the shape of the cursor.
+   * @param cursorShape: The new cursor shape type id.
+   * @return Indication of success. */
+  virtual eAnchorStatus setCursorShape(eAnchorStandardCursor cursorShape) = 0;
+
+  /**
+   * Test if the standard cursor shape is supported by current platform.
+   * @return Indication of success. */
+  virtual eAnchorStatus hasCursorShape(eAnchorStandardCursor cursorShape) = 0;
+
+  /**
+   * Set the shape of the cursor to a custom cursor.
+   * @param bitmap: The bitmap data for the cursor.
+   * @param mask: The mask data for the cursor.
+   * @param hotX: The X coordinate of the cursor hot-spot.
+   * @param hotY: The Y coordinate of the cursor hot-spot.
+   * @return Indication of success. */
+  virtual eAnchorStatus setCustomCursorShape(uint8_t *bitmap,
+                                             uint8_t *mask,
+                                             int sizex,
+                                             int sizey,
+                                             int hotX,
+                                             int hotY,
+                                             bool canInvertColor) = 0;
 };
 
 
@@ -220,7 +252,42 @@ class AnchorSystemWindow : public AnchorISystemWindow
     return false;
   }
 
+
+  /**
+   * Set the shape of the cursor to a custom cursor.
+   * \param bitmap: The bitmap data for the cursor.
+   * \param mask: The mask data for the cursor.
+   * \param hotX: The X coordinate of the cursor hot-spot.
+   * \param hotY: The Y coordinate of the cursor hot-spot.
+   * \return Indication of success.
+   */
+  eAnchorStatus setCustomCursorShape(uint8_t *bitmap,
+                                     uint8_t *mask,
+                                     int sizex,
+                                     int sizey,
+                                     int hotX,
+                                     int hotY,
+                                     bool canInvertColor);
+
   eAnchorStatus getCursorGrabBounds(AnchorRect &bounds);
+
+  eAnchorStatus setCursorVisibility(bool visible);
+
+  /**
+   * Sets the cursor visibility on the window using
+   * native window system calls. */
+  virtual eAnchorStatus setWindowCursorVisibility(bool visible) = 0;
+
+  /**
+   * Sets the cursor shape on the window using
+   * native window system calls. */
+  virtual eAnchorStatus setWindowCustomCursorShape(uint8_t *bitmap,
+                                                   uint8_t *mask,
+                                                   int szx,
+                                                   int szy,
+                                                   int hotX,
+                                                   int hotY,
+                                                   bool canInvertColor) = 0;
 
   /**
    * Returns the visibility state of the cursor.

@@ -87,13 +87,31 @@ namespace CreationFactory
 {
   namespace PTR
   {
-    // not safe at all.
-    // inline std::unique_ptr<UsdPrimDefinition> New(const UsdPrim &type, kContext *C)
-    // {
-    //   return UsdSchemaRegistry::GetInstance().BuildComposedPrimDefinition(
-    //     type.GetName(),
-    //     type.GetAppliedSchemas());
-    // }
+    inline KrakenPRIM Set(KrakenPRIM *ptr, const wabi::TfToken &name, const KrakenPROP *value)
+    {
+      UsdAttribute attr;
+
+      switch (value->type)
+      {
+        case PROP_BOOLEAN:
+          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Bool, SdfVariability::SdfVariabilityUniform);
+          break;
+        case PROP_INT:
+          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Int, SdfVariability::SdfVariabilityUniform);
+          break;
+        case PROP_FLOAT:
+          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Float, SdfVariability::SdfVariabilityUniform);
+          break;
+        case PROP_STRING:
+          attr = ptr->CreateAttribute(name, SdfValueTypeNames->String, SdfVariability::SdfVariabilityUniform);
+          break;
+        case PROP_ENUM:
+          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Token, SdfVariability::SdfVariabilityUniform);
+          break;
+      }
+
+      return ptr->GetPrim();
+    }
   }  // namespace PTR
   namespace STR
   {
@@ -103,6 +121,30 @@ namespace CreationFactory
       attr.Set(value);
     }
   }  // namespace STR
+  namespace INT
+  {
+    inline void Set(KrakenPRIM *ptr, const std::string &name, const int &value)
+    {
+      UsdAttribute attr = ptr->GetAttribute(TfToken(name));
+      attr.Set(value);
+    }
+  }  // namespace INT
+  namespace FLOAT
+  {
+    inline void Set(KrakenPRIM *ptr, const std::string &name, const float &value)
+    {
+      UsdAttribute attr = ptr->GetAttribute(TfToken(name));
+      attr.Set(value);
+    }
+  }  // namespace FLOAT
+  namespace TOKEN
+  {
+    inline void Set(KrakenPRIM *ptr, const std::string &name, const TfToken &value)
+    {
+      UsdAttribute attr = ptr->GetAttribute(TfToken(name));
+      attr.Set(value);
+    }
+  }  // namespace TOKEN
   namespace ASSET
   {
     inline void Set(KrakenPRIM *ptr, const std::string &name, const std::string &value)

@@ -89,13 +89,21 @@ struct wmWindow : public UsdUIWindow
   /** Set to one for an active window. */
   bool active;
 
+  /** Previous cursor when setting modal one. */
+  short lastcursor;
+  /** The current modal cursor. */
+  short modalcursor;
+  /** Cursor grab mode. */
+  short grabcursor;
+  /** Internal: tag this for extra mouse-move event,
+   * makes cursors/buttons active on UI switching. */
   bool addmousemove;
 
   /** Storage for event system. */
   wmEvent *eventstate;
   wmEventQueue event_queue;
   std::vector<wmEventHandler *> modalhandlers;
-
+// uiPopupBlockHandle
   /** Runtime Window State. */
   char windowstate;
   int winid;
@@ -130,6 +138,9 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
     workspace_rel(CreateUiWindowWorkspaceRel()),
     anchorwin(nullptr),
     active(true),
+    lastcursor(0),
+    modalcursor(0),
+    grabcursor(0),
     addmousemove(false),
     eventstate(new wmEvent()),
     windowstate(0),
@@ -209,6 +220,11 @@ struct wmWindowManager : public UsdPrim
 
   /** Active dragged items. */
   std::vector<void *> drags;
+
+  /** Active timers. */
+  std::vector<struct wmTimer *> timers;
+
+  struct ReportList reports;
 
   bool file_saved;
 

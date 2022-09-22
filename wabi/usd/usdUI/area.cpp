@@ -145,6 +145,21 @@ UsdAttribute UsdUIArea::CreateIconAttr(VtValue const &defaultValue, bool writeSp
                                     writeSparsely);
 }
 
+UsdAttribute UsdUIArea::GetCoordsAttr() const
+{
+  return GetPrim().GetAttribute(UsdUITokens->uiAreaCoords);
+}
+
+UsdAttribute UsdUIArea::CreateCoordsAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+  return UsdSchemaBase::_CreateAttr(UsdUITokens->uiAreaCoords,
+                                    SdfValueTypeNames->Int4,
+                                    /* custom = */ false,
+                                    SdfVariabilityUniform,
+                                    defaultValue,
+                                    writeSparsely);
+}
+
 UsdAttribute UsdUIArea::GetPosAttr() const
 {
   return GetPrim().GetAttribute(UsdUITokens->uiAreaPos);

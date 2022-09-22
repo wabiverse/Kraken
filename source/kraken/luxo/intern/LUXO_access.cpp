@@ -305,7 +305,7 @@ void LUXO_save_usd(void)
 /**
  * Use UsdStage::CreateInMemory when we get out of an alpha state
  * for now, this makes it easier to debug scene description - it
- * is located in the Kraken installation /1.50/startup.usda */
+ * is located in ~/Library/Application Support/Kraken/1.50/config/userpref.usda */
 KrakenSTAGE::KrakenSTAGE()
   : wabi::UsdStageRefPtr(wabi::UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}

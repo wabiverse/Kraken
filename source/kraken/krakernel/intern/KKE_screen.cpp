@@ -90,8 +90,8 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
   ScrArea *big = nullptr;
   int maxsize = 0;
 
-  UNIVERSE_FOR_ALL (area, screen->areas) {
-    if (spacetype == SPACE_TYPE_ANY) {
+  for (auto &area : screen->areas) {
+    if ((spacetype == SPACE_TYPE_ANY) &&  area->spacetype.IsValid()) {
       GfVec2f winsize = FormFactory(area->size);
 
       if (min <= GET_X(winsize) && min <= GET_Y(winsize)) {
@@ -143,6 +143,60 @@ void KKE_screen_sort_scrvert(ScrVert **v1, ScrVert **v2)
     *v1 = *v2;
     *v2 = tmp;
   }
+}
+
+ARegionType *KKE_regiontype_from_id(const SpaceType *st, int regionid)
+{
+  for (auto &art : st->regiontypes) {
+    if (art->regionid == regionid) {
+      return art;
+    }
+  }
+  return NULL;
+}
+
+void KKE_area_region_free(SpaceType *st, ARegion *region)
+{
+  if (st) {
+    ARegionType *art = KKE_regiontype_from_id(st, region->regiontype);
+
+    if (art && art->free) {
+      art->free(region);
+    }
+
+    if (region->regiondata) {
+      printf("regiondata free error\n");
+    }
+  }
+  else if (region->type && region->type->free) {
+    region->type->free(region);
+  }
+
+  // KKE_area_region_panels_free(&region->panels);
+
+  // for (auto &uilst : region->ui_lists) {
+  //   if (uilst->dyn_data && uilst->dyn_data->free_runtime_data_fn) {
+  //     uilst->dyn_data->free_runtime_data_fn(uilst);
+  //   }
+  //   if (uilst->properties) {
+  //     IDP_FreeProperty(uilst->properties);
+  //   }
+  //   MEM_SAFE_FREE(uilst->dyn_data);
+  // }
+
+  // if (region->gizmo_map != NULL) {
+  //   region_free_gizmomap_callback(region->gizmo_map);
+  // }
+
+  // if (region->runtime.block_name_map != NULL) {
+  //   BLI_ghash_free(region->runtime.block_name_map, NULL, NULL);
+  //   region->runtime.block_name_map = NULL;
+  // }
+
+  // KLI_freelistN(&region->ui_lists);
+  // KLI_freelistN(&region->ui_previews);
+  // KLI_freelistN(&region->panels_category);
+  // KLI_freelistN(&region->panels_category_active);
 }
 
 KRAKEN_NAMESPACE_END

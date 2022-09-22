@@ -35,6 +35,13 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
+/** #UserDef.factor_display_type */
+enum eUserpref_FactorDisplay
+{
+  USER_FACTOR_AS_FACTOR = 0,
+  USER_FACTOR_AS_PERCENTAGE = 1,
+};
+
 enum eUserprefUIFlag
 {
   USER_UIFLAG_UNUSED_0 = (1 << 0),
@@ -100,6 +107,50 @@ enum eUserPrefFlag
   USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
   USER_TOOLTIPS_PYTHON = (1 << 26),
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
+};
+
+struct uiFontStyle
+{
+  /** Saved in file, 0 is default. */
+  short uifont_id;
+  /** Actual size depends on 'global' DPI. */
+  float points;
+  /** Style hint. */
+  short italic, bold;
+  /** Value is amount of pixels blur. */
+  short shadow;
+  /** Shadow offset in pixels. */
+  short shadx, shady;
+  /** Total alpha. */
+  float shadowalpha;
+  /** 1 value, typically white or black anyway. */
+  float shadowcolor;
+};
+
+struct uiStyle
+{
+  /** MAX_STYLE_NAME. */
+  char name[64];
+
+  uiFontStyle paneltitle;
+  uiFontStyle grouplabel;
+  uiFontStyle widgetlabel;
+  uiFontStyle widget;
+
+  float panelzoom;
+
+  /** In characters. */
+  short minlabelchars;
+  /** In characters. */
+  short minwidgetchars;
+
+  short columnspace;
+  short templatespace;
+  short boxspace;
+  short buttonspacex;
+  short buttonspacey;
+  short panelspace;
+  short panelouter;
 };
 
 struct UserDef : public UsdUIUserPref

@@ -28,8 +28,7 @@
 extern "C" {
 #endif
 
-typedef enum eWmCursorType
-{
+enum WMCursorType {
   WM_CURSOR_DEFAULT = 1,
   WM_CURSOR_TEXT_EDIT,
   WM_CURSOR_WAIT,
@@ -73,9 +72,11 @@ typedef enum eWmCursorType
   WM_CURSOR_NONE,
   WM_CURSOR_MUTE,
 
+  WM_CURSOR_PICK_AREA,
+
   /* --- ALWAYS LAST ----- */
   WM_CURSOR_NUM,
-} eWmCursorType;
+};
 
 void WM_init_cursor_data(void);
 

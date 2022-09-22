@@ -213,6 +213,7 @@ extern Global G;
  * Setup in KKE_kraken.
  * TODO: Move these into
  * UserDef. */
+extern int UI_FACTOR_DISPLAY_TYPE;
 extern float UI_DPI_FAC;
 extern float UI_PRESSURE_SOFTNESS;
 extern float UI_PRESSURE_THRESHOLD_MAX;
