@@ -16,165 +16,49 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#ifndef __KLI_UTILDEFINES_H__
+#define __KLI_UTILDEFINES_H__
+
 /**
  * @file
- * KRAKEN Library.
+ * @ingroup KRAKEN Library.
  * Gadget Vault.
  */
 
-#pragma once
-
-#include "kraken/kraken.h"
-
-/* std */
-#include <filesystem>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
-
-#ifdef _WIN32
-#  include <uchar.h>
-#  include <stdbool.h>
-typedef unsigned __int64 size_t;
-#endif
-
-/* wabi */
-#include <wabi/wabi.h>
-
-/* base */
-#include <wabi/base/arch/export.h>
-#include <wabi/base/tf/stringUtils.h>
-
 #include "KLI_compiler_compat.h"
-
-/* kraklib */
-#include "KLI_compiler_attrs.h"
+#include "KLI_sys_types.h"
+#include "KLI_utildefines_variadic.h"
 
 /* assert. */
 #include "KLI_assert.h"
 
+/* include after _VA_NARGS macro */
+#include "KLI_compiler_typecheck.h"
+
+#ifdef __cplusplus
+#  include "kraken/kraken.h"
+
+/* std */
+#  include <filesystem>
+#  include <iostream>
+#  include <memory>
+#  include <string>
+#  include <vector>
+#  ifdef _WIN32
+#    include <uchar.h>
+#    include <stdbool.h>
+typedef unsigned __int64 size_t;
+
+/* wabi */
+#    include <wabi/wabi.h>
+
+/* base */
+#    include <wabi/base/arch/export.h>
+#    include <wabi/base/tf/stringUtils.h>
+#  endif
+
 namespace fs = std::filesystem;
-
-
-#pragma once
-
-
-/** @file
- * @ingroup kli
- *
- * Use to help with cross platform portability.
- */
-
-/* Causes warning:
- * incompatible types when assigning to type 'Foo' from type 'Bar'
- * ... the compiler optimizes away the temp var */
-#ifdef __GNUC__
-#  define CHECK_TYPE(var, type) \
-    { \
-      typeof(var) *__tmp; \
-      __tmp = (type *)NULL; \
-      (void)__tmp; \
-    } \
-    (void)0
-
-#  define CHECK_TYPE_PAIR(var_a, var_b) \
-    { \
-      const typeof(var_a) *__tmp; \
-      __tmp = (typeof(var_b) *)NULL; \
-      (void)__tmp; \
-    } \
-    (void)0
-
-#  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) \
-    ((void)({ \
-      const typeof(var_a) *__tmp; \
-      __tmp = (typeof(var_b) *)NULL; \
-      (void)__tmp; \
-    }))
-
-#else
-#  define CHECK_TYPE(var, type) \
-    { \
-      EXPR_NOP(var); \
-    } \
-    (void)0
-#  define CHECK_TYPE_PAIR(var_a, var_b) \
-    { \
-      (EXPR_NOP(var_a), EXPR_NOP(var_b)); \
-    } \
-    (void)0
-#  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) (EXPR_NOP(var_a), EXPR_NOP(var_b))
-#endif
-
-/* can be used in simple macros */
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
-#  define CHECK_TYPE_INLINE(val, type) \
-    (void)((void)(((type)0) != (0 ? (val) : ((type)0))), _Generic((val), type : 0, const type : 0))
-#else
-#  define CHECK_TYPE_INLINE(val, type) ((void)(((type)0) != (0 ? (val) : ((type)0))))
-#endif
-
-#if defined(__GNUC__) || defined(__clang__)
-#  define CHECK_TYPE_NONCONST(var) \
-    __extension__({ \
-      void *non_const = 0 ? (var) : NULL; \
-      (void)non_const; \
-    })
-#else
-#  define CHECK_TYPE_NONCONST(var) EXPR_NOP(var)
-#endif
-
-#ifdef __cplusplus
-
-/* -------------------------------------------------------------------- */
-/** \name C++ Macros
- * \{ */
-
-/* Useful to port C code using enums to C++ where enums are strongly typed.
- * To use after the enum declaration. */
-/* If any enumerator `C` is set to say `A|B`, then `C` would be the max enum value. */
-#  define ENUM_OPERATORS(_enum_type, _max_enum_value) \
-    extern "C++" { \
-    inline constexpr _enum_type operator|(_enum_type a, _enum_type b) \
-    { \
-      return static_cast<_enum_type>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b)); \
-    } \
-    inline constexpr _enum_type operator&(_enum_type a, _enum_type b) \
-    { \
-      return static_cast<_enum_type>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b)); \
-    } \
-    inline constexpr _enum_type operator~(_enum_type a) \
-    { \
-      return static_cast<_enum_type>(~static_cast<uint64_t>(a) & \
-                                     (2 * static_cast<uint64_t>(_max_enum_value) - 1)); \
-    } \
-    inline _enum_type &operator|=(_enum_type &a, _enum_type b) \
-    { \
-      return a = static_cast<_enum_type>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b)); \
-    } \
-    inline _enum_type &operator&=(_enum_type &a, _enum_type b) \
-    { \
-      return a = static_cast<_enum_type>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b)); \
-    } \
-    } /* extern "C++" */
-
-#else
-/* Output nothing. */
-#  define ENUM_OPERATORS(_type, _max)
-#endif
-
-/**
- * Utility so function declarations in C headers can use C++ default arguments. The default is then
- * available when included in a C++ file, otherwise the argument has to be set explicitly.
- */
-#ifdef __cplusplus
-#  define CPP_ARG_DEFAULT(default_value) = default_value
-#else
-#  define CPP_ARG_DEFAULT(default_value)
-#endif
-
-/** \} */
+#endif /* __cplusplus */
 
 /* -------------------------------------------------------------------- */
 /** \name Min/Max Macros
@@ -339,6 +223,143 @@ namespace fs = std::filesystem;
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Swap/Shift Macros
+ * \{ */
+
+#define SWAP(type, a, b) \
+  {                      \
+    type sw_ap;          \
+    CHECK_TYPE(a, type); \
+    CHECK_TYPE(b, type); \
+    sw_ap = (a);         \
+    (a) = (b);           \
+    (b) = sw_ap;         \
+  }                      \
+  (void)0
+
+/* swap with a temp value */
+#define SWAP_TVAL(tval, a, b) \
+  {                           \
+    CHECK_TYPE_PAIR(tval, a); \
+    CHECK_TYPE_PAIR(tval, b); \
+    (tval) = (a);             \
+    (a) = (b);                \
+    (b) = (tval);             \
+  }                           \
+  (void)0
+
+/* shift around elements */
+#define SHIFT3(type, a, b, c) \
+  {                           \
+    type tmp;                 \
+    CHECK_TYPE(a, type);      \
+    CHECK_TYPE(b, type);      \
+    CHECK_TYPE(c, type);      \
+    tmp = a;                  \
+    a = c;                    \
+    c = b;                    \
+    b = tmp;                  \
+  }                           \
+  (void)0
+
+#define SHIFT4(type, a, b, c, d) \
+  {                              \
+    type tmp;                    \
+    CHECK_TYPE(a, type);         \
+    CHECK_TYPE(b, type);         \
+    CHECK_TYPE(c, type);         \
+    CHECK_TYPE(d, type);         \
+    tmp = a;                     \
+    a = d;                       \
+    d = c;                       \
+    c = b;                       \
+    b = tmp;                     \
+  }                              \
+  (void)0
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Equal to Any Element (ELEM) Macro
+ * \{ */
+
+/* Manual line breaks for readability. */
+/* clang-format off */
+
+/* ELEM#(v, ...): is the first arg equal any others? */
+/* internal helpers. */
+#define _VA_ELEM2(v, a) ((v) == (a))
+#define _VA_ELEM3(v, a, b) \
+  (_VA_ELEM2(v, a) || _VA_ELEM2(v, b))
+#define _VA_ELEM4(v, a, b, c) \
+  (_VA_ELEM3(v, a, b) || _VA_ELEM2(v, c))
+#define _VA_ELEM5(v, a, b, c, d) \
+  (_VA_ELEM4(v, a, b, c) || _VA_ELEM2(v, d))
+#define _VA_ELEM6(v, a, b, c, d, e) \
+  (_VA_ELEM5(v, a, b, c, d) || _VA_ELEM2(v, e))
+#define _VA_ELEM7(v, a, b, c, d, e, f) \
+  (_VA_ELEM6(v, a, b, c, d, e) || _VA_ELEM2(v, f))
+#define _VA_ELEM8(v, a, b, c, d, e, f, g) \
+  (_VA_ELEM7(v, a, b, c, d, e, f) || _VA_ELEM2(v, g))
+#define _VA_ELEM9(v, a, b, c, d, e, f, g, h) \
+  (_VA_ELEM8(v, a, b, c, d, e, f, g) || _VA_ELEM2(v, h))
+#define _VA_ELEM10(v, a, b, c, d, e, f, g, h, i) \
+  (_VA_ELEM9(v, a, b, c, d, e, f, g, h) || _VA_ELEM2(v, i))
+#define _VA_ELEM11(v, a, b, c, d, e, f, g, h, i, j) \
+  (_VA_ELEM10(v, a, b, c, d, e, f, g, h, i) || _VA_ELEM2(v, j))
+#define _VA_ELEM12(v, a, b, c, d, e, f, g, h, i, j, k) \
+  (_VA_ELEM11(v, a, b, c, d, e, f, g, h, i, j) || _VA_ELEM2(v, k))
+#define _VA_ELEM13(v, a, b, c, d, e, f, g, h, i, j, k, l) \
+  (_VA_ELEM12(v, a, b, c, d, e, f, g, h, i, j, k) || _VA_ELEM2(v, l))
+#define _VA_ELEM14(v, a, b, c, d, e, f, g, h, i, j, k, l, m) \
+  (_VA_ELEM13(v, a, b, c, d, e, f, g, h, i, j, k, l) || _VA_ELEM2(v, m))
+#define _VA_ELEM15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n) \
+  (_VA_ELEM14(v, a, b, c, d, e, f, g, h, i, j, k, l, m) || _VA_ELEM2(v, n))
+#define _VA_ELEM16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) \
+  (_VA_ELEM15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n) || _VA_ELEM2(v, o))
+#define _VA_ELEM17(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
+  (_VA_ELEM16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) || _VA_ELEM2(v, p))
+/* clang-format on */
+
+/* reusable ELEM macro */
+#define ELEM(...) VA_NARGS_CALL_OVERLOAD(_VA_ELEM, __VA_ARGS__)
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Simple Math Macros
+ * \{ */
+
+/* Float equality checks. */
+
+#define IS_EQ(a, b)              \
+  (CHECK_TYPE_INLINE(a, double), \
+   CHECK_TYPE_INLINE(b, double), \
+   ((fabs((double)((a) - (b))) >= (double)FLT_EPSILON) ? false : true))
+
+#define IS_EQF(a, b)            \
+  (CHECK_TYPE_INLINE(a, float), \
+   CHECK_TYPE_INLINE(b, float), \
+   ((fabsf((float)((a) - (b))) >= (float)FLT_EPSILON) ? false : true))
+
+#define IS_EQT(a, b, c) (((a) > (b)) ? ((((a) - (b)) <= (c))) : (((((b) - (a)) <= (c)))))
+#define IN_RANGE(a, b, c) (((b) < (c)) ? (((b) < (a) && (a) < (c))) : (((c) < (a) && (a) < (b))))
+#define IN_RANGE_INCL(a, b, c) \
+  (((b) < (c)) ? (((b) <= (a) && (a) <= (c))) : (((c) <= (a) && (a) <= (b))))
+
+/**
+ * Expands to an integer constant expression evaluating to a close upper bound
+ * on the number the number of decimal digits in a value expressible in the
+ * integer type given by the argument (if it is a type name) or the integer
+ * type of the argument (if it is an expression). The meaning of the resulting
+ * expression is unspecified for other arguments.
+ * i.e: `DECIMAL_DIGITS_BOUND(uchar)` is equal to 3.
+ */
+#define DECIMAL_DIGITS_BOUND(t) (241 * sizeof(t) / 100 + 1)
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Clamp Macros
  * \{ */
 
@@ -444,11 +465,66 @@ namespace fs = std::filesystem;
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Array Unpacking Macros
+ * \{ */
+
+/* unpack vector for args */
+#define UNPACK2(a) ((a)[0]), ((a)[1])
+#define UNPACK3(a) UNPACK2(a), ((a)[2])
+#define UNPACK4(a) UNPACK3(a), ((a)[3])
+/* pre may be '&', '*' or func, post may be '->member' */
+#define UNPACK2_EX(pre, a, post) (pre((a)[0]) post), (pre((a)[1]) post)
+#define UNPACK3_EX(pre, a, post) UNPACK2_EX(pre, a, post), (pre((a)[2]) post)
+#define UNPACK4_EX(pre, a, post) UNPACK3_EX(pre, a, post), (pre((a)[3]) post)
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Array Macros
+ * \{ */
+
+/* array helpers */
+#define ARRAY_LAST_ITEM(arr_start, arr_dtype, arr_len) \
+  (arr_dtype *)((char *)(arr_start) + (sizeof(*((arr_dtype *)NULL)) * (size_t)(arr_len - 1)))
+
+#define ARRAY_HAS_ITEM(arr_item, arr_start, arr_len) \
+  (CHECK_TYPE_PAIR_INLINE(arr_start, arr_item),      \
+   ((unsigned int)((arr_item) - (arr_start)) < (unsigned int)(arr_len)))
+
 /**
- *  Macro to convert a value to string in the pre-processor: */
-#define STRINGIFY_ARG(x) "" #x
-#define STRINGIFY_APPEND(a, b) "" a #b
-#define STRINGIFY(x) STRINGIFY_APPEND("", x)
+ * \note use faster #ARRAY_DELETE_REORDER_LAST when we can re-order.
+ */
+#define ARRAY_DELETE(arr, index, delete_len, arr_len)                      \
+  {                                                                        \
+    KLI_assert((&arr[index] >= arr) && ((index) + delete_len <= arr_len)); \
+    memmove(&(arr)[index],                                                 \
+            &(arr)[(index) + (delete_len)],                                \
+            (((arr_len) - (index)) - (delete_len)) * sizeof(*(arr)));      \
+  }                                                                        \
+  ((void)0)
+
+/**
+ * Re-ordering array removal.
+ *
+ * When removing single items this compiles down to:
+ * `if (index + 1 != arr_len) { arr[index] = arr[arr_len - 1]; }` (typical reordering removal),
+ * with removing multiple items, overlap is detected to avoid memcpy errors.
+ */
+#define ARRAY_DELETE_REORDER_LAST(arr, index, delete_len, arr_len)                              \
+  {                                                                                             \
+    KLI_assert((&arr[index] >= arr) && ((index) + delete_len <= arr_len));                      \
+    if ((index) + (delete_len) != (arr_len)) {                                                  \
+      if (((delete_len) == 1) || ((delete_len) <= ((arr_len) - ((index) + (delete_len))))) {    \
+        memcpy(&(arr)[index], &(arr)[(arr_len) - (delete_len)], (delete_len) * sizeof(*(arr))); \
+      } else {                                                                                  \
+        memcpy(&(arr)[index],                                                                   \
+               &(arr)[(arr_len) - ((arr_len) - ((index) + (delete_len)))],                      \
+               ((arr_len) - ((index) + (delete_len))) * sizeof(*(arr)));                        \
+      }                                                                                         \
+    }                                                                                           \
+  }                                                                                             \
+  ((void)0)
 
 /* assuming a static array */
 #if defined(__GNUC__) && !defined(__cplusplus) && !defined(__clang__) && !defined(__INTEL_COMPILER)
@@ -458,150 +534,6 @@ namespace fs = std::filesystem;
 #else
 #  define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(*(arr)))
 #endif
-
-#define _VA_NARGS_GLUE(x, y) x y
-#define _VA_NARGS_RETURN_COUNT(_1_,   \
-                               _2_,   \
-                               _3_,   \
-                               _4_,   \
-                               _5_,   \
-                               _6_,   \
-                               _7_,   \
-                               _8_,   \
-                               _9_,   \
-                               _10_,  \
-                               _11_,  \
-                               _12_,  \
-                               _13_,  \
-                               _14_,  \
-                               _15_,  \
-                               _16_,  \
-                               _17_,  \
-                               _18_,  \
-                               _19_,  \
-                               _20_,  \
-                               _21_,  \
-                               _22_,  \
-                               _23_,  \
-                               _24_,  \
-                               _25_,  \
-                               _26_,  \
-                               _27_,  \
-                               _28_,  \
-                               _29_,  \
-                               _30_,  \
-                               _31_,  \
-                               _32_,  \
-                               _33_,  \
-                               _34_,  \
-                               _35_,  \
-                               _36_,  \
-                               _37_,  \
-                               _38_,  \
-                               _39_,  \
-                               _40_,  \
-                               _41_,  \
-                               _42_,  \
-                               _43_,  \
-                               _44_,  \
-                               _45_,  \
-                               _46_,  \
-                               _47_,  \
-                               _48_,  \
-                               _49_,  \
-                               _50_,  \
-                               _51_,  \
-                               _52_,  \
-                               _53_,  \
-                               _54_,  \
-                               _55_,  \
-                               _56_,  \
-                               _57_,  \
-                               _58_,  \
-                               _59_,  \
-                               _60_,  \
-                               _61_,  \
-                               _62_,  \
-                               _63_,  \
-                               _64_,  \
-                               count, \
-                               ...)   \
-  count
-#define _VA_NARGS_EXPAND(args) _VA_NARGS_RETURN_COUNT args
-#define _VA_NARGS_OVERLOAD_MACRO2(name, count) name##count
-#define _VA_NARGS_OVERLOAD_MACRO1(name, count) _VA_NARGS_OVERLOAD_MACRO2(name, count)
-#define _VA_NARGS_OVERLOAD_MACRO(name, count) _VA_NARGS_OVERLOAD_MACRO1(name, count)
-/* --- expose for re-use --- */
-/* 64 args max */
-#define VA_NARGS_COUNT(...)      \
-  _VA_NARGS_EXPAND((__VA_ARGS__, \
-                    64,          \
-                    63,          \
-                    62,          \
-                    61,          \
-                    60,          \
-                    59,          \
-                    58,          \
-                    57,          \
-                    56,          \
-                    55,          \
-                    54,          \
-                    53,          \
-                    52,          \
-                    51,          \
-                    50,          \
-                    49,          \
-                    48,          \
-                    47,          \
-                    46,          \
-                    45,          \
-                    44,          \
-                    43,          \
-                    42,          \
-                    41,          \
-                    40,          \
-                    39,          \
-                    38,          \
-                    37,          \
-                    36,          \
-                    35,          \
-                    34,          \
-                    33,          \
-                    32,          \
-                    31,          \
-                    30,          \
-                    29,          \
-                    28,          \
-                    27,          \
-                    26,          \
-                    25,          \
-                    24,          \
-                    23,          \
-                    22,          \
-                    21,          \
-                    20,          \
-                    19,          \
-                    18,          \
-                    17,          \
-                    16,          \
-                    15,          \
-                    14,          \
-                    13,          \
-                    12,          \
-                    11,          \
-                    10,          \
-                    9,           \
-                    8,           \
-                    7,           \
-                    6,           \
-                    5,           \
-                    4,           \
-                    3,           \
-                    2,           \
-                    1,           \
-                    0))
-#define VA_NARGS_CALL_OVERLOAD(name, ...) \
-  _VA_NARGS_GLUE(_VA_NARGS_OVERLOAD_MACRO(name, VA_NARGS_COUNT(__VA_ARGS__)), (__VA_ARGS__))
 
 /* ARRAY_SET_ITEMS#(v, ...): set indices of array 'v' */
 /* internal helpers */
@@ -661,179 +593,6 @@ namespace fs = std::filesystem;
 
 /** \} */
 
-#ifdef __GNUC__
-#  define CHECK_TYPE(var, type) \
-    {                           \
-      typeof(var) *__tmp;       \
-      __tmp = (type *)NULL;     \
-      (void)__tmp;              \
-    }                           \
-    (void)0
-
-#  define CHECK_TYPE_PAIR(var_a, var_b) \
-    {                                   \
-      const typeof(var_a) *__tmp;       \
-      __tmp = (typeof(var_b) *)NULL;    \
-      (void)__tmp;                      \
-    }                                   \
-    (void)0
-
-#  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) \
-    ((void)({                                  \
-      const typeof(var_a) *__tmp;              \
-      __tmp = (typeof(var_b) *)NULL;           \
-      (void)__tmp;                             \
-    }))
-
-#else
-#  define CHECK_TYPE(var, type) \
-    {                           \
-      EXPR_NOP(var);            \
-    }                           \
-    (void)0
-#  define CHECK_TYPE_PAIR(var_a, var_b)   \
-    {                                     \
-      (EXPR_NOP(var_a), EXPR_NOP(var_b)); \
-    }                                     \
-    (void)0
-#  define CHECK_TYPE_PAIR_INLINE(var_a, var_b) (EXPR_NOP(var_a), EXPR_NOP(var_b))
-#endif
-
-/* -------------------------------------------------------------------- */
-/** \name Swap/Shift Macros
- * \{ */
-
-#define SWAP(type, a, b) \
-  {                      \
-    type sw_ap;          \
-    CHECK_TYPE(a, type); \
-    CHECK_TYPE(b, type); \
-    sw_ap = (a);         \
-    (a) = (b);           \
-    (b) = sw_ap;         \
-  }                      \
-  (void)0
-
-/* swap with a temp value */
-#define SWAP_TVAL(tval, a, b) \
-  {                           \
-    CHECK_TYPE_PAIR(tval, a); \
-    CHECK_TYPE_PAIR(tval, b); \
-    (tval) = (a);             \
-    (a) = (b);                \
-    (b) = (tval);             \
-  }                           \
-  (void)0
-
-/* shift around elements */
-#define SHIFT3(type, a, b, c) \
-  {                           \
-    type tmp;                 \
-    CHECK_TYPE(a, type);      \
-    CHECK_TYPE(b, type);      \
-    CHECK_TYPE(c, type);      \
-    tmp = a;                  \
-    a = c;                    \
-    c = b;                    \
-    b = tmp;                  \
-  }                           \
-  (void)0
-
-#define SHIFT4(type, a, b, c, d) \
-  {                              \
-    type tmp;                    \
-    CHECK_TYPE(a, type);         \
-    CHECK_TYPE(b, type);         \
-    CHECK_TYPE(c, type);         \
-    CHECK_TYPE(d, type);         \
-    tmp = a;                     \
-    a = d;                       \
-    d = c;                       \
-    c = b;                       \
-    b = tmp;                     \
-  }                              \
-  (void)0
-
-/** No-op for expressions we don't want to instantiate, but must remain valid. */
-#define EXPR_NOP(expr) (void)(0 ? ((void)(expr), 1) : 0)
-
-/** \} */
-
-/**
- * UNUSED macro, for function argument */
-#if defined(__GNUC__) || defined(__clang__)
-#  define UNUSED(x) UNUSED_##x __attribute__((__unused__))
-#else
-#  define UNUSED(x) UNUSED_##x
-#endif
-
-#if defined(__GNUC__) || defined(__clang__)
-#  define UNUSED_FUNCTION(x) __attribute__((__unused__)) UNUSED_##x
-#else
-#  define UNUSED_FUNCTION(x) UNUSED_##x
-#endif
-
-#define IFACE_(msgid) msgid
-#define TIP_(msgid) msgid
-#define DATA_(msgid) msgid
-#define N_(msgid) msgid
-
-/* hint to mark function arguments expected to be non-null
- * if no arguments are given to the macro, all of pointer
- * arguments would be expected to be non-null
- */
-#ifdef __GNUC__
-#  define ATTR_NONNULL(args...) __attribute__((nonnull(args)))
-#else
-#  define ATTR_NONNULL(...)
-#endif
-
-/* never returns NULL */
-#if (__GNUC__ * 100 + __GNUC_MINOR__) >= 409 /* gcc4.9+ only */
-#  define ATTR_RETURNS_NONNULL __attribute__((returns_nonnull))
-#else
-#  define ATTR_RETURNS_NONNULL
-#endif
-
-/* hint to mark function as it wouldn't return */
-#if defined(__GNUC__) || defined(__clang__)
-#  define ATTR_NORETURN __attribute__((noreturn))
-#else
-#  define ATTR_NORETURN
-#endif
-
-/* hint to treat any non-null function return value cannot alias any other pointer */
-#if (defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__) >= 403))
-#  define ATTR_MALLOC __attribute__((malloc))
-#else
-#  define ATTR_MALLOC
-#endif
-
-/* ensures a NULL terminating argument as the n'th last argument of a variadic function */
-#ifdef __GNUC__
-#  define ATTR_SENTINEL(arg_pos) __attribute__((sentinel(arg_pos)))
-#else
-#  define ATTR_SENTINEL(arg_pos)
-#endif
-
-/* hint to compiler that function uses printf-style format string */
-#ifdef __GNUC__
-#  define ATTR_PRINTF_FORMAT(format_param, dots_param) \
-    __attribute__((format(printf, format_param, dots_param)))
-#else
-#  define ATTR_PRINTF_FORMAT(format_param, dots_param)
-#endif
-
-#define FIND_TOKEN(i) (TfToken::Find(i))
-
-#define STRINGALL(x) wabi::TfStringify(x)
-#define CHARALL(x) wabi::TfStringify(x).c_str()
-
-#define CONCAT(a, b) wabi::TfStringCatPaths(a, b).c_str()
-#define STRCAT(a, b) wabi::TfStringCatPaths(a, b)
-
-#define CHARSTR(a) a.c_str()
-
 /* -------------------------------------------------------------------- */
 /** \name Pointer Macros
  * \{ */
@@ -855,69 +614,316 @@ namespace fs = std::filesystem;
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Equal to Any Element (ELEM) Macro
+/** \name Struct After Macros
+ *
+ * Typically used to copy/clear polymorphic structs which have a generic
+ * member at the start which needs to be left as-is.
+ *
  * \{ */
 
-/* Manual line breaks for readability. */
-/* clang-format off */
+/** Performs `offsetof(typeof(data), member) + sizeof((data)->member)` for non-gcc compilers. */
+#define OFFSETOF_STRUCT_AFTER(_struct, _member)                                  \
+  ((size_t)(((const char *)&((_struct)->_member)) - ((const char *)(_struct))) + \
+   sizeof((_struct)->_member))
 
-/* ELEM#(v, ...): is the first arg equal any others? */
-/* internal helpers. */
-#define _VA_ELEM2(v, a) ((v) == (a))
-#define _VA_ELEM3(v, a, b) \
-  (_VA_ELEM2(v, a) || _VA_ELEM2(v, b))
-#define _VA_ELEM4(v, a, b, c) \
-  (_VA_ELEM3(v, a, b) || _VA_ELEM2(v, c))
-#define _VA_ELEM5(v, a, b, c, d) \
-  (_VA_ELEM4(v, a, b, c) || _VA_ELEM2(v, d))
-#define _VA_ELEM6(v, a, b, c, d, e) \
-  (_VA_ELEM5(v, a, b, c, d) || _VA_ELEM2(v, e))
-#define _VA_ELEM7(v, a, b, c, d, e, f) \
-  (_VA_ELEM6(v, a, b, c, d, e) || _VA_ELEM2(v, f))
-#define _VA_ELEM8(v, a, b, c, d, e, f, g) \
-  (_VA_ELEM7(v, a, b, c, d, e, f) || _VA_ELEM2(v, g))
-#define _VA_ELEM9(v, a, b, c, d, e, f, g, h) \
-  (_VA_ELEM8(v, a, b, c, d, e, f, g) || _VA_ELEM2(v, h))
-#define _VA_ELEM10(v, a, b, c, d, e, f, g, h, i) \
-  (_VA_ELEM9(v, a, b, c, d, e, f, g, h) || _VA_ELEM2(v, i))
-#define _VA_ELEM11(v, a, b, c, d, e, f, g, h, i, j) \
-  (_VA_ELEM10(v, a, b, c, d, e, f, g, h, i) || _VA_ELEM2(v, j))
-#define _VA_ELEM12(v, a, b, c, d, e, f, g, h, i, j, k) \
-  (_VA_ELEM11(v, a, b, c, d, e, f, g, h, i, j) || _VA_ELEM2(v, k))
-#define _VA_ELEM13(v, a, b, c, d, e, f, g, h, i, j, k, l) \
-  (_VA_ELEM12(v, a, b, c, d, e, f, g, h, i, j, k) || _VA_ELEM2(v, l))
-#define _VA_ELEM14(v, a, b, c, d, e, f, g, h, i, j, k, l, m) \
-  (_VA_ELEM13(v, a, b, c, d, e, f, g, h, i, j, k, l) || _VA_ELEM2(v, m))
-#define _VA_ELEM15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n) \
-  (_VA_ELEM14(v, a, b, c, d, e, f, g, h, i, j, k, l, m) || _VA_ELEM2(v, n))
-#define _VA_ELEM16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) \
-  (_VA_ELEM15(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n) || _VA_ELEM2(v, o))
-#define _VA_ELEM17(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) \
-  (_VA_ELEM16(v, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) || _VA_ELEM2(v, p))
-/* clang-format on */
+/**
+ * memcpy helper, skipping the first part of a struct,
+ * ensures 'struct_dst' isn't const and the offset can be computed at compile time.
+ * This isn't inclusive, the value of \a member isn't copied.
+ */
+#define MEMCPY_STRUCT_AFTER(struct_dst, struct_src, member)                         \
+  {                                                                                 \
+    CHECK_TYPE_NONCONST(struct_dst);                                                \
+    ((void)(struct_dst == struct_src),                                              \
+     memcpy((char *)(struct_dst) + OFFSETOF_STRUCT_AFTER(struct_dst, member),       \
+            (const char *)(struct_src) + OFFSETOF_STRUCT_AFTER(struct_dst, member), \
+            sizeof(*(struct_dst)) - OFFSETOF_STRUCT_AFTER(struct_dst, member)));    \
+  }                                                                                 \
+  ((void)0)
 
-/* reusable ELEM macro */
-#define ELEM(...) VA_NARGS_CALL_OVERLOAD(_VA_ELEM, __VA_ARGS__)
+#define MEMSET_STRUCT_AFTER(struct_var, value, member)                         \
+  {                                                                            \
+    CHECK_TYPE_NONCONST(struct_var);                                           \
+    memset((char *)(struct_var) + OFFSETOF_STRUCT_AFTER(struct_var, member),   \
+           value,                                                              \
+           sizeof(*(struct_var)) - OFFSETOF_STRUCT_AFTER(struct_var, member)); \
+  }                                                                            \
+  ((void)0)
+
+/* defined
+ * in memory_utils.c for now. I do not know where we should put it actually... */
+#ifndef __KLI_MEMORY_UTILS_H__
+/**
+ * Check if memory is zeroed, as with `memset(arr, 0, arr_size)`.
+ */
+extern bool KLI_memory_is_zero(const void *arr, size_t arr_size);
+#endif
+
+#define MEMCMP_STRUCT_AFTER_IS_ZERO(struct_var, member)                                       \
+  (KLI_memory_is_zero((const char *)(struct_var) + OFFSETOF_STRUCT_AFTER(struct_var, member), \
+                      sizeof(*(struct_var)) - OFFSETOF_STRUCT_AFTER(struct_var, member)))
 
 /** \} */
 
-typedef unsigned int uint;
-typedef unsigned short ushort;
-typedef unsigned long ulong;
-typedef unsigned char uchar;
+/* -------------------------------------------------------------------- */
+/** \name String Macros
+ * \{ */
 
-/* clang-format off */
-#define VALUE_ZERO 0
-#define ARRAY_ZERO {0}
-#define POINTER_ZERO nullptr
-#define EMPTY
-/* clang-format on */
+/* Macro to convert a value to string in the preprocessor:
+ * - `STRINGIFY_ARG`: gives the argument as a string
+ * - `STRINGIFY_APPEND`: appends any argument 'b' onto the string argument 'a',
+ *   used by `STRINGIFY` because some preprocessors warn about zero arguments.
+ * - `STRINGIFY`: gives the argument's value as a string. */
 
-#ifdef _WIN32
-#  define setenv(x, y, z) _putenv(CHARALL(STRINGALL(x) + "=" + y))
-#  define DebugOutput(w) OutputDebugString(TEXT(w))
+#define STRINGIFY_ARG(x) "" #x
+#define STRINGIFY_APPEND(a, b) "" a #b
+#define STRINGIFY(x) STRINGIFY_APPEND("", x)
+
+/* generic strcmp macros */
+#if defined(_MSC_VER)
+#  define strcasecmp _stricmp
+#  define strncasecmp _strnicmp
 #endif
 
-#ifndef MAX_PATH
-#  define MAX_PATH 260
-#endif /* MAX_PATH */
+#define STREQ(a, b) (strcmp(a, b) == 0)
+#define STRCASEEQ(a, b) (strcasecmp(a, b) == 0)
+#define STREQLEN(a, b, n) (strncmp(a, b, n) == 0)
+#define STRCASEEQLEN(a, b, n) (strncasecmp(a, b, n) == 0)
+
+#define STRPREFIX(a, b) (strncmp((a), (b), strlen(b)) == 0)
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Unused Function/Argument Macros
+ * \{ */
+
+/* UNUSED macro, for function argument */
+#if defined(__GNUC__) || defined(__clang__)
+#  define UNUSED(x) UNUSED_##x __attribute__((__unused__))
+#else
+#  define UNUSED(x) UNUSED_##x
+#endif
+
+/**
+ * WARNING: this doesn't warn when returning pointer types (because of the placement of `*`).
+ * Use #UNUSED_FUNCTION_WITH_RETURN_TYPE instead in this case.
+ */
+#if defined(__GNUC__) || defined(__clang__)
+#  define UNUSED_FUNCTION(x) __attribute__((__unused__)) UNUSED_##x
+#else
+#  define UNUSED_FUNCTION(x) UNUSED_##x
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+#  define UNUSED_FUNCTION_WITH_RETURN_TYPE(rtype, x) __attribute__((__unused__)) rtype UNUSED_##x
+#else
+#  define UNUSED_FUNCTION_WITH_RETURN_TYPE(rtype, x) rtype UNUSED_##x
+#endif
+
+/**
+ * UNUSED_VARS#(a, ...): quiet unused warnings
+ *
+ * \code{.py}
+ * for i in range(16):
+ *     args = [(chr(ord('a') + (c % 26)) + (chr(ord('0') + (c // 26)))) for c in range(i + 1)]
+ *     print("#define _VA_UNUSED_VARS_%d(%s) \\" % (i + 1, ", ".join(args)))
+ *     print("\t((void)(%s)%s)" %
+ *             (args[0], ((", _VA_UNUSED_VARS_" + str(i) + "(%s)") if i else "%s") %
+ *              ", ".join((args[1:]))))
+ * \endcode
+ */
+
+#define _VA_UNUSED_VARS_1(a0) ((void)(a0))
+#define _VA_UNUSED_VARS_2(a0, b0) ((void)(a0), _VA_UNUSED_VARS_1(b0))
+#define _VA_UNUSED_VARS_3(a0, b0, c0) ((void)(a0), _VA_UNUSED_VARS_2(b0, c0))
+#define _VA_UNUSED_VARS_4(a0, b0, c0, d0) ((void)(a0), _VA_UNUSED_VARS_3(b0, c0, d0))
+#define _VA_UNUSED_VARS_5(a0, b0, c0, d0, e0) ((void)(a0), _VA_UNUSED_VARS_4(b0, c0, d0, e0))
+#define _VA_UNUSED_VARS_6(a0, b0, c0, d0, e0, f0) \
+  ((void)(a0), _VA_UNUSED_VARS_5(b0, c0, d0, e0, f0))
+#define _VA_UNUSED_VARS_7(a0, b0, c0, d0, e0, f0, g0) \
+  ((void)(a0), _VA_UNUSED_VARS_6(b0, c0, d0, e0, f0, g0))
+#define _VA_UNUSED_VARS_8(a0, b0, c0, d0, e0, f0, g0, h0) \
+  ((void)(a0), _VA_UNUSED_VARS_7(b0, c0, d0, e0, f0, g0, h0))
+#define _VA_UNUSED_VARS_9(a0, b0, c0, d0, e0, f0, g0, h0, i0) \
+  ((void)(a0), _VA_UNUSED_VARS_8(b0, c0, d0, e0, f0, g0, h0, i0))
+#define _VA_UNUSED_VARS_10(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0) \
+  ((void)(a0), _VA_UNUSED_VARS_9(b0, c0, d0, e0, f0, g0, h0, i0, j0))
+#define _VA_UNUSED_VARS_11(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0, k0) \
+  ((void)(a0), _VA_UNUSED_VARS_10(b0, c0, d0, e0, f0, g0, h0, i0, j0, k0))
+#define _VA_UNUSED_VARS_12(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0) \
+  ((void)(a0), _VA_UNUSED_VARS_11(b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0))
+#define _VA_UNUSED_VARS_13(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0) \
+  ((void)(a0), _VA_UNUSED_VARS_12(b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0))
+#define _VA_UNUSED_VARS_14(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0, n0) \
+  ((void)(a0), _VA_UNUSED_VARS_13(b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0, n0))
+#define _VA_UNUSED_VARS_15(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0, n0, o0) \
+  ((void)(a0), _VA_UNUSED_VARS_14(b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0, n0, o0))
+#define _VA_UNUSED_VARS_16(a0, b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0, n0, o0, p0) \
+  ((void)(a0), _VA_UNUSED_VARS_15(b0, c0, d0, e0, f0, g0, h0, i0, j0, k0, l0, m0, n0, o0, p0))
+
+/* reusable ELEM macro */
+#define UNUSED_VARS(...) VA_NARGS_CALL_OVERLOAD(_VA_UNUSED_VARS_, __VA_ARGS__)
+
+/* for debug-only variables */
+#ifndef NDEBUG
+#  define UNUSED_VARS_NDEBUG(...)
+#else
+#  define UNUSED_VARS_NDEBUG UNUSED_VARS
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Branch Prediction Macros
+ * \{ */
+
+/* hints for branch prediction, only use in code that runs a _lot_ where */
+#ifdef __GNUC__
+#  define LIKELY(x) __builtin_expect(!!(x), 1)
+#  define UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+#  define LIKELY(x) (x)
+#  define UNLIKELY(x) (x)
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Flag Macros
+ * \{ */
+
+/* Set flag from a single test */
+#define SET_FLAG_FROM_TEST(value, test, flag) \
+  {                                           \
+    if (test) {                               \
+      (value) |= (flag);                      \
+    } else {                                  \
+      (value) &= ~(flag);                     \
+    }                                         \
+  }                                           \
+  ((void)0)
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name C++ Macros
+ * \{ */
+
+#ifdef __cplusplus
+
+/* Useful to port C code using enums to C++ where enums are strongly typed.
+ * To use after the enum declaration. */
+/* If any enumerator `C` is set to say `A|B`, then `C` would be the max enum value. */
+#  define ENUM_OPERATORS(_enum_type, _max_enum_value)                                          \
+    extern "C++" {                                                                             \
+    inline constexpr _enum_type operator|(_enum_type a, _enum_type b)                          \
+    {                                                                                          \
+      return static_cast<_enum_type>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b));     \
+    }                                                                                          \
+    inline constexpr _enum_type operator&(_enum_type a, _enum_type b)                          \
+    {                                                                                          \
+      return static_cast<_enum_type>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b));     \
+    }                                                                                          \
+    inline constexpr _enum_type operator~(_enum_type a)                                        \
+    {                                                                                          \
+      return static_cast<_enum_type>(~static_cast<uint64_t>(a) &                               \
+                                     (2 * static_cast<uint64_t>(_max_enum_value) - 1));        \
+    }                                                                                          \
+    inline _enum_type &operator|=(_enum_type &a, _enum_type b)                                 \
+    {                                                                                          \
+      return a = static_cast<_enum_type>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b)); \
+    }                                                                                          \
+    inline _enum_type &operator&=(_enum_type &a, _enum_type b)                                 \
+    {                                                                                          \
+      return a = static_cast<_enum_type>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b)); \
+    }                                                                                          \
+    } /* extern "C++" */
+
+#else
+/* Output nothing. */
+#  define ENUM_OPERATORS(_type, _max)
+#endif
+
+/**
+ * Utility so function declarations in C headers can use C++ default arguments. The default is then
+ * available when included in a C++ file, otherwise the argument has to be set explicitly.
+ */
+#ifdef __cplusplus
+#  define CPP_ARG_DEFAULT(default_value) = default_value
+#else
+#  define CPP_ARG_DEFAULT(default_value)
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Misc Macros
+ * \{ */
+
+/** Useful for debugging. */
+#define AT __FILE__ ":" STRINGIFY(__LINE__)
+
+#ifndef N_
+#  define N_(String) String
+#endif /* N_ */
+#ifndef TIP_
+#  define TIP_(String) String
+#endif /* TIP_ */
+
+/** No-op for expressions we don't want to instantiate, but must remain valid. */
+#define EXPR_NOP(expr) (void)(0 ? ((void)(expr), 1) : 0)
+
+/**
+ * Utility macro that wraps `std::enable_if` to make it a bit easier to use and less verbose for
+ * SFINAE in common cases.
+ *
+ * \note Often one has to invoke this macro with double parenthesis. That's because the condition
+ * often contains a comma and angle brackets are not recognized as parenthesis by the preprocessor.
+ */
+#define KLI_ENABLE_IF(condition) typename std::enable_if_t<(condition)> * = nullptr
+
+#if defined(_MSC_VER)
+#  define KLI_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
+#elif defined(__has_cpp_attribute)
+#  if __has_cpp_attribute(no_unique_address)
+#    define KLI_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#  else
+#    define KLI_NO_UNIQUE_ADDRESS
+#  endif
+#else
+#  define KLI_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#endif
+
+/** \} */
+
+#ifdef __cplusplus
+#  define FIND_TOKEN(i) (TfToken::Find(i))
+
+#  define STRINGALL(x) wabi::TfStringify(x)
+#  define CHARALL(x) wabi::TfStringify(x).c_str()
+
+#  define CONCAT(a, b) wabi::TfStringCatPaths(a, b).c_str()
+#  define STRCAT(a, b) wabi::TfStringCatPaths(a, b)
+
+#  define CHARSTR(a) a.c_str()
+
+#  define VALUE_ZERO 0
+#  define ARRAY_ZERO \
+    {                \
+      0              \
+    }
+#  define POINTER_ZERO nullptr
+#  define EMPTY
+
+#  ifdef _WIN32
+#    define setenv(x, y, z) _putenv(CHARALL(STRINGALL(x) + "=" + y))
+#    define DebugOutput(w) OutputDebugString(TEXT(w))
+#  endif
+
+#  ifndef MAX_PATH
+#    define MAX_PATH 260
+#  endif /* MAX_PATH */
+#endif   /* __cplusplus */
+
+#endif /* __KLI_UTILDEFINES_H__ */

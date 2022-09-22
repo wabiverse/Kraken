@@ -27,7 +27,7 @@
 
 #include <Python.h>
 
-#include "KLI_math_inline.h"
+#include "KLI_math.h"
 
 #include <stdbool.h>
 

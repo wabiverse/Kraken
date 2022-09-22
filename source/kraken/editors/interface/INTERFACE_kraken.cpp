@@ -34,8 +34,6 @@
 
 #include "LUXO_access.h"
 
-#include "ED_screen.h"
-
 #include "UI_interface.h"
 
 #include "KLI_rect.h"
@@ -43,6 +41,10 @@
 
 #include "KKE_scene.h"
 #include "KKE_context.h"
+
+#include "ED_screen.h"
+
+#include "IMB_colormanagement.h"
 
 #include "interface_intern.h"
 
@@ -64,6 +66,25 @@ struct AutoComplete
   char *truncate;
   const char *startname;
 };
+
+static void ui_update_window_matrix(const wmWindow *window, const ARegion *region, uiBlock *block)
+{
+  /* window matrix and aspect */
+  if (region && region->visible) {
+    /* Get projection matrix which includes View2D translation and zoom. */
+    GPU_matrix_projection_get(block->winmat);
+    block->aspect = 2.0f / fabsf(region->winx * block->winmat[0][0]);
+  } else {
+    /* No subwindow created yet, for menus for example, so we use the main
+     * window instead, since buttons are created there anyway. */
+    const int width = WM_window_pixels_x(window);
+    const int height = WM_window_pixels_y(window);
+    const rcti winrct = {0, width - 1, 0, height - 1};
+
+    wmGetProjectionMatrix(block->winmat, &winrct);
+    block->aspect = 2.0f / fabsf(width * block->winmat[0][0]);
+  }
+}
 
 void UI_window_to_block_fl(const ARegion *region, uiBlock *block, float *r_x, float *r_y)
 {
@@ -139,7 +160,41 @@ void ui_block_to_window_fl(const ARegion *region, uiBlock *block, float *r_x, fl
 
 /* ************* EVENTS ************* */
 
-uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eUIEmbossType emboss)
+void UI_block_region_set(uiBlock *block, ARegion *region)
+{
+  auto &lb = region->uiblocks;
+  uiBlock *oldblock = nullptr;
+
+  /* each listbase only has one block with this name, free block
+   * if is already there so it can be rebuilt from scratch */
+  if (!lb.empty()) {
+    if (region->runtime.block_name_map == nullptr) {
+      region->runtime.block_name_map = KKE_rhash_str_new(__func__);
+    }
+    oldblock = (uiBlock *)KKE_rhash_lookup(region->runtime.block_name_map, block->name);
+
+    if (oldblock) {
+      oldblock->active = false;
+      oldblock->panel = nullptr;
+      oldblock->handle = nullptr;
+    }
+
+    /* at the beginning of the list! for dynamical menus/blocks */
+    lb.push_back(block);
+    KKE_rhash_reinsert(region->runtime.block_name_map,
+                       (void *)block->name.GetText(),
+                       block,
+                       nullptr,
+                       nullptr);
+  }
+
+  block->oldblock = oldblock;
+}
+
+uiBlock *UI_block_begin(const kContext *C,
+                        ARegion *region,
+                        const wabi::TfToken &name,
+                        eUIEmbossType emboss)
 {
   wmWindow *window = CTX_wm_window(C);
   Scene *scene = CTX_data_scene(C);
@@ -162,12 +217,11 @@ uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eU
     /* copy to avoid crash when scene gets deleted with ui still open */
     block->unit = new UnitSettings();
     memcpy(block->unit, &scene->unit, sizeof(scene->unit));
-  }
-  else {
+  } else {
     STRNCPY(block->display_device, IMB_colormanagement_display_get_default_name());
   }
 
-  KLI_strncpy(block->name, name, sizeof(block->name));
+  block->name = name;
 
   if (region) {
     UI_block_region_set(block, region);
@@ -183,6 +237,354 @@ uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eU
   }
 
   return block;
+}
+
+void UI_block_flag_enable(uiBlock *block, int flag)
+{
+  block->flag |= flag;
+}
+
+void UI_block_flag_disable(uiBlock *block, int flag)
+{
+  block->flag &= ~flag;
+}
+
+void UI_but_flag_enable(uiBut *but, int flag)
+{
+  but->flag |= flag;
+}
+
+void UI_but_flag_disable(uiBut *but, int flag)
+{
+  but->flag &= ~flag;
+}
+
+bool UI_but_flag_is_set(uiBut *but, int flag)
+{
+  return (but->flag & flag) != 0;
+}
+
+void UI_but_drawflag_enable(uiBut *but, int flag)
+{
+  but->drawflag |= flag;
+}
+
+void UI_but_drawflag_disable(uiBut *but, int flag)
+{
+  but->drawflag &= ~flag;
+}
+
+eUIEmbossType UI_block_emboss_get(uiBlock *block)
+{
+  return block->emboss;
+}
+
+void UI_block_emboss_set(uiBlock *block, eUIEmbossType emboss)
+{
+  block->emboss = emboss;
+}
+
+void UI_block_theme_style_set(uiBlock *block, char theme_style)
+{
+  block->theme_style = theme_style;
+}
+
+bool UI_block_is_search_only(const uiBlock *block)
+{
+  return block->flag & UI_BLOCK_SEARCH_ONLY;
+}
+
+void UI_block_set_search_only(uiBlock *block, bool search_only)
+{
+  SET_FLAG_FROM_TEST(block->flag, search_only, UI_BLOCK_SEARCH_ONLY);
+}
+
+void UI_but_disable(uiBut *but, const char *disabled_hint)
+{
+  UI_but_flag_enable(but, UI_BUT_DISABLED);
+
+  /* Only one disabled hint at a time currently. Don't override the previous one here. */
+  if (but->disabled_info && but->disabled_info[0]) {
+    return;
+  }
+
+  but->disabled_info = disabled_hint;
+}
+
+static void ui_but_alloc_info(const eButType type,
+                              size_t *r_alloc_size,
+                              const char **r_alloc_str,
+                              bool *r_has_custom_type)
+{
+  size_t alloc_size;
+  const char *alloc_str;
+  bool has_custom_type = true;
+
+  switch (type) {
+    case UI_BTYPE_NUM:
+      alloc_size = sizeof(uiButNumber);
+      alloc_str = "uiButNumber";
+      break;
+    case UI_BTYPE_COLOR:
+      alloc_size = sizeof(uiButColor);
+      alloc_str = "uiButColor";
+      break;
+    case UI_BTYPE_DECORATOR:
+      alloc_size = sizeof(uiButDecorator);
+      alloc_str = "uiButDecorator";
+      break;
+    case UI_BTYPE_TAB:
+      alloc_size = sizeof(uiButTab);
+      alloc_str = "uiButTab";
+      break;
+    case UI_BTYPE_SEARCH_MENU:
+      alloc_size = sizeof(uiButSearch);
+      alloc_str = "uiButSearch";
+      break;
+    case UI_BTYPE_PROGRESS_BAR:
+      alloc_size = sizeof(uiButProgressbar);
+      alloc_str = "uiButProgressbar";
+      break;
+    case UI_BTYPE_HSVCUBE:
+      alloc_size = sizeof(uiButHSVCube);
+      alloc_str = "uiButHSVCube";
+      break;
+    case UI_BTYPE_COLORBAND:
+      alloc_size = sizeof(uiButColorBand);
+      alloc_str = "uiButColorBand";
+      break;
+    case UI_BTYPE_CURVE:
+      alloc_size = sizeof(uiButCurveMapping);
+      alloc_str = "uiButCurveMapping";
+      break;
+    case UI_BTYPE_CURVEPROFILE:
+      alloc_size = sizeof(uiButCurveProfile);
+      alloc_str = "uiButCurveProfile";
+      break;
+    case UI_BTYPE_HOTKEY_EVENT:
+      alloc_size = sizeof(uiButHotkeyEvent);
+      alloc_str = "uiButHotkeyEvent";
+      break;
+    case UI_BTYPE_VIEW_ITEM:
+      alloc_size = sizeof(uiButViewItem);
+      alloc_str = "uiButViewItem";
+      break;
+    default:
+      alloc_size = sizeof(uiBut);
+      alloc_str = "uiBut";
+      has_custom_type = false;
+      break;
+  }
+
+  if (r_alloc_size) {
+    *r_alloc_size = alloc_size;
+  }
+  if (r_alloc_str) {
+    *r_alloc_str = alloc_str;
+  }
+  if (r_has_custom_type) {
+    *r_has_custom_type = has_custom_type;
+  }
+}
+
+static uiBut *ui_but_alloc(const eButType type)
+{
+  size_t alloc_size;
+  const char *alloc_str;
+  ui_but_alloc_info(type, &alloc_size, &alloc_str, nullptr);
+
+  return new uiBut();
+}
+
+/**
+ * \brief ui_def_but is the function that draws many button types
+ *
+ * \param x, y: The lower left hand corner of the button (X axis)
+ * \param width, height: The size of the button.
+ *
+ * for float buttons:
+ * \param a1: Click Step (how much to change the value each click)
+ * \param a2: Number of decimal point values to display. 0 defaults to 3 (0.000)
+ * 1,2,3, and a maximum of 4, all greater values will be clamped to 4.
+ */
+static uiBut *ui_def_but(uiBlock *block,
+                         int type,
+                         int retval,
+                         const char *str,
+                         int x,
+                         int y,
+                         short width,
+                         short height,
+                         void *poin,
+                         float min,
+                         float max,
+                         float a1,
+                         float a2,
+                         const char *tip)
+{
+  KLI_assert(width >= 0 && height >= 0);
+
+  /* we could do some more error checks here */
+  if ((type & BUTTYPE) == UI_BTYPE_LABEL) {
+    KLI_assert((poin != nullptr || min != 0.0f || max != 0.0f || (a1 == 0.0f && a2 != 0.0f) ||
+                (a1 != 0.0f && a1 != 1.0f)) == false);
+  }
+
+  if (type & UI_BUT_POIN_TYPES) { /* a pointer is required */
+    if (poin == nullptr) {
+      KLI_assert(0);
+      return nullptr;
+    }
+  }
+
+  uiBut *but = ui_but_alloc((eButType)(type & BUTTYPE));
+
+  but->type = (eButType)(type & BUTTYPE);
+  but->pointype = (eButPointerType)(type & UI_BUT_POIN_TYPES);
+  but->bit = type & UI_BUT_POIN_BIT;
+  but->bitnr = type & 31;
+  but->icon = ICON_NONE;
+  but->iconadd = 0;
+
+  but->retval = retval;
+
+  const int slen = strlen(str);
+  ui_but_string_set_internal(but, str, slen);
+
+  but->rect[0] = x;
+  but->rect[2] = y;
+  but->rect[1] = but->rect[0] + width;
+  but->rect[3] = but->rect[2] + height;
+
+  but->poin = (char *)poin;
+  but->hardmin = but->softmin = min;
+  but->hardmax = but->softmax = max;
+  but->a1 = a1;
+  but->a2 = a2;
+  but->tip = tip;
+
+  but->disabled_info = block->lockstr;
+  but->emboss = block->emboss;
+  but->pie_dir = UI_RADIAL_NONE;
+
+  but->block = block; /* pointer back, used for front-buffer status, and picker. */
+
+  if ((block->flag & UI_BUT_ALIGN) && ui_but_can_align(but)) {
+    but->alignnr = block->alignnr;
+  }
+
+  but->func = block->func;
+  but->func_arg1 = block->func_arg1;
+  but->func_arg2 = block->func_arg2;
+
+  but->funcN = block->funcN;
+  if (block->func_argN) {
+    but->func_argN = MEM_dupallocN(block->func_argN);
+  }
+
+  but->pos = -1; /* cursor invisible */
+
+  if (ELEM(but->type, UI_BTYPE_NUM, UI_BTYPE_NUM_SLIDER)) { /* add a space to name */
+    /* slen remains unchanged from previous assignment, ensure this stays true */
+    if (slen > 0 && slen < UI_MAX_NAME_STR - 2) {
+      if (but->str[slen - 1] != ' ') {
+        but->str[slen] = ' ';
+        but->str[slen + 1] = 0;
+      }
+    }
+  }
+
+  if (block->flag & UI_BLOCK_RADIAL) {
+    but->drawflag |= UI_BUT_TEXT_LEFT;
+    if (but->str && but->str[0]) {
+      but->drawflag |= UI_BUT_ICON_LEFT;
+    }
+  }
+  else if (((block->flag & UI_BLOCK_LOOP) && !ui_block_is_popover(block) &&
+            !(block->flag & UI_BLOCK_QUICK_SETUP)) ||
+           ELEM(but->type,
+                UI_BTYPE_MENU,
+                UI_BTYPE_TEXT,
+                UI_BTYPE_LABEL,
+                UI_BTYPE_BLOCK,
+                UI_BTYPE_BUT_MENU,
+                UI_BTYPE_SEARCH_MENU,
+                UI_BTYPE_POPOVER)) {
+    but->drawflag |= (UI_BUT_TEXT_LEFT | UI_BUT_ICON_LEFT);
+  }
+#ifdef USE_NUMBUTS_LR_ALIGN
+  else if (ELEM(but->type, UI_BTYPE_NUM, UI_BTYPE_NUM_SLIDER)) {
+    if (slen != 0) {
+      but->drawflag |= UI_BUT_TEXT_LEFT;
+    }
+  }
+#endif
+
+  but->drawflag |= (block->flag & UI_BUT_ALIGN);
+
+  if (block->lock == true) {
+    but->flag |= UI_BUT_DISABLED;
+  }
+
+  /* keep track of UI_interface.h */
+  if (ELEM(but->type,
+           UI_BTYPE_BLOCK,
+           UI_BTYPE_BUT,
+           UI_BTYPE_DECORATOR,
+           UI_BTYPE_LABEL,
+           UI_BTYPE_PULLDOWN,
+           UI_BTYPE_ROUNDBOX,
+           UI_BTYPE_LISTBOX,
+           UI_BTYPE_BUT_MENU,
+           UI_BTYPE_SCROLL,
+           UI_BTYPE_GRIP,
+           UI_BTYPE_SEPR,
+           UI_BTYPE_SEPR_LINE,
+           UI_BTYPE_SEPR_SPACER) ||
+      (but->type >= UI_BTYPE_SEARCH_MENU)) {
+    /* pass */
+  }
+  else {
+    but->flag |= UI_BUT_UNDO;
+  }
+
+  BLI_addtail(&block->buttons, but);
+
+  if (block->curlayout) {
+    ui_layout_add_but(block->curlayout, but);
+  }
+
+#ifdef WITH_PYTHON
+  /* If the 'UI_OT_editsource' is running, extract the source info from the button. */
+  if (UI_editsource_enable_check()) {
+    UI_editsource_active_but_test(but);
+  }
+#endif
+
+  return but;
+}
+
+uiBut *uiDefBut(uiBlock *block,
+                int type,
+                int retval,
+                const char *str,
+                int x,
+                int y,
+                short width,
+                short height,
+                void *poin,
+                float min,
+                float max,
+                float a1,
+                float a2,
+                const char *tip)
+{
+  uiBut *but =
+    ui_def_but(block, type, retval, str, x, y, width, height, poin, min, max, a1, a2, tip);
+
+  UI_but_update<bool>(but);
+
+  return but;
 }
 
 template<typename T> int ui_but_is_pushed_ex(uiBut *but, T *value)

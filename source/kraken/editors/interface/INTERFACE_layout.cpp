@@ -463,4 +463,124 @@ PanelType *UI_but_paneltype_get(uiBut *but)
   return NULL;
 }
 
+static void ui_layout_add_padding_button(uiLayoutRoot *root)
+{
+  if (root->padding) {
+    /* add an invisible button for padding */
+    uiBlock *block = root->block;
+    uiLayout *prev_layout = block->curlayout;
+
+    block->curlayout = root->layout;
+    uiDefBut(
+        block, UI_BTYPE_SEPR, 0, "", 0, 0, root->padding, root->padding, NULL, 0.0, 0.0, 0, 0, "");
+    block->curlayout = prev_layout;
+  }
+}
+
+uiLayout *UI_block_layout(uiBlock *block,
+                          int dir,
+                          int type,
+                          int x,
+                          int y,
+                          int size,
+                          int em,
+                          int padding,
+                          const uiStyle *style)
+{
+  uiLayoutRoot *root = new uiLayoutRoot();
+  root->type = type;
+  root->style = style;
+  root->block = block;
+  root->padding = padding;
+  root->opcontext = WM_OP_INVOKE_REGION_WIN;
+
+  uiLayout *layout = new uiLayout();
+  layout->item.type = (type == UI_LAYOUT_VERT_BAR) ? ITEM_LAYOUT_COLUMN : ITEM_LAYOUT_ROOT;
+
+  /* Only used when 'UI_ITEM_PROP_SEP' is set. */
+  layout->item.flag = UI_ITEM_PROP_DECORATE;
+
+  layout->x = x;
+  layout->y = y;
+  layout->root = root;
+  layout->space = style->templatespace;
+  layout->active = true;
+  layout->enabled = true;
+  // layout->context = NULL;
+  layout->emboss = UI_EMBOSS_UNDEFINED;
+
+  if (ELEM(type, UI_LAYOUT_MENU, UI_LAYOUT_PIEMENU)) {
+    layout->space = 0;
+  }
+
+  if (dir == UI_LAYOUT_HORIZONTAL) {
+    layout->h = size;
+    layout->root->emh = em * UI_UNIT_Y;
+  }
+  else {
+    layout->w = size;
+    layout->root->emw = em * UI_UNIT_X;
+  }
+
+  block->curlayout = layout;
+  root->layout = layout;
+  block->layouts.push_back(root);
+
+  ui_layout_add_padding_button(root);
+
+  return layout;
+}
+
+uiBlock *uiLayoutGetBlock(uiLayout *layout)
+{
+  return layout->root->block;
+}
+
+int uiLayoutGetOperatorContext(uiLayout *layout)
+{
+  return layout->root->opcontext;
+}
+
+void UI_block_layout_set_current(uiBlock *block, uiLayout *layout)
+{
+  block->curlayout = layout;
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Alert Box with Big Icon
+ * \{ */
+
+uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
+{
+  const uiStyle *style = UI_style_get_dpi();
+  const short icon_size = 64 * U.dpi_fac;
+  const int text_points_max = MAX2(style->widget.points, style->widgetlabel.points);
+  const int dialog_width = icon_size + (text_points_max * size * U.dpi_fac);
+  /* By default, the space between icon and text/buttons will be equal to the 'columnspace',
+   * this extra padding will add some space by increasing the left column width,
+   * making the icon placement more symmetrical, between the block edge and the text. */
+  const float icon_padding = 5.0f * U.dpi_fac;
+  /* Calculate the factor of the fixed icon column depending on the block width. */
+  const float split_factor = ((float)icon_size + icon_padding) /
+                             (float)(dialog_width - style->columnspace);
+
+  uiLayout *block_layout = UI_block_layout(
+      block, UI_LAYOUT_VERTICAL, UI_LAYOUT_PANEL, 0, 0, dialog_width, 0, 0, style);
+
+  /* Split layout to put alert icon on left side. */
+  uiLayout *split_block = uiLayoutSplit(block_layout, split_factor, false);
+
+  /* Alert icon on the left. */
+  uiLayout *layout = uiLayoutRow(split_block, false);
+  /* Using 'align_left' with 'row' avoids stretching the icon along the width of column. */
+  uiLayoutSetAlignment(layout, UI_LAYOUT_ALIGN_LEFT);
+  uiDefButAlert(block, icon, 0, 0, icon_size, icon_size);
+
+  /* The rest of the content on the right. */
+  layout = uiLayoutColumn(split_block, false);
+
+  return layout;
+}
+
+
 WABI_NAMESPACE_END

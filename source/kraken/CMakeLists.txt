@@ -1,3 +1,6 @@
+# kraken lib depends on eigen.
+add_subdirectory(eigen)
+
 add_subdirectory(KrakenOS)
 add_subdirectory(anchor)
 add_subdirectory(editors)

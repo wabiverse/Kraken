@@ -171,6 +171,13 @@ void *KKE_rhash_lookup(RHash *rh, const void *key);
 void *KKE_rhash_lookup(RHash *rh, const TfToken &key);
 void KKE_rhash_insert(RHash *rh, const TfToken &key, void *value);
 
+bool KKE_rhash_reinsert(RHash *gh,
+                        void *key,
+                        void *val,
+                        RHashKeyFreeFP keyfreefp,
+                        RHashValFreeFP valfreefp);
+
+
 /** Aligned with #PropertyUnit and `kpyunits_ucategories_items` in `kpy_utils_units.cpp`. */
 enum
 {

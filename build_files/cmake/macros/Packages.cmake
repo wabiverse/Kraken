@@ -503,6 +503,11 @@ list(APPEND BOOST_LIBRARIES
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
+# Find Eigen
+
+set(EIGEN3_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/extern/Eigen3)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Jinja2
 
 find_package(Jinja2)

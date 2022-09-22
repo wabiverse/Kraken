@@ -45,6 +45,7 @@ set(SRC
   USD_wm_types.h
   USD_window.h
   USD_workspace.h
+  USD_vec_types.h
 )
 
 set(LIB

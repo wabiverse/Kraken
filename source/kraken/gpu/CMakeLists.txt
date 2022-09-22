@@ -2,7 +2,7 @@ set(INC
   .
   ../../../. # Pixar USD
   ../../../source
-  metal
+  ./metal
   ../krakernel
   ../kraklib
   ../draw
@@ -18,7 +18,10 @@ set(INC_SYS
   ${PYTHON_INCLUDE_DIR}
 )
 
-set(SRC "")
+set(SRC
+
+  GPU_matrix.h
+)
 
 set(OPENGL_SRC "")
 

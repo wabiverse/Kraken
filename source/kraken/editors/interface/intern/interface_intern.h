@@ -111,6 +111,20 @@ enum uiButtonGroupFlag
 };
 ENUM_OPERATORS(uiButtonGroupFlag, UI_BUTTON_GROUP_PANEL_HEADER);
 
+/** #uiBut.pie_dir */
+enum RadialDirection
+{
+  UI_RADIAL_NONE = -1,
+  UI_RADIAL_N = 0,
+  UI_RADIAL_NE = 1,
+  UI_RADIAL_E = 2,
+  UI_RADIAL_SE = 3,
+  UI_RADIAL_S = 4,
+  UI_RADIAL_SW = 5,
+  UI_RADIAL_W = 6,
+  UI_RADIAL_NW = 7,
+};
+
 struct uiBut
 {
   /** Pointer back to the layout item holding this button. */
@@ -184,6 +198,8 @@ struct uiBut
 
   /** Copied from the #uiBlock.emboss */
   eUIEmbossType emboss;
+
+  RadialDirection pie_dir;
 
   /** could be made into a single flag */
   bool changed;
@@ -373,6 +389,49 @@ struct uiButCurveMapping
   eButGradientType gradient_type;
 };
 
+/** Derived struct for #UI_BTYPE_DECORATOR */
+struct uiButDecorator
+{
+  uiBut but;
+
+  struct KrakenPRIM rnapoin;
+  struct KrakenPROP *rnaprop;
+  int rnaindex;
+};
+
+/** Derived struct for #UI_BTYPE_PROGRESS_BAR. */
+struct uiButProgressbar
+{
+  uiBut but;
+
+  /* 0..1 range */
+  float progress;
+};
+
+struct uiButViewItem
+{
+  uiBut but;
+
+  /* C-Handle to the view item this button was created for. */
+  struct uiViewItemHandle *view_item;
+};
+
+/** Derived struct for #UI_BTYPE_HSVCUBE. */
+struct uiButHSVCube
+{
+  uiBut but;
+
+  eButGradientType gradient_type;
+};
+
+/** Derived struct for #UI_BTYPE_HOTKEY_EVENT. */
+struct uiButHotkeyEvent
+{
+  uiBut but;
+
+  short modifier_key;
+};
+
 /* Menu Callbacks */
 
 typedef void (*uiMenuCreateFunc)(struct kContext *C, struct uiLayout *layout, void *arg1);
@@ -402,13 +461,14 @@ struct uiBlock
 
   std::vector<struct uiBut *> buttons;
   struct Panel *panel;
+  struct uiBlock *oldblock;
 
   /** Used for `UI_butstore_*` runtime function. */
   std::vector<struct uiBut *> butstore;
 
   std::vector<struct uiButtonGroup *> button_groups; /* #uiButtonGroup. */
 
-  std::vector<struct uiLayout *> layouts;
+  std::vector<struct uiLayoutRoot *> layouts;
   struct uiLayout *curlayout;
 
   /** Custom interaction data. */
@@ -607,6 +667,8 @@ void UI_but_string_get_ex(uiBut *but,
 void UI_but_string_get(uiBut *but, char *str, const size_t maxlen);
 
 bool UI_but_is_editing(const uiBut *but);
+
+bool ui_but_can_align(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 
 KRAKEN_NAMESPACE_END
 

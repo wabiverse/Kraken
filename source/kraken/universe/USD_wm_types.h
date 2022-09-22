@@ -26,7 +26,7 @@
 
 #include "WM_api.h"
 
-#include "KLI_math_inline.h"
+#include "KLI_math.h"
 
 #include "KKE_context.h"
 

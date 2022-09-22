@@ -27,7 +27,7 @@
 #  error "This include is for Windows only!"
 #endif
 
-#include "KLI_math_inline.h"
+#include "KLI_math.h"
 
 #define WIN32_LEAN_AND_MEAN
 

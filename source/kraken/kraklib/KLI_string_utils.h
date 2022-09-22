@@ -25,6 +25,7 @@
 #pragma once
 
 #include "KLI_api.h"
+#include "KLI_compiler_attrs.h"
 
 /* generic strcmp macros */
 #if defined(_MSC_VER)

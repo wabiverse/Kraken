@@ -331,13 +331,13 @@ void *KKE_mempool_alloc(KKE_mempool *pool)
  *
  * \note Also used by: `KKE_edgehash` & `KKE_smallhash`.
  */
-extern const uint KKE_ghash_hash_sizes[]; /* Quiet warning, this is only used by smallhash.c */
-const uint KKE_ghash_hash_sizes[] = {
+extern const uint KKE_rhash_hash_sizes[]; /* Quiet warning, this is only used by smallhash.c */
+const uint KKE_rhash_hash_sizes[] = {
   5,       11,      17,      37,      67,       131,      257,      521,       1031,
   2053,    4099,    8209,    16411,   32771,    65537,    131101,   262147,    524309,
   1048583, 2097169, 4194319, 8388617, 16777259, 33554467, 67108879, 134217757, 268435459,
 };
-#define hashsizes KKE_ghash_hash_sizes
+#define hashsizes KKE_rhash_hash_sizes
 
 #define RHASH_MAX_SIZE 27
 KLI_STATIC_ASSERT(ARRAY_SIZE(hashsizes) == RHASH_MAX_SIZE, "Invalid 'hashsizes' size");
@@ -439,6 +439,11 @@ KLI_INLINE Entry *rhash_lookup_entry(const RHash *rh, const void *key)
   return rhash_lookup_entry_ex(rh, key, bucket_index);
 }
 
+bool KKE_rhash_haskey(const RHash *rh, const void *key)
+{
+  return (rhash_lookup_entry(rh, key) != NULL);
+}
+
 /**
  * Expand buckets to the next size up or down.
  */
@@ -519,6 +524,79 @@ static void rhash_buckets_expand(RHash *rh, const uint nentries, const bool user
 }
 
 /**
+ * Internal insert function.
+ * Takes hash and bucket_index arguments to avoid calling #rhash_keyhash and #rhash_bucket_index
+ * multiple times.
+ */
+KLI_INLINE void rhash_insert_ex(RHash *gh, void *key, void *val, const uint bucket_index)
+{
+  RHashEntry *e = static_cast<RHashEntry *>(KKE_mempool_alloc(gh->entrypool));
+
+  KLI_assert((gh->flag & RHASH_FLAG_ALLOW_DUPES) || (KKE_rhash_haskey(gh, key) == 0));
+  KLI_assert(!(gh->flag & RHASH_FLAG_IS_RSET));
+
+  e->e.next = gh->buckets[bucket_index];
+  e->e.key = key;
+  e->val = val;
+  gh->buckets[bucket_index] = (Entry *)e;
+
+  rhash_buckets_expand(gh, ++gh->nentries, false);
+}
+
+KLI_INLINE bool rhash_insert_safe(RHash *rh,
+                                  void *key,
+                                  void *val,
+                                  const bool override,
+                                  RHashKeyFreeFP keyfreefp,
+                                  RHashValFreeFP valfreefp)
+{
+  const uint hash = rhash_keyhash(rh, key);
+  const uint bucket_index = rhash_bucket_index(rh, hash);
+  RHashEntry *e = (RHashEntry *)rhash_lookup_entry_ex(rh, key, bucket_index);
+
+  KLI_assert(!(rh->flag & RHASH_FLAG_IS_RSET));
+
+  if (e) {
+    if (override) {
+      if (keyfreefp) {
+        keyfreefp(e->e.key);
+      }
+      if (valfreefp) {
+        valfreefp(e->val);
+      }
+      e->e.key = key;
+      e->val = val;
+    }
+    return false;
+  }
+  rhash_insert_ex(rh, key, val, bucket_index);
+  return true;
+}
+
+static RHash *rhash_new(RHashHashFP hashfp,
+                        RHashCmpFP cmpfp,
+                        const char *info,
+                        const uint nentries_reserve,
+                        const uint flag)
+{
+  RHash *rh = new RHash();
+
+  rh->hashfp = hashfp;
+  rh->cmpfp = cmpfp;
+
+  rh->buckets = NULL;
+  rh->flag = flag;
+
+  rhash_buckets_reset(rh, nentries_reserve);
+  rh->entrypool = KKE_mempool_create(RHASH_ENTRY_SIZE(flag & RHASH_FLAG_IS_RSET),
+                                     64,
+                                     64,
+                                     KKE_MEMPOOL_NOP);
+
+  return rh;
+}
+
+/**
  * Copy the RHash.
  */
 static RHash *rhash_copy(const RHash *rh, RHashKeyCopyFP keycopyfp, RHashValCopyFP valcopyfp)
@@ -581,29 +659,6 @@ void *KKE_rhash_lookup(RHash *rh, const void *key)
   RHashEntry *e = (RHashEntry *)rhash_lookup_entry(rh, key);
   KLI_assert(!(rh->flag & RHASH_FLAG_IS_RSET));
   return e ? e->val : NULL;
-}
-
-static RHash *rhash_new(RHashHashFP hashfp,
-                        RHashCmpFP cmpfp,
-                        const char *info,
-                        const uint nentries_reserve,
-                        const uint flag)
-{
-  RHash *rh = new RHash();
-
-  rh->hashfp = hashfp;
-  rh->cmpfp = cmpfp;
-
-  rh->buckets = NULL;
-  rh->flag = flag;
-
-  rhash_buckets_reset(rh, nentries_reserve);
-  rh->entrypool = KKE_mempool_create(RHASH_ENTRY_SIZE(flag & RHASH_FLAG_IS_RSET),
-                                     64,
-                                     64,
-                                     KKE_MEMPOOL_NOP);
-
-  return rh;
 }
 
 
@@ -701,6 +756,15 @@ RHash *KKE_rhash_int_new(const char *info)
 RHash *KKE_rhash_copy(const RHash *rh, RHashKeyCopyFP keycopyfp, RHashValCopyFP valcopyfp)
 {
   return rhash_copy(rh, keycopyfp, valcopyfp);
+}
+
+bool KKE_rhash_reinsert(RHash *rh,
+                        void *key,
+                        void *val,
+                        RHashKeyFreeFP keyfreefp,
+                        RHashValFreeFP valfreefp)
+{
+  return rhash_insert_safe(rh, key, val, true, keyfreefp, valfreefp);
 }
 
 

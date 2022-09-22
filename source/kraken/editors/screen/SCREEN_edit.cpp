@@ -42,7 +42,7 @@
 #include "KKE_workspace.h"
 
 #include "KLI_assert.h"
-#include "KLI_math_inline.h"
+#include "KLI_math.h"
 
 #include "WM_window.h"
 

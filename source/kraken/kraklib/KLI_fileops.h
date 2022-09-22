@@ -25,6 +25,7 @@
  */
 
 #include "KLI_api.h"
+#include "KLI_compiler_attrs.h"
 
 #if defined(WIN32)
 typedef unsigned int mode_t;

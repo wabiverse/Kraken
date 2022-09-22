@@ -18,10 +18,13 @@
 
 #pragma once
 
-/**
- * @file
- * KRAKEN Library.
- * Gadget Vault.
+/** \file
+ * \ingroup bli
+ *
+ * Defines:
+ * - #KLI_assert
+ * - #KLI_STATIC_ASSERT
+ * - #KLI_STATIC_ASSERT_ALIGN
  */
 
 #ifdef __cplusplus
@@ -29,21 +32,19 @@ extern "C" {
 #endif
 
 /* Utility functions. */
-void _KLI_assert_print_pos(const char *file, const int line, const char *function, const char *id);
+
+void _KLI_assert_print_pos(const char *file, int line, const char *function, const char *id);
+void _KLI_assert_print_extra(const char *str);
 void _KLI_assert_print_backtrace(void);
 void _KLI_assert_abort(void);
-void _KLI_assert_unreachable_print(const char *file, const int line, const char *function);
-
-#ifdef _WIN32
-#  include <stdio.h>
-void KLI_system_backtrace(FILE *fp);
-#endif
+void _KLI_assert_unreachable_print(const char *file, int line, const char *function);
 
 #ifdef _MSC_VER
 #  include <crtdbg.h> /* for _STATIC_ASSERT */
 #endif
 
 #ifndef NDEBUG
+/* _KLI_ASSERT_PRINT_POS */
 #  if defined(__GNUC__)
 #    define _KLI_ASSERT_PRINT_POS(a) _KLI_assert_print_pos(__FILE__, __LINE__, __func__, #    a)
 #  elif defined(_MSC_VER)
@@ -51,45 +52,65 @@ void KLI_system_backtrace(FILE *fp);
 #  else
 #    define _KLI_ASSERT_PRINT_POS(a) _KLI_assert_print_pos(__FILE__, __LINE__, "<?>", #    a)
 #  endif
+/* _KLI_ASSERT_ABORT */
 #  ifdef WITH_ASSERT_ABORT
 #    define _KLI_ASSERT_ABORT _KLI_assert_abort
 #  else
 #    define _KLI_ASSERT_ABORT() (void)0
 #  endif
-#  define KLI_assert(a)                              \
+/* KLI_assert */
+#  define KLI_assert(a) \
     (void)((!(a)) ? ((_KLI_assert_print_backtrace(), \
-                      _KLI_ASSERT_PRINT_POS(a),      \
-                      _KLI_ASSERT_ABORT(),           \
-                      NULL)) :                       \
+                      _KLI_ASSERT_PRINT_POS(a), \
+                      _KLI_ASSERT_ABORT(), \
+                      NULL)) : \
+                    NULL)
+/** A version of #KLI_assert() to pass an additional message to be printed on failure. */
+#  define KLI_assert_msg(a, msg) \
+    (void)((!(a)) ? ((_KLI_assert_print_backtrace(), \
+                      _KLI_ASSERT_PRINT_POS(a), \
+                      _KLI_assert_print_extra(msg), \
+                      _KLI_ASSERT_ABORT(), \
+                      NULL)) : \
                     NULL)
 #else
 #  define KLI_assert(a) ((void)0)
+#  define KLI_assert_msg(a, msg) ((void)0)
 #endif
 
 #if defined(__cplusplus)
+/* C++11 */
 #  define KLI_STATIC_ASSERT(a, msg) static_assert(a, msg);
 #elif defined(_MSC_VER)
+/* Visual Studio */
 #  if (_MSC_VER > 1910) && !defined(__clang__)
 #    define KLI_STATIC_ASSERT(a, msg) static_assert(a, msg);
 #  else
 #    define KLI_STATIC_ASSERT(a, msg) _STATIC_ASSERT(a);
 #  endif
 #elif defined(__COVERITY__)
+/* Workaround error with COVERITY. */
 #  define KLI_STATIC_ASSERT(a, msg)
 #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+/* C11 */
 #  define KLI_STATIC_ASSERT(a, msg) _Static_assert(a, msg);
 #else
+/* Old unsupported compiler */
 #  define KLI_STATIC_ASSERT(a, msg)
 #endif
 
 #define KLI_STATIC_ASSERT_ALIGN(st, align) \
   KLI_STATIC_ASSERT((sizeof(st) % (align) == 0), "Structure must be strictly aligned")
 
-#define KLI_assert_unreachable()                                   \
-  {                                                                \
-    _KLI_assert_unreachable_print(__FILE__, __LINE__, __func__);   \
-    KLI_assert(!"This line of code is marked to be unreachable."); \
-  }                                                                \
+/**
+ * Indicates that this line of code should never be executed. If it is reached, it will abort in
+ * debug builds and print an error in release builds.
+ */
+#define KLI_assert_unreachable() \
+  { \
+    _KLI_assert_unreachable_print(__FILE__, __LINE__, __func__); \
+    KLI_assert_msg(0, "This line of code is marked to be unreachable."); \
+  } \
   ((void)0)
 
 #ifdef __cplusplus

@@ -22,7 +22,49 @@
  * Purple Underground.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
+#include <sys/stat.h>
+
+#if defined(__NetBSD__) || defined(__DragonFly__) || defined(__HAIKU__)
+/* Other modern unix OS's should probably use this also. */
+#  include <sys/statvfs.h>
+#  define USE_STATFS_STATVFS
+#endif
+
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || \
+    defined(__DragonFly__)
+/* For statfs */
+#  include <sys/mount.h>
+#  include <sys/param.h>
+#endif
+
+#if defined(__linux__) || defined(__hpux) || defined(__GNU__) || defined(__GLIBC__)
+#  include <sys/vfs.h>
+#endif
+
+#include <fcntl.h>
+#include <string.h> /* `strcpy` etc. */
+
+#ifdef WIN32
+#  include "KLI_string_utf8.h"
+#  include "KLI_winstuff.h"
+#  include "utfconv.h"
+#  include <ShObjIdl.h>
+#  include <direct.h>
+#  include <io.h>
+#  include <stdbool.h>
+#else
+#  include <pwd.h>
+#  include <sys/ioctl.h>
+#  include <unistd.h>
+#endif
+
 #include "KLI_fileops.h"
+#include "KLI_string.h"
+#include "KLI_utildefines.h"
 #include "KLI_path_utils.h"
 
 #ifdef WIN32
@@ -38,9 +80,46 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-bool KLI_exists(const fs::path &path)
+int KLI_exists(const char *path)
 {
-  return fs::exists(path);
+#if defined(WIN32)
+  KLI_stat_t st;
+  wchar_t *tmp_16 = alloc_utf16_from_8(path, 1);
+  int len, res;
+
+  len = wcslen(tmp_16);
+  /* in Windows #stat doesn't recognize dir ending on a slash
+   * so we remove it here */
+  if ((len > 3) && ELEM(tmp_16[len - 1], L'\\', L'/')) {
+    tmp_16[len - 1] = '\0';
+  }
+  /* two special cases where the trailing slash is needed:
+   * 1. after the share part of a UNC path
+   * 2. after the C:\ when the path is the volume only
+   */
+  if ((len >= 3) && (tmp_16[0] == L'\\') && (tmp_16[1] == L'\\')) {
+    KLI_path_normalize_unc_16(tmp_16);
+  }
+
+  if ((tmp_16[1] == L':') && (tmp_16[2] == L'\0')) {
+    tmp_16[2] = L'\\';
+    tmp_16[3] = L'\0';
+  }
+
+  res = KLI_wstat(tmp_16, &st);
+
+  free(tmp_16);
+  if (res == -1) {
+    return 0;
+  }
+#else
+  struct stat st;
+  KLI_assert(!KLI_path_is_rel(path));
+  if (stat(path, &st)) {
+    return 0;
+  }
+#endif
+  return (st.st_mode);
 }
 
 #ifdef WIN32
@@ -73,16 +152,14 @@ int KLI_wstat(const wchar_t *path, KLI_stat_t *buffer)
 #  endif
 }
 #else
-int KLI_fstat(int fd, stat *buffer)
+int KLI_fstat(int fd, struct stat *buffer)
 {
-  // return fstat(fd, buffer);
-  return 0;
+  return fstat(fd, buffer);
 }
 
-int KLI_stat(const char *path, stat *buffer)
+int KLI_stat(const char *path, struct stat *buffer)
 {
-  // return stat(path, buffer);
-  return 0;
+  return stat(path, buffer);
 }
 #endif
 
@@ -122,14 +199,15 @@ fs::file_status KLI_type(const fs::path &path)
  * Does the specified path point to a directory? */
 bool KLI_is_dir(const char *file)
 {
-  return KLI_ISDIR(KLI_type(file));
+  return S_ISDIR(KLI_exists(file));
 }
 
 /**
  * Does the specified path point to a non-directory? */
 bool KLI_is_file(const char *path)
 {
-  return (KLI_exists(path) && !KLI_ISDIR(KLI_type(path)));
+  const int mode = KLI_exists(path);
+  return (mode && !S_ISDIR(mode));
 }
 
 KRAKEN_NAMESPACE_END

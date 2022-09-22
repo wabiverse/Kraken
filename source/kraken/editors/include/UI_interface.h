@@ -499,6 +499,8 @@ enum eButType
   UI_BTYPE_VIEW_ITEM = 59 << 9,
 };
 
+#define BUTTYPE (63 << 9)
+
 /** Gradient types, for color picker #UI_BTYPE_HSVCUBE etc. */
 enum eButGradientType
 {
@@ -526,6 +528,7 @@ void uiItemL_ex(struct uiLayout *layout,
                 int icon,
                 bool highlight,
                 bool redalert);
+uiLayout *uiItemsAlertBox(uiBlock *block, int size, eAlertIcon icon);
 
 /** \} */
 
@@ -629,17 +632,33 @@ struct uiBlockInteraction_CallbackData
  * Freeing blocks is done by the screen/ module automatically.
  */
 
+void UI_block_region_set(uiBlock *block, struct ARegion *region);
+
 uiBlock *UI_block_begin(const struct kContext *C,
                         struct ARegion *region,
-                        const char *name,
+                        const wabi::TfToken &name,
                         eUIEmbossType emboss);
 
 void UI_block_interaction_set(uiBlock *block, uiBlockInteraction_CallbackData *callbacks);
+
+void UI_block_flag_enable(uiBlock *block, int flag);
+void UI_block_flag_disable(uiBlock *block, int flag);
+void UI_but_flag_enable(uiBut *but, int flag);
+void UI_but_flag_disable(uiBut *but, int flag);
+bool UI_but_flag_is_set(uiBut *but, int flag);
+void UI_but_drawflag_enable(uiBut *but, int flag);
+void UI_but_drawflag_disable(uiBut *but, int flag);
+void UI_but_disable(uiBut *but, const char *disabled_hint);
 
 enum {
   UI_BLOCK_THEME_STYLE_REGULAR = 0,
   UI_BLOCK_THEME_STYLE_POPUP = 1,
 };
+void UI_block_theme_style_set(uiBlock *block, char theme_style);
+eUIEmbossType UI_block_emboss_get(uiBlock *block);
+void UI_block_emboss_set(uiBlock *block, eUIEmbossType emboss);
+bool UI_block_is_search_only(const uiBlock *block);
+void UI_block_set_search_only(uiBlock *block, bool search_only);
 
 /** \} */
 

@@ -5,6 +5,7 @@ set(INC
   ../../../../. # Pixar USD
   ../../../../source
   ../../anchor
+  ../../imbuf
   ../../kraklib
   ../../krakernel
   ../../luxo

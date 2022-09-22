@@ -52,7 +52,7 @@
 #include "KKE_workspace.h"
 
 #include "KLI_icons.h"
-#include "KLI_math_inline.h"
+#include "KLI_math.h"
 #include "KLI_string_utils.h"
 #include "KLI_time.h"
 #include "KLI_threads.h"
@@ -60,6 +60,7 @@
 #include "ED_fileselect.h"
 #include "ED_screen.h"
 #include "UI_interface.h"
+#include "UI_resources.h"
 
 #include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
@@ -1039,7 +1040,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   KKE_reports_init(&reports, RPT_STORE);
   uint modified_images_count = ED_image_save_all_modified_info(kmain, &reports);
 
-  LISTBASE_FOREACH (Report *, report, &reports.list) {
+  for (auto &report : reports.list) {
     uiLayout *row = uiLayoutColumn(layout, false);
     uiLayoutSetScaleY(row, 0.6f);
     uiItemS(row);
@@ -1059,7 +1060,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
     if (path_info) {
       uiItemL_ex(row, path_info, ICON_NONE, false, true);
     }
-    MEM_freeN(message);
+    delete message;
   }
 
   /* Used to determine if extra separators are needed. */
