@@ -40,6 +40,26 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
+struct ARegion;
+struct AnimationEvalContext;
+struct CurveMapping;
+struct CurveProfile;
+struct ID;
+struct ImBuf;
+struct Main;
+struct Scene;
+struct kContext;
+struct kContextStore;
+struct uiHandleButtonData;
+struct uiLayout;
+struct uiStyle;
+struct uiUndoStack_Text;
+struct uiWidgetColors;
+struct wmEvent;
+struct wmKeyConfig;
+struct wmOperatorType;
+struct wmTimer;
+
 /* bit button defines */
 /* Bit operations */
 #define UI_BITBUT_TEST(a, b) (((a) & (1 << (b))) != 0)
@@ -57,83 +77,6 @@ KRAKEN_NAMESPACE_BEGIN
 
 #define UI_PIXEL_AA_JITTER 8
 extern const float ui_pixel_jitter[UI_PIXEL_AA_JITTER][2];
-
-enum eButType
-{
-  UI_BTYPE_BUT = 1 << 9,
-  UI_BTYPE_ROW = 2 << 9,
-  UI_BTYPE_TEXT = 3 << 9,
-  /** Drop-down list. */
-  UI_BTYPE_MENU = 4 << 9,
-  UI_BTYPE_BUT_MENU = 5 << 9,
-  /** number button */
-  UI_BTYPE_NUM = 6 << 9,
-  /** number slider */
-  UI_BTYPE_NUM_SLIDER = 7 << 9,
-  UI_BTYPE_TOGGLE = 8 << 9,
-  UI_BTYPE_TOGGLE_N = 9 << 9,
-  UI_BTYPE_ICON_TOGGLE = 10 << 9,
-  UI_BTYPE_ICON_TOGGLE_N = 11 << 9,
-  /** same as regular toggle, but no on/off state displayed */
-  UI_BTYPE_BUT_TOGGLE = 12 << 9,
-  /** similar to toggle, display a 'tick' */
-  UI_BTYPE_CHECKBOX = 13 << 9,
-  UI_BTYPE_CHECKBOX_N = 14 << 9,
-  UI_BTYPE_COLOR = 15 << 9,
-  UI_BTYPE_TAB = 16 << 9,
-  UI_BTYPE_POPOVER = 17 << 9,
-  UI_BTYPE_SCROLL = 18 << 9,
-  UI_BTYPE_BLOCK = 19 << 9,
-  UI_BTYPE_LABEL = 20 << 9,
-  UI_BTYPE_KEY_EVENT = 24 << 9,
-  UI_BTYPE_HSVCUBE = 26 << 9,
-  /** Menu (often used in headers), `*_MENU` with different draw-type. */
-  UI_BTYPE_PULLDOWN = 27 << 9,
-  UI_BTYPE_ROUNDBOX = 28 << 9,
-  UI_BTYPE_COLORBAND = 30 << 9,
-  /** sphere widget (used to input a unit-vector, aka normal) */
-  UI_BTYPE_UNITVEC = 31 << 9,
-  UI_BTYPE_CURVE = 32 << 9,
-  /** Profile editing widget */
-  UI_BTYPE_CURVEPROFILE = 33 << 9,
-  UI_BTYPE_LISTBOX = 36 << 9,
-  UI_BTYPE_LISTROW = 37 << 9,
-  UI_BTYPE_HSVCIRCLE = 38 << 9,
-  UI_BTYPE_TRACK_PREVIEW = 40 << 9,
-
-  /** Buttons with value >= #UI_BTYPE_SEARCH_MENU don't get undo pushes. */
-  UI_BTYPE_SEARCH_MENU = 41 << 9,
-  UI_BTYPE_EXTRA = 42 << 9,
-  /** A preview image (#PreviewImage), with text under it. Typically bigger than normal buttons and
-   * laid out in a grid, e.g. like the File Browser in thumbnail display mode. */
-  UI_BTYPE_PREVIEW_TILE = 43 << 9,
-  UI_BTYPE_HOTKEY_EVENT = 46 << 9,
-  /** Non-interactive image, used for splash screen */
-  UI_BTYPE_IMAGE = 47 << 9,
-  UI_BTYPE_HISTOGRAM = 48 << 9,
-  UI_BTYPE_WAVEFORM = 49 << 9,
-  UI_BTYPE_VECTORSCOPE = 50 << 9,
-  UI_BTYPE_PROGRESS_BAR = 51 << 9,
-  UI_BTYPE_NODE_SOCKET = 53 << 9,
-  UI_BTYPE_SEPR = 54 << 9,
-  UI_BTYPE_SEPR_LINE = 55 << 9,
-  /** Dynamically fill available space. */
-  UI_BTYPE_SEPR_SPACER = 56 << 9,
-  /** Resize handle (resize uilist). */
-  UI_BTYPE_GRIP = 57 << 9,
-  UI_BTYPE_DECORATOR = 58 << 9,
-  /* An item a view (see #ui::AbstractViewItem). */
-  UI_BTYPE_VIEW_ITEM = 59 << 9,
-};
-
-enum eButPointerType
-{
-  UI_BUT_POIN_CHAR = 32,
-  UI_BUT_POIN_SHORT = 64,
-  UI_BUT_POIN_INT = 96,
-  UI_BUT_POIN_FLOAT = 128,
-  UI_BUT_POIN_BIT = 256, /* OR'd with a bit index. */
-};
 
 /** #uiBut.flag */
 enum
@@ -166,6 +109,7 @@ enum uiButtonGroupFlag
   /** The buttons in this group are inside a panel header. */
   UI_BUTTON_GROUP_PANEL_HEADER = (1 << 1),
 };
+ENUM_OPERATORS(uiButtonGroupFlag, UI_BUTTON_GROUP_PANEL_HEADER);
 
 struct uiBut
 {
@@ -349,7 +293,8 @@ struct uiButSearch
 /**
  * Additional, superimposed icon for a button, invoking an operator.
  */
-struct uiButExtraOpIcon {
+struct uiButExtraOpIcon
+{
   struct uiButExtraOpIcon *next, *prev;
 
   KIFIconID icon;
@@ -445,7 +390,8 @@ void UI_block_new_button_group(uiBlock *block, uiButtonGroupFlag flag);
  * labels (and even their decorators) are separate buttons, but they must be searched and
  * highlighted together.
  */
-struct uiButtonGroup {
+struct uiButtonGroup
+{
   std::vector<uiBut *> buttons;
   short flag;
 };
@@ -565,6 +511,9 @@ struct uiBlock
 
   PieMenuData pie_data;
 };
+
+void ui_block_to_region_fl(const struct ARegion *region, uiBlock *block, float *r_x, float *r_y);
+void ui_block_to_window_fl(const struct ARegion *region, uiBlock *block, float *x, float *y);
 
 typedef uiBlock *(*uiBlockHandleCreateFunc)(struct kContext *C,
                                             struct uiPopupBlockHandle *handle,

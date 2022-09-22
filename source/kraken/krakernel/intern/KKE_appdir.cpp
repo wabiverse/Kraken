@@ -277,7 +277,7 @@ char *KLI_current_working_dir(char *dir, const size_t maxncpy)
 #if defined(WIN32)
   wchar_t path[MAX_PATH];
   if (_wgetcwd(path, MAX_PATH)) {
-    if (BLI_strncpy_wchar_as_utf8(dir, path, maxncpy) != maxncpy) {
+    if (KLI_strncpy_wchar_as_utf8(dir, path, maxncpy) != maxncpy) {
       return dir;
     }
   }
@@ -355,7 +355,7 @@ static void where_am_i(char *fullname, const size_t maxlen, const char *name)
     wchar_t *fullname_16 = MEM_mallocN(maxlen * sizeof(wchar_t), "ProgramPath");
     if (GetModuleFileNameW(0, fullname_16, maxlen)) {
       conv_utf_16_to_8(fullname_16, fullname, maxlen);
-      if (!BLI_exists(fullname)) {
+      if (!KLI_exists(fullname)) {
         CLOG_ERROR(&LOG, "path can't be found: \"%.*s\"", (int)maxlen, fullname);
         MessageBox(NULL,
                    "path contains invalid characters or is too long (see console)",

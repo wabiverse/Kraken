@@ -159,6 +159,22 @@ enum PropertyFlag {
   PROP_NO_DEG_UPDATE = (1 << 30),
 };
 
+enum PropertyUnit {
+  PROP_UNIT_NONE = (0 << 16),
+  PROP_UNIT_LENGTH = (1 << 16),        /* m */
+  PROP_UNIT_AREA = (2 << 16),          /* m^2 */
+  PROP_UNIT_VOLUME = (3 << 16),        /* m^3 */
+  PROP_UNIT_MASS = (4 << 16),          /* kg */
+  PROP_UNIT_ROTATION = (5 << 16),      /* radians */
+  PROP_UNIT_TIME = (6 << 16),          /* frame */
+  PROP_UNIT_TIME_ABSOLUTE = (7 << 16), /* time in seconds (independent of scene) */
+  PROP_UNIT_VELOCITY = (8 << 16),      /* m/s */
+  PROP_UNIT_ACCELERATION = (9 << 16),  /* m/(s^2) */
+  PROP_UNIT_CAMERA = (10 << 16),       /* mm */
+  PROP_UNIT_POWER = (11 << 16),        /* W */
+  PROP_UNIT_TEMPERATURE = (12 << 16),  /* C */
+};
+
 enum PropertySubType {
   PROP_NONE = 0,
 
@@ -212,22 +228,6 @@ enum PropertySubType {
 
   /* temperature */
   PROP_TEMPERATURE = 43 | PROP_UNIT_TEMPERATURE,
-};
-
-enum PropertyUnit {
-  PROP_UNIT_NONE = (0 << 16),
-  PROP_UNIT_LENGTH = (1 << 16),        /* m */
-  PROP_UNIT_AREA = (2 << 16),          /* m^2 */
-  PROP_UNIT_VOLUME = (3 << 16),        /* m^3 */
-  PROP_UNIT_MASS = (4 << 16),          /* kg */
-  PROP_UNIT_ROTATION = (5 << 16),      /* radians */
-  PROP_UNIT_TIME = (6 << 16),          /* frame */
-  PROP_UNIT_TIME_ABSOLUTE = (7 << 16), /* time in seconds (independent of scene) */
-  PROP_UNIT_VELOCITY = (8 << 16),      /* m/s */
-  PROP_UNIT_ACCELERATION = (9 << 16),  /* m/(s^2) */
-  PROP_UNIT_CAMERA = (10 << 16),       /* mm */
-  PROP_UNIT_POWER = (11 << 16),        /* W */
-  PROP_UNIT_TEMPERATURE = (12 << 16),  /* C */
 };
 
 struct KrakenPROP : public wabi::UsdProperty

@@ -59,10 +59,6 @@ size_t KLI_split_name_num(char *left, int *nr, const char *name, const char deli
 char *KLI_strncpy(char *__restrict dst, const char *__restrict src, const size_t maxncpy)
   ATTR_NONNULL();
 
-size_t KLI_strncpy_rlen(char *__restrict dst,
-                        const char *__restrict src,
-                        const size_t maxncpy) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
-
 size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t maxncpy)
   ATTR_NONNULL();
 
@@ -147,13 +143,6 @@ char *KLI_string_join_array(char *result,
   len += KLI_strncpy_rlen(dst + len, suffix, ARRAY_SIZE(dst) - len)
 #define STR_CONCATF(dst, len, format, ...) \
   len += KLI_snprintf_rlen(dst + len, ARRAY_SIZE(dst) - len, format, __VA_ARGS__)
-
-#define STREQ(a, b) (strcmp(a, b) == 0)
-#define STRCASEEQ(a, b) (strcasecmp(a, b) == 0)
-#define STREQLEN(a, b, n) (strncmp(a, b, n) == 0)
-#define STRCASEEQLEN(a, b, n) (strncasecmp(a, b, n) == 0)
-
-#define STRPREFIX(a, b) (strncmp((a), (b), strlen(b)) == 0)
 
 #define UTF8_COMPUTE(Char, Mask, Len, Err)                      \
   if (Char < 128) {                                             \

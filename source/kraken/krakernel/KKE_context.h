@@ -35,6 +35,8 @@ KRAKEN_NAMESPACE_BEGIN
 typedef wabi::UsdStageRefPtr Stage;
 typedef wabi::UsdPrim Prim;
 
+struct uiStyle;
+
 struct ScrArea;
 struct Main;
 struct ARegion;

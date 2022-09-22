@@ -28,8 +28,6 @@
 
 #include "USD_scene.h"
 
-#include "ANCHOR_system_paths.h"
-
 #include "KKE_api.h"
 #include "KKE_main.h"
 #include "KKE_robinhood.h"
@@ -65,7 +63,7 @@ struct RHash
   RHashHashFP hashfp;
   RHashCmpFP cmpfp;
 
-  Entry **buckets;
+  struct Entry **buckets;
   struct KKE_mempool *entrypool;
   uint nbuckets;
   uint limit_grow, limit_shrink;

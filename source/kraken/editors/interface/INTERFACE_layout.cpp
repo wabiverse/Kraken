@@ -93,7 +93,8 @@ struct uiItem
   int flag;
 };
 
-struct uiButtonItem {
+struct uiButtonItem
+{
   uiItem item;
   uiBut *but;
 };
@@ -158,13 +159,111 @@ void UI_block_layout_set_current(uiBlock *block, uiLayout *layout)
   block->curlayout = layout;
 }
 
+/* variable button size in which direction? */
+#define UI_ITEM_VARY_X 1
+#define UI_ITEM_VARY_Y 2
+
+static int ui_layout_vary_direction(uiLayout *layout)
+{
+  return ((ELEM(layout->root->type, UI_LAYOUT_HEADER, UI_LAYOUT_PIEMENU) ||
+           (layout->alignment != UI_LAYOUT_ALIGN_EXPAND)) ?
+              UI_ITEM_VARY_X :
+              UI_ITEM_VARY_Y);
+}
+
+static bool ui_layout_variable_size(uiLayout *layout)
+{
+  /* Note that this code is probably a bit flaky, we'd probably want to know whether it's
+   * variable in X and/or Y, etc. But for now it mimics previous one,
+   * with addition of variable flag set for children of grid-flow layouts. */
+  return ui_layout_vary_direction(layout) == UI_ITEM_VARY_X || layout->variable_size;
+}
+
+/**
+ * Factors to apply to #UI_UNIT_X when calculating button width.
+ * This is used when the layout is a varying size, see #ui_layout_variable_size.
+ */
+struct uiTextIconPadFactor
+{
+  float text;
+  float icon;
+  float icon_only;
+};
+
+/**
+ * This adds over an icons width of padding even when no icon is used,
+ * this is done because most buttons need additional space (drop-down chevron for example).
+ * menus and labels use much smaller `text` values compared to this default.
+ *
+ * \note It may seem odd that the icon only adds 0.25
+ * but taking margins into account its fine,
+ * except for #ui_text_pad_compact where a bit more margin is required.
+ */
+static const struct uiTextIconPadFactor ui_text_pad_default = {
+  .text = 1.50f,
+  .icon = 0.25f,
+  .icon_only = 0.0f,
+};
+
+/** #ui_text_pad_default scaled down. */
+static const struct uiTextIconPadFactor ui_text_pad_compact = {
+  .text = 1.25f,
+  .icon = 0.35f,
+  .icon_only = 0.0f,
+};
+
+/** Least amount of padding not to clip the text or icon. */
+static const struct uiTextIconPadFactor ui_text_pad_none = {
+  .text = 0.25f,
+  .icon = 1.50f,
+  .icon_only = 0.0f,
+};
+
+/**
+ * Estimated size of text + icon.
+ */
+static int ui_text_icon_width_ex(uiLayout *layout,
+                                 const char *name,
+                                 int icon,
+                                 const struct uiTextIconPadFactor *pad_factor)
+{
+  const int unit_x = UI_UNIT_X * (layout->scale[0] ? layout->scale[0] : 1.0f);
+
+  /* When there is no text, always behave as if this is an icon-only button
+   * since it's not useful to return empty space. */
+  if (icon && !name[0]) {
+    return unit_x * (1.0f + pad_factor->icon_only);
+  }
+
+  if (ui_layout_variable_size(layout)) {
+    if (!icon && !name[0]) {
+      return unit_x * (1.0f + pad_factor->icon_only);
+    }
+
+    if (layout->alignment != UI_LAYOUT_ALIGN_EXPAND) {
+      layout->item.flag |= UI_ITEM_FIXED_SIZE;
+    }
+
+    float margin = pad_factor->text;
+    if (icon) {
+      margin += pad_factor->icon;
+    }
+
+    const float aspect = layout->root->block->aspect;
+    const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
+    return UI_fontstyle_string_width_with_block_aspect(fstyle, name, aspect) +
+           (int)ceilf(unit_x * margin);
+  }
+  return unit_x * 10;
+}
+
 /* label item */
 static uiBut *uiItemL_(uiLayout *layout, const char *name, int icon)
 {
   uiBlock *block = layout->root->block;
 
   UI_block_layout_set_current(block, layout);
-  UI_block_new_button_group(block, 0);
+  UI_block_new_button_group(block, (uiButtonGroupFlag)0);
 
   if (!name) {
     name = "";
@@ -176,14 +275,25 @@ static uiBut *uiItemL_(uiLayout *layout, const char *name, int icon)
   const int w = ui_text_icon_width_ex(layout, name, icon, &ui_text_pad_none);
   uiBut *but;
   if (icon && name[0]) {
-    but = uiDefIconTextBut(
-        block, UI_BTYPE_LABEL, 0, icon, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, NULL);
-  }
-  else if (icon) {
-    but = uiDefIconBut(
-        block, UI_BTYPE_LABEL, 0, icon, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, NULL);
-  }
-  else {
+    but = uiDefIconTextBut(block,
+                           UI_BTYPE_LABEL,
+                           0,
+                           icon,
+                           name,
+                           0,
+                           0,
+                           w,
+                           UI_UNIT_Y,
+                           NULL,
+                           0.0,
+                           0.0,
+                           0,
+                           0,
+                           NULL);
+  } else if (icon) {
+    but =
+      uiDefIconBut(block, UI_BTYPE_LABEL, 0, icon, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, NULL);
+  } else {
     but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, NULL);
   }
 
@@ -251,8 +361,7 @@ static bool ui_layout_has_panel_label(const uiLayout *layout, const PanelType *p
       if (!(bitem->but->flag & UI_HIDDEN) && STREQ(bitem->but->str, pt->label)) {
         return true;
       }
-    }
-    else {
+    } else {
       uiLayout *litem = (uiLayout *)sublayout;
       if (ui_layout_has_panel_label(litem, pt)) {
         return true;
@@ -294,20 +403,18 @@ static void ui_paneltype_draw_impl(kContext *C, PanelType *pt, uiLayout *layout,
   panel->layout = layout;
   pt->draw(C, panel);
   panel->layout = NULL;
-  BLI_assert(panel->runtime.custom_data_ptr == NULL);
+  KLI_assert(panel->runtime.custom_data_ptr == NULL);
 
-  MEM_freeN(panel);
+  delete panel;
 
   /* Draw child panels. */
-  LISTBASE_FOREACH(LinkData *, link, &pt->children)
+  for(auto &child_pt : pt->children)
   {
-    PanelType *child_pt = link->data;
-
     if (child_pt->poll == NULL || child_pt->poll(C, child_pt)) {
       /* Add space if something was added to the layout. */
-      if (last_item != layout->items.last) {
+      if (last_item != layout->items.back()) {
         uiItemS(layout);
-        last_item = layout->items.last;
+        last_item = layout->items.back();
       }
 
       uiLayout *col = uiLayoutColumn(layout, false);

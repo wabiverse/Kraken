@@ -25,6 +25,7 @@ set(SRC
   KLI_api.h
   KLI_assert.h
   KLI_compiler_attrs.h
+  KLI_compiler_compat.h
   KLI_fileops.h
   KLI_icons.h
   KLI_math_inline.h
@@ -32,6 +33,7 @@ set(SRC
   KLI_path_utils.h
   KLI_rect.h
   KLI_string_utils.h
+  KLI_sys_types.h
   KLI_threads.h
   KLI_time.h
   KLI_utildefines.h

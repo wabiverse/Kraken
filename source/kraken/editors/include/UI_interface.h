@@ -29,6 +29,53 @@
 
 #include "UI_tokens.h"
 
+KRAKEN_NAMESPACE_BEGIN
+
+struct ARegion;
+struct AssetFilterSettings;
+struct AssetHandle;
+struct AssetMetaData;
+struct AutoComplete;
+struct EnumPropertyItem;
+struct FileDirEntry;
+struct FileSelectParams;
+struct ID;
+struct IDProperty;
+struct ImBuf;
+struct Image;
+struct ImageUser;
+struct ListBase;
+struct MTex;
+struct Panel;
+struct PanelType;
+struct PointerRNA;
+struct PropertyRNA;
+struct ReportList;
+struct kContext;
+struct kContextStore;
+struct kNode;
+struct kNodeSocket;
+struct kNodeTree;
+struct kScreen;
+struct uiBlockInteraction_Handle;
+struct uiButSearch;
+struct uiFontStyle;
+struct uiList;
+struct uiStyle;
+struct uiWidgetColors;
+struct wmDrag;
+struct wmDropBox;
+struct wmEvent;
+struct wmGizmo;
+struct wmKeyConfig;
+struct wmKeyMap;
+struct wmKeyMapItem;
+struct wmMsgBus;
+struct wmOperator;
+struct wmOperatorType;
+struct wmRegionListenerParams;
+struct wmWindow;
+
 /* Defines */
 
 /* char for splitting strings, aligning shortcuts in menus, users never see */
@@ -53,7 +100,8 @@
 /* For float buttons the 'step' (or a1), is scaled */
 #define UI_PRECISION_FLOAT_SCALE 0.01f
 
-KRAKEN_NAMESPACE_BEGIN
+/* Typical UI text */
+#define UI_FSTYLE_WIDGET (const uiFontStyle *)&(UI_style_get()->widget)
 
 /* Layout
  *
@@ -82,8 +130,8 @@ enum
   UI_LAYOUT_VERT_BAR = 5,
 };
 
-// #define UI_UNIT_X ((void)0, U.widget_unit)
-// #define UI_UNIT_Y ((void)0, U.widget_unit)
+#define UI_UNIT_X ((void)0, UI_WIDGET_UNIT)
+#define UI_UNIT_Y ((void)0, UI_WIDGET_UNIT)
 
 enum
 {
@@ -144,6 +192,16 @@ enum
 #define UI_ALPHA_CHECKER_DARK 100
 #define UI_ALPHA_CHECKER_LIGHT 160
 
+/* XXX: read a style configure */
+const struct uiStyle *UI_style_get(void); /* use for fonts etc */
+/* for drawing, scaled with DPI setting */
+const struct uiStyle *UI_style_get_dpi(void); /* DPI scaled settings for drawing */
+
+struct ARegion *UI_tooltip_create_from_button_or_extra_icon(struct kContext *C,
+                                                            struct ARegion *butregion,
+                                                            struct uiBut *but,
+                                                            struct uiButExtraOpIcon *extra_icon,
+                                                            bool is_label);
 void UI_tooltip_free(kContext *C, kScreen *screen, ARegion *region);
 
 /**
@@ -223,6 +281,75 @@ enum
   UI_BUT_OVERRIDDEN = 1u << 31u,
 };
 
+/* Default font size for normal text. */
+#define UI_DEFAULT_TEXT_POINTS 11.0f
+
+/* Larger size used for title text. */
+#define UI_DEFAULT_TITLE_POINTS 11.0f
+
+#define UI_PANEL_WIDTH 340
+#define UI_COMPACT_PANEL_WIDTH 160
+#define UI_SIDEBAR_PANEL_WIDTH 220
+#define UI_NAVIGATION_REGION_WIDTH UI_COMPACT_PANEL_WIDTH
+#define UI_NARROW_NAVIGATION_REGION_WIDTH 100
+
+#define UI_PANEL_CATEGORY_MARGIN_WIDTH (U.widget_unit * 1.0f)
+
+/* Both these margins should be ignored if the panel doesn't show a background (check
+ * #UI_panel_should_show_background()). */
+#define UI_PANEL_MARGIN_X (U.widget_unit * 0.4f)
+#define UI_PANEL_MARGIN_Y (U.widget_unit * 0.1f)
+
+/* but->drawflag - these flags should only affect how the button is drawn. */
+/* NOTE: currently, these flags *are not passed* to the widget's state() or draw() functions
+ *       (except for the 'align' ones)! */
+enum
+{
+  /** Text and icon alignment (by default, they are centered). */
+  UI_BUT_TEXT_LEFT = 1 << 1,
+  UI_BUT_ICON_LEFT = 1 << 2,
+  UI_BUT_TEXT_RIGHT = 1 << 3,
+  /** Prevent the button to show any tooltip. */
+  UI_BUT_NO_TOOLTIP = 1 << 4,
+  /** Do not add the usual horizontal padding for text drawing. */
+  UI_BUT_NO_TEXT_PADDING = 1 << 5,
+
+  /* Button align flag, for drawing groups together.
+   * Used in 'uiBlock.flag', take care! */
+  UI_BUT_ALIGN_TOP = 1 << 14,
+  UI_BUT_ALIGN_LEFT = 1 << 15,
+  UI_BUT_ALIGN_RIGHT = 1 << 16,
+  UI_BUT_ALIGN_DOWN = 1 << 17,
+  UI_BUT_ALIGN = UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT | UI_BUT_ALIGN_DOWN,
+  /* end bits shared with 'uiBlock.flag' */
+
+  /**
+   * Warning - HACK!
+   * Needed for buttons which are not TOP/LEFT aligned,
+   * but have some top/left corner stitched to some other TOP/LEFT-aligned button,
+   * because of 'corrective' hack in widget_roundbox_set()... */
+  UI_BUT_ALIGN_STITCH_TOP = 1 << 18,
+  UI_BUT_ALIGN_STITCH_LEFT = 1 << 19,
+  UI_BUT_ALIGN_ALL = UI_BUT_ALIGN | UI_BUT_ALIGN_STITCH_TOP | UI_BUT_ALIGN_STITCH_LEFT,
+
+  /** This but is "inside" a box item (currently used to change theme colors). */
+  UI_BUT_BOX_ITEM = 1 << 20,
+
+  /** Active left part of number button */
+  UI_BUT_ACTIVE_LEFT = 1 << 21,
+  /** Active right part of number button */
+  UI_BUT_ACTIVE_RIGHT = 1 << 22,
+
+  /** Reverse order of consecutive off/on icons */
+  UI_BUT_ICON_REVERSE = 1 << 23,
+
+  /** Value is animated, but the current value differs from the animated one. */
+  UI_BUT_ANIMATED_CHANGED = 1 << 24,
+
+  /* Draw the checkbox buttons inverted. */
+  UI_BUT_CHECKBOX_INVERT = 1 << 25,
+};
+
 /** #uiBlock.flag (controls) */
 enum
 {
@@ -290,6 +417,88 @@ enum eBlockBoundsCalc
   UI_BLOCK_BOUNDS_PIE_CENTER,
 };
 
+#define UI_DPI_ICON_SIZE ((float)16 * UI_DPI_FAC)
+
+enum eButPointerType
+{
+  UI_BUT_POIN_CHAR = 32,
+  UI_BUT_POIN_SHORT = 64,
+  UI_BUT_POIN_INT = 96,
+  UI_BUT_POIN_FLOAT = 128,
+  UI_BUT_POIN_BIT = 256, /* OR'd with a bit index. */
+};
+
+/* requires (but->poin != NULL) */
+#define UI_BUT_POIN_TYPES (UI_BUT_POIN_FLOAT | UI_BUT_POIN_SHORT | UI_BUT_POIN_CHAR)
+
+enum eButType
+{
+  UI_BTYPE_BUT = 1 << 9,
+  UI_BTYPE_ROW = 2 << 9,
+  UI_BTYPE_TEXT = 3 << 9,
+  /** Drop-down list. */
+  UI_BTYPE_MENU = 4 << 9,
+  UI_BTYPE_BUT_MENU = 5 << 9,
+  /** number button */
+  UI_BTYPE_NUM = 6 << 9,
+  /** number slider */
+  UI_BTYPE_NUM_SLIDER = 7 << 9,
+  UI_BTYPE_TOGGLE = 8 << 9,
+  UI_BTYPE_TOGGLE_N = 9 << 9,
+  UI_BTYPE_ICON_TOGGLE = 10 << 9,
+  UI_BTYPE_ICON_TOGGLE_N = 11 << 9,
+  /** same as regular toggle, but no on/off state displayed */
+  UI_BTYPE_BUT_TOGGLE = 12 << 9,
+  /** similar to toggle, display a 'tick' */
+  UI_BTYPE_CHECKBOX = 13 << 9,
+  UI_BTYPE_CHECKBOX_N = 14 << 9,
+  UI_BTYPE_COLOR = 15 << 9,
+  UI_BTYPE_TAB = 16 << 9,
+  UI_BTYPE_POPOVER = 17 << 9,
+  UI_BTYPE_SCROLL = 18 << 9,
+  UI_BTYPE_BLOCK = 19 << 9,
+  UI_BTYPE_LABEL = 20 << 9,
+  UI_BTYPE_KEY_EVENT = 24 << 9,
+  UI_BTYPE_HSVCUBE = 26 << 9,
+  /** Menu (often used in headers), `*_MENU` with different draw-type. */
+  UI_BTYPE_PULLDOWN = 27 << 9,
+  UI_BTYPE_ROUNDBOX = 28 << 9,
+  UI_BTYPE_COLORBAND = 30 << 9,
+  /** sphere widget (used to input a unit-vector, aka normal) */
+  UI_BTYPE_UNITVEC = 31 << 9,
+  UI_BTYPE_CURVE = 32 << 9,
+  /** Profile editing widget */
+  UI_BTYPE_CURVEPROFILE = 33 << 9,
+  UI_BTYPE_LISTBOX = 36 << 9,
+  UI_BTYPE_LISTROW = 37 << 9,
+  UI_BTYPE_HSVCIRCLE = 38 << 9,
+  UI_BTYPE_TRACK_PREVIEW = 40 << 9,
+
+  /** Buttons with value >= #UI_BTYPE_SEARCH_MENU don't get undo pushes. */
+  UI_BTYPE_SEARCH_MENU = 41 << 9,
+  UI_BTYPE_EXTRA = 42 << 9,
+  /** A preview image (#PreviewImage), with text under it. Typically bigger than normal buttons and
+   * laid out in a grid, e.g. like the File Browser in thumbnail display mode. */
+  UI_BTYPE_PREVIEW_TILE = 43 << 9,
+  UI_BTYPE_HOTKEY_EVENT = 46 << 9,
+  /** Non-interactive image, used for splash screen */
+  UI_BTYPE_IMAGE = 47 << 9,
+  UI_BTYPE_HISTOGRAM = 48 << 9,
+  UI_BTYPE_WAVEFORM = 49 << 9,
+  UI_BTYPE_VECTORSCOPE = 50 << 9,
+  UI_BTYPE_PROGRESS_BAR = 51 << 9,
+  UI_BTYPE_NODE_SOCKET = 53 << 9,
+  UI_BTYPE_SEPR = 54 << 9,
+  UI_BTYPE_SEPR_LINE = 55 << 9,
+  /** Dynamically fill available space. */
+  UI_BTYPE_SEPR_SPACER = 56 << 9,
+  /** Resize handle (resize uilist). */
+  UI_BTYPE_GRIP = 57 << 9,
+  UI_BTYPE_DECORATOR = 58 << 9,
+  /* An item a view (see #ui::AbstractViewItem). */
+  UI_BTYPE_VIEW_ITEM = 59 << 9,
+};
+
 /** Gradient types, for color picker #UI_BTYPE_HSVCUBE etc. */
 enum eButGradientType
 {
@@ -304,53 +513,6 @@ enum eButGradientType
   UI_GRAD_L_ALT = 10,
 };
 
-enum
-{
-  /** Text and icon alignment (by default, they are centered). */
-  UI_BUT_TEXT_LEFT = 1 << 1,
-  UI_BUT_ICON_LEFT = 1 << 2,
-  UI_BUT_TEXT_RIGHT = 1 << 3,
-  /** Prevent the button to show any tooltip. */
-  UI_BUT_NO_TOOLTIP = 1 << 4,
-  /** Do not add the usual horizontal padding for text drawing. */
-  UI_BUT_NO_TEXT_PADDING = 1 << 5,
-
-  /* Button align flag, for drawing groups together.
-   * Used in 'uiBlock.flag', take care! */
-  UI_BUT_ALIGN_TOP = 1 << 14,
-  UI_BUT_ALIGN_LEFT = 1 << 15,
-  UI_BUT_ALIGN_RIGHT = 1 << 16,
-  UI_BUT_ALIGN_DOWN = 1 << 17,
-  UI_BUT_ALIGN = UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT | UI_BUT_ALIGN_DOWN,
-  /* end bits shared with 'uiBlock.flag' */
-
-  /**
-   * Warning - HACK!
-   * Needed for buttons which are not TOP/LEFT aligned,
-   * but have some top/left corner stitched to some other TOP/LEFT-aligned button,
-   * because of 'corrective' hack in widget_roundbox_set()... */
-  UI_BUT_ALIGN_STITCH_TOP = 1 << 18,
-  UI_BUT_ALIGN_STITCH_LEFT = 1 << 19,
-  UI_BUT_ALIGN_ALL = UI_BUT_ALIGN | UI_BUT_ALIGN_STITCH_TOP | UI_BUT_ALIGN_STITCH_LEFT,
-
-  /** This but is "inside" a box item (currently used to change theme colors). */
-  UI_BUT_BOX_ITEM = 1 << 20,
-
-  /** Active left part of number button */
-  UI_BUT_ACTIVE_LEFT = 1 << 21,
-  /** Active right part of number button */
-  UI_BUT_ACTIVE_RIGHT = 1 << 22,
-
-  /** Reverse order of consecutive off/on icons */
-  UI_BUT_ICON_REVERSE = 1 << 23,
-
-  /** Value is animated, but the current value differs from the animated one. */
-  UI_BUT_ANIMATED_CHANGED = 1 << 24,
-
-  /* Draw the checkbox buttons inverted. */
-  UI_BUT_CHECKBOX_INVERT = 1 << 25,
-};
-
 uiBut *UI_region_active_but_get(const struct ARegion *region);
 
 /* -------------------------------------------------------------------- */
@@ -359,7 +521,11 @@ uiBut *UI_region_active_but_get(const struct ARegion *region);
 
 struct uiLayout *uiLayoutRow(struct uiLayout *layout, bool align);
 void uiItemL(struct uiLayout *layout, const char *name, int icon); /* label */
-void uiItemL_ex(struct uiLayout *layout, const char *name, int icon, bool highlight, bool redalert);
+void uiItemL_ex(struct uiLayout *layout,
+                const char *name,
+                int icon,
+                bool highlight,
+                bool redalert);
 
 /** \} */
 
@@ -452,7 +618,28 @@ struct uiBlockInteraction_CallbackData
   void *arg1;
 };
 
+/**
+ * @note BLOCKS
+ * 
+ * Functions for creating, drawing and freeing blocks. A Block is a
+ * container of buttons and used for various purposes.
+ *
+ * Begin/Define Buttons/End/Draw is the typical order in which these
+ * function should be called, though for popup blocks Draw is left out.
+ * Freeing blocks is done by the screen/ module automatically.
+ */
+
+uiBlock *UI_block_begin(const struct kContext *C,
+                        struct ARegion *region,
+                        const char *name,
+                        eUIEmbossType emboss);
+
 void UI_block_interaction_set(uiBlock *block, uiBlockInteraction_CallbackData *callbacks);
+
+enum {
+  UI_BLOCK_THEME_STYLE_REGULAR = 0,
+  UI_BLOCK_THEME_STYLE_POPUP = 1,
+};
 
 /** \} */
 

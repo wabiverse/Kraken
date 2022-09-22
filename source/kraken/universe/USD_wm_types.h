@@ -677,7 +677,8 @@ struct wmTabletData
  * Wrapper to reference a #wmOperatorType together with some set properties and other relevant
  * information to invoke the operator in a customizable way.
  */
-struct wmOperatorCallParams {
+struct wmOperatorCallParams
+{
   struct wmOperatorType *optype;
   struct KrakenPRIM *opptr;
   eWmOperatorContext opcontext;
@@ -908,6 +909,19 @@ struct wmDrag : public wmEvent
 };
 
 
+/**
+ * This is similar to addon-preferences,
+ * however unlike add-ons key-config's aren't saved to disk.
+ *
+ * #wmKeyConfigPref is written to USD,
+ * #wmKeyConfigPrefType_Runtime has the RNA type.
+ */
+struct wmKeyConfigPref
+{
+  /** Unique name. */
+  char idname[64];
+};
+
 struct wmKeyMapItem
 {
   /* operator */
@@ -959,20 +973,17 @@ struct wmKeyMapItem
   {}
 };
 
-
+/** Used instead of wmKeyMapItem for diff keymaps. */
 struct wmKeyMapDiffItem
 {
   wmKeyMapItem *remove_item;
   wmKeyMapItem *add_item;
-
-  wmKeyMapDiffItem() : remove_item(POINTER_ZERO), add_item(POINTER_ZERO) {}
 };
-
 
 struct wmKeyMap
 {
-  std::vector<wmKeyMapItem *> items;
-  std::vector<wmKeyMapDiffItem *> diff_items;
+  std::vector<struct wmKeyMapItem *> items;
+  std::vector<struct wmKeyMapDiffItem *> diff_items;
 
   /** Global editor keymaps, or for more per space/region. */
   char idname[64];
@@ -988,7 +999,7 @@ struct wmKeyMap
 
   /* runtime */
   /** Verify if enabled in the current context, use #WM_keymap_poll instead of direct calls. */
-  bool (*poll)(kContext *);
+  bool (*poll)(struct kContext *);
   bool (*poll_modal_item)(const struct wmOperator *op, int value);
 
   const void *modal_items;
@@ -1031,7 +1042,8 @@ struct wmKeyConfig
  * Struct to store tool-tip timer and possible creation if the time is reached.
  * Allows UI code to call #WM_tooltip_timer_init without each user having to handle the timer.
  */
-struct wmTooltipState {
+struct wmTooltipState
+{
   /** Create tooltip on this event. */
   struct wmTimer *timer;
   /** The area the tooltip is created in. */

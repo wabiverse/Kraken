@@ -46,6 +46,8 @@ typedef unsigned __int64 size_t;
 #include <wabi/base/arch/export.h>
 #include <wabi/base/tf/stringUtils.h>
 
+#include "KLI_compiler_compat.h"
+
 /* kraklib */
 #include "KLI_compiler_attrs.h"
 
@@ -123,34 +125,56 @@ namespace fs = std::filesystem;
 #  define CHECK_TYPE_NONCONST(var) EXPR_NOP(var)
 #endif
 
-#if defined(_MSC_VER)
-#  define alloca _alloca
-#endif
+#ifdef __cplusplus
 
-#if (defined(__GNUC__) || defined(__clang__)) && defined(__cplusplus)
-extern "C++" {
-/** Some magic to be sure we don't have reference in the type. */
-template<typename T> static inline T decltype_helper(T x)
-{
-  return x;
-}
-#  define typeof(x) decltype(decltype_helper(x))
-}
-#endif
+/* -------------------------------------------------------------------- */
+/** \name C++ Macros
+ * \{ */
 
-/* little macro so inline keyword works */
-#if defined(_MSC_VER)
-#  define KLI_INLINE static __forceinline
+/* Useful to port C code using enums to C++ where enums are strongly typed.
+ * To use after the enum declaration. */
+/* If any enumerator `C` is set to say `A|B`, then `C` would be the max enum value. */
+#  define ENUM_OPERATORS(_enum_type, _max_enum_value) \
+    extern "C++" { \
+    inline constexpr _enum_type operator|(_enum_type a, _enum_type b) \
+    { \
+      return static_cast<_enum_type>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b)); \
+    } \
+    inline constexpr _enum_type operator&(_enum_type a, _enum_type b) \
+    { \
+      return static_cast<_enum_type>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b)); \
+    } \
+    inline constexpr _enum_type operator~(_enum_type a) \
+    { \
+      return static_cast<_enum_type>(~static_cast<uint64_t>(a) & \
+                                     (2 * static_cast<uint64_t>(_max_enum_value) - 1)); \
+    } \
+    inline _enum_type &operator|=(_enum_type &a, _enum_type b) \
+    { \
+      return a = static_cast<_enum_type>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b)); \
+    } \
+    inline _enum_type &operator&=(_enum_type &a, _enum_type b) \
+    { \
+      return a = static_cast<_enum_type>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b)); \
+    } \
+    } /* extern "C++" */
+
 #else
-#  define KLI_INLINE static inline __attribute__((always_inline)) __attribute__((__unused__))
+/* Output nothing. */
+#  define ENUM_OPERATORS(_type, _max)
 #endif
 
-#if defined(__GNUC__)
-#  define KLI_NOINLINE __attribute__((noinline))
+/**
+ * Utility so function declarations in C headers can use C++ default arguments. The default is then
+ * available when included in a C++ file, otherwise the argument has to be set explicitly.
+ */
+#ifdef __cplusplus
+#  define CPP_ARG_DEFAULT(default_value) = default_value
 #else
-#  define KLI_NOINLINE
+#  define CPP_ARG_DEFAULT(default_value)
 #endif
 
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Min/Max Macros

@@ -38,6 +38,7 @@
 
 #include "UI_interface.h"
 
+#include "KLI_rect.h"
 #include "KLI_string_utils.h"
 
 #include "KKE_scene.h"
@@ -104,7 +105,85 @@ void UI_window_to_block(const ARegion *region, uiBlock *block, int *r_x, int *r_
   *r_y = (int)lround(fy);
 }
 
+/* ************* window matrix ************** */
+
+void ui_block_to_region_fl(const ARegion *region, uiBlock *block, float *r_x, float *r_y)
+{
+  GfVec4i coords;
+  region->coords.Get(&coords);
+  const int getsizex = KLI_rcti_size_x(coords) + 1;
+  const int getsizey = KLI_rcti_size_y(coords) + 1;
+
+  float gx = *r_x;
+  float gy = *r_y;
+
+  if (block->panel) {
+    gx += block->panel->ofsx;
+    gy += block->panel->ofsy;
+  }
+
+  *r_x = ((float)getsizex) * (0.5f + 0.5f * (gx * block->winmat[0][0] + gy * block->winmat[1][0] +
+                                             block->winmat[3][0]));
+  *r_y = ((float)getsizey) * (0.5f + 0.5f * (gx * block->winmat[0][1] + gy * block->winmat[1][1] +
+                                             block->winmat[3][1]));
+}
+
+void ui_block_to_window_fl(const ARegion *region, uiBlock *block, float *r_x, float *r_y)
+{
+  GfVec4i coords;
+  region->coords.Get(&coords);
+  ui_block_to_region_fl(region, block, r_x, r_y);
+  *r_x += coords[0];
+  *r_y += coords[2];
+}
+
 /* ************* EVENTS ************* */
+
+uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eUIEmbossType emboss)
+{
+  wmWindow *window = CTX_wm_window(C);
+  Scene *scene = CTX_data_scene(C);
+
+  uiBlock *block = new uiBlock();
+  block->active = true;
+  block->emboss = emboss;
+  block->evil_C = (void *)C; /* XXX */
+
+  block->button_groups.clear();
+
+  if (scene) {
+    /* store display device name, don't lookup for transformations yet
+     * block could be used for non-color displays where looking up for transformation
+     * would slow down redraw, so only lookup for actual transform when it's indeed
+     * needed
+     */
+    STRNCPY(block->display_device, scene->display_settings.display_device);
+
+    /* copy to avoid crash when scene gets deleted with ui still open */
+    block->unit = new UnitSettings();
+    memcpy(block->unit, &scene->unit, sizeof(scene->unit));
+  }
+  else {
+    STRNCPY(block->display_device, IMB_colormanagement_display_get_default_name());
+  }
+
+  KLI_strncpy(block->name, name, sizeof(block->name));
+
+  if (region) {
+    UI_block_region_set(block, region);
+  }
+
+  /* Set window matrix and aspect for region and OpenGL state. */
+  ui_update_window_matrix(window, region, block);
+
+  /* Tag as popup menu if not created within a region. */
+  if (!(region && region->visible)) {
+    block->auto_open = true;
+    block->flag |= UI_BLOCK_LOOP;
+  }
+
+  return block;
+}
 
 template<typename T> int ui_but_is_pushed_ex(uiBut *but, T *value)
 {
@@ -204,15 +283,13 @@ template<typename T> int ui_but_is_pushed_ex(uiBut *but, T *value)
   return is_push;
 }
 
-template<typename T>
-int ui_but_is_pushed(uiBut *but)
+template<typename T> int ui_but_is_pushed(uiBut *but)
 {
   T value;
   return ui_but_is_pushed_ex(but, &value);
 }
 
-template<typename T>
-static void ui_but_update_select_flag(uiBut *but, T *value)
+template<typename T> static void ui_but_update_select_flag(uiBut *but, T *value)
 {
   switch (ui_but_is_pushed_ex(but, value)) {
     case true:
@@ -244,8 +321,7 @@ static void ui_but_string_set_internal(uiBut *but, const char *str, size_t str_l
 
   if (str_len > UI_MAX_NAME_STR) {
     but->str = new char[str_len]();
-  }
-  else {
+  } else {
     but->str = but->strdata;
   }
   memcpy(but->str, str, str_len);
@@ -284,7 +360,7 @@ int UI_but_unit_type_get(const uiBut *but)
   if ((ownUnit != 0) || (but->stageprop == nullptr)) {
     return ownUnit << 16;
   }
-  return ((but->stageprop->subtype)&0x00FF0000);
+  return ((but->stageprop->subtype) & 0x00FF0000);
 }
 
 static bool ui_but_hide_fraction(uiBut *but, double value)
@@ -333,8 +409,8 @@ static bool ui_but_is_unit_radians(const uiBut *but)
 
 int UI_calc_float_precision(int prec, double value)
 {
-  static const double pow10_neg[UI_PRECISION_FLOAT_MAX + 1] = {
-      1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
+  static const double pow10_neg[UI_PRECISION_FLOAT_MAX + 1] =
+    {1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6};
   static const double max_pow = 10000000.0; /* pow(10, UI_PRECISION_FLOAT_MAX) */
 
   KLI_assert(prec <= UI_PRECISION_FLOAT_MAX);
@@ -396,11 +472,9 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
    * * If prec is not set, we fallback to a simple default */
   if (ui_but_is_unit_radians(but) && prec < 5) {
     prec = 5;
-  }
-  else if (prec == -1) {
+  } else if (prec == -1) {
     prec = (but->hardmax < 10.001f) ? 3 : 2;
-  }
-  else {
+  } else {
     CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
   }
 
@@ -422,34 +496,27 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
 
   if (value == (double)FLT_MAX) {
     STR_CONCAT(but->drawstr, slen, "inf");
-  }
-  else if (value == (double)-FLT_MAX) {
+  } else if (value == (double)-FLT_MAX) {
     STR_CONCAT(but->drawstr, slen, "-inf");
-  }
-  else if (subtype == PROP_PERCENTAGE) {
+  } else if (subtype == PROP_PERCENTAGE) {
     const int prec = ui_but_calc_float_precision(but, value);
     STR_CONCATF(but->drawstr, slen, "%.*f%%", prec, value);
-  }
-  else if (subtype == PROP_PIXEL) {
+  } else if (subtype == PROP_PIXEL) {
     const int prec = ui_but_calc_float_precision(but, value);
     STR_CONCATF(but->drawstr, slen, "%.*f px", prec, value);
-  }
-  else if (subtype == PROP_FACTOR) {
+  } else if (subtype == PROP_FACTOR) {
     const int precision = ui_but_calc_float_precision(but, value);
 
     if (UI_FACTOR_DISPLAY_TYPE == USER_FACTOR_AS_FACTOR) {
       STR_CONCATF(but->drawstr, slen, "%.*f", precision, value);
-    }
-    else {
+    } else {
       STR_CONCATF(but->drawstr, slen, "%.*f%%", MAX2(0, precision - 2), value * 100);
     }
-  }
-  else if (ui_but_is_unit(but)) {
+  } else if (ui_but_is_unit(but)) {
     char new_str[sizeof(but->drawstr)];
     ui_get_but_string_unit(but, new_str, sizeof(new_str), value, true, -1);
     STR_CONCAT(but->drawstr, slen, new_str);
-  }
-  else {
+  } else {
     const int prec = ui_but_calc_float_precision(but, value);
     STR_CONCATF(but->drawstr, slen, "%.*f", prec, value);
   }
@@ -460,8 +527,7 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
  * \param validate: When set, this function may change the button value.
  * Otherwise treat the button value as read-only.
  */
-template<typename T>
-static void ui_but_update_ex(uiBut *but, const bool validate)
+template<typename T> static void ui_but_update_ex(uiBut *but, const bool validate)
 {
   /* if something changed in the button */
   T value;
@@ -491,8 +557,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
 
     case UI_BTYPE_ICON_TOGGLE:
     case UI_BTYPE_ICON_TOGGLE_N:
-      if ((but->stageprop == nullptr) ||
-          (but->stageprop->flag & PROP_ICONS_CONSECUTIVE)) {
+      if ((but->stageprop == nullptr) || (but->stageprop->flag & PROP_ICONS_CONSECUTIVE)) {
         if (but->stageprop && (but->stageprop->flag & PROP_ICONS_REVERSE)) {
           but->drawflag |= UI_BUT_ICON_REVERSE;
         }
@@ -517,7 +582,8 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
         /* only needed for menus in popup blocks that don't recreate buttons on redraw */
         if (but->block->flag & UI_BLOCK_LOOP) {
           if (but->stageprop && (but->stageprop->type == PROP_ENUM)) {
-            const TfToken value_enum = FormFactory(but->stagepoin.GetAttribute(but->stageprop->name));
+            const TfToken value_enum = FormFactory(
+              but->stagepoin.GetAttribute(but->stageprop->name));
 
             // EnumPropertyItem item;
             // if (RNA_property_enum_item_from_value_gettexted(
@@ -542,7 +608,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
       if (but->editstr) {
         break;
       }
-      UI_GET_BUT_VALUE_INIT(but, T,value);
+      UI_GET_BUT_VALUE_INIT(but, T, value);
       if (ui_but_is_float(but)) {
         ui_but_build_drawstr_float(but, value);
       } else {
@@ -629,14 +695,12 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
   /* text clipping moved to widget drawing code itself */
 }
 
-template<typename T>
-void UI_but_update(uiBut *but)
+template<typename T> void UI_but_update(uiBut *but)
 {
   ui_but_update_ex<T>(but, false);
 }
 
-template<typename T>
-void UI_but_update_edited(uiBut *but)
+template<typename T> void UI_but_update_edited(uiBut *but)
 {
   ui_but_update_ex<T>(but, true);
 }
@@ -804,8 +868,12 @@ bool UI_but_is_utf8(const uiBut *but)
 /**
  * \param float_precision: Override the button precision.
  */
-static void ui_get_but_string_unit(
-    uiBut *but, char *str, int len_max, double value, bool pad, int float_precision)
+static void ui_get_but_string_unit(uiBut *but,
+                                   char *str,
+                                   int len_max,
+                                   double value,
+                                   bool pad,
+                                   int float_precision)
 {
   UnitSettings *unit = but->block->unit;
   const int unit_type = UI_but_unit_type_get(but);
@@ -821,12 +889,10 @@ static void ui_get_but_string_unit(
     precision = (int)ui_but_get_float_precision(but);
     if (precision > UI_PRECISION_FLOAT_MAX) {
       precision = UI_PRECISION_FLOAT_MAX;
-    }
-    else if (precision == -1) {
+    } else if (precision == -1) {
       precision = 2;
     }
-  }
-  else {
+  } else {
     precision = float_precision;
   }
 
@@ -856,7 +922,9 @@ void UI_but_string_get_ex(uiBut *but,
     size_t buf_len;
     const char *buf = nullptr;
     if ((but->type == UI_BTYPE_TAB) && (but->custom_data)) {
-      KrakenPRIM *ptr_type = &CreationFactory::PTR::Set(&but->stagepoin, but->stageprop->GetName(), but->stageprop);
+      KrakenPRIM *ptr_type = &CreationFactory::PTR::Set(&but->stagepoin,
+                                                        but->stageprop->GetName(),
+                                                        but->stageprop);
 
       /* uiBut.custom_data points to data this tab represents (e.g. workspace).
        * uiBut.stagepoin/prop store an active value (e.g. active workspace). */
@@ -865,8 +933,7 @@ void UI_but_string_get_ex(uiBut *but,
       buf_len = but->stagepoin.GetParent().GetName().GetString().length();
       if (buf_len + 1 < maxlen) {
         buf = str;
-      }
-      else {
+      } else {
         buf = new char[buf_len + 1]();
       }
 
@@ -876,8 +943,7 @@ void UI_but_string_get_ex(uiBut *but,
       buf_len = but->stageprop->GetName().GetString().length();
       if (buf_len + 1 < maxlen) {
         buf = str;
-      }
-      else {
+      } else {
         buf = new char[buf_len + 1]();
       }
 
@@ -886,7 +952,7 @@ void UI_but_string_get_ex(uiBut *but,
     } else if (type == PROP_ENUM) {
       /* RNA enum */
       const TfToken value = FormFactory(but->stagepoin.GetAttribute(but->stageprop->GetName()));
-      // if (RNA_property_enum_name(static_cast<bContext *>(but->block->evil_C),
+      // if (RNA_property_enum_name(static_cast<kContext *>(but->block->evil_C),
       //                            &but->stagepoin,
       //                            but->stageprop,
       //                            value,
@@ -900,8 +966,7 @@ void UI_but_string_get_ex(uiBut *but,
       buf_len = ptr.GetName().GetString().length();
       if (buf_len + 1 < maxlen) {
         buf = str;
-      }
-      else {
+      } else {
         buf = new char[buf_len + 1]();
       }
 
@@ -926,7 +991,7 @@ void UI_but_string_get_ex(uiBut *but,
     /* string */
     KLI_strncpy(str, but->poin, maxlen);
     return;
-  // } else if (ui_but_anim_expression_get(but, str, maxlen)) {
+    // } else if (ui_but_anim_expression_get(but, str, maxlen)) {
     /* driver expression */
   } else {
     /* number editing */

@@ -19,7 +19,7 @@ set(INC_SYS
   ${OPENGL_INCLUDE_DIRS}
 )
 
-set(SRC+
+set(SRC
   INTERFACE_button_group.cpp
   INTERFACE_handlers.cpp
   INTERFACE_kraken.cpp
@@ -30,6 +30,7 @@ set(SRC+
   INTERFACE_region_search.cpp
   INTERFACE_region_tooltip.cpp
   INTERFACE_regions.cpp
+  INTERFACE_style.cpp
   INTERFACE_tokens.cpp
 
   intern/interface_intern.h

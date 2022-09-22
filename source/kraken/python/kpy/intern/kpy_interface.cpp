@@ -384,7 +384,7 @@ int KPY_context_member_get(kraken::kContext *C, const char *member, kraken::kCon
           CollectionPointerLink *link = MEM_callocN(sizeof(CollectionPointerLink),
                                                     "kpy_context_get");
           link->ptr = ((KPy_StructRNA *)item)->ptr;
-          BLI_addtail(&result->list, link);
+          KLI_addtail(&result->list, link);
 #endif
           ptr = new KrakenPRIM(((KPy_KrakenStage *)list_item)->ptr->GetPseudoRoot());
           CTX_data_list_add_ptr(result, ptr);

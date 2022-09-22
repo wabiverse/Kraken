@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ANCHOR_system_paths.h"
+
 #include "KLI_math_inline.h"
 #include "KLI_string_utils.h"
 

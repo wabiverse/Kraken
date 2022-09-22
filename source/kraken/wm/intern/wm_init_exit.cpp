@@ -214,10 +214,10 @@ void WM_exit_ex(kContext *C, const bool do_python)
   /* option not to close python so we can use 'atexit' */
   if (do_python && ((C == NULL) || CTX_py_init_get(C))) {
     /* NOTE: (old note)
-     * before BKE_blender_free so Python's garbage-collection happens while library still exists.
+     * before KKE_kraken_free so Python's garbage-collection happens while library still exists.
      * Needed at least for a rare crash that can happen in python-drivers.
      *
-     * Update for Blender 2.5, move after #BKE_blender_free because Blender now holds references
+     * Update for Blender 2.5, move after #KKE_kraken_free because Blender now holds references
      * to #PyObject's so #Py_DECREF'ing them after Python ends causes bad problems every time
      * the python-driver bug can be fixed if it happens again we can deal with it then. */
     KPY_python_end();

@@ -26,6 +26,7 @@
 #include "kraken/kraken.h"
 
 #include "USD_api.h"
+#include "USD_color_types.h"
 #include "USD_object.h"
 
 #include <wabi/base/gf/vec2f.h>
@@ -150,6 +151,13 @@ struct Scene
   explicit Scene(const std::string &identifier, const wabi::UsdPrim &prim = wabi::UsdPrim());
   explicit Scene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj);
   virtual ~Scene();
+
+  /* Units */
+  struct UnitSettings unit;
+
+  ColorManagedViewSettings view_settings;
+  ColorManagedDisplaySettings display_settings;
+  ColorManagedColorspaceSettings sequencer_colorspace_settings;
 
   /** This scenes active stage. */
   wabi::UsdStageRefPtr stage;

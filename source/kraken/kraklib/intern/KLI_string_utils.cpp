@@ -610,20 +610,6 @@ size_t KLI_strnlen(const char *s, const size_t maxlen)
   return len;
 }
 
-size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const size_t maxncpy)
-{
-  size_t srclen = KLI_strnlen(src, maxncpy - 1);
-  KLI_assert(maxncpy != 0);
-
-#ifdef DEBUG_STRSIZE
-  memset(dst, 0xff, sizeof(*dst) * maxncpy);
-#endif
-
-  memcpy(dst, src, srclen);
-  dst[srclen] = '\0';
-  return srclen;
-}
-
 size_t KLI_strcpy_rlen(char *__restrict dst, const char *__restrict src)
 {
   size_t srclen = strlen(src);

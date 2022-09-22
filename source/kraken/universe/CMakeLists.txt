@@ -30,6 +30,7 @@ set(SRC
   USD_default_tables.h
   USD_factory.h
   USD_file.h
+  USD_listbase.h
   USD_object.h
   USD_operator.h
   USD_path_defaults.h

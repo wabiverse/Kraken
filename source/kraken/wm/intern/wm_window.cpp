@@ -47,6 +47,7 @@
 
 #include "KKE_context.h"
 #include "KKE_main.h"
+#include "KKE_report.h"
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
 
@@ -1003,6 +1004,171 @@ static void WM_generic_callback_free(wmGenericCallback *callback)
     callback->free_user_data(callback->user_data);
   }
   delete callback;
+}
+
+static uiBlock *block_create__close_file_dialog(struct kContext *C,
+                                                struct ARegion *region,
+                                                void *arg1)
+{
+  wmGenericCallback *post_action = (wmGenericCallback *)arg1;
+  Main *kmain = CTX_data_main(C);
+
+  uiBlock *block = UI_block_begin(C, region, UI_ID(UI_POPUP_file_close), UI_EMBOSS);
+  UI_block_flag_enable(
+      block, UI_BLOCK_KEEP_OPEN | UI_BLOCK_LOOP | UI_BLOCK_NO_WIN_CLIP | UI_BLOCK_NUMSELECT);
+  UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
+
+  uiLayout *layout = uiItemsAlertBox(block, 34, ALERT_ICON_QUESTION);
+
+  /* Title. */
+  uiItemL_ex(layout, TIP_("Save changes before closing?"), ICON_NONE, true, false);
+
+  /* Filename. */
+  const char *blendfile_path = KKE_main_pixarfile_path(CTX_data_main(C));
+  char filename[FILE_MAX];
+  if (blendfile_path[0] != '\0') {
+    KLI_split_file_part(blendfile_path, filename, sizeof(filename));
+  }
+  else {
+    SNPRINTF(filename, "%s.blend", DATA_("untitled"));
+  }
+  uiItemL(layout, filename, ICON_NONE);
+
+  /* Image Saving Warnings. */
+  ReportList reports;
+  KKE_reports_init(&reports, RPT_STORE);
+  uint modified_images_count = ED_image_save_all_modified_info(kmain, &reports);
+
+  LISTBASE_FOREACH (Report *, report, &reports.list) {
+    uiLayout *row = uiLayoutColumn(layout, false);
+    uiLayoutSetScaleY(row, 0.6f);
+    uiItemS(row);
+
+    /* Error messages created in ED_image_save_all_modified_info() can be long,
+     * but are made to separate into two parts at first colon between text and paths.
+     */
+    char *message = KLI_strdupn(report->message, report->len);
+    char *path_info = strstr(message, ": ");
+    if (path_info) {
+      /* Terminate message string at colon. */
+      path_info[1] = '\0';
+      /* Skip over the ": " */
+      path_info += 2;
+    }
+    uiItemL_ex(row, message, ICON_NONE, false, true);
+    if (path_info) {
+      uiItemL_ex(row, path_info, ICON_NONE, false, true);
+    }
+    MEM_freeN(message);
+  }
+
+  /* Used to determine if extra separators are needed. */
+  bool has_extra_checkboxes = false;
+
+  /* Modified Images Checkbox. */
+  if (modified_images_count > 0) {
+    char message[64];
+    KLI_snprintf(message, sizeof(message), "Save %u modified image(s)", modified_images_count);
+    /* Only the first checkbox should get extra separation. */
+    if (!has_extra_checkboxes) {
+      uiItemS(layout);
+    }
+    uiDefButBitC(block,
+                 UI_BTYPE_CHECKBOX,
+                 1,
+                 0,
+                 message,
+                 0,
+                 0,
+                 0,
+                 UI_UNIT_Y,
+                 &save_images_when_file_is_closed,
+                 0,
+                 0,
+                 0,
+                 0,
+                 "");
+    has_extra_checkboxes = true;
+  }
+
+  if (KKE_asset_library_has_any_unsaved_catalogs()) {
+    static char save_catalogs_when_file_is_closed;
+
+    save_catalogs_when_file_is_closed = ED_asset_catalogs_get_save_catalogs_when_file_is_saved();
+
+    /* Only the first checkbox should get extra separation. */
+    if (!has_extra_checkboxes) {
+      uiItemS(layout);
+    }
+    uiBut *but = uiDefButBitC(block,
+                              UI_BTYPE_CHECKBOX,
+                              1,
+                              0,
+                              "Save modified asset catalogs",
+                              0,
+                              0,
+                              0,
+                              UI_UNIT_Y,
+                              &save_catalogs_when_file_is_closed,
+                              0,
+                              0,
+                              0,
+                              0,
+                              "");
+    UI_but_func_set(
+        but, save_catalogs_when_file_is_closed_set_fn, &save_catalogs_when_file_is_closed, NULL);
+    has_extra_checkboxes = true;
+  }
+
+  KKE_reports_clear(&reports);
+
+  uiItemS_ex(layout, has_extra_checkboxes ? 2.0f : 4.0f);
+
+  /* Buttons. */
+#ifdef _WIN32
+  const bool windows_layout = true;
+#else
+  const bool windows_layout = false;
+#endif
+
+  if (windows_layout) {
+    /* Windows standard layout. */
+
+    uiLayout *split = uiLayoutSplit(layout, 0.0f, true);
+    uiLayoutSetScaleY(split, 1.2f);
+
+    uiLayoutColumn(split, false);
+    wm_block_file_close_save_button(block, post_action);
+
+    uiLayoutColumn(split, false);
+    wm_block_file_close_discard_button(block, post_action);
+
+    uiLayoutColumn(split, false);
+    wm_block_file_close_cancel_button(block, post_action);
+  }
+  else {
+    /* Non-Windows layout (macOS and Linux). */
+
+    uiLayout *split = uiLayoutSplit(layout, 0.3f, true);
+    uiLayoutSetScaleY(split, 1.2f);
+
+    uiLayoutColumn(split, false);
+    wm_block_file_close_discard_button(block, post_action);
+
+    uiLayout *split_right = uiLayoutSplit(split, 0.1f, true);
+
+    uiLayoutColumn(split_right, false);
+    /* Empty space. */
+
+    uiLayoutColumn(split_right, false);
+    wm_block_file_close_cancel_button(block, post_action);
+
+    uiLayoutColumn(split_right, false);
+    wm_block_file_close_save_button(block, post_action);
+  }
+
+  UI_block_bounds_set_centered(block, 14 * U.dpi_fac);
+  return block;
 }
 
 static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)

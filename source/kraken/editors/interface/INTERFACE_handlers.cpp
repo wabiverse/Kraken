@@ -784,11 +784,11 @@ static uiButExtraOpIcon *ui_but_extra_operator_icon_mouse_over_get(uiBut *but,
 
   int x = event->mouse_pos[0], y = event->mouse_pos[1];
   UI_window_to_block(region, but->block, &x, &y);
-  if (!KLI_rctf_isect_pt(&but->rect, x, y)) {
+  if (!KLI_rctf_isect_pt(but->rect, x, y)) {
     return NULL;
   }
 
-  const float icon_size = 0.8f * KLI_rctf_size_y(&but->rect); /* ICON_SIZE_FROM_BUTRECT */
+  const float icon_size = 0.8f * KLI_rctf_size_y(but->rect); /* ICON_SIZE_FROM_BUTRECT */
   float xmax = but->rect[1];
   /* Same as in 'widget_draw_extra_icons', icon padding from the right edge. */
   xmax -= 0.2 * icon_size;
@@ -1091,7 +1091,7 @@ static void button_activate_exit(kContext *C,
 
 #ifdef USE_DRAG_MULTINUM
   if (data->multi_data.has_mbuts) {
-    LISTBASE_FOREACH(uiBut *, bt, &block->buttons)
+    for(auto &bt, block->buttons)
     {
       if (bt->flag & UI_BUT_DRAG_MULTI) {
         bt->flag &= ~UI_BUT_DRAG_MULTI;
@@ -1148,9 +1148,9 @@ static void button_activate_exit(kContext *C,
   }
 
   /* Disable tool-tips until mouse-move + last active flag. */
-  LISTBASE_FOREACH(uiBlock *, block_iter, &data->region->uiblocks)
+  for(auto &block_iter : data->region->uiblocks)
   {
-    LISTBASE_FOREACH(uiBut *, bt, &block_iter->buttons)
+    for(auto &bt : block_iter->buttons)
     {
       bt->flag &= ~UI_BUT_LAST_ACTIVE;
     }

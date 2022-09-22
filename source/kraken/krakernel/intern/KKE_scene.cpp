@@ -54,24 +54,26 @@ double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, doubl
     return value;
   }
 
+  static double metersPerUnit = 0;
+
   switch (unit_type) {
     case K_UNIT_LENGTH:
     case K_UNIT_VELOCITY:
     case K_UNIT_ACCELERATION:
-      const double metersPerUnit = value * (double)unit->scale_length;
+      metersPerUnit = value * (double)unit->scale_length;
       wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
       return metersPerUnit;
     case K_UNIT_AREA:
     case K_UNIT_POWER:
-      const double metersPerUnit = value * pow(unit->scale_length, 2);
+      metersPerUnit = value * pow(unit->scale_length, 2);
       wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
       return metersPerUnit;
     case K_UNIT_VOLUME:
-      const double metersPerUnit = value * pow(unit->scale_length, 3);
+      metersPerUnit = value * pow(unit->scale_length, 3);
       wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
       return metersPerUnit;
     case K_UNIT_MASS:
-      const double metersPerUnit = value * pow(unit->scale_length, 3);
+      metersPerUnit = value * pow(unit->scale_length, 3);
       wabi::UsdGeomSetStageMetersPerUnit(stage, metersPerUnit);
       return metersPerUnit;
     case K_UNIT_CAMERA: /* *Do not* use scene's unit scale for camera focal lens! See T42026. */

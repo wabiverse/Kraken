@@ -47,6 +47,20 @@ KLI_INLINE float KLI_rctf_cent_y(const wabi::GfVec4f &rct)
   return (rct[2] + rct[3]) / 2.0;
 }
 
+/* ----- integers. ----- */
+
+KLI_INLINE int KLI_rcti_size_x(const wabi::GfVec4i &rct)
+{
+  return (&rct[1] - &rct[0]);
+}
+
+KLI_INLINE int KLI_rcti_size_y(const wabi::GfVec4i &rct)
+{
+  return (&rct[3] - &rct[2]);
+}
+
+/* ----- floats. ----- */
+
 KLI_INLINE float KLI_rctf_size_x(const wabi::GfVec4f &rct)
 {
   return (&rct[1] - &rct[0]);

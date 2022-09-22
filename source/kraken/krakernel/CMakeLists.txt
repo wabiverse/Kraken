@@ -42,8 +42,8 @@ set(SRC
   KKE_scene.h
   KKE_screen.h
   KKE_space.h
-  KKE_workspace.h
   KKE_utils.h
+  KKE_workspace.h
 )
 
 set(INC_SYS
@@ -58,12 +58,14 @@ set(INC_SYS
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
   kraken_lib
-  kraken_python
+  kraken_gpu
+  kraken_imbuf
+  kraken_anchor
   kraken_wm
-  kraken_luxo
   kraken_universe
+  kraken_luxo
+  kraken_python
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}
