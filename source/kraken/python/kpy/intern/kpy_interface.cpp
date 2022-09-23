@@ -359,7 +359,7 @@ int KPY_context_member_get(kraken::kContext *C, const char *member, kraken::kCon
   } else if (KPy_KrakenStage_Check(item)) {
     ptr = new KrakenPRIM(((KPy_KrakenStage *)item)->ptr->GetPseudoRoot());
 
-    // result->ptr = ((KPy_StructRNA *)item)->ptr;
+    // result->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
     CTX_data_pointer_set_ptr(result, ptr);
     CTX_data_type_set(result, CTX_DATA_TYPE_POINTER);
     done = true;
@@ -383,7 +383,7 @@ int KPY_context_member_get(kraken::kContext *C, const char *member, kraken::kCon
 #if 0
           CollectionPointerLink *link = MEM_callocN(sizeof(CollectionPointerLink),
                                                     "kpy_context_get");
-          link->ptr = ((KPy_StructRNA *)item)->ptr;
+          link->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
           KLI_addtail(&result->list, link);
 #endif
           ptr = new KrakenPRIM(((KPy_KrakenStage *)list_item)->ptr->GetPseudoRoot());

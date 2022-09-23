@@ -160,6 +160,40 @@ function(kraken_include_dirs_sys
   include_directories(SYSTEM ${_ALL_INCS})
 endfunction()
 
+# Nicer makefiles with -I/1/foo/ instead of -I/1/2/3/../../foo/
+# use it instead of include_directories()
+function(absolute_include_dirs
+  includes_absolute)
+
+  set(_ALL_INCS "")
+  foreach(_INC ${ARGN})
+    get_filename_component(_ABS_INC ${_INC} ABSOLUTE)
+    list(APPEND _ALL_INCS ${_ABS_INC})
+    # for checking for invalid includes, disable for regular use
+    # if(NOT EXISTS "${_ABS_INC}/")
+    #   message(FATAL_ERROR "Include not found: ${_ABS_INC}/")
+    # endif()
+  endforeach()
+
+  set(${includes_absolute} ${_ALL_INCS} PARENT_SCOPE)
+endfunction()
+
+function(kraken_target_include_dirs
+  name
+  )
+
+  absolute_include_dirs(_ALL_INCS ${ARGN})
+  target_include_directories(${name} PRIVATE ${_ALL_INCS})
+endfunction()
+
+function(kraken_target_include_dirs_sys
+  name
+  )
+
+  absolute_include_dirs(_ALL_INCS ${ARGN})
+  target_include_directories(${name} SYSTEM PRIVATE ${_ALL_INCS})
+endfunction()
+
 # Set include paths for header files included with "*.h" syntax.
 # This enables auto-complete suggestions for user header files on Xcode.
 # Build process is not affected since the include paths are the same

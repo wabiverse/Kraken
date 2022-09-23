@@ -25,7 +25,7 @@
 #include "USD_api.h"
 
 #include "KLI_time.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #if defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN)
 #  include <sys/time.h>

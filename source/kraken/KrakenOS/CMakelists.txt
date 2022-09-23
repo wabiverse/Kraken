@@ -44,6 +44,7 @@ set(SRC
 )
 
 set(INC_SYS
+  ${APPLE_CXX_INCLUDE_DIR}
   ${Boost_INCLUDE_DIRS}
   ${TBB_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS}
@@ -53,10 +54,6 @@ set(INC_SYS
 )
 
 set(LIB
-  maelstrom
-  maelstrom_static
-  kraken_gpu
-  kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}
@@ -99,6 +96,6 @@ kraken_add_lib(kraken_os "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 if (APPLE)
   # Kraken CXX/OS depends on Swift implementation.
-  add_dependencies(kraken_os KrakenOS)
+  # add_dependencies(kraken_os KrakenOS)
   target_link_libraries(kraken_os PRIVATE KrakenOS)
 endif()

@@ -40,7 +40,7 @@
 #include "KKE_workspace.h"
 
 #include "KLI_assert.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 KRAKEN_NAMESPACE_BEGIN
 

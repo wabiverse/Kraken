@@ -24,15 +24,11 @@ set(SRC
   SCREEN_geometry.cpp
   SCREEN_workspace_edit.cpp
   SCREEN_workspace_layout_edit.cpp
-
-  ../include/ED_defines.h
-  ../include/ED_screen.h
 )
 
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
   kraken_kernel
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}

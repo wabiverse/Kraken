@@ -26,7 +26,7 @@
 
 #include "KLI_api.h"
 #include "KLI_assert.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include <cstring>
 #include <string>

@@ -132,7 +132,6 @@ set(SRC
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
   kraken_kernel
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}

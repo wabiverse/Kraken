@@ -25,7 +25,7 @@
 #include "LUXO_runtime.h"
 
 #include "KLI_icons.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 #include "KLI_path_utils.h"
 
 #include "KKE_context.h"

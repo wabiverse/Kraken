@@ -233,4 +233,118 @@ enum
   COLORMANAGE_VIEW_USE_CURVES = (1 << 0),
 };
 
+#define IMB_MIPMAP_LEVELS 20
+#define IMB_FILENAME_SIZE 1024
+
+/* -------------------------------------------------------------------- */
+/** \name Image Buffer
+ * \{ */
+
+typedef struct ImBuf {
+  /* dimensions */
+  /** Width and Height of our image buffer.
+   * Should be 'unsigned int' since most formats use this.
+   * but this is problematic with texture math in `imagetexture.c`
+   * avoid problems and use int. - campbell */
+  int x, y;
+
+  /** Active amount of bits/bit-planes. */
+  unsigned char planes;
+  /** Number of channels in `rect_float` (0 = 4 channel default) */
+  int channels;
+
+  /* flags */
+  /** Controls which components should exist. */
+  int flags;
+  /** what is malloced internal, and can be freed */
+  int mall;
+
+  /* pixels */
+
+  /** Image pixel buffer (8bit representation):
+   * - color space defaults to `sRGB`.
+   * - alpha defaults to 'straight'.
+   */
+  unsigned int *rect;
+  /** Image pixel buffer (float representation):
+   * - color space defaults to 'linear' (`rec709`).
+   * - alpha defaults to 'premul'.
+   * \note May need gamma correction to `sRGB` when generating 8bit representations.
+   * \note Formats that support higher more than 8 but channels load as floats.
+   */
+  float *rect_float;
+
+  /** Resolution in pixels per meter. Multiply by `0.0254` for DPI. */
+  double ppm[2];
+
+  /* tiled pixel storage */
+  int tilex, tiley;
+  int xtiles, ytiles;
+  unsigned int **tiles;
+
+  /* zbuffer */
+  /** z buffer data, original zbuffer */
+  int *zbuf;
+  /** z buffer data, camera coordinates */
+  float *zbuf_float;
+
+  /* parameters used by conversion between byte and float */
+  /** random dither value, for conversion from float -> byte rect */
+  float dither;
+
+  /* mipmapping */
+  /** MipMap levels, a series of halved images */
+  struct ImBuf *mipmap[IMB_MIPMAP_LEVELS];
+  int miptot, miplevel;
+
+  /* externally used data */
+  /** reference index for ImBuf lists */
+  int index;
+  /** used to set imbuf to dirty and other stuff */
+  int userflags;
+  /** image metadata */
+  struct IDProperty *metadata;
+  /** temporary storage */
+  void *userdata;
+
+  /* file information */
+  /** file type we are going to save as */
+  // enum eImbFileType ftype;
+  /** file format specific flags */
+  // ImbFormatOptions foptions;
+  /** filename associated with this image */
+  char name[IMB_FILENAME_SIZE];
+  /** full filename used for reading from cache */
+  char cachename[IMB_FILENAME_SIZE];
+
+  /* memory cache limiter */
+  /** handle for cache limiter */
+  // struct MEM_CacheLimiterHandle_s *c_handle;
+  /** reference counter for multiple users */
+  int refcounter;
+
+  /* some parameters to pass along for packing images */
+  /** Compressed image only used with PNG and EXR currently. */
+  unsigned char *encodedbuffer;
+  /** Size of data written to `encodedbuffer`. */
+  unsigned int encodedsize;
+  /** Size of `encodedbuffer` */
+  unsigned int encodedbuffersize;
+
+  /* color management */
+  /** color space of byte buffer */
+  struct ColorSpace *rect_colorspace;
+  /** color space of float buffer, used by sequencer only */
+  struct ColorSpace *float_colorspace;
+  /** array of per-display display buffers dirty flags */
+  unsigned int *display_buffer_flags;
+  /** cache used by color management */
+  // struct ColormanageCache *colormanage_cache;
+  int colormanage_flag;
+  // rcti invalid_rect;
+
+  /* information for compressed textures */
+  // struct DDSData dds_data;
+} ImBuf;
+
 KRAKEN_NAMESPACE_END

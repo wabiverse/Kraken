@@ -27,7 +27,7 @@
 #include "kraken/kraken.h"
 
 #include "KLI_utildefines.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include "KKE_appdir.h"
 #include "KKE_context.h"

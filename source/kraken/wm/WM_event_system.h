@@ -100,4 +100,12 @@ int WM_operator_name_call(kContext *C,
 
 void WM_event_do_refresh_wm(kContext *C);
 
+
+IDProperty *IDP_CopyProperty(const IDProperty *prop);
+IDProperty *IDP_CopyProperty_ex(const IDProperty *prop, const int flag);
+static IDProperty *idp_generic_copy(const IDProperty *prop, const int flag);
+IDProperty *IDP_CopyIDPArray(const IDProperty *array, const int flag);
+IDPropertyUIData *IDP_ui_data_copy(const IDProperty *prop);
+
+
 KRAKEN_NAMESPACE_END

@@ -106,7 +106,7 @@ void CREATOR_kraken_main(int argc, const char **argv)
 #if !defined(ARCH_OS_WINDOWS)
   /* Init & parse args. */
   CREATOR_setup_args(argc, (const char **)argv);
-  if (CREATOR_parse_args(argc, (const char **)argv) != 0) {
+  if (CREATOR_parse_args(argc, (const char **)argv, C) != 0) {
     return;
   }
 #endif /* !defined(ARCH_OS_WINDOWS) */

@@ -24,11 +24,15 @@
 
 #include "kraken/kraken.h"
 
+#include "MEM_guardedalloc.h"
+
 #include "USD_area.h"
 #include "USD_operator.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
 #include "USD_wm_types.h"
+
+#include "WM_window.h"
 
 #include "ED_screen.h"
 
@@ -95,61 +99,13 @@ struct uiTooltipData {
   int toth, lineh;
 };
 
-ARegion *UI_tooltip_create_from_button_or_extra_icon(kContext *C, ARegion *butregion, uiBut *but, uiButExtraOpIcon *extra_icon, bool is_label)
+ARegion *ui_region_temp_add(kScreen *screen)
 {
-  wmWindow *win = CTX_wm_window(C);
-  /* Aspect values that shrink text are likely unreadable. */
-  const float aspect = min_ff(1.0f, but->block->aspect);
-  float init_position[2];
+  ARegion *region = MEM_cnew<ARegion>(__func__);
+  screen->regions.push_back(region);
 
-  if (but->drawflag & UI_BUT_NO_TOOLTIP) {
-    return nullptr;
-  }
-  uiTooltipData *data = nullptr;
-
-  if (data == nullptr) {
-    // data = ui_tooltip_data_from_tool(C, but, is_label);
-  }
-
-  if (data == nullptr) {
-    // data = ui_tooltip_data_from_button_or_extra_icon(C, but, extra_icon);
-  }
-
-  if (data == nullptr) {
-    // data = ui_tooltip_data_from_button_or_extra_icon(C, but, nullptr);
-  }
-
-  if (data == nullptr) {
-    return nullptr;
-  }
-
-  const bool is_no_overlap = UI_but_has_tooltip_label(but) || UI_but_is_tool(but);
-  wabi::GfVec4i init_rect;
-  if (is_no_overlap) {
-    wabi::GfVec4f overlap_rect_fl;
-    init_position[0] = KLI_rctf_cent_x(but->rect);
-    init_position[1] = KLI_rctf_cent_y(but->rect);
-    if (butregion) {
-      ui_block_to_window_fl(butregion, but->block, &init_position[0], &init_position[1]);
-      ui_block_to_window_rctf(butregion, but->block, &overlap_rect_fl, &but->rect);
-    }
-    else {
-      overlap_rect_fl = but->rect;
-    }
-    KLI_rcti_rctf_copy_round(&init_rect, overlap_rect_fl);
-  }
-  else {
-    init_position[0] = KLI_rctf_cent_x(but->rect);
-    init_position[1] = but->rect.ymin;
-    if (butregion) {
-      ui_block_to_window_fl(butregion, but->block, &init_position[0], &init_position[1]);
-      init_position[0] = win->eventstate->xy[0];
-    }
-    init_position[1] -= (UI_POPUP_MARGIN / 2);
-  }
-
-  ARegion *region = ui_tooltip_create_with_data(
-      C, data, init_position, is_no_overlap ? &init_rect : nullptr, aspect);
+  region->regiontype = RGN_TYPE_TEMPORARY;
+  region->alignment = RGN_ALIGN_FLOAT;
 
   return region;
 }

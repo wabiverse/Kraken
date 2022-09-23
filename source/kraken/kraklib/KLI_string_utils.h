@@ -16,160 +16,40 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * KRAKEN Library.
  * Gadget Vault.
  */
 
-#pragma once
+#include <stdarg.h>
 
-#include "KLI_api.h"
 #include "KLI_compiler_attrs.h"
+#include "KLI_utildefines.h"
 
-/* generic strcmp macros */
-#if defined(_MSC_VER)
-#  define strcasecmp _stricmp
-#  define strncasecmp _strnicmp
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-/* ------------------------------------------------------------ CLASSIC C STRING UTILITIES ----- */
+struct ListBase;
 
-char *KLI_strdupn(const char *str, const size_t len) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT
-  ATTR_NONNULL();
+/**
+ * Take multiple arguments, pass as (array, length).
+ */
+#define KLI_string_join(result, result_len, ...) \
+  KLI_string_join_array( \
+      result, result_len, ((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
+#define KLI_string_joinN(...) \
+  KLI_string_join_arrayN(((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
+#define KLI_string_join_by_sep_charN(sep, ...) \
+  KLI_string_join_array_by_sep_charN( \
+      sep, ((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
+#define KLI_string_join_by_sep_char_with_tableN(sep, table, ...) \
+  KLI_string_join_array_by_sep_char_with_tableN( \
+      sep, table, ((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
 
-char *KLI_strdup(const char *str) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL() ATTR_MALLOC;
-
-char *KLI_strdupcat(const char *__restrict str1,
-                    const char *__restrict str2) ATTR_WARN_UNUSED_RESULT
-  ATTR_NONNULL() ATTR_MALLOC;
-
-int KLI_strcasecmp(const char *s1, const char *s2) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
-
-char *KLI_strcasestr(const char *s, const char *find) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
-
-int KLI_strncasecmp(const char *s1, const char *s2, size_t len) ATTR_WARN_UNUSED_RESULT
-  ATTR_NONNULL();
-
-int KLI_strcasecmp_natural(const char *s1, const char *s2) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
-
-void KLI_str_replace_char(char *str, char src, char dst) ATTR_NONNULL();
-
-size_t KLI_split_name_num(char *left, int *nr, const char *name, const char delim);
-
-char *KLI_strncpy(char *__restrict dst, const char *__restrict src, const size_t maxncpy)
-  ATTR_NONNULL();
-
-size_t KLI_strncpy_utf8_rlen(char *__restrict dst, const char *__restrict src, size_t maxncpy)
-  ATTR_NONNULL();
-
-char *KLI_strncpy_utf8(char *__restrict dst, const char *__restrict src, size_t maxncpy);
-
-size_t KLI_strncpy_wchar_as_utf8(char *__restrict dst,
-                                 const wchar_t *__restrict src,
-                                 const size_t maxncpy) ATTR_NONNULL();
-
-int KLI_str_utf8_size(const char *p) ATTR_NONNULL();
-
-int KLI_str_utf8_size_safe(const char *p) ATTR_NONNULL();
-
-size_t KLI_str_utf8_from_unicode(uint c, char *outbuf, const size_t outbuf_len);
-
-size_t KLI_strnlen_utf8(const char *strc, const size_t maxlen);
-
-size_t KLI_strnlen_utf8_ex(const char *strc, const size_t maxlen, size_t *r_len_bytes);
-
-size_t KLI_strnlen(const char *s, const size_t maxlen) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
-
-size_t KLI_strcpy_rlen(char *__restrict dst, const char *__restrict src);
-
-size_t KLI_strncpy_rlen(char *__restrict dst, const char *__restrict src, const size_t maxncpy);
-
-size_t KLI_vsnprintf(char *__restrict buffer,
-                     size_t maxncpy,
-                     const char *__restrict format,
-                     va_list arg) ATTR_PRINTF_FORMAT(3, 0);
-
-size_t KLI_vsnprintf_rlen(char *__restrict buffer,
-                          size_t maxncpy,
-                          const char *__restrict format,
-                          va_list arg) ATTR_PRINTF_FORMAT(3, 0);
-
-size_t KLI_snprintf(char *__restrict dst, size_t maxncpy, const char *__restrict format, ...)
-  ATTR_NONNULL(1, 3) ATTR_PRINTF_FORMAT(3, 4);
-
-size_t KLI_snprintf_rlen(char *__restrict dst, size_t maxncpy, const char *__restrict format, ...)
-  ATTR_NONNULL(1, 3) ATTR_PRINTF_FORMAT(3, 4);
-
-size_t KLI_str_escape(char *__restrict dst, const char *__restrict src, const size_t dst_maxncpy)
-  ATTR_NONNULL();
-
-size_t KLI_str_unescape(char *__restrict dst, const char *__restrict src, const size_t src_maxncpy)
-  ATTR_NONNULL();
-
-typedef bool (*UniquenameCheckCallback)(void *arg, const char *name);
-
-bool KLI_uniquename(std::vector<void *> list,
-                    void *vlink,
-                    const char *defname,
-                    char delim,
-                    int name_offset,
-                    size_t name_len);
-bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
-                       void *arg,
-                       const char *defname,
-                       char delim,
-                       char *name,
-                       size_t name_len);
-
-/* Join strings, return newly allocated string. */
-char *KLI_string_join_array(char *result,
-                            size_t result_len,
-                            const char *strings[],
-                            uint strings_len) ATTR_NONNULL();
-
-/* Take multiple arguments, pass as (array, length). */
-#define KLI_string_join(result, result_len, ...)         \
-  KLI_string_join_array(result,                          \
-                        result_len,                      \
-                        ((const char *[]){__VA_ARGS__}), \
-                        VA_NARGS_COUNT(__VA_ARGS__))
-
-#define STRNCPY(dst, src) KLI_strncpy(dst, src, ARRAY_SIZE(dst))
-#define STRNCPY_RLEN(dst, src) KLI_strncpy_rlen(dst, src, ARRAY_SIZE(dst))
-#define SNPRINTF(dst, format, ...) KLI_snprintf(dst, ARRAY_SIZE(dst), format, __VA_ARGS__)
-#define SNPRINTF_RLEN(dst, format, ...) \
-  KLI_snprintf_rlen(dst, ARRAY_SIZE(dst), format, __VA_ARGS__)
-#define STR_CONCAT(dst, len, suffix) \
-  len += KLI_strncpy_rlen(dst + len, suffix, ARRAY_SIZE(dst) - len)
-#define STR_CONCATF(dst, len, format, ...) \
-  len += KLI_snprintf_rlen(dst + len, ARRAY_SIZE(dst) - len, format, __VA_ARGS__)
-
-#define UTF8_COMPUTE(Char, Mask, Len, Err)                      \
-  if (Char < 128) {                                             \
-    Len = 1;                                                    \
-    Mask = 0x7f;                                                \
-  } else if ((Char & 0xe0) == 0xc0) {                           \
-    Len = 2;                                                    \
-    Mask = 0x1f;                                                \
-  } else if ((Char & 0xf0) == 0xe0) {                           \
-    Len = 3;                                                    \
-    Mask = 0x0f;                                                \
-  } else if ((Char & 0xf8) == 0xf0) {                           \
-    Len = 4;                                                    \
-    Mask = 0x07;                                                \
-  } else if ((Char & 0xfc) == 0xf8) {                           \
-    Len = 5;                                                    \
-    Mask = 0x03;                                                \
-  } else if ((Char & 0xfe) == 0xfc) {                           \
-    Len = 6;                                                    \
-    Mask = 0x01;                                                \
-  } else {                                                      \
-    Len = Err; /* -1 is the typical error value or 1 to skip */ \
-  }                                                             \
-  (void)0
-
-/* ------------------------------------------------------ MODERN CXX STD::STRING UTILITIES ----- */
-
-std::string KLI_str_CapSpaceAmmender(std::string str);
-std::string KLI_str_UpperCamel(std::string str);
+#ifdef __cplusplus
+}
+#endif

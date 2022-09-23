@@ -34,7 +34,7 @@ set(SRC
   KKE_appdir.h
   KKE_context.h
   KKE_icons.h
-  KKE_ID.h
+  KKE_idtype.h
   KKE_kraken_prim.h
   KKE_main.h
   KKE_report.h
@@ -62,10 +62,8 @@ set(LIB
   kraken_gpu
   kraken_imbuf
   kraken_anchor
-  kraken_wm
-  kraken_universe
+  kraken_intern_guardedalloc
   kraken_luxo
-  kraken_python
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

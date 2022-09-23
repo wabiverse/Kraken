@@ -22,25 +22,27 @@
  * Gadget Vault.
  */
 
-#include <stdlib.h> /* malloc */
-#include <string.h>
+#  include <stdlib.h> /* malloc */
+#  include <string.h>
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#  include <fcntl.h>
+#  include <sys/stat.h>
+#  include <sys/types.h>
 
-#include <errno.h>
+#  include <errno.h>
 
 #include <zlib.h>
+#include <zstd.h>
 
 #ifdef WIN32
-#  include <windows.h>
-
+#  include "KLI_fileops_types.h"
+#  include "KLI_winstuff.h"
+#  include "utf_winfunc.h"
 #  include "utfconv.h"
 #  include <io.h>
 #  include <shellapi.h>
-
-#  include "KLI_winstuff.h"
+#  include <shobjidl.h>
+#  include <windows.h>
 #else
 #  if defined(__APPLE__)
 #    include <CoreFoundation/CoreFoundation.h>
@@ -55,16 +57,50 @@
 
 #include "KLI_fileops.h"
 #include "KLI_path_utils.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
+#include "KLI_sys_types.h" /* for intptr_t support */
 #include "KLI_utildefines.h"
 
-#include <wabi/base/tf/diagnostic.h>
 
 KRAKEN_NAMESPACE_BEGIN
 
+/* results from recursive_operation and its callbacks */
+enum
+{
+  /* operation succeeded */
+  RecursiveOp_Callback_OK = 0,
 
-#ifdef WIN32
+  /* operation requested not to perform recursive digging for current path */
+  RecursiveOp_Callback_StopRecurs = 1,
 
+  /* error occurred in callback and recursive walking should stop immediately */
+  RecursiveOp_Callback_Error = 2,
+};
+
+static int delete_callback_post(const char *from, const char *UNUSED(to))
+{
+  if (rmdir(from)) {
+    perror("rmdir");
+
+    return RecursiveOp_Callback_Error;
+  }
+
+  return RecursiveOp_Callback_OK;
+}
+
+static int delete_single_file(const char *from, const char *UNUSED(to))
+{
+  if (unlink(from)) {
+    perror("unlink");
+
+    return RecursiveOp_Callback_Error;
+  }
+
+  return RecursiveOp_Callback_OK;
+}
+
+
+#  ifdef WIN32
 void KLI_get_short_name(char short_name[256], const char *filepath)
 {
   wchar_t short_name_16[256];
@@ -229,14 +265,44 @@ int KLI_delete(const char *file, bool dir, bool recursive)
 
   return err;
 }
-
-#else /* WIN32 */
-
-int KLI_access(const char *filename, int mode)
+#  endif /* WIN32 */
+static int delete_soft(const char *file, const char **error_message)
 {
-  KLI_assert(!KLI_path_is_rel(filename));
+  int ret = -1;
 
-  return 0;
+  Class NSAutoreleasePoolClass = objc_getClass("NSAutoreleasePool");
+  SEL allocSel = sel_registerName("alloc");
+  SEL initSel = sel_registerName("init");
+  id poolAlloc = ((id(*)(Class, SEL))objc_msgSend)(NSAutoreleasePoolClass, allocSel);
+  id pool = ((id(*)(id, SEL))objc_msgSend)(poolAlloc, initSel);
+
+  Class NSStringClass = objc_getClass("NSString");
+  SEL stringWithUTF8StringSel = sel_registerName("stringWithUTF8String:");
+  id pathString = ((
+    id(*)(Class, SEL, const char *))objc_msgSend)(NSStringClass, stringWithUTF8StringSel, file);
+
+  Class NSFileManagerClass = objc_getClass("NSFileManager");
+  SEL defaultManagerSel = sel_registerName("defaultManager");
+  id fileManager = ((id(*)(Class, SEL))objc_msgSend)(NSFileManagerClass, defaultManagerSel);
+
+  Class NSURLClass = objc_getClass("NSURL");
+  SEL fileURLWithPathSel = sel_registerName("fileURLWithPath:");
+  id nsurl = ((id(*)(Class, SEL, id))objc_msgSend)(NSURLClass, fileURLWithPathSel, pathString);
+
+  SEL trashItemAtURLSel = sel_registerName("trashItemAtURL:resultingItemURL:error:");
+  BOOL deleteSuccessful = ((
+    BOOL(*)(id, SEL, id, id, id))objc_msgSend)(fileManager, trashItemAtURLSel, nsurl, nil, nil);
+
+  if (deleteSuccessful) {
+    ret = 0;
+  } else {
+    *error_message = "The Cocoa API call to delete file or directory failed";
+  }
+
+  SEL drainSel = sel_registerName("drain");
+  ((void (*)(id, SEL))objc_msgSend)(pool, drainSel);
+
+  return ret;
 }
 
 /** \return true on success (i.e. given path now exists on FS), false otherwise. */
@@ -288,20 +354,6 @@ bool KLI_dir_create_recursive(const char *dirname)
   }
   return ret;
 }
-
-
-/* results from recursive_operation and its callbacks */
-enum
-{
-  /* operation succeeded */
-  RecursiveOp_Callback_OK = 0,
-
-  /* operation requested not to perform recursive digging for current path */
-  RecursiveOp_Callback_StopRecurs = 1,
-
-  /* error occurred in callback and recursive walking should stop immediately */
-  RecursiveOp_Callback_Error = 2,
-};
 
 typedef int (*RecursiveOp_Callback)(const char *from, const char *to);
 
@@ -479,26 +531,47 @@ static int recursive_operation(const char *startfrom,
   return ret;
 }
 
-/**
- * Deletes the specified file or directory (depending on dir), optionally
- * doing recursive delete of directory contents.
- *
- * @return zero on success (matching 'remove' behavior). */
+
+FILE *KLI_fopen(const char *filepath, const char *mode)
+{
+  KLI_assert(!KLI_path_is_rel(filepath));
+
+  return fopen(filepath, mode);
+}
+
+void *KLI_gzopen(const char *filepath, const char *mode)
+{
+  KLI_assert(!KLI_path_is_rel(filepath));
+
+  return gzopen(filepath, mode);
+}
+
+int KLI_open(const char *filepath, int oflag, int pmode)
+{
+  KLI_assert(!KLI_path_is_rel(filepath));
+
+  return open(filepath, oflag, pmode);
+}
+
+int KLI_access(const char *filepath, int mode)
+{
+  KLI_assert(!KLI_path_is_rel(filepath));
+
+  return access(filepath, mode);
+}
+
 int KLI_delete(const char *file, bool dir, bool recursive)
 {
   KLI_assert(!KLI_path_is_rel(file));
 
-  // if (recursive) {
-  //   return recursive_operation(file, NULL, NULL, delete_single_file, delete_callback_post);
-  // }
+  if (recursive) {
+    return recursive_operation(file, NULL, NULL, delete_single_file, delete_callback_post);
+  }
   if (dir) {
     return rmdir(file);
   }
   return remove(file);
 }
-
-
-#endif /* Linux & Apple */
 
 
 KRAKEN_NAMESPACE_END

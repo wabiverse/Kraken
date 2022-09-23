@@ -177,6 +177,7 @@ bool KKE_rhash_reinsert(RHash *gh,
                         RHashKeyFreeFP keyfreefp,
                         RHashValFreeFP valfreefp);
 
+uint KKE_rhashutil_ptrhash(const void *key);
 
 /** Aligned with #PropertyUnit and `kpyunits_ucategories_items` in `kpy_utils_units.cpp`. */
 enum

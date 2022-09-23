@@ -24,17 +24,11 @@ set(SRC
   VIEW3D_init.cpp
   VIEW3D_runtime.cpp
   VIEW3D_tokens.cpp
-
-  ../include/ED_defines.h
-  ../include/ED_debug_codes.h
-  ../include/ED_tokens.h
-  ../include/ED_view3d.h
 )
 
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
   kraken_kernel
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}

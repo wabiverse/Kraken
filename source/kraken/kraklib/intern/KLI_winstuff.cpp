@@ -38,7 +38,7 @@ using namespace winrt::Windows::Storage;
 
 #  define WIN32_SKIP_HKEY_PROTECTION  // need to use HKEY
 #  include "KLI_path_utils.h"
-#  include "KLI_string_utils.h"
+#  include "KLI_string.h"
 #  include "KLI_utildefines.h"
 #  include "KLI_winstuff.h"
 #  include "utfconv.h"

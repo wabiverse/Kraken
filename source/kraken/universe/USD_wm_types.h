@@ -24,9 +24,14 @@
  * Set the Stage.
  */
 
-#include "WM_api.h"
+#include "KLI_utildefines.h"
+#include "KLI_compiler_attrs.h"
+#include "KLI_compiler_compat.h"
+#include "KLI_sys_types.h"
 
 #include "KLI_math.h"
+#include "KLI_compiler_compat.h"
+#include "KLI_utildefines.h"
 
 #include "KKE_context.h"
 
@@ -67,41 +72,54 @@ enum eWmMiscKmTypes
   KM_CLICK_DRAG = 5,
 };
 
+#define OP_MAX_TYPENAME 64
+#define KMAP_MAX_NAME 64
+
 #define WM_UI_HANDLER_CONTINUE 0
 #define WM_UI_HANDLER_BREAK 1
 
+/* 4 levels
+ *
+ * 0xFF000000; category
+ * 0x00FF0000; data
+ * 0x0000FF00; data subtype (unused?)
+ * 0x000000FF; action
+ */
+
 /* category */
 #define NOTE_CATEGORY 0xFF000000
+#define NOTE_CATEGORY_TAG_CLEARED NOTE_CATEGORY
 #define NC_WM (1 << 24)
 #define NC_WINDOW (2 << 24)
-#define NC_SCREEN (3 << 24)
-#define NC_SCENE (4 << 24)
-#define NC_OBJECT (5 << 24)
-#define NC_MATERIAL (6 << 24)
-#define NC_TEXTURE (7 << 24)
-#define NC_LAMP (8 << 24)
-#define NC_GROUP (9 << 24)
-#define NC_IMAGE (10 << 24)
-#define NC_BRUSH (11 << 24)
-#define NC_TEXT (12 << 24)
-#define NC_WORLD (13 << 24)
-#define NC_ANIMATION (14 << 24)
+#define NC_WORKSPACE (3 << 24)
+#define NC_SCREEN (4 << 24)
+#define NC_SCENE (5 << 24)
+#define NC_OBJECT (6 << 24)
+#define NC_MATERIAL (7 << 24)
+#define NC_TEXTURE (8 << 24)
+#define NC_LAMP (9 << 24)
+#define NC_GROUP (10 << 24)
+#define NC_IMAGE (11 << 24)
+#define NC_BRUSH (12 << 24)
+#define NC_TEXT (13 << 24)
+#define NC_WORLD (14 << 24)
+#define NC_ANIMATION (15 << 24)
 /* When passing a space as reference data with this (e.g. `WM_event_add_notifier(..., space)`),
  * the notifier will only be sent to this space. That avoids unnecessary updates for unrelated
  * spaces. */
-#define NC_SPACE (15 << 24)
-#define NC_GEOM (16 << 24)
-#define NC_NODE (17 << 24)
-#define NC_ID (18 << 24)
-#define NC_PAINTCURVE (19 << 24)
-#define NC_MOVIECLIP (20 << 24)
-#define NC_MASK (21 << 24)
-#define NC_GPENCIL (22 << 24)
-#define NC_LINESTYLE (23 << 24)
-#define NC_CAMERA (24 << 24)
-#define NC_LIGHTPROBE (25 << 24)
+#define NC_SPACE (16 << 24)
+#define NC_GEOM (17 << 24)
+#define NC_NODE (18 << 24)
+#define NC_ID (19 << 24)
+#define NC_PAINTCURVE (20 << 24)
+#define NC_MOVIECLIP (21 << 24)
+#define NC_MASK (22 << 24)
+#define NC_GPENCIL (23 << 24)
+#define NC_LINESTYLE (24 << 24)
+#define NC_CAMERA (25 << 24)
+#define NC_LIGHTPROBE (26 << 24)
 /* Changes to asset data in the current .blend. */
-#define NC_ASSET (26 << 24)
+#define NC_ASSET (27 << 24)
 
 /* data type, 256 entries is enough, it can overlap */
 #define NOTE_DATA 0x00FF0000
@@ -121,11 +139,10 @@ enum eWmMiscKmTypes
 #define ND_LAYOUTDELETE (2 << 16)
 #define ND_ANIMPLAY (4 << 16)
 #define ND_GPENCIL (5 << 16)
-#define ND_EDITOR_CHANGED (6 << 16) /*sent to new editors after switching to them*/
-#define ND_LAYOUTSET (7 << 16)
-#define ND_SKETCH (8 << 16)
-#define ND_WORKSPACE_SET (9 << 16)
-#define ND_WORKSPACE_DELETE (10 << 16)
+#define ND_LAYOUTSET (6 << 16)
+#define ND_SKETCH (7 << 16)
+#define ND_WORKSPACE_SET (8 << 16)
+#define ND_WORKSPACE_DELETE (9 << 16)
 
 /* NC_SCENE Scene */
 #define ND_SCENEBROWSE (1 << 16)
@@ -134,7 +151,7 @@ enum eWmMiscKmTypes
 #define ND_RENDER_OPTIONS (4 << 16)
 #define ND_NODES (5 << 16)
 #define ND_SEQUENCER (6 << 16)
-/* Note: If an object was added, removed, merged/joined, ..., it is not enough to notify with
+/* NOTE: If an object was added, removed, merged/joined, ..., it is not enough to notify with
  * this. This affects the layer so also send a layer change notifier (e.g. ND_LAYER_CONTENT)! */
 #define ND_OB_ACTIVE (7 << 16)
 /* See comment on ND_OB_ACTIVE. */
@@ -166,8 +183,8 @@ enum eWmMiscKmTypes
 #define ND_POINTCACHE (28 << 16)
 #define ND_PARENT (29 << 16)
 #define ND_LOD (30 << 16)
-#define ND_DRAW_RENDER_VIEWPORT \
-  (31 << 16) /* for camera & sequencer viewport update, also /w NC_SCENE */
+/** For camera & sequencer viewport update, also with #NC_SCENE. */
+#define ND_DRAW_RENDER_VIEWPORT (31 << 16)
 #define ND_SHADERFX (32 << 16)
 /* For updating motion paths in 3dview. */
 #define ND_DRAW_ANIMVIZ (33 << 16)
@@ -202,7 +219,7 @@ enum eWmMiscKmTypes
 #define ND_GPENCIL_EDITMODE (85 << 16)
 
 /* NC_GEOM Geometry */
-/* Mesh, Curve, MetaBall, Armature, .. */
+/* Mesh, Curve, MetaBall, Armature, etc. */
 #define ND_SELECT (90 << 16)
 #define ND_DATA (91 << 16)
 #define ND_VERTEX_GROUP (92 << 16)
@@ -228,10 +245,22 @@ enum eWmMiscKmTypes
 #define ND_SPACE_NLA (16 << 16)
 #define ND_SPACE_SEQUENCER (17 << 16)
 #define ND_SPACE_NODE_VIEW (18 << 16)
-#define ND_SPACE_CHANGED (19 << 16) /*sent to a new editor type after it's replaced an old one*/
+/* Sent to a new editor type after it's replaced an old one. */
+#define ND_SPACE_CHANGED (19 << 16)
 #define ND_SPACE_CLIP (20 << 16)
 #define ND_SPACE_FILE_PREVIEW (21 << 16)
 #define ND_SPACE_SPREADSHEET (22 << 16)
+
+/* NC_ASSET */
+/* Denotes that the AssetList is done reading some previews. NOT that the preview generation of
+ * assets is done. */
+#define ND_ASSET_LIST (1 << 16)
+#define ND_ASSET_LIST_PREVIEW (2 << 16)
+#define ND_ASSET_LIST_READING (3 << 16)
+/* Catalog data changed, requiring a redraw of catalog UIs. Note that this doesn't denote a
+ * reloading of asset libraries & their catalogs should happen. That only happens on explicit user
+ * action. */
+#define ND_ASSET_CATALOGS (4 << 16)
 
 /* subtype, 256 entries too */
 #define NOTE_SUBTYPE 0x0000FF00
@@ -248,6 +277,7 @@ enum eWmMiscKmTypes
 #define NS_EDITMODE_ARMATURE (8 << 8)
 #define NS_MODE_POSE (9 << 8)
 #define NS_MODE_PARTICLE (10 << 8)
+#define NS_EDITMODE_CURVES (11 << 8)
 
 /* subtype 3d view editing */
 #define NS_VIEW3D_GPU (16 << 8)
@@ -268,6 +298,16 @@ enum eWmMiscKmTypes
 #define NA_PAINTING 8
 #define NA_JOB_FINISHED 9
 
+/* ************** Gesture Manager data ************** */
+
+/* wmGesture->type */
+#define WM_GESTURE_LINES 1
+#define WM_GESTURE_RECT 2
+#define WM_GESTURE_CROSS_RECT 3
+#define WM_GESTURE_LASSO 4
+#define WM_GESTURE_CIRCLE 5
+#define WM_GESTURE_STRAIGHTLINE 6
+
 
 /** Timer flags. */
 enum eWmTimerFlags
@@ -282,7 +322,9 @@ enum eReportListFlags
   RPT_PRINT = (1 << 0),
   RPT_STORE = (1 << 1),
   RPT_FREE = (1 << 2),
-  RPT_OP_HOLD = (1 << 3),
+  RPT_OP_HOLD = (1 << 3), /* don't move them into the operator global list (caller will use) */
+  /** Don't print (the owner of the #ReportList will handle printing to the `stdout`). */
+  RPT_PRINT_HANDLED_BY_OWNER = (1 << 4),
 };
 
 
@@ -645,18 +687,11 @@ struct ReportList
 {
   std::vector<Report *> list;
   /** eReportType. */
-  int printlevel;
+  eReportType printlevel;
   /** eReportType. */
-  int storelevel;
+  eReportType storelevel;
   int flag;
   wmTimer *reporttimer;
-
-  ReportList()
-    : printlevel(VALUE_ZERO),
-      storelevel(VALUE_ZERO),
-      flag(VALUE_ZERO),
-      reporttimer(POINTER_ZERO)
-  {}
 };
 
 struct wmTabletData
@@ -748,6 +783,8 @@ struct wmEvent
    */
   char is_direction_inverted;
 
+  char modifier;
+
   wmEvent()
     : type(EVENT_NONE),
       val(VALUE_ZERO),
@@ -804,6 +841,7 @@ struct wmEventHandler
 
 struct wmEventHandlerUI : public wmEventHandler
 {
+  wmEventHandler head;
   wmUIHandlerFunc handle_fn;
   wmUIHandlerRemoveFunc remove_fn;
   void *user_data;
@@ -838,27 +876,29 @@ struct wmMsgBus
 
 #define WM_DRAG_ID 0
 #define WM_DRAG_ASSET 1
-#define WM_DRAG_RNA 2
-#define WM_DRAG_PATH 3
-#define WM_DRAG_NAME 4
-#define WM_DRAG_VALUE 5
-#define WM_DRAG_COLOR 6
-#define WM_DRAG_DATASTACK 7
+/** The user is dragging multiple assets. This is only supported in few specific cases, proper
+ * multi-item support for dragging isn't supported well yet. Therefore this is kept separate from
+ * #WM_DRAG_ASSET. */
+#define WM_DRAG_ASSET_LIST 2
+#define WM_DRAG_RNA 3
+#define WM_DRAG_PATH 4
+#define WM_DRAG_NAME 5
+#define WM_DRAG_VALUE 6
+#define WM_DRAG_COLOR 7
+#define WM_DRAG_DATASTACK 8
+#define WM_DRAG_ASSET_CATALOG 9
 
-
-enum eWmDragFlags
-{
+typedef enum eWmDragFlags {
   WM_DRAG_NOP = 0,
   WM_DRAG_FREE_DATA = 1,
-};
+} eWmDragFlags;
+ENUM_OPERATORS(eWmDragFlags, WM_DRAG_FREE_DATA)
 
 
 struct wmDragID
 {
   SdfPath id;
   SdfPath from_parent;
-
-  wmDragID() : id(EMPTY), from_parent(EMPTY) {}
 };
 
 

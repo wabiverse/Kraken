@@ -26,7 +26,7 @@
 #include "KKE_main.h"
 
 #include "KLI_time.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include <wabi/wabi.h>
 

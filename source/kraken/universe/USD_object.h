@@ -26,8 +26,9 @@
 
 #include "USD_api.h"
 #include "USD_types.h"
+#include "USD_ID.h"
 
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include <wabi/base/tf/hashmap.h>
 #include <wabi/base/tf/notice.h>
@@ -230,10 +231,10 @@ enum PropertySubType {
   PROP_TEMPERATURE = 43 | PROP_UNIT_TEMPERATURE,
 };
 
-struct KrakenPROP : public wabi::UsdProperty
+struct KrakenPROP : public wabi::UsdAttribute
 {
-  KrakenPROP(const wabi::UsdProperty &prop = wabi::UsdProperty()) 
-    : wabi::UsdProperty(prop)
+  KrakenPROP(const wabi::UsdAttribute &prop = wabi::UsdAttribute()) 
+    : wabi::UsdAttribute(prop)
   {}
 
   wabi::TfToken name;
@@ -297,13 +298,10 @@ struct KrakenFUNC
 struct KrakenPRIM : public wabi::UsdPrim
 {
   KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim())
-    : wabi::UsdPrim(prim),
-      owner_id(IsValid() ? GetParent().GetName().GetText() : NULL),
-      identifier(!GetName().IsEmpty() ? GetName().GetText() : NULL),
-      collection(wabi::UsdCollectionAPI())
+    : wabi::UsdPrim(prim)
   {}
 
-  const char *owner_id;
+  struct ID *owner_id;
   const char *identifier;
   wabi::UsdCollectionAPI collection;
   KrakenPRIM *type;

@@ -20,8 +20,8 @@
 
 /**
  * @file
- * Universe.
- * Set the Stage.
+ * Editors.
+ * Tools for Artists.
  */
 
 #include "USD_area.h"

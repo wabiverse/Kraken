@@ -40,7 +40,7 @@ void CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
 
 void CREATOR_setup_args(int argc, const char **argv);
 
-int CREATOR_parse_args(int argc, const char **argv);
+int CREATOR_parse_args(int argc, const char **argv, void *C);
 
 /* ------ */
 

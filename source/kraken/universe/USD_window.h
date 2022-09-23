@@ -59,26 +59,26 @@ struct ScrAreaMap
   ScrAreaMap() : verts(EMPTY), edges(EMPTY), areas(EMPTY) {}
 };
 
-struct wmWindow : public UsdUIWindow
+struct wmWindow : public wabi::UsdUIWindow
 {
-  SdfPath path;
+  wabi::SdfPath path;
   wmWindow *parent;
 
-  UsdAttribute title;
-  UsdAttribute icon;
-  UsdAttribute state;
-  UsdAttribute dpi;
-  UsdAttribute widgetunit;
-  UsdAttribute scale;
-  UsdAttribute linewidth;
-  UsdAttribute pixelsz;
-  UsdAttribute cursor;
-  UsdAttribute pos;
-  UsdAttribute alignment;
-  UsdAttribute size;
-  UsdAttribute type;
+  wabi::UsdAttribute title;
+  wabi::UsdAttribute icon;
+  wabi::UsdAttribute state;
+  wabi::UsdAttribute dpi;
+  wabi::UsdAttribute widgetunit;
+  wabi::UsdAttribute scale;
+  wabi::UsdAttribute linewidth;
+  wabi::UsdAttribute pixelsz;
+  wabi::UsdAttribute cursor;
+  wabi::UsdAttribute pos;
+  wabi::UsdAttribute alignment;
+  wabi::UsdAttribute size;
+  wabi::UsdAttribute type;
 
-  UsdRelationship workspace_rel;
+  wabi::UsdRelationship workspace_rel;
 
   /** Active scene for this window. */
   Scene *scene;
@@ -98,6 +98,8 @@ struct wmWindow : public UsdUIWindow
   /** Internal: tag this for extra mouse-move event,
    * makes cursors/buttons active on UI switching. */
   bool addmousemove;
+
+  short modifier;
 
   /** Storage for event system. */
   wmEvent *eventstate;
@@ -119,7 +121,7 @@ struct wmWindow : public UsdUIWindow
 
 
 wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
-  : UsdUIWindow(KRAKEN_STAGE_CREATE(C)),
+  : wabi::UsdUIWindow(KRAKEN_STAGE_CREATE(C)),
     path(GetPath()),
     parent(NULL),
     title(CreateTitleAttr()),
@@ -149,7 +151,7 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
 {}
 
 wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
-  : UsdUIWindow(KRAKEN_STAGE_CREATE_CHILD(C)),
+  : wabi::UsdUIWindow(KRAKEN_STAGE_CREATE_CHILD(C)),
     path(GetPath()),
     parent(prim),
     title(CreateTitleAttr()),
@@ -177,8 +179,6 @@ wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
 
 struct wmNotifier
 {
-  wmNotifier();
-
   wmWindow *window;
   unsigned int category, data, subtype, action;
   void *reference;
@@ -205,12 +205,12 @@ struct wmSpaceTypeListenerParams
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 
-struct wmWindowManager : public UsdPrim
+struct wmWindowManager : public wabi::UsdPrim
 {
   SdfPath path;
 
   /** All windows this manager controls. */
-  TfHashMap<SdfPath, wmWindow *, SdfPath::Hash> windows;
+  wabi::TfHashMap<SdfPath, wmWindow *, wabi::SdfPath::Hash> windows;
 
   wmWindow *windrawable, *winactive;
 
@@ -228,6 +228,8 @@ struct wmWindowManager : public UsdPrim
 
   bool file_saved;
 
+  struct RSet *notifier_queue_set;
+
   inline wmWindowManager();
 };
 
@@ -241,4 +243,5 @@ wmWindowManager::wmWindowManager()
     drags(EMPTY),
     file_saved(VALUE_ZERO)
 {}
+
 KRAKEN_NAMESPACE_END

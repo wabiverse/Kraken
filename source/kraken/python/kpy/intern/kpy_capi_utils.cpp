@@ -27,7 +27,7 @@
 #include <Python.h>
 #include <frameobject.h>
 
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include "KKE_report.h"
 

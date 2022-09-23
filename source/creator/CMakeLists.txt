@@ -28,12 +28,7 @@ kraken_include_dirs(
 )
 
 set(LIB
-  maelstrom
-  maelstrom_static
   kraken_wm
-  kraken_luxo
-  kraken_universe
-  kraken_python
 )
 
 # list(INSERT LIB 0 ${WABI_MALLOC_LIBRARY})

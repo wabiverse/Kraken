@@ -618,13 +618,13 @@ struct kUserAssetLibrary
   char path[1024]; /* FILE_MAX */
 };
 
-struct UserDef : public UsdUIUserPref
+struct UserDef : public wabi::UsdUIUserPref
 {
 
-  SdfPath path;
+  wabi::SdfPath path;
 
-  UsdAttribute showsave;
-  UsdAttribute dpifac;
+  wabi::UsdAttribute showsave;
+  wabi::UsdAttribute dpifac;
 
   int uiflag;
 
@@ -642,10 +642,10 @@ struct UserDef : public UsdUIUserPref
   std::vector<struct kUserAssetLibrary *> asset_libraries;
 
   inline UserDef(kContext *C,
-                 const SdfPath &stagepath = SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_USERPREFS));
+                 const wabi::SdfPath &stagepath = SdfPath(KRAKEN_PATH_DEFAULTS::KRAKEN_USERPREFS));
 };
 
-UserDef::UserDef(kContext *C, const SdfPath &stagepath)
+UserDef::UserDef(kContext *C, const wabi::SdfPath &stagepath)
   : UsdUIUserPref(KRAKEN_STAGE_CREATE(C)),
     path(GetPath()),
     showsave(CreateShowSavePromptAttr()),

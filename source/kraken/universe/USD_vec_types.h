@@ -18,26 +18,26 @@
 
 #pragma once
 
+#include "kraken/kraken.h"
+
 /** 
  * @file
  * @ingroup kli
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+KRAKEN_NAMESPACE_BEGIN
 
 /* types */
 
 /** vector of two shorts. */
-typedef struct vec2s {
+struct vec2s {
   short x, y;
-} vec2s;
+};
 
 /** vector of two floats. */
-typedef struct vec2f {
+struct vec2f {
   float x, y;
-} vec2f;
+};
 
 /* not used at the moment */
 /*
@@ -53,9 +53,9 @@ typedef struct vec3i {
   int x, y, z;
 } vec3i;
 */
-typedef struct vec3f {
+struct vec3f {
   float x, y, z;
-} vec3f;
+} ;
 /*
 typedef struct vec3d {
   double x, y, z;
@@ -75,26 +75,24 @@ typedef struct vec4d {
 */
 
 /** integer rectangle. */
-typedef struct rcti {
+struct rcti {
   int xmin, xmax;
   int ymin, ymax;
-} rcti;
+} ;
 
 /** float rectangle. */
-typedef struct rctf {
+struct rctf {
   float xmin, xmax;
   float ymin, ymax;
-} rctf;
+};
 
 /** dual quaternion. */
-typedef struct DualQuat {
+struct DualQuat {
   float quat[4];
   float trans[4];
 
   float scale[4][4];
   float scale_weight;
-} DualQuat;
+};
 
-#ifdef __cplusplus
-}
-#endif
+KRAKEN_NAMESPACE_END

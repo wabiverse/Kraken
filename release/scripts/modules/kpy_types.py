@@ -17,7 +17,7 @@ class Context(KrakenPRIM):
         :arg coerce: optional argument, when True, the property will be converted into its Python representation.
         :type coerce: boolean
         """
-        # This is a convenience wrapper around `StructRNA.path_resolve` which doesn't support accessing context members.
+        # This is a convenience wrapper around `KrakenSTAGE.path_resolve` which doesn't support accessing context members.
         # Without this wrapper many users were writing `exec("context.%s" % data_path)` which is a security
         # concern if the `data_path` comes from an unknown source.
         # This function performs the initial lookup, after that the regular `path_resolve` function is used.

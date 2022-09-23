@@ -30,7 +30,7 @@
 #include <tlhelp32.h>
 
 #include "KLI_assert.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 static EXCEPTION_POINTERS *current_exception = NULL;
 

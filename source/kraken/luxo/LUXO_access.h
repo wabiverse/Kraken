@@ -31,6 +31,7 @@
 #include "KKE_utils.h"
 
 #include "USD_api.h"
+#include "USD_ID.h"
 #include "USD_types.h"
 #include "USD_wm_types.h"
 #include "USD_object.h"
@@ -70,13 +71,14 @@ void LUXO_save_usd(void);
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr);
 void LUXO_main_pointer_create(Main *main, KrakenPRIM *r_ptr);
 void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
+void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
 void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr);
 
 void *LUXO_struct_py_type_get(KrakenPRIM *srna);
 void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type);
 
 PropertyType LUXO_property_type_enum(KrakenPROP *prop);
-const char *LUXO_property_type(KrakenPROP *prop);
+PropertyType LUXO_property_type(KrakenPROP *prop)
 
 ObjectRegisterFunc LUXO_struct_register(const KrakenPRIM *ptr);
 ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr);
@@ -97,6 +99,6 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 
 void LUXO_set_stage_ctx(kContext *C);
 
-wabi::UsdStageRefPtr &LUXO_get_stage();
+wabi::UsdStageWeakPtr LUXO_get_stage();
 
 KRAKEN_NAMESPACE_END

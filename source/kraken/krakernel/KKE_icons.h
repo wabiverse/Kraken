@@ -1,65 +1,52 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
- */
-
-/**
- * @file
- * KRAKEN Kernel.
- * Purple Underground.
- */
-
 #pragma once
 
-#include "KKE_api.h"
-#include "KKE_context.h"
+/** 
+ * @file
+ * @ingroup KKE
+ *
+ * Resizable Icons for Kraken.
+ *
+ * There is some thread safety for this API but it is rather weak. Registering or unregistering
+ * icons is thread safe, changing data of icons from multiple threads is not. Practically this
+ * should be fine since only the main thread modifies icons. Should that change, more locks or a
+ * different design need to be introduced.
+ */
 
-#include <wabi/base/tf/token.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-KRAKEN_NAMESPACE_BEGIN
+#include "KLI_compiler_attrs.h"
 
-typedef struct PreviewImage
-{
-  /* All values of 2 are really NUM_ICON_SIZES */
-  GfVec2i w;
-  GfVec2i h;
-  GfVec2i flag;
-  GfVec2i changed_timestamp;
-  GfVec2i *rect;
-
-  TfToken icon_id;
-
-  /** Runtime data. */
-  short tag;
-} PreviewImage;
+#include "USD_ID_enums.h"
 
 typedef void (*DrawInfoFreeFP)(void *drawinfo);
 
-enum eCKEIconTypes
-{
+enum {
+  /** ID preview: obj is #ID. */
   ICON_DATA_ID = 0,
+  /** Arbitrary Image buffer: obj is #ImBuf */
   ICON_DATA_IMBUF,
+  /** Preview: obj is #PreviewImage */
   ICON_DATA_PREVIEW,
+  /** 2D triangles: obj is #Icon_Geom */
   ICON_DATA_GEOM,
-  ICON_DATA_STUDIOLIGHT
+  /** Studiolight */
+  ICON_DATA_STUDIOLIGHT,
+  /** GPencil Layer color preview (annotations): obj is #bGPDlayer */
+  ICON_DATA_GPLAYER,
 };
 
-struct Icon
-{
+/**
+ * \note See comment at the top regarding thread safety.
+ */
+struct Icon {
   void *drawinfo;
+  /**
+   * Data defined by #obj_type
+   * \note for #ICON_DATA_GEOM the memory is owned by the icon,
+   * could be made into a flag if we want that to be optional.
+   */
   void *obj;
   char obj_type;
   /** Internal use only. */
@@ -80,6 +67,16 @@ struct Icon_Geom {
   const void *mem;
 };
 
+typedef struct Icon Icon;
+
+struct KrakenDataReader;
+struct USDWriter;
+struct ID;
+struct ImBuf;
+struct PreviewImage;
+struct StudioLight;
+struct kGPDlayer;
+
 void KKE_icons_init(int first_dyn_id);
 
 /**
@@ -87,6 +84,8 @@ void KKE_icons_init(int first_dyn_id);
  */
 struct Icon *KKE_icon_get(int icon_id);
 
-// void KKE_icon_changed(const int icon_id);
+#define ICON_RENDER_DEFAULT_HEIGHT 32
 
-KRAKEN_NAMESPACE_END
+#ifdef __cplusplus
+}
+#endif

@@ -26,7 +26,7 @@
 #include "LUXO_access.h"
 #include "LUXO_main.h"
 
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include "KKE_utils.h"
 #include "KKE_appdir.h"
@@ -72,7 +72,7 @@ void LUXO_init(void)
   LUXO_save_usd();
 }
 
-wabi::UsdStageRefPtr &LUXO_get_stage()
+wabi::UsdStageWeakPtr LUXO_get_stage()
 {
   return KRAKEN_STAGE;
 }
@@ -141,9 +141,39 @@ PropertyType LUXO_property_type_enum(KrakenPROP *prop)
   return rna_ensure_property(prop)->type;
 }
 
-const char *LUXO_property_type(KrakenPROP *prop)
+PropertyType LUXO_property_type(KrakenPROP *prop)
 {
-  return prop->GetName().GetText();
+  SdfValueTypeName type = prop->GetTypeName();
+
+  if (type == SdfValueTypeNames->Bool) {
+    return PROP_BOOLEAN;
+  }
+
+  if ((type == SdfValueTypeNames->Int) || 
+      (type == SdfValueTypeNames->Int2) || 
+      (type == SdfValueTypeNames->Int3) ||
+      (type == SdfValueTypeNames->Int4)) {
+    return PROP_INT;
+  }
+
+  if ((type == SdfValueTypeNames->Float) || 
+      (type == SdfValueTypeNames->Float2) || 
+      (type == SdfValueTypeNames->Float3) ||
+      (type == SdfValueTypeNames->Float4) ||
+      (type == SdfValueTypeNames->Double) ||
+      (type == SdfValueTypeNames->Double2) ||
+      (type == SdfValueTypeNames->Double3) ||
+      (type == SdfValueTypeNames->Double4)) {
+    return PROP_FLOAT;
+  }
+
+  if (type == SdfValueTypeNames->String) {
+    return PROP_STRING;
+  }
+
+  if (type == SdfValueTypeNames->Token) {
+    return PROP_ENUM;
+  }
 }
 
 bool USD_enum_identifier(wabi::TfEnum item, const int value, const char **r_identifier)
@@ -301,15 +331,39 @@ void LUXO_save_usd(void)
 {
   KRAKEN_STAGE->GetRootLayer()->Save();
 }
-
+      // KrakenPRIM ctx = but->stagepoin;
+      // KrakenSTAGE stage = but->stagepoin.GetStage();
+      // UsdEditTarget trg = stage->GetEditTarget();
+      // SdfPrimSpecHandle ptr = trg.GetPrimSpecForScenePath(ctx.GetPath());
 /**
  * Use UsdStage::CreateInMemory when we get out of an alpha state
  * for now, this makes it easier to debug scene description - it
  * is located in ~/Library/Application Support/Kraken/1.50/config/userpref.usda */
 KrakenSTAGE::KrakenSTAGE()
-  : wabi::UsdStageRefPtr(wabi::UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
+  : UsdStageRefPtr(UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 {}
+
+void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
+{
+  const KrakenPRIM *ctx = STAGE_CTX(type);
+
+  r_ptr->owner_id = id;
+  r_ptr->type = &KrakenPRIM(ctx->GetPrim());
+  r_ptr->data = data;
+
+  if (data) {
+    while (r_ptr->type && r_ptr->type->refine) {
+
+      KrakenPRIM *rtype = r_ptr->type->refine(r_ptr);
+
+      if (rtype == r_ptr->type) {
+        break;
+      }
+      r_ptr->type = rtype;
+    }
+  }
+}
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {

@@ -31,10 +31,12 @@
 #include "USD_color_types.h"
 #include "USD_curveprofile_types.h"
 #include "USD_scene.h"
+#include "USD_object.h"
 #include "USD_area.h"
 #include "USD_screen.h"
 #include "USD_texture_types.h"
 
+#include "KKE_utils.h"
 #include "KKE_context.h"
 
 #include "UI_interface.h"

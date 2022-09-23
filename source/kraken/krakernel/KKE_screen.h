@@ -38,6 +38,9 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
+#include "wabi/usd/usdUI/window.h"
+#include "wabi/usd/usd/prim.h"
+
 KRAKEN_NAMESPACE_BEGIN
 
 
@@ -141,7 +144,7 @@ struct SpaceType
   kContextDataCallback context;
 
   /* Used when we want to replace an ID by another (or NULL). */
-  void (*id_remap)(ScrArea *area, struct SpaceLink *sl, TfToken old_id, TfToken new_id);
+  void (*id_remap)(ScrArea *area, struct SpaceLink *sl, wabi::TfToken old_id, wabi::TfToken new_id);
 
   int (*space_subtype_get)(ScrArea *area);
   void (*space_subtype_set)(ScrArea *area, int value);

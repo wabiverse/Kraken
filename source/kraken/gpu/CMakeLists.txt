@@ -46,10 +46,8 @@ endif()
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
   kraken_lib
   kraken_kernel
-  kraken_universe
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}

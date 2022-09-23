@@ -53,7 +53,7 @@
 
 #include "KLI_icons.h"
 #include "KLI_math.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 #include "KLI_time.h"
 #include "KLI_threads.h"
 
@@ -1168,7 +1168,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
     wm_block_file_close_save_button(block, post_action);
   }
 
-  UI_block_bounds_set_centered(block, 14 * U.dpi_fac);
+  UI_block_bounds_set_centered(block, 14 * UI_DPI_FAC);
   return block;
 }
 

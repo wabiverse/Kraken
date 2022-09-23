@@ -351,7 +351,16 @@ function RunKrakenPythonOfficialRelease {
     & ~/dev/lib/win64_vc17/python/310/bin/python.exe $args
   }
   if($IsMacOS) {
-    & ~/dev/lib/apple_darwin_arm64/python/bin/python3.10 $args
+    if ((Test-Path -Path "~/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/python/bin/python3.10")) {
+      # prefer kraken python...
+      & ~/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/python/bin/python3.10 $args
+    } elseif ((Test-Path -Path "~/dev/lib/apple_darwin_arm64/python/bin/python3.10")) {
+      # but also a failsafe in between clean builds...
+      & ~/dev/lib/apple_darwin_arm64/python/bin/python3.10 $args
+    } else {
+      # to prevent the "oh no what it happening" scenario.
+      Write-Color -Text "Could not find python in either the Kraken installation or your dev environment." -Color Red
+    }
   }
   if($IsLinux) {
     Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    

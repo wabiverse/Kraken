@@ -97,10 +97,5 @@
   (std::string("Kraken v" + wabi::TfStringify(KRAKEN_VERSION_MAJOR) + "." + \
                wabi::TfStringify(KRAKEN_VERSION_MINOR)))
 
-enum eIconSizes
-{
-  ICON_SIZE_ICON = 0,
-  ICON_SIZE_PREVIEW = 1,
 
-  NUM_ICON_SIZES,
-};
+#define STAGE_CTX(xxliveptr) xxliveptr->GetStage()->GetPathResolverContext().Get<KrakenPRIM>();

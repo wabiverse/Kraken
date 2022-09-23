@@ -22,8 +22,12 @@
  * Purple Underground.
  */
 
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <mutex>
+
 #include "KKE_icons.h"
-#include "KKE_ID.h"
 #include "KKE_utils.h"
 
 #include "KLI_threads.h"

@@ -76,7 +76,17 @@ static bool kpy_run_string_impl(kraken::kContext *C,
 
   if (retval == NULL) {
     ok = false;
-    // KPy_errors_to_report(CTX_wm_reports(C));
+
+    ReportList reports;
+    KKE_reports_init(&reports, RPT_STORE);
+    KPy_errors_to_report(&reports);
+    PyErr_Clear();
+
+    /* Ensure the reports are printed. */
+    if (!KKE_reports_print_test(&reports, RPT_ERROR)) {
+      KKE_reports_print(&reports, RPT_ERROR);
+    }
+
   } else {
     Py_DECREF(retval);
   }

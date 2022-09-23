@@ -25,6 +25,9 @@
 #pragma once
 
 #include "KLI_utildefines.h"
+#include "KLI_compiler_attrs.h"
+#include "KLI_compiler_compat.h"
+#include "KLI_sys_types.h"
 
 /*
  * ---------------------------------------------------------------------

@@ -30,7 +30,7 @@
 #include "ANCHOR_system_paths.h"
 
 #include "KLI_math.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include "KKE_utils.h"
 

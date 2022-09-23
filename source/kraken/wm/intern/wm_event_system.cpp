@@ -22,6 +22,12 @@
  * Making GUI Fly.
  */
 
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+
+#include "MEM_guardedalloc.h"
+
 #include "WM_event_system.h"
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
@@ -29,6 +35,7 @@
 #include "WM_operators.h"
 #include "WM_window.h"
 
+#include "USD_ID.h"
 #include "USD_area.h"
 #include "USD_factory.h"
 #include "USD_operator.h"
@@ -38,9 +45,10 @@
 #include "USD_window.h"
 
 #include "KKE_context.h"
+#include "KKE_idtype.h"
 
 #include "KLI_assert.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 #include "KLI_time.h"
 
 #include "ED_screen.h"
@@ -49,6 +57,40 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
+static bool wm_notifier_is_clear(const wmNotifier *note)
+{
+  return note->category == NOTE_CATEGORY_TAG_CLEARED;
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Notifiers & Listeners
+ * \{ */
+
+/**
+ * Hash for #wmWindowManager.notifier_queue_set, ignores `window`.
+ */
+static uint note_hash_for_queue_fn(const void *ptr)
+{
+  const wmNotifier *note = static_cast<const wmNotifier *>(ptr);
+  return (KKE_rhashutil_ptrhash(note->reference) ^
+          (note->category | note->data | note->subtype | note->action));
+}
+
+/**
+ * Comparison for #wmWindowManager.notifier_queue_set
+ *
+ * \note This is not an exact equality function as the `window` is ignored.
+ */
+static bool note_cmp_for_queue_fn(const void *a, const void *b)
+{
+  const wmNotifier *note_a = static_cast<const wmNotifier *>(a);
+  const wmNotifier *note_b = static_cast<const wmNotifier *>(b);
+  return !(((note_a->category | note_a->data | note_a->subtype | note_a->action) ==
+            (note_b->category | note_b->data | note_b->subtype | note_b->action)) &&
+           (note_a->reference == note_b->reference));
+}
+
+/** \} */
 
 static bool wm_test_duplicate_notifier(wmWindowManager *wm, uint type, void *reference)
 {
@@ -102,46 +144,50 @@ bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2])
 
 void WM_main_add_notifier(unsigned int type, void *reference)
 {
-  wmWindowManager *wm = G.main->wm.at(0);
+  Main *kmain = G.main;
+  wmWindowManager *wm = static_cast<wmWindowManager *>(kmain->wm.front());
 
-  if (!wm || wm_test_duplicate_notifier(wm, type, reference)) {
-    return;
-  }
-
-  wmNotifier *note = new wmNotifier();
-
-  wm->notifier_queue.push_back(note);
-
-  note->category = type & NOTE_CATEGORY;
-  note->data = type & NOTE_DATA;
-  note->subtype = type & NOTE_SUBTYPE;
-  note->action = type & NOTE_ACTION;
-
-  note->reference = reference;
-
-  note->Push();
+  WM_event_add_notifier_ex(wm, nullptr, type, reference);
 }
 
 
 void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference)
 {
-  if (wm_test_duplicate_notifier(wm, type, reference)) {
+  if (wm == nullptr) {
+    /* There may be some cases where e.g. `G_MAIN` is not actually the real current main, but some
+     * other temporary one (e.g. during liboverride processing over linked data), leading to null
+     * window manager.
+     *
+     * This is fairly bad and weak, but unfortunately we do not have any way to operate over
+     * another main than G_MAIN currently. */
     return;
   }
 
-  wmNotifier *note = new wmNotifier();
+  wmNotifier note_test = {nullptr};
+
+  note_test.window = win;
+
+  note_test.category = type & NOTE_CATEGORY;
+  note_test.data = type & NOTE_DATA;
+  note_test.subtype = type & NOTE_SUBTYPE;
+  note_test.action = type & NOTE_ACTION;
+  note_test.reference = reference;
+
+  KLI_assert(!wm_notifier_is_clear(&note_test));
+
+  if (wm->notifier_queue_set == nullptr) {
+    wm->notifier_queue_set = KKE_rhash_new_ex(
+        note_hash_for_queue_fn, note_cmp_for_queue_fn, __func__, 1024);
+  }
+
+  void **note_p;
+  if (KKE_gset_ensure_p_ex(wm->notifier_queue_set, &note_test, &note_p)) {
+    return;
+  }
+  wmNotifier *note = MEM_new<wmNotifier>(__func__);
+  *note = note_test;
+  *note_p = note;
   wm->notifier_queue.push_back(note);
-
-  note->window = win;
-
-  note->category = type & NOTE_CATEGORY;
-  note->data = type & NOTE_DATA;
-  note->subtype = type & NOTE_SUBTYPE;
-  note->action = type & NOTE_ACTION;
-
-  note->reference = reference;
-
-  note->Push();
 }
 
 void WM_event_add_notifier(kContext *C, uint type, void *reference)
@@ -565,7 +611,8 @@ wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
                                           void *user_data,
                                           const char flag)
 {
-  wmEventHandlerUI *handler = new wmEventHandlerUI();
+  wmEventHandlerUI *handler = MEM_cnew<wmEventHandlerUI>(__func__);
+  handler->head.type = WM_HANDLER_TYPE_UI;
   handler->type = WM_HANDLER_TYPE_UI;
   handler->handle_fn = handle_fn;
   handler->remove_fn = remove_fn;
@@ -980,23 +1027,129 @@ bool WM_operator_poll(kContext *C, wmOperatorType *ot)
   return true;
 }
 
+IDPropertyUIData *IDP_ui_data_copy(const IDProperty *prop)
+{
+  IDPropertyUIData *dst_ui_data = MEM_dupallocN(prop->ui_data);
+
+  /* Copy extra type specific data. */
+  switch (IDP_ui_data_type(prop)) {
+    case IDP_UI_DATA_TYPE_STRING: {
+      const IDPropertyUIDataString *src = (const IDPropertyUIDataString *)prop->ui_data;
+      IDPropertyUIDataString *dst = (IDPropertyUIDataString *)dst_ui_data;
+      dst->default_value = MEM_dupallocN(src->default_value);
+      break;
+    }
+    case IDP_UI_DATA_TYPE_ID: {
+      break;
+    }
+    case IDP_UI_DATA_TYPE_INT: {
+      const IDPropertyUIDataInt *src = (const IDPropertyUIDataInt *)prop->ui_data;
+      IDPropertyUIDataInt *dst = (IDPropertyUIDataInt *)dst_ui_data;
+      dst->default_array = MEM_dupallocN(src->default_array);
+      break;
+    }
+    case IDP_UI_DATA_TYPE_FLOAT: {
+      const IDPropertyUIDataFloat *src = (const IDPropertyUIDataFloat *)prop->ui_data;
+      IDPropertyUIDataFloat *dst = (IDPropertyUIDataFloat *)dst_ui_data;
+      dst->default_array = MEM_dupallocN(src->default_array);
+      break;
+    }
+    case IDP_UI_DATA_TYPE_UNSUPPORTED: {
+      break;
+    }
+  }
+
+  dst_ui_data->description = MEM_dupallocN(prop->ui_data->description);
+
+  return dst_ui_data;
+}
+
+IDProperty *IDP_CopyIDPArray(const IDProperty *array, const int flag)
+{
+  /* don't use MEM_dupallocN because this may be part of an array */
+  KLI_assert(array->type == IDP_IDPARRAY);
+
+  IDProperty *narray = MEM_mallocN(sizeof(IDProperty), __func__);
+  *narray = *array;
+
+  narray->data.pointer = MEM_dupallocN(array->data.pointer);
+  for (int i = 0; i < narray->len; i++) {
+    /* OK, the copy functions always allocate a new structure,
+     * which doesn't work here.  instead, simply copy the
+     * contents of the new structure into the array cell,
+     * then free it.  this makes for more maintainable
+     * code than simply re-implementing the copy functions
+     * in this loop. */
+    IDProperty *tmp = IDP_CopyProperty_ex(GETPROP(narray, i), flag);
+    memcpy(GETPROP(narray, i), tmp, sizeof(IDProperty));
+    MEM_freeN(tmp);
+  }
+
+  return narray;
+}
+
+static IDProperty *idp_generic_copy(const IDProperty *prop, const int UNUSED(flag))
+{
+  IDProperty *newp = MEM_callocN(sizeof(IDProperty), __func__);
+
+  KLI_strncpy(newp->name, prop->name, MAX_IDPROP_NAME);
+  newp->type = prop->type;
+  newp->flag = prop->flag;
+  newp->data.val = prop->data.val;
+  newp->data.val2 = prop->data.val2;
+
+  if (prop->ui_data != NULL) {
+    newp->ui_data = IDP_ui_data_copy(prop);
+  }
+
+  return newp;
+}
+
+IDProperty *IDP_CopyProperty_ex(const IDProperty *prop, const int flag)
+{
+  switch (prop->type) {
+    case IDP_GROUP:
+      return IDP_CopyGroup(prop, flag);
+    case IDP_STRING:
+      return IDP_CopyString(prop, flag);
+    case IDP_ID:
+      return IDP_CopyID(prop, flag);
+    case IDP_ARRAY:
+      return IDP_CopyArray(prop, flag);
+    case IDP_IDPARRAY:
+      return IDP_CopyIDPArray(prop, flag);
+    default:
+      return idp_generic_copy(prop, flag);
+  }
+}
+
+IDProperty *IDP_CopyProperty(const IDProperty *prop)
+{
+  return IDP_CopyProperty_ex(prop, 0);
+}
+
 
 static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       wmOperatorType *ot,
                                       KrakenPRIM *properties,
                                       ReportList *reports)
 {
-  wmOperator *op = new wmOperator();
+  /* Operator-type names are static still. pass to allocation name for debugging. */
+  wmOperator *op = MEM_cnew<wmOperator>(ot->idname);
   
   op->type = ot;
-  op->idname = ot->idname;
+  KLI_strncpy(op->idname, ot->idname, OP_MAX_TYPENAME);
 
-  /* Initialize error reports. */
-  if (reports) {
-    op->reports = reports;
-  } else {
-    op->reports = new ReportList();
+  /* Initialize properties, either copy or create. */
+  op->ptr = MEM_cnew<KrakenPRIM>("wmOperatorPtrRNA");
+  if (properties && properties->data) {
+    op->properties = IDP_CopyProperty(static_cast<const IDProperty *>(properties->data));
   }
+  else {
+    IDPropertyTemplate val = {0};
+    op->properties = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+  }
+  RNA_pointer_create(&wm->id, ot->srna, op->properties, op->ptr);
 
   return op;
 }

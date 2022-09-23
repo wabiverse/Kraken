@@ -53,7 +53,7 @@
 
 #include "KLI_fileops.h"
 #include "KLI_path_utils.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 #include "KLI_utildefines.h"
 
 #ifdef WIN32

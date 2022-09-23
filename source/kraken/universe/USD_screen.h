@@ -213,12 +213,12 @@ struct ScrEdge
   ScrEdge() : v1(POINTER_ZERO), v2(POINTER_ZERO), border(VALUE_ZERO), flag(VALUE_ZERO) {}
 };
 
-struct kScreen : public UsdUIScreen
+struct kScreen : public wabi::UsdUIScreen
 {
-  SdfPath path;
+  wabi::SdfPath path;
 
-  UsdAttribute align;
-  UsdRelationship areas_rel;
+  wabi::UsdAttribute align;
+  wabi::UsdRelationship areas_rel;
 
   std::vector<ScrVert *> verts;
   std::vector<ScrEdge *> edges;
@@ -226,6 +226,7 @@ struct kScreen : public UsdUIScreen
 
   /** Screen level regions (menus), runtime only. */
   std::vector<ARegion *> regions;
+  short alignment;
 
   ARegion *active_region;
 
@@ -242,11 +243,11 @@ struct kScreen : public UsdUIScreen
   /** Runtime. */
   struct wmTooltipState *tool_tip;
 
-  inline kScreen(kContext *C, const SdfPath &stagepath);
+  inline kScreen(kContext *C, const wabi::SdfPath &stagepath);
 };
 
-kScreen::kScreen(kContext *C, const SdfPath &stagepath)
-  : UsdUIScreen(KRAKEN_STAGE_CREATE(C)),
+kScreen::kScreen(kContext *C, const wabi::SdfPath &stagepath)
+  : wabi::UsdUIScreen(KRAKEN_STAGE_CREATE(C)),
     path(GetPath()),
     align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
     areas_rel(CreateAreasRel()),

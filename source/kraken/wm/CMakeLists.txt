@@ -60,15 +60,13 @@ set(SRC
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
-  kraken_editor_interface
-  kraken_editor_spacefile
-  kraken_editor_screen
-  kraken_editor_spaceview3d
+  # kraken_editor_interface
+  # kraken_editor_spacefile
+  # kraken_editor_screen
+  # kraken_editor_spaceview3d
   # kraken_editor_code
+  kraken_kernel
   kraken_lib
-  kraken_luxo
-  kraken_universe
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}

@@ -25,7 +25,9 @@
 #include <wabi/usd/sdf/path.h>
 #include <wabi/wabi.h>
 
-#include "KLI_string_utils.h"
+#include "MEM_guardedalloc.h"
+
+#include "KLI_string.h"
 
 #include "KKE_context.h"
 
@@ -52,7 +54,7 @@ void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
   }
 
   /* Add to list. */
-  wmDragID *drag_id = new wmDragID();
+  wmDragID *drag_id = MEM_cnew<wmDragID>(__func__);
   drag_id->id = id;
   drag_id->from_parent = from_parent;
   drag->ids.push_back(drag_id);
@@ -65,14 +67,12 @@ wmDrag *WM_event_start_drag(kContext *C,
                             double value,
                             unsigned int flags)
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
-  wmDrag *drag = new wmDrag();
+  wmDrag *drag = MEM_cnew<wmDrag>(__func__);
 
   /* keep track of future multitouch drag too, add a mousepointer id or so */
   /* if multiple drags are added, they're drawn as list */
 
-  wm->drags.push_back(drag);
-  drag->flags = flags;
+  drag->flags = static_cast<eWmDragFlags>(flags);
   drag->icon = icon;
   drag->type = type;
   switch (type) {

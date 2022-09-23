@@ -147,7 +147,7 @@ enum eSceneLoadSet
 
 struct Scene
 {
-  explicit Scene(const wabi::UsdStageRefPtr &stage);
+  explicit Scene(const wabi::UsdStageWeakPtr &stage);
   explicit Scene(const std::string &identifier, const wabi::UsdPrim &prim = wabi::UsdPrim());
   explicit Scene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj);
   virtual ~Scene();
@@ -160,7 +160,7 @@ struct Scene
   ColorManagedColorspaceSettings sequencer_colorspace_settings;
 
   /** This scenes active stage. */
-  wabi::UsdStageRefPtr stage;
+  wabi::UsdStageWeakPtr stage;
 };
 
 KRAKEN_NAMESPACE_END

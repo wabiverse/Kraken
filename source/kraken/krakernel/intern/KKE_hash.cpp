@@ -22,9 +22,20 @@
  * Purple Underground.
  */
 
+#include <limits.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "MEM_guardedalloc.h"
+
+#include "KLI_sys_types.h" /* for intptr_t support */
+#include "KLI_utildefines.h"
+
 #define RHASH_INTERNAL_API
 #include "KKE_utils.h"
-#include "KLI_utildefines.h"
+
+#include "KLI_strict_flags.h"
 
 KRAKEN_NAMESPACE_BEGIN
 
@@ -165,7 +176,7 @@ KLI_INLINE uint mempool_maxchunks(const uint elem_num, const uint pchunk)
 
 static KKE_mempool_chunk *mempool_chunk_alloc(KKE_mempool *pool)
 {
-  return new KKE_mempool_chunk[(size_t)pool->csize]();
+  return static_cast<KKE_mempool_chunk *>(MEM_mallocN(sizeof(KKE_mempool_chunk) + (size_t)pool->csize, "KKE_Mempool Chunk"));
 }
 
 /**
@@ -240,7 +251,7 @@ KKE_mempool *KKE_mempool_create(uint esize, uint elem_num, uint pchunk, uint fla
   uint i, maxchunks;
 
   /* allocate the pool structure */
-  pool = new KKE_mempool();
+  pool = static_cast<KKE_mempool *>(MEM_mallocN(sizeof(KKE_mempool), "memory pool"));
 
   /* set the elem size */
   if (esize < (int)MEMPOOL_ELEM_SIZE_MIN) {
@@ -459,7 +470,7 @@ static void rhash_buckets_resize(RHash *rh, const uint nbuckets)
 
   rh->nbuckets = nbuckets;
 
-  buckets_new = (Entry **)new Entry[rh->nbuckets]();
+  buckets_new = (Entry **)MEM_callocN(sizeof(*rh->buckets) * rh->nbuckets, __func__);
 
   if (buckets_old) {
     if (nbuckets > nbuckets_old) {
@@ -487,7 +498,7 @@ static void rhash_buckets_resize(RHash *rh, const uint nbuckets)
 
   rh->buckets = buckets_new;
   if (buckets_old) {
-    delete[] buckets_old;
+    MEM_freeN(buckets_old);
   }
 }
 
@@ -579,7 +590,7 @@ static RHash *rhash_new(RHashHashFP hashfp,
                         const uint nentries_reserve,
                         const uint flag)
 {
-  RHash *rh = new RHash();
+  RHash *rh = static_cast<RHash *>(MEM_mallocN(sizeof(*rh), info));
 
   rh->hashfp = hashfp;
   rh->cmpfp = cmpfp;
@@ -640,7 +651,7 @@ static RHash *rhash_copy(const RHash *rh, RHashKeyCopyFP keycopyfp, RHashValCopy
  */
 KLI_INLINE void rhash_buckets_reset(RHash *rh, const uint nentries)
 {
-  delete[] rh->buckets;
+  MEM_SAFE_FREE(rh->buckets);
 
   rh->cursize = 0;
   rh->size_min = 0;
@@ -767,16 +778,17 @@ bool KKE_rhash_reinsert(RHash *rh,
   return rhash_insert_safe(rh, key, val, true, keyfreefp, valfreefp);
 }
 
+uint KKE_rhashutil_ptrhash(const void *key)
+{
+  /* Based Python3.7's pointer hashing function. */
 
-// void *KKE_rhash_lookup(RHash *rh, const TfToken &key)
-// {
-//   void *ot = rh->at(key);
-//   return ot ? ot : NULL;
-// }
+  size_t y = (size_t)key;
+  /* bottom 3 or 4 bits are likely to be 0; rotate y by 4 to avoid
+   * excessive hash collisions for dicts and sets */
 
-// void KKE_rhash_insert(RHash *rh, const TfToken &key, void *value)
-// {
-//   rh->insert(typename RHash::value_type(std::make_pair(key, value)));
-// }
+  /* NOTE: Unlike Python 'sizeof(uint)' is used instead of 'sizeof(void *)',
+   * Otherwise casting to 'uint' ignores the upper bits on 64bit platforms. */
+  return (uint)(y >> 4) | ((uint)y << (sizeof(uint[8]) - 4));
+}
 
 KRAKEN_NAMESPACE_END

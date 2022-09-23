@@ -37,7 +37,7 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include "KKE_context.h"
 #include "KKE_workspace.h"

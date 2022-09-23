@@ -26,6 +26,8 @@
 
 #include "kraken/kraken.h"
 
+#include "KKE_main.h"
+
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/collectionAPI.h>
@@ -36,6 +38,8 @@ KRAKEN_NAMESPACE_BEGIN
 struct Main;
 struct ReportList;
 struct kContext;
+
+#define MAX_NAME 64
 
 typedef std::vector<wabi::UsdCollectionAPI> UsdCollectionsVector;
 typedef std::vector<wabi::UsdProperty> UsdPropertyVector;
@@ -115,10 +119,9 @@ typedef enum eStringPropertySearchFlag
   PROP_STRING_SEARCH_SUGGESTION = (1 << 2),
 } eStringPropertySearchFlag;
 
+
 struct KrakenSTAGE : public wabi::UsdStageRefPtr
 {
-  KrakenSTAGE();
-
   std::vector<struct KrakenPRIM *> structs;
 };
 

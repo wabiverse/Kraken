@@ -96,20 +96,41 @@ struct ARegion_Runtime
   struct RHash *block_name_map;
 };
 
-struct ARegion : public UsdUIArea
-{
-  SdfPath path;
+/** #ARegion.alignment */
+enum {
+  RGN_ALIGN_NONE = 0,
+  RGN_ALIGN_TOP = 1,
+  RGN_ALIGN_BOTTOM = 2,
+  RGN_ALIGN_LEFT = 3,
+  RGN_ALIGN_RIGHT = 4,
+  RGN_ALIGN_HSPLIT = 5,
+  RGN_ALIGN_VSPLIT = 6,
+  RGN_ALIGN_FLOAT = 7,
+  RGN_ALIGN_QSPLIT = 8,
+  /* Maximum 15. */
 
-  UsdAttribute name;
-  UsdAttribute spacetype;
-  UsdAttribute icon;
-  UsdAttribute coords;
-  UsdAttribute pos;
-  UsdAttribute size;
+  /* Flags start here. */
+  RGN_SPLIT_PREV = 32,
+};
+
+struct ARegion : public wabi::UsdUIArea
+{
+  wabi::SdfPath path;
+
+  wabi::UsdAttribute name;
+  wabi::UsdAttribute spacetype;
+  wabi::UsdAttribute icon;
+  wabi::UsdAttribute coords;
+  wabi::UsdAttribute pos;
+  wabi::UsdAttribute size;
+  
 
   eRegionType regiontype;
   short flag;
   short alignment;
+
+  /** Region is currently visible on screen. */
+  short visible;
 
   struct ARegionType *type;
 
@@ -131,11 +152,11 @@ struct ARegion : public UsdUIArea
 
   ARegion_Runtime runtime;
 
-  inline ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath);
+  inline ARegion(kContext *C, kScreen *prim, const wabi::SdfPath &stagepath);
 };
 
-ARegion::ARegion(kContext *C, kScreen *prim, const SdfPath &stagepath)
-  : UsdUIArea(KRAKEN_STAGE_CREATE_CHILD(C)),
+ARegion::ARegion(kContext *C, kScreen *prim, const wabi::SdfPath &stagepath)
+  : wabi::UsdUIArea(KRAKEN_STAGE_CREATE_CHILD(C)),
     path(GetPath()),
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),

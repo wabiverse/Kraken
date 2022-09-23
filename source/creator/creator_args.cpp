@@ -82,8 +82,8 @@ void CREATOR_setup_args(int argc, const char **argv)
     ("factory-startup", CREATOR_ARGS::bool_switch(&G.factory_startup),
     "Resets factory default settings and preferences on startup")
 
-    ("server", CREATOR_ARGS::bool_switch(&G.background),
-    "Puts Kraken in a headless client-serving server mode")
+    ("python-console", CREATOR_ARGS::bool_switch(&G.interactive_console),
+    "Run Kraken with an interactive console.")
 
     ("diagnostics", CREATOR_ARGS::bool_switch(&run_diagnostics),
     "Run system diagnostics to debug the Kraken System")
@@ -112,10 +112,78 @@ void CREATOR_setup_args(int argc, const char **argv)
   }
 }
 
-int CREATOR_parse_args(int argc, const char **argv)
+
+struct KrakenPyContextStore
+{
+  wmWindowManager *wm;
+  Scene *scene;
+  wmWindow *win;
+  bool has_win;
+};
+
+static void arg_py_context_backup(kContext *C,
+                                  struct KrakenPyContextStore *c_py,
+                                  const char *script_id)
+{
+  c_py->wm = CTX_wm_manager(C);
+  c_py->scene = CTX_data_scene(C);
+  c_py->has_win = !c_py->wm->windows.empty();
+  if (c_py->has_win) {
+    c_py->win = CTX_wm_window(C);
+    CTX_wm_window_set(C, c_py->wm->windows.begin()->second);
+  } else {
+    c_py->win = NULL;
+    fprintf(stderr,
+            "Python script \"%s\" "
+            "running with missing context data.\n",
+            script_id);
+  }
+}
+
+static void arg_py_context_restore(kContext *C, struct KrakenPyContextStore *c_py)
+{
+  /* script may load a file, check old data is valid before using */
+  if (c_py->has_win) {
+
+    if ((c_py->win == NULL) ||
+        ((std::find(G.main->wm.begin(), G.main->wm.end(), c_py->wm) != G.main->wm.end()) &&
+         (std::find(c_py->wm->windows.begin(), c_py->wm->windows.end(), c_py->win) !=
+          c_py->wm->windows.end()))) {
+      CTX_wm_window_set(C, c_py->win);
+    }
+  }
+
+  if ((c_py->scene == NULL) ||
+      (std::find(G.main->scenes.begin(), G.main->scenes.end(), c_py->wm) != G.main->wm.end())) {
+    CTX_data_scene_set(C, c_py->scene);
+  }
+}
+
+/* macro for context setup/reset */
+#define KPY_CTX_SETUP(_cmd)                   \
+  {                                           \
+    struct KrakenPyContextStore py_c;         \
+    arg_py_context_backup(C, &py_c, argv[1]); \
+    {                                         \
+      _cmd;                                   \
+    }                                         \
+    arg_py_context_restore(C, &py_c);         \
+  }                                           \
+  ((void)0)
+
+
+int CREATOR_parse_args(int argc, const char **argv, void *C)
 {
   if (run_diagnostics) {
     KKE_kraken_enable_debug_codes();
+  }
+
+  if (G.interactive_console) {
+    kContext *C = C;
+
+    KPY_CTX_SETUP(KPY_run_string_eval(C, (const char *[]){"code", NULL}, "code.interact()"));
+
+    return 0;
   }
 
   if (load_stage.length() > 2) {

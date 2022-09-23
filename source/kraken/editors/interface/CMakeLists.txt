@@ -4,6 +4,9 @@ set(INC
   ../include/.
   ../../../../. # Pixar USD
   ../../../../source
+  ../../../../intern/guardedalloc
+  ../../python/kpy
+  ../../gpu
   ../../anchor
   ../../imbuf
   ../../kraklib
@@ -21,6 +24,7 @@ set(INC_SYS
 )
 
 set(SRC
+  INTERFACE_align.cpp
   INTERFACE_button_group.cpp
   INTERFACE_handlers.cpp
   INTERFACE_kraken.cpp
@@ -34,19 +38,15 @@ set(SRC
   INTERFACE_style.cpp
   INTERFACE_tokens.cpp
 
+  views/abstract_view_item.cpp
+
   intern/interface_intern.h
   intern/interface_regions_intern.h
-  ../include/UI_icons.h
-  ../include/UI_interface.h
-  ../include/UI_resources.h
-  ../include/UI_tokens.h
 )
 
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_anchor
-  kraken_kernel
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

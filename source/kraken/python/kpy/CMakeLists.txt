@@ -93,9 +93,6 @@ set(LIB
   _usdImagingGL
   _usdAppUtils
   _usdviewq
-  kraken_kernel
-  kraken_luxo
-  kraken_universe
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LINKFLAGS}

@@ -41,7 +41,7 @@ KRAKEN_NAMESPACE_BEGIN
 //   TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
 // }
 
-double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value, const wabi::UsdStageRefPtr &stage)
+double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value, const wabi::UsdStageWeakPtr &stage)
 {
   if (unit->system == USER_UNIT_NONE) {
     /* Never apply scale_length when not using a unit setting! */
@@ -82,7 +82,7 @@ double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, doubl
   }
 }
 
-Scene::Scene(const wabi::UsdStageRefPtr &stage)
+Scene::Scene(const wabi::UsdStageWeakPtr &stage)
   : stage(stage)
 {}
 

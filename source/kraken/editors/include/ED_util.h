@@ -18,16 +18,26 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * Editors.
+ * Tools for Artists.
  */
 
-#ifndef KRAKEN_KERNEL_ID_H
-#define KRAKEN_KERNEL_ID_H
+#pragma once
 
-struct ID
-{
-  int icon_id;
-};
+#include "KLI_compiler_attrs.h"
+// #include "WM_types.h"
 
-#endif /* KRAKEN_KERNEL_ID_H */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct GPUBatch;
+struct IDRemapper;
+struct Main;
+struct kContext;
+
+void ED_editors_init(struct kContext *C);
+
+#ifdef __cplusplus
+}
+#endif

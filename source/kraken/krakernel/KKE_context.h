@@ -32,7 +32,7 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-typedef wabi::UsdStageRefPtr Stage;
+typedef wabi::UsdStageWeakPtr Stage;
 typedef wabi::UsdPrim Prim;
 
 struct uiStyle;
@@ -70,9 +70,9 @@ void CTX_free(kContext *C);
 bool CTX_py_init_get(kContext *C);
 void CTX_py_init_set(kContext *C, bool value);
 void *CTX_py_dict_get(const kContext *C);
-void CTX_data_pointer_set_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
+void CTX_data_pointer_set_ptr(kContextDataResult *result, const struct KrakenPRIM *ptr);
 void CTX_data_type_set(kContextDataResult *result, short type);
-void CTX_data_list_add_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
+void CTX_data_list_add_ptr(kContextDataResult *result, const struct KrakenPRIM *ptr);
 
 /**
  * Kraken Context Getters:

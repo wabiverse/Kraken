@@ -48,7 +48,7 @@
 #include "USD_workspace.h"
 
 /* KRAKEN LIBRARY */
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 /* KRAKEN KERNEL */
 #include "KKE_context.h"

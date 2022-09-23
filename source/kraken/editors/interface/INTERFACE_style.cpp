@@ -63,7 +63,7 @@ KRAKEN_NAMESPACE_BEGIN
 
 /* ********************************************** */
 
-static uiStyle *ui_style_new(const std::vector<uiStyle *> &styles, const char *name, short uifont_id)
+static uiStyle *ui_style_new(std::vector<uiStyle *> styles, const char *name, short uifont_id)
 {
   uiStyle *style = new uiStyle();
 

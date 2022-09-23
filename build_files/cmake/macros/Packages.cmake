@@ -644,6 +644,7 @@ if(WABI_BUILD_IMAGING)
             ${STATIC_BLENDER_OPENJPEG}/lib/libopenjp2.a)
           list(APPEND PNG_LIBRARY 
             ${STATIC_BLENDER_PNG}/lib/libpng16.a)
+          set(PNG_LIBRARIES ${PNG_LIBRARY})
           list(APPEND FFMPEG_LIBRARY 
             ${STATIC_BLENDER_FFMPEG}/lib/libaom.a
             ${STATIC_BLENDER_FFMPEG}/lib/libavcodec.a

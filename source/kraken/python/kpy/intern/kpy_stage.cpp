@@ -28,7 +28,7 @@
 #include <stddef.h>
 
 #include "KLI_utildefines.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 
 #include "KKE_context.h"
 #include "KKE_main.h"
@@ -1265,7 +1265,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
       pystage = (KPy_KrakenStage *)tp->tp_alloc(tp, 0);
 #ifdef USE_PYRNA_STRUCT_REFERENCE
       /* #PyType_GenericAlloc will have set tracking.
-       * We only want tracking when `StructRNA.reference` has been set. */
+       * We only want tracking when `KrakenSTAGE.reference` has been set. */
       if (pystage != NULL) {
         PyObject_GC_UnTrack(pystage);
       }
@@ -1309,11 +1309,11 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
   pystage->reference = NULL;
 #endif
 
-  // PyC_ObSpit("NewStructRNA: ", (PyObject *)pystage);
+  // PyC_ObSpit("NewKrakenSTAGE: ", (PyObject *)pystage);
 
 #ifdef USE_PYRNA_INVALIDATE_WEAKREF
   if (ptr->owner_id) {
-    id_weakref_pool_add(ptr->owner_id, (KPy_DummyPointerRNA *)pystage);
+    id_weakref_pool_add(ptr->owner_id, (KPy_DummyKrakenPRIM *)pystage);
   }
 #endif
   return (PyObject *)pystage;

@@ -24,17 +24,19 @@
 
 #pragma once
 
+#include "KLI_sys_types.h"
+
 /* Define icon enum. */
 #define DEF_ICON(name) ICON_##name,
 #define DEF_ICON_VECTOR(name) ICON_##name,
 #define DEF_ICON_COLOR(name) ICON_##name,
 #define DEF_ICON_BLANK(name) ICON_BLANK_##name,
 
-enum KIFIconID {
+typedef enum {
 /* ui */
 #include "UI_icons.h"
   KIFICONID_LAST,
-};
+} KIFIconID;
 
 #define KIFICONID_FIRST (ICON_NONE)
 

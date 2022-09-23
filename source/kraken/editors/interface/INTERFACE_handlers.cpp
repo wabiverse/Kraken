@@ -28,6 +28,7 @@
 #include "USD_operator.h"
 #include "USD_userpref.h"
 #include "USD_wm_types.h"
+#include "USD_object.h"
 
 #include "WM_cursors_api.h"
 #include "WM_window.h"
@@ -201,11 +202,11 @@ struct uiAfterFunc
 
   wmOperator *popup_op;
   wmOperatorType *optype;
-  // wmOperatorCallContext opcontext;
+  // kraken::eWmOperatorContext opcontext;
   KrakenPRIM *opptr;
 
-  KrakenPRIM stagepoin;
-  KrakenPROP *stageprop;
+  struct KrakenPRIM stagepoin;
+  struct KrakenPROP *stageprop;
 
   void *search_arg;
   uiFreeArgFunc search_arg_free_fn;
@@ -458,35 +459,35 @@ static void ui_apply_but_BLOCK(kContext *C, uiBut *but, uiHandleButtonData *data
       bool typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
         UI_but_value_set(but, typedVal);
-        UI_but_update_edited<bool>(but);
+        UI_but_update_edited(but);
       }
 
     } else if (data->value.GetTypeName() == SdfValueTypeNames->Int) {
       int typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
         UI_but_value_set(but, typedVal);
-        UI_but_update_edited<int>(but);
+        UI_but_update_edited(but);
       }
 
     } else if (data->value.GetTypeName() == SdfValueTypeNames->Float) {
       float typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
         UI_but_value_set(but, typedVal);
-        UI_but_update_edited<float>(but);
+        UI_but_update_edited(but);
       }
 
     } else if (data->value.GetTypeName() == SdfValueTypeNames->Token) {
       TfToken typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
         UI_but_value_set(but, typedVal);
-        UI_but_update_edited<TfToken>(but);
+        UI_but_update_edited(but);
       }
 
     } else {
       double typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
         UI_but_value_set(but, typedVal);
-        UI_but_update_edited<double>(but);
+        UI_but_update_edited(but);
       }
     }
   }
@@ -498,7 +499,7 @@ static void ui_apply_but_BLOCK(kContext *C, uiBut *but, uiHandleButtonData *data
 
 static void ui_apply_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data)
 {
-  const bool value = UI_but_value_get<bool>(but);
+  const bool value = UI_but_value_get(but);
   int value_toggle;
   if (but->bit) {
     value_toggle = UI_BITBUT_VALUE_TOGGLED((int)value, but->bitnr);
@@ -511,7 +512,7 @@ static void ui_apply_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data)
 
   UI_but_value_set(but, (bool)value_toggle);
   if (ELEM(but->type, UI_BTYPE_ICON_TOGGLE, UI_BTYPE_ICON_TOGGLE_N)) {
-    UI_but_update_edited<bool>(but);
+    UI_but_update_edited(but);
   }
 
   ui_apply_but_func(C, but);
@@ -529,7 +530,7 @@ static void ui_apply_but_ROW(kContext *C, uiBlock *block, uiBut *but, uiHandleBu
   /* states of other row buttons */
   for (auto &bt : block->buttons) {
     if (bt != but && bt->poin == but->poin && ELEM(bt->type, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
-      UI_but_update_edited<wabi::TfToken>(bt);
+      UI_but_update_edited(bt);
     }
   }
 
@@ -825,7 +826,7 @@ static ARegion *ui_but_tooltip_init(kContext *C, ARegion *region, int *pass, dou
     uiButExtraOpIcon *extra_icon = ui_but_extra_operator_icon_mouse_over_get(
         but, but->active ? but->active->region : region, win->eventstate);
 
-    return UI_tooltip_create_from_button_or_extra_icon(C, region, but, extra_icon, is_label);
+    // return UI_tooltip_create_from_button_or_extra_icon(C, region, but, extra_icon, is_label);
   }
   return NULL;
 }
@@ -907,7 +908,7 @@ static void button_activate_state(kContext *C, uiBut *but, uiHandleButtonState s
         /* Menu button types may draw as popovers, check for this case
          * ignoring other kinds of menus (mainly enums). (see T66538). */
         ((but->type == UI_BTYPE_MENU) &&
-         (UI_but_paneltype_get(but) || ui_but_menu_draw_as_popover(but)))) {
+         (UI_but_paneltype_get(but) || UI_but_menu_draw_as_popover(but)))) {
       if (data->used_mouse && !data->autoopentimer) {
         int time;
 

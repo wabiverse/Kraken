@@ -25,6 +25,11 @@
 #ifndef KRAKEN_KERNEL_MAIN_H
 #define KRAKEN_KERNEL_MAIN_H
 
+#include "USD_listBase.h"
+
+#include "KLI_compiler_attrs.h"
+#include "KLI_sys_types.h"
+
 #include "KKE_api.h"
 #include "KKE_context.h"
 #include "KKE_robinhood.h"
@@ -32,6 +37,16 @@
 #include "USD_object.h"
 
 KRAKEN_NAMESPACE_BEGIN
+
+struct KKE_mempool;
+struct KrakenThumbnail;
+struct RHash;
+struct RSet;
+struct IDNameLib_Map;
+struct ImBuf;
+struct Library;
+struct MainLock;
+struct UniqueName_Map;
 
 struct Main
 {
@@ -128,6 +143,7 @@ struct Global
 {
   Main *main;
 
+  bool interactive_console;
   bool background;
   bool factory_startup;
 
@@ -195,10 +211,10 @@ void KKE_kraken_atexit(void);
 void KKE_kraken_atexit_register(void (*func)(void *user_data), void *user_data);
 void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *user_data);
 
-void KKE_kraken_main_init(kContext *C, int argc = 0, const char **argv = NULL);
+void KKE_kraken_main_init(struct kContext *C, int argc = 0, const char **argv = NULL);
 Global &KKE_kraken_globals_init();
 void KKE_kraken_plugins_init(void);
-void KKE_kraken_python_init(kContext *C);
+void KKE_kraken_python_init(struct kContext *C);
 ckeStatusCode KKE_main_runtime(int backend);
 void KKE_kraken_enable_debug_codes(void);
 

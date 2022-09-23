@@ -31,7 +31,7 @@
 
 #include "KLI_assert.h"
 #include "KLI_path_utils.h"
-#include "KLI_string_utils.h"
+#include "KLI_string.h"
 #include "KLI_fileops.h"
 
 #include "KKE_api.h"
@@ -352,7 +352,7 @@ static void where_am_i(char *fullname, const size_t maxlen, const char *name)
 
 #ifdef _WIN32
   {
-    wchar_t *fullname_16 = malloc(maxlen * sizeof(wchar_t));
+    wchar_t *fullname_16 = MEM_mallocN(maxlen * sizeof(wchar_t));
     if (GetModuleFileNameW(0, fullname_16, maxlen)) {
       conv_utf_16_to_8(fullname_16, fullname, maxlen);
       if (!KLI_exists(fullname)) {

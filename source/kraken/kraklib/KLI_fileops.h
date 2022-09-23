@@ -41,13 +41,23 @@ typedef unsigned int mode_t;
 #  define PATH_MAX 1024
 #endif
 
+
 KRAKEN_NAMESPACE_BEGIN
+
+
+FILE *KLI_fopen(const char *filepath, const char *mode);
+
+void *KLI_gzopen(const char *filepath, const char *mode);
+
+int KLI_open(const char *filepath, int oflag, int pmode);
+
+int KLI_access(const char *filepath, int mode);
+
+int KLI_delete(const char *file, bool dir, bool recursive);
+
 
 /* Cross Platform Implementations (Seperate by preprocessors) */
 bool KLI_dir_create_recursive(const char *dirname);
-
-int KLI_access(const char *filename, int mode);
-int KLI_delete(const char *file, bool dir, bool recursive);
 
 bool KLI_exists(const fs::path &path);
 fs::file_status KLI_type(const fs::path &path);

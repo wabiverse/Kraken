@@ -30,7 +30,9 @@ set(SRC
   USD_default_tables.h
   USD_factory.h
   USD_file.h
-  USD_listbase.h
+  USD_ID.h
+  USD_ID_enums.h
+  USD_listBase.h
   USD_object.h
   USD_operator.h
   USD_path_defaults.h
@@ -51,8 +53,6 @@ set(SRC
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_lib
-  kraken_kernel
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}

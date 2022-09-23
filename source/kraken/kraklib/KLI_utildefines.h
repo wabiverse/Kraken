@@ -871,6 +871,15 @@ extern bool KLI_memory_is_zero(const void *arr, size_t arr_size);
 #  define TIP_(String) String
 #endif /* TIP_ */
 
+/* These macros should be used everywhere in UI code. */
+/*#  define _(msgid) BLT_gettext(msgid) */
+#define IFACE_(msgid) msgid
+// #define TIP_(msgid) msgid
+#define DATA_(msgid) msgid
+#define CTX_IFACE_(context, msgid) context msgid
+#define CTX_TIP_(context, msgid) context msgid
+#define CTX_DATA_(context, msgid) context msgid
+
 /** No-op for expressions we don't want to instantiate, but must remain valid. */
 #define EXPR_NOP(expr) (void)(0 ? ((void)(expr), 1) : 0)
 
