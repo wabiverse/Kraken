@@ -45,7 +45,8 @@ KRAKEN_NAMESPACE_BEGIN
 /* Make sure enums are updated with these */
 /* HIGHEST FLAG IN USE: 1 << 31
  * FREE FLAGS: 2, 9, 11, 13, 14, 15. */
-enum PropertyFlag {
+enum PropertyFlag
+{
   /**
    * Editable means the property is editable in the user
    * interface, properties are editable by default except
@@ -160,7 +161,8 @@ enum PropertyFlag {
   PROP_NO_DEG_UPDATE = (1 << 30),
 };
 
-enum PropertyUnit {
+enum PropertyUnit
+{
   PROP_UNIT_NONE = (0 << 16),
   PROP_UNIT_LENGTH = (1 << 16),        /* m */
   PROP_UNIT_AREA = (2 << 16),          /* m^2 */
@@ -176,7 +178,8 @@ enum PropertyUnit {
   PROP_UNIT_TEMPERATURE = (12 << 16),  /* C */
 };
 
-enum PropertySubType {
+enum PropertySubType
+{
   PROP_NONE = 0,
 
   /* strings */
@@ -233,9 +236,7 @@ enum PropertySubType {
 
 struct KrakenPROP : public wabi::UsdAttribute
 {
-  KrakenPROP(const wabi::UsdAttribute &prop = wabi::UsdAttribute()) 
-    : wabi::UsdAttribute(prop)
-  {}
+  KrakenPROP(const wabi::UsdAttribute &prop = wabi::UsdAttribute()) : wabi::UsdAttribute(prop) {}
 
   wabi::TfToken name;
   PropertyType type;
@@ -295,11 +296,11 @@ struct KrakenFUNC
   KrakenPRIM *c_ret;
 };
 
+typedef struct IDProperty **(*IDPropertiesFunc)(struct KrakenPRIM *ptr);
+
 struct KrakenPRIM : public wabi::UsdPrim
 {
-  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim())
-    : wabi::UsdPrim(prim)
-  {}
+  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) : wabi::UsdPrim(prim) {}
 
   struct ID *owner_id;
   const char *identifier;
@@ -309,11 +310,16 @@ struct KrakenPRIM : public wabi::UsdPrim
   /**
    * context (C) */
   void *data;
-  
+
   KrakenPRIM *base;
   StructRefineFunc refine;
 
   void *py_type;
+
+  short flag;
+
+  /** Return the location of the struct's pointer to the root group IDProperty. */
+  IDPropertiesFunc idproperties;
 
   PropertyVectorLUXO props;
 
@@ -323,5 +329,22 @@ struct KrakenPRIM : public wabi::UsdPrim
 
   std::vector<KrakenPRIM *> functions;
 };
+
+/* is this ID type used as object data */
+#define OB_DATA_SUPPORT_ID(_id_type) \
+  (ELEM(_id_type,                    \
+        ID_ME,                       \
+        ID_CU_LEGACY,                \
+        ID_MB,                       \
+        ID_LA,                       \
+        ID_SPK,                      \
+        ID_LP,                       \
+        ID_CA,                       \
+        ID_LT,                       \
+        ID_GD,                       \
+        ID_AR,                       \
+        ID_CV,                       \
+        ID_PT,                       \
+        ID_VO))
 
 KRAKEN_NAMESPACE_END

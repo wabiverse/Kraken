@@ -24,7 +24,10 @@
 
 #include "kraken/kraken.h"
 
+#include "MEM_guardedalloc.h"
+
 #include "KLI_threads.h"
+#include "KLI_listbase.h"
 
 #include "KKE_context.h"
 #include "KKE_main.h"
@@ -68,6 +71,7 @@ struct kContext
     ScrArea *area;
     ARegion *region;
     ARegion *menu;
+    kContextStore *store;
 
     const char *operator_poll_msg;
     kContextPollMsgParams operator_poll_msg_params;
@@ -163,6 +167,111 @@ void CTX_free(kContext *C)
 
   delete C;
 }
+
+/* store */
+
+kContextStore *CTX_store_add(std::vector<kContextStore *> contexts, const TfToken &name, const KrakenPRIM *ptr)
+{
+  /* ensure we have a context to put the entry in, if it was already used
+   * we have to copy the context to ensure */
+  kContextStore *ctx = contexts.back();
+
+  if (!ctx || ctx->used) {
+    if (ctx) {
+      kContextStore *lastctx = ctx;
+      ctx = (kContextStore *)MEM_dupallocN(lastctx);
+      std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
+    }
+    else {
+      ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
+    }
+
+    contexts.push_back(ctx);
+  }
+
+  kContextStoreEntry *entry = (kContextStoreEntry *)MEM_callocN(sizeof(kContextStoreEntry), "kContextStoreEntry");
+  entry->name = name;
+  entry->ptr = *ptr;
+
+  ctx->entries.push_back(entry);
+
+  return ctx;
+}
+
+kContextStore *CTX_store_add_all(std::vector<kContextStore *> contexts, kContextStore *context)
+{
+  /* ensure we have a context to put the entries in, if it was already used
+   * we have to copy the context to ensure */
+  kContextStore *ctx = contexts.back();
+
+  if (!ctx || ctx->used) {
+    if (ctx) {
+      kContextStore *lastctx = ctx;
+      ctx = (kContextStore *)MEM_dupallocN(lastctx);
+      std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
+    }
+    else {
+      ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
+    }
+
+    contexts.push_back(ctx);
+  }
+
+  for (auto &tentry : context->entries) {
+    kContextStoreEntry *entry = (kContextStoreEntry *)MEM_dupallocN(tentry);
+    ctx->entries.push_back(entry);
+  }
+
+  return ctx;
+}
+
+kContextStore *CTX_store_get(kContext *C)
+{
+  return C->wm.store;
+}
+
+void CTX_store_set(kContext *C, kContextStore *store)
+{
+  C->wm.store = store;
+}
+
+const KrakenPRIM *CTX_store_ptr_lookup(const kContextStore *store,
+                                       const TfToken &name,
+                                       const KrakenPRIM *type)
+{
+  kContextStoreEntry *entry = KLI_rfindtoken(store, name);
+  if (!entry) {
+    return NULL;
+  }
+
+  if (type && !LUXO_struct_is_a(entry->ptr.type, type)) {
+    return NULL;
+  }
+  return &entry->ptr;
+}
+
+kContextStore *CTX_store_copy(kContextStore *store)
+{
+  kContextStore *ctx = (kContextStore *)MEM_dupallocN(store);
+  std::copy(store->entries.begin(), store->entries.end(), ctx->entries);
+
+  return ctx;
+}
+
+void CTX_store_free(kContextStore *store)
+{
+  KLI_freelistN(store);
+  MEM_freeN(store);
+}
+
+void CTX_store_free_list(std::vector<kContextStore*> contexts)
+{
+  kContextStore *ctx;
+  while ((ctx = KLI_pophead(contexts))) {
+    CTX_store_free(ctx);
+  }
+}
+
 
 bool CTX_py_init_get(kContext *C)
 {

@@ -22,20 +22,19 @@
  * Pixel Magic.
  */
 
-#include "kraken/kraken.h"
+#include "gpu_context_private.hh"
+#include "gpu_matrix_private.h"
 
 #define SUPPRESS_GENERIC_MATRIX_API
 #define USE_GPU_PY_MATRIX_API /* only so values are declared */
 #include "GPU_matrix.h"
 #undef USE_GPU_PY_MATRIX_API
-#ifdef __APPLE__
-/* temporary, til we bring the namespace out elsewhere. */
-#  include "mtl_context.h"
-#endif /* __APPLE__ */
 
 #include "KLI_math_matrix.h"
 #include "KLI_math_rotation.h"
 #include "KLI_math_vector.h"
+
+#include "MEM_guardedalloc.h"
 
 using namespace kraken::gpu;
 
@@ -81,7 +80,7 @@ GPUMatrixState *GPU_matrix_state_create()
     }                                                                             \
   }
 
-  GPUMatrixState *state = new GPUMatrixState();
+  GPUMatrixState *state = (GPUMatrixState *)MEM_mallocN(sizeof(*state), __func__);
   const MatrixStack identity_stack = {{MATRIX_4X4_IDENTITY}, 0};
 
   state->model_view_stack = state->projection_stack = identity_stack;
@@ -92,6 +91,17 @@ GPUMatrixState *GPU_matrix_state_create()
   return state;
 }
 
+void GPU_matrix_state_discard(GPUMatrixState *state)
+{
+  MEM_freeN(state);
+}
+
+static void gpu_matrix_state_active_set_dirty(bool value)
+{
+  GPUMatrixState *state = Context::get()->matrix_state;
+  state->dirty = value;
+}
+
 const float (*GPU_matrix_projection_get(float m[4][4]))[4]
 {
   if (m) {
@@ -100,4 +110,11 @@ const float (*GPU_matrix_projection_get(float m[4][4]))[4]
   }
 
   return Projection;
+}
+
+void GPU_matrix_pop_projection()
+{
+  KLI_assert(ProjectionStack.top > 0);
+  ProjectionStack.top--;
+  gpu_matrix_state_active_set_dirty(true);
 }

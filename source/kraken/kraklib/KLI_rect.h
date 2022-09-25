@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "USD_vec_types.h"
+
 #include "KLI_api.h"
 #include "KLI_assert.h"
 #include "KLI_string.h"
@@ -33,10 +35,18 @@
 #include <wabi/base/gf/vec4i.h>
 #include <wabi/base/gf/vec4f.h>
 
-KRAKEN_NAMESPACE_BEGIN
+void KLI_rctf_init_minmax(rctf *rect);
 
+bool KLI_rctf_isect(const struct rctf *src1, const struct rctf *src2, struct rctf *dest);
+bool KLI_rcti_isect(const struct rcti *src1, const struct rcti *src2, struct rcti *dest);
 bool KLI_rctf_isect_pt(const wabi::GfVec4f &rect, const float x, const float y);
 void KLI_rcti_rctf_copy_round(wabi::GfVec4i *dst, const wabi::GfVec4f &src);
+
+void KLI_rcti_rctf_copy_floor(struct rcti *dst, const struct rctf *src);
+void KLI_rcti_translate(struct rcti *rect, int x, int y);
+void KLI_rctf_translate(struct rctf *rect, float x, float y);
+
+void KLI_rctf_union(struct rctf *rct_a, const struct rctf *rct_b);
 
 KLI_INLINE float KLI_rctf_cent_x(const wabi::GfVec4f &rct)
 {
@@ -70,5 +80,3 @@ KLI_INLINE float KLI_rctf_size_y(const wabi::GfVec4f &rct)
 {
   return (&rct[3] - &rct[2]);
 }
-
-KRAKEN_NAMESPACE_END

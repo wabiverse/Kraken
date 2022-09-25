@@ -25,13 +25,14 @@
 
 #include <wabi/usd/usd/prim.h>
 
+struct ID;
+
 KRAKEN_NAMESPACE_BEGIN
 
 struct ARegion;
 struct AnimationEvalContext;
 struct CurveMapping;
 struct CurveProfile;
-struct ID;
 struct ImBuf;
 struct Main;
 struct Scene;
@@ -249,8 +250,8 @@ struct uiBut {
   uiMenuStepFunc menu_step_func;
 
   /* RNA data */
-  struct kraken::KrakenPRIM rnapoin;
-  struct kraken::KrakenPROP *rnaprop;
+  struct kraken::KrakenPRIM stagepoin;
+  struct kraken::KrakenPROP *stageprop;
   int rnaindex;
 
   /* Operator data */
@@ -261,7 +262,7 @@ struct uiBut {
   /** When non-zero, this is the key used to activate a menu items (`a-z` always lower case). */
   uchar menu_key;
 
-  ListBase extra_op_icons; /** #uiButExtraOpIcon */
+  std::vector<struct uiButExtraOpIcon *> extra_op_icons; /** #uiButExtraOpIcon */
 
   /* Drag-able data, type is WM_DRAG_... */
   char dragtype;
@@ -341,8 +342,8 @@ typedef struct uiButSearch {
 typedef struct uiButDecorator {
   uiBut but;
 
-  struct kraken::KrakenPRIM rnapoin;
-  struct kraken::KrakenPROP *rnaprop;
+  struct kraken::KrakenPRIM stagepoin;
+  struct kraken::KrakenPROP *stageprop;
   int rnaindex;
 } uiButDecorator;
 
@@ -484,7 +485,7 @@ ENUM_OPERATORS(uiButtonGroupFlag, UI_BUTTON_GROUP_PANEL_HEADER);
 struct uiBlock {
   uiBlock *next, *prev;
 
-  ListBase buttons;
+  std::vector<struct uiBut *> buttons;
   struct Panel *panel;
   uiBlock *oldblock;
 
@@ -503,7 +504,7 @@ struct uiBlock {
    * state that is persistent over redraws (e.g. collapsed tree-view items). */
   ListBase views;
 
-  char name[UI_MAX_NAME_STR];
+  wabi::TfToken name;
 
   float winmat[4][4];
 

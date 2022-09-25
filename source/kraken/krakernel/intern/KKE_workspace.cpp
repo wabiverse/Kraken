@@ -292,4 +292,20 @@ kScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout)
   return layout->screen;
 }
 
+bool KKE_workspace_owner_id_check(const WorkSpace *workspace, const TfToken &owner_id)
+{
+  if ((owner_id.IsEmpty()) || ((workspace->flags & WORKSPACE_USE_FILTER_BY_ORIGIN) == 0)) {
+    return true;
+  }
+
+  for (auto &wspaceid : workspace->owner_ids)
+  {
+    if (wspaceid == owner_id) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 KRAKEN_NAMESPACE_END

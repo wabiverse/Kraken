@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __LUXO_RUNTIME_H__
+#define __LUXO_RUNTIME_H__
 
 /**
  *
@@ -45,7 +46,6 @@
  *
  */
 
-#define KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(x) TF_REGISTRY_FUNCTION(x)
+#define LUXO_ENUM_(context) context
 
-#define LUXO_ADD_ENUM_PROP(VAL, IDENT, ICO, NAME, DESC)
-// TF_ADD_USER_INTERFACE_ENUM(VAL, IDENT, ICO, NAME, DESC)
+#endif /* __LUXO_RUNTIME_H__ */

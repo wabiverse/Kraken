@@ -45,6 +45,11 @@ struct WorkSpaceLayout
 
 typedef std::vector<WorkSpaceLayout *> WorkSpaceLayoutVector;
 
+enum eWorkSpaceFlags {
+  WORKSPACE_USE_FILTER_BY_ORIGIN = (1 << 1),
+  WORKSPACE_USE_PIN_SCENE = (1 << 2),
+};
+
 struct WorkSpaceInstanceHook
 {
   WorkSpace *active;
@@ -83,6 +88,10 @@ struct WorkSpace : public UsdUIWorkspace
   WorkSpaceLayoutVector layouts;
 
   WorkSpaceDataRelationVector hook_layout_relations;
+
+  short flags;
+
+  wabi::TfTokenVector owner_ids;
 
   inline WorkSpace(kContext *C, const SdfPath &stagepath);
 };

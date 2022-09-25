@@ -113,6 +113,19 @@ void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
   LUXO_pointer_create(ptr, NULL, ptr);
 }
 
+bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update)
+{
+  bool changed = false;
+  for (auto &prop : ptr->GetAttributes())
+  {
+    if (ptr->ClearActive()) {
+      changed = true;
+    }
+  }
+
+  return changed;
+}
+
 void WM_operators_init(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);

@@ -18,14 +18,10 @@
 
 #pragma once
 
-#include "kraken/kraken.h"
-
 /** 
  * @file
  * @ingroup kli
  */
-
-KRAKEN_NAMESPACE_BEGIN
 
 /* types */
 
@@ -94,5 +90,3 @@ struct DualQuat {
   float scale[4][4];
   float scale_weight;
 };
-
-KRAKEN_NAMESPACE_END

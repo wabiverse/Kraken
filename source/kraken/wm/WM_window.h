@@ -24,6 +24,9 @@
 
 #pragma once
 
+#include "USD_wm_types.h"
+#include "USD_vec_types.h"
+
 #include "WM_api.h"
 
 #include "WM_msgbus.h"
@@ -52,6 +55,11 @@ struct wmGenericCallback
   void *user_data;
   wmGenericUserDataFreeFn free_user_data;
 };
+
+wmGenericCallback *WM_generic_callback_steal(wmGenericCallback *callback);
+void WM_generic_callback_free(wmGenericCallback *callback);
+
+void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct);
 
 wmWindow *wm_window_new(kContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog);
 wmWindow *WM_window_open(kContext *C,

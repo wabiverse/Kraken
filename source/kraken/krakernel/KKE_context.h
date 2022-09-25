@@ -64,6 +64,23 @@ enum
 kContext *CTX_create(void);
 void CTX_free(kContext *C);
 
+
+/* store */
+
+struct kContextStore *CTX_store_add(std::vector<struct kContextStore *> contexts,
+                                    const char *name,
+                                    const struct KrakenPRIM *ptr);
+struct kContextStore *CTX_store_add_all(std::vector<struct kContextStore *> contexts,
+                                        struct kContextStore *context);
+struct kContextStore *CTX_store_get(kContext *C);
+void CTX_store_set(kContext *C, struct kContextStore *store);
+const struct KrakenPRIM *CTX_store_ptr_lookup(const struct kContextStore *store,
+                                              const char *name,
+                                              const KrakenPRIM *type);
+struct kContextStore *CTX_store_copy(struct kContextStore *store);
+void CTX_store_free(struct kContextStore *store);
+void CTX_store_free_list(std::vector<struct kContextStore *> *contexts);
+
 /**
  * need to store if python
  * is initialized or not */
@@ -112,6 +129,18 @@ void CTX_data_prefs_set(kContext *C, UserDef *uprefs);
 
 void CTX_wm_operator_poll_msg_clear(kContext *C);
 void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
+
+struct kContextStoreEntry
+{
+  wabi::TfToken name;
+  KrakenPRIM ptr;
+};
+
+struct kContextStore
+{
+  std::vector<struct kContextStoreEntry *> entries;
+  bool used;
+};
 
 typedef int (*kContextDataCallback)(const kContext *C,
                                     const char *member,

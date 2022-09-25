@@ -2,6 +2,7 @@ set(INC
   .
   ../../../. # Pixar USD
   ../../../source
+  ./intern
   ./metal
   ../krakernel
   ../kraklib
@@ -19,7 +20,12 @@ set(INC_SYS
 )
 
 set(SRC
+  intern/gpu_matrix.cpp
 
+  intern/gpu_matrix_private.h
+  intern/gpu_context_private.hh
+
+  GPU_viewport.h
   GPU_matrix.h
 )
 

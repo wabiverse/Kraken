@@ -108,8 +108,8 @@ bool ui_but_is_interactive(const uiBut *but, const bool labeledit)
 
 bool UI_but_is_utf8(const uiBut *but)
 {
-  if (but->rnaprop) {
-    const int subtype = RNA_property_subtype(but->rnaprop);
+  if (but->stageprop) {
+    const int subtype = RNA_property_subtype(but->stageprop);
     return !(ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH, PROP_FILENAME, PROP_BYTESTRING));
   }
   return !(but->flag & UI_BUT_NO_UTF8);
@@ -124,8 +124,8 @@ bool ui_but_is_popover_once_compat(const uiBut *but)
 
 bool ui_but_has_array_value(const uiBut *but)
 {
-  return (but->rnapoin.data && but->rnaprop &&
-          ELEM(RNA_property_subtype(but->rnaprop),
+  return (but->stagepoin.data && but->stageprop &&
+          ELEM(RNA_property_subtype(but->stageprop),
                PROP_COLOR,
                PROP_TRANSLATION,
                PROP_DIRECTION,
@@ -558,7 +558,7 @@ bool ui_but_is_cursor_warp(const uiBut *but)
 
 bool ui_but_contains_password(const uiBut *but)
 {
-  return but->rnaprop && (RNA_property_subtype(but->rnaprop) == PROP_PASSWORD);
+  return but->stageprop && (RNA_property_subtype(but->stageprop) == PROP_PASSWORD);
 }
 
 /** \} */

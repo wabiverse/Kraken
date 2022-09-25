@@ -22,6 +22,8 @@ set(SRC
   intern/KKE_diagnostics.cpp
   intern/KKE_hash.cpp
   intern/KKE_icons.cpp
+  intern/KKE_idprop.cpp
+  intern/KKE_lib_id.cpp
   intern/KKE_plugins.cpp
   intern/KKE_python.cpp
   intern/KKE_report.cpp
@@ -34,8 +36,10 @@ set(SRC
   KKE_appdir.h
   KKE_context.h
   KKE_icons.h
+  KKE_idprop.h
   KKE_idtype.h
   KKE_kraken_prim.h
+  KKE_lib_id.h
   KKE_main.h
   KKE_report.h
   KKE_robinhood.h

@@ -26,6 +26,7 @@
 
 #include "USD_context.h"
 #include "USD_screen.h"
+#include "USD_view2d.h"
 
 #include "KKE_context.h"
 #include "KKE_screen.h"
@@ -123,7 +124,9 @@ struct ARegion : public wabi::UsdUIArea
   wabi::UsdAttribute coords;
   wabi::UsdAttribute pos;
   wabi::UsdAttribute size;
-  
+
+  /** 2D-View scrolling/zoom info (most regions are 2d anyways). */
+  View2D v2d;
 
   eRegionType regiontype;
   short flag;
@@ -149,6 +152,7 @@ struct ARegion : public wabi::UsdUIArea
   wabi::GfVec4i drawrct;
 
   std::vector<struct uiBlock *> uiblocks;
+  std::vector<struct wmEventHandler *> handlers;
 
   ARegion_Runtime runtime;
 
@@ -161,7 +165,7 @@ ARegion::ARegion(kContext *C, kScreen *prim, const wabi::SdfPath &stagepath)
     name(CreateNameAttr()),
     spacetype(CreateSpacetypeAttr()),
     icon(CreateIconAttr()),
-    coords(CreatePosAttr(DEFAULT_VEC4I(0, 0, 0, 0))),
+    coords(CreateCoordsAttr(DEFAULT_VEC4I(0, 0, 0, 0))),
     pos(CreatePosAttr()),
     size(CreateSizeAttr()),
     regiontype(RGN_TYPE_WINDOW),

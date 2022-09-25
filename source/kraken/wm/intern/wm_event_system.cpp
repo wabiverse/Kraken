@@ -46,12 +46,16 @@
 
 #include "KKE_context.h"
 #include "KKE_idtype.h"
+#include "KKE_idprop.h"
+#include "KKE_report.h"
 
 #include "KLI_assert.h"
 #include "KLI_string.h"
 #include "KLI_time.h"
 
 #include "ED_screen.h"
+
+#include "LUXO_access.h"
 
 #include <wabi/base/tf/stringUtils.h>
 
@@ -176,8 +180,10 @@ void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, voi
   KLI_assert(!wm_notifier_is_clear(&note_test));
 
   if (wm->notifier_queue_set == nullptr) {
-    wm->notifier_queue_set = KKE_rhash_new_ex(
-        note_hash_for_queue_fn, note_cmp_for_queue_fn, __func__, 1024);
+    wm->notifier_queue_set = KKE_rhash_new_ex(note_hash_for_queue_fn,
+                                              note_cmp_for_queue_fn,
+                                              __func__,
+                                              1024);
   }
 
   void **note_p;
@@ -604,6 +610,30 @@ void WM_event_init_from_window(wmWindow *win, wmEvent *event)
   *event = *(win->eventstate);
 }
 
+/* -------------------------------------------------------------------- */
+/** @name Event / Keymap Matching API
+ * \{ */
+
+void WM_event_get_keymaps_from_handler(wmWindowManager *wm,
+                                       wmWindow *win,
+                                       wmEventHandler_Keymap *handler,
+                                       wmEventHandler_KeymapResult *km_result)
+{
+  if (handler->dynamic.keymap_fn != nullptr) {
+    handler->dynamic.keymap_fn(wm, win, handler, km_result);
+    KLI_assert(handler->keymap == nullptr);
+  } else {
+    memset(km_result, 0x0, sizeof(*km_result));
+    wmKeyMap *keymap = WM_keymap_active(wm, handler->keymap);
+    KLI_assert(keymap != nullptr);
+    if (keymap != nullptr) {
+      km_result->keymaps[km_result->keymaps_len++] = keymap;
+    }
+  }
+}
+
+/** \} */
+
 wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
                                           std::vector<wmEventHandler *> handlers,
                                           wmUIHandlerFunc handle_fn,
@@ -1027,129 +1057,90 @@ bool WM_operator_poll(kContext *C, wmOperatorType *ot)
   return true;
 }
 
-IDPropertyUIData *IDP_ui_data_copy(const IDProperty *prop)
-{
-  IDPropertyUIData *dst_ui_data = MEM_dupallocN(prop->ui_data);
-
-  /* Copy extra type specific data. */
-  switch (IDP_ui_data_type(prop)) {
-    case IDP_UI_DATA_TYPE_STRING: {
-      const IDPropertyUIDataString *src = (const IDPropertyUIDataString *)prop->ui_data;
-      IDPropertyUIDataString *dst = (IDPropertyUIDataString *)dst_ui_data;
-      dst->default_value = MEM_dupallocN(src->default_value);
-      break;
-    }
-    case IDP_UI_DATA_TYPE_ID: {
-      break;
-    }
-    case IDP_UI_DATA_TYPE_INT: {
-      const IDPropertyUIDataInt *src = (const IDPropertyUIDataInt *)prop->ui_data;
-      IDPropertyUIDataInt *dst = (IDPropertyUIDataInt *)dst_ui_data;
-      dst->default_array = MEM_dupallocN(src->default_array);
-      break;
-    }
-    case IDP_UI_DATA_TYPE_FLOAT: {
-      const IDPropertyUIDataFloat *src = (const IDPropertyUIDataFloat *)prop->ui_data;
-      IDPropertyUIDataFloat *dst = (IDPropertyUIDataFloat *)dst_ui_data;
-      dst->default_array = MEM_dupallocN(src->default_array);
-      break;
-    }
-    case IDP_UI_DATA_TYPE_UNSUPPORTED: {
-      break;
-    }
-  }
-
-  dst_ui_data->description = MEM_dupallocN(prop->ui_data->description);
-
-  return dst_ui_data;
-}
-
-IDProperty *IDP_CopyIDPArray(const IDProperty *array, const int flag)
-{
-  /* don't use MEM_dupallocN because this may be part of an array */
-  KLI_assert(array->type == IDP_IDPARRAY);
-
-  IDProperty *narray = MEM_mallocN(sizeof(IDProperty), __func__);
-  *narray = *array;
-
-  narray->data.pointer = MEM_dupallocN(array->data.pointer);
-  for (int i = 0; i < narray->len; i++) {
-    /* OK, the copy functions always allocate a new structure,
-     * which doesn't work here.  instead, simply copy the
-     * contents of the new structure into the array cell,
-     * then free it.  this makes for more maintainable
-     * code than simply re-implementing the copy functions
-     * in this loop. */
-    IDProperty *tmp = IDP_CopyProperty_ex(GETPROP(narray, i), flag);
-    memcpy(GETPROP(narray, i), tmp, sizeof(IDProperty));
-    MEM_freeN(tmp);
-  }
-
-  return narray;
-}
-
-static IDProperty *idp_generic_copy(const IDProperty *prop, const int UNUSED(flag))
-{
-  IDProperty *newp = MEM_callocN(sizeof(IDProperty), __func__);
-
-  KLI_strncpy(newp->name, prop->name, MAX_IDPROP_NAME);
-  newp->type = prop->type;
-  newp->flag = prop->flag;
-  newp->data.val = prop->data.val;
-  newp->data.val2 = prop->data.val2;
-
-  if (prop->ui_data != NULL) {
-    newp->ui_data = IDP_ui_data_copy(prop);
-  }
-
-  return newp;
-}
-
-IDProperty *IDP_CopyProperty_ex(const IDProperty *prop, const int flag)
-{
-  switch (prop->type) {
-    case IDP_GROUP:
-      return IDP_CopyGroup(prop, flag);
-    case IDP_STRING:
-      return IDP_CopyString(prop, flag);
-    case IDP_ID:
-      return IDP_CopyID(prop, flag);
-    case IDP_ARRAY:
-      return IDP_CopyArray(prop, flag);
-    case IDP_IDPARRAY:
-      return IDP_CopyIDPArray(prop, flag);
-    default:
-      return idp_generic_copy(prop, flag);
-  }
-}
-
-IDProperty *IDP_CopyProperty(const IDProperty *prop)
-{
-  return IDP_CopyProperty_ex(prop, 0);
-}
-
-
 static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       wmOperatorType *ot,
                                       KrakenPRIM *properties,
                                       ReportList *reports)
 {
   /* Operator-type names are static still. pass to allocation name for debugging. */
-  wmOperator *op = MEM_cnew<wmOperator>(ot->idname);
-  
+  wmOperator *op = MEM_cnew<wmOperator>(ot->idname.GetText());
+
+  /* Adding new operator could be function, only happens here now. */
   op->type = ot;
-  KLI_strncpy(op->idname, ot->idname, OP_MAX_TYPENAME);
+  op->idname = ot->idname;
 
   /* Initialize properties, either copy or create. */
-  op->ptr = MEM_cnew<KrakenPRIM>("wmOperatorPtrRNA");
+  op->ptr = MEM_cnew<KrakenPRIM>("wmOperatorPtrPRIM");
   if (properties && properties->data) {
     op->properties = IDP_CopyProperty(static_cast<const IDProperty *>(properties->data));
-  }
-  else {
+  } else {
     IDPropertyTemplate val = {0};
     op->properties = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
   }
-  RNA_pointer_create(&wm->id, ot->srna, op->properties, op->ptr);
+  LUXO_pointer_create(&wm->id, &ot->prim, op->properties, op->ptr);
+
+  /* Initialize error reports. */
+  if (reports) {
+    op->reports = reports; /* Must be initialized already. */
+  } else {
+    op->reports = MEM_cnew<ReportList>("wmOperatorReportList");
+    KKE_reports_init(op->reports, RPT_STORE | RPT_FREE);
+  }
+
+  /* Recursive filling of operator macro list. */
+  if (!ot->macro.empty()) {
+    static wmOperator *motherop = nullptr;
+    int root = 0;
+
+    /* Ensure all ops are in execution order in 1 list. */
+    if (motherop == nullptr) {
+      motherop = op;
+      root = 1;
+    }
+
+    /* If properties exist, it will contain everything needed. */
+    if (properties) {
+      wmOperatorTypeMacro *otmacro = static_cast<wmOperatorTypeMacro *>(ot->macro.front());
+
+      LUXO_STRUCT_BEGIN(properties, prop)
+      {
+
+        if (otmacro == nullptr) {
+          break;
+        }
+
+        /* Skip invalid properties. */
+        if (STREQ(RNA_property_identifier(prop), otmacro->idname)) {
+          wmOperatorType *otm = WM_operatortype_find(otmacro->idname, false);
+          PointerRNA someptr = RNA_property_pointer_get(properties, prop);
+          wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
+
+          IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
+
+          BLI_addtail(&motherop->macro, opm);
+          opm->opm = motherop; /* Pointer to mom, for modal(). */
+
+          otmacro = otmacro->next;
+        }
+      }
+      LUXO_STRUCT_END;
+    } else {
+      LISTBASE_FOREACH(wmOperatorTypeMacro *, macro, &ot->macro)
+      {
+        wmOperatorType *otm = WM_operatortype_find(macro->idname, false);
+        wmOperator *opm = wm_operator_create(wm, otm, macro->ptr, nullptr);
+
+        BLI_addtail(&motherop->macro, opm);
+        opm->opm = motherop; /* Pointer to mom, for modal(). */
+      }
+    }
+
+    if (root) {
+      motherop = nullptr;
+    }
+  }
+
+  WM_operator_properties_sanitize(op->ptr, false);
 
   return op;
 }
@@ -1725,6 +1716,17 @@ void WM_event_do_handlers(kContext *C)
   }
 }
 
+bool WM_operator_poll_context(kContext *C, wmOperatorType *ot, short context)
+{
+  /* Sets up the new context and calls #wm_operator_invoke() with poll_only. */
+  return wm_operator_call_internal(C,
+                                   ot,
+                                   nullptr,
+                                   nullptr,
+                                   static_cast<eWmOperatorContext>(context),
+                                   true,
+                                   nullptr);
+}
 
 static int wm_handler_fileselect() {}
 

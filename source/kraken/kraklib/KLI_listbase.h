@@ -14,6 +14,33 @@
 // struct LinkData;
 
 #ifdef __cplusplus
+KRAKEN_NAMESPACE_BEGIN
+
+/**
+ * Finds the last element of @a store which contains the
+ * token @a id, @returns NULL if not found.
+ */
+struct kContextStoreEntry *KLI_rfindtoken(const struct kContextStore *store, const wabi::TfToken &id);
+
+/**
+ * Removes the head from @a contexts and returns it.
+ */
+kContextStore *KLI_pophead(std::vector<struct kContextStore*> contexts);
+
+/**
+ * Removes and disposes of the entire contents of @a store using guardedalloc.
+ */
+void KLI_freelistN(struct kContextStore *store) ATTR_NONNULL(1);
+
+/**
+ * Removes @a store from @a contexts.
+ */
+void KLI_remlink(std::vector<struct kContextStore*> contexts, kContextStore *store);
+
+KRAKEN_NAMESPACE_END
+#endif /* __cplusplus */
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -21,7 +48,7 @@ extern "C" {
  * Returns the position of \a vlink within \a listbase, numbering from 0, or -1 if not found.
  */
 int KLI_findindex(const struct ListBase *listbase, const void *vlink) ATTR_WARN_UNUSED_RESULT
-    ATTR_NONNULL(1);
+  ATTR_NONNULL(1);
 /**
  * Returns the 0-based index of the first element of listbase which contains the specified
  * null-terminated string at the specified offset, or -1 if not found.
@@ -41,7 +68,7 @@ ListBase KLI_listbase_from_link(struct Link *some_link);
  * Returns the nth element of \a listbase, numbering from 0.
  */
 void *KLI_findlink(const struct ListBase *listbase, int number) ATTR_WARN_UNUSED_RESULT
-    ATTR_NONNULL(1);
+  ATTR_NONNULL(1);
 
 /**
  * Returns the nth element after \a link, numbering from 0.
@@ -95,14 +122,8 @@ void *KLI_listbase_string_or_index_find(const struct ListBase *listbase,
  * Returns the nth-last element of \a listbase, numbering from 0.
  */
 void *KLI_rfindlink(const struct ListBase *listbase, int number) ATTR_WARN_UNUSED_RESULT
-    ATTR_NONNULL(1);
-/**
- * Finds the last element of \a listbase which contains the
- * null-terminated string \a id at the specified offset, returning NULL if not found.
- */
-void *KLI_rfindstring(const struct ListBase *listbase,
-                      const char *id,
-                      int offset) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(1);
+  ATTR_NONNULL(1);
+
 /**
  * Finds the last element of \a listbase which contains a pointer to the
  * null-terminated string \a id at the specified offset, returning NULL if not found.
@@ -160,13 +181,13 @@ void KLI_addhead(struct ListBase *listbase, void *vlink) ATTR_NONNULL(1);
  * Or, if \a vnextlink is NULL, puts \a vnewlink at the end of the list.
  */
 void KLI_insertlinkbefore(struct ListBase *listbase, void *vnextlink, void *vnewlink)
-    ATTR_NONNULL(1);
+  ATTR_NONNULL(1);
 /**
  * Inserts \a vnewlink immediately following \a vprevlink in \a listbase.
  * Or, if \a vprevlink is NULL, puts \a vnewlink at the front of the list.
  */
 void KLI_insertlinkafter(struct ListBase *listbase, void *vprevlink, void *vnewlink)
-    ATTR_NONNULL(1);
+  ATTR_NONNULL(1);
 /**
  * Insert a link in place of another, without changing its position in the list.
  *
@@ -175,14 +196,14 @@ void KLI_insertlinkafter(struct ListBase *listbase, void *vprevlink, void *vnewl
  * - `vnewlink` *must not* be in the list.
  */
 void KLI_insertlinkreplace(ListBase *listbase, void *vreplacelink, void *vnewlink)
-    ATTR_NONNULL(1, 2, 3);
+  ATTR_NONNULL(1, 2, 3);
 /**
  * Sorts the elements of listbase into the order defined by cmp
  * (which should return 1 if its first arg should come after its second arg).
  * This uses insertion sort, so NOT ok for large list.
  */
 void KLI_listbase_sort(struct ListBase *listbase, int (*cmp)(const void *, const void *))
-    ATTR_NONNULL(1, 2);
+  ATTR_NONNULL(1, 2);
 void KLI_listbase_sort_r(ListBase *listbase,
                          int (*cmp)(void *, const void *, const void *),
                          void *thunk) ATTR_NONNULL(1, 2);
@@ -225,7 +246,7 @@ void KLI_freelinkN(struct ListBase *listbase, void *vlink) ATTR_NONNULL(1);
  * Swaps \a vlinka and \a vlinkb in the list. Assumes they are both already in the list!
  */
 void KLI_listbase_swaplinks(struct ListBase *listbase, void *vlinka, void *vlinkb)
-    ATTR_NONNULL(1, 2);
+  ATTR_NONNULL(1, 2);
 /**
  * Swaps \a vlinka and \a vlinkb from their respective lists.
  * Assumes they are both already in their \a listbasea!
@@ -310,26 +331,26 @@ struct LinkData *KLI_genericNodeN(void *data);
  * \endcode
  */
 #define LISTBASE_CIRCULAR_FORWARD_BEGIN(type, lb, lb_iter, lb_init) \
-  if ((lb)->first && (lb_init || (lb_init = (type)(lb)->first))) { \
-    lb_iter = (type)(lb_init); \
+  if ((lb)->first && (lb_init || (lb_init = (type)(lb)->first))) {  \
+    lb_iter = (type)(lb_init);                                      \
     do {
-#define LISTBASE_CIRCULAR_FORWARD_END(type, lb, lb_iter, lb_init) \
-  } \
+#define LISTBASE_CIRCULAR_FORWARD_END(type, lb, lb_iter, lb_init)                 \
+  }                                                                               \
   while ((lb_iter = (lb_iter)->next ? (type)(lb_iter)->next : (type)(lb)->first), \
-         (lb_iter != lb_init)) \
-    ; \
-  } \
+         (lb_iter != lb_init))                                                    \
+    ;                                                                             \
+  }                                                                               \
   ((void)0)
 
 #define LISTBASE_CIRCULAR_BACKWARD_BEGIN(type, lb, lb_iter, lb_init) \
-  if ((lb)->last && (lb_init || (lb_init = (type)(lb)->last))) { \
-    lb_iter = lb_init; \
+  if ((lb)->last && (lb_init || (lb_init = (type)(lb)->last))) {     \
+    lb_iter = lb_init;                                               \
     do {
-#define LISTBASE_CIRCULAR_BACKWARD_END(type, lb, lb_iter, lb_init) \
-  } \
+#define LISTBASE_CIRCULAR_BACKWARD_END(type, lb, lb_iter, lb_init)                               \
+  }                                                                                              \
   while ((lb_iter = (lb_iter)->prev ? (lb_iter)->prev : (type)(lb)->last), (lb_iter != lb_init)) \
-    ; \
-  } \
+    ;                                                                                            \
+  }                                                                                              \
   ((void)0)
 
 #define LISTBASE_FOREACH(type, var, list) \
@@ -340,7 +361,7 @@ struct LinkData *KLI_genericNodeN(void *data);
  * Including this in the macro helps prevent mistakes where "continue" mistakenly skips the
  * incrementation.
  */
-#define LISTBASE_FOREACH_INDEX(type, var, list, index_var) \
+#define LISTBASE_FOREACH_INDEX(type, var, list, index_var)                       \
   for (type var = (((void)(index_var = 0)), (type)((list)->first)); var != NULL; \
        var = (type)(((Link *)(var))->next), index_var++)
 
@@ -350,16 +371,16 @@ struct LinkData *KLI_genericNodeN(void *data);
 /**
  * A version of #LISTBASE_FOREACH that supports removing the item we're looping over.
  */
-#define LISTBASE_FOREACH_MUTABLE(type, var, list) \
-  for (type var = (type)((list)->first), *var##_iter_next; \
+#define LISTBASE_FOREACH_MUTABLE(type, var, list)                                          \
+  for (type var = (type)((list)->first), *var##_iter_next;                                 \
        ((var != NULL) ? ((void)(var##_iter_next = (type)(((Link *)(var))->next)), 1) : 0); \
        var = var##_iter_next)
 
 /**
  * A version of #LISTBASE_FOREACH_BACKWARD that supports removing the item we're looping over.
  */
-#define LISTBASE_FOREACH_BACKWARD_MUTABLE(type, var, list) \
-  for (type var = (type)((list)->last), *var##_iter_prev; \
+#define LISTBASE_FOREACH_BACKWARD_MUTABLE(type, var, list)                                 \
+  for (type var = (type)((list)->last), *var##_iter_prev;                                  \
        ((var != NULL) ? ((void)(var##_iter_prev = (type)(((Link *)(var))->prev)), 1) : 0); \
        var = var##_iter_prev)
 

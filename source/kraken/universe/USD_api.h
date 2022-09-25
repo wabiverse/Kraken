@@ -55,7 +55,7 @@
 #define KRAKEN_DECLARE_STATIC_TOKEN(x) const TfToken x
 #define KRAKEN_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
 #define UI_ID(r) KRAKEN_UI_TOKENS->r
-#define IDNAME(z) KRAKEN_OPERATOR_TOKENS->z
+#define WM_ID_(z) KRAKEN_WM_TOKENS->z
 
 /* Switch Get() to Define() for production. */
 #define KRAKEN_STAGE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))

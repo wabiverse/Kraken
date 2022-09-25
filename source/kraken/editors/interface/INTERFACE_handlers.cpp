@@ -202,7 +202,7 @@ struct uiAfterFunc
 
   wmOperator *popup_op;
   wmOperatorType *optype;
-  // kraken::eWmOperatorContext opcontext;
+  kraken::eWmOperatorContext opcontext;
   KrakenPRIM *opptr;
 
   struct KrakenPRIM stagepoin;
@@ -214,7 +214,7 @@ struct uiAfterFunc
   uiBlockInteraction_CallbackData custom_interaction_callbacks;
   uiBlockInteraction_Handle *custom_interaction_handle;
 
-  // kContextStore *context;
+  kContextStore *context;
 
   char undostr[KKE_UNDO_STR_MAX];
   char drawstr[UI_MAX_DRAW_STR];
@@ -386,7 +386,7 @@ static void ui_apply_but_func(kContext *C, uiBut *but)
   }
 
   after->optype = but->optype;
-  // after->opcontext = but->opcontext;
+  after->opcontext = but->opcontext;
   after->opptr = but->opptr;
 
   after->stagepoin = but->stagepoin;
@@ -420,9 +420,9 @@ static void ui_apply_but_func(kContext *C, uiBut *but)
     }
   }
 
-  // if (but->context) {
-  //   after->context = CTX_store_copy(but->context);
-  // }
+  if (but->context) {
+    after->context = CTX_store_copy(but->context);
+  }
 
   UI_but_drawstr_without_sep_char(but, after->drawstr, sizeof(after->drawstr));
 
@@ -1018,7 +1018,7 @@ static void button_activate_state(kContext *C, uiBut *but, uiHandleButtonState s
     if (button_modal_state(state)) {
       if (!button_modal_state(data->state)) {
         WM_event_add_ui_handler(C,
-                                &data->window->modalhandlers,
+                                data->window->modalhandlers,
                                 ui_handler_region_menu,
                                 NULL,
                                 data,
@@ -1027,7 +1027,7 @@ static void button_activate_state(kContext *C, uiBut *but, uiHandleButtonState s
     } else {
       if (button_modal_state(data->state)) {
         /* true = postpone free */
-        WM_event_remove_ui_handler(&data->window->modalhandlers,
+        WM_event_remove_ui_handler(data->window->modalhandlers,
                                    ui_handler_region_menu,
                                    NULL,
                                    data,
@@ -1132,7 +1132,7 @@ static void button_activate_exit(kContext *C,
       uiSelectContextStore *selctx_data = &data->select_others;
       for (int i = 0; i < selctx_data->elems_len; i++) {
         uiSelectContextElem *other = &selctx_data->elems[i];
-        but_temp.rnapoin = other->ptr;
+        but_temp.stagepoin = other->ptr;
         ui_apply_but_autokey(C, &but_temp);
       }
     }
@@ -1499,6 +1499,119 @@ static int ui_popup_handler(kContext *C, const wmEvent *event, void *userdata)
   CTX_wm_region_set(C, menu_region);
 
   return retval;
+}
+
+static void ui_apply_but_funcs_after(kContext *C)
+{
+  /* Copy to avoid recursive calls. */
+  std::vector<uiAfterFunc *> funcs = UIAfterFuncs;
+  UIAfterFuncs.clear();
+
+  size_t afterfIdx = 0;
+  for (auto &afterf : funcs) {
+    uiAfterFunc after = *afterf; /* copy to avoid memleak on exit() */
+    funcs.erase(funcs.begin()+afterfIdx);
+
+    if (after.context) {
+      CTX_store_set(C, after.context);
+    }
+
+    if (after.popup_op) {
+      popup_check(C, after.popup_op);
+    }
+
+    PointerRNA opptr;
+    if (after.opptr) {
+      /* free in advance to avoid leak on exit */
+      opptr = *after.opptr;
+      MEM_freeN(after.opptr);
+    }
+
+    if (after.optype) {
+      WM_operator_name_call_ptr_with_depends_on_cursor(
+          C, after.optype, after.opcontext, (after.opptr) ? &opptr : NULL, NULL, after.drawstr);
+    }
+
+    if (after.opptr) {
+      WM_operator_properties_free(&opptr);
+    }
+
+    if (after.stagepoin.data) {
+      RNA_property_update(C, &after.stagepoin, after.stageprop);
+    }
+
+    if (after.context) {
+      CTX_store_set(C, NULL);
+      CTX_store_free(after.context);
+    }
+
+    if (after.func) {
+      after.func(C, after.func_arg1, after.func_arg2);
+    }
+    if (after.funcN) {
+      after.funcN(C, after.func_argN, after.func_arg2);
+    }
+    if (after.func_argN) {
+      MEM_freeN(after.func_argN);
+    }
+
+    if (after.handle_func) {
+      after.handle_func(C, after.handle_func_arg, after.retval);
+    }
+    if (after.butm_func) {
+      after.butm_func(C, after.butm_func_arg, after.a2);
+    }
+
+    if (after.rename_func) {
+      after.rename_func(C, after.rename_arg1, after.rename_orig);
+    }
+    if (after.rename_orig) {
+      MEM_freeN(after.rename_orig);
+    }
+
+    if (after.search_arg_free_fn) {
+      after.search_arg_free_fn(after.search_arg);
+    }
+
+    if (after.custom_interaction_handle != NULL) {
+      after.custom_interaction_handle->user_count--;
+      KLI_assert(after.custom_interaction_handle->user_count >= 0);
+      if (after.custom_interaction_handle->user_count == 0) {
+        ui_block_interaction_update(
+            C, &after.custom_interaction_callbacks, after.custom_interaction_handle);
+        ui_block_interaction_end(
+            C, &after.custom_interaction_callbacks, after.custom_interaction_handle);
+      }
+      after.custom_interaction_handle = NULL;
+    }
+
+    ui_afterfunc_update_preferences_dirty(&after);
+
+    if (after.undostr[0]) {
+      ED_undo_push(C, after.undostr);
+    }
+
+    ++afterfIdx;
+  }
+}
+
+static void ui_popup_handler_remove(kContext *C, void *userdata)
+{
+  uiPopupBlockHandle *menu = (uiPopupBlockHandle *)userdata;
+
+  /* More correct would be to expect UI_RETURN_CANCEL here, but not wanting to
+   * cancel when removing handlers because of file exit is a rare exception.
+   * So instead of setting cancel flag for all menus before removing handlers,
+   * just explicitly flag menu with UI_RETURN_OK to avoid canceling it. */
+  if ((menu->menuretval & UI_RETURN_OK) == 0 && menu->cancel_func) {
+    menu->cancel_func(C, menu->popup_arg);
+  }
+
+  /* free menu block if window is closed for some reason */
+  ui_popup_block_free(C, menu);
+
+  /* delayed apply callbacks */
+  ui_apply_but_funcs_after(C);
 }
 
 void UI_popup_handlers_add(kContext *C,

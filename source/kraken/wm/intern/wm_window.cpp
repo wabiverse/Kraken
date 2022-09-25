@@ -22,12 +22,15 @@
  * Making GUI Fly.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "WM_window.h"
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
 #include "WM_dragdrop.h"
 #include "WM_draw.h"
 #include "WM_event_system.h"
+#include "WM_files.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
 #include "WM_tokens.h"
@@ -40,6 +43,7 @@
 #include "USD_userpref.h"
 #include "USD_window.h"
 #include "USD_workspace.h"
+#include "USD_wm_types.h"
 
 #include "ANCHOR_api.h"
 #include "ANCHOR_event_consumer.h"
@@ -57,10 +61,14 @@
 #include "KLI_time.h"
 #include "KLI_threads.h"
 
+#include "GPU_matrix.h"
+#include "GPU_viewport.h"
+
 #include "ED_fileselect.h"
 #include "ED_screen.h"
 #include "UI_interface.h"
 #include "UI_resources.h"
+#include "UI_tokens.h"
 
 #include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
@@ -437,7 +445,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
         const char *path = (const char *)ANCHOR::GetEventData(evt);
 
         if (path) {
-          wmOperatorType *ot = WM_operatortype_find(IDNAME(WM_OT_open_mainfile));
+          wmOperatorType *ot = WM_operatortype_find(WM_ID_(WM_OT_open_mainfile));
           CTX_wm_window_set(C, win);
 
           KrakenPRIM props_ptr;
@@ -1007,183 +1015,6 @@ static void WM_generic_callback_free(wmGenericCallback *callback)
   delete callback;
 }
 
-static uiBlock *block_create__close_file_dialog(struct kContext *C,
-                                                struct ARegion *region,
-                                                void *arg1)
-{
-  wmGenericCallback *post_action = (wmGenericCallback *)arg1;
-  Main *kmain = CTX_data_main(C);
-
-  uiBlock *block = UI_block_begin(C, region, UI_ID(UI_POPUP_file_close), UI_EMBOSS);
-  UI_block_flag_enable(
-      block, UI_BLOCK_KEEP_OPEN | UI_BLOCK_LOOP | UI_BLOCK_NO_WIN_CLIP | UI_BLOCK_NUMSELECT);
-  UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
-
-  uiLayout *layout = uiItemsAlertBox(block, 34, ALERT_ICON_QUESTION);
-
-  /* Title. */
-  uiItemL_ex(layout, TIP_("Save changes before closing?"), ICON_NONE, true, false);
-
-  /* Filename. */
-  const char *blendfile_path = KKE_main_pixarfile_path(CTX_data_main(C));
-  char filename[FILE_MAX];
-  if (blendfile_path[0] != '\0') {
-    KLI_split_file_part(blendfile_path, filename, sizeof(filename));
-  }
-  else {
-    SNPRINTF(filename, "%s.blend", DATA_("untitled"));
-  }
-  uiItemL(layout, filename, ICON_NONE);
-
-  /* Image Saving Warnings. */
-  ReportList reports;
-  KKE_reports_init(&reports, RPT_STORE);
-  uint modified_images_count = ED_image_save_all_modified_info(kmain, &reports);
-
-  for (auto &report : reports.list) {
-    uiLayout *row = uiLayoutColumn(layout, false);
-    uiLayoutSetScaleY(row, 0.6f);
-    uiItemS(row);
-
-    /* Error messages created in ED_image_save_all_modified_info() can be long,
-     * but are made to separate into two parts at first colon between text and paths.
-     */
-    char *message = KLI_strdupn(report->message, report->len);
-    char *path_info = strstr(message, ": ");
-    if (path_info) {
-      /* Terminate message string at colon. */
-      path_info[1] = '\0';
-      /* Skip over the ": " */
-      path_info += 2;
-    }
-    uiItemL_ex(row, message, ICON_NONE, false, true);
-    if (path_info) {
-      uiItemL_ex(row, path_info, ICON_NONE, false, true);
-    }
-    delete message;
-  }
-
-  /* Used to determine if extra separators are needed. */
-  bool has_extra_checkboxes = false;
-
-  /* Modified Images Checkbox. */
-  if (modified_images_count > 0) {
-    char message[64];
-    KLI_snprintf(message, sizeof(message), "Save %u modified image(s)", modified_images_count);
-    /* Only the first checkbox should get extra separation. */
-    if (!has_extra_checkboxes) {
-      uiItemS(layout);
-    }
-    uiDefButBitC(block,
-                 UI_BTYPE_CHECKBOX,
-                 1,
-                 0,
-                 message,
-                 0,
-                 0,
-                 0,
-                 UI_UNIT_Y,
-                 &save_images_when_file_is_closed,
-                 0,
-                 0,
-                 0,
-                 0,
-                 "");
-    has_extra_checkboxes = true;
-  }
-
-  if (KKE_asset_library_has_any_unsaved_catalogs()) {
-    static char save_catalogs_when_file_is_closed;
-
-    save_catalogs_when_file_is_closed = ED_asset_catalogs_get_save_catalogs_when_file_is_saved();
-
-    /* Only the first checkbox should get extra separation. */
-    if (!has_extra_checkboxes) {
-      uiItemS(layout);
-    }
-    uiBut *but = uiDefButBitC(block,
-                              UI_BTYPE_CHECKBOX,
-                              1,
-                              0,
-                              "Save modified asset catalogs",
-                              0,
-                              0,
-                              0,
-                              UI_UNIT_Y,
-                              &save_catalogs_when_file_is_closed,
-                              0,
-                              0,
-                              0,
-                              0,
-                              "");
-    UI_but_func_set(
-        but, save_catalogs_when_file_is_closed_set_fn, &save_catalogs_when_file_is_closed, NULL);
-    has_extra_checkboxes = true;
-  }
-
-  KKE_reports_clear(&reports);
-
-  uiItemS_ex(layout, has_extra_checkboxes ? 2.0f : 4.0f);
-
-  /* Buttons. */
-#ifdef _WIN32
-  const bool windows_layout = true;
-#else
-  const bool windows_layout = false;
-#endif
-
-  if (windows_layout) {
-    /* Windows standard layout. */
-
-    uiLayout *split = uiLayoutSplit(layout, 0.0f, true);
-    uiLayoutSetScaleY(split, 1.2f);
-
-    uiLayoutColumn(split, false);
-    wm_block_file_close_save_button(block, post_action);
-
-    uiLayoutColumn(split, false);
-    wm_block_file_close_discard_button(block, post_action);
-
-    uiLayoutColumn(split, false);
-    wm_block_file_close_cancel_button(block, post_action);
-  }
-  else {
-    /* Non-Windows layout (macOS and Linux). */
-
-    uiLayout *split = uiLayoutSplit(layout, 0.3f, true);
-    uiLayoutSetScaleY(split, 1.2f);
-
-    uiLayoutColumn(split, false);
-    wm_block_file_close_discard_button(block, post_action);
-
-    uiLayout *split_right = uiLayoutSplit(split, 0.1f, true);
-
-    uiLayoutColumn(split_right, false);
-    /* Empty space. */
-
-    uiLayoutColumn(split_right, false);
-    wm_block_file_close_cancel_button(block, post_action);
-
-    uiLayoutColumn(split_right, false);
-    wm_block_file_close_save_button(block, post_action);
-  }
-
-  UI_block_bounds_set_centered(block, 14 * UI_DPI_FAC);
-  return block;
-}
-
-static void wm_close_file_dialog(kContext *C, wmGenericCallback *post_action)
-{
-  if (!UI_popup_block_name_exists(CTX_wm_screen(C), UI_ID(UI_POPUP_file_close))) {
-    UI_popup_block_invoke(C,
-                          block_create__close_file_dialog,
-                          post_action,
-                          free_post_file_close_action);
-  } else {
-    WM_generic_callback_free(post_action);
-  }
-}
-
 
 static int wm_exit_handler(kContext *C, const wmEvent *event, void *userdata)
 {
@@ -1203,6 +1034,18 @@ void WM_exit_schedule_delayed(const kContext *C)
   WM_event_add_mousemove(win);
 }
 
+static void do_nothing(struct kContext *UNUSED(C), void *UNUSED(user_data))
+{
+}
+
+wmGenericCallback *WM_generic_callback_steal(wmGenericCallback *callback)
+{
+  wmGenericCallback *new_callback = static_cast<wmGenericCallback *>(MEM_dupallocN(callback));
+  callback->exec = do_nothing;
+  callback->free_user_data = NULL;
+  callback->user_data = NULL;
+  return new_callback;
+}
 
 static void wm_save_file_on_quit_dialog_callback(kContext *C, void *UNUSED(user_data))
 {
@@ -1213,7 +1056,7 @@ static void wm_confirm_quit(kContext *C)
 {
   wmGenericCallback *action = new wmGenericCallback();
   action->exec = wm_save_file_on_quit_dialog_callback;
-  wm_close_file_dialog(C, action);
+  WM_close_file_dialog(C, action);
 }
 
 
@@ -1606,6 +1449,25 @@ void WM_event_remove_timer(wmWindowManager *wm, wmWindow *UNUSED(win), wmTimer *
   }
 }
 
+void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct)
+{
+  GfVec4i size;
+  size[0] = winrct->xmin;
+  size[1] = winrct->xmax;
+  size[2] = winrct->ymin;
+  size[3] = winrct->ymax;
+
+  int width = KLI_rcti_size_x(size) + 1;
+  int height = KLI_rcti_size_y(size) + 1;
+  orthographic_m4(mat,
+                  -GLA_PIXEL_OFS,
+                  (float)width - GLA_PIXEL_OFS,
+                  -GLA_PIXEL_OFS,
+                  (float)height - GLA_PIXEL_OFS,
+                  GPU_MATRIX_ORTHO_CLIP_NEAR_DEFAULT,
+                  GPU_MATRIX_ORTHO_CLIP_FAR_DEFAULT);
+}
+
 /**
  *  -----  The Window Operators. ----- */
 
@@ -1685,7 +1547,7 @@ static int wm_exit_kraken_invoke(kContext *C, wmOperator *UNUSED(op), wmEvent *U
 static void WM_OT_window_close(wmOperatorType *ot)
 {
   ot->name = "Close Window";
-  ot->idname = IDNAME(WM_OT_window_close);
+  ot->idname = WM_ID_(WM_OT_window_close);
   ot->description = "Close the current window";
 
   ot->exec = wm_window_close_exec;
@@ -1696,7 +1558,7 @@ static void WM_OT_window_close(wmOperatorType *ot)
 static void WM_OT_window_new(wmOperatorType *ot)
 {
   ot->name = "New Window";
-  ot->idname = IDNAME(WM_OT_window_new);
+  ot->idname = WM_ID_(WM_OT_window_new);
   ot->description = "Create a new window";
 
   ot->exec = wm_window_new_exec;
@@ -1707,7 +1569,7 @@ static void WM_OT_window_new(wmOperatorType *ot)
 static void WM_OT_window_new_main(wmOperatorType *ot)
 {
   ot->name = "New Main Window";
-  ot->idname = IDNAME(WM_OT_window_new_main);
+  ot->idname = WM_ID_(WM_OT_window_new_main);
   ot->description = "Create a new main window with its own workspace and scene selection";
 
   ot->exec = wm_window_new_main_exec;
@@ -1718,7 +1580,7 @@ static void WM_OT_window_new_main(wmOperatorType *ot)
 static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 {
   ot->name = "Toggle Window Fullscreen";
-  ot->idname = IDNAME(WM_OT_window_fullscreen_toggle);
+  ot->idname = WM_ID_(WM_OT_window_fullscreen_toggle);
   ot->description = "Toggle the current window fullscreen";
 
   ot->exec = wm_window_fullscreen_toggle_exec;
@@ -1729,7 +1591,7 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 static void WM_OT_quit_kraken(wmOperatorType *ot)
 {
   ot->name = "Quit Kraken";
-  ot->idname = IDNAME(WM_OT_quit_kraken);
+  ot->idname = WM_ID_(WM_OT_quit_kraken);
   ot->description = "Quit Kraken";
 
   ot->invoke = wm_exit_kraken_invoke;

@@ -50,8 +50,10 @@ KRAKEN_NAMESPACE_BEGIN
 /** \name RHash Types
  * \{ */
 
+typedef unsigned int (*RHashHashTFP)(const TfToken &key);
 typedef unsigned int (*RHashHashFP)(const void *key);
 /** returns false when equal */
+typedef bool (*RHashCmpTFP)(const TfToken &a, const TfToken &b);
 typedef bool (*RHashCmpFP)(const void *a, const void *b);
 typedef void (*RHashKeyFreeFP)(void *key);
 typedef void (*RHashValFreeFP)(void *val);
@@ -60,6 +62,9 @@ typedef void *(*RHashValCopyFP)(const void *val);
 
 struct RHash
 {
+  RHashHashTFP hashtfp;
+  RHashCmpTFP cmptfp;
+
   RHashHashFP hashfp;
   RHashCmpFP cmpfp;
 
@@ -170,6 +175,12 @@ RHash *KKE_rhash_copy(const RHash *gh,
 void *KKE_rhash_lookup(RHash *rh, const void *key);
 void *KKE_rhash_lookup(RHash *rh, const TfToken &key);
 void KKE_rhash_insert(RHash *rh, const TfToken &key, void *value);
+
+bool KKE_rhash_reinsert(RHash *gh,
+                        TfToken &key,
+                        void *val,
+                        RHashKeyFreeFP keyfreefp,
+                        RHashValFreeFP valfreefp);
 
 bool KKE_rhash_reinsert(RHash *gh,
                         void *key,

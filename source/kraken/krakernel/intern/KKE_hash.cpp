@@ -361,6 +361,7 @@ struct Entry
   struct Entry *next;
 
   void *key;
+  TfToken &token;
 };
 
 struct RHashEntry
@@ -398,6 +399,14 @@ KLI_INLINE void rhash_entry_copy(RHash *gh_dst,
 }
 
 /**
+ * Get the full hash for a token.
+ */
+KLI_INLINE uint rhash_keyhash(const RHash *rh, const TfToken &key)
+{
+  return rh->hashtfp(key);
+}
+
+/**
  * Get the full hash for a key.
  */
 KLI_INLINE uint rhash_keyhash(const RHash *rh, const void *key)
@@ -426,6 +435,25 @@ KLI_INLINE uint rhash_bucket_index(const RHash *rh, const uint hash)
  * Takes hash and bucket_index arguments to avoid calling #rhash_keyhash and #rhash_bucket_index
  * multiple times.
  */
+KLI_INLINE Entry *rhash_lookup_entry_ex(const RHash *rh, const TfToken &key, const uint bucket_index)
+{
+  Entry *e;
+  /* If we do not store RHash, not worth computing it for each entry here!
+   * Typically, comparison function will be quicker, and since it's needed in the end anyway... */
+  for (e = rh->buckets[bucket_index]; e; e = e->next) {
+    if (ARCH_UNLIKELY(rh->cmptfp(key, e->token) == false)) {
+      return e;
+    }
+  }
+
+  return NULL;
+}
+
+/**
+ * Internal lookup function.
+ * Takes hash and bucket_index arguments to avoid calling #rhash_keyhash and #rhash_bucket_index
+ * multiple times.
+ */
 KLI_INLINE Entry *rhash_lookup_entry_ex(const RHash *rh, const void *key, const uint bucket_index)
 {
   Entry *e;
@@ -443,11 +471,26 @@ KLI_INLINE Entry *rhash_lookup_entry_ex(const RHash *rh, const void *key, const 
 /**
  * Internal lookup function. Only wraps #rhash_lookup_entry_ex
  */
+KLI_INLINE Entry *rhash_lookup_entry(const RHash *rh, const TfToken &key)
+{
+  const uint hash = rhash_keyhash(rh, key);
+  const uint bucket_index = rhash_bucket_index(rh, hash);
+  return rhash_lookup_entry_ex(rh, key, bucket_index);
+}
+
+/**
+ * Internal lookup function. Only wraps #rhash_lookup_entry_ex
+ */
 KLI_INLINE Entry *rhash_lookup_entry(const RHash *rh, const void *key)
 {
   const uint hash = rhash_keyhash(rh, key);
   const uint bucket_index = rhash_bucket_index(rh, hash);
   return rhash_lookup_entry_ex(rh, key, bucket_index);
+}
+
+bool KKE_rhash_haskey(const RHash *rh, const TfToken &key)
+{
+  return (rhash_lookup_entry(rh, key) != NULL);
 }
 
 bool KKE_rhash_haskey(const RHash *rh, const void *key)
@@ -539,6 +582,26 @@ static void rhash_buckets_expand(RHash *rh, const uint nentries, const bool user
  * Takes hash and bucket_index arguments to avoid calling #rhash_keyhash and #rhash_bucket_index
  * multiple times.
  */
+KLI_INLINE void rhash_insert_ex(RHash *rh, const TfToken &key, void *val, const uint bucket_index)
+{
+  RHashEntry *e = static_cast<RHashEntry *>(KKE_mempool_alloc(rh->entrypool));
+
+  KLI_assert((rh->flag & RHASH_FLAG_ALLOW_DUPES) || (KKE_rhash_haskey(rh, key) == 0));
+  KLI_assert(!(rh->flag & RHASH_FLAG_IS_RSET));
+
+  e->e.next = rh->buckets[bucket_index];
+  e->e.token = key;
+  e->val = val;
+  rh->buckets[bucket_index] = (Entry *)e;
+
+  rhash_buckets_expand(rh, ++rh->nentries, false);
+}
+
+/**
+ * Internal insert function.
+ * Takes hash and bucket_index arguments to avoid calling #rhash_keyhash and #rhash_bucket_index
+ * multiple times.
+ */
 KLI_INLINE void rhash_insert_ex(RHash *gh, void *key, void *val, const uint bucket_index)
 {
   RHashEntry *e = static_cast<RHashEntry *>(KKE_mempool_alloc(gh->entrypool));
@@ -552,6 +615,36 @@ KLI_INLINE void rhash_insert_ex(RHash *gh, void *key, void *val, const uint buck
   gh->buckets[bucket_index] = (Entry *)e;
 
   rhash_buckets_expand(gh, ++gh->nentries, false);
+}
+
+KLI_INLINE bool rhash_insert_safe(RHash *rh,
+                                  TfToken &key,
+                                  void *val,
+                                  const bool override,
+                                  RHashKeyFreeFP keyfreefp,
+                                  RHashValFreeFP valfreefp)
+{
+  const uint hash = rhash_keyhash(rh, key);
+  const uint bucket_index = rhash_bucket_index(rh, hash);
+  RHashEntry *e = (RHashEntry *)rhash_lookup_entry_ex(rh, key, bucket_index);
+
+  KLI_assert(!(rh->flag & RHASH_FLAG_IS_RSET));
+
+  if (e) {
+    if (override) {
+      if (keyfreefp) {
+        keyfreefp(e->e.key);
+      }
+      if (valfreefp) {
+        valfreefp(e->val);
+      }
+      e->e.token = key;
+      e->val = val;
+    }
+    return false;
+  }
+  rhash_insert_ex(rh, key, val, bucket_index);
+  return true;
 }
 
 KLI_INLINE bool rhash_insert_safe(RHash *rh,
@@ -767,6 +860,15 @@ RHash *KKE_rhash_int_new(const char *info)
 RHash *KKE_rhash_copy(const RHash *rh, RHashKeyCopyFP keycopyfp, RHashValCopyFP valcopyfp)
 {
   return rhash_copy(rh, keycopyfp, valcopyfp);
+}
+
+bool KKE_rhash_reinsert(RHash *rh,
+                        TfToken &key,
+                        void *val,
+                        RHashKeyFreeFP keyfreefp,
+                        RHashValFreeFP valfreefp)
+{
+  return rhash_insert_safe(rh, key, val, true, keyfreefp, valfreefp);
 }
 
 bool KKE_rhash_reinsert(RHash *rh,

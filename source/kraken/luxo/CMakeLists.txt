@@ -50,8 +50,11 @@ unset(CMAKE_CXX_CLANG_TIDY)
 
 set(SRC_LUXO_INC
   LUXO_define.h
+  LUXO_enum_items.h
+  LUXO_enum_types.h
   LUXO_main.h
   LUXO_runtime.h
+  LUXO_types.h
 )
 
 set(SRC

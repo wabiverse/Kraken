@@ -14,6 +14,7 @@ set(SRC
   intern/KLI_filelist.cpp
   intern/KLI_fileops.cpp
   intern/KLI_icons.cpp
+  intern/KLI_listbase.cpp
   intern/KLI_math_base_inline.c
   intern/KLI_math_bits_inline.c
   intern/KLI_math_geom_inline.c
@@ -26,6 +27,7 @@ set(SRC
   intern/KLI_numaapi.cpp
   intern/KLI_path_utils.cpp
   intern/KLI_rect.cpp
+  intern/KLI_string_utf8.c
   intern/KLI_storage.cpp
   intern/KLI_system.c
   intern/KLI_string.c
@@ -34,14 +36,18 @@ set(SRC
   intern/KLI_winstuff.cpp
 
   KLI_api.h
+  KLI_array.h
   KLI_assert.h
   KLI_compiler_attrs.h
   KLI_compiler_compat.h
   KLI_compiler_typecheck.h
   KLI_dynstr.h
+  KLI_easing.h
   KLI_fileops.h
   KLI_index_range.hh
   KLI_icons.h
+  KLI_kraklib.h
+  KLI_link_utils.h
   KLI_listbase.h
   KLI_memory_utils.hh
   KLI_math_base.h
@@ -61,6 +67,7 @@ set(SRC
   KLI_strict_flags.h
   KLI_string_ref.hh
   KLI_string_utils.h
+  KLI_string_utf8.h
   KLI_string.h
   KLI_sys_types.h
   KLI_system.h

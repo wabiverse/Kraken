@@ -25,13 +25,15 @@
 #pragma once
 
 #include "WM_api.h"
-
+#include "WM_window.h"
 #include "WM_msgbus.h"
 #include "WM_operators.h"
 
 #include "KKE_context.h"
 
 KRAKEN_NAMESPACE_BEGIN
+
+void WM_close_file_dialog(kContext *C, struct wmGenericCallback *post_action);
 
 void WM_file_operators_register(void);
 void WM_files_init(kContext *C);

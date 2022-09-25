@@ -24,15 +24,6 @@
 
 #include "LUXO_runtime.h"
 
-#include "KLI_icons.h"
-#include "KLI_string.h"
-#include "KLI_path_utils.h"
-
-#include "KKE_context.h"
-#include "KKE_main.h"
-#include "KKE_report.h"
-#include "KKE_screen.h"
-
 #include "USD_api.h"
 #include "USD_area.h"
 #include "USD_context.h"
@@ -46,189 +37,243 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
-#include "LUXO_internal.h"
+#include "KLI_utildefines.h"
+#include "KLI_icons.h"
+#include "KLI_string.h"
+#include "KLI_path_utils.h"
+
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_report.h"
+#include "KKE_screen.h"
+
 #include "LUXO_runtime.h"
+#include "LUXO_access.h"
 #include "LUXO_define.h"
+
+#include "LUXO_internal.h"
+
+#include "WM_tokens.h"
+
+#include <wabi/base/tf/token.h>
 
 KRAKEN_NAMESPACE_BEGIN
 
-KRAKEN_REGISTER_LUXO_RUNTIME_TYPES(TfEnum)
-{
-  LUXO_ADD_ENUM_PROP(LEFTMOUSE, "LEFTMOUSE", ICON_NONE, "Left Mouse", "LMB");
-  LUXO_ADD_ENUM_PROP(MIDDLEMOUSE, "MIDDLEMOUSE", ICON_NONE, "Middle Mouse", "MMB");
-  LUXO_ADD_ENUM_PROP(RIGHTMOUSE, "RIGHTMOUSE", ICON_NONE, "Right Mouse", "RMB");
-  LUXO_ADD_ENUM_PROP(BUTTON4MOUSE, "BUTTON4MOUSE", ICON_NONE, "Button4 Mouse", "MB4");
-  LUXO_ADD_ENUM_PROP(BUTTON5MOUSE, "BUTTON5MOUSE", ICON_NONE, "Button5 Mouse", "MB5");
-  LUXO_ADD_ENUM_PROP(BUTTON6MOUSE, "BUTTON6MOUSE", ICON_NONE, "Button6 Mouse", "MB6");
-  LUXO_ADD_ENUM_PROP(BUTTON7MOUSE, "BUTTON7MOUSE", ICON_NONE, "Button7 Mouse", "MB7");
-  LUXO_ADD_ENUM_PROP(TABLET_STYLUS, "PEN", ICON_NONE, "Pen", "");
-  LUXO_ADD_ENUM_PROP(TABLET_ERASER, "ERASER", ICON_NONE, "Eraser", "");
-  LUXO_ADD_ENUM_PROP(MOUSEMOVE, "MOUSEMOVE", ICON_NONE, "Mouse Move", "MsMov");
-  LUXO_ADD_ENUM_PROP(INBETWEEN_MOUSEMOVE,
-                     "INBETWEEN_MOUSEMOVE",
-                     ICON_NONE,
-                     "In-between Move",
-                     "MsSubMov");
-  LUXO_ADD_ENUM_PROP(MOUSEPAN, "TRACKPADPAN", ICON_NONE, "Mouse/Trackpad Pan", "MsPan");
-  LUXO_ADD_ENUM_PROP(MOUSEZOOM, "TRACKPADZOOM", ICON_NONE, "Mouse/Trackpad Zoom", "MsZoom");
-  LUXO_ADD_ENUM_PROP(MOUSEROTATE, "MOUSEROTATE", ICON_NONE, "Mouse/Trackpad Rotate", "MsRot");
-  LUXO_ADD_ENUM_PROP(MOUSESMARTZOOM,
-                     "MOUSESMARTZOOM",
-                     ICON_NONE,
-                     "Mouse/Trackpad Smart Zoom",
-                     "MsSmartZoom");
-  LUXO_ADD_ENUM_PROP(WHEELUPMOUSE, "WHEELUPMOUSE", ICON_NONE, "Wheel Up", "WhUp");
-  LUXO_ADD_ENUM_PROP(WHEELDOWNMOUSE, "WHEELDOWNMOUSE", ICON_NONE, "Wheel Down", "WhDown");
-  LUXO_ADD_ENUM_PROP(WHEELINMOUSE, "WHEELINMOUSE", ICON_NONE, "Wheel In", "WhIn");
-  LUXO_ADD_ENUM_PROP(WHEELOUTMOUSE, "WHEELOUTMOUSE", ICON_NONE, "Wheel Out", "WhOut");
-  LUXO_ADD_ENUM_PROP(EVT_TWEAK_L, "EVT_TWEAK_L", ICON_NONE, "Tweak Left", "TwkL");
-  LUXO_ADD_ENUM_PROP(EVT_TWEAK_M, "EVT_TWEAK_M", ICON_NONE, "Tweak Middle", "TwkM");
-  LUXO_ADD_ENUM_PROP(EVT_TWEAK_R, "EVT_TWEAK_R", ICON_NONE, "Tweak Right", "TwkR");
-  LUXO_ADD_ENUM_PROP(EVT_AKEY, "A", ICON_NONE, "A", "");
-  LUXO_ADD_ENUM_PROP(EVT_BKEY, "B", ICON_NONE, "B", "");
-  LUXO_ADD_ENUM_PROP(EVT_CKEY, "C", ICON_NONE, "C", "");
-  LUXO_ADD_ENUM_PROP(EVT_DKEY, "D", ICON_NONE, "D", "");
-  LUXO_ADD_ENUM_PROP(EVT_EKEY, "E", ICON_NONE, "E", "");
-  LUXO_ADD_ENUM_PROP(EVT_FKEY, "F", ICON_NONE, "F", "");
-  LUXO_ADD_ENUM_PROP(EVT_GKEY, "G", ICON_NONE, "G", "");
-  LUXO_ADD_ENUM_PROP(EVT_HKEY, "H", ICON_NONE, "H", "");
-  LUXO_ADD_ENUM_PROP(EVT_IKEY, "I", ICON_NONE, "I", "");
-  LUXO_ADD_ENUM_PROP(EVT_JKEY, "J", ICON_NONE, "J", "");
-  LUXO_ADD_ENUM_PROP(EVT_KKEY, "K", ICON_NONE, "K", "");
-  LUXO_ADD_ENUM_PROP(EVT_LKEY, "L", ICON_NONE, "L", "");
-  LUXO_ADD_ENUM_PROP(EVT_MKEY, "M", ICON_NONE, "M", "");
-  LUXO_ADD_ENUM_PROP(EVT_NKEY, "N", ICON_NONE, "N", "");
-  LUXO_ADD_ENUM_PROP(EVT_OKEY, "O", ICON_NONE, "O", "");
-  LUXO_ADD_ENUM_PROP(EVT_PKEY, "P", ICON_NONE, "P", "");
-  LUXO_ADD_ENUM_PROP(EVT_QKEY, "Q", ICON_NONE, "Q", "");
-  LUXO_ADD_ENUM_PROP(EVT_RKEY, "R", ICON_NONE, "R", "");
-  LUXO_ADD_ENUM_PROP(EVT_SKEY, "S", ICON_NONE, "S", "");
-  LUXO_ADD_ENUM_PROP(EVT_TKEY, "T", ICON_NONE, "T", "");
-  LUXO_ADD_ENUM_PROP(EVT_UKEY, "U", ICON_NONE, "U", "");
-  LUXO_ADD_ENUM_PROP(EVT_VKEY, "V", ICON_NONE, "V", "");
-  LUXO_ADD_ENUM_PROP(EVT_WKEY, "W", ICON_NONE, "W", "");
-  LUXO_ADD_ENUM_PROP(EVT_XKEY, "X", ICON_NONE, "X", "");
-  LUXO_ADD_ENUM_PROP(EVT_YKEY, "Y", ICON_NONE, "Y", "");
-  LUXO_ADD_ENUM_PROP(EVT_ZKEY, "Z", ICON_NONE, "Z", "");
-  LUXO_ADD_ENUM_PROP(EVT_ZEROKEY, "ZERO", ICON_NONE, "0", "");
-  LUXO_ADD_ENUM_PROP(EVT_ONEKEY, "ONE", ICON_NONE, "1", "");
-  LUXO_ADD_ENUM_PROP(EVT_TWOKEY, "TWO", ICON_NONE, "2", "");
-  LUXO_ADD_ENUM_PROP(EVT_THREEKEY, "THREE", ICON_NONE, "3", "");
-  LUXO_ADD_ENUM_PROP(EVT_FOURKEY, "FOUR", ICON_NONE, "4", "");
-  LUXO_ADD_ENUM_PROP(EVT_FIVEKEY, "FIVE", ICON_NONE, "5", "");
-  LUXO_ADD_ENUM_PROP(EVT_SIXKEY, "SIX", ICON_NONE, "6", "");
-  LUXO_ADD_ENUM_PROP(EVT_SEVENKEY, "SEVEN", ICON_NONE, "7", "");
-  LUXO_ADD_ENUM_PROP(EVT_EIGHTKEY, "EIGHT", ICON_NONE, "8", "");
-  LUXO_ADD_ENUM_PROP(EVT_NINEKEY, "NINE", ICON_NONE, "9", "");
-  LUXO_ADD_ENUM_PROP(EVT_LEFTCTRLKEY, "LEFT_CTRL", ICON_NONE, "Left Ctrl", "CtrlL");
-  LUXO_ADD_ENUM_PROP(EVT_LEFTALTKEY, "LEFT_ALT", ICON_NONE, "Left Alt", "AltL");
-  LUXO_ADD_ENUM_PROP(EVT_LEFTSHIFTKEY, "LEFT_SHIFT", ICON_NONE, "Left Shift", "ShiftL");
-  LUXO_ADD_ENUM_PROP(EVT_RIGHTALTKEY, "RIGHT_ALT", ICON_NONE, "Right Alt", "AltR");
-  LUXO_ADD_ENUM_PROP(EVT_RIGHTCTRLKEY, "RIGHT_CTRL", ICON_NONE, "Right Ctrl", "CtrlR");
-  LUXO_ADD_ENUM_PROP(EVT_RIGHTSHIFTKEY, "RIGHT_SHIFT", ICON_NONE, "Right Shift", "ShiftR");
-  LUXO_ADD_ENUM_PROP(EVT_OSKEY, "OSKEY", ICON_NONE, "OS Key", "Cmd");
-  LUXO_ADD_ENUM_PROP(EVT_APPKEY, "APP", ICON_NONE, "Application", "App");
-  LUXO_ADD_ENUM_PROP(EVT_GRLESSKEY, "GRLESS", ICON_NONE, "Grless", "");
-  LUXO_ADD_ENUM_PROP(EVT_ESCKEY, "ESC", ICON_NONE, "Esc", "");
-  LUXO_ADD_ENUM_PROP(EVT_TABKEY, "TAB", ICON_NONE, "Tab", "");
-  LUXO_ADD_ENUM_PROP(EVT_RETKEY, "RET", ICON_NONE, "Return", "Enter");
-  LUXO_ADD_ENUM_PROP(EVT_SPACEKEY, "SPACE", ICON_NONE, "Spacebar", "Space");
-  LUXO_ADD_ENUM_PROP(EVT_LINEFEEDKEY, "LINE_FEED", ICON_NONE, "Line Feed", "");
-  LUXO_ADD_ENUM_PROP(EVT_BACKSPACEKEY, "BACK_SPACE", ICON_NONE, "Backspace", "BkSpace");
-  LUXO_ADD_ENUM_PROP(EVT_DELKEY, "DEL", ICON_NONE, "Delete", "Del");
-  LUXO_ADD_ENUM_PROP(EVT_SEMICOLONKEY, "SEMI_COLON", ICON_NONE, ";", "");
-  LUXO_ADD_ENUM_PROP(EVT_PERIODKEY, "PERIOD", ICON_NONE, ".", "");
-  LUXO_ADD_ENUM_PROP(EVT_COMMAKEY, "COMMA", ICON_NONE, ",", "");
-  LUXO_ADD_ENUM_PROP(EVT_QUOTEKEY, "QUOTE", ICON_NONE, "\"", "");
-  LUXO_ADD_ENUM_PROP(EVT_ACCENTGRAVEKEY, "ACCENT_GRAVE", ICON_NONE, "`", "");
-  LUXO_ADD_ENUM_PROP(EVT_MINUSKEY, "MINUS", ICON_NONE, "-", "");
-  LUXO_ADD_ENUM_PROP(EVT_PLUSKEY, "PLUS", ICON_NONE, "+", "");
-  LUXO_ADD_ENUM_PROP(EVT_SLASHKEY, "SLASH", ICON_NONE, "/", "");
-  LUXO_ADD_ENUM_PROP(EVT_BACKSLASHKEY, "BACK_SLASH", ICON_NONE, "\\", "");
-  LUXO_ADD_ENUM_PROP(EVT_EQUALKEY, "EQUAL", ICON_NONE, "=", "");
-  LUXO_ADD_ENUM_PROP(EVT_LEFTBRACKETKEY, "LEFT_BRACKET", ICON_NONE, "[", "");
-  LUXO_ADD_ENUM_PROP(EVT_RIGHTBRACKETKEY, "RIGHT_BRACKET", ICON_NONE, "]", "");
-  LUXO_ADD_ENUM_PROP(EVT_LEFTARROWKEY, "LEFT_ARROW", ICON_NONE, "Left Arrow", "←");
-  LUXO_ADD_ENUM_PROP(EVT_DOWNARROWKEY, "DOWN_ARROW", ICON_NONE, "Down Arrow", "↓");
-  LUXO_ADD_ENUM_PROP(EVT_RIGHTARROWKEY, "RIGHT_ARROW", ICON_NONE, "Right Arrow", "→");
-  LUXO_ADD_ENUM_PROP(EVT_UPARROWKEY, "UP_ARROW", ICON_NONE, "Up Arrow", "↑");
-  LUXO_ADD_ENUM_PROP(EVT_PAD2, "NUMPAD_2", ICON_NONE, "Numpad 2", "Pad2");
-  LUXO_ADD_ENUM_PROP(EVT_PAD4, "NUMPAD_4", ICON_NONE, "Numpad 4", "Pad4");
-  LUXO_ADD_ENUM_PROP(EVT_PAD6, "NUMPAD_6", ICON_NONE, "Numpad 6", "Pad6");
-  LUXO_ADD_ENUM_PROP(EVT_PAD8, "NUMPAD_8", ICON_NONE, "Numpad 8", "Pad8");
-  LUXO_ADD_ENUM_PROP(EVT_PAD1, "NUMPAD_1", ICON_NONE, "Numpad 1", "Pad1");
-  LUXO_ADD_ENUM_PROP(EVT_PAD3, "NUMPAD_3", ICON_NONE, "Numpad 3", "Pad3");
-  LUXO_ADD_ENUM_PROP(EVT_PAD5, "NUMPAD_5", ICON_NONE, "Numpad 5", "Pad5");
-  LUXO_ADD_ENUM_PROP(EVT_PAD7, "NUMPAD_7", ICON_NONE, "Numpad 7", "Pad7");
-  LUXO_ADD_ENUM_PROP(EVT_PAD9, "NUMPAD_9", ICON_NONE, "Numpad 9", "Pad9");
-  LUXO_ADD_ENUM_PROP(EVT_PADPERIOD, "NUMPAD_PERIOD", ICON_NONE, "Numpad .", "Pad.");
-  LUXO_ADD_ENUM_PROP(EVT_PADSLASHKEY, "NUMPAD_SLASH", ICON_NONE, "Numpad /", "Pad/");
-  LUXO_ADD_ENUM_PROP(EVT_PADASTERKEY, "NUMPAD_ASTERIX", ICON_NONE, "Numpad *", "Pad*");
-  LUXO_ADD_ENUM_PROP(EVT_PAD0, "NUMPAD_0", ICON_NONE, "Numpad 0", "Pad0");
-  LUXO_ADD_ENUM_PROP(EVT_PADMINUS, "NUMPAD_MINUS", ICON_NONE, "Numpad -", "Pad-");
-  LUXO_ADD_ENUM_PROP(EVT_PADENTER, "NUMPAD_ENTER", ICON_NONE, "Numpad Enter", "PadEnter");
-  LUXO_ADD_ENUM_PROP(EVT_PADPLUSKEY, "NUMPAD_PLUS", ICON_NONE, "Numpad +", "Pad+");
-  LUXO_ADD_ENUM_PROP(EVT_F1KEY, "F1", ICON_NONE, "F1", "");
-  LUXO_ADD_ENUM_PROP(EVT_F2KEY, "F2", ICON_NONE, "F2", "");
-  LUXO_ADD_ENUM_PROP(EVT_F3KEY, "F3", ICON_NONE, "F3", "");
-  LUXO_ADD_ENUM_PROP(EVT_F4KEY, "F4", ICON_NONE, "F4", "");
-  LUXO_ADD_ENUM_PROP(EVT_F5KEY, "F5", ICON_NONE, "F5", "");
-  LUXO_ADD_ENUM_PROP(EVT_F6KEY, "F6", ICON_NONE, "F6", "");
-  LUXO_ADD_ENUM_PROP(EVT_F7KEY, "F7", ICON_NONE, "F7", "");
-  LUXO_ADD_ENUM_PROP(EVT_F8KEY, "F8", ICON_NONE, "F8", "");
-  LUXO_ADD_ENUM_PROP(EVT_F9KEY, "F9", ICON_NONE, "F9", "");
-  LUXO_ADD_ENUM_PROP(EVT_F10KEY, "F10", ICON_NONE, "F10", "");
-  LUXO_ADD_ENUM_PROP(EVT_F11KEY, "F11", ICON_NONE, "F11", "");
-  LUXO_ADD_ENUM_PROP(EVT_F12KEY, "F12", ICON_NONE, "F12", "");
-  LUXO_ADD_ENUM_PROP(EVT_F13KEY, "F13", ICON_NONE, "F13", "");
-  LUXO_ADD_ENUM_PROP(EVT_F14KEY, "F14", ICON_NONE, "F14", "");
-  LUXO_ADD_ENUM_PROP(EVT_F15KEY, "F15", ICON_NONE, "F15", "");
-  LUXO_ADD_ENUM_PROP(EVT_F16KEY, "F16", ICON_NONE, "F16", "");
-  LUXO_ADD_ENUM_PROP(EVT_F17KEY, "F17", ICON_NONE, "F17", "");
-  LUXO_ADD_ENUM_PROP(EVT_F18KEY, "F18", ICON_NONE, "F18", "");
-  LUXO_ADD_ENUM_PROP(EVT_F19KEY, "F19", ICON_NONE, "F19", "");
-  LUXO_ADD_ENUM_PROP(EVT_F20KEY, "F20", ICON_NONE, "F20", "");
-  LUXO_ADD_ENUM_PROP(EVT_F21KEY, "F21", ICON_NONE, "F21", "");
-  LUXO_ADD_ENUM_PROP(EVT_F22KEY, "F22", ICON_NONE, "F22", "");
-  LUXO_ADD_ENUM_PROP(EVT_F23KEY, "F23", ICON_NONE, "F23", "");
-  LUXO_ADD_ENUM_PROP(EVT_F24KEY, "F24", ICON_NONE, "F24", "");
-  LUXO_ADD_ENUM_PROP(EVT_PAUSEKEY, "PAUSE", ICON_NONE, "Pause", "");
-  LUXO_ADD_ENUM_PROP(EVT_INSERTKEY, "INSERT", ICON_NONE, "Insert", "Ins");
-  LUXO_ADD_ENUM_PROP(EVT_HOMEKEY, "HOME", ICON_NONE, "Home", "");
-  LUXO_ADD_ENUM_PROP(EVT_PAGEUPKEY, "PAGE_UP", ICON_NONE, "Page Up", "PgUp");
-  LUXO_ADD_ENUM_PROP(EVT_PAGEDOWNKEY, "PAGE_DOWN", ICON_NONE, "Page Down", "PgDown");
-  LUXO_ADD_ENUM_PROP(EVT_ENDKEY, "END", ICON_NONE, "End", "");
-  LUXO_ADD_ENUM_PROP(EVT_MEDIAPLAY, "MEDIA_PLAY", ICON_NONE, "Media Play/Pause", ">/||");
-  LUXO_ADD_ENUM_PROP(EVT_MEDIASTOP, "MEDIA_STOP", ICON_NONE, "Media Stop", "Stop");
-  LUXO_ADD_ENUM_PROP(EVT_MEDIAFIRST, "MEDIA_FIRST", ICON_NONE, "Media First", "|<<");
-  LUXO_ADD_ENUM_PROP(EVT_MEDIALAST, "MEDIA_LAST", ICON_NONE, "Media Last", ">>|");
-  LUXO_ADD_ENUM_PROP(KM_TEXTINPUT, "TEXTINPUT", ICON_NONE, "Text Input", "TxtIn");
-  LUXO_ADD_ENUM_PROP(WINDEACTIVATE, "WINDOW_DEACTIVATE", ICON_NONE, "Window Deactivate", "");
-  LUXO_ADD_ENUM_PROP(TIMER, "TIMER", ICON_NONE, "Timer", "Tmr");
-  LUXO_ADD_ENUM_PROP(TIMER0, "TIMER0", ICON_NONE, "Timer 0", "Tmr0");
-  LUXO_ADD_ENUM_PROP(TIMER1, "TIMER1", ICON_NONE, "Timer 1", "Tmr1");
-  LUXO_ADD_ENUM_PROP(TIMER2, "TIMER2", ICON_NONE, "Timer 2", "Tmr2");
-  LUXO_ADD_ENUM_PROP(TIMERJOBS, "TIMER_JOBS", ICON_NONE, "Timer Jobs", "TmrJob");
-  LUXO_ADD_ENUM_PROP(TIMERAUTOSAVE, "TIMER_AUTOSAVE", ICON_NONE, "Timer Autosave", "TmrSave");
-  LUXO_ADD_ENUM_PROP(TIMERREPORT, "TIMER_REPORT", ICON_NONE, "Timer Report", "TmrReport");
-  LUXO_ADD_ENUM_PROP(TIMERREGION, "TIMERREGION", ICON_NONE, "Timer Region", "TmrReg");
-  /* Action Zones. */
-  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_AREA,
-                     "ACTIONZONE_AREA",
-                     ICON_NONE,
-                     "ActionZone Area",
-                     "AZone Area");
-  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_REGION,
-                     "ACTIONZONE_REGION",
-                     ICON_NONE,
-                     "ActionZone Region",
-                     "AZone Region");
-  LUXO_ADD_ENUM_PROP(EVT_ACTIONZONE_FULLSCREEN,
-                     "ACTIONZONE_FULLSCREEN",
-                     ICON_NONE,
-                     "ActionZone Fullscreen",
-                     "AZone FullScr");
-}
+const EnumPropertyItem luxo_enum_event_type_items[] = {
+  /* - Note we abuse 'tooltip' message here to store a 'compact' form of some (too) long names.
+  * - Intentionally excluded: #CAPSLOCKKEY, #UNKNOWNKEY.
+  */
+  {0,                         WM_ID_(NONE),                 0, "",                          ""            },
+  {LEFTMOUSE,                 WM_ID_(LEFTMOUSE),            0, "Left Mouse",                "LMB"         },
+  {MIDDLEMOUSE,               WM_ID_(MIDDLEMOUSE),          0, "Middle Mouse",              "MMB"         },
+  {RIGHTMOUSE,                WM_ID_(RIGHTMOUSE),           0, "Right Mouse",               "RMB"         },
+  {BUTTON4MOUSE,              WM_ID_(BUTTON4MOUSE),         0, "Button4 Mouse",             "MB4"         },
+  {BUTTON5MOUSE,              WM_ID_(BUTTON5MOUSE),         0, "Button5 Mouse",             "MB5"         },
+  {BUTTON6MOUSE,              WM_ID_(BUTTON6MOUSE),         0, "Button6 Mouse",             "MB6"         },
+  {BUTTON7MOUSE,              WM_ID_(BUTTON7MOUSE),         0, "Button7 Mouse",             "MB7"         },
+  LUXO_ENUM_ITEM_SEPR,
+  {TABLET_STYLUS,             WM_ID_(PEN),                  0, "Pen",                       ""            },
+  {TABLET_ERASER,             WM_ID_(ERASER),               0, "Eraser",                    ""            },
+  LUXO_ENUM_ITEM_SEPR,
+  {MOUSEMOVE,                 WM_ID_(MOUSEMOVE),            0, "Mouse Move",                "MsMov"       },
+  {INBETWEEN_MOUSEMOVE,       WM_ID_(INBETWEEN_MOUSEMOVE),  0, "In-between Move",           "MsSubMov"    },
+  {MOUSEPAN,                  WM_ID_(TRACKPADPAN),          0, "Mouse/Trackpad Pan",        "MsPan"       },
+  {MOUSEZOOM,                 WM_ID_(TRACKPADZOOM),         0, "Mouse/Trackpad Zoom",       "MsZoom"      },
+  {MOUSEROTATE,               WM_ID_(MOUSEROTATE),          0, "Mouse/Trackpad Rotate",     "MsRot"       },
+  {MOUSESMARTZOOM,            WM_ID_(MOUSESMARTZOOM),       0, "Mouse/Trackpad Smart Zoom", "MsSmartZoom" },
+  LUXO_ENUM_ITEM_SEPR,
+  {WHEELUPMOUSE,              WM_ID_(WHEELUPMOUSE),         0, "Wheel Up",                  "WhUp"        },
+  {WHEELDOWNMOUSE,            WM_ID_(WHEELDOWNMOUSE),       0, "Wheel Down",                "WhDown"      },
+  {WHEELINMOUSE,              WM_ID_(WHEELINMOUSE),         0, "Wheel In",                  "WhIn"        },
+  {WHEELOUTMOUSE,             WM_ID_(WHEELOUTMOUSE),        0, "Wheel Out",                 "WhOut"       },
+  LUXO_ENUM_ITEM_SEPR,
+  {EVT_AKEY,                  WM_ID_(A),                    0, "A",                         ""            },
+  {EVT_BKEY,                  WM_ID_(B),                    0, "B",                         ""            },
+  {EVT_CKEY,                  WM_ID_(C),                    0, "C",                         ""            },
+  {EVT_DKEY,                  WM_ID_(D),                    0, "D",                         ""            },
+  {EVT_EKEY,                  WM_ID_(E),                    0, "E",                         ""            },
+  {EVT_FKEY,                  WM_ID_(F),                    0, "F",                         ""            },
+  {EVT_GKEY,                  WM_ID_(G),                    0, "G",                         ""            },
+  {EVT_HKEY,                  WM_ID_(H),                    0, "H",                         ""            },
+  {EVT_IKEY,                  WM_ID_(I),                    0, "I",                         ""            },
+  {EVT_JKEY,                  WM_ID_(J),                    0, "J",                         ""            },
+  {EVT_KKEY,                  WM_ID_(K),                    0, "K",                         ""            },
+  {EVT_LKEY,                  WM_ID_(L),                    0, "L",                         ""            },
+  {EVT_MKEY,                  WM_ID_(M),                    0, "M",                         ""            },
+  {EVT_NKEY,                  WM_ID_(N),                    0, "N",                         ""            },
+  {EVT_OKEY,                  WM_ID_(O),                    0, "O",                         ""            },
+  {EVT_PKEY,                  WM_ID_(P),                    0, "P",                         ""            },
+  {EVT_QKEY,                  WM_ID_(Q),                    0, "Q",                         ""            },
+  {EVT_RKEY,                  WM_ID_(R),                    0, "R",                         ""            },
+  {EVT_SKEY,                  WM_ID_(S),                    0, "S",                         ""            },
+  {EVT_TKEY,                  WM_ID_(T),                    0, "T",                         ""            },
+  {EVT_UKEY,                  WM_ID_(U),                    0, "U",                         ""            },
+  {EVT_VKEY,                  WM_ID_(V),                    0, "V",                         ""            },
+  {EVT_WKEY,                  WM_ID_(W),                    0, "W",                         ""            },
+  {EVT_XKEY,                  WM_ID_(X),                    0, "X",                         ""            },
+  {EVT_YKEY,                  WM_ID_(Y),                    0, "Y",                         ""            },
+  {EVT_ZKEY,                  WM_ID_(Z),                    0, "Z",                         ""            },
+  LUXO_ENUM_ITEM_SEPR,
+  {EVT_ZEROKEY,               WM_ID_(ZERO),                 0, "0",                         ""            },
+  {EVT_ONEKEY,                WM_ID_(ONE),                  0, "1",                         ""            },
+  {EVT_TWOKEY,                WM_ID_(TWO),                  0, "2",                         ""            },
+  {EVT_THREEKEY,              WM_ID_(THREE),                0, "3",                         ""            },
+  {EVT_FOURKEY,               WM_ID_(FOUR),                 0, "4",                         ""            },
+  {EVT_FIVEKEY,               WM_ID_(FIVE),                 0, "5",                         ""            },
+  {EVT_SIXKEY,                WM_ID_(SIX),                  0, "6",                         ""            },
+  {EVT_SEVENKEY,              WM_ID_(SEVEN),                0, "7",                         ""            },
+  {EVT_EIGHTKEY,              WM_ID_(EIGHT),                0, "8",                         ""            },
+  {EVT_NINEKEY,               WM_ID_(NINE),                 0, "9",                         ""            },
+  LUXO_ENUM_ITEM_SEPR,
+  {EVT_LEFTCTRLKEY,           WM_ID_(LEFT_CTRL),            0, "Left Ctrl",                 "CtrlL"       },
+  {EVT_LEFTALTKEY,            WM_ID_(LEFT_ALT),             0, "Left Alt",                  "AltL"        },
+  {EVT_LEFTSHIFTKEY,          WM_ID_(LEFT_SHIFT),           0, "Left Shift",                "ShiftL"      },
+  {EVT_RIGHTALTKEY,           WM_ID_(RIGHT_ALT),            0, "Right Alt",                 "AltR"        },
+  {EVT_RIGHTCTRLKEY,          WM_ID_(RIGHT_CTRL),           0, "Right Ctrl",                "CtrlR"       },
+  {EVT_RIGHTSHIFTKEY,         WM_ID_(RIGHT_SHIFT),          0, "Right Shift",               "ShiftR"      },
+  LUXO_ENUM_ITEM_SEPR,
+  {EVT_OSKEY,                 WM_ID_(OSKEY),                0, "OS Key",                    "Cmd"         },
+  {EVT_APPKEY,                WM_ID_(APP),                  0, "Application",               "App"         },
+  {EVT_GRLESSKEY,             WM_ID_(GRLESS),               0, "Grless",                    ""            },
+  {EVT_ESCKEY,                WM_ID_(ESC),                  0, "Esc",                       ""            },
+  {EVT_TABKEY,                WM_ID_(TAB),                  0, "Tab",                       ""            },
+  {EVT_RETKEY,                WM_ID_(RET),                  0, "Return",                    "Enter"       },
+  {EVT_SPACEKEY,              WM_ID_(SPACE),                0, "Spacebar",                  "Space"       },
+  {EVT_LINEFEEDKEY,           WM_ID_(LINE_FEED),            0, "Line Feed",                 ""            },
+  {EVT_BACKSPACEKEY,          WM_ID_(BACK_SPACE),           0, "Backspace",                 "BkSpace"     },
+  {EVT_DELKEY,                WM_ID_(DEL),                  0, "Delete",                    "Del"         },
+  {EVT_SEMICOLONKEY,          WM_ID_(SEMI_COLON),           0, ";",                         ""            },
+  {EVT_PERIODKEY,             WM_ID_(PERIOD),               0, ".",                         ""            },
+  {EVT_COMMAKEY,              WM_ID_(COMMA),                0, ",",                         ""            },
+  {EVT_QUOTEKEY,              WM_ID_(QUOTE),                0, "\"",                        ""            },
+  {EVT_ACCENTGRAVEKEY,        WM_ID_(ACCENT_GRAVE),         0, "`",                         ""            },
+  {EVT_MINUSKEY,              WM_ID_(MINUS),                0, "-",                         ""            },
+  {EVT_PLUSKEY,               WM_ID_(PLUS),                 0, "+",                         ""            },
+  {EVT_SLASHKEY,              WM_ID_(SLASH),                0, "/",                         ""            },
+  {EVT_BACKSLASHKEY,          WM_ID_(BACK_SLASH),           0, "\\",                        ""            },
+  {EVT_EQUALKEY,              WM_ID_(EQUAL),                0, "=",                         ""            },
+  {EVT_LEFTBRACKETKEY,        WM_ID_(LEFT_BRACKET),         0, "[",                         ""            },
+  {EVT_RIGHTBRACKETKEY,       WM_ID_(RIGHT_BRACKET),        0, "]",                         ""            },
+  {EVT_LEFTARROWKEY,          WM_ID_(LEFT_ARROW),           0, "Left Arrow",                "←"         },
+  {EVT_DOWNARROWKEY,          WM_ID_(DOWN_ARROW),           0, "Down Arrow",                "↓"         },
+  {EVT_RIGHTARROWKEY,         WM_ID_(RIGHT_ARROW),          0, "Right Arrow",               "→"         },
+  {EVT_UPARROWKEY,            WM_ID_(UP_ARROW),             0, "Up Arrow",                  "↑"         },
+  {EVT_PAD2,                  WM_ID_(NUMPAD_2),             0, "Numpad 2",                  "Pad2"        },
+  {EVT_PAD4,                  WM_ID_(NUMPAD_4),             0, "Numpad 4",                  "Pad4"        },
+  {EVT_PAD6,                  WM_ID_(NUMPAD_6),             0, "Numpad 6",                  "Pad6"        },
+  {EVT_PAD8,                  WM_ID_(NUMPAD_8),             0, "Numpad 8",                  "Pad8"        },
+  {EVT_PAD1,                  WM_ID_(NUMPAD_1),             0, "Numpad 1",                  "Pad1"        },
+  {EVT_PAD3,                  WM_ID_(NUMPAD_3),             0, "Numpad 3",                  "Pad3"        },
+  {EVT_PAD5,                  WM_ID_(NUMPAD_5),             0, "Numpad 5",                  "Pad5"        },
+  {EVT_PAD7,                  WM_ID_(NUMPAD_7),             0, "Numpad 7",                  "Pad7"        },
+  {EVT_PAD9,                  WM_ID_(NUMPAD_9),             0, "Numpad 9",                  "Pad9"        },
+  {EVT_PADPERIOD,             WM_ID_(NUMPAD_PERIOD),        0, "Numpad .",                  "Pad."        },
+  {EVT_PADSLASHKEY,           WM_ID_(NUMPAD_SLASH),         0, "Numpad /",                  "Pad/"        },
+  {EVT_PADASTERKEY,           WM_ID_(NUMPAD_ASTERIX),       0, "Numpad *",                  "Pad*"        },
+  {EVT_PAD0,                  WM_ID_(NUMPAD_0),             0, "Numpad 0",                  "Pad0"        },
+  {EVT_PADMINUS,              WM_ID_(NUMPAD_MINUS),         0, "Numpad -",                  "Pad-"        },
+  {EVT_PADENTER,              WM_ID_(NUMPAD_ENTER),         0, "Numpad Enter",              "PadEnter"    },
+  {EVT_PADPLUSKEY,            WM_ID_(NUMPAD_PLUS),          0, "Numpad +",                  "Pad+"        },
+  {EVT_F1KEY,                 WM_ID_(F1),                   0, "F1",                        ""            },
+  {EVT_F2KEY,                 WM_ID_(F2),                   0, "F2",                        ""            },
+  {EVT_F3KEY,                 WM_ID_(F3),                   0, "F3",                        ""            },
+  {EVT_F4KEY,                 WM_ID_(F4),                   0, "F4",                        ""            },
+  {EVT_F5KEY,                 WM_ID_(F5),                   0, "F5",                        ""            },
+  {EVT_F6KEY,                 WM_ID_(F6),                   0, "F6",                        ""            },
+  {EVT_F7KEY,                 WM_ID_(F7),                   0, "F7",                        ""            },
+  {EVT_F8KEY,                 WM_ID_(F8),                   0, "F8",                        ""            },
+  {EVT_F9KEY,                 WM_ID_(F9),                   0, "F9",                        ""            },
+  {EVT_F10KEY,                WM_ID_(F10),                  0, "F10",                       ""            },
+  {EVT_F11KEY,                WM_ID_(F11),                  0, "F11",                       ""            },
+  {EVT_F12KEY,                WM_ID_(F12),                  0, "F12",                       ""            },
+  {EVT_F13KEY,                WM_ID_(F13),                  0, "F13",                       ""            },
+  {EVT_F14KEY,                WM_ID_(F14),                  0, "F14",                       ""            },
+  {EVT_F15KEY,                WM_ID_(F15),                  0, "F15",                       ""            },
+  {EVT_F16KEY,                WM_ID_(F16),                  0, "F16",                       ""            },
+  {EVT_F17KEY,                WM_ID_(F17),                  0, "F17",                       ""            },
+  {EVT_F18KEY,                WM_ID_(F18),                  0, "F18",                       ""            },
+  {EVT_F19KEY,                WM_ID_(F19),                  0, "F19",                       ""            },
+  {EVT_F20KEY,                WM_ID_(F20),                  0, "F20",                       ""            },
+  {EVT_F21KEY,                WM_ID_(F21),                  0, "F21",                       ""            },
+  {EVT_F22KEY,                WM_ID_(F22),                  0, "F22",                       ""            },
+  {EVT_F23KEY,                WM_ID_(F23),                  0, "F23",                       ""            },
+  {EVT_F24KEY,                WM_ID_(F24),                  0, "F24",                       ""            },
+  {EVT_PAUSEKEY,              WM_ID_(PAUSE),                0, "Pause",                     ""            },
+  {EVT_INSERTKEY,             WM_ID_(INSERT),               0, "Insert",                    "Ins"         },
+  {EVT_HOMEKEY,               WM_ID_(HOME),                 0, "Home",                      ""            },
+  {EVT_PAGEUPKEY,             WM_ID_(PAGE_UP),              0, "Page Up",                   "PgUp"        },
+  {EVT_PAGEDOWNKEY,           WM_ID_(PAGE_DOWN),            0, "Page Down",                 "PgDown"      },
+  {EVT_ENDKEY,                WM_ID_(END),                  0, "End",                       ""            },
+  LUXO_ENUM_ITEM_SEPR,
+  {EVT_MEDIAPLAY,             WM_ID_(MEDIA_PLAY),           0, "Media Play/Pause",          ">/||"        },
+  {EVT_MEDIASTOP,             WM_ID_(MEDIA_STOP),           0, "Media Stop",                "Stop"        },
+  {EVT_MEDIAFIRST,            WM_ID_(MEDIA_FIRST),          0, "Media First",               "|<<"         },
+  {EVT_MEDIALAST,             WM_ID_(MEDIA_LAST),           0, "Media Last",                ">>|"         },
+  LUXO_ENUM_ITEM_SEPR,
+  {KM_TEXTINPUT,              WM_ID_(TEXTINPUT),            0, "Text Input",                "TxtIn"       },
+  LUXO_ENUM_ITEM_SEPR,
+  {WINDEACTIVATE,             WM_ID_(WINDOW_DEACTIVATE),    0, "Window Deactivate",         ""            },
+  {TIMER,                     WM_ID_(TIMER),                0, "Timer",                     "Tmr"         },
+  {TIMER0,                    WM_ID_(TIMER0),               0, "Timer 0",                   "Tmr0"        },
+  {TIMER1,                    WM_ID_(TIMER1),               0, "Timer 1",                   "Tmr1"        },
+  {TIMER2,                    WM_ID_(TIMER2),               0, "Timer 2",                   "Tmr2"        },
+  {TIMERJOBS,                 WM_ID_(TIMER_JOBS),           0, "Timer Jobs",                "TmrJob"      },
+  {TIMERAUTOSAVE,             WM_ID_(TIMER_AUTOSAVE),       0, "Timer Autosave",            "TmrSave"     },
+  {TIMERREPORT,               WM_ID_(TIMER_REPORT),         0, "Timer Report",              "TmrReport"   },
+  {TIMERREGION,               WM_ID_(TIMERREGION),          0, "Timer Region",              "TmrReg"      },
+  LUXO_ENUM_ITEM_SEPR,
+  {NDOF_MOTION,               WM_ID_(NDOF_MOTION),          0, "NDOF Motion",               "NdofMov"     },
+ /* buttons on all 3dconnexion devices */
+  {NDOF_BUTTON_MENU,          WM_ID_(NDOF_BUTTON_MENU),     0, "NDOF Menu",                 "NdofMenu"    },
+  {NDOF_BUTTON_FIT,           WM_ID_(NDOF_BUTTON_FIT),      0, "NDOF Fit",                  "NdofFit"     },
+ /* view buttons */
+  {NDOF_BUTTON_TOP,           WM_ID_(NDOF_BUTTON_TOP),      0, "NDOF Top",                  "Ndof↑"     },
+  {NDOF_BUTTON_BOTTOM,        WM_ID_(NDOF_BUTTON_BOTTOM),   0, "NDOF Bottom",               "Ndof↓"     },
+  {NDOF_BUTTON_LEFT,          WM_ID_(NDOF_BUTTON_LEFT),     0, "NDOF Left",                 "Ndof←"     },
+  {NDOF_BUTTON_RIGHT,         WM_ID_(NDOF_BUTTON_RIGHT),    0, "NDOF Right",                "Ndof→"     },
+  {NDOF_BUTTON_FRONT,         WM_ID_(NDOF_BUTTON_FRONT),    0, "NDOF Front",                "NdofFront"   },
+  {NDOF_BUTTON_BACK,          WM_ID_(NDOF_BUTTON_BACK),     0, "NDOF Back",                 "NdofBack"    },
+ /* more views */
+  {NDOF_BUTTON_ISO1,          WM_ID_(NDOF_BUTTON_ISO1),     0, "NDOF Isometric 1",          "NdofIso1"    },
+  {NDOF_BUTTON_ISO2,          WM_ID_(NDOF_BUTTON_ISO2),     0, "NDOF Isometric 2",          "NdofIso2"    },
+ /* 90 degree rotations */
+  {NDOF_BUTTON_ROLL_CW,       WM_ID_(NDOF_BUTTON_ROLL_CW),  0, "NDOF Roll CW",              "NdofRCW"     },
+  {NDOF_BUTTON_ROLL_CCW,      WM_ID_(NDOF_BUTTON_ROLL_CCW), 0, "NDOF Roll CCW",             "NdofRCCW"    },
+  {NDOF_BUTTON_SPIN_CW,       WM_ID_(NDOF_BUTTON_SPIN_CW),  0, "NDOF Spin CW",              "NdofSCW"     },
+  {NDOF_BUTTON_SPIN_CCW,      WM_ID_(NDOF_BUTTON_SPIN_CCW), 0, "NDOF Spin CCW",             "NdofSCCW"    },
+  {NDOF_BUTTON_TILT_CW,       WM_ID_(NDOF_BUTTON_TILT_CW),  0, "NDOF Tilt CW",              "NdofTCW"     },
+  {NDOF_BUTTON_TILT_CCW,      WM_ID_(NDOF_BUTTON_TILT_CCW), 0, "NDOF Tilt CCW",             "NdofTCCW"    },
+ /* device control */
+  {NDOF_BUTTON_ROTATE,        WM_ID_(NDOF_BUTTON_ROTATE),   0, "NDOF Rotate",               "NdofRot"     },
+  {NDOF_BUTTON_PANZOOM,       WM_ID_(NDOF_BUTTON_PANZOOM),  0, "NDOF Pan/Zoom",             "NdofPanZoom" },
+  {NDOF_BUTTON_DOMINANT,      WM_ID_(NDOF_BUTTON_DOMINANT), 0, "NDOF Dominant",             "NdofDom"     },
+  {NDOF_BUTTON_PLUS,          WM_ID_(NDOF_BUTTON_PLUS),     0, "NDOF Plus",                 "Ndof+"       },
+  {NDOF_BUTTON_MINUS,         WM_ID_(NDOF_BUTTON_MINUS),    0, "NDOF Minus",                "Ndof-"       },
+ /* general-purpose buttons */
+  {NDOF_BUTTON_1,             WM_ID_(NDOF_BUTTON_1),        0, "NDOF Button 1",             "NdofB1"      },
+  {NDOF_BUTTON_2,             WM_ID_(NDOF_BUTTON_2),        0, "NDOF Button 2",             "NdofB2"      },
+  {NDOF_BUTTON_3,             WM_ID_(NDOF_BUTTON_3),        0, "NDOF Button 3",             "NdofB3"      },
+  {NDOF_BUTTON_4,             WM_ID_(NDOF_BUTTON_4),        0, "NDOF Button 4",             "NdofB4"      },
+  {NDOF_BUTTON_5,             WM_ID_(NDOF_BUTTON_5),        0, "NDOF Button 5",             "NdofB5"      },
+  {NDOF_BUTTON_6,             WM_ID_(NDOF_BUTTON_6),        0, "NDOF Button 6",             "NdofB6"      },
+  {NDOF_BUTTON_7,             WM_ID_(NDOF_BUTTON_7),        0, "NDOF Button 7",             "NdofB7"      },
+  {NDOF_BUTTON_8,             WM_ID_(NDOF_BUTTON_8),        0, "NDOF Button 8",             "NdofB8"      },
+  {NDOF_BUTTON_9,             WM_ID_(NDOF_BUTTON_9),        0, "NDOF Button 9",             "NdofB9"      },
+  {NDOF_BUTTON_10,            WM_ID_(NDOF_BUTTON_10),       0, "NDOF Button 10",            "NdofB10"     },
+  {NDOF_BUTTON_A,             WM_ID_(NDOF_BUTTON_A),        0, "NDOF Button A",             "NdofBA"      },
+  {NDOF_BUTTON_B,             WM_ID_(NDOF_BUTTON_B),        0, "NDOF Button B",             "NdofBB"      },
+  {NDOF_BUTTON_C,             WM_ID_(NDOF_BUTTON_C),        0, "NDOF Button C",             "NdofBC"      },
+ /* Action Zones. */
+  {EVT_ACTIONZONE_AREA,       WM_ID_(ACTIONZONE_AREA),      0, "ActionZone Area",           "AZone Area"  },
+  {EVT_ACTIONZONE_REGION,     WM_ID_(ACTIONZONE_REGION),    0, "ActionZone Region",         "AZone Region"},
+  {EVT_ACTIONZONE_FULLSCREEN,
+   WM_ID_(ACTIONZONE_FULLSCREEN),
+   0,                                                          "ActionZone Fullscreen",
+   "AZone FullScr"                                                                                        },
+ /* xr */
+  {EVT_XR_ACTION,             WM_ID_(XR_ACTION),            0, "XR Action",                 ""            },
+  {0,                         wabi::TfToken(),              0, NULL,                        NULL          },
+};
 
 static void prim_def_operator(const Stage &kstage)
 {

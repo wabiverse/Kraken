@@ -95,6 +95,7 @@ struct ScrArea : UsdUIArea
   short region_active_win;
 
   std::vector<ARegion *> regions;
+  std::vector<wmEventHandler *> handlers;
 
   inline ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath);
 };

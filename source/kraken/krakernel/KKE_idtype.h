@@ -1,11 +1,28 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
+/*
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ */
 
 #pragma once
 
-/** \file
- * \ingroup kke
- *
+/**
+ * @file
+ * KRAKEN Kernel.
+ * Purple Underground.
+ * 
  * ID type structure, helping to factorize common operations and data for all data-block types.
  */
 
@@ -16,10 +33,10 @@ extern "C" {
 #endif
 
 struct KPathForeachPathData;
-struct KrakenDataReader;
-struct UniverseExpander;
-struct USDLibReader;
-struct USDWriter;
+struct UsdDataReader;
+struct UsdExpander;
+struct UsdLibReader;
+struct UsdWriter;
 struct ID;
 struct LibraryForeachIDData;
 struct Main;
@@ -70,7 +87,7 @@ typedef void (*IDTypeMakeLocalFunction)(struct Main *bmain, struct ID *id, int f
 typedef void (*IDTypeForeachIDFunction)(struct ID *id, struct LibraryForeachIDData *data);
 
 typedef enum eIDTypeInfoCacheCallbackFlags {
-  /** Indicates to the callback that cache may be stored in the .blend file,
+  /** Indicates to the callback that cache may be stored in the .usd file,
    * so its pointer should not be cleared at read-time. */
   IDTYPE_CACHE_CB_FLAGS_PERSISTENT = 1 << 0,
 } eIDTypeInfoCacheCallbackFlags;
@@ -184,34 +201,34 @@ typedef struct IDTypeInfo {
    */
   IDTypeEmbeddedOwnerPointerGetFunction owner_pointer_get;
 
-  /* ********** Callbacks for reading and writing .blend files. ********** */
+  /* ********** Callbacks for reading and writing .usd files. ********** */
 
   /**
-   * Write all structs that should be saved in a .blend file.
+   * Write all structs that should be saved in a .usd file.
    */
-  IDTypeBlendWriteFunction blend_write;
+  IDTypeBlendWriteFunction usd_write;
 
   /**
    * Update pointers for all structs directly owned by this data block.
    */
-  IDTypeBlendReadDataFunction blend_read_data;
+  IDTypeBlendReadDataFunction usd_read_data;
 
   /**
    * Update pointers to other id data blocks.
    */
-  IDTypeBlendReadLibFunction blend_read_lib;
+  IDTypeBlendReadLibFunction usd_read_lib;
 
   /**
    * Specify which other id data blocks should be loaded when the current one is loaded.
    */
-  IDTypeBlendReadExpandFunction blend_read_expand;
+  IDTypeBlendReadExpandFunction usd_read_expand;
 
   /**
    * Allow an ID type to preserve some of its data across (memfile) undo steps.
    *
    * \note Called from #setup_app_data when undoing or redoing a memfile step.
    */
-  IDTypeBlendReadUndoPreserve blend_read_undo_preserve;
+  IDTypeBlendReadUndoPreserve usd_read_undo_preserve;
 
   /**
    * Called after library override operations have been applied.
@@ -375,19 +392,6 @@ short KKE_idtype_idcode_iter_step(int *index);
 void KKE_idtype_id_foreach_cache(struct ID *id,
                                  IDTypeForeachCacheFunctionCallback function_callback,
                                  void *user_data);
-
-typedef enum eIDPropertyUIDataType {
-  /** Other properties types that don't support RNA UI data. */
-  IDP_UI_DATA_TYPE_UNSUPPORTED = -1,
-  /** IDP_INT or IDP_ARRAY with subtype IDP_INT. */
-  IDP_UI_DATA_TYPE_INT = 0,
-  /** IDP_FLOAT and IDP_DOUBLE or IDP_ARRAY properties with a float or double sub-types. */
-  IDP_UI_DATA_TYPE_FLOAT = 1,
-  /** IDP_STRING properties. */
-  IDP_UI_DATA_TYPE_STRING = 2,
-  /** IDP_ID. */
-  IDP_UI_DATA_TYPE_ID = 3,
-} eIDPropertyUIDataType;
 
 #ifdef __cplusplus
 }

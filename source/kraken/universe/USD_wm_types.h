@@ -811,10 +811,6 @@ struct wmEvent
   {}
 };
 
-typedef bool (*EventHandlerPoll)(const struct ARegion *region, const wmEvent *event);
-typedef int (*wmUIHandlerFunc)(kContext *C, const wmEvent *event, void *userdata);
-typedef void (*wmUIHandlerRemoveFunc)(kContext *C, void *userdata);
-
 enum eWmEventHandlerType
 {
   WM_HANDLER_TYPE_GIZMO = 1,
@@ -831,6 +827,11 @@ enum
   WM_HANDLER_DO_FREE = (1 << 7),
 };
 
+#define IS_EVENT_ACTIONZONE(event_type) \
+  ELEM(event_type, EVT_ACTIONZONE_AREA, EVT_ACTIONZONE_REGION, EVT_ACTIONZONE_FULLSCREEN)
+
+typedef bool (*EventHandlerPoll)(const struct ARegion *region, const struct wmEvent *event);
+
 struct wmEventHandler
 {
   eWmEventHandlerType type;
@@ -838,6 +839,48 @@ struct wmEventHandler
 
   EventHandlerPoll poll;
 };
+
+struct wmEventHandler_KeymapResult
+{
+  struct wmKeyMap *keymaps[3];
+  int keymaps_len;
+};
+
+/** Run after the keymap item runs. */
+struct wmEventHandler_KeymapPost
+{
+  void (*post_fn)(struct wmKeyMap *keymap, struct wmKeyMapItem *kmi, void *user_data);
+  void *user_data;
+};
+
+typedef void(wmEventHandler_KeymapDynamicFn)(struct wmWindowManager *wm,
+                                             struct wmWindow *win,
+                                             struct wmEventHandler_Keymap *handler,
+                                             struct wmEventHandler_KeymapResult *km_result);
+
+/** Support for a getter function that looks up the keymap each access. */
+struct wmEventHandler_KeymapDynamic
+{
+  wmEventHandler_KeymapDynamicFn *keymap_fn;
+  void *user_data;
+};
+
+/** #WM_HANDLER_TYPE_KEYMAP */
+struct wmEventHandler_Keymap
+{
+  wmEventHandler head;
+
+  /** Pointer to builtin/custom keymaps (never NULL). */
+  struct wmKeyMap *keymap;
+
+  struct wmEventHandler_KeymapPost post;
+  struct wmEventHandler_KeymapDynamic dynamic;
+
+  struct bToolRef *keymap_tool;
+};
+
+typedef int (*wmUIHandlerFunc)(struct kContext *C, const struct wmEvent *event, void *userdata);
+typedef void (*wmUIHandlerRemoveFunc)(struct kContext *C, void *userdata);
 
 struct wmEventHandlerUI : public wmEventHandler
 {
@@ -888,7 +931,8 @@ struct wmMsgBus
 #define WM_DRAG_DATASTACK 8
 #define WM_DRAG_ASSET_CATALOG 9
 
-typedef enum eWmDragFlags {
+typedef enum eWmDragFlags
+{
   WM_DRAG_NOP = 0,
   WM_DRAG_FREE_DATA = 1,
 } eWmDragFlags;
@@ -1020,17 +1064,51 @@ struct wmKeyMapDiffItem
   wmKeyMapItem *add_item;
 };
 
+/** #wmKeyMapItem.flag */
+enum
+{
+  KMI_INACTIVE = (1 << 0),
+  KMI_EXPANDED = (1 << 1),
+  KMI_USER_MODIFIED = (1 << 2),
+  KMI_UPDATE = (1 << 3),
+  /**
+   * When set, ignore events with `wmEvent.flag & WM_EVENT_IS_REPEAT` enabled.
+   *
+   * \note this flag isn't cleared when editing/loading the key-map items,
+   * so it may be set in cases which don't make sense (modifier-keys or mouse-motion for example).
+   *
+   * Knowing if an event may repeat is something set at the operating-systems event handling level
+   * so rely on #WM_EVENT_IS_REPEAT being false non keyboard events instead of checking if this
+   * flag makes sense.
+   *
+   * Only used when: `ISKEYBOARD(kmi->type) || (kmi->type == KM_TEXTINPUT)`
+   * as mouse, 3d-mouse, timer... etc never repeat.
+   */
+  KMI_REPEAT_IGNORE = (1 << 4),
+};
+
+/** #wmKeyMapItem.maptype */
+enum
+{
+  KMI_TYPE_KEYBOARD = 0,
+  KMI_TYPE_MOUSE = 1,
+  /* 2 is deprecated, was tweak. */
+  KMI_TYPE_TEXTINPUT = 3,
+  KMI_TYPE_TIMER = 4,
+  KMI_TYPE_NDOF = 5,
+};
+
 struct wmKeyMap
 {
   std::vector<struct wmKeyMapItem *> items;
   std::vector<struct wmKeyMapDiffItem *> diff_items;
 
   /** Global editor keymaps, or for more per space/region. */
-  char idname[64];
+  wabi::TfToken idname;
 
   short spaceid;
   short regionid;
-  char owner_id[64];
+  wabi::TfToken owner_id;
 
   /** General flags. */
   short flag;
@@ -1055,6 +1133,19 @@ struct wmKeyMap
       kmi_id(VALUE_ZERO),
       modal_items(POINTER_ZERO)
   {}
+};
+
+/* These two Lines with # tell makesdna this struct can be excluded. */
+/* should be something like DNA_EXCLUDE
+ * but the preprocessor first removes all comments, spaces etc */
+struct wmOperatorTypeMacro
+{
+  /* operator id */
+  wabi::TfToken idname;
+  /* rna pointer to access properties, like keymap */
+  /** Operator properties, assigned to ptr->data and can be written to a file. */
+  struct IDProperty *properties;
+  struct PointerRNA *ptr;
 };
 
 

@@ -31,6 +31,7 @@
 #include "USD_screen.h"
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
+#include "USD_ID.h"
 
 #include "WM_operators.h"
 
@@ -105,6 +106,7 @@ struct wmWindow : public wabi::UsdUIWindow
   wmEvent *eventstate;
   wmEventQueue event_queue;
   std::vector<wmEventHandler *> modalhandlers;
+  std::vector<wmEventHandler *> handlers;
 // uiPopupBlockHandle
   /** Runtime Window State. */
   char windowstate;
@@ -207,6 +209,8 @@ typedef std::deque<wmNotifier *> wmNotifierQueue;
 
 struct wmWindowManager : public wabi::UsdPrim
 {
+  ID id;
+
   SdfPath path;
 
   /** All windows this manager controls. */
@@ -221,10 +225,19 @@ struct wmWindowManager : public wabi::UsdPrim
   /** Active dragged items. */
   std::vector<void *> drags;
 
+  struct ReportList reports;
+
+  std::vector<wmKeyConfig *> keyconfigs;
+
+  /** Default configuration. */
+  struct wmKeyConfig *defaultconf;
+  /** Addon configuration. */
+  struct wmKeyConfig *addonconf;
+  /** User configuration. */
+  struct wmKeyConfig *userconf;
+
   /** Active timers. */
   std::vector<struct wmTimer *> timers;
-
-  struct ReportList reports;
 
   bool file_saved;
 

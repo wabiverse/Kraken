@@ -22,19 +22,22 @@
  * The Universe Gets Animated.
  */
 
-#include "LUXO_runtime.h"
-#include "LUXO_access.h"
-#include "LUXO_main.h"
-
 #include "KLI_string.h"
 
 #include "KKE_utils.h"
 #include "KKE_appdir.h"
+#include "KKE_idprop.h"
 
 #include "USD_api.h"
 #include "USD_object.h"
 #include "USD_types.h"
 #include "USD_scene.h"
+
+#include "LUXO_runtime.h"
+#include "LUXO_access.h"
+#include "LUXO_main.h"
+
+#include "LUXO_internal.h"
 
 #include <wabi/usd/ar/resolver.h>
 
@@ -108,7 +111,7 @@ bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna)
   }
 
   for (base = type; base; base = base->base) {
-    if (base == srna) {
+    if (base->GetTypeName() == srna->GetTypeName()) {
       return true;
     }
   }
@@ -129,7 +132,7 @@ void **LUXO_struct_instance(KrakenPRIM *ptr)
   return NULL;
 }
 
-KrakenPROP *rna_ensure_property(KrakenPROP *prop)
+KrakenPROP *luxo_ensure_property(KrakenPROP *prop)
 {
   if (prop) {
     return prop;
@@ -138,7 +141,81 @@ KrakenPROP *rna_ensure_property(KrakenPROP *prop)
 
 PropertyType LUXO_property_type_enum(KrakenPROP *prop)
 {
-  return rna_ensure_property(prop)->type;
+  return luxo_ensure_property(prop)->type;
+}
+
+bool LUXO_struct_undo_check(const KrakenPRIM *type)
+{
+  return (type->flag & STRUCT_UNDO) != 0;
+}
+
+// bool RNA_path_resolve_property(const KrakenPRIM *ptr,
+//                                const char *path,
+//                                KrakenPRIM *r_ptr,
+//                                KrakenPROP **r_prop)
+// {
+//   if (!luxo_path_parse(ptr, path, r_ptr, r_prop, nullptr, nullptr, nullptr, false)) {
+//     return false;
+//   }
+
+//   return r_ptr->data != nullptr && *r_prop != nullptr;
+// }
+
+KrakenPROP *LUXO_struct_iterator_property(KrakenPRIM *type)
+{
+  return type->props.front();
+}
+
+KrakenPROP *LUXO_struct_find_property(KrakenPRIM *ptr, const char *identifier)
+{
+  if (identifier[0] == '[' && identifier[1] == '"') {
+    /* id prop lookup, not so common */
+    KrakenPROP *r_prop = NULL;
+    KrakenPRIM r_ptr; /* only support single level props */
+    // if (RNA_path_resolve_property(ptr, identifier, &r_ptr, &r_prop) && (r_ptr.type == ptr->type)
+    // &&
+    //     (r_ptr.data == ptr->data)) {
+    //   return r_prop;
+    // }
+  } else {
+    /* most common case */
+    KrakenPROP *iterprop = LUXO_struct_iterator_property(ptr->type);
+    KrakenPRIM propptr;
+
+    // if (LUXO_property_collection_lookup_string(ptr, iterprop, identifier, &propptr)) {
+    //   return propptr.data;
+    // }
+  }
+
+  return NULL;
+}
+
+static const char *luxo_ensure_property_identifier(const KrakenPROP *prop)
+{
+  // if (prop->magic == LUXO_MAGIC) {
+  //   return prop->identifier;
+  // }
+  return ((const IDProperty *)prop)->name;
+}
+
+const char *LUXO_property_identifier(const KrakenPROP *prop)
+{
+  return luxo_ensure_property_identifier(prop);
+}
+
+PropertySubType LUXO_property_subtype(KrakenPROP *prop)
+{
+  KrakenPROP *stage_prop = luxo_ensure_property(prop);
+
+  /* For custom properties, find and parse the 'subtype' metadata field. */
+  IDProperty *idprop = (IDProperty *)prop;
+
+  if (idprop && idprop->ui_data) {
+    IDPropertyUIData *ui_data = idprop->ui_data;
+    return (PropertySubType)ui_data->rna_subtype;
+  }
+
+  return stage_prop->subtype;
 }
 
 PropertyType LUXO_property_type(KrakenPROP *prop)
@@ -149,21 +226,15 @@ PropertyType LUXO_property_type(KrakenPROP *prop)
     return PROP_BOOLEAN;
   }
 
-  if ((type == SdfValueTypeNames->Int) || 
-      (type == SdfValueTypeNames->Int2) || 
-      (type == SdfValueTypeNames->Int3) ||
-      (type == SdfValueTypeNames->Int4)) {
+  if ((type == SdfValueTypeNames->Int) || (type == SdfValueTypeNames->Int2) ||
+      (type == SdfValueTypeNames->Int3) || (type == SdfValueTypeNames->Int4)) {
     return PROP_INT;
   }
 
-  if ((type == SdfValueTypeNames->Float) || 
-      (type == SdfValueTypeNames->Float2) || 
-      (type == SdfValueTypeNames->Float3) ||
-      (type == SdfValueTypeNames->Float4) ||
-      (type == SdfValueTypeNames->Double) ||
-      (type == SdfValueTypeNames->Double2) ||
-      (type == SdfValueTypeNames->Double3) ||
-      (type == SdfValueTypeNames->Double4)) {
+  if ((type == SdfValueTypeNames->Float) || (type == SdfValueTypeNames->Float2) ||
+      (type == SdfValueTypeNames->Float3) || (type == SdfValueTypeNames->Float4) ||
+      (type == SdfValueTypeNames->Double) || (type == SdfValueTypeNames->Double2) ||
+      (type == SdfValueTypeNames->Double3) || (type == SdfValueTypeNames->Double4)) {
     return PROP_FLOAT;
   }
 
@@ -174,6 +245,8 @@ PropertyType LUXO_property_type(KrakenPROP *prop)
   if (type == SdfValueTypeNames->Token) {
     return PROP_ENUM;
   }
+
+  return PROP_COLLECTION;
 }
 
 bool USD_enum_identifier(wabi::TfEnum item, const int value, const char **r_identifier)
@@ -218,6 +291,138 @@ UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfTok
 
   collection = UsdCollectionAPI::Get(prim, name);
   return collection.GetAllCollections(prim);
+}
+
+IDProperty **LUXO_struct_idprops_p(KrakenPRIM *ptr)
+{
+  KrakenPRIM *type = ptr->type;
+  if (type == NULL) {
+    return NULL;
+  }
+  if (type->idproperties == NULL) {
+    return NULL;
+  }
+
+  return type->idproperties(ptr);
+}
+
+IDProperty *LUXO_struct_idprops(KrakenPRIM *ptr, bool create)
+{
+  IDProperty **property_ptr = LUXO_struct_idprops_p(ptr);
+  if (property_ptr == NULL) {
+    return NULL;
+  }
+
+  if (create && *property_ptr == NULL) {
+    IDPropertyTemplate val = {0};
+    *property_ptr = IDP_New(IDP_GROUP, &val, wabi::TfToken(__func__));
+  }
+
+  return *property_ptr;
+}
+
+IDProperty *prim_idproperty_find(KrakenPRIM *ptr, const TfToken &name)
+{
+  IDProperty *group = LUXO_struct_idprops(ptr, 0);
+
+  if (group) {
+    if (group->type == IDP_GROUP) {
+      return IDP_GetPropertyFromGroup(group, name);
+    }
+    /* Not sure why that happens sometimes, with nested properties... */
+    /* Seems to be actually array prop, name is usually "0"... To be sorted out later. */
+#if 0
+      printf(
+          "Got unexpected IDProp container when trying to retrieve %s: %d\n", name, group->type);
+#endif
+  }
+
+  return NULL;
+}
+
+void prim_property_prim_or_id_get(KrakenPROP *prop,
+                                  KrakenPRIM *ptr,
+                                  PropertyRNAOrID *r_prop_rna_or_id)
+{
+  /* This is quite a hack, but avoids some complexity in the API. we
+   * pass IDProperty structs as PropertyRNA pointers to the outside.
+   * We store some bytes in PropertyRNA structs that allows us to
+   * distinguish it from IDProperty structs. If it is an ID property,
+   * we look up an IDP PropertyRNA based on the type, and set the data
+   * pointer to the IDProperty. */
+  memset(r_prop_rna_or_id, 0, sizeof(*r_prop_rna_or_id));
+
+  r_prop_rna_or_id->ptr = *ptr;
+  r_prop_rna_or_id->rawprop = prop;
+
+
+  IDProperty *idprop = (IDProperty *)prop;
+  /* Given prop may come from the custom properties of another data, ensure we get the one from
+   * given data ptr. */
+  IDProperty *idprop_evaluated = prim_idproperty_find(ptr, idprop->name);
+  if (idprop_evaluated != NULL && idprop->type != idprop_evaluated->type) {
+    idprop_evaluated = NULL;
+  }
+
+  r_prop_rna_or_id->idprop = idprop_evaluated;
+  r_prop_rna_or_id->is_idprop = true;
+  /* Full IDProperties are always set, if it exists. */
+  r_prop_rna_or_id->is_set = (idprop_evaluated != NULL);
+
+  r_prop_rna_or_id->identifier = idprop->name;
+  if (idprop->type == IDP_ARRAY) {
+    r_prop_rna_or_id->rnaprop = arraytypemap[(int)(idprop->subtype)];
+    r_prop_rna_or_id->is_array = true;
+    r_prop_rna_or_id->array_len = idprop_evaluated != NULL ? (uint)idprop_evaluated->len : 0;
+  } else {
+    r_prop_rna_or_id->rnaprop = typemap[(int)(idprop->type)];
+  }
+}
+
+IDProperty *prim_idproperty_check(KrakenPROP **prop, KrakenPRIM *ptr)
+{
+  PropertyPRIMOrID prop_prim_or_id;
+
+  prim_property_rna_or_id_get(*prop, ptr, &prop_prim_or_id);
+
+  *prop = prop_prim_or_id.rnaprop;
+  return prop_prim_or_id.idprop;
+}
+
+void LUXO_property_collection_begin(KrakenPRIM *ptr,
+                                    KrakenPROP *prop,
+                                    CollectionPropertyIterator *iter)
+{
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_property_type(prop) == PROP_COLLECTION);
+
+  memset(iter, 0, sizeof(*iter));
+
+  if ((idprop = rna_idproperty_check(&prop, ptr)) || (prop->flag & PROP_IDPROPERTY)) {
+    iter->parent = *ptr;
+    iter->prop = prop;
+
+    if (idprop) {
+      rna_iterator_array_begin(iter,
+                               IDP_IDPArray(idprop),
+                               sizeof(IDProperty),
+                               idprop->len,
+                               0,
+                               NULL);
+    } else {
+      rna_iterator_array_begin(iter, NULL, sizeof(IDProperty), 0, 0, NULL);
+    }
+
+    if (iter->valid) {
+      rna_property_collection_get_idp(iter);
+    }
+
+    iter->idprop = 1;
+  } else {
+    CollectionPropertyRNA *cprop = (CollectionPropertyRNA *)prop;
+    cprop->begin(iter, ptr);
+  }
 }
 
 void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr)
@@ -331,10 +536,10 @@ void LUXO_save_usd(void)
 {
   KRAKEN_STAGE->GetRootLayer()->Save();
 }
-      // KrakenPRIM ctx = but->stagepoin;
-      // KrakenSTAGE stage = but->stagepoin.GetStage();
-      // UsdEditTarget trg = stage->GetEditTarget();
-      // SdfPrimSpecHandle ptr = trg.GetPrimSpecForScenePath(ctx.GetPath());
+// KrakenPRIM ctx = but->stagepoin;
+// KrakenSTAGE stage = but->stagepoin.GetStage();
+// UsdEditTarget trg = stage->GetEditTarget();
+// SdfPrimSpecHandle ptr = trg.GetPrimSpecForScenePath(ctx.GetPath());
 /**
  * Use UsdStage::CreateInMemory when we get out of an alpha state
  * for now, this makes it easier to debug scene description - it
@@ -371,6 +576,70 @@ void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = (void *&)KRAKEN_STAGE;
+}
+
+int LUXO_enum_from_value(const EnumPropertyItem *item, const int value)
+{
+  int i = 0;
+  for (; item->identifier.data(); item++, i++) {
+    if ((!item->identifier.IsEmpty()) && item->value == value) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void LUXO_property_enum_items_ex(kContext *C,
+                                 KrakenPRIM *ptr,
+                                 KrakenPROP *prop,
+                                 const bool use_static,
+                                 const EnumPropertyItem **r_item,
+                                 int *r_totitem,
+                                 bool *r_free)
+{
+  EnumPropertyPRIM *eprop = (EnumPropertyPRIM *)luxo_ensure_property(prop);
+
+  *r_free = false;
+
+  if (!use_static && (eprop->item_fn != NULL)) {
+    const bool no_context = (prop->flag & PROP_ENUM_NO_CONTEXT) ||
+                            ((ptr->type->flag & STRUCT_NO_CONTEXT_WITHOUT_OWNER_ID) &&
+                             (ptr->owner_id == NULL));
+    if (C != NULL || no_context) {
+      const EnumPropertyItem *item;
+
+      item = eprop->item_fn(no_context ? NULL : C, ptr, prop, r_free);
+
+      /* any callbacks returning NULL should be fixed */
+      KLI_assert(item != NULL);
+
+      if (r_totitem) {
+        int tot;
+        for (tot = 0; item[tot].identifier.data(); tot++) {
+          /* pass */
+        }
+        *r_totitem = tot;
+      }
+
+      *r_item = item;
+      return;
+    }
+  }
+
+  *r_item = eprop->item;
+  if (r_totitem) {
+    *r_totitem = eprop->totitem;
+  }
+}
+
+void LUXO_property_enum_items(kContext *C,
+                              KrakenPRIM *ptr,
+                              KrakenPROP *prop,
+                              const EnumPropertyItem **r_item,
+                              int *r_totitem,
+                              bool *r_free)
+{
+  LUXO_property_enum_items_ex(C, ptr, prop, false, r_item, r_totitem, r_free);
 }
 
 KRAKEN_NAMESPACE_END

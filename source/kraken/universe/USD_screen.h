@@ -49,8 +49,8 @@ struct Menu
 
 struct MenuType
 {
-  char idname[KKE_ST_MAXNAME]; /* unique name */
-  char label[KKE_ST_MAXNAME];  /* for button text */
+  wabi::TfToken idname;       /* unique name */
+  char label[KKE_ST_MAXNAME]; /* for button text */
   char translation_context[KKE_ST_MAXNAME];
   char owner_id[KKE_ST_MAXNAME]; /* optional, see: #wmOwnerID */
   const char *description;
@@ -63,9 +63,9 @@ struct MenuType
 
 struct PanelType
 {
-  char idname[KKE_ST_MAXNAME]; /* unique name */
-  char label[KKE_ST_MAXNAME];  /* for panel header */
-  char *description;           /* for panel tooltip */
+  wabi::TfToken idname;       /* unique name */
+  char label[KKE_ST_MAXNAME]; /* for panel header */
+  char *description;          /* for panel tooltip */
   char translation_context[KKE_ST_MAXNAME];
   char context[KKE_ST_MAXNAME];   /* for buttons window */
   char category[KKE_ST_MAXNAME];  /* for category tabs */

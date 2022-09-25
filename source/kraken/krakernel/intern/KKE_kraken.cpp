@@ -127,6 +127,11 @@ Main *KKE_main_new(void)
   return kmain;
 }
 
+std::filesystem::path KKE_main_usdfile_path(const Main *kmain)
+{
+  return kmain->stage_id;
+}
+
 Global &KKE_kraken_globals_init()
 {
   kraken_version_init();

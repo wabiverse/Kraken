@@ -62,7 +62,9 @@ struct wmOperatorType
   /** Use for tool-tips and Python docs. */
   const char *description;
 
-  wabi::UsdPrim prim;
+  KrakenPRIM prim;
+
+  std::vector<wmOperatorTypeMacro *> macro;
 
   /** Signal changes, allow for Pub/Sub. */
   // const TfNotice notice;
@@ -86,5 +88,6 @@ void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot);
 void WM_operator_properties_free(KrakenPRIM *ptr);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
+bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update);
 
 KRAKEN_NAMESPACE_END

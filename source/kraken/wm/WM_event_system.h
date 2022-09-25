@@ -28,10 +28,12 @@
 #include <wabi/wabi.h>
 
 #include "KKE_context.h"
+#include "KKE_idtype.h"
 
 #include "USD_object.h"
 
 #include "WM_operators.h"
+#include "WM_keymap.h"
 
 KRAKEN_NAMESPACE_BEGIN
 
@@ -100,12 +102,11 @@ int WM_operator_name_call(kContext *C,
 
 void WM_event_do_refresh_wm(kContext *C);
 
+void WM_event_get_keymaps_from_handler(wmWindowManager *wm,
+                                       wmWindow *win,
+                                       wmEventHandler_Keymap *handler,
+                                       wmEventHandler_KeymapResult *km_result);
 
-IDProperty *IDP_CopyProperty(const IDProperty *prop);
-IDProperty *IDP_CopyProperty_ex(const IDProperty *prop, const int flag);
-static IDProperty *idp_generic_copy(const IDProperty *prop, const int flag);
-IDProperty *IDP_CopyIDPArray(const IDProperty *array, const int flag);
-IDPropertyUIData *IDP_ui_data_copy(const IDProperty *prop);
-
+bool WM_operator_poll_context(kContext *C, wmOperatorType *ot, short context);
 
 KRAKEN_NAMESPACE_END

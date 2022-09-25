@@ -74,6 +74,7 @@ struct Main
 };
 
 Main *KKE_main_new(void);
+std::filesystem::path KKE_main_usdfile_path(const Main *kmain);
 
 /** #Global.debug */
 enum

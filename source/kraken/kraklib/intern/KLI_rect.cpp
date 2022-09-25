@@ -22,15 +22,21 @@
  * Gadget Vault.
  */
 
-#include "kraken/kraken.h"
-
 #include "USD_api.h"
 
 #include "KLI_api.h"
 #include "KLI_assert.h"
 #include "KLI_rect.h"
 
-KRAKEN_NAMESPACE_BEGIN
+#include <wabi/base/gf/vec2i.h>
+#include <wabi/base/gf/vec4i.h>
+#include <wabi/base/gf/vec4f.h>
+
+void KLI_rctf_init_minmax(rctf *rect)
+{
+  rect->xmin = rect->ymin = FLT_MAX;
+  rect->xmax = rect->ymax = -FLT_MAX;
+}
 
 bool KLI_rctf_isect_pt(const wabi::GfVec4f &rect, const float x, const float y)
 {
@@ -58,4 +64,101 @@ void KLI_rcti_rctf_copy_round(wabi::GfVec4i *dst, const wabi::GfVec4f &src)
                  floorf(src[3] + 0.5f));
 }
 
-KRAKEN_NAMESPACE_END
+void KLI_rcti_rctf_copy_floor(rcti *dst, const rctf *src)
+{
+  dst->xmin = floorf(src->xmin);
+  dst->xmax = floorf(src->xmax);
+  dst->ymin = floorf(src->ymin);
+  dst->ymax = floorf(src->ymax);
+}
+
+void KLI_rcti_translate(rcti *rect, int x, int y)
+{
+  rect->xmin += x;
+  rect->ymin += y;
+  rect->xmax += x;
+  rect->ymax += y;
+}
+
+void KLI_rctf_translate(rctf *rect, float x, float y)
+{
+  rect->xmin += x;
+  rect->ymin += y;
+  rect->xmax += x;
+  rect->ymax += y;
+}
+
+
+bool KLI_rctf_isect(const rctf *src1, const rctf *src2, rctf *dest)
+{
+  float xmin, xmax;
+  float ymin, ymax;
+
+  xmin = (src1->xmin) > (src2->xmin) ? (src1->xmin) : (src2->xmin);
+  xmax = (src1->xmax) < (src2->xmax) ? (src1->xmax) : (src2->xmax);
+  ymin = (src1->ymin) > (src2->ymin) ? (src1->ymin) : (src2->ymin);
+  ymax = (src1->ymax) < (src2->ymax) ? (src1->ymax) : (src2->ymax);
+
+  if (xmax >= xmin && ymax >= ymin) {
+    if (dest) {
+      dest->xmin = xmin;
+      dest->xmax = xmax;
+      dest->ymin = ymin;
+      dest->ymax = ymax;
+    }
+    return true;
+  }
+
+  if (dest) {
+    dest->xmin = 0;
+    dest->xmax = 0;
+    dest->ymin = 0;
+    dest->ymax = 0;
+  }
+  return false;
+}
+
+bool KLI_rcti_isect(const rcti *src1, const rcti *src2, rcti *dest)
+{
+  int xmin, xmax;
+  int ymin, ymax;
+
+  xmin = (src1->xmin) > (src2->xmin) ? (src1->xmin) : (src2->xmin);
+  xmax = (src1->xmax) < (src2->xmax) ? (src1->xmax) : (src2->xmax);
+  ymin = (src1->ymin) > (src2->ymin) ? (src1->ymin) : (src2->ymin);
+  ymax = (src1->ymax) < (src2->ymax) ? (src1->ymax) : (src2->ymax);
+
+  if (xmax >= xmin && ymax >= ymin) {
+    if (dest) {
+      dest->xmin = xmin;
+      dest->xmax = xmax;
+      dest->ymin = ymin;
+      dest->ymax = ymax;
+    }
+    return true;
+  }
+
+  if (dest) {
+    dest->xmin = 0;
+    dest->xmax = 0;
+    dest->ymin = 0;
+    dest->ymax = 0;
+  }
+  return false;
+}
+
+void KLI_rctf_union(rctf *rct_a, const rctf *rct_b)
+{
+  if (rct_a->xmin > rct_b->xmin) {
+    rct_a->xmin = rct_b->xmin;
+  }
+  if (rct_a->xmax < rct_b->xmax) {
+    rct_a->xmax = rct_b->xmax;
+  }
+  if (rct_a->ymin > rct_b->ymin) {
+    rct_a->ymin = rct_b->ymin;
+  }
+  if (rct_a->ymax < rct_b->ymax) {
+    rct_a->ymax = rct_b->ymax;
+  }
+}

@@ -40,6 +40,7 @@ set(SRC
   ../include/UI_interface.h
   ../include/UI_resources.h
   ../include/UI_tokens.h
+  ../include/UI_view2d.h
 )
 
 set(LIB

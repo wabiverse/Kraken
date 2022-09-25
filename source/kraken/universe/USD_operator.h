@@ -26,6 +26,7 @@
 
 #include "USD_context.h"
 #include "USD_object.h"
+#include "USD_ID.h"
 
 #include <wabi/usd/usd/attribute.h>
 
@@ -37,6 +38,7 @@ struct wmOperator
   /** Used to retrieve type pointer. */
   TfToken idname;
   /** Saved, user-settable properties. */
+  IDProperty *properties;
   KrakenPRIM *ptr;
 
   /* runtime */

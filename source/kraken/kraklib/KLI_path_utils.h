@@ -16,24 +16,16 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * KRAKEN Library.
  * Gadget Vault.
  */
 
-#pragma once
-
-#include "KLI_api.h"
-#include "KLI_assert.h"
-#include "KLI_string.h"
-
-#include <cstring>
-#include <string>
-
-#include <wabi/base/arch/attributes.h>
-
-KRAKEN_NAMESPACE_BEGIN
+#include "KLI_compiler_attrs.h"
+#include "KLI_utildefines.h"
 
 #ifdef _WIN32
 #  define MAXPATHLEN MAX_PATH
@@ -141,5 +133,3 @@ bool KLI_path_program_extensions_add_win32(char *name, const size_t maxlen);
 #ifndef KLI_ISDIR
 #  define KLI_ISDIR(x) fs::is_directory(x)
 #endif
-
-KRAKEN_NAMESPACE_END

@@ -16,6 +16,7 @@
 #include "USD_window.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
+#include "USD_wm_types.h"
 
 // #include "KLI_alloca.h"
 #include "KLI_dynstr.h"
@@ -141,7 +142,7 @@ struct uiLayout {
   uiItem item;
 
   uiLayoutRoot *root;
-  bContextStore *context;
+  kContextStore *context;
   uiLayout *parent;
   ListBase items;
 
@@ -494,8 +495,8 @@ static void ui_layer_but_cb(kContext *C, void *arg_but, void *arg_index)
 {
   wmWindow *win = CTX_wm_window(C);
   uiBut *but = (uiBut *)arg_but;
-  KrakenPRIM *ptr = &but->rnapoin;
-  KrakenPROP *prop = but->rnaprop;
+  KrakenPRIM *ptr = &but->stagepoin;
+  KrakenPROP *prop = but->stageprop;
   const int index = POINTER_AS_INT(arg_index);
   const bool shift = win->eventstate->modifier & KM_SHIFT;
   const int len = RNA_property_array_length(ptr, prop);
@@ -761,14 +762,14 @@ static void ui_item_enum_expand_handle(kContext *C, void *arg1, void *arg2)
     uiBut *but = (uiBut *)arg1;
     const int enum_value = POINTER_AS_INT(arg2);
 
-    int current_value = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
+    int current_value = RNA_property_enum_get(&but->stagepoin, but->stageprop);
     if (!(current_value & enum_value)) {
       current_value = enum_value;
     }
     else {
       current_value &= enum_value;
     }
-    RNA_property_enum_set(&but->rnapoin, but->rnaprop, current_value);
+    RNA_property_enum_set(&but->stagepoin, but->stageprop, current_value);
   }
 }
 
@@ -969,13 +970,13 @@ static void ui_keymap_but_cb(kContext *UNUSED(C), void *but_v, void *UNUSED(key_
   const uiButHotkeyEvent *hotkey_but = (uiButHotkeyEvent *)but;
 
   RNA_int_set(
-      &but->rnapoin, "shift", (hotkey_but->modifier_key & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING);
+      &but->stagepoin, "shift", (hotkey_but->modifier_key & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING);
   RNA_int_set(
-      &but->rnapoin, "ctrl", (hotkey_but->modifier_key & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING);
+      &but->stagepoin, "ctrl", (hotkey_but->modifier_key & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING);
   RNA_int_set(
-      &but->rnapoin, "alt", (hotkey_but->modifier_key & KM_ALT) ? KM_MOD_HELD : KM_NOTHING);
+      &but->stagepoin, "alt", (hotkey_but->modifier_key & KM_ALT) ? KM_MOD_HELD : KM_NOTHING);
   RNA_int_set(
-      &but->rnapoin, "oskey", (hotkey_but->modifier_key & KM_OSKEY) ? KM_MOD_HELD : KM_NOTHING);
+      &but->stagepoin, "oskey", (hotkey_but->modifier_key & KM_OSKEY) ? KM_MOD_HELD : KM_NOTHING);
 }
 
 /**
@@ -1049,8 +1050,8 @@ static uiBut *ui_item_with_label(uiLayout *layout,
     }
   }
 
-  const PropertyType type = RNA_property_type(prop);
-  const PropertySubType subtype = RNA_property_subtype(prop);
+  const PropertyType type = LUXO_property_type(prop);
+  const PropertySubType subtype = LUXO_property_subtype(prop);
 
   uiBut *but;
   if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH)) {
@@ -1150,16 +1151,16 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
 
   LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
-      if (but && but->rnapoin.data) {
-        if (RNA_property_type(but->rnaprop) == PROP_STRING) {
+      if (but && but->stagepoin.data) {
+        if (RNA_property_type(but->stageprop) == PROP_STRING) {
           prevbut = but;
         }
       }
 
       /* find the button before the active one */
       if ((but->flag & UI_BUT_LAST_ACTIVE) && prevbut) {
-        *r_ptr = prevbut->rnapoin;
-        *r_prop = prevbut->rnaprop;
+        *r_ptr = prevbut->stagepoin;
+        *r_prop = prevbut->stageprop;
         *r_is_undo = (prevbut->flag & UI_BUT_UNDO) != 0;
         *r_is_userdef = UI_but_is_userdef(prevbut);
         return;
@@ -2421,8 +2422,8 @@ void uiItemFullR(uiLayout *layout,
 
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
-      KrakenPRIM *ptr_dec = use_blank_decorator ? NULL : &but_decorate->rnapoin;
-      KrakenPROP *prop_dec = use_blank_decorator ? NULL : but_decorate->rnaprop;
+      KrakenPRIM *ptr_dec = use_blank_decorator ? NULL : &but_decorate->stagepoin;
+      KrakenPROP *prop_dec = use_blank_decorator ? NULL : but_decorate->stageprop;
 
       /* The icons are set in 'ui_but_anim_flag' */
       uiItemDecoratorR_prop(layout_col, ptr_dec, prop_dec, but_decorate->rnaindex);
@@ -2479,7 +2480,7 @@ void uiItemFullR_with_popover(uiLayout *layout,
   uiItemFullR(layout, ptr, prop, index, value, flag, name, icon);
   but = but->next;
   while (but) {
-    if (but->rnaprop == prop && ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_COLOR)) {
+    if (but->stageprop == prop && ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_COLOR)) {
       ui_but_rna_menu_convert_to_panel_type(but, panel_type);
       break;
     }
@@ -2510,7 +2511,7 @@ void uiItemFullR_with_menu(uiLayout *layout,
   uiItemFullR(layout, ptr, prop, index, value, flag, name, icon);
   but = but->next;
   while (but) {
-    if (but->rnaprop == prop && but->type == UI_BTYPE_MENU) {
+    if (but->stageprop == prop && but->type == UI_BTYPE_MENU) {
       ui_but_rna_menu_convert_to_menu_type(but, menu_type);
       break;
     }
@@ -3033,7 +3034,7 @@ void uiItemMContents(uiLayout *layout, const char *menuname)
     return;
   }
 
-  bContextStore *previous_ctx = CTX_store_get(C);
+  kContextStore *previous_ctx = CTX_store_get(C);
   UI_menutype_draw(C, mt, layout);
 
   /* Restore context that was cleared by `UI_menutype_draw`. */
@@ -3093,8 +3094,8 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
     UI_but_func_set(&decorator_but->but, ui_but_anim_decorate_cb, decorator_but, NULL);
     decorator_but->but.flag |= UI_BUT_UNDO | UI_BUT_DRAG_LOCK;
     /* Reusing RNA search members, setting actual RNA data has many side-effects. */
-    decorator_but->rnapoin = *ptr;
-    decorator_but->rnaprop = prop;
+    decorator_but->stagepoin = *ptr;
+    decorator_but->stageprop = prop;
     /* ui_def_but_rna() sets non-array buttons to have a RNA index of 0. */
     decorator_but->rnaindex = (!is_array || is_expand) ? i : index;
   }
@@ -3440,7 +3441,7 @@ typedef struct MenuItemLevel {
    * allocate strings and free before the menu draws, see T27304. */
   char opname[OP_MAX_TYPENAME];
   char propname[MAX_IDPROP_NAME];
-  KrakenPRIM rnapoin;
+  KrakenPRIM stagepoin;
 } MenuItemLevel;
 
 static void menu_item_enum_opname_menu(kContext *UNUSED(C), uiLayout *layout, void *arg)
@@ -3540,7 +3541,7 @@ static void menu_item_enum_rna_menu(kContext *UNUSED(C), uiLayout *layout, void 
   MenuItemLevel *lvl = (MenuItemLevel *)(((uiBut *)arg)->func_argN);
 
   uiLayoutSetOperatorContext(layout, lvl->opcontext);
-  uiItemsEnumR(layout, &lvl->rnapoin, lvl->propname);
+  uiItemsEnumR(layout, &lvl->stagepoin, lvl->propname);
   layout->root->block->flag |= UI_BLOCK_IS_FLIP;
 }
 
@@ -3555,7 +3556,7 @@ void uiItemMenuEnumR_prop(
   }
 
   MenuItemLevel *lvl = MEM_callocN(sizeof(MenuItemLevel), "MenuItemLevel");
-  lvl->rnapoin = *ptr;
+  lvl->stagepoin = *ptr;
   KLI_strncpy(lvl->propname, RNA_property_identifier(prop), sizeof(lvl->propname));
   lvl->opcontext = layout->root->opcontext;
 
@@ -4876,8 +4877,8 @@ uiLayout *uiLayoutListBox(uiLayout *layout,
 
   but->custom_data = ui_list;
 
-  but->rnapoin = *actptr;
-  but->rnaprop = actprop;
+  but->stagepoin = *actptr;
+  but->stageprop = actprop;
 
   /* only for the undo string */
   if (but->flag & UI_BUT_UNDO) {
@@ -5116,12 +5117,12 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
     }
   }
 
-  if (but->rnaprop != NULL) {
-    if (KLI_strcasestr(RNA_property_ui_name(but->rnaprop), search_filter)) {
+  if (but->stageprop != NULL) {
+    if (KLI_strcasestr(RNA_property_ui_name(but->stageprop), search_filter)) {
       return true;
     }
 #ifdef PROPERTY_SEARCH_USE_TOOLTIPS
-    if (KLI_strcasestr(RNA_property_description(but->rnaprop), search_filter)) {
+    if (KLI_strcasestr(RNA_property_description(but->stageprop), search_filter)) {
       return true;
     }
 #endif
@@ -5130,8 +5131,8 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
      * Unfortunately we have no #kContext here so we cannot search through RNA enums
      * with dynamic entries (or "itemf" functions) which require context. */
     if (but->type == UI_BTYPE_MENU) {
-      KrakenPRIM *ptr = &but->rnapoin;
-      KrakenPROP *enum_prop = but->rnaprop;
+      KrakenPRIM *ptr = &but->stagepoin;
+      KrakenPROP *enum_prop = but->stageprop;
 
       int items_len;
       const EnumPropertyItem *items_array = NULL;
@@ -5712,12 +5713,12 @@ void uiLayoutSetContextPointer(uiLayout *layout, const char *name, KrakenPRIM *p
   layout->context = CTX_store_add(&block->contexts, name, ptr);
 }
 
-bContextStore *uiLayoutGetContextStore(uiLayout *layout)
+kContextStore *uiLayoutGetContextStore(uiLayout *layout)
 {
   return layout->context;
 }
 
-void uiLayoutContextCopy(uiLayout *layout, bContextStore *context)
+void uiLayoutContextCopy(uiLayout *layout, kContextStore *context)
 {
   uiBlock *block = layout->root->block;
   layout->context = CTX_store_add_all(&block->contexts, context);
@@ -5763,12 +5764,12 @@ void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but)
     uiLayoutSetContextPointer(layout, "button_operator", but->opptr);
   }
 
-  if (but->rnapoin.data && but->rnaprop) {
+  if (but->stagepoin.data && but->stageprop) {
     /* TODO: index could be supported as well */
     KrakenPRIM ptr_prop;
-    RNA_pointer_create(NULL, &RNA_Property, but->rnaprop, &ptr_prop);
+    RNA_pointer_create(NULL, &RNA_Property, but->stageprop, &ptr_prop);
     uiLayoutSetContextPointer(layout, "button_prop", &ptr_prop);
-    uiLayoutSetContextPointer(layout, "button_pointer", &but->rnapoin);
+    uiLayoutSetContextPointer(layout, "button_pointer", &but->stagepoin);
   }
 }
 
@@ -5948,11 +5949,11 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
     }
   }
 
-  if (but->rnaprop) {
+  if (but->stageprop) {
     KLI_dynstr_appendf(ds,
                        "'rna':'%s.%s[%d]', ",
-                       RNA_struct_identifier(but->rnapoin.type),
-                       RNA_property_identifier(but->rnaprop),
+                       RNA_struct_identifier(but->stagepoin.type),
+                       RNA_property_identifier(but->stageprop),
                        but->rnaindex);
   }
 }

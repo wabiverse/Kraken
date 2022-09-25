@@ -14,12 +14,15 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "USD_ID.h"
 #include "USD_types.h"
 #include "USD_area.h"
+#include "USD_factory.h"
 #include "USD_scene.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
+#include "USD_vec_types.h"
 
 #include "KLI_listbase.h"
 #include "KLI_math.h"
@@ -31,6 +34,7 @@
 
 #include "KKE_context.h"
 #include "KKE_idtype.h"
+#include "KKE_idprop.h"
 #include "KKE_main.h"
 #include "KKE_report.h"
 #include "KKE_scene.h"
@@ -38,23 +42,27 @@
 #include "KKE_utils.h"
 
 #include "GPU_matrix.h"
-// #include "GPU_state.h"
+#include "GPU_state.h"
 
-// #include "BLF_api.h"
+#include "KRF_api.h"
 // #include "BLT_translation.h"
 
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
-// #include "UI_view2d.h"
+#include "UI_view2d.h"
 
 // #include "IMB_imbuf.h"
 
 #include "WM_api.h"
 #include "WM_window.h"
+#include "WM_keymap.h"
+#include "WM_tokens.h"
+#include "WM_event_system.h"
 // #include "WM_message.h"
 // #include "WM_types.h"
 
 #include "LUXO_access.h"
+#include "LUXO_types.h"
 
 #ifdef WITH_PYTHON
 #  include "KPY_extern_run.h"
@@ -85,9 +93,9 @@ static void ui_def_but_rna__menu_type(kContext *UNUSED(C), uiLayout *layout, voi
 /* avoid unneeded calls to ui_but_value_get */
 #define UI_BUT_VALUE_UNSET DBL_MAX
 #define UI_GET_BUT_VALUE_INIT(_but, _value) \
-  if (_value == DBL_MAX) { \
-    (_value) = ui_but_value_get(_but); \
-  } \
+  if (_value == DBL_MAX) {                  \
+    (_value) = ui_but_value_get(_but);      \
+  }                                         \
   ((void)0)
 
 #define B_NOP -1
@@ -111,8 +119,9 @@ static bool ui_but_is_unit_radians(const uiBut *but)
 
 void ui_block_to_region_fl(const ARegion *region, uiBlock *block, float *r_x, float *r_y)
 {
-  const int getsizex = KLI_rcti_size_x(&region->winrct) + 1;
-  const int getsizey = KLI_rcti_size_y(&region->winrct) + 1;
+  wabi::GfVec4i coords = FormFactory(region->coords);
+  const int getsizex = KLI_rcti_size_x(coords) + 1;
+  const int getsizey = KLI_rcti_size_y(coords) + 1;
 
   float gx = *r_x;
   float gy = *r_y;
@@ -130,9 +139,10 @@ void ui_block_to_region_fl(const ARegion *region, uiBlock *block, float *r_x, fl
 
 void ui_block_to_window_fl(const ARegion *region, uiBlock *block, float *r_x, float *r_y)
 {
+  wabi::GfVec4i coords = FormFactory(region->coords);
   ui_block_to_region_fl(region, block, r_x, r_y);
-  *r_x += region->winrct.xmin;
-  *r_y += region->winrct.ymin;
+  *r_x += coords[0];
+  *r_y += coords[2];
 }
 
 void ui_block_to_window(const ARegion *region, uiBlock *block, int *r_x, int *r_y)
@@ -179,10 +189,12 @@ float ui_block_to_window_scale(const ARegion *region, uiBlock *block)
 
 void ui_window_to_block_fl(const ARegion *region, uiBlock *block, float *r_x, float *r_y)
 {
-  const int getsizex = KLI_rcti_size_x(&region->winrct) + 1;
-  const int getsizey = KLI_rcti_size_y(&region->winrct) + 1;
-  const int sx = region->winrct.xmin;
-  const int sy = region->winrct.ymin;
+  wabi::GfVec4i coords = FormFactory(region->coords);
+
+  const int getsizex = KLI_rcti_size_x(coords) + 1;
+  const int getsizey = KLI_rcti_size_y(coords) + 1;
+  const int sx = coords[0];
+  const int sy = coords[2];
 
   const float a = 0.5f * ((float)getsizex) * block->winmat[0][0];
   const float b = 0.5f * ((float)getsizex) * block->winmat[1][0];
@@ -227,36 +239,44 @@ void ui_window_to_block(const ARegion *region, uiBlock *block, int *r_x, int *r_
 
 void ui_window_to_region(const ARegion *region, int *r_x, int *r_y)
 {
-  *r_x -= region->winrct.xmin;
-  *r_y -= region->winrct.ymin;
+  wabi::GfVec4i coords = FormFactory(region->coords);
+
+  *r_x -= coords[0];
+  *r_y -= coords[2];
 }
 
 void ui_window_to_region_rcti(const ARegion *region, rcti *rect_dst, const rcti *rct_src)
 {
-  rect_dst->xmin = rct_src->xmin - region->winrct.xmin;
-  rect_dst->xmax = rct_src->xmax - region->winrct.xmin;
-  rect_dst->ymin = rct_src->ymin - region->winrct.ymin;
-  rect_dst->ymax = rct_src->ymax - region->winrct.ymin;
+  wabi::GfVec4i coords = FormFactory(region->coords);
+
+  rect_dst->xmin = rct_src->xmin - coords[0];
+  rect_dst->xmax = rct_src->xmax - coords[0];
+  rect_dst->ymin = rct_src->ymin - coords[2];
+  rect_dst->ymax = rct_src->ymax - coords[2];
 }
 
 void ui_window_to_region_rctf(const ARegion *region, rctf *rect_dst, const rctf *rct_src)
 {
-  rect_dst->xmin = rct_src->xmin - region->winrct.xmin;
-  rect_dst->xmax = rct_src->xmax - region->winrct.xmin;
-  rect_dst->ymin = rct_src->ymin - region->winrct.ymin;
-  rect_dst->ymax = rct_src->ymax - region->winrct.ymin;
+  wabi::GfVec4i coords = FormFactory(region->coords);
+
+  rect_dst->xmin = rct_src->xmin - coords[0];
+  rect_dst->xmax = rct_src->xmax - coords[0];
+  rect_dst->ymin = rct_src->ymin - coords[2];
+  rect_dst->ymax = rct_src->ymax - coords[2];
 }
 
 void ui_region_to_window(const ARegion *region, int *r_x, int *r_y)
 {
-  *r_x += region->winrct.xmin;
-  *r_y += region->winrct.ymin;
+  wabi::GfVec4i coords = FormFactory(region->coords);
+
+  *r_x += coords[0];
+  *r_y += coords[2];
 }
 
 static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
 {
   int sepr_flex_len = 0;
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for (auto &but : block->buttons) {
     if (but->type == UI_BTYPE_SEPR_SPACER) {
       sepr_flex_len++;
     }
@@ -267,9 +287,10 @@ static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
   }
 
   rcti rect;
-  ui_but_to_pixelrect(&rect, region, block, static_cast<const uiBut *>(block->buttons.last));
+  ui_but_to_pixelrect(&rect, region, block, static_cast<const uiBut *>(block->buttons.back()));
+  wabi::GfVec2f size = FormFactory(region->size);
   const float buttons_width = (float)rect.xmax + UI_HEADER_OFFSET;
-  const float region_width = (float)region->sizex * U.dpi_fac;
+  const float region_width = (float)size[0] * UI_DPI_FAC;
 
   if (region_width <= buttons_width) {
     return;
@@ -277,7 +298,7 @@ static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
 
   /* We could get rid of this loop if we agree on a max number of spacer */
   Vector<int, 8> spacers_pos;
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for (auto &but : block->buttons) {
     if (but->type == UI_BTYPE_SEPR_SPACER) {
       ui_but_to_pixelrect(&rect, region, block, but);
       spacers_pos.append(rect.xmax + UI_HEADER_OFFSET);
@@ -288,7 +309,7 @@ static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
   const float segment_width = region_width / (float)sepr_flex_len;
   float offset = 0, remaining_space = region_width - buttons_width;
   int i = 0;
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for (auto &but : block->buttons) {
     KLI_rctf_translate(&but->rect, offset / view_scale_x, 0);
     if (but->type == UI_BTYPE_SEPR_SPACER) {
       /* How much the next block overlap with the current segment */
@@ -314,9 +335,10 @@ static void ui_update_window_matrix(const wmWindow *window, const ARegion *regio
   if (region && region->visible) {
     /* Get projection matrix which includes View2D translation and zoom. */
     GPU_matrix_projection_get(block->winmat);
-    block->aspect = 2.0f / fabsf(region->winx * block->winmat[0][0]);
-  }
-  else {
+
+    wabi::GfVec2f coords = FormFactory(region->size);
+    block->aspect = 2.0f / fabsf(coords[0] * block->winmat[0][0]);
+  } else {
     /* No subwindow created yet, for menus for example, so we use the main
      * window instead, since buttons are created there anyway. */
     const int width = WM_window_pixels_x(window);
@@ -330,13 +352,17 @@ static void ui_update_window_matrix(const wmWindow *window, const ARegion *regio
 
 void ui_region_winrct_get_no_margin(const struct ARegion *region, struct rcti *r_rect)
 {
-  uiBlock *block = static_cast<uiBlock *>(region->uiblocks.first);
+  wabi::GfVec4i coords = FormFactory(region->coords);
+
+  uiBlock *block = static_cast<uiBlock *>(region->uiblocks.front());
   if (block && (block->flag & UI_BLOCK_LOOP) && (block->flag & UI_BLOCK_RADIAL) == 0) {
     KLI_rcti_rctf_copy_floor(r_rect, &block->rect);
-    KLI_rcti_translate(r_rect, region->winrct.xmin, region->winrct.ymin);
-  }
-  else {
-    *r_rect = region->winrct;
+    KLI_rcti_translate(r_rect, coords[0], coords[2]);
+  } else {
+    r_rect->xmin = coords[0];
+    r_rect->xmax = coords[1];
+    r_rect->ymin = coords[2];
+    r_rect->ymax = coords[3];
   }
 }
 
@@ -344,7 +370,7 @@ void ui_region_winrct_get_no_margin(const struct ARegion *region, struct rcti *r
 
 void UI_block_translate(uiBlock *block, int x, int y)
 {
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for (auto &but : block->buttons) {
     KLI_rctf_translate(&but->rect, x, y);
   }
 
@@ -365,10 +391,10 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
 
   UI_fontstyle_set(&style->widget);
 
-  uiBut *init_col_bt = static_cast<uiBut *>(block->buttons.first);
-  LISTBASE_FOREACH (uiBut *, bt, &block->buttons) {
+  uiBut *init_col_bt = static_cast<uiBut *>(block->buttons.front());
+  for (auto &bt : block->buttons) {
     if (!ELEM(bt->type, UI_BTYPE_SEPR, UI_BTYPE_SEPR_LINE, UI_BTYPE_SEPR_SPACER)) {
-      j = BLF_width(style->widget.uifont_id, bt->drawstr, sizeof(bt->drawstr));
+      j = KRF_width(style->widget.uifont_id, bt->drawstr, sizeof(bt->drawstr));
 
       if (j > i) {
         i = j;
@@ -382,7 +408,8 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
       int width = 0;
       const int alignnr = bt->alignnr;
       for (col_bt = bt; col_bt && col_bt->alignnr == alignnr; col_bt = col_bt->next) {
-        width += KLI_rctf_size_x(&col_bt->rect);
+        width += KLI_rctf_size_x(
+          GfVec4f(col_bt->rect.xmin, col_bt->rect.xmax, col_bt->rect.ymin, col_bt->rect.ymax));
         col_bt->rect.xmin += x1addval;
         col_bt->rect.xmax += x1addval;
       }
@@ -432,19 +459,18 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
 
 void ui_block_bounds_calc(uiBlock *block)
 {
-  if (KLI_listbase_is_empty(&block->buttons)) {
+  if (block->buttons.empty()) {
     if (block->panel) {
       block->rect.xmin = 0.0;
       block->rect.xmax = block->panel->sizex;
       block->rect.ymin = 0.0;
       block->rect.ymax = block->panel->sizey;
     }
-  }
-  else {
+  } else {
 
     KLI_rctf_init_minmax(&block->rect);
 
-    LISTBASE_FOREACH (uiBut *, bt, &block->buttons) {
+    for (auto &bt : block->buttons) {
       KLI_rctf_union(&block->rect, &bt->rect);
     }
 
@@ -454,11 +480,15 @@ void ui_block_bounds_calc(uiBlock *block)
     block->rect.ymax += block->bounds;
   }
 
-  block->rect.xmax = block->rect.xmin + max_ff(KLI_rctf_size_x(&block->rect), block->minbounds);
+  block->rect.xmax = block->rect.xmin + max_ff(KLI_rctf_size_x(GfVec4f(block->rect.xmin,
+                                                                       block->rect.xmax,
+                                                                       block->rect.ymin,
+                                                                       block->rect.ymax)),
+                                               block->minbounds);
 
   /* hardcoded exception... but that one is annoying with larger safety */
-  uiBut *bt = static_cast<uiBut *>(block->buttons.first);
-  const int xof = ((bt && STRPREFIX(bt->str, "ERROR")) ? 10 : 40) * U.dpi_fac;
+  uiBut *bt = static_cast<uiBut *>(block->buttons.front());
+  const int xof = ((bt && STRPREFIX(bt->str, "ERROR")) ? 10 : 40) * UI_DPI_FAC;
 
   block->safety.xmin = block->rect.xmin - xof;
   block->safety.ymin = block->rect.ymin - xof;
@@ -476,8 +506,10 @@ static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
 
   ui_block_bounds_calc(block);
 
-  const int width = KLI_rctf_size_x(&block->rect);
-  const int height = KLI_rctf_size_y(&block->rect);
+  const int width = KLI_rctf_size_x(
+    GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax));
+  const int height = KLI_rctf_size_y(
+    GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax));
 
   const int startx = (xmax * 0.5f) - (width * 0.5f);
   const int starty = (ymax * 0.5f) - (height * 0.5f);
@@ -491,8 +523,8 @@ static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
 static void ui_block_bounds_calc_centered_pie(uiBlock *block)
 {
   const int xy[2] = {
-      (int)block->pie_data.pie_center_spawned[0],
-      (int)block->pie_data.pie_center_spawned[1],
+    (int)block->pie_data.pie_center_spawned[0],
+    (int)block->pie_data.pie_center_spawned[1],
   };
 
   UI_block_translate(block, xy[0], xy[1]);
@@ -501,8 +533,11 @@ static void ui_block_bounds_calc_centered_pie(uiBlock *block)
   ui_block_bounds_calc(block);
 }
 
-static void ui_block_bounds_calc_popup(
-    wmWindow *window, uiBlock *block, eBlockBoundsCalc bounds_calc, const int xy[2], int r_xy[2])
+static void ui_block_bounds_calc_popup(wmWindow *window,
+                                       uiBlock *block,
+                                       eBlockBoundsCalc bounds_calc,
+                                       const int xy[2],
+                                       int r_xy[2])
 {
   const int oldbounds = block->bounds;
 
@@ -512,8 +547,10 @@ static void ui_block_bounds_calc_popup(
   const int xmax = WM_window_pixels_x(window);
   const int ymax = WM_window_pixels_y(window);
 
-  int oldwidth = KLI_rctf_size_x(&block->rect);
-  int oldheight = KLI_rctf_size_y(&block->rect);
+  int oldwidth = KLI_rctf_size_x(
+    GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax));
+  int oldheight = KLI_rctf_size_y(
+    GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax));
 
   /* first we ensure wide enough text bounds */
   if (bounds_calc == UI_BLOCK_BOUNDS_POPUP_MENU) {
@@ -528,8 +565,10 @@ static void ui_block_bounds_calc_popup(
   ui_block_bounds_calc(block);
 
   /* and we adjust the position to fit within window */
-  const int width = KLI_rctf_size_x(&block->rect);
-  const int height = KLI_rctf_size_y(&block->rect);
+  const int width = KLI_rctf_size_x(
+    GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax));
+  const int height = KLI_rctf_size_y(
+    GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax));
 
   /* avoid divide by zero below, caused by calling with no UI, but better not crash */
   oldwidth = oldwidth > 0 ? oldwidth : MAX2(1, width);
@@ -591,8 +630,7 @@ void UI_block_bounds_set_popup(uiBlock *block, int addval, const int bounds_offs
   if (bounds_offset != nullptr) {
     block->bounds_offset[0] = bounds_offset[0];
     block->bounds_offset[1] = bounds_offset[1];
-  }
-  else {
+  } else {
     block->bounds_offset[0] = 0;
     block->bounds_offset[1] = 0;
   }
@@ -604,8 +642,7 @@ void UI_block_bounds_set_menu(uiBlock *block, int addval, const int bounds_offse
   block->bounds_type = UI_BLOCK_BOUNDS_POPUP_MENU;
   if (bounds_offset != nullptr) {
     copy_v2_v2_int(block->bounds_offset, bounds_offset);
-  }
-  else {
+  } else {
     zero_v2_int(block->bounds_offset);
   }
 }
@@ -678,11 +715,9 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
    * * If prec is not set, we fallback to a simple default */
   if (ui_but_is_unit_radians(but) && prec < 5) {
     prec = 5;
-  }
-  else if (prec == -1) {
+  } else if (prec == -1) {
     prec = (but->hardmax < 10.001f) ? 3 : 2;
-  }
-  else {
+  } else {
     CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
   }
 
@@ -693,7 +728,7 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
 
 bool ui_but_rna_equals(const uiBut *a, const uiBut *b)
 {
-  return ui_but_rna_equals_ex(a, &b->rnapoin, b->rnaprop, b->rnaindex);
+  return ui_but_rna_equals_ex(a, &b->stagepoin, b->stageprop, b->rnaindex);
 }
 
 bool ui_but_rna_equals_ex(const uiBut *but,
@@ -701,10 +736,10 @@ bool ui_but_rna_equals_ex(const uiBut *but,
                           const KrakenPROP *prop,
                           int index)
 {
-  if (but->rnapoin.data != ptr->data) {
+  if (but->stagepoin.data != ptr->data) {
     return false;
   }
-  if (but->rnaprop != prop || but->rnaindex != index) {
+  if (but->stageprop != prop || but->rnaindex != index) {
     return false;
   }
 
@@ -772,7 +807,7 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
 
 uiBut *ui_but_find_old(uiBlock *block_old, const uiBut *but_new)
 {
-  LISTBASE_FOREACH (uiBut *, but, &block_old->buttons) {
+  for (auto &but : block_old->buttons) {
     if (ui_but_equals_old(but_new, but)) {
       return but;
     }
@@ -782,7 +817,7 @@ uiBut *ui_but_find_old(uiBlock *block_old, const uiBut *but_new)
 
 uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old)
 {
-  LISTBASE_FOREACH (uiBut *, but, &block_new->buttons) {
+  for (auto &but : block_new->buttons) {
     if (ui_but_equals_old(but, but_old)) {
       return but;
     }
@@ -800,7 +835,7 @@ static bool ui_but_extra_icons_equals_old(const uiButExtraOpIcon *new_extra_icon
 static uiButExtraOpIcon *ui_but_extra_icon_find_old(const uiButExtraOpIcon *new_extra_icon,
                                                     const uiBut *old_but)
 {
-  LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &old_but->extra_op_icons) {
+  for (auto &op_icon : old_but->extra_op_icons) {
     if (ui_but_extra_icons_equals_old(new_extra_icon, op_icon)) {
       return op_icon;
     }
@@ -813,7 +848,7 @@ static void ui_but_extra_icons_update_from_old_but(const uiBut *new_but, const u
   /* Specifically for keeping some state info for the active button. */
   KLI_assert(old_but->active);
 
-  LISTBASE_FOREACH (uiButExtraOpIcon *, new_extra_icon, &new_but->extra_op_icons) {
+  for (auto &new_extra_icon : new_but->extra_op_icons) {
     uiButExtraOpIcon *old_extra_icon = ui_but_extra_icon_find_old(new_extra_icon, old_but);
     /* Keep the highlighting state, and let handling update it later. */
     if (old_extra_icon) {
@@ -865,7 +900,7 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
   oldbut->drawflag = (oldbut->drawflag & ~drawflag_copy) | (but->drawflag & drawflag_copy);
 
   ui_but_extra_icons_update_from_old_but(but, oldbut);
-  SWAP(ListBase, but->extra_op_icons, oldbut->extra_op_icons);
+  but->extra_op_icons.swap(oldbut->extra_op_icons);
 
   if (oldbut->type == UI_BTYPE_SEARCH_MENU) {
     uiButSearch *search_oldbut = (uiButSearch *)oldbut, *search_but = (uiButSearch *)but;
@@ -902,13 +937,11 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
   if (but->str != but->strdata) {
     if (oldbut->str != oldbut->strdata) {
       SWAP(char *, but->str, oldbut->str);
-    }
-    else {
+    } else {
       oldbut->str = but->str;
       but->str = but->strdata;
     }
-  }
-  else {
+  } else {
     if (oldbut->str != oldbut->strdata) {
       MEM_freeN(oldbut->str);
       oldbut->str = oldbut->strdata;
@@ -942,14 +975,15 @@ static bool ui_but_update_from_old_block(const kContext *C,
   uiBut *oldbut = ui_but_find_old(oldblock, but);
   UNUSED_VARS(but_old_p);
 #else
-  KLI_assert(*but_old_p == nullptr || KLI_findindex(&oldblock->buttons, *but_old_p) != -1);
+  KLI_assert(*but_old_p == nullptr ||
+             (std::find(oldblock->buttons.begin(), oldblock->buttons.end(), *but_old_p) !=
+              oldblock->buttons.end()));
 
   /* As long as old and new buttons are aligned, avoid loop-in-loop (calling #ui_but_find_old). */
   uiBut *oldbut;
   if (LIKELY(*but_old_p && ui_but_equals_old(but, *but_old_p))) {
     oldbut = *but_old_p;
-  }
-  else {
+  } else {
     /* Fallback to block search. */
     oldbut = ui_but_find_old(oldblock, but);
   }
@@ -964,8 +998,15 @@ static bool ui_but_update_from_old_block(const kContext *C,
 
   if (oldbut->active) {
     /* Move button over from oldblock to new block. */
-    KLI_remlink(&oldblock->buttons, oldbut);
-    KLI_insertlinkafter(&block->buttons, but, oldbut);
+    const auto &it = oldblock->buttons.erase(
+      std::remove(oldblock->buttons.begin(), oldblock->buttons.end(), oldbut),
+      oldblock->buttons.end());
+    const auto &prev = std::find(block->buttons.begin(), block->buttons.end(), but);
+    if (prev != block->buttons.end()) {
+      block->buttons.insert(prev + 1, oldbut);
+    } else {
+      block->buttons.insert(block->buttons.begin(), oldbut);
+    }
     /* Add the old button to the button groups in the new block. */
     ui_button_group_replace_but_ptr(block, but, oldbut);
     oldbut->block = block;
@@ -977,12 +1018,12 @@ static bool ui_but_update_from_old_block(const kContext *C,
       UI_butstore_register_update(block, oldbut, but);
     }
 
-    KLI_remlink(&block->buttons, but);
+    block->buttons.erase(std::remove(block->buttons.begin(), block->buttons.end(), but),
+                         block->buttons.end());
     ui_but_free(C, but);
 
     found_active = true;
-  }
-  else {
+  } else {
     int flag_copy = UI_BUT_DRAG_MULTI;
 
     /* Stupid special case: The active button may be inside (as in, overlapped on top) a view-item
@@ -995,23 +1036,27 @@ static bool ui_but_update_from_old_block(const kContext *C,
 
     /* ensures one button can get activated, and in case the buttons
      * draw are the same this gives O(1) lookup for each button */
-    KLI_remlink(&oldblock->buttons, oldbut);
+    oldblock->buttons.erase(
+      std::remove(oldblock->buttons.begin(), oldblock->buttons.end(), oldbut),
+      oldblock->buttons.end());
     ui_but_free(C, oldbut);
   }
 
   return found_active;
 }
 
-bool UI_but_active_only_ex(
-    const kContext *C, ARegion *region, uiBlock *block, uiBut *but, const bool remove_on_failure)
+bool UI_but_active_only_ex(const kContext *C,
+                           ARegion *region,
+                           uiBlock *block,
+                           uiBut *but,
+                           const bool remove_on_failure)
 {
   bool activate = false, found = false, isactive = false;
 
   uiBlock *oldblock = block->oldblock;
   if (!oldblock) {
     activate = true;
-  }
-  else {
+  } else {
     uiBut *oldbut = ui_but_find_old(oldblock, but);
     if (oldbut) {
       found = true;
@@ -1029,10 +1074,10 @@ bool UI_but_active_only_ex(
     }
 
     ui_but_activate_event((kContext *)C, region, but);
-  }
-  else if ((found == true) && (isactive == false)) {
+  } else if ((found == true) && (isactive == false)) {
     if (remove_on_failure) {
-      KLI_remlink(&block->buttons, but);
+      block->buttons.erase(std::remove(block->buttons.begin(), block->buttons.end(), but),
+                           block->buttons.end());
       if (but->layout) {
         ui_layout_remove_but(but->layout, but);
       }
@@ -1056,7 +1101,7 @@ bool UI_block_active_only_flagged_buttons(const kContext *C, ARegion *region, ui
   KLI_assert(block->endblock);
 
   bool done = false;
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for (auto &but : block->buttons) {
     if (but->flag & UI_BUT_ACTIVATE_ON_INIT) {
       but->flag &= ~UI_BUT_ACTIVATE_ON_INIT;
       if (ui_but_is_editable(but)) {
@@ -1071,7 +1116,7 @@ bool UI_block_active_only_flagged_buttons(const kContext *C, ARegion *region, ui
   if (done) {
     /* Run this in a second pass since it's possible activating the button
      * removes the buttons being looped over. */
-    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+    for (auto &but : block->buttons) {
       but->flag &= ~UI_BUT_ACTIVATE_ON_INIT;
     }
   }
@@ -1091,17 +1136,17 @@ void UI_but_execute(const kContext *C, ARegion *region, uiBut *but)
  * returns false if undo needs to be disabled. */
 static bool ui_but_is_rna_undo(const uiBut *but)
 {
-  if (but->rnapoin.owner_id) {
+  if (but->stagepoin.owner_id) {
     /* avoid undo push for buttons who's ID are screen or wm level
      * we could disable undo for buttons with no ID too but may have
      * unforeseen consequences, so best check for ID's we _know_ are not
      * handled by undo - campbell */
-    ID *id = but->rnapoin.owner_id;
+    ID *id = but->stagepoin.owner_id;
     if (ID_CHECK_UNDO(id) == false) {
       return false;
     }
   }
-  if (but->rnapoin.type && !RNA_struct_undo_check(but->rnapoin.type)) {
+  if (but->stagepoin.type && !LUXO_struct_undo_check(but->stagepoin.type)) {
     return false;
   }
 
@@ -1124,7 +1169,7 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
     /* 2 Passes: One for first letter only, second for any letter if the first pass fails.
      * Run first pass on all buttons so first word chars always get first priority. */
 
-    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+    for (auto &but : block->buttons) {
       if (!ELEM(but->type,
                 UI_BTYPE_BUT,
                 UI_BTYPE_BUT_MENU,
@@ -1163,8 +1208,7 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
           if (*str_pt) {
             str_pt++;
           }
-        }
-        else {
+        } else {
           /* just step over every char second pass and find first usable key */
           str_pt++;
         }
@@ -1172,8 +1216,7 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
 
       if (*str_pt) {
         but->menu_key = menu_key;
-      }
-      else {
+      } else {
         /* run second pass */
         tot_missing++;
       }
@@ -1209,12 +1252,14 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_str
   char *butstr_orig;
   if (but->str != but->strdata) {
     butstr_orig = but->str; /* free after using as source buffer */
-  }
-  else {
+  } else {
     butstr_orig = KLI_strdup(but->str);
   }
-  KLI_snprintf(
-      but->strdata, sizeof(but->strdata), "%s" UI_SEP_CHAR_S "%s", butstr_orig, shortcut_str);
+  KLI_snprintf(but->strdata,
+               sizeof(but->strdata),
+               "%s" UI_SEP_CHAR_S "%s",
+               butstr_orig,
+               shortcut_str);
   MEM_freeN(butstr_orig);
   but->str = but->strdata;
   but->flag |= UI_BUT_HAS_SEP_CHAR;
@@ -1236,8 +1281,8 @@ static bool ui_but_event_operator_string_from_operator(const kContext *C,
   KLI_assert(op_call_params->optype != nullptr);
   bool found = false;
   IDProperty *prop = reinterpret_cast<IDProperty *>(op_call_params->opptr) ?
-                         static_cast<IDProperty *>(op_call_params->opptr->data) :
-                         nullptr;
+                       static_cast<IDProperty *>(op_call_params->opptr->data) :
+                       nullptr;
 
   if (WM_key_event_operator_string(C,
                                    op_call_params->optype->idname,
@@ -1263,15 +1308,22 @@ static bool ui_but_event_operator_string_from_menu(const kContext *C,
 
   /* annoying, create a property */
   const IDPropertyTemplate val = {0};
-  IDProperty *prop_menu = IDP_New(IDP_GROUP, &val, __func__); /* Dummy, name is unimportant. */
-  IDP_AddToGroup(prop_menu, IDP_NewString(mt->idname, "name", sizeof(mt->idname)));
+  IDProperty *prop_menu = IDP_New(IDP_GROUP,
+                                  &val,
+                                  wabi::TfToken(__func__)); /* Dummy, name is unimportant. */
+  IDP_AddToGroup(prop_menu, IDP_NewString(mt->idname, TfToken("name"), sizeof(mt->idname)));
 
-  if (WM_key_event_operator_string(
-          C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true, buf, buf_len)) {
+  if (WM_key_event_operator_string(C,
+                                   WM_ID_(WM_OT_call_menu),
+                                   WM_OP_INVOKE_REGION_WIN,
+                                   prop_menu,
+                                   true,
+                                   buf,
+                                   buf_len)) {
     found = true;
   }
 
-  IDP_FreeProperty(prop_menu);
+  // IDP_FreeProperty(prop_menu);
   return found;
 }
 
@@ -1288,30 +1340,36 @@ static bool ui_but_event_operator_string_from_panel(const kContext *C,
 
   /* annoying, create a property */
   const IDPropertyTemplate group_val = {0};
-  IDProperty *prop_panel = IDP_New(
-      IDP_GROUP, &group_val, __func__); /* Dummy, name is unimportant. */
-  IDP_AddToGroup(prop_panel, IDP_NewString(pt->idname, "name", sizeof(pt->idname)));
+  IDProperty *prop_panel = IDP_New(IDP_GROUP,
+                                   &group_val,
+                                   wabi::TfToken(__func__)); /* Dummy, name is unimportant. */
+  IDP_AddToGroup(prop_panel, IDP_NewString(pt->idname, wabi::TfToken("name"), sizeof(pt->idname)));
   IDPropertyTemplate space_type_val = {0};
   space_type_val.i = pt->space_type;
-  IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &space_type_val, "space_type"));
+  IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &space_type_val, wabi::TfToken("space_type")));
   IDPropertyTemplate region_type_val = {0};
   region_type_val.i = pt->region_type;
-  IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &region_type_val, "region_type"));
+  IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &region_type_val, wabi::TfToken("region_type")));
 
   for (int i = 0; i < 2; i++) {
     /* FIXME(@campbellbarton): We can't reasonably search all configurations - long term. */
     IDPropertyTemplate val = {0};
     val.i = i;
 
-    IDP_ReplaceInGroup(prop_panel, IDP_New(IDP_INT, &val, "keep_open"));
-    if (WM_key_event_operator_string(
-            C, "WM_OT_call_panel", WM_OP_INVOKE_REGION_WIN, prop_panel, true, buf, buf_len)) {
+    IDP_ReplaceInGroup(prop_panel, IDP_New(IDP_INT, &val, wabi::TfToken("keep_open")));
+    if (WM_key_event_operator_string(C,
+                                     WM_ID_(WM_OT_call_panel),
+                                     WM_OP_INVOKE_REGION_WIN,
+                                     prop_panel,
+                                     true,
+                                     buf,
+                                     buf_len)) {
       found = true;
       break;
     }
   }
 
-  IDP_FreeProperty(prop_panel);
+  // IDP_FreeProperty(prop_panel);
   return found;
 }
 
@@ -1328,11 +1386,9 @@ static bool ui_but_event_operator_string(const kContext *C,
     params.opptr = but->opptr;
     params.opcontext = but->opcontext;
     found = ui_but_event_operator_string_from_operator(C, &params, buf, buf_len);
-  }
-  else if (UI_but_menutype_get(but) != nullptr) {
+  } else if (UI_but_menutype_get(but) != nullptr) {
     found = ui_but_event_operator_string_from_menu(C, but, buf, buf_len);
-  }
-  else if (UI_but_paneltype_get(but) != nullptr) {
+  } else if (UI_but_paneltype_get(but) != nullptr) {
     found = ui_but_event_operator_string_from_panel(C, but, buf, buf_len);
   }
 
@@ -1362,47 +1418,47 @@ static bool ui_but_event_property_operator_string(const kContext *C,
 
   /* This function could use a refactor to generalize button type to operator relationship
    * as well as which operators use properties. - Campbell */
-  const char *ctx_toggle_opnames[] = {
-      "WM_OT_context_toggle",
-      "WM_OT_context_toggle_enum",
-      "WM_OT_context_cycle_int",
-      "WM_OT_context_cycle_enum",
-      "WM_OT_context_cycle_array",
-      "WM_OT_context_menu_enum",
-      nullptr,
+  const TfToken ctx_toggle_opnames[] = {
+    WM_ID_(WM_OT_context_toggle),
+    WM_ID_(WM_OT_context_toggle_enum),
+    WM_ID_(WM_OT_context_cycle_int),
+    WM_ID_(WM_OT_context_cycle_enum),
+    WM_ID_(WM_OT_context_cycle_array),
+    WM_ID_(WM_OT_context_menu_enum),
+    wabi::TfToken(),
   };
 
-  const char *ctx_enum_opnames[] = {
-      "WM_OT_context_set_enum",
-      nullptr,
+  const TfToken ctx_enum_opnames[] = {
+    WM_ID_(WM_OT_context_set_enum),
+    wabi::TfToken(),
   };
 
-  const char *ctx_enum_opnames_for_Area_ui_type[] = {
-      "SCREEN_OT_space_type_set_or_cycle",
-      nullptr,
+  const TfToken ctx_enum_opnames_for_Area_ui_type[] = {
+    WM_ID_(SCREEN_OT_space_type_set_or_cycle),
+    wabi::TfToken(),
   };
 
-  const char **opnames = ctx_toggle_opnames;
+  const TfToken *opnames = ctx_toggle_opnames;
   int opnames_len = ARRAY_SIZE(ctx_toggle_opnames);
 
   int prop_enum_value = -1;
   bool prop_enum_value_ok = false;
   bool prop_enum_value_is_int = false;
   const char *prop_enum_value_id = "value";
-  KrakenPRIM *ptr = &but->rnapoin;
-  KrakenPROP *prop = but->rnaprop;
+  KrakenPRIM *ptr = &but->stagepoin;
+  KrakenPROP *prop = but->stageprop;
   int prop_index = but->rnaindex;
   if ((but->type == UI_BTYPE_BUT_MENU) && (but->block->handle != nullptr)) {
     uiBut *but_parent = but->block->handle->popup_create_vars.but;
-    if ((but->type == UI_BTYPE_BUT_MENU) && (but_parent && but_parent->rnaprop) &&
-        (RNA_property_type(but_parent->rnaprop) == PROP_ENUM) &&
+    if ((but->type == UI_BTYPE_BUT_MENU) && (but_parent && but_parent->stageprop) &&
+        (LUXO_property_type(but_parent->stageprop) == PROP_ENUM) &&
         ELEM(but_parent->menu_create_func,
              ui_def_but_rna__menu,
              ui_def_but_rna__panel_type,
              ui_def_but_rna__menu_type)) {
       prop_enum_value = (int)but->hardmin;
-      ptr = &but_parent->rnapoin;
-      prop = but_parent->rnaprop;
+      ptr = &but_parent->stagepoin;
+      prop = but_parent->stageprop;
       prop_enum_value_ok = true;
 
       opnames = ctx_enum_opnames;
@@ -1424,14 +1480,14 @@ static bool ui_but_event_property_operator_string(const kContext *C,
     ID *id = ptr->owner_id;
 
     if (GS(id->name) == ID_SCR) {
-      if (RNA_struct_is_a(ptr->type, &RNA_Area)) {
+      if (LUXO_struct_is_a(ptr->type, &LUXO_Area)) {
         /* data should be directly on here... */
-        const char *prop_id = RNA_property_identifier(prop);
+        const char *prop_id = LUXO_property_identifier(prop);
         /* Hack since keys access 'type', UI shows 'ui_type'. */
         if (STREQ(prop_id, "ui_type")) {
           prop_id = "type";
           prop_enum_value >>= 16;
-          prop = RNA_struct_find_property(ptr, prop_id);
+          prop = LUXO_struct_find_property(ptr, prop_id);
           prop_index = -1;
 
           opnames = ctx_enum_opnames_for_Area_ui_type;
@@ -1443,39 +1499,39 @@ static bool ui_but_event_property_operator_string(const kContext *C,
     }
   }
 
-  char *data_path = WM_context_path_resolve_property_full(C, ptr, prop, prop_index);
+  wabi::SdfPath data_path_sdf = prop->GetPath();
+  std::string data_path = data_path_sdf.GetAsString();
 
   /* We have a data-path! */
   bool found = false;
-  if (data_path || (prop_enum_value_ok && prop_enum_value_id)) {
+  if ((!data_path.empty()) || (prop_enum_value_ok && prop_enum_value_id)) {
     /* Create a property to host the "data_path" property we're sending to the operators. */
     IDProperty *prop_path;
 
     const IDPropertyTemplate group_val = {0};
-    prop_path = IDP_New(IDP_GROUP, &group_val, __func__);
-    if (data_path) {
-      IDP_AddToGroup(prop_path, IDP_NewString(data_path, "data_path", strlen(data_path) + 1));
+    prop_path = IDP_New(IDP_GROUP, &group_val, wabi::TfToken(__func__));
+    if (!data_path.empty()) {
+      std::replace(data_path.begin(), data_path.end(), '/', '.');
+      IDP_AddToGroup(prop_path, IDP_NewString(TfToken(data_path), TfToken("data_path"), strlen(data_path.c_str()) + 1));
     }
     if (prop_enum_value_ok) {
       const EnumPropertyItem *item;
       bool free;
-      RNA_property_enum_items((kContext *)C, ptr, prop, &item, nullptr, &free);
-      const int index = RNA_enum_from_value(item, prop_enum_value);
+      LUXO_property_enum_items((kContext *)C, ptr, prop, &item, nullptr, &free);
+      const int index = LUXO_enum_from_value(item, prop_enum_value);
       if (index != -1) {
         IDProperty *prop_value;
         if (prop_enum_value_is_int) {
           const int value = item[index].value;
           IDPropertyTemplate val = {};
           val.i = value;
-          prop_value = IDP_New(IDP_INT, &val, prop_enum_value_id);
-        }
-        else {
-          const char *id = item[index].identifier;
-          prop_value = IDP_NewString(id, prop_enum_value_id, strlen(id) + 1);
+          prop_value = IDP_New(IDP_INT, &val, wabi::TfToken(prop_enum_value_id));
+        } else {
+          const TfToken id = item[index].identifier;
+          prop_value = IDP_NewString(id, wabi::TfToken(prop_enum_value_id), strlen(id.GetText()) + 1);
         }
         IDP_AddToGroup(prop_path, prop_value);
-      }
-      else {
+      } else {
         opnames_len = 0; /* Do nothing. */
       }
       if (free) {
@@ -1485,19 +1541,24 @@ static bool ui_but_event_property_operator_string(const kContext *C,
 
     /* check each until one works... */
 
-    for (int i = 0; (i < opnames_len) && (opnames[i]); i++) {
-      if (WM_key_event_operator_string(
-              C, opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false, buf, buf_len)) {
+    for (int i = 0; (i < opnames_len) && (opnames[i].data()); i++) {
+      if (WM_key_event_operator_string(C,
+                                       opnames[i],
+                                       WM_OP_INVOKE_REGION_WIN,
+                                       prop_path,
+                                       false,
+                                       buf,
+                                       buf_len)) {
         found = true;
         break;
       }
     }
 
     /* cleanup */
-    IDP_FreeProperty(prop_path);
-    if (data_path) {
-      MEM_freeN(data_path);
-    }
+    // IDP_FreeProperty(prop_path);
+    // if (data_path) {
+    //   MEM_freeN(data_path);
+    // }
   }
 
   return found;
@@ -1531,14 +1592,14 @@ static bool ui_but_event_property_operator_string(const kContext *C,
  * --Matt 07/2006
  */
 const char ui_radial_dir_order[8] = {
-    UI_RADIAL_W,
-    UI_RADIAL_E,
-    UI_RADIAL_S,
-    UI_RADIAL_N,
-    UI_RADIAL_NW,
-    UI_RADIAL_NE,
-    UI_RADIAL_SW,
-    UI_RADIAL_SE,
+  UI_RADIAL_W,
+  UI_RADIAL_E,
+  UI_RADIAL_S,
+  UI_RADIAL_N,
+  UI_RADIAL_NW,
+  UI_RADIAL_NE,
+  UI_RADIAL_SW,
+  UI_RADIAL_SE,
 };
 
 const char ui_radial_dir_to_numpad[8] = {8, 9, 6, 3, 2, 1, 4, 7};
@@ -1560,20 +1621,21 @@ static void ui_menu_block_set_keymaps(const kContext *C, uiBlock *block)
   if (block->rect.xmin != block->rect.xmax) {
     return;
   }
-  if (STREQ(block->name, "splash")) {
+  if (block->name == TfToken("splash")) {
     return;
   }
 
   if (block->flag & UI_BLOCK_RADIAL) {
-    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+    for(auto &but : block->buttons)
+    {
       if (but->pie_dir != UI_RADIAL_NONE) {
         ui_but_pie_direction_string(but, buf, sizeof(buf));
         ui_but_add_shortcut(but, buf, false);
       }
     }
-  }
-  else {
-    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  } else {
+    for(auto &but : block->buttons)
+    {
       if (block->flag & UI_BLOCK_SHOW_SHORTCUT_ALWAYS) {
         /* Skip icon-only buttons (as used in the toolbar). */
         if (but->drawstr[0] == '\0') {
@@ -1584,32 +1646,31 @@ static void ui_menu_block_set_keymaps(const kContext *C, uiBlock *block)
            * (has special shortcut handling code). */
           continue;
         }
-      }
-      else if (but->emboss != UI_EMBOSS_PULLDOWN) {
+      } else if (but->emboss != UI_EMBOSS_PULLDOWN) {
         continue;
       }
 
       if (ui_but_event_operator_string(C, but, buf, sizeof(buf))) {
         ui_but_add_shortcut(but, buf, false);
-      }
-      else if (ui_but_event_property_operator_string(C, but, buf, sizeof(buf))) {
+      } else if (ui_but_event_property_operator_string(C, but, buf, sizeof(buf))) {
         ui_but_add_shortcut(but, buf, false);
       }
     }
   }
 }
 
-void ui_but_override_flag(Main *bmain, uiBut *but)
+void ui_but_override_flag(Main *kmain, uiBut *but)
 {
-  const uint override_status = RNA_property_override_library_status(
-      bmain, &but->rnapoin, but->rnaprop, but->rnaindex);
+  // const uint override_status = LUXO_property_override_library_status(kmain,
+  //                                                                    &but->stagepoin,
+  //                                                                    but->stageprop,
+  //                                                                    but->rnaindex);
 
-  if (override_status & RNA_OVERRIDE_STATUS_OVERRIDDEN) {
-    but->flag |= UI_BUT_OVERRIDDEN;
-  }
-  else {
-    but->flag &= ~UI_BUT_OVERRIDDEN;
-  }
+  // if (override_status & LUXO_OVERRIDE_STATUS_OVERRIDDEN) {
+  //   but->flag |= UI_BUT_OVERRIDDEN;
+  // } else {
+  but->flag &= ~UI_BUT_OVERRIDDEN;
+  // }
 }
 
 /* -------------------------------------------------------------------- */
@@ -1624,7 +1685,8 @@ void ui_but_override_flag(Main *bmain, uiBut *but)
 /**
  * Predefined types for generic extra operator icons (uiButExtraOpIcon).
  */
-enum PredefinedExtraOpIconType {
+enum PredefinedExtraOpIconType
+{
   PREDEFINED_EXTRA_OP_ICON_NONE = 1,
   PREDEFINED_EXTRA_OP_ICON_CLEAR,
   PREDEFINED_EXTRA_OP_ICON_EYEDROPPER,
@@ -1662,18 +1724,19 @@ static void ui_but_extra_operator_icon_free(uiButExtraOpIcon *extra_icon)
 
 void ui_but_extra_operator_icons_free(uiBut *but)
 {
-  LISTBASE_FOREACH_MUTABLE (uiButExtraOpIcon *, op_icon, &but->extra_op_icons) {
+  for (auto &op_icon : but->extra_op_icons)
+  {
     ui_but_extra_operator_icon_free(op_icon);
   }
-  KLI_listbase_clear(&but->extra_op_icons);
+  but->extra_op_icons.clear();
 }
 
 KrakenPRIM *UI_but_extra_operator_icon_add(uiBut *but,
-                                           const char *opname,
+                                           const TfToken &opname,
                                            kraken::eWmOperatorContext opcontext,
                                            int icon)
 {
-  wmOperatorType *optype = WM_operatortype_find(opname, false);
+  wmOperatorType *optype = WM_operatortype_find(opname);
 
   if (optype) {
     return ui_but_extra_operator_icon_add_ptr(but, optype, opcontext, icon);
@@ -1709,12 +1772,12 @@ static bool ui_but_icon_extra_is_visible_search_eyedropper(uiBut *but)
 {
   KLI_assert(but->type == UI_BTYPE_SEARCH_MENU && (but->flag & UI_BUT_VALUE_CLEAR));
 
-  if (but->rnaprop == nullptr) {
+  if (but->stageprop == nullptr) {
     return false;
   }
 
-  KrakenSTAGE *type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
-  const short idcode = RNA_type_to_ID_code(type);
+  KrakenPRIM *type = &KrakenPRIM(but->stagepoin.GetPrim());
+  const short idcode = LUXO_type_to_ID_code(type);
 
   return ((but->editstr == nullptr) && (idcode == ID_OB || OB_DATA_SUPPORT_ID(idcode)));
 }
@@ -1730,11 +1793,9 @@ static PredefinedExtraOpIconType ui_but_icon_extra_get(uiBut *but)
     case UI_BTYPE_SEARCH_MENU:
       if ((but->flag & UI_BUT_VALUE_CLEAR) == 0) {
         /* pass */
-      }
-      else if (ui_but_icon_extra_is_visible_search_unlink(but)) {
+      } else if (ui_but_icon_extra_is_visible_search_unlink(but)) {
         return PREDEFINED_EXTRA_OP_ICON_CLEAR;
-      }
-      else if (ui_but_icon_extra_is_visible_search_eyedropper(but)) {
+      } else if (ui_but_icon_extra_is_visible_search_eyedropper(but)) {
         return PREDEFINED_EXTRA_OP_ICON_EYEDROPPER;
       }
       break;
@@ -1786,7 +1847,8 @@ static void ui_but_predefined_extra_operator_icons_add(uiBut *but)
   }
 
   if (optype) {
-    LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &but->extra_op_icons) {
+    for(auto &op_icon : but->extra_op_icons)
+    {
       if ((op_icon->optype_params->optype == optype) && (op_icon->icon == icon)) {
         /* Don't add the same operator icon twice (happens if button is kept alive while active).
          */
@@ -1805,13 +1867,14 @@ void UI_block_update_from_old(const kContext *C, uiBlock *block)
     return;
   }
 
-  uiBut *but_old = static_cast<uiBut *>(block->oldblock->buttons.first);
+  uiBut *but_old = static_cast<uiBut *>(block->oldblock->buttons.front());
 
   if (KLI_listbase_is_empty(&block->oldblock->butstore) == false) {
     UI_butstore_update(block);
   }
 
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for (auto &but : block->buttons)
+  {
     if (ui_but_update_from_old_block(C, block, &but, &but_old)) {
       ui_but_update(but);
 
@@ -1871,7 +1934,7 @@ bool ui_but_context_poll_operator_ex(kContext *C,
 
   if (but) {
     KLI_assert_msg((but->flag & ~UI_BUT_ACTIVE_OVERRIDE) ==
-                       (old_but_flag & ~UI_BUT_ACTIVE_OVERRIDE),
+                     (old_but_flag & ~UI_BUT_ACTIVE_OVERRIDE),
                    "Operator polls shouldn't change button flags");
 
     const_cast<uiBut *>(but)->flag = old_but_flag;
@@ -1898,12 +1961,13 @@ void UI_block_end_ex(const kContext *C, uiBlock *block, const int xy[2], int r_x
   wmWindow *window = CTX_wm_window(C);
   Scene *scene = CTX_data_scene(C);
   ARegion *region = CTX_wm_region(C);
-  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  // Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
 
   KLI_assert(block->active);
 
   /* Extend button data. This needs to be done before the block updating. */
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for(auto &but : block->buttons)
+  {
     ui_but_predefined_extra_operator_icons_add(but);
   }
 
@@ -1913,7 +1977,8 @@ void UI_block_end_ex(const kContext *C, uiBlock *block, const int xy[2], int r_x
    * on matching buttons, we need this to make button event handling non
    * blocking, while still allowing buttons to be remade each redraw as it
    * is expected by kraken code */
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for(auto &but : block->buttons)
+  {
     /* temp? Proper check for graying out */
     if (but->optype) {
       wmOperatorType *ot = but->optype;
@@ -1923,19 +1988,20 @@ void UI_block_end_ex(const kContext *C, uiBlock *block, const int xy[2], int r_x
       }
     }
 
-    LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &but->extra_op_icons) {
+    for(auto &op_icon : but->extra_op_icons)
+    {
       if (!ui_but_context_poll_operator_ex((kContext *)C, but, op_icon->optype_params)) {
         op_icon->disabled = true;
       }
     }
 
-    const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
-        depsgraph, (scene) ? scene->r.cfra : 0.0f);
-    ui_but_anim_flag(but, &anim_eval_context);
-    ui_but_override_flag(CTX_data_main(C), but);
-    if (UI_but_is_decorator(but)) {
-      ui_but_anim_decorate_update_from_flag((uiButDecorator *)but);
-    }
+    // const AnimationEvalContext anim_eval_context = KKE_animsys_eval_context_construct(
+    //     depsgraph, (scene) ? scene->r.cfra : 0.0f);
+    // ui_but_anim_flag(but, &anim_eval_context);
+    // ui_but_override_flag(CTX_data_main(C), but);
+    // if (UI_but_is_decorator(but)) {
+    //   ui_but_anim_decorate_update_from_flag((uiButDecorator *)but);
+    // }
 
 #ifndef NDEBUG
     ui_but_validate(but);
@@ -1995,7 +2061,7 @@ void UI_block_end(const kContext *C, uiBlock *block)
 {
   wmWindow *window = CTX_wm_window(C);
 
-  UI_block_end_ex(C, block, window->eventstate->xy, nullptr);
+  UI_block_end_ex(C, block, window->eventstate->mouse_pos.data(), nullptr);
 }
 
 /* ************** BLOCK DRAWING FUNCTION ************* */
@@ -2011,18 +2077,40 @@ static void ui_but_to_pixelrect(rcti *rect,
                                 uiBlock *block,
                                 const uiBut *but)
 {
-  rctf rectf;
+  wabi::GfVec4f rectf;
+  wabi::GfVec4i frmRect;
+  rctf frmRectf;
 
-  ui_block_to_window_rctf(region, block, &rectf, (but) ? &but->rect : &block->rect);
-  KLI_rcti_rctf_copy_round(rect, &rectf);
-  KLI_rcti_translate(rect, -region->winrct.xmin, -region->winrct.ymin);
+  ui_block_to_window_rctf(region, block, &frmRectf, (but) ? &but->rect : &block->rect);
+  rectf[0] = frmRectf.xmin;
+  rectf[1] = frmRectf.xmax;
+  rectf[2] = frmRectf.ymin;
+  rectf[3] = frmRectf.ymax;
+
+  KLI_rcti_rctf_copy_round(&frmRect, rectf);
+
+  rect->xmin = frmRect[0];
+  rect->xmax = frmRect[1];
+  rect->ymin = frmRect[2];
+  rect->ymax = frmRect[3];
+
+  wabi::GfVec4f coords = FormFactory(region->coords);
+  KLI_rcti_translate(rect, -coords[0], -coords[2]);
 }
 
 static bool ui_but_pixelrect_in_view(const ARegion *region, const rcti *rect)
 {
   rcti rect_winspace = *rect;
-  KLI_rcti_translate(&rect_winspace, region->winrct.xmin, region->winrct.ymin);
-  return KLI_rcti_isect(&region->winrct, &rect_winspace, nullptr);
+
+  wabi::GfVec4f coords = FormFactory(region->coords);
+  KLI_rcti_translate(&rect_winspace, coords[0], coords[2]);
+
+  rcti frmCoords;
+  frmCoords.xmin = (int)coords[0];
+  frmCoords.xmax = (int)coords[1];
+  frmCoords.ymin = (int)coords[2];
+  frmCoords.ymax = (int)coords[3];
+  return KLI_rcti_isect(&frmCoords, &rect_winspace, nullptr);
 }
 
 void UI_block_draw(const kContext *C, uiBlock *block)
@@ -2062,14 +2150,11 @@ void UI_block_draw(const kContext *C, uiBlock *block)
   /* back */
   if (block->flag & UI_BLOCK_RADIAL) {
     ui_draw_pie_center(block);
-  }
-  else if (block->flag & UI_BLOCK_POPOVER) {
+  } else if (block->flag & UI_BLOCK_POPOVER) {
     ui_draw_popover_back(region, &style, block, &rect);
-  }
-  else if (block->flag & UI_BLOCK_LOOP) {
+  } else if (block->flag & UI_BLOCK_LOOP) {
     ui_draw_menu_back(&style, block, &rect);
-  }
-  else if (block->panel) {
+  } else if (block->panel) {
     ui_draw_aligned_panel(&style,
                           block,
                           &rect,
@@ -2078,12 +2163,13 @@ void UI_block_draw(const kContext *C, uiBlock *block)
                           region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE);
   }
 
-  BLF_batch_draw_begin();
+  KRF_batch_draw_begin();
   UI_icon_draw_cache_begin();
   UI_widgetbase_draw_cache_begin();
 
   /* widgets */
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  for(auto &but : block->buttons)
+  {
     if (but->flag & (UI_HIDDEN | UI_SCROLLED)) {
       continue;
     }
@@ -2103,7 +2189,7 @@ void UI_block_draw(const kContext *C, uiBlock *block)
 
   UI_widgetbase_draw_cache_end();
   UI_icon_draw_cache_end();
-  BLF_batch_draw_end();
+  KRF_batch_draw_end();
 
   /* restore matrix */
   GPU_matrix_pop_projection();
@@ -2114,19 +2200,20 @@ static void ui_block_message_subscribe(ARegion *region, struct wmMsgBus *mbus, u
 {
   uiBut *but_prev = nullptr;
   /* possibly we should keep the region this block is contained in? */
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
-    if (but->rnapoin.type && but->rnaprop) {
+  for(auto &but : block->buttons)
+  {
+    if (but->stagepoin.type && but->stageprop) {
       /* quick check to avoid adding buttons representing a vector, multiple times. */
-      if ((but_prev && (but_prev->rnaprop == but->rnaprop) &&
-           (but_prev->rnapoin.type == but->rnapoin.type) &&
-           (but_prev->rnapoin.data == but->rnapoin.data) &&
-           (but_prev->rnapoin.owner_id == but->rnapoin.owner_id)) == false) {
+      if ((but_prev && (but_prev->stageprop == but->stageprop) &&
+           (but_prev->stagepoin.type == but->stagepoin.type) &&
+           (but_prev->stagepoin.data == but->stagepoin.data) &&
+           (but_prev->stagepoin.owner_id == but->stagepoin.owner_id)) == false) {
         /* TODO: could make this into utility function. */
         wmMsgSubscribeValue value = {};
         value.owner = region;
         value.user_data = region;
         value.notify = ED_region_do_msg_notify_tag_redraw;
-        WM_msg_subscribe_rna(mbus, &but->rnapoin, but->rnaprop, &value, __func__);
+        WM_msg_subscribe_rna(mbus, &but->stagepoin, but->stageprop, &value, __func__);
         but_prev = but;
       }
     }
@@ -2135,7 +2222,8 @@ static void ui_block_message_subscribe(ARegion *region, struct wmMsgBus *mbus, u
 
 void UI_region_message_subscribe(ARegion *region, struct wmMsgBus *mbus)
 {
-  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
+  for(auto &block : region->uiblocks)
+  {
     ui_block_message_subscribe(region, mbus, block);
   }
 }
@@ -2150,19 +2238,19 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
   }
 
   if (but->bit) {
-    const bool state = !ELEM(
-        but->type, UI_BTYPE_TOGGLE_N, UI_BTYPE_ICON_TOGGLE_N, UI_BTYPE_CHECKBOX_N);
+    const bool state = !ELEM(but->type,
+                             UI_BTYPE_TOGGLE_N,
+                             UI_BTYPE_ICON_TOGGLE_N,
+                             UI_BTYPE_CHECKBOX_N);
     int lvalue;
     UI_GET_BUT_VALUE_INIT(but, *value);
     lvalue = (int)*value;
     if (UI_BITBUT_TEST(lvalue, (but->bitnr))) {
       is_push = state;
-    }
-    else {
+    } else {
       is_push = !state;
     }
-  }
-  else {
+  } else {
     switch (but->type) {
       case UI_BTYPE_BUT:
       case UI_BTYPE_HOTKEY_EVENT:
@@ -2191,29 +2279,27 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
       case UI_BTYPE_ROW:
       case UI_BTYPE_LISTROW:
       case UI_BTYPE_TAB:
-        if ((but->type == UI_BTYPE_TAB) && but->rnaprop && but->custom_data) {
+        if ((but->type == UI_BTYPE_TAB) && but->stageprop && but->custom_data) {
           /* uiBut.custom_data points to data this tab represents (e.g. workspace).
-           * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
-          if (RNA_property_type(but->rnaprop) == PROP_POINTER) {
-            const KrakenPRIM active_ptr = RNA_property_pointer_get(&but->rnapoin, but->rnaprop);
-            if (active_ptr.data == but->custom_data) {
+           * uiBut.stagepoin/prop store an active value (e.g. active workspace). */
+          if (LUXO_property_type(but->stageprop) == PROP_POINTER) {
+            const KrakenPRIM *active_ptr = &KrakenPRIM(but->stagepoin.GetAttribute(but->stageprop->GetName()).GetPrim());
+            if (active_ptr->data == but->custom_data) {
               is_push = true;
             }
           }
           break;
-        }
-        else if (but->optype) {
+        } else if (but->optype) {
           break;
         }
 
         UI_GET_BUT_VALUE_INIT(but, *value);
         /* support for rna enum buts */
-        if (but->rnaprop && (RNA_property_flag(but->rnaprop) & PROP_ENUM_FLAG)) {
+        if (but->stageprop && (LUXO_property_type(but->stageprop) & PROP_ENUM_FLAG)) {
           if ((int)*value & (int)but->hardmax) {
             is_push = true;
           }
-        }
-        else {
+        } else {
           if (*value == (double)but->hardmax) {
             is_push = true;
           }
@@ -2283,39 +2369,37 @@ void ui_but_v3_get(uiBut *but, float vec[3])
     copy_v3_v3(vec, but->editvec);
   }
 
-  if (but->rnaprop) {
-    KrakenPROP *prop = but->rnaprop;
+  if (but->stageprop) {
+    KrakenPROP *prop = but->stageprop;
 
     zero_v3(vec);
 
     if (LUXO_property_type(prop) == PROP_FLOAT) {
       float pretot;
-      const KrakenPRIM *ptr = STAGE_CTX(&but->rnapoin);
+      const KrakenPRIM *ptr = STAGE_CTX((&but->stagepoin));
       ptr->GetAttribute(prop->GetName()).Get(&pretot);
-
+      GfVec3f val = FormFactory(but->stagepoin.GetAttribute(prop->GetName()));
       KLI_assert((int)pretot > 0);
       if ((int)pretot == 3) {
-        RNA_property_float_get_array(&but->rnapoin, prop, vec);
-      }
-      else {
-        tot = min_ii((int)pretot, 3);
-        for (int a = 0; a < tot; a++) {
-          vec[a] = RNA_property_float_get_index(&but->rnapoin, prop, a);
+        vec[0] = val[0];
+        vec[1] = val[1];
+        vec[2] = val[2];
+      } else {
+        pretot = min_ii((int)pretot, 3);
+        for (int a = 0; a < pretot; a++) {
+          vec[a] = val[a];
         }
       }
     }
-  }
-  else if (but->pointype == UI_BUT_POIN_CHAR) {
+  } else if (but->pointype == UI_BUT_POIN_CHAR) {
     const char *cp = (char *)but->poin;
     vec[0] = ((float)cp[0]) / 255.0f;
     vec[1] = ((float)cp[1]) / 255.0f;
     vec[2] = ((float)cp[2]) / 255.0f;
-  }
-  else if (but->pointype == UI_BUT_POIN_FLOAT) {
+  } else if (but->pointype == UI_BUT_POIN_FLOAT) {
     const float *fp = (float *)but->poin;
     copy_v3_v3(vec, fp);
-  }
-  else {
+  } else {
     if (but->editvec == nullptr) {
       fprintf(stderr, "%s: can't get color, should never happen\n", __func__);
       zero_v3(vec);
@@ -2333,33 +2417,30 @@ void ui_but_v3_set(uiBut *but, const float vec[3])
     copy_v3_v3(but->editvec, vec);
   }
 
-  if (but->rnaprop) {
-    KrakenPROP *prop = but->rnaprop;
+  if (but->stageprop) {
+    KrakenPROP *prop = but->stageprop;
 
-    if (RNA_property_type(prop) == PROP_FLOAT) {
+    if (LUXO_property_type(prop) == PROP_FLOAT) {
       int tot;
       int a;
 
-      tot = RNA_property_array_length(&but->rnapoin, prop);
+      tot = LUXO_property_array_length(&but->stagepoin, prop);
       KLI_assert(tot > 0);
       if (tot == 3) {
-        RNA_property_float_set_array(&but->rnapoin, prop, vec);
-      }
-      else {
+        LUXO_property_float_set_array(&but->stagepoin, prop, vec);
+      } else {
         tot = min_ii(tot, 3);
         for (a = 0; a < tot; a++) {
-          RNA_property_float_set_index(&but->rnapoin, prop, a, vec[a]);
+          LUXO_property_float_set_index(&but->stagepoin, prop, a, vec[a]);
         }
       }
     }
-  }
-  else if (but->pointype == UI_BUT_POIN_CHAR) {
+  } else if (but->pointype == UI_BUT_POIN_CHAR) {
     char *cp = (char *)but->poin;
     cp[0] = (char)lround(vec[0] * 255.0f);
     cp[1] = (char)lround(vec[1] * 255.0f);
     cp[2] = (char)lround(vec[2] * 255.0f);
-  }
-  else if (but->pointype == UI_BUT_POIN_FLOAT) {
+  } else if (but->pointype == UI_BUT_POIN_FLOAT) {
     float *fp = (float *)but->poin;
     copy_v3_v3(fp, vec);
   }
@@ -2371,7 +2452,7 @@ bool ui_but_is_float(const uiBut *but)
     return true;
   }
 
-  if (but->rnaprop && RNA_property_type(but->rnaprop) == PROP_FLOAT) {
+  if (but->stageprop && LUXO_property_type(but->stageprop) == PROP_FLOAT) {
     return true;
   }
 
@@ -2380,8 +2461,8 @@ bool ui_but_is_float(const uiBut *but)
 
 PropertyScaleType ui_but_scale_type(const uiBut *but)
 {
-  if (but->rnaprop) {
-    return RNA_property_ui_scale(but->rnaprop);
+  if (but->stageprop) {
+    return LUXO_property_ui_scale(but->stageprop);
   }
   return PROP_SCALE_LINEAR;
 }
@@ -2397,11 +2478,11 @@ bool ui_but_is_bool(const uiBut *but)
     return true;
   }
 
-  if (but->rnaprop && RNA_property_type(but->rnaprop) == PROP_BOOLEAN) {
+  if (but->stageprop && LUXO_property_type(but->stageprop) == PROP_BOOLEAN) {
     return true;
   }
 
-  if ((but->rnaprop && RNA_property_type(but->rnaprop) == PROP_ENUM) &&
+  if ((but->stageprop && LUXO_property_type(but->stageprop) == PROP_ENUM) &&
       (but->type == UI_BTYPE_ROW)) {
     return true;
   }
@@ -2447,16 +2528,16 @@ bool ui_but_is_compatible(const uiBut *but_a, const uiBut *but_b)
     return false;
   }
 
-  if (but_a->rnaprop) {
-    /* skip 'rnapoin.data', 'rnapoin.owner_id'
+  if (but_a->stageprop) {
+    /* skip 'stagepoin.data', 'stagepoin.owner_id'
      * allow different data to have the same props edited at once */
-    if (but_a->rnapoin.type != but_b->rnapoin.type) {
+    if (but_a->stagepoin.type != but_b->stagepoin.type) {
       return false;
     }
-    if (RNA_property_type(but_a->rnaprop) != RNA_property_type(but_b->rnaprop)) {
+    if (LUXO_property_type(but_a->stageprop) != LUXO_property_type(but_b->stageprop)) {
       return false;
     }
-    if (RNA_property_subtype(but_a->rnaprop) != RNA_property_subtype(but_b->rnaprop)) {
+    if (LUXO_property_subtype(but_a->stageprop) != LUXO_property_subtype(but_b->stageprop)) {
       return false;
     }
   }
@@ -2466,10 +2547,11 @@ bool ui_but_is_compatible(const uiBut *but_a, const uiBut *but_b)
 
 bool ui_but_is_rna_valid(uiBut *but)
 {
-  if (but->rnaprop == nullptr || RNA_struct_contains_property(&but->rnapoin, but->rnaprop)) {
+  if (but->stageprop == nullptr ||
+      LUXO_struct_contains_property(&but->stagepoin, but->stageprop)) {
     return true;
   }
-  printf("property removed %s: %p\n", but->drawstr, but->rnaprop);
+  printf("property removed %s: %p\n", but->drawstr, but->stageprop);
   return false;
 }
 
@@ -2488,58 +2570,51 @@ double ui_but_value_get(uiBut *but)
   if (but->editval) {
     return *(but->editval);
   }
-  if (but->poin == nullptr && but->rnapoin.data == nullptr) {
+  if (but->poin == nullptr && but->stagepoin.data == nullptr) {
     return 0.0;
   }
 
-  if (but->rnaprop) {
-    KrakenPROP *prop = but->rnaprop;
+  if (but->stageprop) {
+    KrakenPROP *prop = but->stageprop;
 
     KLI_assert(but->rnaindex != -1);
 
-    switch (RNA_property_type(prop)) {
+    switch (LUXO_property_type(prop)) {
       case PROP_BOOLEAN:
-        if (RNA_property_array_check(prop)) {
-          value = RNA_property_boolean_get_index(&but->rnapoin, prop, but->rnaindex);
-        }
-        else {
-          value = RNA_property_boolean_get(&but->rnapoin, prop);
+        if (LUXO_property_array_check(prop)) {
+          value = LUXO_property_boolean_get_index(&but->stagepoin, prop, but->rnaindex);
+        } else {
+          value = LUXO_property_boolean_get(&but->stagepoin, prop);
         }
         break;
       case PROP_INT:
-        if (RNA_property_array_check(prop)) {
-          value = RNA_property_int_get_index(&but->rnapoin, prop, but->rnaindex);
-        }
-        else {
-          value = RNA_property_int_get(&but->rnapoin, prop);
+        if (LUXO_property_array_check(prop)) {
+          value = LUXO_property_int_get_index(&but->stagepoin, prop, but->rnaindex);
+        } else {
+          value = LUXO_property_int_get(&but->stagepoin, prop);
         }
         break;
       case PROP_FLOAT:
-        if (RNA_property_array_check(prop)) {
-          value = RNA_property_float_get_index(&but->rnapoin, prop, but->rnaindex);
-        }
-        else {
-          value = RNA_property_float_get(&but->rnapoin, prop);
+        if (LUXO_property_array_check(prop)) {
+          value = LUXO_property_float_get_index(&but->stagepoin, prop, but->rnaindex);
+        } else {
+          value = LUXO_property_float_get(&but->stagepoin, prop);
         }
         break;
       case PROP_ENUM:
-        value = RNA_property_enum_get(&but->rnapoin, prop);
+        value = LUXO_property_enum_get(&but->stagepoin, prop);
         break;
       default:
         value = 0.0;
         break;
     }
-  }
-  else if (but->pointype == UI_BUT_POIN_CHAR) {
+  } else if (but->pointype == UI_BUT_POIN_CHAR) {
     value = *(char *)but->poin;
-  }
-  else if (but->pointype == UI_BUT_POIN_SHORT) {
+  } else if (but->pointype == UI_BUT_POIN_SHORT) {
     value = *(short *)but->poin;
-  }
-  else if (but->pointype == UI_BUT_POIN_INT) {
+  } else if (but->pointype == UI_BUT_POIN_INT) {
     value = *(int *)but->poin;
-  }
-  else if (but->pointype == UI_BUT_POIN_FLOAT) {
+  } else if (but->pointype == UI_BUT_POIN_FLOAT) {
     value = *(float *)but->poin;
   }
 
@@ -2549,44 +2624,40 @@ double ui_but_value_get(uiBut *but)
 void ui_but_value_set(uiBut *but, double value)
 {
   /* Value is a HSV value: convert to RGB. */
-  if (but->rnaprop) {
-    KrakenPROP *prop = but->rnaprop;
+  if (but->stageprop) {
+    KrakenPROP *prop = but->stageprop;
 
-    if (RNA_property_editable(&but->rnapoin, prop)) {
-      switch (RNA_property_type(prop)) {
+    if (LUXO_property_editable(&but->stagepoin, prop)) {
+      switch (LUXO_property_type(prop)) {
         case PROP_BOOLEAN:
-          if (RNA_property_array_check(prop)) {
-            RNA_property_boolean_set_index(&but->rnapoin, prop, but->rnaindex, value);
-          }
-          else {
-            RNA_property_boolean_set(&but->rnapoin, prop, value);
+          if (LUXO_property_array_check(prop)) {
+            LUXO_property_boolean_set_index(&but->stagepoin, prop, but->rnaindex, value);
+          } else {
+            LUXO_property_boolean_set(&but->stagepoin, prop, value);
           }
           break;
         case PROP_INT:
-          if (RNA_property_array_check(prop)) {
-            RNA_property_int_set_index(&but->rnapoin, prop, but->rnaindex, (int)value);
-          }
-          else {
-            RNA_property_int_set(&but->rnapoin, prop, (int)value);
+          if (LUXO_property_array_check(prop)) {
+            LUXO_property_int_set_index(&but->stagepoin, prop, but->rnaindex, (int)value);
+          } else {
+            LUXO_property_int_set(&but->stagepoin, prop, (int)value);
           }
           break;
         case PROP_FLOAT:
-          if (RNA_property_array_check(prop)) {
-            RNA_property_float_set_index(&but->rnapoin, prop, but->rnaindex, value);
-          }
-          else {
-            RNA_property_float_set(&but->rnapoin, prop, value);
+          if (LUXO_property_array_check(prop)) {
+            LUXO_property_float_set_index(&but->stagepoin, prop, but->rnaindex, value);
+          } else {
+            LUXO_property_float_set(&but->stagepoin, prop, value);
           }
           break;
         case PROP_ENUM:
-          if (RNA_property_flag(prop) & PROP_ENUM_FLAG) {
+          if (LUXO_property_flag(prop) & PROP_ENUM_FLAG) {
             int ivalue = (int)value;
             /* toggle for enum/flag buttons */
-            ivalue ^= RNA_property_enum_get(&but->rnapoin, prop);
-            RNA_property_enum_set(&but->rnapoin, prop, ivalue);
-          }
-          else {
-            RNA_property_enum_set(&but->rnapoin, prop, value);
+            ivalue ^= LUXO_property_enum_get(&but->stagepoin, prop);
+            LUXO_property_enum_set(&but->stagepoin, prop, ivalue);
+          } else {
+            LUXO_property_enum_set(&but->stagepoin, prop, value);
           }
           break;
         default:
@@ -2597,22 +2668,17 @@ void ui_but_value_set(uiBut *but, double value)
     /* we can't be sure what RNA set functions actually do,
      * so leave this unset */
     value = UI_BUT_VALUE_UNSET;
-  }
-  else if (but->pointype == 0) {
+  } else if (but->pointype == 0) {
     /* pass */
-  }
-  else {
+  } else {
     /* first do rounding */
     if (but->pointype == UI_BUT_POIN_CHAR) {
       value = round_db_to_uchar_clamp(value);
-    }
-    else if (but->pointype == UI_BUT_POIN_SHORT) {
+    } else if (but->pointype == UI_BUT_POIN_SHORT) {
       value = round_db_to_short_clamp(value);
-    }
-    else if (but->pointype == UI_BUT_POIN_INT) {
+    } else if (but->pointype == UI_BUT_POIN_INT) {
       value = round_db_to_int_clamp(value);
-    }
-    else if (but->pointype == UI_BUT_POIN_FLOAT) {
+    } else if (but->pointype == UI_BUT_POIN_FLOAT) {
       float fval = (float)value;
       if (fval >= -0.00001f && fval <= 0.00001f) {
         /* prevent negative zero */
@@ -2624,17 +2690,13 @@ void ui_but_value_set(uiBut *but, double value)
     /* then set value with possible edit override */
     if (but->editval) {
       value = *but->editval = value;
-    }
-    else if (but->pointype == UI_BUT_POIN_CHAR) {
+    } else if (but->pointype == UI_BUT_POIN_CHAR) {
       value = *((char *)but->poin) = (char)value;
-    }
-    else if (but->pointype == UI_BUT_POIN_SHORT) {
+    } else if (but->pointype == UI_BUT_POIN_SHORT) {
       value = *((short *)but->poin) = (short)value;
-    }
-    else if (but->pointype == UI_BUT_POIN_INT) {
+    } else if (but->pointype == UI_BUT_POIN_INT) {
       value = *((int *)but->poin) = (int)value;
-    }
-    else if (but->pointype == UI_BUT_POIN_FLOAT) {
+    } else if (but->pointype == UI_BUT_POIN_FLOAT) {
       value = *((float *)but->poin) = (float)value;
     }
   }
@@ -2656,7 +2718,8 @@ uiBut *ui_but_drag_multi_edit_get(uiBut *but)
 
   KLI_assert(but->flag & UI_BUT_DRAG_MULTI);
 
-  LISTBASE_FOREACH (uiBut *, but_iter, &but->block->buttons) {
+  LISTBASE_FOREACH(uiBut *, but_iter, &but->block->buttons)
+  {
     if (but_iter->editstr) {
       return_but = but_iter;
       break;
@@ -2671,12 +2734,12 @@ static double ui_get_but_scale_unit(uiBut *but, double value)
   UnitSettings *unit = but->block->unit;
   const int unit_type = UI_but_unit_type_get(but);
 
-  /* Time unit is a bit special, not handled by BKE_scene_unit_scale() for now. */
+  /* Time unit is a bit special, not handled by KKE_scene_unit_scale() for now. */
   if (unit_type == PROP_UNIT_TIME) { /* WARNING: using evil_C :| */
     Scene *scene = CTX_data_scene(static_cast<const kContext *>(but->block->evil_C));
     return FRA2TIME(value);
   }
-  return BKE_scene_unit_scale(unit, RNA_SUBTYPE_UNIT_VALUE(unit_type), value);
+  return KKE_scene_unit_scale(unit, LUXO_SUBTYPE_UNIT_VALUE(unit_type), value);
 }
 
 void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
@@ -2691,7 +2754,7 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
 
   orig_str = KLI_strdup(str);
 
-  BKE_unit_name_to_alt(str, maxlen, orig_str, unit->system, RNA_SUBTYPE_UNIT_VALUE(unit_type));
+  KKE_unit_name_to_alt(str, maxlen, orig_str, unit->system, LUXO_SUBTYPE_UNIT_VALUE(unit_type));
 
   MEM_freeN(orig_str);
 }
@@ -2699,8 +2762,12 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
 /**
  * \param float_precision: Override the button precision.
  */
-static void ui_get_but_string_unit(
-    uiBut *but, char *str, int len_max, double value, bool pad, int float_precision)
+static void ui_get_but_string_unit(uiBut *but,
+                                   char *str,
+                                   int len_max,
+                                   double value,
+                                   bool pad,
+                                   int float_precision)
 {
   UnitSettings *unit = but->block->unit;
   const int unit_type = UI_but_unit_type_get(but);
@@ -2716,32 +2783,30 @@ static void ui_get_but_string_unit(
     precision = (int)ui_but_get_float_precision(but);
     if (precision > UI_PRECISION_FLOAT_MAX) {
       precision = UI_PRECISION_FLOAT_MAX;
-    }
-    else if (precision == -1) {
+    } else if (precision == -1) {
       precision = 2;
     }
-  }
-  else {
+  } else {
     precision = float_precision;
   }
 
-  BKE_unit_value_as_string(str,
+  KKE_unit_value_as_string(str,
                            len_max,
                            ui_get_but_scale_unit(but, value),
                            precision,
-                           RNA_SUBTYPE_UNIT_VALUE(unit_type),
+                           LUXO_SUBTYPE_UNIT_VALUE(unit_type),
                            unit,
                            pad);
 }
 
 static float ui_get_but_step_unit(uiBut *but, float step_default)
 {
-  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
+  const int unit_type = LUXO_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
   const double step_orig = step_default * UI_PRECISION_FLOAT_SCALE;
   /* Scaling up 'step_origg ' here is a bit arbitrary,
    * its just giving better scales from user POV */
   const double scale_step = ui_get_but_scale_unit(but, step_orig * 10);
-  const double step = BKE_unit_closest_scalar(scale_step, but->block->unit->system, unit_type);
+  const double step = KKE_unit_closest_scalar(scale_step, but->block->unit->system, unit_type);
 
   /* -1 is an error value */
   if (step == -1.0f) {
@@ -2749,8 +2814,9 @@ static float ui_get_but_step_unit(uiBut *but, float step_default)
   }
 
   const double scale_unit = ui_get_but_scale_unit(but, 1.0);
-  const double step_unit = BKE_unit_closest_scalar(
-      scale_unit, but->block->unit->system, unit_type);
+  const double step_unit = KKE_unit_closest_scalar(scale_unit,
+                                                   but->block->unit->system,
+                                                   unit_type);
   double step_final;
 
   KLI_assert(step > 0.0);
@@ -2781,75 +2847,66 @@ void ui_but_string_get_ex(uiBut *but,
     *r_use_exp_float = false;
   }
 
-  if (but->rnaprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU, UI_BTYPE_TAB)) {
-    const PropertyType type = RNA_property_type(but->rnaprop);
+  if (but->stageprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU, UI_BTYPE_TAB)) {
+    const PropertyType type = LUXO_property_type(but->stageprop);
 
     int buf_len;
     const char *buf = nullptr;
     if ((but->type == UI_BTYPE_TAB) && (but->custom_data)) {
-      KrakenSTAGE *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
+      KrakenSTAGE *ptr_type = LUXO_property_pointer_type(&but->stagepoin, but->stageprop);
       KrakenPRIM ptr;
 
       /* uiBut.custom_data points to data this tab represents (e.g. workspace).
-       * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
-      RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data, &ptr);
-      buf = RNA_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
-    }
-    else if (type == PROP_STRING) {
+       * uiBut.stagepoin/prop store an active value (e.g. active workspace). */
+      LUXO_pointer_create(but->stagepoin.owner_id, ptr_type, but->custom_data, &ptr);
+      buf = LUXO_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
+    } else if (type == PROP_STRING) {
       /* RNA string */
-      buf = RNA_property_string_get_alloc(&but->rnapoin, but->rnaprop, str, maxlen, &buf_len);
-    }
-    else if (type == PROP_ENUM) {
+      buf = LUXO_property_string_get_alloc(&but->stagepoin, but->stageprop, str, maxlen, &buf_len);
+    } else if (type == PROP_ENUM) {
       /* RNA enum */
-      const int value = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
-      if (RNA_property_enum_name(static_cast<kContext *>(but->block->evil_C),
-                                 &but->rnapoin,
-                                 but->rnaprop,
-                                 value,
-                                 &buf)) {
+      const int value = LUXO_property_enum_get(&but->stagepoin, but->stageprop);
+      if (LUXO_property_enum_name(static_cast<kContext *>(but->block->evil_C),
+                                  &but->stagepoin,
+                                  but->stageprop,
+                                  value,
+                                  &buf)) {
         KLI_strncpy(str, buf, maxlen);
         buf = str;
       }
-    }
-    else if (type == PROP_POINTER) {
+    } else if (type == PROP_POINTER) {
       /* RNA pointer */
-      KrakenPRIM ptr = RNA_property_pointer_get(&but->rnapoin, but->rnaprop);
-      buf = RNA_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
-    }
-    else {
+      KrakenPRIM ptr = LUXO_property_pointer_get(&but->stagepoin, but->stageprop);
+      buf = LUXO_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
+    } else {
       KLI_assert(0);
     }
 
     if (buf == nullptr) {
       str[0] = '\0';
-    }
-    else if (buf != str) {
+    } else if (buf != str) {
       KLI_assert(maxlen <= buf_len + 1);
       /* string was too long, we have to truncate */
       if (UI_but_is_utf8(but)) {
         KLI_strncpy_utf8(str, buf, maxlen);
-      }
-      else {
+      } else {
         KLI_strncpy(str, buf, maxlen);
       }
       MEM_freeN((void *)buf);
     }
-  }
-  else if (ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
+  } else if (ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
     /* string */
     KLI_strncpy(str, but->poin, maxlen);
     return;
-  }
-  else if (ui_but_anim_expression_get(but, str, maxlen)) {
+  } else if (ui_but_anim_expression_get(but, str, maxlen)) {
     /* driver expression */
-  }
-  else {
+  } else {
     /* number editing */
     const double value = ui_but_value_get(but);
 
     PropertySubType subtype = PROP_NONE;
-    if (but->rnaprop) {
-      subtype = RNA_property_subtype(but->rnaprop);
+    if (but->stageprop) {
+      subtype = LUXO_property_subtype(but->stageprop);
     }
 
     if (ui_but_is_float(but)) {
@@ -2857,23 +2914,19 @@ void ui_but_string_get_ex(uiBut *but,
 
       if (float_precision == -1) {
         prec = ui_but_calc_float_precision(but, value);
-      }
-      else if (!use_exp_float && ui_but_hide_fraction(but, value)) {
+      } else if (!use_exp_float && ui_but_hide_fraction(but, value)) {
         prec = 0;
       }
 
       if (ui_but_is_unit(but)) {
         ui_get_but_string_unit(but, str, maxlen, value, false, prec);
-      }
-      else if (subtype == PROP_FACTOR) {
+      } else if (subtype == PROP_FACTOR) {
         if (U.factor_display_type == USER_FACTOR_AS_FACTOR) {
           KLI_snprintf(str, maxlen, "%.*f", prec, value);
-        }
-        else {
+        } else {
           KLI_snprintf(str, maxlen, "%.*f", MAX2(0, prec - 2), value * 100);
         }
-      }
-      else {
+      } else {
         const int int_digits_num = integer_digits_f(value);
         if (use_exp_float) {
           if (int_digits_num < -6 || int_digits_num > 12) {
@@ -2881,21 +2934,18 @@ void ui_but_string_get_ex(uiBut *but,
             if (r_use_exp_float) {
               *r_use_exp_float = true;
             }
-          }
-          else {
+          } else {
             prec -= int_digits_num;
             CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
             KLI_snprintf(str, maxlen, "%.*f", prec, value);
           }
-        }
-        else {
+        } else {
           prec -= int_digits_num;
           CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
           KLI_snprintf(str, maxlen, "%.*f", prec, value);
         }
       }
-    }
-    else {
+    } else {
       KLI_snprintf(str, maxlen, "%d", (int)value);
     }
   }
@@ -2910,40 +2960,37 @@ char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
   char *str = nullptr;
   *r_str_size = 1;
 
-  if (but->rnaprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
-    const PropertyType type = RNA_property_type(but->rnaprop);
+  if (but->stageprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
+    const PropertyType type = LUXO_property_type(but->stageprop);
 
     if (type == PROP_STRING) {
       /* RNA string */
-      str = RNA_property_string_get_alloc(&but->rnapoin, but->rnaprop, nullptr, 0, r_str_size);
+      str =
+        LUXO_property_string_get_alloc(&but->stagepoin, but->stageprop, nullptr, 0, r_str_size);
       (*r_str_size) += 1;
-    }
-    else if (type == PROP_ENUM) {
+    } else if (type == PROP_ENUM) {
       /* RNA enum */
-      const int value = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
+      const int value = LUXO_property_enum_get(&but->stagepoin, but->stageprop);
       const char *value_id;
-      if (!RNA_property_enum_name(static_cast<kContext *>(but->block->evil_C),
-                                  &but->rnapoin,
-                                  but->rnaprop,
-                                  value,
-                                  &value_id)) {
+      if (!LUXO_property_enum_name(static_cast<kContext *>(but->block->evil_C),
+                                   &but->stagepoin,
+                                   but->stageprop,
+                                   value,
+                                   &value_id)) {
         value_id = "";
       }
 
       *r_str_size = strlen(value_id) + 1;
       str = KLI_strdupn(value_id, *r_str_size);
-    }
-    else if (type == PROP_POINTER) {
+    } else if (type == PROP_POINTER) {
       /* RNA pointer */
-      KrakenPRIM ptr = RNA_property_pointer_get(&but->rnapoin, but->rnaprop);
-      str = RNA_struct_name_get_alloc(&ptr, nullptr, 0, r_str_size);
+      KrakenPRIM ptr = LUXO_property_pointer_get(&but->stagepoin, but->stageprop);
+      str = LUXO_struct_name_get_alloc(&ptr, nullptr, 0, r_str_size);
       (*r_str_size) += 1;
-    }
-    else {
+    } else {
       KLI_assert(0);
     }
-  }
-  else {
+  } else {
     KLI_assert(0);
   }
 
@@ -2963,14 +3010,17 @@ char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
  */
 #define UI_NUMBER_EVAL_ERROR_PREFIX IFACE_("Error evaluating number, see Info editor for details")
 
-static bool ui_number_from_string_units(
-    kContext *C, const char *str, const int unit_type, const UnitSettings *unit, double *r_value)
+static bool ui_number_from_string_units(kContext *C,
+                                        const char *str,
+                                        const int unit_type,
+                                        const UnitSettings *unit,
+                                        double *r_value)
 {
   char *error = nullptr;
   const bool ok = user_string_to_number(C, str, unit, unit_type, r_value, true, &error);
   if (error) {
     ReportList *reports = CTX_wm_reports(C);
-    BKE_reportf(reports, RPT_ERROR, "%s: %s", UI_NUMBER_EVAL_ERROR_PREFIX, error);
+    KKE_reportf(reports, RPT_ERROR, "%s: %s", UI_NUMBER_EVAL_ERROR_PREFIX, error);
     MEM_freeN(error);
   }
   return ok;
@@ -2981,7 +3031,7 @@ static bool ui_number_from_string_units_with_but(kContext *C,
                                                  const uiBut *but,
                                                  double *r_value)
 {
-  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
+  const int unit_type = LUXO_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
   const UnitSettings *unit = but->block->unit;
   return ui_number_from_string_units(C, str, unit_type, unit, r_value);
 }
@@ -3041,8 +3091,8 @@ bool ui_but_string_eval_number(kContext *C, const uiBut *but, const char *str, d
   }
 
   PropertySubType subtype = PROP_NONE;
-  if (but->rnaprop) {
-    subtype = RNA_property_subtype(but->rnaprop);
+  if (but->stageprop) {
+    subtype = LUXO_property_subtype(but->stageprop);
   }
 
   if (ui_but_is_float(but)) {
@@ -3069,8 +3119,7 @@ static void ui_but_string_set_internal(uiBut *but, const char *str, size_t str_l
 
   if (str_len > UI_MAX_NAME_STR) {
     but->str = static_cast<char *>(MEM_mallocN(str_len, "ui_def_but str"));
-  }
-  else {
+  } else {
     but->str = but->strdata;
   }
   memcpy(but->str, str, str_len);
@@ -3089,19 +3138,20 @@ static void ui_but_string_free_internal(uiBut *but)
 
 bool ui_but_string_set(kContext *C, uiBut *but, const char *str)
 {
-  if (but->rnaprop && but->rnapoin.data && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
-    if (RNA_property_editable(&but->rnapoin, but->rnaprop)) {
-      const PropertyType type = RNA_property_type(but->rnaprop);
+  if (but->stageprop && but->stagepoin.data &&
+      ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
+    if (LUXO_property_editable(&but->stagepoin, but->stageprop)) {
+      const PropertyType type = LUXO_property_type(but->stageprop);
 
       if (type == PROP_STRING) {
         /* RNA string */
-        RNA_property_string_set(&but->rnapoin, but->rnaprop, str);
+        LUXO_property_string_set(&but->stagepoin, but->stageprop, str);
         return true;
       }
 
       if (type == PROP_POINTER) {
         if (str[0] == '\0') {
-          RNA_property_pointer_set(&but->rnapoin, but->rnaprop, KrakenPRIM_NULL, nullptr);
+          LUXO_property_pointer_set(&but->stagepoin, but->stageprop, KrakenPRIM_NULL, nullptr);
           return true;
         }
 
@@ -3117,16 +3167,17 @@ bool ui_but_string_set(kContext *C, uiBut *but, const char *str)
          * Fact remains, using `editstr` as main 'reference' over whole search button thingy
          * is utterly weak and should be redesigned IMHO, but that's not a simple task. */
         if (search_but && search_but->rnasearchprop &&
-            RNA_property_collection_lookup_string(
-                &search_but->rnasearchpoin, search_but->rnasearchprop, str, &rptr)) {
-          RNA_property_pointer_set(&but->rnapoin, but->rnaprop, rptr, nullptr);
-        }
-        else if (search_but->item_active != nullptr) {
-          RNA_pointer_create(nullptr,
-                             RNA_property_pointer_type(&but->rnapoin, but->rnaprop),
-                             search_but->item_active,
-                             &rptr);
-          RNA_property_pointer_set(&but->rnapoin, but->rnaprop, rptr, nullptr);
+            LUXO_property_collection_lookup_string(&search_but->rnasearchpoin,
+                                                   search_but->rnasearchprop,
+                                                   str,
+                                                   &rptr)) {
+          LUXO_property_pointer_set(&but->stagepoin, but->stageprop, rptr, nullptr);
+        } else if (search_but->item_active != nullptr) {
+          LUXO_pointer_create(nullptr,
+                              LUXO_property_pointer_type(&but->stagepoin, but->stageprop),
+                              search_but->item_active,
+                              &rptr);
+          LUXO_property_pointer_set(&but->stagepoin, but->stageprop, rptr, nullptr);
         }
 
         return true;
@@ -3134,62 +3185,54 @@ bool ui_but_string_set(kContext *C, uiBut *but, const char *str)
 
       if (type == PROP_ENUM) {
         int value;
-        if (RNA_property_enum_value(static_cast<kContext *>(but->block->evil_C),
-                                    &but->rnapoin,
-                                    but->rnaprop,
-                                    str,
-                                    &value)) {
-          RNA_property_enum_set(&but->rnapoin, but->rnaprop, value);
+        if (LUXO_property_enum_value(static_cast<kContext *>(but->block->evil_C),
+                                     &but->stagepoin,
+                                     but->stageprop,
+                                     str,
+                                     &value)) {
+          LUXO_property_enum_set(&but->stagepoin, but->stageprop, value);
           return true;
         }
         return false;
       }
       KLI_assert(0);
     }
-  }
-  else if (but->type == UI_BTYPE_TAB) {
-    if (but->rnaprop && but->custom_data) {
-      KrakenSTAGE *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
+  } else if (but->type == UI_BTYPE_TAB) {
+    if (but->stageprop && but->custom_data) {
+      KrakenSTAGE *ptr_type = LUXO_property_pointer_type(&but->stagepoin, but->stageprop);
       KrakenPRIM ptr;
       KrakenPROP *prop;
 
       /* uiBut.custom_data points to data this tab represents (e.g. workspace).
-       * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
-      RNA_pointer_create(but->rnapoin.owner_id, ptr_type, but->custom_data, &ptr);
-      prop = RNA_struct_name_property(ptr_type);
-      if (RNA_property_editable(&ptr, prop)) {
-        RNA_property_string_set(&ptr, prop, str);
+       * uiBut.stagepoin/prop store an active value (e.g. active workspace). */
+      LUXO_pointer_create(but->stagepoin.owner_id, ptr_type, but->custom_data, &ptr);
+      prop = LUXO_struct_name_property(ptr_type);
+      if (LUXO_property_editable(&ptr, prop)) {
+        LUXO_property_string_set(&ptr, prop, str);
       }
     }
-  }
-  else if (but->type == UI_BTYPE_TEXT) {
+  } else if (but->type == UI_BTYPE_TEXT) {
     /* string */
     if (!but->poin) {
       str = "";
-    }
-    else if (UI_but_is_utf8(but)) {
+    } else if (UI_but_is_utf8(but)) {
       KLI_strncpy_utf8(but->poin, str, but->hardmax);
-    }
-    else {
+    } else {
       KLI_strncpy(but->poin, str, but->hardmax);
     }
 
     return true;
-  }
-  else if (but->type == UI_BTYPE_SEARCH_MENU) {
+  } else if (but->type == UI_BTYPE_SEARCH_MENU) {
     /* string */
     KLI_strncpy(but->poin, str, but->hardmax);
     return true;
-  }
-  else if (ui_but_anim_expression_set(but, str)) {
+  } else if (ui_but_anim_expression_set(but, str)) {
     /* driver expression */
     return true;
-  }
-  else if (str[0] == '#') {
+  } else if (str[0] == '#') {
     /* Shortcut to create new driver expression (versus immediate Python-execution). */
     return ui_but_anim_expression_create(but, str + 1);
-  }
-  else {
+  } else {
     /* number editing */
     double value;
 
@@ -3249,21 +3292,20 @@ static double soft_range_round_down(double value, double max)
 
 void ui_but_range_set_hard(uiBut *but)
 {
-  if (but->rnaprop == nullptr) {
+  if (but->stageprop == nullptr) {
     return;
   }
 
-  const PropertyType type = RNA_property_type(but->rnaprop);
+  const PropertyType type = LUXO_property_type(but->stageprop);
 
   if (type == PROP_INT) {
     int imin, imax;
-    RNA_property_int_range(&but->rnapoin, but->rnaprop, &imin, &imax);
+    LUXO_property_int_range(&but->stagepoin, but->stageprop, &imin, &imax);
     but->hardmin = imin;
     but->hardmax = imax;
-  }
-  else if (type == PROP_FLOAT) {
+  } else if (type == PROP_FLOAT) {
     float fmin, fmax;
-    RNA_property_float_range(&but->rnapoin, but->rnaprop, &fmin, &fmax);
+    LUXO_property_float_range(&but->stagepoin, but->stageprop, &fmin, &fmax);
     but->hardmin = fmin;
     but->hardmax = fmax;
   }
@@ -3277,9 +3319,9 @@ void ui_but_range_set_soft(uiBut *but)
    * enough. Worst case is very long vectors won't use a smart soft-range,
    * which isn't so bad. */
 
-  if (but->rnaprop) {
-    const PropertyType type = RNA_property_type(but->rnaprop);
-    const PropertySubType subtype = RNA_property_subtype(but->rnaprop);
+  if (but->stageprop) {
+    const PropertyType type = LUXO_property_type(but->stageprop);
+    const PropertySubType subtype = LUXO_property_subtype(but->stageprop);
     double softmin, softmax /*, step, precision*/;
     double value_min;
     double value_max;
@@ -3287,10 +3329,10 @@ void ui_but_range_set_soft(uiBut *but)
     /* clamp button range to something reasonable in case
      * we get -inf/inf from RNA properties */
     if (type == PROP_INT) {
-      const bool is_array = RNA_property_array_check(but->rnaprop);
+      const bool is_array = LUXO_property_array_check(but->stageprop);
       int imin, imax, istep;
 
-      RNA_property_int_ui_range(&but->rnapoin, but->rnaprop, &imin, &imax, &istep);
+      LUXO_property_int_ui_range(&but->stagepoin, but->stageprop, &imin, &imax, &istep);
       softmin = (imin == INT_MIN) ? -1e4 : imin;
       softmax = (imin == INT_MAX) ? 1e4 : imax;
       // step = istep;  /* UNUSED */
@@ -3298,19 +3340,22 @@ void ui_but_range_set_soft(uiBut *but)
 
       if (is_array) {
         int value_range[2];
-        RNA_property_int_get_array_range(&but->rnapoin, but->rnaprop, value_range);
+        LUXO_property_int_get_array_range(&but->stagepoin, but->stageprop, value_range);
         value_min = (double)value_range[0];
         value_max = (double)value_range[1];
-      }
-      else {
+      } else {
         value_min = value_max = ui_but_value_get(but);
       }
-    }
-    else if (type == PROP_FLOAT) {
-      const bool is_array = RNA_property_array_check(but->rnaprop);
+    } else if (type == PROP_FLOAT) {
+      const bool is_array = LUXO_property_array_check(but->stageprop);
       float fmin, fmax, fstep, fprecision;
 
-      RNA_property_float_ui_range(&but->rnapoin, but->rnaprop, &fmin, &fmax, &fstep, &fprecision);
+      LUXO_property_float_ui_range(&but->stagepoin,
+                                   but->stageprop,
+                                   &fmin,
+                                   &fmax,
+                                   &fstep,
+                                   &fprecision);
       softmin = (fmin == -FLT_MAX) ? (float)-1e4 : fmin;
       softmax = (fmax == FLT_MAX) ? (float)1e4 : fmax;
       // step = fstep;           /* UNUSED */
@@ -3319,15 +3364,13 @@ void ui_but_range_set_soft(uiBut *but)
       /* Use shared min/max for array values, except for color alpha. */
       if (is_array && !(subtype == PROP_COLOR && but->rnaindex == 3)) {
         float value_range[2];
-        RNA_property_float_get_array_range(&but->rnapoin, but->rnaprop, value_range);
+        LUXO_property_float_get_array_range(&but->stagepoin, but->stageprop, value_range);
         value_min = (double)value_range[0];
         value_max = (double)value_range[1];
-      }
-      else {
+      } else {
         value_min = value_max = ui_but_value_get(but);
       }
-    }
-    else {
+    } else {
       return;
     }
 
@@ -3335,8 +3378,7 @@ void ui_but_range_set_soft(uiBut *but)
     if (value_min + 1e-10 < softmin) {
       if (value_min < 0.0) {
         softmin = -soft_range_round_up(-value_min, -softmin);
-      }
-      else {
+      } else {
         softmin = soft_range_round_down(value_min, softmin);
       }
 
@@ -3347,8 +3389,7 @@ void ui_but_range_set_soft(uiBut *but)
     if (value_max - 1e-10 > softmax) {
       if (value_max < 0.0) {
         softmax = -soft_range_round_down(-value_max, -softmax);
-      }
-      else {
+      } else {
         softmax = soft_range_round_up(value_max, softmax);
       }
 
@@ -3359,8 +3400,7 @@ void ui_but_range_set_soft(uiBut *but)
 
     but->softmin = softmin;
     but->softmax = softmax;
-  }
-  else if (but->poin && (but->pointype & UI_BUT_POIN_TYPES)) {
+  } else if (but->poin && (but->pointype & UI_BUT_POIN_TYPES)) {
     float value = ui_but_value_get(but);
     if (isfinite(value)) {
       CLAMP(value, but->hardmin, but->hardmax);
@@ -3422,8 +3462,7 @@ static void ui_but_free(const kContext *C, uiBut *but)
      * be closed using a context pointer */
     if (C) {
       ui_but_active_free(C, but);
-    }
-    else {
+    } else {
       if (but->active) {
         MEM_freeN(but->active);
       }
@@ -3478,7 +3517,8 @@ void UI_blocklist_update_window_matrix(const kContext *C, const ListBase *lb)
   ARegion *region = CTX_wm_region(C);
   wmWindow *window = CTX_wm_window(C);
 
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH(uiBlock *, block, lb)
+  {
     if (block->active) {
       ui_update_window_matrix(window, region, block);
     }
@@ -3487,7 +3527,8 @@ void UI_blocklist_update_window_matrix(const kContext *C, const ListBase *lb)
 
 void UI_blocklist_update_view_for_buttons(const kContext *C, const ListBase *lb)
 {
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH(uiBlock *, block, lb)
+  {
     if (block->active) {
       ui_but_update_view_for_active(C, block);
     }
@@ -3496,7 +3537,8 @@ void UI_blocklist_update_view_for_buttons(const kContext *C, const ListBase *lb)
 
 void UI_blocklist_draw(const kContext *C, const ListBase *lb)
 {
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH(uiBlock *, block, lb)
+  {
     if (block->active) {
       UI_block_draw(C, block);
     }
@@ -3520,15 +3562,15 @@ void UI_blocklist_free_inactive(const kContext *C, ARegion *region)
 {
   ListBase *lb = &region->uiblocks;
 
-  LISTBASE_FOREACH_MUTABLE (uiBlock *, block, lb) {
+  LISTBASE_FOREACH_MUTABLE(uiBlock *, block, lb)
+  {
     if (!block->handle) {
       if (block->active) {
         block->active = false;
-      }
-      else {
+      } else {
         if (region->runtime.block_name_map != nullptr) {
           uiBlock *b = static_cast<uiBlock *>(
-              KLI_ghash_lookup(region->runtime.block_name_map, block->name));
+            KLI_ghash_lookup(region->runtime.block_name_map, block->name));
           if (b == block) {
             KLI_ghash_remove(region->runtime.block_name_map, b->name, nullptr, nullptr);
           }
@@ -3542,16 +3584,16 @@ void UI_blocklist_free_inactive(const kContext *C, ARegion *region)
 
 void UI_block_region_set(uiBlock *block, ARegion *region)
 {
-  ListBase *lb = &region->uiblocks;
+  std::vector<uiBlock *> lb = region->uiblocks;
   uiBlock *oldblock = nullptr;
 
   /* each listbase only has one block with this name, free block
    * if is already there so it can be rebuilt from scratch */
-  if (lb) {
+  if (!lb.empty()) {
     if (region->runtime.block_name_map == nullptr) {
-      region->runtime.block_name_map = KLI_ghash_str_new(__func__);
+      region->runtime.block_name_map = KKE_rhash_str_new(__func__);
     }
-    oldblock = (uiBlock *)KLI_ghash_lookup(region->runtime.block_name_map, block->name);
+    oldblock = (uiBlock *)KKE_rhash_lookup(region->runtime.block_name_map, block->name);
 
     if (oldblock) {
       oldblock->active = false;
@@ -3560,14 +3602,17 @@ void UI_block_region_set(uiBlock *block, ARegion *region)
     }
 
     /* at the beginning of the list! for dynamical menus/blocks */
-    KLI_addhead(lb, block);
-    KLI_ghash_reinsert(region->runtime.block_name_map, block->name, block, nullptr, nullptr);
+    lb.insert(lb.begin(), block);
+    KKE_rhash_reinsert(region->runtime.block_name_map, block->name, block, nullptr, nullptr);
   }
 
   block->oldblock = oldblock;
 }
 
-uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eUIEmbossType emboss)
+uiBlock *UI_block_begin(const kContext *C,
+                        ARegion *region,
+                        const wabi::TfToken &name,
+                        eUIEmbossType emboss)
 {
   wmWindow *window = CTX_wm_window(C);
   Scene *scene = CTX_data_scene(C);
@@ -3590,12 +3635,11 @@ uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eU
     /* copy to avoid crash when scene gets deleted with ui still open */
     block->unit = MEM_new<UnitSettings>(__func__);
     memcpy(block->unit, &scene->unit, sizeof(scene->unit));
-  }
-  else {
+  } else {
     STRNCPY(block->display_device, IMB_colormanagement_display_get_default_name());
   }
 
-  KLI_strncpy(block->name, name, sizeof(block->name));
+  block->name = name;
 
   if (region) {
     UI_block_region_set(block, region);
@@ -3644,8 +3688,8 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
   STR_CONCAT(but->drawstr, slen, but->str);
 
   PropertySubType subtype = PROP_NONE;
-  if (but->rnaprop) {
-    subtype = RNA_property_subtype(but->rnaprop);
+  if (but->stageprop) {
+    subtype = LUXO_property_subtype(but->stageprop);
   }
 
   /* Change negative zero to regular zero, without altering anything else. */
@@ -3653,34 +3697,27 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
 
   if (value == (double)FLT_MAX) {
     STR_CONCAT(but->drawstr, slen, "inf");
-  }
-  else if (value == (double)-FLT_MAX) {
+  } else if (value == (double)-FLT_MAX) {
     STR_CONCAT(but->drawstr, slen, "-inf");
-  }
-  else if (subtype == PROP_PERCENTAGE) {
+  } else if (subtype == PROP_PERCENTAGE) {
     const int prec = ui_but_calc_float_precision(but, value);
     STR_CONCATF(but->drawstr, slen, "%.*f%%", prec, value);
-  }
-  else if (subtype == PROP_PIXEL) {
+  } else if (subtype == PROP_PIXEL) {
     const int prec = ui_but_calc_float_precision(but, value);
     STR_CONCATF(but->drawstr, slen, "%.*f px", prec, value);
-  }
-  else if (subtype == PROP_FACTOR) {
+  } else if (subtype == PROP_FACTOR) {
     const int precision = ui_but_calc_float_precision(but, value);
 
     if (U.factor_display_type == USER_FACTOR_AS_FACTOR) {
       STR_CONCATF(but->drawstr, slen, "%.*f", precision, value);
-    }
-    else {
+    } else {
       STR_CONCATF(but->drawstr, slen, "%.*f%%", MAX2(0, precision - 2), value * 100);
     }
-  }
-  else if (ui_but_is_unit(but)) {
+  } else if (ui_but_is_unit(but)) {
     char new_str[sizeof(but->drawstr)];
     ui_get_but_string_unit(but, new_str, sizeof(new_str), value, true, -1);
     STR_CONCAT(but->drawstr, slen, new_str);
-  }
-  else {
+  } else {
     const int prec = ui_but_calc_float_precision(but, value);
     STR_CONCATF(but->drawstr, slen, "%.*f", prec, value);
   }
@@ -3692,16 +3729,15 @@ static void ui_but_build_drawstr_int(uiBut *but, int value)
   STR_CONCAT(but->drawstr, slen, but->str);
 
   PropertySubType subtype = PROP_NONE;
-  if (but->rnaprop) {
-    subtype = RNA_property_subtype(but->rnaprop);
+  if (but->stageprop) {
+    subtype = LUXO_property_subtype(but->stageprop);
   }
 
   STR_CONCATF(but->drawstr, slen, "%d", value);
 
   if (subtype == PROP_PERCENTAGE) {
     STR_CONCAT(but->drawstr, slen, "%");
-  }
-  else if (subtype == PROP_PIXEL) {
+  } else if (subtype == PROP_PIXEL) {
     STR_CONCAT(but->drawstr, slen, " px");
   }
 }
@@ -3720,7 +3756,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
 
   /* only update soft range while not editing */
   if (!ui_but_is_editing(but)) {
-    if ((but->rnaprop != nullptr) || (but->poin && (but->pointype & UI_BUT_POIN_TYPES))) {
+    if ((but->stageprop != nullptr) || (but->poin && (but->pointype & UI_BUT_POIN_TYPES))) {
       ui_but_range_set_soft(but);
     }
   }
@@ -3734,8 +3770,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
         UI_GET_BUT_VALUE_INIT(but, value);
         if (value < (double)but->hardmin) {
           ui_but_value_set(but, but->hardmin);
-        }
-        else if (value > (double)but->hardmax) {
+        } else if (value > (double)but->hardmax) {
           ui_but_value_set(but, but->hardmax);
         }
 
@@ -3746,9 +3781,9 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
 
     case UI_BTYPE_ICON_TOGGLE:
     case UI_BTYPE_ICON_TOGGLE_N:
-      if ((but->rnaprop == nullptr) ||
-          (RNA_property_flag(but->rnaprop) & PROP_ICONS_CONSECUTIVE)) {
-        if (but->rnaprop && RNA_property_flag(but->rnaprop) & PROP_ICONS_REVERSE) {
+      if ((but->stageprop == nullptr) ||
+          (LUXO_property_flag(but->stageprop) & PROP_ICONS_CONSECUTIVE)) {
+        if (but->stageprop && LUXO_property_flag(but->stageprop) & PROP_ICONS_REVERSE) {
           but->drawflag |= UI_BUT_ICON_REVERSE;
         }
 
@@ -3771,16 +3806,16 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
       if (KLI_rctf_size_x(&but->rect) >= (UI_UNIT_X * 2)) {
         /* only needed for menus in popup blocks that don't recreate buttons on redraw */
         if (but->block->flag & UI_BLOCK_LOOP) {
-          if (but->rnaprop && (RNA_property_type(but->rnaprop) == PROP_ENUM)) {
-            const int value_enum = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
+          if (but->stageprop && (LUXO_property_type(but->stageprop) == PROP_ENUM)) {
+            const int value_enum = LUXO_property_enum_get(&but->stagepoin, but->stageprop);
 
             EnumPropertyItem item;
-            if (RNA_property_enum_item_from_value_gettexted(
-                    static_cast<kContext *>(but->block->evil_C),
-                    &but->rnapoin,
-                    but->rnaprop,
-                    value_enum,
-                    &item)) {
+            if (LUXO_property_enum_item_from_value_gettexted(
+                  static_cast<kContext *>(but->block->evil_C),
+                  &but->stagepoin,
+                  but->stageprop,
+                  value_enum,
+                  &item)) {
               const size_t slen = strlen(item.name);
               ui_but_string_free_internal(but);
               ui_but_string_set_internal(but, item.name, slen);
@@ -3800,8 +3835,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
       UI_GET_BUT_VALUE_INIT(but, value);
       if (ui_but_is_float(but)) {
         ui_but_build_drawstr_float(but, value);
-      }
-      else {
+      } else {
         ui_but_build_drawstr_int(but, (int)value);
       }
       break;
@@ -3811,8 +3845,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
         UI_GET_BUT_VALUE_INIT(but, value);
         const int prec = ui_but_calc_float_precision(but, value);
         KLI_snprintf(but->drawstr, sizeof(but->drawstr), "%s%.*f", but->str, prec, value);
-      }
-      else {
+      } else {
         KLI_strncpy(but->drawstr, but->str, UI_MAX_DRAW_STR);
       }
 
@@ -3832,8 +3865,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
       const char *str;
       if (but->flag & UI_SELECT) {
         str = "Press a key";
-      }
-      else {
+      } else {
         UI_GET_BUT_VALUE_INIT(but, value);
         str = WM_key_event_string((short)value, false);
       }
@@ -3862,12 +3894,10 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
           }
 
           (void)str; /* UNUSED */
-        }
-        else {
+        } else {
           KLI_strncpy(but->drawstr, "Press a key", UI_MAX_DRAW_STR);
         }
-      }
-      else {
+      } else {
         KLI_strncpy(but->drawstr, but->str, UI_MAX_DRAW_STR);
       }
 
@@ -4168,17 +4198,16 @@ static uiBut *ui_def_but(uiBlock *block,
     if (but->str && but->str[0]) {
       but->drawflag |= UI_BUT_ICON_LEFT;
     }
-  }
-  else if (((block->flag & UI_BLOCK_LOOP) && !ui_block_is_popover(block) &&
-            !(block->flag & UI_BLOCK_QUICK_SETUP)) ||
-           ELEM(but->type,
-                UI_BTYPE_MENU,
-                UI_BTYPE_TEXT,
-                UI_BTYPE_LABEL,
-                UI_BTYPE_BLOCK,
-                UI_BTYPE_BUT_MENU,
-                UI_BTYPE_SEARCH_MENU,
-                UI_BTYPE_POPOVER)) {
+  } else if (((block->flag & UI_BLOCK_LOOP) && !ui_block_is_popover(block) &&
+              !(block->flag & UI_BLOCK_QUICK_SETUP)) ||
+             ELEM(but->type,
+                  UI_BTYPE_MENU,
+                  UI_BTYPE_TEXT,
+                  UI_BTYPE_LABEL,
+                  UI_BTYPE_BLOCK,
+                  UI_BTYPE_BUT_MENU,
+                  UI_BTYPE_SEARCH_MENU,
+                  UI_BTYPE_POPOVER)) {
     but->drawflag |= (UI_BUT_TEXT_LEFT | UI_BUT_ICON_LEFT);
   }
 #ifdef USE_NUMBUTS_LR_ALIGN
@@ -4212,8 +4241,7 @@ static uiBut *ui_def_but(uiBlock *block,
            UI_BTYPE_SEPR_SPACER) ||
       (but->type >= UI_BTYPE_SEARCH_MENU)) {
     /* pass */
-  }
-  else {
+  } else {
     but->flag |= UI_BUT_UNDO;
   }
 
@@ -4267,12 +4295,12 @@ static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *bu
   UI_block_flag_enable(block, UI_BLOCK_MOVEMOUSE_QUIT);
 
   bool free;
-  RNA_property_enum_items_gettexted(static_cast<kContext *>(block->evil_C),
-                                    &but->rnapoin,
-                                    but->rnaprop,
-                                    &item_array,
-                                    nullptr,
-                                    &free);
+  LUXO_property_enum_items_gettexted(static_cast<kContext *>(block->evil_C),
+                                     &but->stagepoin,
+                                     but->stageprop,
+                                     &item_array,
+                                     nullptr,
+                                     &free);
 
   /* We don't want nested rows, cols in menus. */
   UI_block_layout_set_current(block, layout);
@@ -4311,7 +4339,7 @@ static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *bu
     rows++;
   }
 
-  const char *title = RNA_property_ui_name(but->rnaprop);
+  const char *title = LUXO_property_ui_name(but->stageprop);
 
   if (title[0] && (categories == 0) && (block->flag & UI_BLOCK_NO_FLIP)) {
     /* Title at the top for menus with categories. */
@@ -4372,8 +4400,7 @@ static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *bu
       if (item->name) {
         if (item->icon) {
           uiItemL(column, item->name, item->icon);
-        }
-        else {
+        } else {
           /* Do not use uiItemL here, as our root layout is a menu one,
            * it will add a fake blank icon! */
           uiDefBut(block,
@@ -4393,8 +4420,7 @@ static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *bu
         }
       }
       uiItemS(column);
-    }
-    else {
+    } else {
       if (item->icon) {
         uiDefIconTextButI(block,
                           UI_BTYPE_BUT_MENU,
@@ -4411,8 +4437,7 @@ static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *bu
                           0,
                           -1,
                           item->description);
-      }
-      else {
+      } else {
         uiDefButI(block,
                   UI_BTYPE_BUT_MENU,
                   B_NOP,
@@ -4466,8 +4491,7 @@ static void ui_def_but_rna__panel_type(kContext *C, uiLayout *layout, void *but_
   PanelType *pt = WM_paneltype_find(panel_type, true);
   if (pt) {
     ui_item_paneltype_func(C, layout, pt);
-  }
-  else {
+  } else {
     char msg[256];
     SNPRINTF(msg, TIP_("Missing Panel: %s"), panel_type);
     uiItemL(layout, msg, ICON_NONE);
@@ -4495,8 +4519,7 @@ static void ui_def_but_rna__menu_type(kContext *C, uiLayout *layout, void *but_p
   MenuType *mt = WM_menutype_find(menu_type, true);
   if (mt) {
     ui_item_menutype_func(C, layout, mt);
-  }
-  else {
+  } else {
     char msg[256];
     SNPRINTF(msg, TIP_("Missing Menu: %s"), menu_type);
     uiItemL(layout, msg, ICON_NONE);
@@ -4543,7 +4566,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
                              float a2,
                              const char *tip)
 {
-  const PropertyType proptype = RNA_property_type(prop);
+  const PropertyType proptype = LUXO_property_type(prop);
   int icon = 0;
   uiMenuCreateFunc func = nullptr;
   const bool always_set_a1_a2 = ELEM(type, UI_BTYPE_NUM);
@@ -4556,37 +4579,38 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   if ((proptype == PROP_ENUM) && ELEM(type, UI_BTYPE_MENU, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
     bool free;
     const EnumPropertyItem *item;
-    RNA_property_enum_items(
-        static_cast<kContext *>(block->evil_C), ptr, prop, &item, nullptr, &free);
+    LUXO_property_enum_items(static_cast<kContext *>(block->evil_C),
+                             ptr,
+                             prop,
+                             &item,
+                             nullptr,
+                             &free);
 
     int value;
     /* UI_BTYPE_MENU is handled a little differently here */
     if (type == UI_BTYPE_MENU) {
-      value = RNA_property_enum_get(ptr, prop);
-    }
-    else {
+      value = LUXO_property_enum_get(ptr, prop);
+    } else {
       value = (int)max;
     }
 
-    const int i = RNA_enum_from_value(item, value);
+    const int i = LUXO_enum_from_value(item, value);
     if (i != -1) {
 
       if (!str) {
         str = item[i].name;
 #ifdef WITH_INTERNATIONAL
-        str = CTX_IFACE_(RNA_property_translation_context(prop), str);
+        str = CTX_IFACE_(LUXO_property_translation_context(prop), str);
 #endif
       }
 
       icon = item[i].icon;
-    }
-    else {
+    } else {
       if (!str) {
         if (type == UI_BTYPE_MENU) {
           str = "";
-        }
-        else {
-          str = RNA_property_ui_name(prop);
+        } else {
+          str = LUXO_property_ui_name(prop);
         }
       }
     }
@@ -4598,24 +4622,23 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     if (free) {
       MEM_freeN((void *)item);
     }
-  }
-  else {
+  } else {
     if (!str) {
-      str = RNA_property_ui_name(prop);
+      str = LUXO_property_ui_name(prop);
     }
-    icon = RNA_property_ui_icon(prop);
+    icon = LUXO_property_ui_icon(prop);
   }
 
   if (!tip && proptype != PROP_ENUM) {
-    tip = RNA_property_ui_description(prop);
+    tip = LUXO_property_ui_description(prop);
   }
 
   if (min == max || a1 == -1 || a2 == -1 || always_set_a1_a2) {
     if (proptype == PROP_INT) {
       int hardmin, hardmax, softmin, softmax, step;
 
-      RNA_property_int_range(ptr, prop, &hardmin, &hardmax);
-      RNA_property_int_ui_range(ptr, prop, &softmin, &softmax, &step);
+      LUXO_property_int_range(ptr, prop, &hardmin, &hardmax);
+      LUXO_property_int_ui_range(ptr, prop, &softmin, &softmax, &step);
 
       if (!ELEM(type, UI_BTYPE_ROW, UI_BTYPE_LISTROW) && min == max) {
         min = hardmin;
@@ -4627,12 +4650,11 @@ static uiBut *ui_def_but_rna(uiBlock *block,
       if (a2 == -1 || always_set_a1_a2) {
         a2 = 0;
       }
-    }
-    else if (proptype == PROP_FLOAT) {
+    } else if (proptype == PROP_FLOAT) {
       float hardmin, hardmax, softmin, softmax, step, precision;
 
-      RNA_property_float_range(ptr, prop, &hardmin, &hardmax);
-      RNA_property_float_ui_range(ptr, prop, &softmin, &softmax, &step, &precision);
+      LUXO_property_float_range(ptr, prop, &hardmin, &hardmax);
+      LUXO_property_float_ui_range(ptr, prop, &softmin, &softmax, &step, &precision);
 
       if (!ELEM(type, UI_BTYPE_ROW, UI_BTYPE_LISTROW) && min == max) {
         min = hardmin;
@@ -4644,17 +4666,16 @@ static uiBut *ui_def_but_rna(uiBlock *block,
       if (a2 == -1 || always_set_a1_a2) {
         a2 = precision;
       }
-    }
-    else if (proptype == PROP_STRING) {
+    } else if (proptype == PROP_STRING) {
       min = 0;
-      max = RNA_property_string_maxlength(prop);
+      max = LUXO_property_string_maxlength(prop);
       /* NOTE: 'max' may be zero (code for dynamically resized array). */
     }
   }
 
   /* now create button */
-  uiBut *but = ui_def_but(
-      block, type, retval, str, x, y, width, height, nullptr, min, max, a1, a2, tip);
+  uiBut *but =
+    ui_def_but(block, type, retval, str, x, y, width, height, nullptr, min, max, a1, a2, tip);
 
   if (but->type == UI_BTYPE_NUM) {
     /* Set default values, can be overridden later. */
@@ -4662,13 +4683,12 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     UI_but_number_precision_set(but, a2);
   }
 
-  but->rnapoin = *ptr;
-  but->rnaprop = prop;
+  but->stagepoin = *ptr;
+  but->stageprop = prop;
 
-  if (RNA_property_array_check(but->rnaprop)) {
+  if (LUXO_property_array_check(but->stageprop)) {
     but->rnaindex = index;
-  }
-  else {
+  } else {
     but->rnaindex = 0;
   }
 
@@ -4680,8 +4700,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     if (but->emboss == UI_EMBOSS_PULLDOWN) {
       ui_but_submenu_enable(block, but);
     }
-  }
-  else if (type == UI_BTYPE_SEARCH_MENU) {
+  } else if (type == UI_BTYPE_SEARCH_MENU) {
     if (proptype == PROP_POINTER) {
       /* Search buttons normally don't get undo, see: T54580. */
       but->flag |= UI_BUT_UNDO;
@@ -4689,15 +4708,15 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   }
 
   const char *info;
-  if (but->rnapoin.data && !RNA_property_editable_info(&but->rnapoin, prop, &info)) {
+  if (but->stagepoin.data && !LUXO_property_editable_info(&but->stagepoin, prop, &info)) {
     UI_but_disable(but, info);
   }
 
   if (proptype == PROP_POINTER) {
     /* If the button shows an ID, automatically set it as focused in context so operators can
      * access it. */
-    const KrakenPRIM pptr = RNA_property_pointer_get(ptr, prop);
-    if (pptr.data && RNA_struct_is_ID(pptr.type)) {
+    const KrakenPRIM pptr = LUXO_property_pointer_get(ptr, prop);
+    if (pptr.data && LUXO_struct_is_ID(pptr.type)) {
       but->context = CTX_store_add(&block->contexts, "id", &pptr);
     }
   }
@@ -4711,8 +4730,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     if (type == UI_BTYPE_NUM) {
       uiButNumber *number_but = (uiButNumber *)but;
       number_but->step_size = ui_get_but_step_unit(but, number_but->step_size);
-    }
-    else {
+    } else {
       but->a1 = ui_get_but_step_unit(but, but->a1);
     }
   }
@@ -4742,16 +4760,41 @@ static uiBut *ui_def_but_rna_propname(uiBlock *block,
                                       float a2,
                                       const char *tip)
 {
-  KrakenPROP *prop = RNA_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
 
   uiBut *but;
   if (prop) {
-    but = ui_def_but_rna(
-        block, type, retval, str, x, y, width, height, ptr, prop, index, min, max, a1, a2, tip);
-  }
-  else {
-    but = ui_def_but(
-        block, type, retval, propname, x, y, width, height, nullptr, min, max, a1, a2, tip);
+    but = ui_def_but_rna(block,
+                         type,
+                         retval,
+                         str,
+                         x,
+                         y,
+                         width,
+                         height,
+                         ptr,
+                         prop,
+                         index,
+                         min,
+                         max,
+                         a1,
+                         a2,
+                         tip);
+  } else {
+    but = ui_def_but(block,
+                     type,
+                     retval,
+                     propname,
+                     x,
+                     y,
+                     width,
+                     height,
+                     nullptr,
+                     min,
+                     max,
+                     a1,
+                     a2,
+                     tip);
 
     UI_but_disable(but, "Unknown Property.");
   }
@@ -4773,14 +4816,13 @@ static uiBut *ui_def_but_operator_ptr(uiBlock *block,
   if (!str) {
     if (ot && ot->srna) {
       str = WM_operatortype_name(ot, nullptr);
-    }
-    else {
+    } else {
       str = "";
     }
   }
 
   if ((!tip || tip[0] == '\0') && ot && ot->srna && !ot->get_description) {
-    tip = RNA_struct_ui_description(ot->srna);
+    tip = LUXO_struct_ui_description(ot->srna);
   }
 
   uiBut *but = ui_def_but(block, type, -1, str, x, y, width, height, nullptr, 0, 0, 0, 0, tip);
@@ -4810,23 +4852,27 @@ uiBut *uiDefBut(uiBlock *block,
                 float a2,
                 const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, type, retval, str, x, y, width, height, poin, min, max, a1, a2, tip);
+  uiBut *but =
+    ui_def_but(block, type, retval, str, x, y, width, height, poin, min, max, a1, a2, tip);
 
   ui_but_update(but);
 
   return but;
 }
 
-uiBut *uiDefButImage(
-    uiBlock *block, void *imbuf, int x, int y, short width, short height, const uchar color[4])
+uiBut *uiDefButImage(uiBlock *block,
+                     void *imbuf,
+                     int x,
+                     int y,
+                     short width,
+                     short height,
+                     const uchar color[4])
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_IMAGE, 0, "", x, y, width, height, imbuf, 0, 0, 0, 0, "");
+  uiBut *but =
+    ui_def_but(block, UI_BTYPE_IMAGE, 0, "", x, y, width, height, imbuf, 0, 0, 0, 0, "");
   if (color) {
     copy_v4_v4_uchar(but->col, color);
-  }
-  else {
+  } else {
     but->col[0] = 255;
     but->col[1] = 255;
     but->col[2] = 255;
@@ -4883,7 +4929,8 @@ static int findBitIndex(uint x)
 }
 
 /* Auto-complete helper functions. */
-struct AutoComplete {
+struct AutoComplete
+{
   size_t maxlen;
   int matches;
   char *truncate;
@@ -4921,8 +4968,7 @@ void UI_autocomplete_update_name(AutoComplete *autocpl, const char *name)
     /* first match */
     if (truncate[0] == 0) {
       KLI_strncpy(truncate, name, autocpl->maxlen);
-    }
-    else {
+    } else {
       /* remove from truncate what is not in bone->name */
       for (int a = 0; a < autocpl->maxlen - 1; a++) {
         if (name[a] == 0) {
@@ -4943,13 +4989,11 @@ int UI_autocomplete_end(AutoComplete *autocpl, char *autoname)
   if (autocpl->truncate[0]) {
     if (autocpl->matches == 1) {
       match = AUTOCOMPLETE_FULL_MATCH;
-    }
-    else {
+    } else {
       match = AUTOCOMPLETE_PARTIAL_MATCH;
     }
     KLI_strncpy(autoname, autocpl->truncate, autocpl->maxlen);
-  }
-  else {
+  } else {
     if (autoname != autocpl->startname) { /* don't copy a string over itself */
       KLI_strncpy(autoname, autocpl->startname, autocpl->maxlen);
     }
@@ -5264,8 +5308,22 @@ uiBut *uiDefButR(uiBlock *block,
                  float a2,
                  const char *tip)
 {
-  uiBut *but = ui_def_but_rna_propname(
-      block, type, retval, str, x, y, width, height, ptr, propname, index, min, max, a1, a2, tip);
+  uiBut *but = ui_def_but_rna_propname(block,
+                                       type,
+                                       retval,
+                                       str,
+                                       x,
+                                       y,
+                                       width,
+                                       height,
+                                       ptr,
+                                       propname,
+                                       index,
+                                       min,
+                                       max,
+                                       a1,
+                                       a2,
+                                       tip);
   ui_but_update(but);
   return but;
 }
@@ -5286,8 +5344,22 @@ uiBut *uiDefButR_prop(uiBlock *block,
                       float a2,
                       const char *tip)
 {
-  uiBut *but = ui_def_but_rna(
-      block, type, retval, str, x, y, width, height, ptr, prop, index, min, max, a1, a2, tip);
+  uiBut *but = ui_def_but_rna(block,
+                              type,
+                              retval,
+                              str,
+                              x,
+                              y,
+                              width,
+                              height,
+                              ptr,
+                              prop,
+                              index,
+                              min,
+                              max,
+                              a1,
+                              a2,
+                              tip);
   ui_but_update(but);
   return but;
 }
@@ -5340,8 +5412,8 @@ uiBut *uiDefIconBut(uiBlock *block,
                     float a2,
                     const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, type, retval, "", x, y, width, height, poin, min, max, a1, a2, tip);
+  uiBut *but =
+    ui_def_but(block, type, retval, "", x, y, width, height, poin, min, max, a1, a2, tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
@@ -5554,8 +5626,22 @@ uiBut *uiDefIconButR(uiBlock *block,
                      float a2,
                      const char *tip)
 {
-  uiBut *but = ui_def_but_rna_propname(
-      block, type, retval, "", x, y, width, height, ptr, propname, index, min, max, a1, a2, tip);
+  uiBut *but = ui_def_but_rna_propname(block,
+                                       type,
+                                       retval,
+                                       "",
+                                       x,
+                                       y,
+                                       width,
+                                       height,
+                                       ptr,
+                                       propname,
+                                       index,
+                                       min,
+                                       max,
+                                       a1,
+                                       a2,
+                                       tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
@@ -5576,8 +5662,22 @@ uiBut *uiDefIconButR_prop(uiBlock *block,
                           float a2,
                           const char *tip)
 {
-  uiBut *but = ui_def_but_rna(
-      block, type, retval, "", x, y, width, height, ptr, prop, index, min, max, a1, a2, tip);
+  uiBut *but = ui_def_but_rna(block,
+                              type,
+                              retval,
+                              "",
+                              x,
+                              y,
+                              width,
+                              height,
+                              ptr,
+                              prop,
+                              index,
+                              min,
+                              max,
+                              a1,
+                              a2,
+                              tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
@@ -5628,8 +5728,8 @@ uiBut *uiDefIconTextBut(uiBlock *block,
                         float a2,
                         const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, type, retval, str, x, y, width, height, poin, min, max, a1, a2, tip);
+  uiBut *but =
+    ui_def_but(block, type, retval, str, x, y, width, height, poin, min, max, a1, a2, tip);
   ui_but_update_and_icon_set(but, icon);
   but->drawflag |= UI_BUT_ICON_LEFT;
   return but;
@@ -5716,8 +5816,22 @@ uiBut *uiDefIconTextButR(uiBlock *block,
                          float a2,
                          const char *tip)
 {
-  uiBut *but = ui_def_but_rna_propname(
-      block, type, retval, str, x, y, width, height, ptr, propname, index, min, max, a1, a2, tip);
+  uiBut *but = ui_def_but_rna_propname(block,
+                                       type,
+                                       retval,
+                                       str,
+                                       x,
+                                       y,
+                                       width,
+                                       height,
+                                       ptr,
+                                       propname,
+                                       index,
+                                       min,
+                                       max,
+                                       a1,
+                                       a2,
+                                       tip);
   ui_but_update_and_icon_set(but, icon);
   but->drawflag |= UI_BUT_ICON_LEFT;
   return but;
@@ -5740,8 +5854,22 @@ uiBut *uiDefIconTextButR_prop(uiBlock *block,
                               float a2,
                               const char *tip)
 {
-  uiBut *but = ui_def_but_rna(
-      block, type, retval, str, x, y, width, height, ptr, prop, index, min, max, a1, a2, tip);
+  uiBut *but = ui_def_but_rna(block,
+                              type,
+                              retval,
+                              str,
+                              x,
+                              y,
+                              width,
+                              height,
+                              ptr,
+                              prop,
+                              index,
+                              min,
+                              max,
+                              a1,
+                              a2,
+                              tip);
   ui_but_update_and_icon_set(but, icon);
   but->drawflag |= UI_BUT_ICON_LEFT;
   return but;
@@ -5790,7 +5918,8 @@ int UI_blocklist_min_y_get(ListBase *lb)
 {
   int min = 0;
 
-  LISTBASE_FOREACH (uiBlock *, block, lb) {
+  LISTBASE_FOREACH(uiBlock *, block, lb)
+  {
     if (block == lb->first || block->rect.ymin < min) {
       min = block->rect.ymin;
     }
@@ -5815,7 +5944,8 @@ void UI_block_order_flip(uiBlock *block)
     return;
   }
 
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  LISTBASE_FOREACH(uiBut *, but, &block->buttons)
+  {
     if (but->drawflag & UI_BUT_ALIGN) {
       return;
     }
@@ -5828,7 +5958,8 @@ void UI_block_order_flip(uiBlock *block)
   }
   /* mirror trick */
   centy = (miny + maxy) / 2.0f;
-  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+  LISTBASE_FOREACH(uiBut *, but, &block->buttons)
+  {
     but->rect.ymin = centy - (but->rect.ymin - centy);
     but->rect.ymax = centy - (but->rect.ymax - centy);
     SWAP(float, but->rect.ymin, but->rect.ymax);
@@ -5913,7 +6044,9 @@ void UI_but_context_ptr_set(uiBlock *block, uiBut *but, const char *name, const 
   but->context->used = true;
 }
 
-const KrakenPRIM *UI_but_context_ptr_get(const uiBut *but, const char *name, const KrakenSTAGE *type)
+const KrakenPRIM *UI_but_context_ptr_get(const uiBut *but,
+                                         const char *name,
+                                         const KrakenSTAGE *type)
 {
   return CTX_store_ptr_lookup(but->context, name, type);
 }
@@ -5925,7 +6058,7 @@ kContextStore *UI_but_context_get(const uiBut *but)
 
 void UI_but_unit_type_set(uiBut *but, const int unit_type)
 {
-  but->unit_type = (uchar)(RNA_SUBTYPE_UNIT_VALUE(unit_type));
+  but->unit_type = (uchar)(LUXO_SUBTYPE_UNIT_VALUE(unit_type));
 }
 
 int UI_but_unit_type_get(const uiBut *but)
@@ -5936,10 +6069,10 @@ int UI_but_unit_type_get(const uiBut *but)
    * default value provided in RNA in a few special cases (i.e. Active Keyframe in Graph Edit)
    */
   /* XXX: this doesn't allow clearing unit completely, though the same could be said for icons */
-  if ((ownUnit != 0) || (but->rnaprop == nullptr)) {
+  if ((ownUnit != 0) || (but->stageprop == nullptr)) {
     return ownUnit << 16;
   }
-  return RNA_SUBTYPE_UNIT(RNA_property_subtype(but->rnaprop));
+  return LUXO_SUBTYPE_UNIT(LUXO_property_subtype(but->stageprop));
 }
 
 void UI_block_func_handle_set(uiBlock *block, uiBlockHandleFunc func, void *arg)
@@ -5979,10 +6112,10 @@ void UI_but_func_rename_set(uiBut *but, uiButHandleRenameFunc func, void *arg1)
 }
 
 void UI_but_func_drawextra_set(
-    uiBlock *block,
-    void (*func)(const kContext *C, void *idv, void *arg1, void *arg2, rcti *rect),
-    void *arg1,
-    void *arg2)
+  uiBlock *block,
+  void (*func)(const kContext *C, void *idv, void *arg1, void *arg2, rcti *rect),
+  void *arg1,
+  void *arg2)
 {
   block->drawextra = func;
   block->drawextra_arg1 = arg1;
@@ -6045,8 +6178,8 @@ uiBut *uiDefBlockBut(uiBlock *block,
                      short height,
                      const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_BLOCK, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but =
+    ui_def_but(block, UI_BTYPE_BLOCK, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
   but->block_create_func = func;
   ui_but_update(but);
   return but;
@@ -6062,8 +6195,20 @@ uiBut *uiDefBlockButN(uiBlock *block,
                       short height,
                       const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_BLOCK, 0, str, x, y, width, height, nullptr, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but = ui_def_but(block,
+                          UI_BTYPE_BLOCK,
+                          0,
+                          str,
+                          x,
+                          y,
+                          width,
+                          height,
+                          nullptr,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          tip);
   but->block_create_func = func;
   if (but->func_argN) {
     MEM_freeN(but->func_argN);
@@ -6083,8 +6228,20 @@ uiBut *uiDefPulldownBut(uiBlock *block,
                         short height,
                         const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_PULLDOWN, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but = ui_def_but(block,
+                          UI_BTYPE_PULLDOWN,
+                          0,
+                          str,
+                          x,
+                          y,
+                          width,
+                          height,
+                          arg,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          tip);
   but->block_create_func = func;
   ui_but_update(but);
   return but;
@@ -6100,8 +6257,20 @@ uiBut *uiDefMenuBut(uiBlock *block,
                     short height,
                     const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_PULLDOWN, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but = ui_def_but(block,
+                          UI_BTYPE_PULLDOWN,
+                          0,
+                          str,
+                          x,
+                          y,
+                          width,
+                          height,
+                          arg,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          tip);
   but->menu_create_func = func;
   ui_but_update(but);
   return but;
@@ -6118,8 +6287,20 @@ uiBut *uiDefIconTextMenuBut(uiBlock *block,
                             short height,
                             const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_PULLDOWN, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but = ui_def_but(block,
+                          UI_BTYPE_PULLDOWN,
+                          0,
+                          str,
+                          x,
+                          y,
+                          width,
+                          height,
+                          arg,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
 
@@ -6142,8 +6323,8 @@ uiBut *uiDefIconMenuBut(uiBlock *block,
                         short height,
                         const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_PULLDOWN, 0, "", x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but =
+    ui_def_but(block, UI_BTYPE_PULLDOWN, 0, "", x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
   but->drawflag &= ~UI_BUT_ICON_LEFT;
@@ -6165,8 +6346,8 @@ uiBut *uiDefIconTextBlockBut(uiBlock *block,
                              short height,
                              const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_BLOCK, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but =
+    ui_def_but(block, UI_BTYPE_BLOCK, 0, str, x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
 
   /* XXX temp, old menu calls pass on icon arrow, which is now UI_BUT_ICON_SUBMENU flag */
   if (icon != ICON_RIGHTARROW_THIN) {
@@ -6193,8 +6374,20 @@ uiBut *uiDefIconBlockBut(uiBlock *block,
                          short height,
                          const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_BLOCK, retval, "", x, y, width, height, arg, 0.0, 0.0, 0.0, 0.0, tip);
+  uiBut *but = ui_def_but(block,
+                          UI_BTYPE_BLOCK,
+                          retval,
+                          "",
+                          x,
+                          y,
+                          width,
+                          height,
+                          arg,
+                          0.0,
+                          0.0,
+                          0.0,
+                          0.0,
+                          tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
 
@@ -6219,8 +6412,20 @@ uiBut *uiDefSearchBut(uiBlock *block,
                       float a2,
                       const char *tip)
 {
-  uiBut *but = ui_def_but(
-      block, UI_BTYPE_SEARCH_MENU, retval, "", x, y, width, height, arg, 0.0, maxlen, a1, a2, tip);
+  uiBut *but = ui_def_but(block,
+                          UI_BTYPE_SEARCH_MENU,
+                          retval,
+                          "",
+                          x,
+                          y,
+                          width,
+                          height,
+                          arg,
+                          0.0,
+                          maxlen,
+                          a1,
+                          a2,
+                          tip);
 
   ui_def_but_icon(but, icon, UI_HAS_ICON);
 
@@ -6273,8 +6478,7 @@ void UI_but_func_search_set(uiBut *but,
     /* Handling will pass the active item as arg2 later, so keep it nullptr here. */
     if (free_arg) {
       UI_but_funcN_set(but, search_exec_fn, search_but->arg, nullptr);
-    }
-    else {
+    } else {
       UI_but_func_set(but, search_exec_fn, search_but->arg, nullptr);
     }
   }
@@ -6340,20 +6544,18 @@ static void operator_enum_search_update_fn(const struct kContext *C,
 
   if (prop == nullptr) {
     printf("%s: %s has no enum property set\n", __func__, ot->idname);
-  }
-  else if (RNA_property_type(prop) != PROP_ENUM) {
+  } else if (LUXO_property_type(prop) != PROP_ENUM) {
     printf("%s: %s \"%s\" is not an enum property\n",
            __func__,
            ot->idname,
-           RNA_property_identifier(prop));
-  }
-  else {
+           LUXO_property_identifier(prop));
+  } else {
     /* Will create it if needed! */
     KrakenPRIM *ptr = UI_but_operator_ptr_get(static_cast<uiBut *>(but));
 
     bool do_free;
     const EnumPropertyItem *all_items;
-    RNA_property_enum_items_gettexted((kContext *)C, ptr, prop, &all_items, nullptr, &do_free);
+    LUXO_property_enum_items_gettexted((kContext *)C, ptr, prop, &all_items, nullptr, &do_free);
 
     StringSearch *search = KLI_string_search_new();
     for (const EnumPropertyItem *item = all_items; item->identifier; item++) {
@@ -6367,8 +6569,12 @@ static void operator_enum_search_update_fn(const struct kContext *C,
       const EnumPropertyItem *item = filtered_items[i];
       /* NOTE: need to give the index rather than the
        * identifier because the enum can be freed */
-      if (!UI_search_item_add(
-              items, item->name, POINTER_FROM_INT(item->value), item->icon, 0, 0)) {
+      if (!UI_search_item_add(items,
+                              item->name,
+                              POINTER_FROM_INT(item->value),
+                              item->icon,
+                              0,
+                              0)) {
         break;
       }
     }
@@ -6390,13 +6596,12 @@ static void operator_enum_search_exec_fn(struct kContext *UNUSED(C), void *but, 
 
   if (ot) {
     if (ot->prop) {
-      RNA_property_enum_set(opptr, ot->prop, POINTER_AS_INT(arg2));
+      LUXO_property_enum_set(opptr, ot->prop, POINTER_AS_INT(arg2));
       /* We do not call op from here, will be called by button code.
        * ui_apply_but_funcs_after() (in interface_handlers.c)
        * called this func before checking operators,
        * because one of its parameters is the button itself! */
-    }
-    else {
+    } else {
       printf("%s: op->prop for '%s' is nullptr\n", __func__, ot->idname);
     }
   }
@@ -6511,85 +6716,70 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
 
         if ((but->flag & UI_BUT_HAS_SEP_CHAR) && (str_sep = strrchr(but->str, UI_SEP_CHAR))) {
           str_len = (str_sep - but->str);
-        }
-        else {
+        } else {
           str_len = strlen(but->str);
         }
 
         tmp = KLI_strdupn(but->str, str_len);
+      } else {
+        type = BUT_GET_LUXO_LABEL; /* Fail-safe solution... */
       }
-      else {
-        type = BUT_GET_RNA_LABEL; /* Fail-safe solution... */
-      }
-    }
-    else if (type == BUT_GET_TIP) {
+    } else if (type == BUT_GET_TIP) {
       if (but->tip_func) {
         tmp = but->tip_func(C, but->tip_arg, but->tip);
-      }
-      else if (but->tip && but->tip[0]) {
+      } else if (but->tip && but->tip[0]) {
         tmp = KLI_strdup(but->tip);
-      }
-      else {
-        type = BUT_GET_RNA_TIP; /* Fail-safe solution... */
+      } else {
+        type = BUT_GET_LUXO_TIP; /* Fail-safe solution... */
       }
     }
 
     if (type == BUT_GET_RNAPROP_IDENTIFIER) {
-      if (but->rnaprop) {
-        tmp = KLI_strdup(RNA_property_identifier(but->rnaprop));
+      if (but->stageprop) {
+        tmp = KLI_strdup(LUXO_property_identifier(but->stageprop));
       }
-    }
-    else if (type == BUT_GET_RNASTRUCT_IDENTIFIER) {
-      if (but->rnaprop && but->rnapoin.data) {
-        tmp = KLI_strdup(RNA_struct_identifier(but->rnapoin.type));
-      }
-      else if (but->optype) {
+    } else if (type == BUT_GET_RNASTRUCT_IDENTIFIER) {
+      if (but->stageprop && but->stagepoin.data) {
+        tmp = KLI_strdup(LUXO_struct_identifier(but->stagepoin.type));
+      } else if (but->optype) {
         tmp = KLI_strdup(but->optype->idname);
-      }
-      else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
+      } else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
         MenuType *mt = UI_but_menutype_get(but);
         if (mt) {
           tmp = KLI_strdup(mt->idname);
         }
-      }
-      else if (but->type == UI_BTYPE_POPOVER) {
+      } else if (but->type == UI_BTYPE_POPOVER) {
         PanelType *pt = UI_but_paneltype_get(but);
         if (pt) {
           tmp = KLI_strdup(pt->idname);
         }
       }
-    }
-    else if (ELEM(type, BUT_GET_RNA_LABEL, BUT_GET_RNA_TIP)) {
-      if (but->rnaprop) {
-        if (type == BUT_GET_RNA_LABEL) {
-          tmp = KLI_strdup(RNA_property_ui_name(but->rnaprop));
-        }
-        else {
-          const char *t = RNA_property_ui_description(but->rnaprop);
+    } else if (ELEM(type, BUT_GET_LUXO_LABEL, BUT_GET_LUXO_TIP)) {
+      if (but->stageprop) {
+        if (type == BUT_GET_LUXO_LABEL) {
+          tmp = KLI_strdup(LUXO_property_ui_name(but->stageprop));
+        } else {
+          const char *t = LUXO_property_ui_description(but->stageprop);
           if (t && t[0]) {
             tmp = KLI_strdup(t);
           }
         }
-      }
-      else if (but->optype) {
-        if (type == BUT_GET_RNA_LABEL) {
+      } else if (but->optype) {
+        if (type == BUT_GET_LUXO_LABEL) {
           tmp = KLI_strdup(WM_operatortype_name(but->optype, but->opptr));
-        }
-        else {
+        } else {
           tmp = WM_operatortype_description(C, but->optype, but->opptr);
         }
-      }
-      else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER)) {
+      } else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER)) {
         {
           MenuType *mt = UI_but_menutype_get(but);
           if (mt) {
-            if (type == BUT_GET_RNA_LABEL) {
+            if (type == BUT_GET_LUXO_LABEL) {
               tmp = KLI_strdup(CTX_TIP_(mt->translation_context, mt->label));
-            }
-            else {
+            } else {
               /* Not all menus are from Python. */
               if (mt->rna_ext.srna) {
-                const char *t = RNA_struct_ui_description(mt->rna_ext.srna);
+                const char *t = LUXO_struct_ui_description(mt->rna_ext.srna);
                 if (t && t[0]) {
                   tmp = KLI_strdup(t);
                 }
@@ -6601,10 +6791,9 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
         if (tmp == nullptr) {
           wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(but, nullptr);
           if (ot) {
-            if (type == BUT_GET_RNA_LABEL) {
+            if (type == BUT_GET_LUXO_LABEL) {
               tmp = KLI_strdup(WM_operatortype_name(ot, nullptr));
-            }
-            else {
+            } else {
               tmp = WM_operatortype_description(C, ot, nullptr);
             }
           }
@@ -6613,10 +6802,9 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
         if (tmp == nullptr) {
           PanelType *pt = UI_but_paneltype_get(but);
           if (pt) {
-            if (type == BUT_GET_RNA_LABEL) {
+            if (type == BUT_GET_LUXO_LABEL) {
               tmp = KLI_strdup(CTX_TIP_(pt->translation_context, pt->label));
-            }
-            else {
+            } else {
               /* Not all panels are from Python. */
               if (pt->rna_ext.srna) {
                 /* Panels don't yet have descriptions, this may be added. */
@@ -6625,40 +6813,38 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
           }
         }
       }
-    }
-    else if (type == BUT_GET_RNA_LABEL_CONTEXT) {
+    } else if (type == BUT_GET_LUXO_LABEL_CONTEXT) {
       const char *_tmp = BLT_I18NCONTEXT_DEFAULT;
-      if (but->rnaprop) {
-        _tmp = RNA_property_translation_context(but->rnaprop);
-      }
-      else if (but->optype) {
-        _tmp = RNA_struct_translation_context(but->optype->srna);
-      }
-      else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
+      if (but->stageprop) {
+        _tmp = LUXO_property_translation_context(but->stageprop);
+      } else if (but->optype) {
+        _tmp = LUXO_struct_translation_context(but->optype->srna);
+      } else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
         MenuType *mt = UI_but_menutype_get(but);
         if (mt) {
-          _tmp = RNA_struct_translation_context(mt->rna_ext.srna);
+          _tmp = LUXO_struct_translation_context(mt->rna_ext.srna);
         }
       }
       if (BLT_is_default_context(_tmp)) {
         _tmp = BLT_I18NCONTEXT_DEFAULT_BPYRNA;
       }
       tmp = KLI_strdup(_tmp);
-    }
-    else if (ELEM(type, BUT_GET_RNAENUM_IDENTIFIER, BUT_GET_RNAENUM_LABEL, BUT_GET_RNAENUM_TIP)) {
+    } else if (ELEM(type,
+                    BUT_GET_RNAENUM_IDENTIFIER,
+                    BUT_GET_RNAENUM_LABEL,
+                    BUT_GET_RNAENUM_TIP)) {
       KrakenPRIM *ptr = nullptr;
       KrakenPROP *prop = nullptr;
       int value = 0;
 
       /* get the enum property... */
-      if (but->rnaprop && RNA_property_type(but->rnaprop) == PROP_ENUM) {
+      if (but->stageprop && LUXO_property_type(but->stageprop) == PROP_ENUM) {
         /* enum property */
-        ptr = &but->rnapoin;
-        prop = but->rnaprop;
+        ptr = &but->stagepoin;
+        prop = but->stageprop;
         value = (ELEM(but->type, UI_BTYPE_ROW, UI_BTYPE_TAB)) ? (int)but->hardmax :
                                                                 (int)ui_but_value_get(but);
-      }
-      else if (but->optype) {
+      } else if (but->optype) {
         KrakenPRIM *opptr = UI_but_operator_ptr_get(but);
         wmOperatorType *ot = but->optype;
 
@@ -6670,11 +6856,11 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
          * operator menus in the Anim Editors will show tooltips for the different
          * operations instead of the meaningless generic operator tooltip
          */
-        if (ot->prop && RNA_property_type(ot->prop) == PROP_ENUM) {
-          if (RNA_struct_contains_property(opptr, ot->prop)) {
+        if (ot->prop && LUXO_property_type(ot->prop) == PROP_ENUM) {
+          if (LUXO_struct_contains_property(opptr, ot->prop)) {
             ptr = opptr;
             prop = ot->prop;
-            value = RNA_property_enum_get(opptr, ot->prop);
+            value = LUXO_property_enum_get(opptr, ot->prop);
           }
         }
       }
@@ -6684,7 +6870,7 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
         if (!item) {
           int i;
 
-          RNA_property_enum_items_gettexted(C, ptr, prop, &items, &totitems, &free_items);
+          LUXO_property_enum_items_gettexted(C, ptr, prop, &items, &totitems, &free_items);
           for (i = 0, item = items; i < totitems; i++, item++) {
             if (item->identifier[0] && item->value == value) {
               break;
@@ -6694,25 +6880,21 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
         if (item && item->identifier) {
           if (type == BUT_GET_RNAENUM_IDENTIFIER) {
             tmp = KLI_strdup(item->identifier);
-          }
-          else if (type == BUT_GET_RNAENUM_LABEL) {
+          } else if (type == BUT_GET_RNAENUM_LABEL) {
             tmp = KLI_strdup(item->name);
-          }
-          else if (item->description && item->description[0]) {
+          } else if (item->description && item->description[0]) {
             tmp = KLI_strdup(item->description);
           }
         }
       }
-    }
-    else if (type == BUT_GET_OP_KEYMAP) {
+    } else if (type == BUT_GET_OP_KEYMAP) {
       if (!ui_block_is_menu(but->block)) {
         char buf[128];
         if (ui_but_event_operator_string(C, but, buf, sizeof(buf))) {
           tmp = KLI_strdup(buf);
         }
       }
-    }
-    else if (type == BUT_GET_PROP_KEYMAP) {
+    } else if (type == BUT_GET_PROP_KEYMAP) {
       /* for properties that are bound to one of the context cycle, etc. keys... */
       char buf[128];
       if (ui_but_event_property_operator_string(C, but, buf, sizeof(buf))) {

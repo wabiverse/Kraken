@@ -11,10 +11,6 @@
 
 #pragma once
 
-#include "kraken/kraken.h"
-
-KRAKEN_NAMESPACE_BEGIN
-
 /** Generic - all structs which are put into linked lists begin with this. */
 struct Link {
   struct Link *next, *prev;
@@ -32,6 +28,4 @@ struct ListBase {
 };
 
 /* 8 byte alignment! */
-
-KRAKEN_NAMESPACE_END
 

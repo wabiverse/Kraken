@@ -69,6 +69,6 @@ void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
 
 WorkSpace *KKE_workspace_active_get(WorkSpaceInstanceHook *hook);
 WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid);
-
+bool KKE_workspace_owner_id_check(const struct WorkSpace *workspace, const TfToken &owner_id) ATTR_NONNULL();
 
 KRAKEN_NAMESPACE_END
