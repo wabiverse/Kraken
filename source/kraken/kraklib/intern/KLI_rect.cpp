@@ -55,6 +55,90 @@ bool KLI_rctf_isect_pt(const wabi::GfVec4f &rect, const float x, const float y)
   return true;
 }
 
+bool KLI_rcti_isect_pt(const rcti *rect, const int x, const int y)
+{
+  if (x < rect->xmin) {
+    return false;
+  }
+  if (x > rect->xmax) {
+    return false;
+  }
+  if (y < rect->ymin) {
+    return false;
+  }
+  if (y > rect->ymax) {
+    return false;
+  }
+  return true;
+}
+
+bool KLI_rcti_clamp(rcti *rect, const rcti *rect_bounds, int r_xy[2])
+{
+  bool changed = false;
+
+  r_xy[0] = 0;
+  r_xy[1] = 0;
+
+  if (rect->xmax > rect_bounds->xmax) {
+    int ofs = rect_bounds->xmax - rect->xmax;
+    rect->xmin += ofs;
+    rect->xmax += ofs;
+    r_xy[0] += ofs;
+    changed = true;
+  }
+
+  if (rect->xmin < rect_bounds->xmin) {
+    int ofs = rect_bounds->xmin - rect->xmin;
+    rect->xmin += ofs;
+    rect->xmax += ofs;
+    r_xy[0] += ofs;
+    changed = true;
+  }
+
+  if (rect->ymin < rect_bounds->ymin) {
+    int ofs = rect_bounds->ymin - rect->ymin;
+    rect->ymin += ofs;
+    rect->ymax += ofs;
+    r_xy[1] += ofs;
+    changed = true;
+  }
+
+  if (rect->ymax > rect_bounds->ymax) {
+    int ofs = rect_bounds->ymax - rect->ymax;
+    rect->ymin += ofs;
+    rect->ymax += ofs;
+    r_xy[1] += ofs;
+    changed = true;
+  }
+
+  return changed;
+}
+
+bool KLI_rcti_isect_pt_v(const rcti *rect, const int xy[2])
+{
+  if (xy[0] < rect->xmin) {
+    return false;
+  }
+  if (xy[0] > rect->xmax) {
+    return false;
+  }
+  if (xy[1] < rect->ymin) {
+    return false;
+  }
+  if (xy[1] > rect->ymax) {
+    return false;
+  }
+  return true;
+}
+
+
+void KLI_rcti_rctf_copy(rcti *dst, const rctf *src)
+{
+  dst->xmin = floorf(src->xmin + 0.5f);
+  dst->xmax = dst->xmin + floorf(KLI_rctf_size_x(GfVec4f(src->xmin, src->xmax, src->ymin, src->ymax)) + 0.5f);
+  dst->ymin = floorf(src->ymin + 0.5f);
+  dst->ymax = dst->ymin + floorf(KLI_rctf_size_y(GfVec4f(src->xmin, src->xmax, src->ymin, src->ymax)) + 0.5f);
+}
 
 void KLI_rcti_rctf_copy_round(wabi::GfVec4i *dst, const wabi::GfVec4f &src)
 {
@@ -70,6 +154,14 @@ void KLI_rcti_rctf_copy_floor(rcti *dst, const rctf *src)
   dst->xmax = floorf(src->xmax);
   dst->ymin = floorf(src->ymin);
   dst->ymax = floorf(src->ymax);
+}
+
+void KLI_rctf_rcti_copy(rctf *dst, const rcti *src)
+{
+  dst->xmin = src->xmin;
+  dst->xmax = src->xmax;
+  dst->ymin = src->ymin;
+  dst->ymax = src->ymax;
 }
 
 void KLI_rcti_translate(rcti *rect, int x, int y)

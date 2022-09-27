@@ -652,7 +652,7 @@ void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna)
    * having an instance within a type looks wrong, but this instance _is_ a LUXO type. */
 
   /* Python deals with the circular reference. */
-  LUXO_pointer_create(&LUXO_Struct, srna, &ptr);
+  LUXO_pointer_create(NULL, &LUXO_Struct, srna, &ptr);
   item = pystage_struct_CreatePyObject(&ptr);
 
   /* NOTE: must set the class not the __dict__ else the internal slots are not updated correctly.

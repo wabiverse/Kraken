@@ -34,7 +34,7 @@
 KRAKEN_NAMESPACE_BEGIN
 
 /* not technically a prim, but meh. */
-static void prim_def_config(const Stage &kstage)
+static void prim_def_config(const KrakenSTAGE &kstage)
 {
   kstage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
   kstage->SetColorConfiguration(wabi::SdfAssetPath(G.main->ocio_cfg));
@@ -42,7 +42,7 @@ static void prim_def_config(const Stage &kstage)
   kstage->SetMetadata(wabi::UsdGeomTokens->upAxis, wabi::UsdGeomTokens->z);
 }
 
-void PRIM_def_info(const Stage &kstage)
+void PRIM_def_info(const KrakenSTAGE &kstage)
 {
   prim_def_config(kstage);
 }

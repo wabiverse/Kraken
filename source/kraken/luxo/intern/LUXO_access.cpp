@@ -22,7 +22,7 @@
  * The Universe Gets Animated.
  */
 
-#include "KLI_string.h"
+#include "KLI_kraklib.h"
 
 #include "KKE_utils.h"
 #include "KKE_appdir.h"
@@ -190,7 +190,7 @@ KrakenPROP *LUXO_struct_find_property(KrakenPRIM *ptr, const char *identifier)
   return NULL;
 }
 
-static const char *luxo_ensure_property_identifier(const KrakenPROP *prop)
+static const TfToken luxo_ensure_property_identifier(const KrakenPROP *prop)
 {
   // if (prop->magic == LUXO_MAGIC) {
   //   return prop->identifier;
@@ -198,7 +198,7 @@ static const char *luxo_ensure_property_identifier(const KrakenPROP *prop)
   return ((const IDProperty *)prop)->name;
 }
 
-const char *LUXO_property_identifier(const KrakenPROP *prop)
+const TfToken LUXO_property_identifier(const KrakenPROP *prop)
 {
   return luxo_ensure_property_identifier(prop);
 }
@@ -268,7 +268,7 @@ void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP 
   }
 
   prim = ptr->GetPrim();
-  *r_ptr = prim.GetProperty(name);
+  *r_ptr = prim.GetAttribute(name);
 
   if (!r_ptr || !r_ptr->IsValid()) {
     std::string msg;
@@ -340,9 +340,34 @@ IDProperty *prim_idproperty_find(KrakenPRIM *ptr, const TfToken &name)
   return NULL;
 }
 
+static KrakenPROP *typemap[IDP_NUMTYPES] = {
+    &prim_PropertyGroupItem_string,
+    &prim_PropertyGroupItem_int,
+    &prim_PropertyGroupItem_float,
+    NULL,
+    NULL,
+    NULL,
+    &prim_PropertyGroupItem_group,
+    &prim_PropertyGroupItem_id,
+    &prim_PropertyGroupItem_double,
+    &prim_PropertyGroupItem_idp_array,
+};
+
+static KrakenPROP *arraytypemap[IDP_NUMTYPES] = {
+    NULL,
+    &prim_PropertyGroupItem_int_array,
+    &prim_PropertyGroupItem_float_array,
+    NULL,
+    NULL,
+    NULL,
+    &prim_PropertyGroupItem_collection,
+    NULL,
+    &prim_PropertyGroupItem_double_array,
+};
+
 void prim_property_prim_or_id_get(KrakenPROP *prop,
                                   KrakenPRIM *ptr,
-                                  PropertyRNAOrID *r_prop_rna_or_id)
+                                  PropertyPRIMOrID *r_prop_rna_or_id)
 {
   /* This is quite a hack, but avoids some complexity in the API. we
    * pass IDProperty structs as PropertyRNA pointers to the outside.
@@ -383,7 +408,7 @@ IDProperty *prim_idproperty_check(KrakenPROP **prop, KrakenPRIM *ptr)
 {
   PropertyPRIMOrID prop_prim_or_id;
 
-  prim_property_rna_or_id_get(*prop, ptr, &prop_prim_or_id);
+  prim_property_prim_or_id_get(*prop, ptr, &prop_prim_or_id);
 
   *prop = prop_prim_or_id.rnaprop;
   return prop_prim_or_id.idprop;
@@ -399,29 +424,29 @@ void LUXO_property_collection_begin(KrakenPRIM *ptr,
 
   memset(iter, 0, sizeof(*iter));
 
-  if ((idprop = rna_idproperty_check(&prop, ptr)) || (prop->flag & PROP_IDPROPERTY)) {
+  if ((idprop = prim_idproperty_check(&prop, ptr)) || (prop->flag & PROP_IDPROPERTY)) {
     iter->parent = *ptr;
     iter->prop = prop;
 
-    if (idprop) {
-      rna_iterator_array_begin(iter,
-                               IDP_IDPArray(idprop),
-                               sizeof(IDProperty),
-                               idprop->len,
-                               0,
-                               NULL);
-    } else {
-      rna_iterator_array_begin(iter, NULL, sizeof(IDProperty), 0, 0, NULL);
-    }
+  //   if (idprop) {
+  //     prim_iterator_array_begin(iter,
+  //                              IDP_IDPArray(idprop),
+  //                              sizeof(IDProperty),
+  //                              idprop->len,
+  //                              0,
+  //                              NULL);
+  //   } else {
+  //     prim_iterator_array_begin(iter, NULL, sizeof(IDProperty), 0, 0, NULL);
+  //   }
 
-    if (iter->valid) {
-      rna_property_collection_get_idp(iter);
-    }
+  //   if (iter->valid) {
+  //     prim_property_collection_get_idp(iter);
+  //   }
 
-    iter->idprop = 1;
-  } else {
-    CollectionPropertyRNA *cprop = (CollectionPropertyRNA *)prop;
-    cprop->begin(iter, ptr);
+  //   iter->idprop = 1;
+  // } else {
+  //   CollectionPropertyPRIM *cprop = (CollectionPropertyPRIM *)prop;
+  //   cprop->begin(iter, ptr);
   }
 }
 
@@ -478,27 +503,6 @@ void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
   srna->py_type = type;
 }
 
-void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
-{
-  if (!r_ptr->IsValid()) {
-    *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios"));
-  }
-  r_ptr->owner_id = r_ptr->GetParent().IsValid() ? r_ptr->GetParent().GetName().GetText() : NULL;
-  r_ptr->type = type;
-  r_ptr->data = data;
-
-  if (data) {
-    while (r_ptr->type && r_ptr->type->refine) {
-      KrakenPRIM *rtype = r_ptr->type->refine(r_ptr);
-
-      if (rtype == r_ptr->type) {
-        break;
-      }
-      r_ptr->type = rtype;
-    }
-  }
-}
-
 std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna)
 {
   return srna->functions;
@@ -551,10 +555,8 @@ KrakenSTAGE::KrakenSTAGE()
 
 void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
 {
-  const KrakenPRIM *ctx = STAGE_CTX(type);
-
   r_ptr->owner_id = id;
-  r_ptr->type = &KrakenPRIM(ctx->GetPrim());
+  r_ptr->type = type;
   r_ptr->data = data;
 
   if (data) {

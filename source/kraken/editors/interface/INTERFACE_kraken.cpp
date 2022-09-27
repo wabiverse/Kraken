@@ -1709,7 +1709,7 @@ static KrakenPRIM *ui_but_extra_operator_icon_add_ptr(uiBut *but,
   extra_op_icon->highlighted = false;
   extra_op_icon->disabled = false;
 
-  KLI_addtail(&but->extra_op_icons, extra_op_icon);
+  but->extra_op_icons.push_back(extra_op_icon);
 
   return extra_op_icon->optype_params->opptr;
 }
@@ -1821,7 +1821,7 @@ static void ui_but_predefined_extra_operator_icons_add(uiBut *but)
     case PREDEFINED_EXTRA_OP_ICON_EYEDROPPER: {
       static wmOperatorType *id_eyedropper_ot = nullptr;
       if (!id_eyedropper_ot) {
-        id_eyedropper_ot = WM_operatortype_find("UI_OT_eyedropper_id", false);
+        id_eyedropper_ot = WM_operatortype_find(WM_ID_(UI_OT_eyedropper_id));
       }
       KLI_assert(id_eyedropper_ot);
 
@@ -1833,7 +1833,7 @@ static void ui_but_predefined_extra_operator_icons_add(uiBut *but)
     case PREDEFINED_EXTRA_OP_ICON_CLEAR: {
       static wmOperatorType *clear_ot = nullptr;
       if (!clear_ot) {
-        clear_ot = WM_operatortype_find("UI_OT_button_string_clear", false);
+        clear_ot = WM_operatortype_find(WM_ID_(UI_OT_button_string_clear));
       }
       KLI_assert(clear_ot);
 
@@ -2196,7 +2196,9 @@ void UI_block_draw(const kContext *C, uiBlock *block)
   GPU_matrix_pop();
 }
 
-static void ui_block_message_subscribe(ARegion *region, struct wmMsgBus *mbus, uiBlock *block)
+/* ************* EVENTS ************* */
+
+static void ui_block_message_subscribe(ARegion *region, wmMsgBus *mbus, uiBlock *block)
 {
   uiBut *but_prev = nullptr;
   /* possibly we should keep the region this block is contained in? */
@@ -2213,22 +2215,20 @@ static void ui_block_message_subscribe(ARegion *region, struct wmMsgBus *mbus, u
         value.owner = region;
         value.user_data = region;
         value.notify = ED_region_do_msg_notify_tag_redraw;
-        WM_msg_subscribe_rna(mbus, &but->stagepoin, but->stageprop, &value, __func__);
+        WM_msg_subscribe_prim(mbus, &but->stagepoin, but->stageprop, &value, __func__);
         but_prev = but;
       }
     }
   }
 }
 
-void UI_region_message_subscribe(ARegion *region, struct wmMsgBus *mbus)
+void UI_region_message_subscribe(ARegion *region, wmMsgBus *mbus)
 {
   for(auto &block : region->uiblocks)
   {
     ui_block_message_subscribe(region, mbus, block);
   }
 }
-
-/* ************* EVENTS ************* */
 
 int ui_but_is_pushed_ex(uiBut *but, double *value)
 {
@@ -2376,7 +2376,7 @@ void ui_but_v3_get(uiBut *but, float vec[3])
 
     if (LUXO_property_type(prop) == PROP_FLOAT) {
       float pretot;
-      const KrakenPRIM *ptr = STAGE_CTX((&but->stagepoin));
+      const KrakenPRIM *ptr = &but->stagepoin;
       ptr->GetAttribute(prop->GetName()).Get(&pretot);
       GfVec3f val = FormFactory(but->stagepoin.GetAttribute(prop->GetName()));
       KLI_assert((int)pretot > 0);
@@ -3553,30 +3553,30 @@ void UI_blocklist_free(const kContext *C, ARegion *region)
     UI_block_free(C, block);
   }
   if (region->runtime.block_name_map != nullptr) {
-    KLI_ghash_free(region->runtime.block_name_map, nullptr, nullptr);
+    KKE_rhash_free(region->runtime.block_name_map, nullptr, nullptr);
     region->runtime.block_name_map = nullptr;
   }
 }
 
 void UI_blocklist_free_inactive(const kContext *C, ARegion *region)
 {
-  ListBase *lb = &region->uiblocks;
+  std::vector<uiBlock *>::iterator it = region->uiblocks.begin();
 
-  LISTBASE_FOREACH_MUTABLE(uiBlock *, block, lb)
+  while (it != region->uiblocks.end())
   {
-    if (!block->handle) {
-      if (block->active) {
-        block->active = false;
+    if (!(*it)->handle) {
+      if ((*it)->active) {
+        (*it)->active = false;
       } else {
         if (region->runtime.block_name_map != nullptr) {
           uiBlock *b = static_cast<uiBlock *>(
-            KLI_ghash_lookup(region->runtime.block_name_map, block->name));
-          if (b == block) {
-            KLI_ghash_remove(region->runtime.block_name_map, b->name, nullptr, nullptr);
+            KKE_rhash_lookup(region->runtime.block_name_map, (*it)->name));
+          if (b == (*it)) {
+            KKE_rhash_remove(region->runtime.block_name_map, b->name, nullptr, nullptr);
           }
         }
-        KLI_remlink(lb, block);
-        UI_block_free(C, block);
+        region->uiblocks.erase(it);
+        UI_block_free(C, (*it));
       }
     }
   }

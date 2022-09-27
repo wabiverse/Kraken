@@ -1155,7 +1155,7 @@ void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
   bool show_save = FormFactory(uprefs->showsave);
 
   if (show_save) {
-    Stage stage = CTX_data_stage(C);
+    KrakenSTAGE stage = CTX_data_stage(C);
     if (stage->GetPseudoRoot().IsValid()) {
       wm_window_raise(win);
       wm_confirm_quit(C);
@@ -1173,7 +1173,7 @@ void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
 /* this is event from anchor, or exit-kraken op */
 void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
 {
-  Stage stage = CTX_data_stage(C);
+  KrakenSTAGE stage = CTX_data_stage(C);
 
   SdfPath other_hash;
 
@@ -1447,6 +1447,31 @@ void WM_event_remove_timer(wmWindowManager *wm, wmWindow *UNUSED(win), wmTimer *
       }
     }
   }
+}
+
+void wmOrtho2(float x1, float x2, float y1, float y2)
+{
+  /* prevent opengl from generating errors */
+  if (x2 == x1) {
+    x2 += 1.0f;
+  }
+  if (y2 == y1) {
+    y2 += 1.0f;
+  }
+
+  GPU_matrix_ortho_set(
+      x1, x2, y1, y2, GPU_MATRIX_ORTHO_CLIP_NEAR_DEFAULT, GPU_MATRIX_ORTHO_CLIP_FAR_DEFAULT);
+}
+
+static void wmOrtho2_offset(const float x, const float y, const float ofs)
+{
+  wmOrtho2(ofs, x + ofs, ofs, y + ofs);
+}
+
+void wmOrtho2_region_pixelspace(const ARegion *region)
+{
+  GfVec2f size = FormFactory(region->size);
+  wmOrtho2_offset(size[0], size[1], -0.01f);
 }
 
 void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct)

@@ -76,21 +76,21 @@ void USD_create_stage(kContext *C)
 
 void USD_destroy(kContext *C)
 {
-  Stage stage = CTX_data_stage(C);
+  KrakenSTAGE stage = CTX_data_stage(C);
   stage->~UsdStage();
 }
 
 void USD_open_stage(kContext *C)
 {
   Main *main = CTX_data_main(C);
-  Stage stage = CTX_data_stage(C);
+  KrakenSTAGE stage = CTX_data_stage(C);
 
   stage->Open(main->stage_id.string());
 }
 
 void USD_save_stage(kContext *C)
 {
-  Stage stage = CTX_data_stage(C);
+  KrakenSTAGE stage = CTX_data_stage(C);
   stage->GetRootLayer()->Save();
 }
 
@@ -99,7 +99,7 @@ void USD_set_defaults(kContext *C)
   /* ----- */
 
   /** Pixar Stage Initiated. */
-  // Stage stage = CTX_data_stage(C);
+  // KrakenSTAGE stage = CTX_data_stage(C);
 
   /* ----- */
 

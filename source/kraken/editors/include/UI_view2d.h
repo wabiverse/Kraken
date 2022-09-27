@@ -27,4 +27,28 @@
 #include "KLI_compiler_attrs.h"
 #include "KLI_rect.h"
 
+/* ------------------------------------------ */
+/* Macros:                                    */
+
+/* Test if mouse in a scroll-bar (assume that scroller availability has been tested). */
+#define IN_2D_VERT_SCROLL(v2d, co) (KLI_rcti_isect_pt_v(&v2d->vert, co))
+#define IN_2D_HORIZ_SCROLL(v2d, co) (KLI_rcti_isect_pt_v(&v2d->hor, co))
+
+#define IN_2D_VERT_SCROLL_RECT(v2d, rct) (KLI_rcti_isect(&v2d->vert, rct, NULL))
+#define IN_2D_HORIZ_SCROLL_RECT(v2d, rct) (KLI_rcti_isect(&v2d->hor, rct, NULL))
+
 float UI_view2d_scale_get_x(const struct View2D *v2d);
+
+char UI_view2d_mouse_in_scrollers_ex(const struct kraken::ARegion *region,
+                                     const struct View2D *v2d,
+                                     const int xy[2],
+                                     int *r_scroll) ATTR_NONNULL(1, 2, 3, 4);
+char UI_view2d_mouse_in_scrollers(const struct kraken::ARegion *region,
+                                  const struct View2D *v2d,
+                                  const int xy[2]) ATTR_NONNULL(1, 2, 3);
+
+char UI_view2d_rect_in_scrollers(const kraken::ARegion *region, const View2D *v2d, const rcti *rect);
+char UI_view2d_rect_in_scrollers_ex(const kraken::ARegion *region,
+                                    const View2D *v2d,
+                                    const rcti *rect,
+                                    int *r_scroll);

@@ -50,7 +50,7 @@
 #include "KKE_report.h"
 
 #include "KLI_assert.h"
-#include "KLI_string.h"
+#include "KLI_kraklib.h"
 #include "KLI_time.h"
 
 #include "ED_screen.h"
@@ -180,14 +180,14 @@ void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, voi
   KLI_assert(!wm_notifier_is_clear(&note_test));
 
   if (wm->notifier_queue_set == nullptr) {
-    wm->notifier_queue_set = KKE_rhash_new_ex(note_hash_for_queue_fn,
-                                              note_cmp_for_queue_fn,
-                                              __func__,
-                                              1024);
+    wm->notifier_queue_set = KKE_rset_new_ex(note_hash_for_queue_fn,
+                                             note_cmp_for_queue_fn,
+                                             __func__,
+                                             1024);
   }
 
   void **note_p;
-  if (KKE_gset_ensure_p_ex(wm->notifier_queue_set, &note_test, &note_p)) {
+  if (KKE_rset_ensure_p_ex(wm->notifier_queue_set, &note_test, &note_p)) {
     return;
   }
   wmNotifier *note = MEM_new<wmNotifier>(__func__);
@@ -1075,7 +1075,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
     op->properties = IDP_CopyProperty(static_cast<const IDProperty *>(properties->data));
   } else {
     IDPropertyTemplate val = {0};
-    op->properties = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+    op->properties = IDP_New(IDP_GROUP, &val, TfToken("wmOperatorProperties"));
   }
   LUXO_pointer_create(&wm->id, &ot->prim, op->properties, op->ptr);
 
@@ -1110,14 +1110,14 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
         }
 
         /* Skip invalid properties. */
-        if (STREQ(RNA_property_identifier(prop), otmacro->idname)) {
+        if (STREQ(LUXO_property_identifier(prop), otmacro->idname)) {
           wmOperatorType *otm = WM_operatortype_find(otmacro->idname, false);
-          PointerRNA someptr = RNA_property_pointer_get(properties, prop);
+          PointerRNA someptr = LUXO_property_pointer_get(properties, prop);
           wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
 
           IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
 
-          BLI_addtail(&motherop->macro, opm);
+          motherop->macro.push_back(opm);
           opm->opm = motherop; /* Pointer to mom, for modal(). */
 
           otmacro = otmacro->next;

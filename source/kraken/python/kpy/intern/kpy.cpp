@@ -479,7 +479,7 @@ void KPy_init_modules(struct kraken::kContext *C)
 
   PyModule_AddObject(mod, "app", KPY_app_struct());
 
-  LUXO_pointer_create(&LUXO_Context, C, &ctx_ptr);
+  LUXO_pointer_create(NULL, &LUXO_Context, C, &ctx_ptr);
   kpy_context_module = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ctx_ptr);
   /* odd that this is needed, 1 ref on creation and another for the module
    * but without we get a crash on exit */

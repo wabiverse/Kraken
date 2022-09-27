@@ -28,13 +28,13 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-static void luxo_preprocess(const Stage &kstage)
+static void luxo_preprocess(const KrakenSTAGE &kstage)
 {
   PRIM_def_wm(kstage);
   PRIM_def_info(kstage);
 }
 
-void LUXO_main(const Stage &kstage)
+void LUXO_main(const KrakenSTAGE &kstage)
 {
   luxo_preprocess(kstage);
 }

@@ -22,33 +22,30 @@
  * The Universe Gets Animated.
  */
 
-#include "LUXO_runtime.h"
+#include <ctype.h>
+#include <float.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "KLI_icons.h"
-#include "KLI_string.h"
-#include "KLI_path_utils.h"
-
-#include "KKE_context.h"
-#include "KKE_main.h"
-#include "KKE_report.h"
-#include "KKE_screen.h"
+#include "KLI_utildefines.h"
+#include "MEM_guardedalloc.h"
 
 #include "USD_api.h"
-#include "USD_area.h"
-#include "USD_context.h"
-#include "USD_default_tables.h"
-#include "USD_factory.h"
-#include "USD_file.h"
-#include "USD_scene.h"
-#include "USD_screen.h"
+#include "USD_object.h"
 #include "USD_types.h"
-#include "USD_userpref.h"
-#include "USD_window.h"
-#include "USD_wm_types.h"
-#include "USD_workspace.h"
 
-#include "LUXO_access.h"
+#include "KKE_utils.h"
+#include "KLI_listbase.h"
+
+#include "UI_resources.h"
+#include "UI_interface.h"
+
 #include "LUXO_define.h"
+
+#include "LUXO_internal.h"
 
 #include <wabi/base/tf/token.h>
 
@@ -58,72 +55,103 @@ WABI_NAMESPACE_USING
 
 KRAKEN_NAMESPACE_BEGIN
 
-void PRIM_def_struct_ptr(const Stage &kstage,
-                         const wabi::SdfPath &identifier,
-                         KrakenPRIM *r_ptr,
-                         const wabi::TfToken &from)
+KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
+                                const wabi::SdfPath &identifier,
+                                KrakenPRIM *primfrom)
 {
-  // KrakenPRIM kprim;
-  // KrakenPROP prop;
-  // KrakenPRIMDEF *kpdef = NULL, *kpdefrom = NULL;
+  KrakenPRIM *kprim;
+  KrakenPROP *prop;
 
-  *r_ptr = KrakenPRIM(kstage->GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier)));
+  kprim = &KrakenPRIM(kstage->GetPrimAtPath(K_BEDROCK));
 
-  if (!r_ptr->IsValid()) {
-    /* This prim doesn't exist yet. */
-    *r_ptr = KrakenPRIM(kstage->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier), from));
+  if (primfrom && primfrom->IsValid()) {
+    const TfToken type = primfrom->GetName();
+    const TfToken type_ctx = TfToken(type.GetString() + "s");
+
+    const SdfPath path = kprim->GetPath();
+    const SdfPath path_ctx = path.AppendPath(SdfPath(type_ctx)).AppendPath(identifier);
+
+    /* Get or create prim at ctx. */
+    kprim = &KrakenPRIM(kstage->DefinePrim(path_ctx, type));
+    kprim->py_type = NULL;
+    kprim->base = primfrom;
+  } else {
+    const SdfPath path_ctx = SdfPath(identifier.GetString());
+
+    kprim = &KrakenPRIM(kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx)));
+    kprim->py_type = NULL;
+    kprim->base = kprim;
   }
 
-  r_ptr->identifier = identifier.GetAsString().c_str();
-  // kprim.SetDocumentation(kprim.description);
+  kprim->identifier = kprim->GetName();
+  kprim->ClearDocumentation();
+
+  if (!primfrom || !primfrom->IsValid()) {
+    kprim->icon = ICON_DOT;
+    kprim->flag |= STRUCT_UNDO;
+  }
+
+  return kprim;
 }
 
-void PRIM_def_struct(const Stage &kstage,
-                     const wabi::SdfPath &identifier,
-                     KrakenPRIM *r_ptr,
-                     const wabi::TfToken &from)
+KrakenPRIM *PRIM_def_struct(KrakenPRIM *kprim,
+                            const wabi::SdfPath &identifier,
+                            const wabi::TfToken &from)
 {
-  /* only use PRIM_def_struct() while pre-processing, otherwise use PRIM_def_struct_ptr() */
-  // KLI_assert(DefPRIM.preprocess);
+  KrakenPRIM *prim;
+  KrakenSTAGE stage;
+  SdfPath path_ctx;
 
   /**
    * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
-  *r_ptr = KrakenPRIM(kstage->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(identifier), from));
+  stage = KrakenSTAGE(kprim->GetStage());
+  path_ctx = kprim->GetPath().AppendPath(identifier);
+  prim = &KrakenPRIM(stage->DefinePrim(path_ctx, from));
 
-  if (!r_ptr->IsValid()) {
-
-    wabi::TF_WARN("struct %s could not be created.", identifier.GetText());
-    // DefPRIM.error = true;
+  if (!prim->IsValid()) {
+    wabi::TF_WARN("prim %s could not be created.", identifier.GetText());
   }
 
-  PRIM_def_struct_ptr(kstage, identifier, r_ptr, from);
+  return prim;
 }
 
-void PRIM_def_begin(wabi::UsdPrim &prim, 
-                    const wabi::TfToken &identifier,
-                    const wabi::TfToken &type,
-                    const std::string &ui_name,
-                    const std::string &ui_description)
+void PRIM_def_struct_identifier(const KrakenSTAGE &kstage,
+                                KrakenPRIM *prim,
+                                const TfToken &identifier)
 {
-  prim = LUXO_get_stage()->DefinePrim(wabi::SdfPath("/WabiAnimationStudios/Structs").AppendPath(wabi::SdfPath(type)).AppendPath(wabi::SdfPath(identifier)), type);
+  if (identifier != prim->identifier) {
+    prim = PRIM_def_struct_ptr(kstage, SdfPath(identifier), prim);
+  }
+
+  prim->identifier = identifier;
+}
+
+void PRIM_def_struct_ui_text(KrakenPRIM *prim,
+                             const std::string &ui_name,
+                             const std::string &ui_description)
+{
   if (ui_name.length()) {
-    wabi::UsdAttribute name = prim.CreateAttribute(wabi::TfToken("ui:operator:name"), wabi::SdfValueTypeNames->Token, wabi::SdfVariability::SdfVariabilityUniform);
+    wabi::UsdAttribute name = prim->CreateAttribute(wabi::TfToken("ui:name"),
+                                                    wabi::SdfValueTypeNames->Token,
+                                                    wabi::SdfVariability::SdfVariabilityUniform);
     name.Set(wabi::TfToken(ui_name));
   }
 
   if (ui_description.length()) {
-    prim.SetDocumentation(ui_description);
+    prim->SetDocumentation(ui_description);
   }
 }
 
-void PRIM_def_boolean(wabi::UsdPrim &prim, 
-                      const std::string &identifier, 
-                      bool default_value, 
-                      const std::string &ui_name, 
+void PRIM_def_boolean(KrakenPRIM *prim,
+                      const std::string &identifier,
+                      bool default_value,
+                      const std::string &ui_name,
                       const std::string &ui_description)
-{ 
-  wabi::UsdAttribute attr = prim.CreateAttribute(wabi::TfToken(identifier), wabi::SdfValueTypeNames->Bool, wabi::SdfVariability::SdfVariabilityVarying);
+{
+  wabi::UsdAttribute attr = prim->CreateAttribute(wabi::TfToken(identifier),
+                                                  wabi::SdfValueTypeNames->Bool,
+                                                  wabi::SdfVariability::SdfVariabilityVarying);
   attr.Set(default_value);
 
   if (ui_name.length()) {
@@ -135,13 +163,15 @@ void PRIM_def_boolean(wabi::UsdPrim &prim,
   }
 }
 
-void PRIM_def_asset(wabi::UsdPrim &prim, 
-                    const std::string &identifier, 
-                    const std::string &default_value, 
-                    const std::string &ui_name, 
+void PRIM_def_asset(KrakenPRIM *prim,
+                    const std::string &identifier,
+                    const std::string &default_value,
+                    const std::string &ui_name,
                     const std::string &ui_description)
-{ 
-  wabi::UsdAttribute attr = prim.CreateAttribute(wabi::TfToken(identifier), wabi::SdfValueTypeNames->Asset, wabi::SdfVariability::SdfVariabilityVarying);
+{
+  wabi::UsdAttribute attr = prim->CreateAttribute(wabi::TfToken(identifier),
+                                                  wabi::SdfValueTypeNames->Asset,
+                                                  wabi::SdfVariability::SdfVariabilityVarying);
   attr.Set(wabi::SdfAssetPath(default_value));
 
   if (ui_name.length()) {

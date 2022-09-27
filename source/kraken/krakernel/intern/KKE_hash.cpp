@@ -880,6 +880,46 @@ bool KKE_rhash_reinsert(RHash *rh,
   return rhash_insert_safe(rh, key, val, true, keyfreefp, valfreefp);
 }
 
+bool KLI_rhash_haskey(const RHash *gh, const void *key)
+{
+  return (rhash_lookup_entry(gh, key) != NULL);
+}
+
+/**
+ * Insert function that takes a pre-allocated entry.
+ */
+KLI_INLINE void rhash_insert_ex_keyonly_entry(RHash *rh,
+                                              void *key,
+                                              const uint bucket_index,
+                                              Entry *e)
+{
+  KLI_assert((rh->flag & RHASH_FLAG_ALLOW_DUPES) || (KLI_rhash_haskey(rh, key) == 0));
+
+  e->next = rh->buckets[bucket_index];
+  e->key = key;
+  rh->buckets[bucket_index] = e;
+
+  rhash_buckets_expand(rh, ++rh->nentries, false);
+}
+
+bool KKE_rset_ensure_p_ex(RSet *rs, const void *key, void ***r_key)
+{
+  const uint hash = rhash_keyhash((RHash *)rs, key);
+  const uint bucket_index = rhash_bucket_index((RHash *)rs, hash);
+  RSetEntry *e = (RSetEntry *)rhash_lookup_entry_ex((const RHash *)rs, key, bucket_index);
+  const bool haskey = (e != NULL);
+
+  if (!haskey) {
+    /* Pass 'key' in case we resize */
+    e = (RSetEntry *)KKE_mempool_alloc(((RHash *)rs)->entrypool);
+    rhash_insert_ex_keyonly_entry((RHash *)rs, (void *)key, bucket_index, (Entry *)e);
+    e->key = NULL; /* caller must re-assign */
+  }
+
+  *r_key = &e->key;
+  return haskey;
+}
+
 uint KKE_rhashutil_ptrhash(const void *key)
 {
   /* Based Python3.7's pointer hashing function. */
@@ -892,5 +932,18 @@ uint KKE_rhashutil_ptrhash(const void *key)
    * Otherwise casting to 'uint' ignores the upper bits on 64bit platforms. */
   return (uint)(y >> 4) | ((uint)y << (sizeof(uint[8]) - 4));
 }
+
+/* -------------------------------------------------------------------- */
+/** \name GSet Public API
+ * \{ */
+
+RSet *KKE_rset_new_ex(RSetHashFP hashfp,
+                      RSetCmpFP cmpfp,
+                      const char *info,
+                      const uint nentries_reserve)
+{
+  return (RSet *)rhash_new(hashfp, cmpfp, info, nentries_reserve, RHASH_FLAG_IS_RSET);
+}
+
 
 KRAKEN_NAMESPACE_END

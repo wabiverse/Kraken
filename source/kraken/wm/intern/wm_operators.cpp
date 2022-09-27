@@ -22,6 +22,9 @@
  * Making GUI Fly.
  */
 
+#include "MEM_guardedalloc.h"
+
+#include "WM_cursors.h"
 #include "WM_operators.h"
 #include "WM_debug_codes.h"
 #include "WM_msgbus.h"
@@ -40,9 +43,13 @@
 #include "KKE_context.h"
 #include "KKE_utils.h"
 
+#define UNDOCUMENTED_OPERATOR_TIP N_("(undocumented operator)")
+
 KRAKEN_NAMESPACE_BEGIN
 
-static RHashOp *global_ops_hash = NULL;
+static RHash *global_ops_hash = NULL;
+/** Counter for operator-properties that should not be tagged with #OP_PROP_TAG_ADVANCED. */
+static int ot_prop_basic_count = -1;
 
 wmOperatorType::wmOperatorType() {}
 
@@ -64,36 +71,48 @@ wmOperatorType *WM_operatortype_find(const TfToken &idname)
   return NULL;
 }
 
+/* -------------------------------------------------------------------- */
+/** \name Operator Type Append
+ * \{ */
+
+static wmOperatorType *wm_operatortype_append__begin(void)
+{
+  wmOperatorType *ot = (wmOperatorType *)MEM_callocN(sizeof(wmOperatorType), "operatortype");
+
+  KLI_assert(ot_prop_basic_count == -1);
+  
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath("Operators"));
+  ot->cursor_pending = WM_CURSOR_PICK_AREA;
+
+  return ot;
+}
+
+static void wm_operatortype_append__end(wmOperatorType *ot)
+{
+  if (ot->name == NULL) {
+    printf("Operator '%s' has no name property\n", ot->idname.GetText());
+  }
+  KLI_assert((ot->description == NULL) || (ot->description[0]));
+
+  /* Allow calling _begin without _end in operatortype creation. */
+  // WM_operatortype_props_advanced_end(ot);
+
+  /* XXX All ops should have a description but for now allow them not to. */
+  PRIM_def_struct_ui_text(ot->prim, ot->name, ot->description ? ot->description : UNDOCUMENTED_OPERATOR_TIP);
+  PRIM_def_struct_identifier(KRAKEN_STAGE, ot->prim, ot->idname);
+
+  KKE_rhash_insert(global_ops_hash, ot->idname, ot);
+}
+
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
 {
   /* ------ */
 
-  wmOperatorType *ot = new wmOperatorType();
+  wmOperatorType *ot = wm_operatortype_append__begin();
   opfunc(ot);
+  wm_operatortype_append__end(ot);
 
   /* ------ */
-
-  if(!ot->prim.IsValid())
-  {
-    PRIM_def_begin(ot->prim, ot->idname, TfToken("Operator"), ot->name, ot->description);
-  }
-
-  /* ------ */
-
-  /** Hashed. */
-  global_ops_hash->insert(typename RHashOp::value_type(std::make_pair(ot->idname, ot)));
-
-  /* ------ */
-
-  // TfNotice notice = TfNotice();
-  MsgBusCallback *cb = new MsgBusCallback(ot);
-  MsgBus invoker(cb);
-  // TfNotice::Register(invoker, &MsgBusCallback::OperatorCOMM, invoker);
-
-  /* ------ */
-
-  /** Operator says Hello. */
-  // notice.Send(invoker);
 }
 
 void WM_operator_properties_free(KrakenPRIM *ptr)
@@ -108,9 +127,7 @@ void WM_operator_properties_free(KrakenPRIM *ptr)
 
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
 {
-  ptr = new KrakenPRIM(ot->prim);
-
-  LUXO_pointer_create(ptr, NULL, ptr);
+  LUXO_pointer_create(&G.main->wm.front()->id, ot->prim, NULL, ptr);
 }
 
 bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update)

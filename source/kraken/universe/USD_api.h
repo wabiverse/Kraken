@@ -97,5 +97,5 @@
   (std::string("Kraken v" + wabi::TfStringify(KRAKEN_VERSION_MAJOR) + "." + \
                wabi::TfStringify(KRAKEN_VERSION_MINOR)))
 
-
-#define STAGE_CTX(xxliveptr) xxliveptr->GetStage()->GetPathResolverContext().Get<KrakenPRIM>();
+#define K_FOUNDATION SdfPath("/WabiAnimationStudios")
+#define K_BEDROCK SdfPath("/WabiAnimationStudios/Structs")

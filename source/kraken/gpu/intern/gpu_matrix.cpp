@@ -102,14 +102,51 @@ static void gpu_matrix_state_active_set_dirty(bool value)
   state->dirty = value;
 }
 
-const float (*GPU_matrix_projection_get(float m[4][4]))[4]
+void GPU_matrix_reset()
 {
-  if (m) {
-    copy_m4_m4(m, Projection);
-    return m;
-  }
+  GPUMatrixState *state = Context::get()->matrix_state;
+  state->model_view_stack.top = 0;
+  state->projection_stack.top = 0;
+  unit_m4(ModelView);
+  unit_m4(Projection);
+  gpu_matrix_state_active_set_dirty(true);
+}
 
-  return Projection;
+#ifdef WITH_GPU_SAFETY
+
+/* Check if matrix is numerically good */
+static void checkmat(cosnt float *m)
+{
+  const int n = 16;
+  for (int i = 0; i < n; i++) {
+#  if _MSC_VER
+    BLI_assert(_finite(m[i]));
+#  else
+    BLI_assert(!isinf(m[i]));
+#  endif
+  }
+}
+
+#  define CHECKMAT(m) checkmat((const float *)m)
+
+#else
+
+#  define CHECKMAT(m)
+
+#endif
+
+void GPU_matrix_push()
+{
+  KLI_assert(ModelViewStack.top + 1 < MATRIX_STACK_DEPTH);
+  ModelViewStack.top++;
+  copy_m4_m4(ModelView, ModelViewStack.stack[ModelViewStack.top - 1]);
+}
+
+void GPU_matrix_pop()
+{
+  KLI_assert(ModelViewStack.top > 0);
+  ModelViewStack.top--;
+  gpu_matrix_state_active_set_dirty(true);
 }
 
 void GPU_matrix_pop_projection()

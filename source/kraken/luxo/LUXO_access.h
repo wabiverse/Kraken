@@ -78,10 +78,9 @@ void LUXO_save_usd(void);
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr);
 void LUXO_main_pointer_create(Main *main, KrakenPRIM *r_ptr);
-void LUXO_pointer_create(KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
 void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
 void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr);
-const char *LUXO_property_identifier(const KrakenPROP *prop);
+const wabi::TfToken LUXO_property_identifier(const KrakenPROP *prop);
 void *LUXO_struct_py_type_get(KrakenPRIM *srna);
 void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type);
 
@@ -98,7 +97,7 @@ ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr);
 
 void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP *r_ptr);
 void **LUXO_struct_instance(KrakenPRIM *ptr);
-const char *LUXO_struct_identifier(const KrakenPRIM *type);
+const wabi::TfToken LUXO_struct_identifier(const KrakenPRIM *type);
 bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna);
 
 std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna);
@@ -133,26 +132,26 @@ short LUXO_type_to_ID_code(const kraken::KrakenPRIM *type);
 #define LUXO_STRUCT_BEGIN(sptr, prop) \
   { \
     CollectionPropertyIterator prim_macro_iter; \
-    for (RNA_property_collection_begin( \
-             sptr, RNA_struct_iterator_property((sptr)->type), &prim_macro_iter); \
+    for (LUXO_property_collection_begin( \
+             sptr, LUXO_struct_iterator_property((sptr)->type), &prim_macro_iter); \
          prim_macro_iter.valid; \
-         RNA_property_collection_next(&prim_macro_iter)) { \
+         LUXO_property_collection_next(&prim_macro_iter)) { \
       PropertyRNA *prop = (PropertyRNA *)prim_macro_iter.ptr.data;
 
-#define LUXO_STRUCT_BEGIN_SKIP_RNA_TYPE(sptr, prop) \
+#define LUXO_STRUCT_BEGIN_SKIP_LUXO_TYPE(sptr, prop) \
   { \
     CollectionPropertyIterator prim_macro_iter; \
-    RNA_property_collection_begin( \
-        sptr, RNA_struct_iterator_property((sptr)->type), &prim_macro_iter); \
+    LUXO_property_collection_begin( \
+        sptr, LUXO_struct_iterator_property((sptr)->type), &prim_macro_iter); \
     if (prim_macro_iter.valid) { \
-      RNA_property_collection_next(&prim_macro_iter); \
+      LUXO_property_collection_next(&prim_macro_iter); \
     } \
-    for (; prim_macro_iter.valid; RNA_property_collection_next(&prim_macro_iter)) { \
+    for (; prim_macro_iter.valid; LUXO_property_collection_next(&prim_macro_iter)) { \
       PropertyRNA *prop = (PropertyRNA *)prim_macro_iter.ptr.data;
 
 #define LUXO_STRUCT_END \
   } \
-  RNA_property_collection_end(&prim_macro_iter); \
+  LUXO_property_collection_end(&prim_macro_iter); \
   } \
   ((void)0)
 

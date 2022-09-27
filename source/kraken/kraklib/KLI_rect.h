@@ -40,7 +40,12 @@ void KLI_rctf_init_minmax(rctf *rect);
 bool KLI_rctf_isect(const struct rctf *src1, const struct rctf *src2, struct rctf *dest);
 bool KLI_rcti_isect(const struct rcti *src1, const struct rcti *src2, struct rcti *dest);
 bool KLI_rctf_isect_pt(const wabi::GfVec4f &rect, const float x, const float y);
+bool KLI_rcti_isect_pt(const struct rcti *rect, int x, int y);
+bool KLI_rcti_isect_pt_v(const struct rcti *rect, const int xy[2]);
+void KLI_rctf_rcti_copy(struct rctf *dst, const struct rcti *src);
 void KLI_rcti_rctf_copy_round(wabi::GfVec4i *dst, const wabi::GfVec4f &src);
+void KLI_rcti_rctf_copy(struct rcti *dst, const struct rctf *src);
+bool KLI_rcti_clamp(struct rcti *rect, const struct rcti *rect_bounds, int r_xy[2]);
 
 void KLI_rcti_rctf_copy_floor(struct rcti *dst, const struct rctf *src);
 void KLI_rcti_translate(struct rcti *rect, int x, int y);

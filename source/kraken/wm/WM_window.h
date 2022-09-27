@@ -59,8 +59,6 @@ struct wmGenericCallback
 wmGenericCallback *WM_generic_callback_steal(wmGenericCallback *callback);
 void WM_generic_callback_free(wmGenericCallback *callback);
 
-void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct);
-
 wmWindow *wm_window_new(kContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog);
 wmWindow *WM_window_open(kContext *C,
                          const char *title,
@@ -125,5 +123,10 @@ void WM_window_set_active_layout(wmWindow *win, WorkSpace *workspace, WorkSpaceL
 /** Cleanup. */
 void WM_exit_schedule_delayed(const kContext *C);
 void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win);
+
+void wmOrtho2(float x1, float x2, float y1, float y2);
+static void wmOrtho2_offset(const float x, const float y, const float ofs);
+void wmOrtho2_region_pixelspace(const ARegion *region);
+void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct);
 
 KRAKEN_NAMESPACE_END

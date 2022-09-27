@@ -907,13 +907,11 @@ enum
 
 struct wmMsgBus
 {
-  RHash *messages_gset[WM_MSG_TYPE_NUM];
+  struct RSet *messages_rset[WM_MSG_TYPE_NUM];
   /** Messages in order of being added. */
-  std::vector<RHash *> messages;
+  std::vector<struct wmMsgSubscribeKey *> messages;
   /** Avoid checking messages when no tags exist. */
   uint messages_tag_count;
-
-  wmMsgBus() : messages_gset{VALUE_ZERO}, messages(EMPTY), messages_tag_count(VALUE_ZERO) {}
 };
 
 

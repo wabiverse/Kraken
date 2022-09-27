@@ -37,6 +37,6 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-void LUXO_main(const Stage &kstage);
+void LUXO_main(const KrakenSTAGE &kstage);
 
 KRAKEN_NAMESPACE_END

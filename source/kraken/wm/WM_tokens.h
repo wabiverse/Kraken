@@ -52,6 +52,9 @@ struct KRAKEN_WM_TOKENS_TYPE
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_context_menu_enum);
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_context_set_enum);
   KRAKEN_DECLARE_STATIC_TOKEN(SCREEN_OT_space_type_set_or_cycle);
+  KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_tool_set_by_id);
+  KRAKEN_DECLARE_STATIC_TOKEN(UI_OT_eyedropper_id);
+  KRAKEN_DECLARE_STATIC_TOKEN(UI_OT_button_string_clear);
 
   /* --------------------------------- windows ops ----- */
   KRAKEN_DECLARE_STATIC_TOKEN(WM_OT_window_close);

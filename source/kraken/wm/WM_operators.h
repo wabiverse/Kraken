@@ -62,7 +62,7 @@ struct wmOperatorType
   /** Use for tool-tips and Python docs. */
   const char *description;
 
-  KrakenPRIM prim;
+  KrakenPRIM *prim;
 
   std::vector<wmOperatorTypeMacro *> macro;
 
@@ -70,6 +70,9 @@ struct wmOperatorType
   // const TfNotice notice;
 
   eWmOperatorType flag;
+
+  /** Cursor to use when waiting for cursor input, see: #OPTYPE_DEPENDS_ON_CURSOR. */
+  int cursor_pending;
 
   int (*exec)(kContext *C, wmOperator *op) ATTR_WARN_UNUSED_RESULT;
 

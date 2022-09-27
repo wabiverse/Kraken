@@ -32,7 +32,6 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-typedef wabi::UsdStageWeakPtr Stage;
 typedef wabi::UsdPrim Prim;
 
 struct uiStyle;
@@ -96,7 +95,7 @@ void CTX_data_list_add_ptr(kContextDataResult *result, const struct KrakenPRIM *
  *  - System Main.
  *  - WindowManager.
  *  - Scene data.
- *  - Stage data. */
+ *  - KrakenSTAGE data. */
 
 Main *CTX_data_main(const kContext *C);
 wmWindowManager *CTX_wm_manager(const kContext *C);
@@ -107,7 +106,7 @@ ScrArea *CTX_wm_area(const kContext *C);
 ARegion *CTX_wm_region(const kContext *C);
 ARegion *CTX_wm_menu(const kContext *C);
 Scene *CTX_data_scene(const kContext *C);
-Stage CTX_data_stage(const kContext *C);
+KrakenSTAGE CTX_data_stage(const kContext *C);
 UserDef *CTX_data_prefs(const kContext *C);
 
 /**
@@ -115,7 +114,7 @@ UserDef *CTX_data_prefs(const kContext *C);
  *  - System Main.
  *  - WindowManager.
  *  - Scene data.
- *  - Stage data. */
+ *  - KrakenSTAGE data. */
 
 void CTX_data_main_set(kContext *C, Main *kmain);
 void CTX_wm_manager_set(kContext *C, wmWindowManager *wm);

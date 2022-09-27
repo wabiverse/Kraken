@@ -230,5 +230,56 @@ int ED_area_global_size_y(const ScrArea *area)
   return round_fl_to_int(area->global->cur_fixed_height * UI_DPI_FAC);
 }
 
+void ED_area_tag_refresh(ScrArea *area)
+{
+  if (area) {
+    area->do_refresh = true;
+  }
+}
+
+void ED_region_tag_redraw(ARegion *region)
+{
+  /* don't tag redraw while drawing, it shouldn't happen normally
+   * but python scripts can cause this to happen indirectly */
+  if (region && !(region->do_draw & RGN_DRAWING)) {
+    /* zero region means full region redraw */
+    region->do_draw &= ~(RGN_DRAW_PARTIAL | RGN_DRAW_NO_REBUILD | RGN_DRAW_EDITOR_OVERLAYS);
+    region->do_draw |= RGN_DRAW;
+    memset(&region->drawrct, 0, sizeof(region->drawrct));
+  }
+}
+
+void ED_region_do_msg_notify_tag_redraw(
+  /* Follow wmMsgNotifyFn spec */
+  kContext *UNUSED(C),
+  wmMsgSubscribeKey *UNUSED(msg_key),
+  wmMsgSubscribeValue *msg_val)
+{
+  ARegion *region = (ARegion *)msg_val->owner;
+  ED_region_tag_redraw(region);
+
+  /* This avoids _many_ situations where header/properties control display settings.
+   * the common case is space properties in the header */
+  if (ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER, RGN_TYPE_UI)) {
+    while (region && region->prev) {
+      region = region->prev;
+    }
+    for (; region; region = region->next) {
+      if (ELEM(region->regiontype, RGN_TYPE_WINDOW, RGN_TYPE_CHANNELS)) {
+        ED_region_tag_redraw(region);
+      }
+    }
+  }
+}
+
+void ED_area_do_msg_notify_tag_refresh(
+  /* Follow wmMsgNotifyFn spec */
+  kContext *UNUSED(C),
+  wmMsgSubscribeKey *UNUSED(msg_key),
+  wmMsgSubscribeValue *msg_val)
+{
+  ScrArea *area = (ScrArea *)msg_val->user_data;
+  ED_area_tag_refresh(area);
+}
 
 KRAKEN_NAMESPACE_END

@@ -218,7 +218,7 @@ static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
 {
   Main *kmain_temp = KKE_main_new();
   KrakenPRIM ptr;
-  LUXO_pointer_create(&LUXO_KrakenPixar, kmain_temp, &ptr);
+  LUXO_pointer_create(NULL, &LUXO_KrakenPixar, kmain_temp, &ptr);
 
   self->data_luxo = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ptr);
 

@@ -105,7 +105,7 @@ void WM_exit_ex(kContext *C, const bool do_python)
     }
 
     UserDef *uprefs = CTX_data_prefs(C);
-    Stage stage = CTX_data_stage(C);
+    KrakenSTAGE stage = CTX_data_stage(C);
 
     bool show_save = FormFactory(uprefs->showsave);
 

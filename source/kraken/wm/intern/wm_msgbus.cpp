@@ -24,18 +24,12 @@
 
 #include "kraken/kraken.h"
 
-#include "USD_area.h"
-#include "USD_context.h"
+#include "MEM_guardedalloc.h"
+
+#include "USD_ID.h"
 #include "USD_object.h"
 #include "USD_operator.h"
-#include "USD_pixar_utils.h"
-#include "USD_region.h"
-#include "USD_screen.h"
-#include "USD_space_types.h"
-#include "USD_userpref.h"
-#include "USD_window.h"
 #include "USD_wm_types.h"
-#include "USD_workspace.h"
 
 #include "WM_api.h"
 #include "WM_debug_codes.h"
@@ -62,13 +56,13 @@ KRAKEN_NAMESPACE_BEGIN
 
 /* ------ */
 
+static wmMsgTypeInfo wm_msg_types[WM_MSG_TYPE_NUM] = {{{NULL}}};
 
 /**
  *  -----  The MsgBus Callback. ----- */
 
 
-MsgBusCallback::MsgBusCallback(wmNotifier *notice) : ref(1), note(notice)
-{}
+MsgBusCallback::MsgBusCallback(wmNotifier *notice) : ref(1), note(notice) {}
 
 void MsgBusCallback::wmCOMM(const TfNotice &notice, MsgBus const &sender)
 {
@@ -161,16 +155,6 @@ void MsgBusCallback::wmCOMM(const TfNotice &notice, MsgBus const &sender)
 }
 
 
-wmNotifier::wmNotifier()
-  : window(nullptr),
-    category(0),
-    data(0),
-    subtype(0),
-    action(0),
-    reference(nullptr)
-{}
-
-
 void wmNotifier::Push()
 {
   MsgBusCallback *cb = new MsgBusCallback(this);
@@ -193,5 +177,125 @@ void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)
   ++ref;
 }
 
+void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
+                                 const wmMsgParams_PRIM *msg_key_params,
+                                 const wmMsgSubscribeValue *msg_val_params,
+                                 const char *id_repr)
+{
+  wmMsgSubscribeKey_PRIM msg_key_test = {{NULL}};
+
+  /* use when added */
+  msg_key_test.msg.head.id = id_repr;
+  msg_key_test.msg.head.type = WM_MSG_TYPE_RNA;
+  /* for lookup */
+  msg_key_test.msg.params = *msg_key_params;
+
+  const char *none = "<none>";
+  printf("rna(id='%s', %s.%s, info='%s')\n",
+         msg_key_params->ptr.owner_id ? ((ID *)msg_key_params->ptr.owner_id)->name : none,
+         msg_key_params->ptr.type ? msg_key_params->ptr.type->identifier : none,
+         msg_key_params->prop ? ((const IDProperty *)msg_key_params->prop)->name.GetText() : none,
+         id_repr);
+
+  wmMsgSubscribeKey_PRIM *msg_key = (wmMsgSubscribeKey_PRIM *)
+    WM_msg_subscribe_with_key(mbus, &msg_key_test.head, msg_val_params);
+
+  if (msg_val_params->is_persistent) {
+    if (msg_key->msg.params.data_path == NULL) {
+      if (msg_key->msg.params.ptr.data != msg_key->msg.params.ptr.owner_id) {
+        /* We assume prop type can't change. */
+        std::string screenob = msg_key->msg.params.ptr.GetPath().GetAsString();
+        std::replace(screenob.begin(), screenob.end(), "/", ".");
+        msg_key->msg.params.data_path = TfToken(screenob);
+      }
+    }
+  }
+}
+
+void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
+                          KrakenPRIM *ptr,
+                          const KrakenPROP *prop,
+                          const wmMsgSubscribeValue *msg_val_params,
+                          const char *id_repr)
+{
+  WM_msg_subscribe_prim_params(mbus,
+                              &(const wmMsgParams_PRIM){
+                                .ptr = *ptr,
+                                .prop = prop,
+                              },
+                              msg_val_params,
+                              id_repr);
+}
+
+
+wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
+                                             const wmMsgSubscribeKey *msg_key_test,
+                                             const wmMsgSubscribeValue *msg_val_params)
+{
+  const uint type = wm_msg_subscribe_value_msg_cast(msg_key_test)->type;
+  const wmMsgTypeInfo *info = &wm_msg_types[type];
+  wmMsgSubscribeKey *key;
+
+  KLI_assert(wm_msg_subscribe_value_msg_cast(msg_key_test)->id != NULL);
+
+  void **r_key;
+  if (!KKE_rset_ensure_p_ex(mbus->messages_rset[type], msg_key_test, &r_key)) {
+    key = static_cast<wmMsgSubscribeKey *>(*r_key = MEM_mallocN(info->msg_key_size, __func__));
+    memcpy(key, msg_key_test, info->msg_key_size);
+    mbus->messages.push_back(key);
+  }
+  else {
+    key = static_cast<wmMsgSubscribeKey *>(*r_key);
+    for (auto &msg_lnk : key->values) {
+      if ((msg_lnk->params.notify == msg_val_params->notify) &&
+          (msg_lnk->params.owner == msg_val_params->owner) &&
+          (msg_lnk->params.user_data == msg_val_params->user_data)) {
+        return key;
+      }
+    }
+  }
+
+  wmMsgSubscribeValueLink *msg_lnk = static_cast<wmMsgSubscribeValueLink *>(MEM_mallocN(sizeof(wmMsgSubscribeValueLink), __func__));
+  msg_lnk->params = *msg_val_params;
+  key->values.push_back(msg_lnk);
+  return key;
+}
+
+void WM_msg_publish_with_key(struct wmMsgBus *mbus, wmMsgSubscribeKey *msg_key)
+{
+  printf("tagging subscribers: (ptr=%p, len=%d)\n", msg_key, msg_key->values.size());
+
+  for (auto &msg_lnk : msg_key->values) {
+    if (false) { /* make an option? */
+      msg_lnk->params.notify(NULL, msg_key, &msg_lnk->params);
+    }
+    else {
+      if (msg_lnk->params.tag == false) {
+        msg_lnk->params.tag = true;
+        mbus->messages_tag_count += 1;
+      }
+    }
+  }
+}
+
+void WM_msg_id_update(struct wmMsgBus *mbus, struct ID *id_src, struct ID *id_dst)
+{
+  for (uint i = 0; i < WM_MSG_TYPE_NUM; i++) {
+    wmMsgTypeInfo *info = &wm_msg_types[i];
+    if (info->update_by_id != NULL) {
+      info->update_by_id(mbus, id_src, id_dst);
+    }
+  }
+}
+
+void WM_msg_id_remove(struct wmMsgBus *mbus, const struct ID *id)
+{
+  for (uint i = 0; i < WM_MSG_TYPE_NUM; i++) {
+    wmMsgTypeInfo *info = &wm_msg_types[i];
+    if (info->remove_by_id != NULL) {
+      info->remove_by_id(mbus, id);
+    }
+  }
+}
 
 KRAKEN_NAMESPACE_END

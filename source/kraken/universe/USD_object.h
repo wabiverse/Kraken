@@ -303,7 +303,7 @@ struct KrakenPRIM : public wabi::UsdPrim
   KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) : wabi::UsdPrim(prim) {}
 
   struct ID *owner_id;
-  const char *identifier;
+  wabi::TfToken identifier;
   wabi::UsdCollectionAPI collection;
   KrakenPRIM *type;
 
@@ -317,6 +317,7 @@ struct KrakenPRIM : public wabi::UsdPrim
   void *py_type;
 
   short flag;
+  int icon;
 
   /** Return the location of the struct's pointer to the root group IDProperty. */
   IDPropertiesFunc idproperties;

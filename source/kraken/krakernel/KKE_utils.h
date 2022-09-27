@@ -90,6 +90,7 @@ struct RHashIterState
   unsigned int curr_bucket _RHASH_INTERNAL_ATTR;
 };
 
+
 enum
 {
   RHASH_FLAG_ALLOW_DUPES = (1 << 0),  /* Only checked for in debug mode */
@@ -101,6 +102,28 @@ enum
   RHASH_FLAG_IS_RSET = (1 << 16),
 #endif
 };
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name RSet Types
+ * A 'set' implementation (unordered collection of unique elements).
+ *
+ * Internally this is a 'RHash' without any keys,
+ * which is why these API's are in the same header & source file.
+ * \{ */
+
+typedef RHashHashFP RSetHashFP;
+typedef RHashCmpFP RSetCmpFP;
+typedef RHashKeyFreeFP RSetKeyFreeFP;
+typedef RHashKeyCopyFP RSetKeyCopyFP;
+
+typedef RHashIterState RSetIterState;
+
+RSet *KKE_rset_new_ex(RSetHashFP hashfp,
+                      RSetCmpFP cmpfp,
+                      const char *info,
+                      const uint nentries_reserve);
 
 /** \} */
 
@@ -226,5 +249,15 @@ size_t KKE_unit_value_as_string(char *str,
                                 int type,
                                 const struct UnitSettings *settings,
                                 bool pad);
+
+/**
+ * Set counterpart to #KKE_rhash_ensure_p_ex.
+ * similar to KLI_rset_add, except it returns the key pointer.
+ *
+ * \warning Caller _must_ write to \a r_key when returning false.
+ */
+
+bool KKE_rset_ensure_p_ex(RSet *rs, const void *key, void ***r_key);
+uint KKE_rhashutil_ptrhash(const void *key);
 
 KRAKEN_NAMESPACE_END

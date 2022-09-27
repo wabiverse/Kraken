@@ -275,25 +275,27 @@ const EnumPropertyItem luxo_enum_event_type_items[] = {
   {0,                         wabi::TfToken(),              0, NULL,                        NULL          },
 };
 
-static void prim_def_operator(const Stage &kstage)
+static void prim_def_operator(KrakenPRIM *wm)
 {
-  KrakenPRIM kprim;
-  KrakenPROP prop;
+  KrakenPRIM *op;
 
-  PRIM_def_struct(kstage, SdfPath("Operator"), &kprim);
+  op = PRIM_def_struct(wm, SdfPath("Operator"));
+  PRIM_def_struct_ui_text(op, "Operator", "Storage of an operator being executed, or registered after execution");
+  // PRIM_def_struct_refine_func(kstage, "rna_Operator_refine");
+  // PRIM_def_struct_flag(kstage, STRUCT_PUBLIC_NAMESPACE_INHERIT);
 }
 
-void PRIM_def_wm(const Stage &kstage)
+void PRIM_def_wm(const KrakenSTAGE &kstage)
 {
-  prim_def_operator(kstage);
-  // PRIM_def_struct_ui_text(kstage, "Operator", "Storage of an operator being executed, or
-  // registered after execution"); PRIM_def_struct_sdna(kstage, "wmOperator");
-  // PRIM_def_struct_refine_func(kstage, "rna_Operator_refine");
-#ifdef WITH_PYTHON
-  // PRIM_def_struct_register_funcs(kstage, "rna_Operator_register", "rna_Operator_unregister",
-  // "rna_Operator_instance");
-#endif
-  // PRIM_def_struct_flag(kstage, STRUCT_PUBLIC_NAMESPACE_INHERIT);
+  KrakenPRIM *wm;
+
+  wm = PRIM_def_struct_ptr(kstage, SdfPath("WindowManager"));
+  
+  /* all types that make up wm... */
+  
+  prim_def_operator(wm);
+
+  /* ... */
 }
 
 KRAKEN_NAMESPACE_END

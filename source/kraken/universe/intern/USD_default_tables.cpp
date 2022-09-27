@@ -130,7 +130,7 @@ void USD_default_table_area_workspace(kContext *C)
 
 void USD_default_table_scene_data(kContext *C)
 {
-  Stage stage = CTX_data_stage(C);
+  KrakenSTAGE stage = CTX_data_stage(C);
 
   UsdGeomCube cube = UsdGeomCube::Define(stage, SdfPath("/Cube"));
 

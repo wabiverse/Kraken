@@ -1560,6 +1560,9 @@ struct ID *ui_template_id_liboverride_hierarchy_make(struct kContext *C,
                                                      struct ID *owner_id,
                                                      struct ID *id,
                                                      const char **r_undo_push_label);
+
+void UI_region_message_subscribe(struct ARegion *region, struct wmMsgBus *mbus);
+
 KRAKEN_NAMESPACE_END
 
 

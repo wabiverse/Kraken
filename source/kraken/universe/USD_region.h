@@ -116,6 +116,8 @@ enum {
 
 struct ARegion : public wabi::UsdUIArea
 {
+  struct ARegion *next, *prev;
+  
   wabi::SdfPath path;
 
   wabi::UsdAttribute name;

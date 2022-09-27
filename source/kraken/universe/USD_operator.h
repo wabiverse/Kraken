@@ -51,7 +51,7 @@ struct wmOperator
   struct ReportList *reports;
 
   /** List of operators. */
-  std::vector<wmOperator> macro;
+  std::vector<wmOperator *> macro;
   /** Current running macro, not saved. */
   struct wmOperator *opm;
   /** Runtime for drawing. */
