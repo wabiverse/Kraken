@@ -1195,4 +1195,11 @@ struct wmTooltipState
   int pass;
 };
 
+
+/* timer customdata to control reports display */
+struct ReportTimerInfo {
+  float col[4];
+  float widthfac;
+};
+
 KRAKEN_NAMESPACE_END

@@ -76,7 +76,7 @@ set(SRC
   KLI_utildefines.h
   KLI_utildefines_variadic.h
   KLI_winstuff.h
-  KLI_vector.h
+  KLI_vector.hh
 )
 
 set(INC_SYS

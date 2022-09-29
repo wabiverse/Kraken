@@ -242,6 +242,7 @@ struct KrakenPROP : public wabi::UsdAttribute
   PropertyType type;
   PropertyFlag flag;
   PropertySubType subtype;
+  int icon;
 };
 
 typedef std::vector<KrakenPROP *> PropertyVectorLUXO;

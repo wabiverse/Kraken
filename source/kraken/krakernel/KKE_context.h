@@ -78,7 +78,7 @@ const struct KrakenPRIM *CTX_store_ptr_lookup(const struct kContextStore *store,
                                               const KrakenPRIM *type);
 struct kContextStore *CTX_store_copy(struct kContextStore *store);
 void CTX_store_free(struct kContextStore *store);
-void CTX_store_free_list(std::vector<struct kContextStore *> *contexts);
+void CTX_store_free_list(const std::vector<kContextStore*> &contexts);
 
 /**
  * need to store if python

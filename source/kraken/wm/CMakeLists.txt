@@ -32,6 +32,7 @@ set(SRC
   intern/wm_files.cpp
   intern/wm_init_exit.cpp
   intern/wm_keymap.cpp
+  intern/wm_menu_type.cpp
   intern/wm_msgbus.cpp
   intern/wm_operators.cpp
   intern/wm_panel_type.cpp
@@ -52,6 +53,7 @@ set(SRC
   WM_init_exit.h
   WM_inline_tools.h
   WM_keymap.h
+  WM_menu_type.h
   WM_msgbus.h
   WM_operators.h
   WM_tokens.h

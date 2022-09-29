@@ -60,6 +60,21 @@ struct EnumPropertyItem
   const char *description;
 };
 
+enum PropertyScaleType {
+  /** Linear scale (default). */
+  PROP_SCALE_LINEAR = 0,
+  /**
+   * Logarithmic scale
+   * - Maximum range: `0 <= x < inf`
+   */
+  PROP_SCALE_LOG = 1,
+  /**
+   * Cubic scale.
+   * - Maximum range: `-inf < x < inf`
+   */
+  PROP_SCALE_CUBIC = 2,
+};
+
 enum StructFlag
 {
   /** Indicates that this struct is an ID struct, and to use reference-counting. */

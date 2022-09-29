@@ -497,7 +497,7 @@ struct uiBlock {
   ListBase layouts;
   struct uiLayout *curlayout;
 
-  ListBase contexts;
+  std::vector<kContextStore *> contexts;
 
   /** A block can store "views" on data-sets. Currently tree-views (#AbstractTreeView) only.
    * Others are imaginable, e.g. table-views, grid-views, etc. These are stored here to support
@@ -704,13 +704,6 @@ extern void ui_but_string_get_ex(uiBut *but,
                                  bool use_exp_float,
                                  bool *r_use_exp_float) ATTR_NONNULL(1, 2);
 extern void ui_but_string_get(uiBut *but, char *str, size_t maxlen) ATTR_NONNULL();
-/**
- * A version of #ui_but_string_get_ex for dynamic buffer sizes
- * (where #ui_but_string_get_max_length returns 0).
- *
- * \param r_str_size: size of the returned string (including terminator).
- */
-extern char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size);
 /**
  * \param str: will be overwritten.
  */

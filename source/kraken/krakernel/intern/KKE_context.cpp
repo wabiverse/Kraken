@@ -264,7 +264,7 @@ void CTX_store_free(kContextStore *store)
   MEM_freeN(store);
 }
 
-void CTX_store_free_list(std::vector<kContextStore*> contexts)
+void CTX_store_free_list(const std::vector<kContextStore*> &contexts)
 {
   kContextStore *ctx;
   while ((ctx = KLI_pophead(contexts))) {

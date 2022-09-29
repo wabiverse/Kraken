@@ -84,6 +84,7 @@ const wabi::TfToken LUXO_property_identifier(const KrakenPROP *prop);
 void *LUXO_struct_py_type_get(KrakenPRIM *srna);
 void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type);
 
+PropertyScaleType LUXO_property_ui_scale(KrakenPROP *prop);
 PropertyType LUXO_property_type_enum(KrakenPROP *prop);
 PropertyType LUXO_property_type(KrakenPROP *prop);
 PropertySubType LUXO_property_subtype(KrakenPROP *prop);
@@ -128,6 +129,9 @@ void LUXO_property_enum_items_ex(kContext *C,
                                  bool *r_free);
 
 short LUXO_type_to_ID_code(const kraken::KrakenPRIM *type);
+
+void LUXO_property_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax);
+void LUXO_property_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax);
 
 #define LUXO_STRUCT_BEGIN(sptr, prop) \
   { \

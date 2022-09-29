@@ -1642,6 +1642,29 @@ void WM_event_do_refresh_wm(kContext *C)
   CTX_wm_window_set(C, NULL);
 }
 
+/* -------------------------------------------------------------------- */
+/** \name WM Reports
+ *
+ * Access to #wmWindowManager.reports
+ * \{ */
+
+void WM_report_banner_show(void)
+{
+  wmWindowManager *wm = G.main->wm.front();
+  ReportList *wm_reports = &wm->reports;
+
+  /* After adding reports to the global list, reset the report timer. */
+  WM_event_remove_timer(wm, nullptr, wm_reports->reporttimer);
+
+  /* Records time since last report was added. */
+  wm_reports->reporttimer = WM_event_add_timer(wm, wm->winactive, TIMERREPORT, 0.05);
+
+  ReportTimerInfo *rti = MEM_cnew<ReportTimerInfo>(__func__);
+  wm_reports->reporttimer->customdata = rti;
+}
+
+
+
 static void wm_event_free(wmEvent *event)
 {
   if (event->customdata) {

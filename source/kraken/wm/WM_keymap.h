@@ -60,4 +60,6 @@ int WM_keymap_item_to_string(const struct wmKeyMapItem *kmi,
                              char *result,
                              const int result_len);
 
+const char *WM_key_event_string(const short type, const bool compact);
+
 KRAKEN_NAMESPACE_END

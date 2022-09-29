@@ -109,4 +109,6 @@ void WM_event_get_keymaps_from_handler(wmWindowManager *wm,
 
 bool WM_operator_poll_context(kContext *C, wmOperatorType *ot, short context);
 
+void WM_report_banner_show(void);
+
 KRAKEN_NAMESPACE_END

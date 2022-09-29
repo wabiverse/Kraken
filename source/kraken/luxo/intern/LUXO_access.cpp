@@ -139,6 +139,28 @@ KrakenPROP *luxo_ensure_property(KrakenPROP *prop)
   }
 }
 
+void LUXO_property_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax)
+{
+  KrakenPROP *iprop = luxo_ensure_property(&KrakenPROP(ptr->GetAttribute(prop->GetName())));
+  *hardmin = INT_MIN;
+  *hardmax = INT_MAX;
+}
+
+void LUXO_property_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax)
+{
+  KrakenPROP *iprop = luxo_ensure_property(&KrakenPROP(ptr->GetAttribute(prop->GetName())));
+  *hardmin = FLT_MIN;
+  *hardmax = FLT_MAX;
+}
+
+PropertyScaleType LUXO_property_ui_scale(KrakenPROP *prop)
+{
+  // KrakenPROP *prim_prop = luxo_ensure_property(prop);
+  // SdfValueTypeName s_type = prim_prop->GetTypeName().GetScalarType();
+
+  return PROP_SCALE_LINEAR;
+}
+
 PropertyType LUXO_property_type_enum(KrakenPROP *prop)
 {
   return luxo_ensure_property(prop)->type;
