@@ -130,6 +130,20 @@ void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
   LUXO_pointer_create(&G.main->wm.front()->id, ot->prim, NULL, ptr);
 }
 
+const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties)
+{
+  const char *name = NULL;
+
+  if (properties) {
+    ot->name = properties->GetName().GetText();
+    name = ot->name;
+  } else {
+    name = ot->name;
+  }
+
+  return (name && name[0]) ? name : ot->prim->GetName().GetText();
+}
+
 bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update)
 {
   bool changed = false;

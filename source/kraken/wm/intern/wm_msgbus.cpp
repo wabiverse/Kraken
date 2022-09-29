@@ -178,9 +178,9 @@ void MsgBusCallback::OperatorCOMM(const TfNotice &notice, MsgBus const &sender)
 }
 
 void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
-                                 const wmMsgParams_PRIM *msg_key_params,
-                                 const wmMsgSubscribeValue *msg_val_params,
-                                 const char *id_repr)
+                                  const wmMsgParams_PRIM *msg_key_params,
+                                  const wmMsgSubscribeValue *msg_val_params,
+                                  const char *id_repr)
 {
   wmMsgSubscribeKey_PRIM msg_key_test = {{NULL}};
 
@@ -213,18 +213,18 @@ void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
 }
 
 void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
-                          KrakenPRIM *ptr,
-                          const KrakenPROP *prop,
-                          const wmMsgSubscribeValue *msg_val_params,
-                          const char *id_repr)
+                           KrakenPRIM *ptr,
+                           const KrakenPROP *prop,
+                           const wmMsgSubscribeValue *msg_val_params,
+                           const char *id_repr)
 {
   WM_msg_subscribe_prim_params(mbus,
-                              &(const wmMsgParams_PRIM){
-                                .ptr = *ptr,
-                                .prop = prop,
-                              },
-                              msg_val_params,
-                              id_repr);
+                               &(const wmMsgParams_PRIM){
+                                 .ptr = *ptr,
+                                 .prop = prop,
+                               },
+                               msg_val_params,
+                               id_repr);
 }
 
 
@@ -243,8 +243,7 @@ wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
     key = static_cast<wmMsgSubscribeKey *>(*r_key = MEM_mallocN(info->msg_key_size, __func__));
     memcpy(key, msg_key_test, info->msg_key_size);
     mbus->messages.push_back(key);
-  }
-  else {
+  } else {
     key = static_cast<wmMsgSubscribeKey *>(*r_key);
     for (auto &msg_lnk : key->values) {
       if ((msg_lnk->params.notify == msg_val_params->notify) &&
@@ -255,7 +254,8 @@ wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
     }
   }
 
-  wmMsgSubscribeValueLink *msg_lnk = static_cast<wmMsgSubscribeValueLink *>(MEM_mallocN(sizeof(wmMsgSubscribeValueLink), __func__));
+  wmMsgSubscribeValueLink *msg_lnk = static_cast<wmMsgSubscribeValueLink *>(
+    MEM_mallocN(sizeof(wmMsgSubscribeValueLink), __func__));
   msg_lnk->params = *msg_val_params;
   key->values.push_back(msg_lnk);
   return key;
@@ -268,8 +268,7 @@ void WM_msg_publish_with_key(struct wmMsgBus *mbus, wmMsgSubscribeKey *msg_key)
   for (auto &msg_lnk : msg_key->values) {
     if (false) { /* make an option? */
       msg_lnk->params.notify(NULL, msg_key, &msg_lnk->params);
-    }
-    else {
+    } else {
       if (msg_lnk->params.tag == false) {
         msg_lnk->params.tag = true;
         mbus->messages_tag_count += 1;
@@ -296,6 +295,21 @@ void WM_msg_id_remove(struct wmMsgBus *mbus, const struct ID *id)
       info->remove_by_id(mbus, id);
     }
   }
+}
+
+void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
+                           KrakenPRIM *ptr,
+                           const KrakenPROP *prop,
+                           const wmMsgSubscribeValue *msg_val_params,
+                           const char *id_repr)
+{
+  WM_msg_subscribe_prim_params(mbus,
+                               &(const wmMsgParams_PRIM){
+                                 .ptr = *ptr,
+                                 .prop = prop,
+                               },
+                               msg_val_params,
+                               id_repr);
 }
 
 KRAKEN_NAMESPACE_END

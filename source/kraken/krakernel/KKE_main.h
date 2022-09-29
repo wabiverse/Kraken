@@ -230,6 +230,7 @@ extern Global G;
  * Setup in KKE_kraken.
  * TODO: Move these into
  * UserDef. */
+extern std::vector<struct kTheme *> UI_THEMES_LIST;
 extern std::vector<struct uiStyle *> UI_STYLES_LIST;
 extern short UI_WIDGET_UNIT;
 extern int UI_FACTOR_DISPLAY_TYPE;

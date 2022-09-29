@@ -92,5 +92,6 @@ void WM_operator_properties_free(KrakenPRIM *ptr);
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname);
 bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update);
+const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties);
 
 KRAKEN_NAMESPACE_END

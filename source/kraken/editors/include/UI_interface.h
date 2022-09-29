@@ -1376,28 +1376,27 @@ void UI_but_context_ptr_set(uiBlock *block,
                             const struct kraken::KrakenPRIM *ptr);
 const struct kraken::KrakenPRIM *UI_but_context_ptr_get(const uiBut *but,
                                                         const char *name,
-                                                        const kraken::KrakenSTAGE *type
+                                                        const kraken::KrakenPRIM *type
                                                           CPP_ARG_DEFAULT(nullptr));
 struct kContextStore *UI_but_context_get(const uiBut *but);
 
 void UI_but_unit_type_set(uiBut *but, int unit_type);
 int UI_but_unit_type_get(const uiBut *but);
 
-typedef enum uiStringInfoType
-{
-  BUT_GET_RNAPROP_IDENTIFIER = 1,
-  BUT_GET_RNASTRUCT_IDENTIFIER,
-  BUT_GET_RNAENUM_IDENTIFIER,
+enum uiStringInfoType {
+  BUT_GET_PRIMPROP_IDENTIFIER = 1,
+  BUT_GET_PRIMSTRUCT_IDENTIFIER,
+  BUT_GET_PRIMENUM_IDENTIFIER,
   BUT_GET_LABEL,
-  BUT_GET_RNA_LABEL,
-  BUT_GET_RNAENUM_LABEL,
-  BUT_GET_RNA_LABEL_CONTEXT, /* Context specified in CTX_XXX_ macros are just unreachable! */
+  BUT_GET_PRIM_LABEL,
+  BUT_GET_PRIMENUM_LABEL,
+  BUT_GET_PRIM_LABEL_CONTEXT, /* Context specified in CTX_XXX_ macros are just unreachable! */
   BUT_GET_TIP,
-  BUT_GET_RNA_TIP,
-  BUT_GET_RNAENUM_TIP,
+  BUT_GET_PRIM_TIP,
+  BUT_GET_PRIMENUM_TIP,
   BUT_GET_OP_KEYMAP,
   BUT_GET_PROP_KEYMAP,
-} uiStringInfoType;
+};
 
 typedef struct uiStringInfo
 {
@@ -1722,7 +1721,7 @@ int UI_search_items_find_index(uiSearchItems *items, const char *name);
  */
 void UI_but_hint_drawstr_set(uiBut *but, const char *string);
 
-void UI_but_node_link_set(uiBut *but, struct bNodeSocket *socket, const float draw_color[4]);
+void UI_but_node_link_set(uiBut *but, struct kNodeSocket *socket, const float draw_color[4]);
 
 void UI_but_number_step_size_set(uiBut *but, float step_size);
 void UI_but_number_precision_set(uiBut *but, float precision);
@@ -2576,12 +2575,12 @@ void uiTemplateNodeLink(uiLayout *layout,
                         struct kContext *C,
                         struct bNodeTree *ntree,
                         struct bNode *node,
-                        struct bNodeSocket *input);
+                        struct kNodeSocket *input);
 void uiTemplateNodeView(uiLayout *layout,
                         struct kContext *C,
                         struct bNodeTree *ntree,
                         struct bNode *node,
-                        struct bNodeSocket *input);
+                        struct kNodeSocket *input);
 void uiTemplateTextureUser(uiLayout *layout, struct kContext *C);
 /**
  * Button to quickly show texture in Properties Editor texture tab.

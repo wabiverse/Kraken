@@ -339,6 +339,15 @@ Scene *CTX_data_scene(const kContext *C)
   return C->data.scene;
 }
 
+struct ReportList *CTX_wm_reports(const kContext *C)
+{
+  if (C->wm.manager) {
+    return &(C->wm.manager->reports);
+  }
+
+  return NULL;
+}
+
 KrakenSTAGE CTX_data_stage(const kContext *C)
 {
   return C->data.stage;

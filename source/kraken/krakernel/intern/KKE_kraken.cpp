@@ -82,7 +82,8 @@ KRAKEN_NAMESPACE_BEGIN
 Global G;
 
 /** User Prefs modifies this value globally. */
-std::vector<struct uiStyle *> UI_STYLES_LIST = {};
+std::vector<struct kTheme *> UI_THEMES_LIST;
+std::vector<struct uiStyle *> UI_STYLES_LIST;
 short UI_WIDGET_UNIT = 20;
 int UI_FACTOR_DISPLAY_TYPE = USER_FACTOR_AS_FACTOR;
 float UI_DPI_FAC = float(1.0f);

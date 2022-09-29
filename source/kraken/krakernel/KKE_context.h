@@ -39,6 +39,7 @@ struct uiStyle;
 struct ScrArea;
 struct Main;
 struct ARegion;
+struct ReportList;
 struct Scene;
 struct kScreen;
 struct UserDef;
@@ -108,6 +109,7 @@ ARegion *CTX_wm_menu(const kContext *C);
 Scene *CTX_data_scene(const kContext *C);
 KrakenSTAGE CTX_data_stage(const kContext *C);
 UserDef *CTX_data_prefs(const kContext *C);
+ReportList *CTX_wm_reports(const kContext *C);
 
 /**
  * Kraken Context Setters:

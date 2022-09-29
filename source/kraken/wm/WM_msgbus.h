@@ -194,6 +194,12 @@ struct wmMsgSubscribeKey_Generic {
   wmMsg msg;
 };
 
+void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
+                           KrakenPRIM *ptr,
+                           const KrakenPROP *prop,
+                           const wmMsgSubscribeValue *msg_val_params,
+                           const char *id_repr);
+
 KLI_INLINE const wmMsg *wm_msg_subscribe_value_msg_cast(const wmMsgSubscribeKey *key)
 {
   return &((wmMsgSubscribeKey_Generic *)key)->msg;
