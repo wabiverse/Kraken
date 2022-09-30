@@ -135,9 +135,11 @@ bool KLI_rcti_isect_pt_v(const rcti *rect, const int xy[2])
 void KLI_rcti_rctf_copy(rcti *dst, const rctf *src)
 {
   dst->xmin = floorf(src->xmin + 0.5f);
-  dst->xmax = dst->xmin + floorf(KLI_rctf_size_x(GfVec4f(src->xmin, src->xmax, src->ymin, src->ymax)) + 0.5f);
+  dst->xmax = dst->xmin +
+              floorf(KLI_rctf_size_x(GfVec4f(src->xmin, src->xmax, src->ymin, src->ymax)) + 0.5f);
   dst->ymin = floorf(src->ymin + 0.5f);
-  dst->ymax = dst->ymin + floorf(KLI_rctf_size_y(GfVec4f(src->xmin, src->xmax, src->ymin, src->ymax)) + 0.5f);
+  dst->ymax = dst->ymin +
+              floorf(KLI_rctf_size_y(GfVec4f(src->xmin, src->xmax, src->ymin, src->ymax)) + 0.5f);
 }
 
 void KLI_rcti_rctf_copy_round(wabi::GfVec4i *dst, const wabi::GfVec4f &src)
@@ -253,4 +255,127 @@ void KLI_rctf_union(rctf *rct_a, const rctf *rct_b)
   if (rct_a->ymax < rct_b->ymax) {
     rct_a->ymax = rct_b->ymax;
   }
+}
+
+bool KLI_rctf_isect_pt_v(const rctf *rect, const float xy[2])
+{
+  if (xy[0] < rect->xmin) {
+    return false;
+  }
+  if (xy[0] > rect->xmax) {
+    return false;
+  }
+  if (xy[1] < rect->ymin) {
+    return false;
+  }
+  if (xy[1] > rect->ymax) {
+    return false;
+  }
+  return true;
+}
+
+static int isect_segments_fl(const float v1[2],
+                             const float v2[2],
+                             const float v3[2],
+                             const float v4[2])
+{
+  const double div = (double)((v2[0] - v1[0]) * (v4[1] - v3[1]) -
+                              (v2[1] - v1[1]) * (v4[0] - v3[0]));
+  if (div == 0.0) {
+    return 1; /* co-linear */
+  }
+
+  const double lambda = (double)((v1[1] - v3[1]) * (v4[0] - v3[0]) -
+                                 (v1[0] - v3[0]) * (v4[1] - v3[1])) /
+                        div;
+  const double mu = (double)((v1[1] - v3[1]) * (v2[0] - v1[0]) -
+                             (v1[0] - v3[0]) * (v2[1] - v1[1])) /
+                    div;
+  return (lambda >= 0.0 && lambda <= 1.0 && mu >= 0.0 && mu <= 1.0);
+}
+
+bool KLI_rctf_isect_rect_x(const rctf *src1, const rctf *src2, float range_x[2])
+{
+  const float xmin = (src1->xmin) > (src2->xmin) ? (src1->xmin) : (src2->xmin);
+  const float xmax = (src1->xmax) < (src2->xmax) ? (src1->xmax) : (src2->xmax);
+
+  if (xmax >= xmin) {
+    if (range_x) {
+      range_x[0] = xmin;
+      range_x[1] = xmax;
+    }
+    return true;
+  }
+
+  if (range_x) {
+    range_x[0] = 0;
+    range_x[1] = 0;
+  }
+  return false;
+}
+
+bool KLI_rctf_isect_rect_y(const rctf *src1, const rctf *src2, float range_y[2])
+{
+  const float ymin = (src1->ymin) > (src2->ymin) ? (src1->ymin) : (src2->ymin);
+  const float ymax = (src1->ymax) < (src2->ymax) ? (src1->ymax) : (src2->ymax);
+
+  if (ymax >= ymin) {
+    if (range_y) {
+      range_y[0] = ymin;
+      range_y[1] = ymax;
+    }
+    return true;
+  }
+
+  if (range_y) {
+    range_y[0] = 0;
+    range_y[1] = 0;
+  }
+  return false;
+}
+
+bool KLI_rctf_isect_segment(const rctf *rect, const float s1[2], const float s2[2])
+{
+  /* first do outside-bounds check for both points of the segment */
+  if (s1[0] < rect->xmin && s2[0] < rect->xmin) {
+    return false;
+  }
+  if (s1[0] > rect->xmax && s2[0] > rect->xmax) {
+    return false;
+  }
+  if (s1[1] < rect->ymin && s2[1] < rect->ymin) {
+    return false;
+  }
+  if (s1[1] > rect->ymax && s2[1] > rect->ymax) {
+    return false;
+  }
+
+  /* if either points intersect then we definitely intersect */
+  if (KLI_rctf_isect_pt_v(rect, s1) || KLI_rctf_isect_pt_v(rect, s2)) {
+    return true;
+  }
+
+  /* both points are outside but may intersect the rect */
+  float tvec1[2];
+  float tvec2[2];
+  /* diagonal: [/] */
+  tvec1[0] = rect->xmin;
+  tvec1[1] = rect->ymin;
+  tvec2[0] = rect->xmax;
+  tvec2[1] = rect->ymax;
+  if (isect_segments_fl(s1, s2, tvec1, tvec2)) {
+    return true;
+  }
+
+  /* diagonal: [\] */
+  tvec1[0] = rect->xmin;
+  tvec1[1] = rect->ymax;
+  tvec2[0] = rect->xmax;
+  tvec2[1] = rect->ymin;
+  if (isect_segments_fl(s1, s2, tvec1, tvec2)) {
+    return true;
+  }
+
+  /* no intersection */
+  return false;
 }

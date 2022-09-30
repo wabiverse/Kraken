@@ -113,6 +113,10 @@ bool WM_window_find_under_cursor(wmWindowManager *wm,
                                  GfVec2i *r_mval);
 void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect);
 
+void WM_cursor_position_to_anchor_screen_coords(wmWindow *win, int *x, int *y);
+void WM_cursor_position_to_anchor_client_coords(wmWindow *win, int *x, int *y);
+void WM_clipboard_text_set(const char *buf, bool selection);
+
 Scene *WM_window_get_active_scene(const wmWindow *win);
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 kScreen *WM_window_get_active_screen(const wmWindow *win);

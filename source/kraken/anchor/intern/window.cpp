@@ -65,16 +65,47 @@ void *AnchorSystemWindow::getOSWindow() const
   return NULL;
 }
 
-eAnchorStatus AnchorSystemWindow::setCustomCursorShape(uint8_t *bitmap, 
-                                                       uint8_t *mask, 
-                                                       int sizex, 
-                                                       int sizey, 
-                                                       int hotX, 
-                                                       int hotY, 
+eAnchorStatus AnchorSystemWindow::setCustomCursorShape(uint8_t *bitmap,
+                                                       uint8_t *mask,
+                                                       int sizex,
+                                                       int sizey,
+                                                       int hotX,
+                                                       int hotY,
                                                        bool canInvertColor)
 {
   if (setWindowCustomCursorShape(bitmap, mask, sizex, sizey, hotX, hotY, canInvertColor)) {
     m_cursorShape = ANCHOR_StandardCursorCustom;
+    return ANCHOR_SUCCESS;
+  }
+  return ANCHOR_FAILURE;
+}
+
+eAnchorStatus AnchorSystemWindow::setCursorGrab(eAnchorGrabCursorMode mode,
+                                                eAnchorAxisFlag wrap_axis,
+                                                AnchorRect *bounds,
+                                                AnchorS32 mouse_ungrab_xy[2])
+{
+  if (m_cursorGrab == mode) {
+    return ANCHOR_SUCCESS;
+  }
+  /* Override with new location. */
+  if (mouse_ungrab_xy) {
+    ANCHOR_ASSERT(mode == ANCHOR_GrabDisable);
+    m_cursorGrabInitPos[0] = mouse_ungrab_xy[0];
+    m_cursorGrabInitPos[1] = mouse_ungrab_xy[1];
+  }
+
+  if (setWindowCursorGrab(mode)) {
+
+    if (mode == ANCHOR_GrabDisable) {
+      m_cursorGrabBounds.m_l = m_cursorGrabBounds.m_r = -1;
+    } else if (bounds) {
+      m_cursorGrabBounds = *bounds;
+    } else { /* if bounds not defined, use window */
+      getClientBounds(m_cursorGrabBounds);
+    }
+    m_cursorGrab = mode;
+    m_cursorGrabAxis = wrap_axis;
     return ANCHOR_SUCCESS;
   }
   return ANCHOR_FAILURE;

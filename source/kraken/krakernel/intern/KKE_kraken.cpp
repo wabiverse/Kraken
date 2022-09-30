@@ -82,6 +82,9 @@ KRAKEN_NAMESPACE_BEGIN
 Global G;
 
 /** User Prefs modifies this value globally. */
+int UI_MOVE_THRESHOLD = int(2);
+int UI_MENU_THRESHOLD1 = int(5);
+int UI_MENU_THRESHOLD2 = int(2);
 bool UI_RUNTIME_IS_DIRTY = bool(false);
 short UI_PIE_MENU_RADIUS = short(100);
 short UI_PIE_MENU_THRESHOLD = short(12);

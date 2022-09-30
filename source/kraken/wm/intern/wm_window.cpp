@@ -1034,9 +1034,7 @@ void WM_exit_schedule_delayed(const kContext *C)
   WM_event_add_mousemove(win);
 }
 
-static void do_nothing(struct kContext *UNUSED(C), void *UNUSED(user_data))
-{
-}
+static void do_nothing(struct kContext *UNUSED(C), void *UNUSED(user_data)) {}
 
 wmGenericCallback *WM_generic_callback_steal(wmGenericCallback *callback)
 {
@@ -1389,6 +1387,58 @@ void WM_window_process_events(kContext *C)
   }
 }
 
+void WM_cursor_position_to_anchor_client_coords(wmWindow *win, int *x, int *y)
+{
+  float fac = ANCHOR::GetNativePixelSize((AnchorSystemWindowHandle)win->anchorwin);
+
+  GfVec2f win_size = FormFactory(win->size);
+  *x /= fac;
+  *y /= fac;
+  *y = win_size[1] - *y - 1;
+}
+
+void WM_cursor_position_to_anchor_screen_coords(wmWindow *win, int *x, int *y)
+{
+  WM_cursor_position_to_anchor_client_coords(win, x, y);
+  ANCHOR::ClientToScreen((AnchorSystemWindowHandle)win->anchorwin, *x, *y, x, y);
+}
+
+void WM_clipboard_text_set(const char *buf, bool selection)
+{
+  if (!G.background) {
+#ifdef _WIN32
+    /* do conversion from \n to \r\n on Windows */
+    const char *p;
+    char *p2, *newbuf;
+    int newlen = 0;
+
+    for (p = buf; *p; p++) {
+      if (*p == '\n') {
+        newlen += 2;
+      } else {
+        newlen++;
+      }
+    }
+
+    newbuf = (char *)MEM_callocN(newlen + 1, "WM_clipboard_text_set");
+
+    for (p = buf, p2 = newbuf; *p; p++, p2++) {
+      if (*p == '\n') {
+        *(p2++) = '\r';
+        *p2 = '\n';
+      } else {
+        *p2 = *p;
+      }
+    }
+    *p2 = '\0';
+
+    ANCHOR::PutClipboard(newbuf, selection);
+    MEM_freeN(newbuf);
+#else
+    // ANCHOR::PutClipboard(buf, selection);
+#endif
+  }
+}
 
 void WM_window_swap_buffers(wmWindow *win)
 {
@@ -1402,7 +1452,7 @@ wmTimer *WM_event_add_timer(wmWindowManager *wm, wmWindow *win, int event_type, 
 
   wt->event_type = event_type;
   wt->ltime = PIL_check_seconds_timer();
-  wt->ntime = wt->ltime + timestep;
+  wt->ntime = wt->ltime.GetValue() + timestep;
   wt->stime = wt->ltime;
   wt->timestep = timestep;
   wt->win = win;
@@ -1436,10 +1486,8 @@ void WM_event_remove_timer(wmWindowManager *wm, wmWindow *UNUSED(win), wmTimer *
   delete wt;
 
   /* there might be events in queue with this timer as customdata */
-  for(auto &win : wm->windows)
-  {
-    for(auto &event : win.second->event_queue)
-    {
+  for (auto &win : wm->windows) {
+    for (auto &event : win.second->event_queue) {
       if (event->customdata == wt) {
         event->customdata = NULL;
         /* Timer users customdata, don't want `NULL == NULL`. */
@@ -1459,8 +1507,12 @@ void wmOrtho2(float x1, float x2, float y1, float y2)
     y2 += 1.0f;
   }
 
-  GPU_matrix_ortho_set(
-      x1, x2, y1, y2, GPU_MATRIX_ORTHO_CLIP_NEAR_DEFAULT, GPU_MATRIX_ORTHO_CLIP_FAR_DEFAULT);
+  GPU_matrix_ortho_set(x1,
+                       x2,
+                       y1,
+                       y2,
+                       GPU_MATRIX_ORTHO_CLIP_NEAR_DEFAULT,
+                       GPU_MATRIX_ORTHO_CLIP_FAR_DEFAULT);
 }
 
 static void wmOrtho2_offset(const float x, const float y, const float ofs)

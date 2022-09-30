@@ -171,6 +171,19 @@ class AnchorISystemWindow
   virtual void getWindowBounds(AnchorRect &bounds) const = 0;
 
   /**
+   * Grabs the cursor for a modal operation.
+   * @param grab: The new grab state of the cursor.
+   * @return Indication of success.
+   */
+  virtual eAnchorStatus setCursorGrab(eAnchorGrabCursorMode /*mode*/,
+                                      eAnchorAxisFlag /*wrap_axis*/,
+                                      AnchorRect * /*bounds*/,
+                                      AnchorS32 /*mouse_ungrab_xy*/[2])
+  {
+    return ANCHOR_SUCCESS;
+  }
+
+  /**
    * Shows or hides the cursor.
    * @param visible: The new visibility state of the cursor.
    * @return Indication of success. */
@@ -271,7 +284,26 @@ class AnchorSystemWindow : public AnchorISystemWindow
 
   eAnchorStatus getCursorGrabBounds(AnchorRect &bounds);
 
+  /**
+   * Sets the cursor grab.
+   * @param mode: The new grab state of the cursor.
+   * @return Indication of success.
+   */
+  eAnchorStatus setCursorGrab(eAnchorGrabCursorMode mode,
+                              eAnchorAxisFlag wrap_axis,
+                              AnchorRect *bounds,
+                              AnchorS32 mouse_ungrab_xy[2]) override;
+
   eAnchorStatus setCursorVisibility(bool visible);
+
+  /**
+   * Sets the cursor grab on the window using
+   * native window system calls.
+   */
+  virtual eAnchorStatus setWindowCursorGrab(eAnchorGrabCursorMode /*mode*/)
+  {
+    return ANCHOR_SUCCESS;
+  }
 
   /**
    * Sets the cursor visibility on the window using
@@ -386,6 +418,9 @@ class AnchorSystemWindow : public AnchorISystemWindow
 
   /** Wrap the cursor within this region. */
   AnchorRect m_cursorGrabBounds;
+
+  /** Initial grab location. */
+  AnchorS32 m_cursorGrabInitPos[2];
 
   /** Accumulated offset from m_cursorGrabInitPos. */
   AnchorS32 m_cursorGrabAccumPos[2];

@@ -398,7 +398,7 @@ AnchorStyle::AnchorStyle()
   ItemInnerSpacing = wabi::GfVec2f(4,
                                    4);  // Horizontal and vertical spacing between within elements
                                         // of a composed widget (e.g. a slider and its label)
-  CellPadding = wabi::GfVec2f(4, 2);  // Padding within a table cell
+  CellPadding = wabi::GfVec2f(4, 2);    // Padding within a table cell
   TouchExtraPadding = wabi::GfVec2f(
     0,
     0);  // Expand reactive bounding box for touch-based system where touch position is not
@@ -3378,6 +3378,30 @@ void ANCHOR::ScreenToClient(AnchorSystemWindowHandle windowhandle,
   AnchorISystemWindow *window = (AnchorISystemWindow *)windowhandle;
 
   window->screenToClient(inX, inY, *outX, *outY);
+}
+
+eAnchorStatus ANCHOR::SetCursorGrab(AnchorSystemWindowHandle windowhandle,
+                                    eAnchorGrabCursorMode mode,
+                                    eAnchorAxisFlag wrap_axis,
+                                    int bounds[4],
+                                    const int mouse_ungrab_xy[2])
+{
+  AnchorISystemWindow *window = (AnchorISystemWindow *)windowhandle;
+  AnchorRect bounds_rect;
+  int32_t mouse_xy[2];
+
+  if (bounds) {
+    bounds_rect = AnchorRect(bounds[0], bounds[1], bounds[2], bounds[3]);
+  }
+  if (mouse_ungrab_xy) {
+    mouse_xy[0] = mouse_ungrab_xy[0];
+    mouse_xy[1] = mouse_ungrab_xy[1];
+  }
+
+  return window->setCursorGrab(mode,
+                               wrap_axis,
+                               bounds ? &bounds_rect : nullptr,
+                               mouse_ungrab_xy ? mouse_xy : nullptr);
 }
 
 eAnchorStatus ANCHOR::GetCursorPosition(AnchorSystemHandle systemhandle,

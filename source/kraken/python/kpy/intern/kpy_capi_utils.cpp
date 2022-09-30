@@ -654,3 +654,75 @@ void KPy_reports_write_stdout(const kraken::ReportList *reports, const char *hea
     PySys_WriteStdout("%s: %s\n", report->typestr, report->message);
   }
 }
+
+/* -------------------------------------------------------------------- */
+/** \name Run String (Evaluate to Primitive Types)
+ * \{ */
+
+bool PyC_RunString_AsNumber(const char *imports[],
+                            const char *expr,
+                            const char *filename,
+                            double *r_value)
+{
+  PyObject *py_dict, *mod, *retval;
+  bool ok = true;
+  PyObject *main_mod = NULL;
+
+  PyC_MainModule_Backup(&main_mod);
+
+  py_dict = PyC_DefaultNameSpace(filename);
+
+  mod = PyImport_ImportModule("math");
+  if (mod) {
+    PyDict_Merge(py_dict, PyModule_GetDict(mod), 0); /* 0 - don't overwrite existing values */
+    Py_DECREF(mod);
+  }
+  else { /* highly unlikely but possibly */
+    PyErr_Print();
+    PyErr_Clear();
+  }
+
+  if (imports && (!PyC_NameSpace_ImportArray(py_dict, imports))) {
+    ok = false;
+  }
+  else if ((retval = PyRun_String(expr, Py_eval_input, py_dict, py_dict)) == NULL) {
+    ok = false;
+  }
+  else {
+    double val;
+
+    if (PyTuple_Check(retval)) {
+      /* Users my have typed in 10km, 2m
+       * add up all values */
+      int i;
+      val = 0.0;
+
+      for (i = 0; i < PyTuple_GET_SIZE(retval); i++) {
+        const double val_item = PyFloat_AsDouble(PyTuple_GET_ITEM(retval, i));
+        if (val_item == -1 && PyErr_Occurred()) {
+          val = -1;
+          break;
+        }
+        val += val_item;
+      }
+    }
+    else {
+      val = PyFloat_AsDouble(retval);
+    }
+    Py_DECREF(retval);
+
+    if (val == -1 && PyErr_Occurred()) {
+      ok = false;
+    }
+    else if (!isfinite(val)) {
+      *r_value = 0.0;
+    }
+    else {
+      *r_value = val;
+    }
+  }
+
+  PyC_MainModule_Restore(main_mod);
+
+  return ok;
+}

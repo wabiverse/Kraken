@@ -27,5 +27,36 @@
 #include "KPY_api.h"
 #include "KKE_context.h"
 
+/**
+ * @note When this struct is passed in as NULL,
+ * print errors to the `stdout` and clear.
+ */
+struct KPy_RunErrInfo {
+  /** Brief text, single line (can show this in status bar for e.g.). */
+  bool use_single_line_error;
+
+  /** Report with optional prefix (when non-NULL). */
+  struct kraken::ReportList *reports;
+  const char *report_prefix;
+
+  /** Allocated exception text (assign when non-NULL). */
+  char **r_string;
+};
+
+/**
+ * Evaluate `expr` as a number (double).
+ *
+ * @param C: See @ref common_args.
+ * @param imports: See @ref common_args.
+ * @param expr: The expression to evaluate.
+ * @param err_info: See @ref common_args.
+ * @param r_value: The resulting value.
+ * @return Success.
+ */
+bool KPY_run_string_as_number(kraken::kContext *C,
+                              const char *imports[],
+                              const char *expr,
+                              struct KPy_RunErrInfo *err_info,
+                              double *r_value) ATTR_NONNULL(1, 3, 5);
 bool KPY_run_string_exec(struct kraken::kContext *C, const char *imports[], const char *expr);
 bool KPY_run_string_eval(struct kraken::kContext *C, const char *imports[], const char *expr);

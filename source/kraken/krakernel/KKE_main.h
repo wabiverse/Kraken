@@ -230,6 +230,9 @@ extern Global G;
  * Setup in KKE_kraken.
  * TODO: Move these into
  * UserDef. */
+extern int UI_MOVE_THRESHOLD;
+extern int UI_MENU_THRESHOLD1;
+extern int UI_MENU_THRESHOLD2;
 extern bool UI_RUNTIME_IS_DIRTY;
 extern short UI_PIE_MENU_RADIUS;
 extern short UI_PIE_MENU_THRESHOLD;

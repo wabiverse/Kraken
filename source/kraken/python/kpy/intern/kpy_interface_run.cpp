@@ -24,6 +24,7 @@
 
 #include "KKE_appdir.h"
 #include "KKE_context.h"
+#include "KKE_report.h"
 
 #include "KPY_api.h"
 #include "KPY_extern_run.h"
@@ -83,8 +84,8 @@ static bool kpy_run_string_impl(kraken::kContext *C,
     PyErr_Clear();
 
     /* Ensure the reports are printed. */
-    if (!KKE_reports_print_test(&reports, RPT_ERROR)) {
-      KKE_reports_print(&reports, RPT_ERROR);
+    if (!kraken::KKE_reports_print_test(&reports, RPT_ERROR)) {
+      kraken::KKE_reports_print(&reports, RPT_ERROR);
     }
 
   } else {
@@ -92,6 +93,83 @@ static bool kpy_run_string_impl(kraken::kContext *C,
   }
 
   PyC_MainModule_Restore(main_mod);
+
+  kpy_context_clear(C, &gilstate);
+
+  return ok;
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Run Python & Evaluate Utilities
+ *
+ * Return values as plain C types, useful to run Python scripts
+ * in code that doesn't deal with Python data-types.
+ * \{ */
+
+static void run_string_handle_error(struct KPy_RunErrInfo *err_info)
+{
+  if (err_info == NULL) {
+    PyErr_Print();
+    PyErr_Clear();
+    return;
+  }
+
+  /* Signal to do nothing. */
+  if (!(err_info->reports || err_info->r_string)) {
+    PyErr_Clear();
+    return;
+  }
+
+  PyObject *py_err_str = err_info->use_single_line_error ? PyC_ExceptionBuffer_Simple() :
+                                                           PyC_ExceptionBuffer();
+  const char *err_str = py_err_str ? PyUnicode_AsUTF8(py_err_str) : "Unable to extract exception";
+  PyErr_Clear();
+
+  if (err_info->reports != NULL) {
+    if (err_info->report_prefix) {
+      KKE_reportf(err_info->reports, RPT_ERROR, "%s: %s", err_info->report_prefix, err_str);
+    }
+    else {
+      KKE_report(err_info->reports, RPT_ERROR, err_str);
+    }
+  }
+
+  /* Print the reports if they were not printed already. */
+  if ((err_info->reports == NULL) || !kraken::KKE_reports_print_test(err_info->reports, RPT_ERROR)) {
+    if (err_info->report_prefix) {
+      fprintf(stderr, "%s: ", err_info->report_prefix);
+    }
+    fprintf(stderr, "%s\n", err_str);
+  }
+
+  if (err_info->r_string != NULL) {
+    *err_info->r_string = KLI_strdup(err_str);
+  }
+
+  Py_XDECREF(py_err_str);
+}
+
+bool KPY_run_string_as_number(struct kraken::kContext *C,
+                              const char *imports[],
+                              const char *expr,
+                              struct KPy_RunErrInfo *err_info,
+                              double *r_value) ATTR_NONNULL(1, 3, 5)
+{
+  PyGILState_STATE gilstate;
+  bool ok = true;
+
+  if (expr[0] == '\0') {
+    *r_value = 0.0;
+    return ok;
+  }
+
+  kpy_context_set(C, &gilstate);
+
+  ok = PyC_RunString_AsNumber(imports, expr, "<expr as number>", r_value);
+
+  if (ok == false) {
+    run_string_handle_error(err_info);
+  }
 
   kpy_context_clear(C, &gilstate);
 

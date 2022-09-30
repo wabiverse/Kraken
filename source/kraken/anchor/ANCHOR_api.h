@@ -1117,6 +1117,13 @@ namespace ANCHOR
                       AnchorS32 *outY);
 
   ANCHOR_API
+  eAnchorStatus SetCursorGrab(AnchorSystemWindowHandle windowhandle,
+                              eAnchorGrabCursorMode mode,
+                              eAnchorAxisFlag wrap_axis,
+                              int bounds[4],
+                              const int mouse_ungrab_xy[2]);
+
+  ANCHOR_API
   eAnchorStatus GetCursorPosition(AnchorSystemHandle systemhandle, AnchorS32 *x, AnchorS32 *y);
 
   /**

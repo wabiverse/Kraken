@@ -314,6 +314,14 @@ enum eWmMiscKmTypes
 #define WM_GESTURE_CIRCLE 5
 #define WM_GESTURE_STRAIGHTLINE 6
 
+/**
+ * Values below are ignored when detecting if the user intentionally moved the cursor.
+ * Keep this very small since it's used for selection cycling for eg,
+ * where we want intended adjustments to pass this threshold and select new items.
+ *
+ * Always check for <= this value since it may be zero.
+ */
+#define WM_EVENT_CURSOR_MOTION_THRESHOLD ((float)UI_MOVE_THRESHOLD * UI_DPI_FAC)
 
 /** Timer flags. */
 enum eWmTimerFlags
@@ -1151,7 +1159,7 @@ struct wmOperatorTypeMacro
   /* rna pointer to access properties, like keymap */
   /** Operator properties, assigned to ptr->data and can be written to a file. */
   struct IDProperty *properties;
-  struct PointerRNA *ptr;
+  struct KrakenPRIM *ptr;
 };
 
 

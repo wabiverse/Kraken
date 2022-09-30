@@ -52,7 +52,7 @@ struct PropertyPRIMOrID {
   /** 
    * The real RNA property of this property, never NULL:
    * - Static RNA: The rna property, also gives direct access to the data (from any matching
-   *               PointerRNA).
+   *               KrakenPRIM).
    * - Runtime RNA: The rna property, does not directly gives access to the data.
    * - IDProperty: The generic PropertyRNA matching its type.
    */

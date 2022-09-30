@@ -91,3 +91,13 @@ extern void kpy_context_clear(kraken::kContext *C, const PyGILState_STATE *gilst
 
 void PyC_ObSpitStr(char *result, size_t result_len, PyObject *var);
 void PyC_ObSpit(const char *name, PyObject *var);
+
+/**
+ * @return success
+ *
+ * @note it is caller's responsibility to acquire & release GIL!
+ */
+bool PyC_RunString_AsNumber(const char **imports,
+                            const char *expr,
+                            const char *filename,
+                            double *r_value);

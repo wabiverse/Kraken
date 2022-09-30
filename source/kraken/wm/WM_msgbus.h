@@ -49,7 +49,7 @@ KRAKEN_NAMESPACE_BEGIN
 
 struct wmMsgParams_PRIM
 {
-  /** when #PointerRNA.data & owner_id are NULL. match against all. */
+  /** when #KrakenPRIM.data & owner_id are NULL. match against all. */
   struct KrakenPRIM ptr;
   /** when NULL, match against any property. */
   const KrakenPROP *prop;

@@ -135,6 +135,14 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
  protected:
 
+  /**
+   * Sets the cursor grab on the window using
+   * native window system calls.
+   * @param mode: The grabbing mode of the cursor.
+   * @return Indication of success.
+   */
+  eAnchorStatus setWindowCursorGrab(eAnchorGrabCursorMode mode);
+
   void SetupMetal();
 
   /* The swift window which holds the metal view. */

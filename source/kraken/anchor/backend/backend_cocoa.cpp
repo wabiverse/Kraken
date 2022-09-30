@@ -1016,6 +1016,42 @@ eAnchorStatus AnchorAppleMetal::setWindowCustomCursorShape(uint8_t *bitmap,
   return ANCHOR_SUCCESS;
 }
 
+eAnchorStatus AnchorAppleMetal::setWindowCursorGrab(eAnchorGrabCursorMode mode)
+{
+  eAnchorStatus err = ANCHOR_SUCCESS;
+
+  if (mode != ANCHOR_GrabDisable) {
+    // No need to perform grab without warp as it is always on in OS X
+    if (mode != ANCHOR_GrabNormal) {
+      // NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
+
+      m_systemCocoa->getCursorPosition(m_cursorGrabInitPos[0], m_cursorGrabInitPos[1]);
+      setCursorGrabAccum(0, 0);
+
+      if (mode == ANCHOR_GrabHide) {
+        setWindowCursorVisibility(false);
+      }
+
+      // Make window key if it wasn't to get the mouse move events
+      // m_window->makeKeyWindow();
+
+      // pool->drain();
+    }
+  }
+  else {
+    if (m_cursorGrab == ANCHOR_GrabHide) {
+      m_systemCocoa->setCursorPosition(m_cursorGrabInitPos[0], m_cursorGrabInitPos[1]);
+      setWindowCursorVisibility(true);
+    }
+
+    /* Almost works without but important otherwise the mouse GHOST location
+     * can be incorrect on exit. */
+    setCursorGrabAccum(0, 0);
+    m_cursorGrabBounds.m_l = m_cursorGrabBounds.m_r = -1; /* disable */
+  }
+  return err;
+}
+
 eAnchorStatus AnchorAppleMetal::hasCursorShape(eAnchorStandardCursor shape)
 {
   NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();

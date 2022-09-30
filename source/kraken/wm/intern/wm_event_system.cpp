@@ -50,6 +50,7 @@
 #include "KKE_report.h"
 
 #include "KLI_assert.h"
+#include "KLI_dynstr.h"
 #include "KLI_kraklib.h"
 #include "KLI_time.h"
 
@@ -1112,7 +1113,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
         /* Skip invalid properties. */
         if (STREQ(LUXO_property_identifier(prop), otmacro->idname)) {
           wmOperatorType *otm = WM_operatortype_find(otmacro->idname, false);
-          PointerRNA someptr = LUXO_property_pointer_get(properties, prop);
+          KrakenPRIM someptr = LUXO_property_pointer_get(properties, prop);
           wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
 
           IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
@@ -1648,6 +1649,48 @@ void WM_event_do_refresh_wm(kContext *C)
  * Access to #wmWindowManager.reports
  * \{ */
 
+static void wm_add_reports(ReportList *reports)
+{
+  /* If the caller owns them, handle this. */
+  if (reports->list.front() && (reports->flag & RPT_OP_HOLD) == 0) {
+    wmWindowManager *wm = G.main->wm.front();
+
+    /* Add reports to the global list, otherwise they are not seen. */
+    for (auto &rep : reports->list) {
+      wm->reports.list.push_back(rep);
+    }
+
+    WM_report_banner_show();
+  }
+}
+
+void WM_report(eReportType type, const char *message)
+{
+  ReportList reports;
+  KKE_reports_init(&reports, RPT_STORE);
+  KKE_report(&reports, type, message);
+
+  wm_add_reports(&reports);
+
+  KKE_reports_clear(&reports);
+}
+
+void WM_reportf(eReportType type, const char *format, ...)
+{
+  va_list args;
+
+  DynStr *ds = KLI_dynstr_new();
+  va_start(args, format);
+  KLI_dynstr_vappendf(ds, format, args);
+  va_end(args);
+
+  char *str = KLI_dynstr_get_cstring(ds);
+  WM_report(type, str);
+  MEM_freeN(str);
+
+  KLI_dynstr_free(ds);
+}
+
 void WM_report_banner_show(void)
 {
   wmWindowManager *wm = G.main->wm.front();
@@ -1662,8 +1705,6 @@ void WM_report_banner_show(void)
   ReportTimerInfo *rti = MEM_cnew<ReportTimerInfo>(__func__);
   wm_reports->reporttimer->customdata = rti;
 }
-
-
 
 static void wm_event_free(wmEvent *event)
 {

@@ -135,6 +135,20 @@ class AnchorSystemCocoa : public AnchorSystem
 
   eAnchorStatus handleApplicationBecomeActiveEvent();
 
+  /**
+   * Returns the current location of the cursor (location in screen coordinates)
+   * @param x: The x-coordinate of the cursor.
+   * @param y: The y-coordinate of the cursor.
+   * @return Indication of success. */
+  eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const;
+
+  /**
+   * Updates the location of the cursor (location in screen coordinates).
+   * @param x: The x-coordinate of the cursor.
+   * @param y: The y-coordinate of the cursor.
+   * @return Indication of success. */
+  eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
+
  private:
 
   eAnchorStatus init();
@@ -152,20 +166,6 @@ class AnchorSystemCocoa : public AnchorSystem
                                     const bool exclusive = false,
                                     const bool is_dialog = false,
                                     const AnchorISystemWindow *parentWindow = NULL);
-
-  /**
-   * Returns the current location of the cursor (location in screen coordinates)
-   * @param x: The x-coordinate of the cursor.
-   * @param y: The y-coordinate of the cursor.
-   * @return Indication of success. */
-  eAnchorStatus getCursorPosition(AnchorS32 &x, AnchorS32 &y) const;
-
-  /**
-   * Updates the location of the cursor (location in screen coordinates).
-   * @param x: The x-coordinate of the cursor.
-   * @param y: The y-coordinate of the cursor.
-   * @return Indication of success. */
-  eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
 
  protected:
 

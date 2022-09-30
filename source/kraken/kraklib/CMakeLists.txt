@@ -17,6 +17,7 @@ set(SRC
   intern/KLI_listbase.cpp
   intern/KLI_math_base_inline.c
   intern/KLI_math_bits_inline.c
+  intern/KLI_math_color_inline.c
   intern/KLI_math_geom_inline.c
   intern/KLI_math_geom.c
   intern/KLI_math_matrix.c
@@ -52,6 +53,7 @@ set(SRC
   KLI_memory_utils.hh
   KLI_math_base.h
   KLI_math_bits.h
+  KLI_math_color.h
   KLI_math_geom.h
   KLI_math_inline.h
   KLI_math_matrix.h

@@ -42,4 +42,7 @@ char *KKE_reports_string(ReportList *reports, eReportType level);
 
 const char *KKE_report_type_str(eReportType type);
 
+void KKE_reports_print(ReportList *reports, eReportType level);
+bool KKE_reports_print_test(const ReportList *reports, eReportType type);
+
 KRAKEN_NAMESPACE_END

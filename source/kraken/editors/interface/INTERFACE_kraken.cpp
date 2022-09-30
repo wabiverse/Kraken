@@ -734,9 +734,9 @@ bool ui_but_luxo_equals(const uiBut *a, const uiBut *b)
 }
 
 bool ui_but_luxo_equals_ex(const uiBut *but,
-                          const KrakenPRIM *ptr,
-                          const KrakenPROP *prop,
-                          int index)
+                           const KrakenPRIM *ptr,
+                           const KrakenPROP *prop,
+                           int index)
 {
   if (but->stagepoin.data != ptr->data) {
     return false;
@@ -2943,6 +2943,55 @@ void ui_but_string_get(uiBut *but, char *str, const size_t maxlen)
   ui_but_string_get_ex(but, str, maxlen, -1, false, nullptr);
 }
 
+char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
+{
+  char *str = nullptr;
+  *r_str_size = 1;
+
+  if (but->stageprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
+    const PropertyType type = LUXO_property_type(but->stageprop);
+
+    if (type == PROP_STRING) {
+      /* LUXO string */
+      std::string strval;
+      but->stagepoin.GetAttribute(but->stageprop->GetName()).Get(&strval);
+      str = KLI_strdup(strval.c_str());
+      (*r_str_size) += 1;
+    } else if (type == PROP_ENUM) {
+      /* LUXO enum */
+      TfToken value;
+      but->stagepoin.GetAttribute(but->stageprop->GetName()).Get(&value);
+      const char *value_id;
+      if (value.IsEmpty()) {
+        value_id = "";
+      } else {
+        value_id = value.GetText();
+      }
+
+      *r_str_size = strlen(value_id) + 1;
+      str = KLI_strdupn(value_id, *r_str_size);
+    } else if (type == PROP_POINTER) {
+      /* RNA pointer */
+      KrakenPRIM ptr = but->stagepoin.GetAttribute(but->stageprop->GetName()).GetPrim();
+      str = KLI_strdup(ptr.GetName().GetText());
+      (*r_str_size) += 1;
+    } else {
+      KLI_assert(0);
+    }
+  } else {
+    KLI_assert(0);
+  }
+
+  if (UNLIKELY(str == nullptr)) {
+    /* should never happen, paranoid check */
+    *r_str_size = 1;
+    str = KLI_strdup("");
+    KLI_assert(0);
+  }
+
+  return str;
+}
+
 /**
  * Report a generic error prefix when evaluating a string with #BPY_run_string_as_number
  * as the Python error on its own doesn't provide enough context.
@@ -2982,7 +3031,7 @@ static bool ui_number_from_string(kContext *C, const char *str, double *r_value)
   KPy_RunErrInfo err_info = {};
   err_info.reports = CTX_wm_reports(C);
   err_info.report_prefix = UI_NUMBER_EVAL_ERROR_PREFIX;
-  ok = BPY_run_string_as_number(C, nullptr, str, &err_info, r_value);
+  ok = KPY_run_string_as_number(C, nullptr, str, &err_info, r_value);
 #else
   UNUSED_VARS(C);
   *r_value = atof(str);
@@ -4699,21 +4748,21 @@ static uiBut *ui_def_but_rna(uiBlock *block,
 }
 
 static uiBut *ui_def_but_luxo_propname(uiBlock *block,
-                                      int type,
-                                      int retval,
-                                      const char *str,
-                                      int x,
-                                      int y,
-                                      short width,
-                                      short height,
-                                      KrakenPRIM *ptr,
-                                      const char *propname,
-                                      int index,
-                                      float min,
-                                      float max,
-                                      float a1,
-                                      float a2,
-                                      const char *tip)
+                                       int type,
+                                       int retval,
+                                       const char *str,
+                                       int x,
+                                       int y,
+                                       short width,
+                                       short height,
+                                       KrakenPRIM *ptr,
+                                       const char *propname,
+                                       int index,
+                                       float min,
+                                       float max,
+                                       float a1,
+                                       float a2,
+                                       const char *tip)
 {
   KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
 
@@ -5269,21 +5318,21 @@ uiBut *uiDefButR(uiBlock *block,
                  const char *tip)
 {
   uiBut *but = ui_def_but_luxo_propname(block,
-                                       type,
-                                       retval,
-                                       str,
-                                       x,
-                                       y,
-                                       width,
-                                       height,
-                                       ptr,
-                                       propname,
-                                       index,
-                                       min,
-                                       max,
-                                       a1,
-                                       a2,
-                                       tip);
+                                        type,
+                                        retval,
+                                        str,
+                                        x,
+                                        y,
+                                        width,
+                                        height,
+                                        ptr,
+                                        propname,
+                                        index,
+                                        min,
+                                        max,
+                                        a1,
+                                        a2,
+                                        tip);
   ui_but_update(but);
   return but;
 }
@@ -5587,21 +5636,21 @@ uiBut *uiDefIconButR(uiBlock *block,
                      const char *tip)
 {
   uiBut *but = ui_def_but_luxo_propname(block,
-                                       type,
-                                       retval,
-                                       "",
-                                       x,
-                                       y,
-                                       width,
-                                       height,
-                                       ptr,
-                                       propname,
-                                       index,
-                                       min,
-                                       max,
-                                       a1,
-                                       a2,
-                                       tip);
+                                        type,
+                                        retval,
+                                        "",
+                                        x,
+                                        y,
+                                        width,
+                                        height,
+                                        ptr,
+                                        propname,
+                                        index,
+                                        min,
+                                        max,
+                                        a1,
+                                        a2,
+                                        tip);
   ui_but_update_and_icon_set(but, icon);
   return but;
 }
@@ -5777,21 +5826,21 @@ uiBut *uiDefIconTextButR(uiBlock *block,
                          const char *tip)
 {
   uiBut *but = ui_def_but_luxo_propname(block,
-                                       type,
-                                       retval,
-                                       str,
-                                       x,
-                                       y,
-                                       width,
-                                       height,
-                                       ptr,
-                                       propname,
-                                       index,
-                                       min,
-                                       max,
-                                       a1,
-                                       a2,
-                                       tip);
+                                        type,
+                                        retval,
+                                        str,
+                                        x,
+                                        y,
+                                        width,
+                                        height,
+                                        ptr,
+                                        propname,
+                                        index,
+                                        min,
+                                        max,
+                                        a1,
+                                        a2,
+                                        tip);
   ui_but_update_and_icon_set(but, icon);
   but->drawflag |= UI_BUT_ICON_LEFT;
   return but;

@@ -26,6 +26,7 @@
 
 #include "WM_cursors_api.h"
 #include "WM_cursors.h"
+#include "WM_window.h"
 
 #include "USD_area.h"
 #include "USD_factory.h"
@@ -377,6 +378,74 @@ void WM_cursor_grab_enable(wmWindow *win, int wrap, bool hide, int bounds[4])
       mode_axis = ANCHOR_GrabAxisX;
     } else if (wrap == WM_CURSOR_WRAP_Y) {
       mode_axis = ANCHOR_GrabAxisY;
+    }
+  }
+}
+
+void WM_cursor_modal_set(wmWindow *win, int val)
+{
+  if (win->lastcursor == 0) {
+
+    static TfToken lastcursor;
+
+    /* convert usd authored cursor to int. */
+    if (win->cursor.Get(&lastcursor)) {
+      if (lastcursor == UsdUITokens->default_) {
+        win->lastcursor = WM_CURSOR_DEFAULT;
+      } else if (lastcursor == UsdUITokens->textEdit) {
+        win->lastcursor = WM_CURSOR_TEXT_EDIT;
+      } else if (lastcursor == UsdUITokens->wait) {
+        win->lastcursor = WM_CURSOR_WAIT;
+      } else if (lastcursor == UsdUITokens->stop) {
+        win->lastcursor = WM_CURSOR_STOP;
+      } else if (lastcursor == UsdUITokens->edit) {
+        win->lastcursor = WM_CURSOR_EDIT;
+      } else if (lastcursor == UsdUITokens->copy) {
+        win->lastcursor = WM_CURSOR_COPY;
+      } else if (lastcursor == UsdUITokens->hand) {
+        win->lastcursor = WM_CURSOR_HAND;
+      } else if (lastcursor == UsdUITokens->paint) {
+        win->lastcursor = WM_CURSOR_PAINT;
+      } else if (lastcursor == UsdUITokens->dot) {
+        win->lastcursor = WM_CURSOR_DOT;
+      } else if (lastcursor == UsdUITokens->knife) {
+        win->lastcursor = WM_CURSOR_KNIFE;
+      } else if (lastcursor == UsdUITokens->paintBrush) {
+        win->lastcursor = WM_CURSOR_PAINT_BRUSH;
+      } else if (lastcursor == UsdUITokens->eraser) {
+        win->lastcursor = WM_CURSOR_ERASER;
+      } else if (lastcursor == UsdUITokens->eyedropper) {
+        win->lastcursor = WM_CURSOR_EYEDROPPER;
+      } else if (lastcursor == UsdUITokens->xMove) {
+        win->lastcursor = WM_CURSOR_X_MOVE;
+      } else if (lastcursor == UsdUITokens->yMove) {
+        win->lastcursor = WM_CURSOR_Y_MOVE;
+      } else if (lastcursor == UsdUITokens->hSplit) {
+        win->lastcursor = WM_CURSOR_H_SPLIT;
+      } else if (lastcursor == UsdUITokens->verticalSplit) {
+        win->lastcursor = WM_CURSOR_V_SPLIT;
+      }
+    }
+  }
+
+  win->modalcursor = val;
+  WM_cursor_set(win, val);
+}
+
+void WM_cursor_grab_disable(wmWindow *win, const int mouse_ungrab_xy[2])
+{
+  if ((G.debug & G_DEBUG) == 0) {
+    if (win && win->anchorwin) {
+      if (mouse_ungrab_xy) {
+        int mouse_xy[2] = {mouse_ungrab_xy[0], mouse_ungrab_xy[1]};
+        WM_cursor_position_to_anchor_screen_coords(win, &mouse_xy[0], &mouse_xy[1]);
+        ANCHOR::SetCursorGrab((AnchorSystemWindowHandle)win->anchorwin, ANCHOR_GrabDisable, ANCHOR_GrabAxisNone, NULL, mouse_xy);
+      }
+      else {
+        ANCHOR::SetCursorGrab((AnchorSystemWindowHandle)win->anchorwin, ANCHOR_GrabDisable, ANCHOR_GrabAxisNone, NULL, NULL);
+      }
+
+      win->grabcursor = ANCHOR_GrabDisable;
     }
   }
 }
