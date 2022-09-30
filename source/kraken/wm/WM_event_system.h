@@ -37,8 +37,6 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-struct ARegion;
-struct ScrArea;
 struct wmEvent;
 
 #define WM_HANDLER_CONTINUE 0

@@ -28,8 +28,8 @@
 
 #include "KLI_utildefines.h"
 
-#include "USD_screen.h
 #include "USD_wm_types.h"
+#include "USD_screen.h
 
 KRAKEN_NAMESPACE_BEGIN
 

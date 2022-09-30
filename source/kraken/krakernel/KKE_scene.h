@@ -29,6 +29,7 @@
 #include "KKE_main.h"
 #include "KKE_utils.h"
 
+#include "USD_wm_types.h"
 #include "USD_area.h"
 #include "USD_object.h"
 #include "USD_region.h"
@@ -36,7 +37,6 @@
 #include "USD_screen.h"
 #include "USD_space_types.h"
 #include "USD_window.h"
-#include "USD_wm_types.h"
 #include "USD_workspace.h"
 
 KRAKEN_NAMESPACE_BEGIN

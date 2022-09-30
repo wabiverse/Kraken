@@ -16,22 +16,13 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * Universe.
  * Set the Stage.
  */
-
-#pragma once
-
-#include "USD_api.h"
-#include "USD_area.h"
-#include "USD_object.h"
-#include "USD_region.h"
-#include "USD_scene.h"
-#include "USD_screen.h"
-#include "USD_system.h"
-#include "USD_window.h"
 
 #include "KKE_context.h"
 
@@ -43,16 +34,7 @@ KRAKEN_NAMESPACE_BEGIN
  * - Stage Destruction
  * - Opening Stages.
  * - Saving Stages. */
-void USD_create_stage(kContext *C);
-void USD_destroy(kContext *C);
-void USD_open_stage(kContext *C);
 void USD_save_stage(kContext *C);
-
-/**
- * Pixar Stage Defaults
- * - Kraken GUI defaults.
- * - Kraken Scene defaults. */
-void USD_set_defaults(kContext *C);
 
 
 KRAKEN_NAMESPACE_END

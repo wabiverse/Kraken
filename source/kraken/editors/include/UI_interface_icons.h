@@ -33,10 +33,6 @@ extern "C" {
 
 struct Collection;
 struct ID;
-struct KrakenPRIM;
-struct PreviewImage;
-struct Scene;
-struct kContext;
 
 typedef struct IconFile {
   struct IconFile *next, *prev;

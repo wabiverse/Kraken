@@ -26,6 +26,8 @@
 
 #include "USD_operator.h"
 
+#include "WM_event_system.h"
+
 #include "ED_screen.h"
 
 #include "UI_interface.h"

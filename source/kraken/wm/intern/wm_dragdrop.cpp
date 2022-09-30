@@ -31,8 +31,8 @@
 
 #include "KKE_context.h"
 
-#include "USD_window.h"
 #include "USD_wm_types.h"
+#include "USD_window.h"
 
 KRAKEN_NAMESPACE_BEGIN
 

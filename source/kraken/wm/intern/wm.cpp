@@ -22,6 +22,7 @@
  * Making GUI Fly.
  */
 
+#include "USD_wm_types.h"
 #include "USD_area.h"
 #include "USD_context.h"
 #include "USD_default_tables.h"
@@ -34,7 +35,6 @@
 #include "USD_space_types.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
-#include "USD_wm_types.h"
 #include "USD_workspace.h"
 
 #include "KLI_string.h"

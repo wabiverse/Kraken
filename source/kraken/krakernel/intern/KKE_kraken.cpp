@@ -34,6 +34,7 @@
 #include "kraken/kraken.h"
 
 /* UNIVERSE */
+#include "USD_wm_types.h"
 #include "USD_area.h"
 #include "USD_context.h"
 #include "USD_object.h"
@@ -44,7 +45,6 @@
 #include "USD_space_types.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
-#include "USD_wm_types.h"
 #include "USD_workspace.h"
 
 /* KRAKEN LIBRARY */
@@ -166,18 +166,12 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 
   CTX_data_main_set(C, G.main);
 
-  /** @em Always */
-  USD_create_stage(C);
-
   if (G.factory_startup) {
     /**
      * Create default Pixar stage. */
-    // USD_set_defaults(C);
-    // USD_save_stage(C);
   } else {
     /**
      * Open user's stage. */
-    // USD_open_stage(C);
   }
 }
 

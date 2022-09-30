@@ -27,6 +27,7 @@
 #include "KLI_compiler_compat.h"
 #include "KLI_sys_types.h"
 
+#include "USD_area.h"
 #include "USD_screen.h"
 #include "USD_object.h"
 #include "USD_userpref.h"

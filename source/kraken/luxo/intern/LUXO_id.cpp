@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "USD_wm_types.h"
 #include "USD_ID.h"
 #include "USD_object.h"
 #include "USD_types.h"
-#include "USD_wm_types.h"
 
 #include "KLI_utildefines.h"
 

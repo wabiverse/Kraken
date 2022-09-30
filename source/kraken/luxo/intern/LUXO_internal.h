@@ -28,10 +28,10 @@
 #include "KKE_main.h"
 #include "KKE_utils.h"
 
+#include "USD_wm_types.h"
 #include "USD_listBase.h"
 #include "USD_api.h"
 #include "USD_types.h"
-#include "USD_wm_types.h"
 #include "USD_object.h"
 
 #include "LUXO_runtime.h"
@@ -79,14 +79,14 @@ struct PropertyPRIMOrID {
   uint array_len;
 };
 
-typedef int (*PropEnumGetFunc)(struct KrakenPRIM *ptr);
-typedef void (*PropEnumSetFunc)(struct KrakenPRIM *ptr, int value);
-typedef const EnumPropertyItem *(*PropEnumItemFunc)(struct kContext *C,
-                                                    struct KrakenPRIM *ptr,
-                                                    struct KrakenPROP *prop,
+typedef int (*PropEnumGetFunc)(KrakenPRIM *ptr);
+typedef void (*PropEnumSetFunc)(KrakenPRIM *ptr, int value);
+typedef const EnumPropertyItem *(*PropEnumItemFunc)(kContext *C,
+                                                    KrakenPRIM *ptr,
+                                                    KrakenPROP *prop,
                                                     bool *r_free);
-typedef int (*PropEnumGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
-typedef void (*PropEnumSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, int value);
+typedef int (*PropEnumGetFuncEx)(KrakenPRIM *ptr, KrakenPROP *prop);
+typedef void (*PropEnumSetFuncEx)(KrakenPRIM *ptr, KrakenPROP *prop, int value);
 
 struct EnumPropertyPRIM {
   KrakenPROP property;

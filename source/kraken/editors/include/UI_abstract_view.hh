@@ -20,19 +20,14 @@
 #include <array>
 #include <memory>
 
-#include "USD_object.h"
 #include "USD_wm_types.h"
+#include "USD_object.h"
+#include "USD_window.h"
+
+#include "KKE_context.h"
 
 #include "KLI_span.hh"
 #include "KLI_string_ref.hh"
-
-struct kContext;
-struct uiBlock;
-struct uiBut;
-struct uiLayout;
-struct uiViewItemHandle;
-struct wmDrag;
-struct wmNotifier;
 
 namespace kraken::ui {
 

@@ -18,10 +18,15 @@
 #include "USD_listBase.h"
 #include "USD_types.h"
 #include "USD_object.h"
+#include "USD_area.h"
+#include "USD_region.h"
+#include "USD_screen.h"
 #include "USD_vec_types.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
+
+#include "LUXO_types.h"
 
 #include <wabi/usd/usd/prim.h>
 
@@ -835,8 +840,8 @@ struct uiPopupBlockHandle {
 
   /* for operator popups */
   struct wmOperator *popup_op;
-  struct ScrArea *ctx_area;
-  struct ARegion *ctx_region;
+  ScrArea *ctx_area;
+  ARegion *ctx_region;
 
   /* return values */
   int butretval;

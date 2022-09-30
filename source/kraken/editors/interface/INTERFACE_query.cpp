@@ -14,10 +14,11 @@
 #include "KLI_string.h"
 #include "KLI_utildefines.h"
 
+#include "USD_wm_types.h"
 #include "USD_listBase.h"
+#include "USD_area.h"
 #include "USD_screen.h"
 #include "USD_object.h"
-#include "USD_wm_types.h"
 #include "USD_vec_types.h"
 
 #include "UI_interface.h"

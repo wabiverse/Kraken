@@ -30,9 +30,9 @@
 #include "KKE_main.h"
 #include "KKE_utils.h"
 
+#include "USD_wm_types.h"
 #include "USD_api.h"
 #include "USD_types.h"
-#include "USD_wm_types.h"
 #include "USD_object.h"
 
 KRAKEN_NAMESPACE_BEGIN

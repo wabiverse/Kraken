@@ -25,30 +25,33 @@
 #pragma once
 
 #include "KKE_api.h"
-#include "USD_object.h"
 
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/common.h>
 
 KRAKEN_NAMESPACE_BEGIN
 
-typedef wabi::UsdPrim Prim;
+/* kraken fwd. */
 
-struct uiStyle;
-
+struct ARegion;
+struct kContext;
+struct kContextDataResult;
+struct KrakenPRIM;
+struct KrakenSTAGE;
+struct kScreen;
 struct ScrArea;
 struct Main;
-struct ARegion;
 struct ReportList;
 struct Scene;
-struct kScreen;
+struct uiStyle;
 struct UserDef;
+struct wmMsgBus;
+struct wmNotifier;
+struct wmSpaceTypeListenerParams;
 struct wmWindowManager;
 struct wmWindow;
 struct WorkSpace;
-
-struct kContext;
-struct kContextDataResult;
+struct WorkSpaceInstanceHook;
 
 enum
 {
@@ -69,12 +72,12 @@ void CTX_free(kContext *C);
 
 struct kContextStore *CTX_store_add(std::vector<struct kContextStore *> contexts,
                                     const char *name,
-                                    const struct KrakenPRIM *ptr);
+                                    const KrakenPRIM *ptr);
 struct kContextStore *CTX_store_add_all(std::vector<struct kContextStore *> contexts,
                                         struct kContextStore *context);
 struct kContextStore *CTX_store_get(kContext *C);
 void CTX_store_set(kContext *C, struct kContextStore *store);
-const struct KrakenPRIM *CTX_store_ptr_lookup(const struct kContextStore *store,
+const KrakenPRIM *CTX_store_ptr_lookup(const struct kContextStore *store,
                                               const char *name,
                                               const KrakenPRIM *type);
 struct kContextStore *CTX_store_copy(struct kContextStore *store);
@@ -87,9 +90,9 @@ void CTX_store_free_list(const std::vector<kContextStore*> &contexts);
 bool CTX_py_init_get(kContext *C);
 void CTX_py_init_set(kContext *C, bool value);
 void *CTX_py_dict_get(const kContext *C);
-void CTX_data_pointer_set_ptr(kContextDataResult *result, const struct KrakenPRIM *ptr);
+void CTX_data_pointer_set_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
 void CTX_data_type_set(kContextDataResult *result, short type);
-void CTX_data_list_add_ptr(kContextDataResult *result, const struct KrakenPRIM *ptr);
+void CTX_data_list_add_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
 
 /**
  * Kraken Context Getters:
@@ -134,7 +137,7 @@ void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
 struct kContextStoreEntry
 {
   wabi::TfToken name;
-  KrakenPRIM ptr;
+  KrakenPRIM *ptr;
 };
 
 struct kContextStore

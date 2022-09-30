@@ -24,13 +24,9 @@
  * Set the Stage.
  */
 
-#include "USD_area.h"
-#include "USD_context.h"
-#include "USD_region.h"
-
 #include "KKE_context.h"
-#include "KKE_robinhood.h"
-#include "KKE_utils.h"
+
+#include "USD_types.h"
 
 #include <wabi/base/gf/vec2i.h>
 #include <wabi/usd/usdUI/screen.h>
@@ -266,13 +262,13 @@ kScreen::kScreen(kContext *C, const wabi::SdfPath &stagepath)
 
 struct wmRegionMessageSubscribeParams
 {
-  const struct kContext *context;
-  struct wmMsgBus *message_bus;
-  struct WorkSpace *workspace;
-  struct Scene *scene;
-  struct kScreen *screen;
-  struct ScrArea *area;
-  struct ARegion *region;
+  const kContext *context;
+  wmMsgBus *message_bus;
+  WorkSpace *workspace;
+  Scene *scene;
+  kScreen *screen;
+  ScrArea *area;
+  ARegion *region;
 
   wmRegionMessageSubscribeParams()
     : context(POINTER_ZERO),

@@ -24,6 +24,7 @@
 
 #include "LUXO_runtime.h"
 
+#include "USD_wm_types.h"
 #include "USD_api.h"
 #include "USD_area.h"
 #include "USD_context.h"
@@ -34,7 +35,6 @@
 #include "USD_screen.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
-#include "USD_wm_types.h"
 #include "USD_workspace.h"
 
 #include "KLI_utildefines.h"

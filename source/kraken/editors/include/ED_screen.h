@@ -53,10 +53,10 @@ void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen);
 
 void ED_region_exit(kContext *C, ARegion *region);
 
-void ED_area_tag_refresh(struct ScrArea *area);
-void ED_region_tag_redraw(struct ARegion *region);
-void ED_region_tag_redraw_no_rebuild(struct ARegion *region);
-void ED_region_tag_refresh_ui(struct ARegion *region);
+void ED_area_tag_refresh(ScrArea *area);
+void ED_region_tag_redraw(ARegion *region);
+void ED_region_tag_redraw_no_rebuild(ARegion *region);
+void ED_region_tag_refresh_ui(ARegion *region);
 
 /* message_bus callbacks */
 void ED_region_do_msg_notify_tag_redraw(struct kContext *C,

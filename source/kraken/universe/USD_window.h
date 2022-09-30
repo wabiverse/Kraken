@@ -24,12 +24,11 @@
  * Set the Stage.
  */
 
-#include "USD_area.h"
+#include "USD_wm_types.h"
 #include "USD_context.h"
 #include "USD_region.h"
 #include "USD_scene.h"
 #include "USD_screen.h"
-#include "USD_wm_types.h"
 #include "USD_workspace.h"
 #include "USD_ID.h"
 
@@ -192,10 +191,10 @@ struct wmNotifier
 
 struct wmSpaceTypeListenerParams
 {
-  struct wmWindow *window;
+  wmWindow *window;
   struct ScrArea *area;
-  struct wmNotifier *notifier;
-  const struct Scene *scene;
+  wmNotifier *notifier;
+  const Scene *scene;
 
   wmSpaceTypeListenerParams()
     : window(POINTER_ZERO),

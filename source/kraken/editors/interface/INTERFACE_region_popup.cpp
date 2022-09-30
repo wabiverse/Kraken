@@ -24,8 +24,11 @@
 
 #include "kraken/kraken.h"
 
-#include "USD_operator.h"
 #include "USD_wm_types.h"
+#include "USD_operator.h"
+
+#include "WM_cursors_api.h"
+#include "WM_cursors.h"
 
 #include "ED_screen.h"
 

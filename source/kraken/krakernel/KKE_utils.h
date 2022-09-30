@@ -113,6 +113,8 @@ enum
  * which is why these API's are in the same header & source file.
  * \{ */
 
+typedef struct RSet RSet;
+
 typedef RHashHashFP RSetHashFP;
 typedef RHashCmpFP RSetCmpFP;
 typedef RHashKeyFreeFP RSetKeyFreeFP;

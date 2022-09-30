@@ -26,10 +26,10 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "USD_wm_types.h"
 #include "USD_ID.h"
 #include "USD_object.h"
 #include "USD_operator.h"
-#include "USD_wm_types.h"
 
 #include "WM_api.h"
 #include "WM_debug_codes.h"
@@ -193,7 +193,7 @@ void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
   const char *none = "<none>";
   printf("rna(id='%s', %s.%s, info='%s')\n",
          msg_key_params->ptr.owner_id ? ((ID *)msg_key_params->ptr.owner_id)->name : none,
-         msg_key_params->ptr.type ? msg_key_params->ptr.type->identifier : none,
+         msg_key_params->ptr.type ? msg_key_params->ptr.type->identifier : TfToken(none),
          msg_key_params->prop ? ((const IDProperty *)msg_key_params->prop)->name.GetText() : none,
          id_repr);
 

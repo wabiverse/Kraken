@@ -58,6 +58,7 @@
 #define WM_ID_(z) KRAKEN_WM_TOKENS->z
 
 /* Switch Get() to Define() for production. */
+#define KRAKEN_KSTAGE_CREATE_CHILD(i) Define(i, prim->path.AppendPath(stagepath))
 #define KRAKEN_STAGE_CREATE_CHILD(i) Define(CTX_data_stage(i), prim->path.AppendPath(stagepath))
 #define KRAKEN_STAGE_CREATE(g) Define(CTX_data_stage(g), stagepath)
 #define KRAKEN_PRIM_OPERATOR_CREATE(x, y) \

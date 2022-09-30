@@ -25,7 +25,7 @@
 #pragma once
 
 #include "USD_api.h"
-#include "USD_types.h"
+#include "USD_wm_types.h"
 #include "USD_ID.h"
 
 #include "KLI_string.h"
@@ -41,6 +41,31 @@
 #include <wabi/usd/usd/collectionAPI.h>
 
 KRAKEN_NAMESPACE_BEGIN
+
+enum PropertyType
+{
+  PROP_BOOLEAN = 0,
+  PROP_INT = 1,
+  PROP_FLOAT = 2,
+  PROP_STRING = 3,
+  PROP_ENUM = 4,
+  PROP_POINTER = 5,
+  PROP_COLLECTION = 6,
+};
+
+enum FunctionFlag
+{
+  FUNC_USE_SELF_ID = (1 << 11),
+  FUNC_NO_SELF = (1 << 0),
+  FUNC_USE_SELF_TYPE = (1 << 1),
+  FUNC_USE_MAIN = (1 << 2),
+  FUNC_USE_CONTEXT = (1 << 3),
+  FUNC_USE_REPORTS = (1 << 4),
+  FUNC_REGISTER = (1 << 5),
+  FUNC_REGISTER_OPTIONAL = FUNC_REGISTER | (1 << 6),
+  FUNC_ALLOW_WRITE = (1 << 12),
+  FUNC_RUNTIME = (1 << 9),
+};
 
 /* Make sure enums are updated with these */
 /* HIGHEST FLAG IN USE: 1 << 31
@@ -246,6 +271,57 @@ struct KrakenPROP : public wabi::UsdAttribute
 };
 
 typedef std::vector<KrakenPROP *> PropertyVectorLUXO;
+
+typedef int (*ObjectValidateFunc)(const wabi::UsdPrim &ptr, void *data, int *have_function);
+typedef int (*ObjectCallbackFunc)(struct kContext *C,
+                                  const wabi::UsdPrim &ptr,
+                                  void *func,
+                                  UsdPropertyVector list);
+typedef void (*ObjectFreeFunc)(void *data);
+typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
+                                                 struct ReportList *reports,
+                                                 void *data,
+                                                 const char *identifier,
+                                                 ObjectValidateFunc validate,
+                                                 ObjectCallbackFunc call,
+                                                 ObjectFreeFunc free);
+typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const wabi::UsdPrim &type);
+typedef void **(*ObjectInstanceFunc)(struct KrakenPRIM *ptr);
+
+typedef void (*PropStringGetFunc)(struct KrakenPRIM *ptr, char *value);
+typedef int (*PropStringLengthFunc)(struct KrakenPRIM *ptr);
+typedef void (*PropStringSetFunc)(struct KrakenPRIM *ptr, const char *value);
+typedef int (*PropEnumGetFunc)(struct KrakenPRIM *ptr);
+typedef void (*PropStringGetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop, char *value);
+typedef int (*PropStringLengthFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop);
+typedef void (*PropStringSetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop, const char *value);
+typedef int (*PropEnumGetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop);
+typedef void (*PropEnumSetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop, int value);
+
+typedef std::vector<wabi::UsdCollectionAPI> UsdCollectionsVector;
+
+typedef struct StringPropertySearchVisitParams
+{
+  /** Text being searched for (never NULL). */
+  const char *text;
+  /** Additional information to display (optional, may be NULL). */
+  const char *info;
+} StringPropertySearchVisitParams;
+typedef void (*StringPropertySearchVisitFunc)(void *visit_user_data,
+                                              const StringPropertySearchVisitParams *params);
+typedef void (*StringPropertySearchFunc)(const struct kContext *C,
+                                         struct KrakenPRIM *ptr,
+                                         KrakenPROP *prop,
+                                         const char *edit_text,
+                                         StringPropertySearchVisitFunc visit_fn,
+                                         void *visit_user_data);
+
+typedef enum eStringPropertySearchFlag
+{
+  PROP_STRING_SEARCH_SUPPORTED = (1 << 0),
+  PROP_STRING_SEARCH_SORT = (1 << 1),
+  PROP_STRING_SEARCH_SUGGESTION = (1 << 2),
+} eStringPropertySearchFlag;
 
 struct KrakenPROPString
 {

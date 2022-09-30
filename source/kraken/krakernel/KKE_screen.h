@@ -28,14 +28,13 @@
 #include "KKE_context.h"
 #include "KKE_utils.h"
 
-#include "USD_area.h"
+#include "USD_wm_types.h"
 #include "USD_object.h"
 #include "USD_region.h"
 #include "USD_scene.h"
 #include "USD_screen.h"
 #include "USD_space_types.h"
 #include "USD_window.h"
-#include "USD_wm_types.h"
 #include "USD_workspace.h"
 
 #include "wabi/usd/usdUI/window.h"
@@ -46,11 +45,11 @@ KRAKEN_NAMESPACE_BEGIN
 
 struct wmRegionListenerParams
 {
-  struct wmWindow *window;
+  wmWindow *window;
   struct ScrArea *area;
-  struct ARegion *region;
-  struct wmNotifier *notifier;
-  const struct Scene *scene;
+  ARegion *region;
+  wmNotifier *notifier;
+  const Scene *scene;
 
   wmRegionListenerParams()
     : window(POINTER_ZERO),
@@ -74,7 +73,7 @@ struct ARegionType
   void (*layout)(const kContext *C, ARegion *region);
   int (*snap_size)(const ARegion *region, int size, int axis);
   void (*listener)(const wmRegionListenerParams *params);
-  void (*message_subscribe)(const struct wmRegionMessageSubscribeParams *params);
+  void (*message_subscribe)(const wmRegionMessageSubscribeParams *params);
 
   void (*free)(ARegion *);
 
@@ -82,7 +81,7 @@ struct ARegionType
 
   void (*operatortypes)(void);
   void (*keymap)(wmKeyConfig *keyconf);
-  void (*cursor)(wmWindow *win, ScrArea *area, ARegion *region);
+  void (*cursor)(wmWindow *win, struct ScrArea *area, ARegion *region);
 
   /* return context data */
   kContextDataCallback context;
@@ -118,19 +117,19 @@ struct SpaceType
   int spaceid;  /* unique space identifier */
   int iconid;   /* icon lookup for menus */
 
-  struct SpaceLink *(*create)(const ScrArea *area, const Scene *scene);
+  struct SpaceLink *(*create)(const struct ScrArea *area, const Scene *scene);
 
   void (*free)(struct SpaceLink *sl);
 
 
-  void (*init)(wmWindowManager *wm, ScrArea *area);
-  void (*exit)(wmWindowManager *wm, ScrArea *area);
-  void (*listener)(const struct wmSpaceTypeListenerParams *params);
+  void (*init)(wmWindowManager *wm, struct ScrArea *area);
+  void (*exit)(wmWindowManager *wm, struct ScrArea *area);
+  void (*listener)(const wmSpaceTypeListenerParams *params);
 
 
-  void (*deactivate)(ScrArea *area);
+  void (*deactivate)(struct ScrArea *area);
 
-  void (*refresh)(const kContext *C, ScrArea *area);
+  void (*refresh)(const kContext *C, struct ScrArea *area);
 
   struct SpaceLink *(*duplicate)(struct SpaceLink *sl);
 
@@ -144,10 +143,10 @@ struct SpaceType
   kContextDataCallback context;
 
   /* Used when we want to replace an ID by another (or NULL). */
-  void (*id_remap)(ScrArea *area, struct SpaceLink *sl, wabi::TfToken old_id, wabi::TfToken new_id);
+  void (*id_remap)(struct ScrArea *area, struct SpaceLink *sl, wabi::TfToken old_id, wabi::TfToken new_id);
 
-  int (*space_subtype_get)(ScrArea *area);
-  void (*space_subtype_set)(ScrArea *area, int value);
+  int (*space_subtype_get)(struct ScrArea *area);
+  void (*space_subtype_set)(struct ScrArea *area, int value);
   // void (*space_subtype_item_extend)(kContext *C, EnumPropertyItem **item, int *totitem);
 
   /* region type definitions */
@@ -169,8 +168,8 @@ struct SpaceType
 SdfPath make_screenpath(const char *layout_name, int id);
 int find_free_screenid(kContext *C);
 
-ARegion *KKE_area_find_region_type(const ScrArea *area, int type);
-ARegion *KKE_area_find_region_active_win(ScrArea *area);
+ARegion *KKE_area_find_region_type(const struct ScrArea *area, int type);
+ARegion *KKE_area_find_region_active_win(struct ScrArea *area);
 
 SpaceType *KKE_spacetype_from_id(int spaceid);
 bool KKE_screen_is_used(const kScreen *screen);

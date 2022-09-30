@@ -1,11 +1,28 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
-
-/** \file
- * \ingroup editorui
+/*
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
 #pragma once
+
+/**
+ * @file
+ * Editors.
+ * Tools for Artists.
+ */
 
 #include "KLI_compiler_attrs.h"
 #include "KLI_listbase.h"
@@ -15,9 +32,12 @@
 
 #include "UI_interface_icons.h"
 
+#include "USD_wm_types.h"
 #include "USD_listBase.h"
 #include "USD_object.h"
-#include "USD_wm_types.h"
+#include "USD_area.h"
+#include "USD_screen.h"
+#include "USD_region.h"
 
 #include <wabi/usd/usd/prim.h>
 
@@ -30,59 +50,18 @@ struct ID;
 struct IDProperty;
 struct EnumPropertyItem;
 
-KRAKEN_NAMESPACE_BEGIN
+/* C handle for C++ #ui::AbstractView type. */
+typedef struct uiViewHandle uiViewHandle;
+/* C handle for C++ #ui::AbstractViewItem type. */
+typedef struct uiViewItemHandle uiViewItemHandle;
 
-struct ARegion;
-struct AssetFilterSettings;
-struct AssetHandle;
-struct AssetMetaData;
-struct AutoComplete;
-struct FileDirEntry;
-struct FileSelectParams;
-struct ImBuf;
-struct Image;
-struct ImageUser;
-struct MTex;
-struct Panel;
-struct PanelType;
-struct KrakenPRIM;
-struct KrakenPROP;
-struct ReportList;
-struct ResultKRF;
-struct kContext;
-struct kContextStore;
-struct kNode;
-struct kNodeSocket;
-struct kNodeTree;
-struct kScreen;
-struct uiBlockInteraction_Handle;
-struct uiButSearch;
-struct uiFontStyle;
-struct uiList;
-struct uiStyle;
-struct uiWidgetColors;
-struct wmDrag;
-struct wmDropBox;
-struct wmEvent;
-struct wmGizmo;
-struct wmKeyConfig;
-struct wmKeyMap;
-struct wmKeyMapItem;
-struct wmMsgBus;
-struct wmOperator;
-struct wmOperatorType;
-struct wmRegionListenerParams;
-struct wmWindow;
+KRAKEN_NAMESPACE_BEGIN
 
 typedef struct uiBlock uiBlock;
 typedef struct uiBut uiBut;
 typedef struct uiButExtraOpIcon uiButExtraOpIcon;
 typedef struct uiLayout uiLayout;
 typedef struct uiPopupBlockHandle uiPopupBlockHandle;
-/* C handle for C++ #ui::AbstractView type. */
-typedef struct uiViewHandle uiViewHandle;
-/* C handle for C++ #ui::AbstractViewItem type. */
-typedef struct uiViewItemHandle uiViewItemHandle;
 
 /* Defines */
 
@@ -525,7 +504,7 @@ typedef struct uiSearchItems uiSearchItems;
 typedef void (*uiButHandleFunc)(struct kContext *C, void *arg1, void *arg2);
 typedef void (*uiButHandleRenameFunc)(struct kContext *C, void *arg, char *origstr);
 typedef void (*uiButHandleNFunc)(struct kContext *C, void *argN, void *arg2);
-typedef void (*uiButHandleHoldFunc)(struct kContext *C, struct ARegion *butregion, uiBut *but);
+typedef void (*uiButHandleHoldFunc)(struct kContext *C, ARegion *butregion, uiBut *but);
 typedef int (*uiButCompleteFunc)(struct kContext *C, char *str, void *arg);
 
 /** Function to compare the identity of two buttons over redraws, to check if they represent the
@@ -533,8 +512,8 @@ typedef int (*uiButCompleteFunc)(struct kContext *C, char *str, void *arg);
 typedef bool (*uiButIdentityCompareFunc)(const uiBut *a, const uiBut *b);
 
 /* Search types. */
-typedef struct ARegion *(*uiButSearchCreateFn)(struct kContext *C,
-                                               struct ARegion *butregion,
+typedef ARegion *(*uiButSearchCreateFn)(struct kContext *C,
+                                               ARegion *butregion,
                                                struct uiButSearch *search_but);
 /**
  * `is_first` is typically used to ignore search filtering when the menu is first opened in order
@@ -550,8 +529,8 @@ typedef bool (*uiButSearchContextMenuFn)(struct kContext *C,
                                          void *arg,
                                          void *active,
                                          const struct wmEvent *event);
-typedef struct ARegion *(*uiButSearchTooltipFn)(struct kContext *C,
-                                                struct ARegion *region,
+typedef ARegion *(*uiButSearchTooltipFn)(struct kContext *C,
+                                                ARegion *region,
                                                 const struct rcti *item_rect,
                                                 void *arg,
                                                 void *active);
@@ -640,7 +619,7 @@ bool UI_block_is_empty_ex(const uiBlock *block, bool skip_title);
 bool UI_block_is_empty(const uiBlock *block);
 bool UI_block_can_add_separator(const uiBlock *block);
 
-struct uiList *UI_list_find_mouse_over(const struct ARegion *region, const struct wmEvent *event);
+struct uiList *UI_list_find_mouse_over(const ARegion *region, const struct wmEvent *event);
 
 /* interface_region_menu_popup.c */
 
@@ -682,7 +661,7 @@ void UI_popup_menu_retval_set(const uiBlock *block, int retval, bool enable);
 /**
  * Setting the button makes the popup open from the button instead of the cursor.
  */
-void UI_popup_menu_but_set(uiPopupMenu *pup, struct ARegion *butregion, uiBut *but);
+void UI_popup_menu_but_set(uiPopupMenu *pup, ARegion *butregion, uiBut *but);
 
 /* interface_region_popover.c */
 
@@ -737,7 +716,7 @@ struct uiLayout *UI_pie_menu_layout(struct uiPieMenu *pie);
  *
  * Functions used to create popup blocks. These are like popup menus
  * but allow using all button types and creating an own layout. */
-typedef uiBlock *(*uiBlockCreateFunc)(struct kContext *C, struct ARegion *region, void *arg1);
+typedef uiBlock *(*uiBlockCreateFunc)(struct kContext *C, ARegion *region, void *arg1);
 typedef void (*uiBlockCancelFunc)(struct kContext *C, void *arg1);
 
 void UI_popup_block_invoke(struct kContext *C,
@@ -777,7 +756,7 @@ bool UI_popup_block_name_exists(const struct kScreen *screen, const wabi::TfToke
  */
 
 uiBlock *UI_block_begin(const struct kContext *C,
-                        struct ARegion *region,
+                        ARegion *region,
                         const wabi::TfToken &name,
                         eUIEmbossType emboss);
 void UI_block_end_ex(const struct kContext *C, uiBlock *block, const int xy[2], int r_xy[2]);
@@ -813,16 +792,16 @@ void UI_block_free(const struct kContext *C, uiBlock *block);
 /**
  * Can be called with C==NULL.
  */
-void UI_blocklist_free(const struct kContext *C, struct ARegion *region);
-void UI_blocklist_free_inactive(const struct kContext *C, struct ARegion *region);
+void UI_blocklist_free(const struct kContext *C, ARegion *region);
+void UI_blocklist_free_inactive(const struct kContext *C, ARegion *region);
 
 /**
  * Is called by notifier.
  */
 void UI_screen_free_active_but_highlight(const struct kContext *C, struct kScreen *screen);
-void UI_region_free_active_but_all(struct kContext *context, struct ARegion *region);
+void UI_region_free_active_but_all(struct kContext *context, ARegion *region);
 
-void UI_block_region_set(uiBlock *block, struct ARegion *region);
+void UI_block_region_set(uiBlock *block, ARegion *region);
 
 void UI_block_lock_set(uiBlock *block, bool val, const char *lockstr);
 void UI_block_lock_clear(uiBlock *block);
@@ -907,12 +886,12 @@ void UI_but_type_set_menu_from_pulldown(uiBut *but);
  * \return false when button removed.
  */
 bool UI_but_active_only_ex(const struct kContext *C,
-                           struct ARegion *region,
+                           ARegion *region,
                            uiBlock *block,
                            uiBut *but,
                            bool remove_on_failure);
 bool UI_but_active_only(const struct kContext *C,
-                        struct ARegion *region,
+                        ARegion *region,
                         uiBlock *block,
                         uiBut *but);
 /**
@@ -920,13 +899,13 @@ bool UI_but_active_only(const struct kContext *C,
  * otherwise the handler won't be removed, see: T71112.
  */
 bool UI_block_active_only_flagged_buttons(const struct kContext *C,
-                                          struct ARegion *region,
+                                          ARegion *region,
                                           struct uiBlock *block);
 
 /**
  * Simulate button click.
  */
-void UI_but_execute(const struct kContext *C, struct ARegion *region, uiBut *but);
+void UI_but_execute(const struct kContext *C, ARegion *region, uiBut *but);
 
 bool UI_but_online_manual_id(const uiBut *but,
                              char *r_str,
@@ -1757,7 +1736,7 @@ void UI_but_tooltip_refresh(struct kContext *C, uiBut *but);
 void UI_but_tooltip_timer_remove(struct kContext *C, uiBut *but);
 
 bool UI_textbutton_activate_rna(const struct kContext *C,
-                                struct ARegion *region,
+                                ARegion *region,
                                 const void *rna_poin_data,
                                 const char *rna_prop_id);
 bool UI_textbutton_activate_but(const struct kContext *C, uiBut *but);
@@ -1846,18 +1825,18 @@ void UI_but_drag_set_image(uiBut *but,
  * could use a good cleanup, though how they will function in 2.5 is
  * not clear yet so we postpone that. */
 
-void UI_panels_begin(const struct kContext *C, struct ARegion *region);
-void UI_panels_end(const struct kContext *C, struct ARegion *region, int *r_x, int *r_y);
+void UI_panels_begin(const struct kContext *C, ARegion *region);
+void UI_panels_end(const struct kContext *C, ARegion *region, int *r_x, int *r_y);
 /**
  * Draw panels, selected (panels currently being dragged) on top.
  */
-void UI_panels_draw(const struct kContext *C, struct ARegion *region);
+void UI_panels_draw(const struct kContext *C, ARegion *region);
 
 struct Panel *UI_panel_find_by_type(struct ListBase *lb, const struct PanelType *pt);
 /**
  * \note \a panel should be return value from #UI_panel_find_by_type and can be NULL.
  */
-struct Panel *UI_panel_begin(struct ARegion *region,
+struct Panel *UI_panel_begin(ARegion *region,
                              struct ListBase *lb,
                              uiBlock *block,
                              struct PanelType *pt,
@@ -1894,7 +1873,7 @@ bool UI_panel_is_active(const struct Panel *panel);
  * For button layout next to label.
  */
 void UI_panel_label_offset(const struct uiBlock *block, int *r_x, int *r_y);
-bool UI_panel_should_show_background(const struct ARegion *region,
+bool UI_panel_should_show_background(const ARegion *region,
                                      const struct PanelType *panel_type);
 int UI_panel_size_y(const struct Panel *panel);
 bool UI_panel_is_dragging(const struct Panel *panel);
@@ -1905,19 +1884,19 @@ bool UI_panel_is_dragging(const struct Panel *panel);
 bool UI_panel_matches_search_filter(const struct Panel *panel);
 bool UI_panel_can_be_pinned(const struct Panel *panel);
 
-bool UI_panel_category_is_visible(const struct ARegion *region);
-void UI_panel_category_add(struct ARegion *region, const char *name);
-struct PanelCategoryDyn *UI_panel_category_find(const struct ARegion *region, const char *idname);
-struct PanelCategoryStack *UI_panel_category_active_find(struct ARegion *region,
+bool UI_panel_category_is_visible(const ARegion *region);
+void UI_panel_category_add(ARegion *region, const char *name);
+struct PanelCategoryDyn *UI_panel_category_find(const ARegion *region, const char *idname);
+struct PanelCategoryStack *UI_panel_category_active_find(ARegion *region,
                                                          const char *idname);
-const char *UI_panel_category_active_get(struct ARegion *region, bool set_fallback);
-void UI_panel_category_active_set(struct ARegion *region, const char *idname);
-void UI_panel_category_active_set_default(struct ARegion *region, const char *idname);
-void UI_panel_category_clear_all(struct ARegion *region);
+const char *UI_panel_category_active_get(ARegion *region, bool set_fallback);
+void UI_panel_category_active_set(ARegion *region, const char *idname);
+void UI_panel_category_active_set_default(ARegion *region, const char *idname);
+void UI_panel_category_clear_all(ARegion *region);
 /**
  * Draw vertical tabs on the left side of the region, one tab per category.
  */
-void UI_panel_category_draw_all(struct ARegion *region, const char *category_id_active);
+void UI_panel_category_draw_all(ARegion *region, const char *category_id_active);
 
 /* Panel custom data. */
 struct kraken::KrakenPRIM *UI_panel_custom_data_get(const struct Panel *panel);
@@ -1931,7 +1910,7 @@ void UI_panel_custom_data_set(struct Panel *panel, struct kraken::KrakenPRIM *cu
  * having only one panel corresponding to each #PanelType.
  */
 struct Panel *UI_panel_add_instanced(const struct kContext *C,
-                                     struct ARegion *region,
+                                     ARegion *region,
                                      struct ListBase *panels,
                                      const char *panel_idname,
                                      struct kraken::KrakenPRIM *custom_data);
@@ -1941,7 +1920,7 @@ struct Panel *UI_panel_add_instanced(const struct kContext *C,
  * \note Can be called with NULL \a C, but it should be avoided because
  * handlers might not be removed.
  */
-void UI_panels_free_instanced(const struct kContext *C, struct ARegion *region);
+void UI_panels_free_instanced(const struct kContext *C, ARegion *region);
 
 #define INSTANCED_PANEL_UNIQUE_STR_LEN 16
 /**
@@ -1960,7 +1939,7 @@ typedef void (*uiListPanelIDFromDataFunc)(void *data_link, char *r_idname);
  * \param panel_idname_func: Function to find the #PanelType.idname for each item in the data list.
  * For a readability and generality, this lookup happens separately for each type of panel list.
  */
-bool UI_panel_list_matches_data(struct ARegion *region,
+bool UI_panel_list_matches_data(ARegion *region,
                                 struct ListBase *data,
                                 uiListPanelIDFromDataFunc panel_idname_func);
 
@@ -2121,7 +2100,7 @@ void UI_block_layout_free(uiBlock *block);
  */
 bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter);
 
-void UI_region_message_subscribe(struct ARegion *region, struct wmMsgBus *mbus);
+void UI_region_message_subscribe(ARegion *region, struct wmMsgBus *mbus);
 
 uiBlock *uiLayoutGetBlock(uiLayout *layout);
 
@@ -3022,7 +3001,7 @@ uiBut *UI_context_active_but_prop_get(const struct kContext *C,
                                       struct kraken::KrakenPROP **r_prop,
                                       int *r_index);
 void UI_context_active_but_prop_handle(struct kContext *C, bool handle_undo);
-void UI_context_active_but_clear(struct kContext *C, struct wmWindow *win, struct ARegion *region);
+void UI_context_active_but_clear(struct kContext *C, struct wmWindow *win, ARegion *region);
 
 struct wmOperator *UI_context_active_operator_get(const struct kContext *C);
 /**
@@ -3042,15 +3021,15 @@ void UI_context_active_but_prop_get_templateID(struct kContext *C,
                                                struct kraken::KrakenPROP **r_prop);
 struct ID *UI_context_active_but_get_tab_ID(struct kContext *C);
 
-uiBut *UI_region_active_but_get(const struct ARegion *region);
-uiBut *UI_region_but_find_rect_over(const struct ARegion *region, const struct rcti *rect_px);
-uiBlock *UI_region_block_find_mouse_over(const struct ARegion *region,
+uiBut *UI_region_active_but_get(const ARegion *region);
+uiBut *UI_region_but_find_rect_over(const ARegion *region, const struct rcti *rect_px);
+uiBlock *UI_region_block_find_mouse_over(const ARegion *region,
                                          const int xy[2],
                                          bool only_clip);
 /**
  * Try to find a search-box region opened from a button in \a button_region.
  */
-struct ARegion *UI_region_searchbox_region_get(const struct ARegion *button_region);
+ARegion *UI_region_searchbox_region_get(const ARegion *button_region);
 
 /** #uiFontStyle.align */
 typedef enum eFontStyle_Align
@@ -3162,7 +3141,7 @@ void UI_editsource_but_replace(const uiBut *old_but, uiBut *new_but);
  * \param region: The region the button is placed in. Make sure this is actually the one the button
  *                is placed in, not just the context region.
  */
-void UI_but_ensure_in_view(const struct kContext *C, struct ARegion *region, const uiBut *but);
+void UI_but_ensure_in_view(const struct kContext *C, ARegion *region, const uiBut *but);
 
 /* UI_butstore_ helpers */
 typedef struct uiButStore uiButStore;
@@ -3196,17 +3175,17 @@ void UI_butstore_unregister(uiButStore *bs_handle, uiBut **but_p);
  * \param is_label: When true, show a small tip that only shows the name, otherwise show the full
  *                  tooltip.
  */
-struct ARegion *UI_tooltip_create_from_button(struct kContext *C,
-                                              struct ARegion *butregion,
+ARegion *UI_tooltip_create_from_button(struct kContext *C,
+                                              ARegion *butregion,
                                               uiBut *but,
                                               bool is_label);
-struct ARegion *UI_tooltip_create_from_button_or_extra_icon(struct kContext *C,
-                                                            struct ARegion *butregion,
+ARegion *UI_tooltip_create_from_button_or_extra_icon(struct kContext *C,
+                                                            ARegion *butregion,
                                                             uiBut *but,
                                                             uiButExtraOpIcon *extra_icon,
                                                             bool is_label);
-struct ARegion *UI_tooltip_create_from_gizmo(struct kContext *C, struct wmGizmo *gz);
-void UI_tooltip_free(struct kContext *C, struct kScreen *screen, struct ARegion *region);
+ARegion *UI_tooltip_create_from_gizmo(struct kContext *C, struct wmGizmo *gz);
+void UI_tooltip_free(struct kContext *C, struct kScreen *screen, ARegion *region);
 
 typedef struct
 {
@@ -3225,9 +3204,9 @@ typedef struct
  * \param item_rect: Rectangle of the search item in search region space (#ui_searchbox_butrect())
  *                   which is passed to the tooltip callback.
  */
-struct ARegion *UI_tooltip_create_from_search_item_generic(
+ARegion *UI_tooltip_create_from_search_item_generic(
   struct kContext *C,
-  const struct ARegion *searchbox_region,
+  const ARegion *searchbox_region,
   const struct rcti *item_rect,
   const uiSearchItemTooltipData *item_tooltip_data);
 
@@ -3305,13 +3284,13 @@ char *UI_view_item_drop_tooltip(const uiViewItemHandle *item, const struct wmDra
  */
 bool UI_view_item_drop_handle(struct kContext *C,
                               const uiViewItemHandle *item_,
-                              const struct ListBase *drags);
+                              const std::vector<wmDrag *> *drags);
 
 /**
  * \param xy: Coordinate to find a view item at, in window space.
  */
-uiViewItemHandle *UI_region_views_find_item_at(const struct ARegion *region, const int xy[2])
+uiViewItemHandle *UI_region_views_find_item_at(const ARegion *region, const int xy[2])
   ATTR_NONNULL();
-uiViewItemHandle *UI_region_views_find_active_item(const struct ARegion *region);
+uiViewItemHandle *UI_region_views_find_active_item(const ARegion *region);
 
 KRAKEN_NAMESPACE_END

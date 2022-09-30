@@ -24,11 +24,12 @@
 
 #include <vector>
 
-#include "USD_area.h"
+#include "USD_wm_types.h"
 #include "USD_operator.h"
+#include "USD_area.h"
+#include "USD_region.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
-#include "USD_wm_types.h"
 
 #include "WM_draw.h"
 

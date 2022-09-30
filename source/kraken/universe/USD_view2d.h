@@ -26,6 +26,7 @@
 
 #include "kraken/kraken.h"
 
+#include "USD_wm_types.h"
 #include "USD_vec_types.h"
 
 /** Scroller flags for View2D (#View2D.scroll). */
@@ -99,5 +100,5 @@ typedef struct View2D {
 
   /* animated smooth view */
   // struct SmoothView2DStore *sms;
-  struct kraken::wmTimer *smooth_timer;
+  kraken::wmTimer *smooth_timer;
 } View2D;

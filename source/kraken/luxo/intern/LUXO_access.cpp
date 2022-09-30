@@ -29,8 +29,8 @@
 #include "KKE_idprop.h"
 
 #include "USD_api.h"
-#include "USD_object.h"
 #include "USD_types.h"
+#include "USD_object.h"
 #include "USD_scene.h"
 
 #include "LUXO_runtime.h"

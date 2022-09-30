@@ -26,11 +26,13 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "USD_wm_types.h"
 #include "USD_area.h"
 #include "USD_operator.h"
 #include "USD_screen.h"
+#include "USD_types.h"
+#include "USD_object.h"
 #include "USD_userpref.h"
-#include "USD_wm_types.h"
 
 #include "WM_window.h"
 
@@ -101,7 +103,9 @@ struct uiTooltipData {
 
 ARegion *ui_region_temp_add(kScreen *screen)
 {
-  ARegion *region = MEM_cnew<ARegion>(__func__);
+  wabi::UsdStageWeakPtr stage = screen->GetPrim().GetStage();
+
+  ARegion *region = MEM_new<ARegion>(__func__, stage, screen, SdfPath("RegionTemp"));
   screen->regions.push_back(region);
 
   region->regiontype = RGN_TYPE_TEMPORARY;

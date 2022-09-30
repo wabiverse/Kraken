@@ -24,20 +24,21 @@
  * Set the Stage.
  */
 
-#include "USD_context.h"
-#include "USD_region.h"
-#include "USD_screen.h"
-#include "USD_space_types.h"
-
-#include "KLI_icons.h"
-
 #include "KKE_context.h"
-#include "KKE_screen.h"
+
+#include "USD_screen.h"
+#include "USD_types.h"
 
 #include <wabi/usd/usdUI/area.h>
 
 KRAKEN_NAMESPACE_BEGIN
 
+struct ARegion;
+struct kScreen;
+struct ScrVert;
+struct SpaceLink;
+struct SpaceType;
+struct wmEventHandler;
 
 enum GlobalAreaAlign
 {
@@ -67,7 +68,7 @@ struct ScrGlobalAreaData
 };
 
 
-struct ScrArea : UsdUIArea
+struct ScrArea : public UsdUIArea
 {
   int areaid;
   SdfPath path;
@@ -83,7 +84,7 @@ struct ScrArea : UsdUIArea
   UsdAttribute pos;
   UsdAttribute size;
 
-  struct SpaceType *type;
+  SpaceType *type;
   ScrGlobalAreaData *global;
 
   /** Private, for spacetype refresh callback. */

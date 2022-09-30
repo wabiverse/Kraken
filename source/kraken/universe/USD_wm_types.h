@@ -24,6 +24,8 @@
  * Set the Stage.
  */
 
+#include "USD_api.h"
+
 #include "KLI_utildefines.h"
 #include "KLI_compiler_attrs.h"
 #include "KLI_compiler_compat.h"
@@ -635,7 +637,7 @@ struct wmTimer
   struct wmWindow *win;
 
   /** Set by timer user. */
-  UsdTimeCode timestep;
+  wabi::UsdTimeCode timestep;
   /** Set by timer user, goes to event system. */
   int event_type;
   /** Various flags controlling timer options, see below. */
@@ -644,16 +646,16 @@ struct wmTimer
   void *customdata;
 
   /** Total running time in seconds. */
-  UsdTimeCode duration;
+  wabi::UsdTimeCode duration;
   /** Time since previous step in seconds. */
-  UsdTimeCode delta;
+  wabi::UsdTimeCode delta;
 
   /** Internal, last time timer was activated. */
-  UsdTimeCode ltime;
+  wabi::UsdTimeCode ltime;
   /** Internal, next time we want to activate the timer. */
-  UsdTimeCode ntime;
+  wabi::UsdTimeCode ntime;
   /** Internal, when the timer started. */
-  UsdTimeCode stime;
+  wabi::UsdTimeCode stime;
   /** Internal, put timers to sleep when needed. */
   bool sleep;
 
@@ -1003,6 +1005,8 @@ struct wmKeyConfigPref
   /** Unique name. */
   char idname[64];
 };
+
+typedef std::vector<wabi::UsdProperty> UsdPropertyVector;
 
 struct wmKeyMapItem
 {

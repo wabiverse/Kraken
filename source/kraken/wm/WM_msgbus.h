@@ -61,12 +61,6 @@ struct wmMsgParams_PRIM
   TfToken data_path;
 };
 
-enum {
-  WM_MSG_TYPE_RNA = 0,
-  WM_MSG_TYPE_STATIC = 1,
-};
-#define WM_MSG_TYPE_NUM 2
-
 struct wmMsgTypeInfo {
   struct {
     unsigned int (*hash_fn)(const void *msg);
@@ -93,11 +87,6 @@ struct wmMsg {
 struct wmMsg_PRIM {
   wmMsg head; /* keep first */
   wmMsgParams_PRIM params;
-};
-
-struct wmMsgSubscribeKey_PRIM {
-  wmMsgSubscribeKey head;
-  wmMsg_PRIM msg;
 };
 
 typedef void (*wmMsgNotifyFn)(struct kContext *C,
@@ -146,6 +135,11 @@ struct wmMsgSubscribeKey {
   std::vector<wmMsgSubscribeValueLink *> values;
   /* over-alloc, eg: wmMsgSubscribeKey_RNA */
   /* Last member will be 'wmMsg_*' */
+};
+
+struct wmMsgSubscribeKey_PRIM {
+  wmMsgSubscribeKey head;
+  wmMsg_PRIM msg;
 };
 
 wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,

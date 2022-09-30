@@ -159,7 +159,29 @@ struct ARegion : public wabi::UsdUIArea
   ARegion_Runtime runtime;
 
   inline ARegion(kContext *C, kScreen *prim, const wabi::SdfPath &stagepath);
+  inline ARegion(const wabi::UsdStageWeakPtr &S, kScreen *prim, const wabi::SdfPath &stagepath);
 };
+
+ARegion::ARegion(const wabi::UsdStageWeakPtr &S, kScreen *prim, const wabi::SdfPath &stagepath)
+  : wabi::UsdUIArea(KRAKEN_KSTAGE_CREATE_CHILD(S)),
+    path(GetPath()),
+    name(CreateNameAttr()),
+    spacetype(CreateSpacetypeAttr()),
+    icon(CreateIconAttr()),
+    coords(CreateCoordsAttr(DEFAULT_VEC4I(0, 0, 0, 0))),
+    pos(CreatePosAttr()),
+    size(CreateSizeAttr()),
+    regiontype(RGN_TYPE_WINDOW),
+    flag(VALUE_ZERO),
+    alignment(VALUE_ZERO),
+    type(POINTER_ZERO),
+    regiondata(POINTER_ZERO),
+    do_draw(0),
+    do_draw_paintcursor(0),
+    overlap(0),
+    flagfullscreen(0),
+    drawrct(0, 0, 0, 0)
+{}
 
 ARegion::ARegion(kContext *C, kScreen *prim, const wabi::SdfPath &stagepath)
   : wabi::UsdUIArea(KRAKEN_STAGE_CREATE_CHILD(C)),

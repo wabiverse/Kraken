@@ -30,10 +30,10 @@
 
 #include "KKE_robinhood.h"
 
+#include "USD_wm_types.h"
 #include "USD_object.h"
 #include "USD_operator.h"
 #include "USD_path_defaults.h"
-#include "USD_wm_types.h"
 
 #include <wabi/base/tf/hash.h>
 #include <wabi/usd/usd/attribute.h>

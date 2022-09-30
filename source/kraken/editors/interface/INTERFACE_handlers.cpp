@@ -24,11 +24,13 @@
 
 #include "kraken/kraken.h"
 
+#include "USD_wm_types.h"
 #include "USD_factory.h"
 #include "USD_operator.h"
 #include "USD_userpref.h"
-#include "USD_wm_types.h"
+#include "USD_types.h"
 #include "USD_object.h"
+
 
 #include "WM_cursors_api.h"
 #include "WM_window.h"
@@ -205,8 +207,8 @@ struct uiAfterFunc
   kraken::eWmOperatorContext opcontext;
   KrakenPRIM *opptr;
 
-  struct KrakenPRIM stagepoin;
-  struct KrakenPROP *stageprop;
+  KrakenPRIM stagepoin;
+  KrakenPROP *stageprop;
 
   void *search_arg;
   uiFreeArgFunc search_arg_free_fn;

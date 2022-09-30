@@ -4,8 +4,19 @@
  * \ingroup edinterface
  */
 
+#include "KLI_string.h"
+
+#include "WM_api.h"
+#include "WM_dragdrop.h"
+
+#include "UI_interface.h"
+#include "interface_intern.h"
+
+#include "UI_abstract_view.hh"
+
 #include "KKE_context.h"
 
+#include "USD_wm_types.h"
 #include "USD_listBase.h"
 #include "USD_area.h"
 #include "USD_screen.h"
@@ -13,16 +24,6 @@
 #include "USD_workspace.h"
 #include "USD_object.h"
 #include "USD_region.h"
-#include "USD_wm_types.h"
-
-#include "KLI_string.h"
-
-#include "WM_api.h"
-
-#include "UI_interface.h"
-#include "interface_intern.h"
-
-#include "UI_abstract_view.hh"
 
 namespace kraken::ui {
 
@@ -103,7 +104,7 @@ static AbstractViewItem *find_item_from_rename_button(const uiBut &rename_but)
   /* A minimal sanity check, can't do much more here. */
   KLI_assert(rename_but.type == UI_BTYPE_TEXT && rename_but.poin);
 
-  LISTBASE_FOREACH (uiBut *, but, &rename_but.block->buttons) {
+  for (auto &but : rename_but.block->buttons) {
     if (but->type != UI_BTYPE_VIEW_ITEM) {
       continue;
     }
@@ -297,13 +298,13 @@ class ViewItemAPIWrapper {
     return drop_controller->drop_tooltip(drag);
   }
 
-  static bool drop_handle(kContext &C, const AbstractViewItem &item, const ListBase &drags)
+  static bool drop_handle(kContext &C, const AbstractViewItem &item, const std::vector<wmDrag *> &drags)
   {
     std::unique_ptr<AbstractViewItemDropController> drop_controller =
         item.create_drop_controller();
 
     const char *disabled_hint_dummy = nullptr;
-    LISTBASE_FOREACH (const wmDrag *, drag, &drags) {
+    for (auto &drag : drags) {
       if (drop_controller->can_drop(*drag, &disabled_hint_dummy)) {
         return drop_controller->on_drop(&C, *drag);
       }
@@ -342,29 +343,29 @@ void UI_view_item_begin_rename(uiViewItemHandle *item_handle)
   item.begin_renaming();
 }
 
-void UI_view_item_context_menu_build(kContext *C,
+void UI_view_item_context_menu_build(kraken::kContext *C,
                                      const uiViewItemHandle *item_handle,
-                                     uiLayout *column)
+                                     kraken::uiLayout *column)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_handle);
   item.build_context_menu(*C, *column);
 }
 
-bool UI_view_item_drag_start(kContext *C, const uiViewItemHandle *item_)
+bool UI_view_item_drag_start(kraken::kContext *C, const uiViewItemHandle *item_)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
   return ViewItemAPIWrapper::drag_start(*C, item);
 }
 
 bool UI_view_item_can_drop(const uiViewItemHandle *item_,
-                           const wmDrag *drag,
+                           const kraken::wmDrag *drag,
                            const char **r_disabled_hint)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
   return ViewItemAPIWrapper::can_drop(item, *drag, r_disabled_hint);
 }
 
-char *UI_view_item_drop_tooltip(const uiViewItemHandle *item_, const wmDrag *drag)
+char *UI_view_item_drop_tooltip(const uiViewItemHandle *item_, const kraken::wmDrag *drag)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
 
@@ -372,7 +373,7 @@ char *UI_view_item_drop_tooltip(const uiViewItemHandle *item_, const wmDrag *dra
   return tooltip.empty() ? nullptr : KLI_strdup(tooltip.c_str());
 }
 
-bool UI_view_item_drop_handle(kContext *C, const uiViewItemHandle *item_, const ListBase *drags)
+bool UI_view_item_drop_handle(kraken::kContext *C, const uiViewItemHandle *item_, const std::vector<kraken::wmDrag *> *drags)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
   return ViewItemAPIWrapper::drop_handle(*C, item, *drags);

@@ -39,9 +39,9 @@
 #include "LUXO_access.h"
 #include "LUXO_runtime.h"
 
+#include "USD_wm_types.h"
 #include "USD_types.h"
 #include "USD_object.h"
-#include "USD_wm_types.h"
 
 #include "kpy_utildefines.h"
 #include "kpy_interface.h"
