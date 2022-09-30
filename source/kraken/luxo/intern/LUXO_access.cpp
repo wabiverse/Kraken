@@ -22,7 +22,10 @@
  * The Universe Gets Animated.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "KLI_kraklib.h"
+#include "KLI_dynstr.h"
 
 #include "KKE_utils.h"
 #include "KKE_appdir.h"
@@ -540,9 +543,136 @@ const char *LUXO_function_identifier(KrakenFUNC *func)
   return func->identifier;
 }
 
-const char *LUXO_struct_identifier(const KrakenPRIM *type)
+const TfToken LUXO_struct_identifier(const KrakenPRIM *type)
 {
-  return (type->identifier != NULL) ? type->identifier : "Context";
+  return (type->identifier != NULL) ? type->identifier : TfToken("Context");
+}
+
+char *LUXO_pointer_as_string_keywords_ex(kContext *C,
+                                         KrakenPRIM *ptr,
+                                         const bool as_function,
+                                         const bool all_args,
+                                         const bool nested_args,
+                                         const int max_prop_length,
+                                         KrakenPROP *iterprop)
+{
+  const char *arg_name = NULL;
+
+  KrakenPROP *prop;
+
+  DynStr *dynstr = KLI_dynstr_new();
+  char *cstring, *buf;
+  bool first_iter = true;
+  int flag, flag_parameter;
+
+  for (auto &prop : ptr->GetAttributes()) {
+    flag = (&KrakenPROP(prop))->flag;
+    // flag_parameter =
+
+    // if (as_function && (flag_parameter & PARM_OUTPUT)) {
+    //   continue;
+    // }
+
+    arg_name = LUXO_property_identifier(&KrakenPROP(prop)).GetText();
+
+    if (STREQ(arg_name, "rna_type")) {
+      continue;
+    }
+
+    if ((nested_args == false) && (LUXO_property_type(&KrakenPROP(prop)) == PROP_POINTER)) {
+      continue;
+    }
+
+    // if (as_function && (&KrakenPROP(prop)->flag_parameter & PARM_REQUIRED)) {
+    /* required args don't have useful defaults */
+    // KLI_dynstr_appendf(dynstr, first_iter ? "%s" : ", %s", arg_name);
+    // first_iter = false;
+    // } else {
+    bool ok = true;
+
+    if (all_args == true) {
+      /* pass */
+    } else if (ptr->type && !ptr->type->GetAttributes().empty()) {
+      ok = ptr->GetAttribute(prop.GetName()).IsValid();
+    }
+
+    if (ok) {
+      if (as_function && LUXO_property_type(&KrakenPROP(prop)) == PROP_POINTER) {
+        /* don't expand pointers for functions */
+        if (flag & PROP_NEVER_NULL) {
+          /* we can't really do the right thing here. arg=arg?, hrmf! */
+          buf = KLI_strdup(arg_name);
+        } else {
+          buf = KLI_strdup("None");
+        }
+      } else {
+        buf = KLI_strdup(ptr->GetAttribute(prop.GetName()).GetName().GetText());
+      }
+
+      KLI_dynstr_appendf(dynstr, first_iter ? "%s=%s" : ", %s=%s", arg_name, buf);
+      first_iter = false;
+      MEM_freeN(buf);
+    }
+    // }
+  }
+
+  cstring = KLI_dynstr_get_cstring(dynstr);
+  KLI_dynstr_free(dynstr);
+  return cstring;
+}
+
+char *LUXO_pointer_as_string_keywords(kContext *C,
+                                      KrakenPRIM *ptr,
+                                      const bool as_function,
+                                      const bool all_args,
+                                      const bool nested_args,
+                                      const int max_prop_length)
+{
+  KrakenPROP *iterprop;
+
+  iterprop = &KrakenPROP(ptr->GetAttributes().front());
+
+  return LUXO_pointer_as_string_keywords_ex(C,
+                                            ptr,
+                                            as_function,
+                                            all_args,
+                                            nested_args,
+                                            max_prop_length,
+                                            iterprop);
+}
+
+char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr)
+{
+  DynStr *dynstr = KLI_dynstr_new();
+  char *cstring;
+
+  const char *propname;
+  int first_time = 1;
+
+  KLI_dynstr_append(dynstr, "{");
+
+  for (auto prop : ptr->GetAttributes()) {
+    propname = LUXO_property_identifier(&KrakenPROP(prop)).GetText();
+
+    if (STREQ(propname, "rna_type")) {
+      continue;
+    }
+
+    if (first_time == 0) {
+      KLI_dynstr_append(dynstr, ", ");
+    }
+    first_time = 0;
+
+    cstring = KLI_strdup(prop.GetName().GetText());
+    KLI_dynstr_appendf(dynstr, "\"%s\":%s", propname, cstring);
+    MEM_freeN(cstring);
+  }
+
+  KLI_dynstr_append(dynstr, "}");
+
+  cstring = KLI_dynstr_get_cstring(dynstr);
+  KLI_dynstr_free(dynstr);
+  return cstring;
 }
 
 /**

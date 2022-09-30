@@ -110,6 +110,41 @@ struct PanelType
   std::vector<struct PanelType *> children;
 };
 
+enum
+{
+  PANEL_TYPE_DEFAULT_CLOSED = (1 << 0),
+  PANEL_TYPE_NO_HEADER = (1 << 1),
+  /** Makes buttons in the header shrink/stretch to fill full layout width. */
+  PANEL_TYPE_HEADER_EXPAND = (1 << 2),
+  PANEL_TYPE_LAYOUT_VERT_BAR = (1 << 3),
+  /** This panel type represents data external to the UI. */
+  PANEL_TYPE_INSTANCED = (1 << 4),
+  /** Don't search panels with this type during property search. */
+  PANEL_TYPE_NO_SEARCH = (1 << 7),
+};
+
+struct Panel_Runtime
+{
+  /* Applied to Panel.ofsx, but saved separately so we can track changes between redraws. */
+  int region_ofsx;
+
+  /**
+   * Pointer for storing which data the panel corresponds to.
+   * Useful when there can be multiple instances of the same panel type.
+   *
+   * \note A panel and its sub-panels share the same custom data pointer.
+   * This avoids freeing the same pointer twice when panels are removed.
+   */
+  KrakenPRIM *custom_data_ptr;
+
+  /* Pointer to the panel's block. Useful when changes to panel #uiBlocks
+   * need some context from traversal of the panel "tree". */
+  uiBlock *block;
+
+  /* Non-owning pointer. The context is stored in the block. */
+  kContextStore *context;
+};
+
 struct Panel
 {
   /** Runtime. */
@@ -129,7 +164,6 @@ struct Panel
   int blocksizex, blocksizey;
   short labelofs;
   short flag, runtime_flag;
-  char _pad[6];
   /** Panels are aligned according to increasing sort-order. */
   int sortorder;
   /** Runtime for panel manipulation. */
@@ -137,7 +171,7 @@ struct Panel
   /** Sub panels. */
   std::vector<struct Panel *> children;
 
-  // Panel_Runtime runtime;
+  Panel_Runtime runtime;
 };
 
 enum eScreenRedrawsFlag

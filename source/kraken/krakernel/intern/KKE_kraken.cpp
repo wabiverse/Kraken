@@ -82,6 +82,11 @@ KRAKEN_NAMESPACE_BEGIN
 Global G;
 
 /** User Prefs modifies this value globally. */
+bool UI_RUNTIME_IS_DIRTY = bool(false);
+short UI_PIE_MENU_RADIUS = short(100);
+short UI_PIE_MENU_THRESHOLD = short(12);
+short UI_PIE_ANIMATION_TIMEOUT = short(6);
+int UI_PIXEL_SIZE = int(1);
 std::vector<struct kTheme *> UI_THEMES_LIST;
 std::vector<struct uiStyle *> UI_STYLES_LIST;
 short UI_WIDGET_UNIT = 20;

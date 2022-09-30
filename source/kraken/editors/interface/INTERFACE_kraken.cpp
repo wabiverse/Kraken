@@ -88,9 +88,9 @@ static void ui_but_to_pixelrect(struct rcti *rect,
                                 const struct ARegion *region,
                                 struct uiBlock *block,
                                 const struct uiBut *but);
-static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *but_p);
-static void ui_def_but_rna__panel_type(kContext *UNUSED(C), uiLayout *layout, void *but_p);
-static void ui_def_but_rna__menu_type(kContext *UNUSED(C), uiLayout *layout, void *but_p);
+static void ui_def_but_luxo__menu(kContext *UNUSED(C), uiLayout *layout, void *but_p);
+static void ui_def_but_luxo__panel_type(kContext *UNUSED(C), uiLayout *layout, void *but_p);
+static void ui_def_but_luxo__menu_type(kContext *UNUSED(C), uiLayout *layout, void *but_p);
 
 /* avoid unneeded calls to ui_but_value_get */
 #define UI_BUT_VALUE_UNSET DBL_MAX
@@ -728,12 +728,12 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
 
 /* ************** BLOCK ENDING FUNCTION ************* */
 
-bool ui_but_rna_equals(const uiBut *a, const uiBut *b)
+bool ui_but_luxo_equals(const uiBut *a, const uiBut *b)
 {
-  return ui_but_rna_equals_ex(a, &b->stagepoin, b->stageprop, b->rnaindex);
+  return ui_but_luxo_equals_ex(a, &b->stagepoin, b->stageprop, b->rnaindex);
 }
 
-bool ui_but_rna_equals_ex(const uiBut *but,
+bool ui_but_luxo_equals_ex(const uiBut *but,
                           const KrakenPRIM *ptr,
                           const KrakenPROP *prop,
                           int index)
@@ -769,7 +769,7 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
   if (but->retval != oldbut->retval) {
     return false;
   }
-  if (!ui_but_rna_equals(but, oldbut)) {
+  if (!ui_but_luxo_equals(but, oldbut)) {
     return false;
   }
   if (but->func != oldbut->func) {
@@ -1136,7 +1136,7 @@ void UI_but_execute(const kContext *C, ARegion *region, uiBut *but)
 
 /* use to check if we need to disable undo, but don't make any changes
  * returns false if undo needs to be disabled. */
-static bool ui_but_is_rna_undo(const uiBut *but)
+static bool ui_but_is_luxo_undo(const uiBut *but)
 {
   if (but->stagepoin.owner_id) {
     /* avoid undo push for buttons who's ID are screen or wm level
@@ -1455,9 +1455,9 @@ static bool ui_but_event_property_operator_string(const kContext *C,
     if ((but->type == UI_BTYPE_BUT_MENU) && (but_parent && but_parent->stageprop) &&
         (LUXO_property_type(but_parent->stageprop) == PROP_ENUM) &&
         ELEM(but_parent->menu_create_func,
-             ui_def_but_rna__menu,
-             ui_def_but_rna__panel_type,
-             ui_def_but_rna__menu_type)) {
+             ui_def_but_luxo__menu,
+             ui_def_but_luxo__panel_type,
+             ui_def_but_luxo__menu_type)) {
       prop_enum_value = (int)but->hardmin;
       ptr = &but_parent->stagepoin;
       prop = but_parent->stageprop;
@@ -2541,7 +2541,7 @@ bool ui_but_is_compatible(const uiBut *but_a, const uiBut *but_b)
   return true;
 }
 
-bool ui_but_is_rna_valid(uiBut *but)
+bool ui_but_is_luxo_valid(uiBut *but)
 {
   if (but->stageprop == nullptr || but->stagepoin.GetAttribute(but->stageprop->GetName())) {
     return true;
@@ -4233,7 +4233,7 @@ void ui_def_but_icon_clear(uiBut *but)
   but->drawflag &= ~UI_BUT_ICON_LEFT;
 }
 
-static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *but_p)
+static void ui_def_but_luxo__menu(kContext *UNUSED(C), uiLayout *layout, void *but_p)
 {
   uiBlock *block = uiLayoutGetBlock(layout);
   uiPopupBlockHandle *handle = block->handle;
@@ -4440,7 +4440,7 @@ static void ui_def_but_rna__menu(kContext *UNUSED(C), uiLayout *layout, void *bu
   block->flag |= UI_BLOCK_IS_FLIP;
 }
 
-static void ui_def_but_rna__panel_type(kContext *C, uiLayout *layout, void *but_p)
+static void ui_def_but_luxo__panel_type(kContext *C, uiLayout *layout, void *but_p)
 {
   uiBut *but = static_cast<uiBut *>(but_p);
   const char *panel_type = static_cast<const char *>(but->func_argN);
@@ -4454,21 +4454,21 @@ static void ui_def_but_rna__panel_type(kContext *C, uiLayout *layout, void *but_
   }
 }
 
-void ui_but_rna_menu_convert_to_panel_type(uiBut *but, const char *panel_type)
+void ui_but_luxo_menu_convert_to_panel_type(uiBut *but, const char *panel_type)
 {
   KLI_assert(ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_COLOR));
-  //  KLI_assert(but->menu_create_func == ui_def_but_rna__menu);
+  //  KLI_assert(but->menu_create_func == ui_def_but_luxo__menu);
   //  KLI_assert((void *)but->poin == but);
-  but->menu_create_func = ui_def_but_rna__panel_type;
+  but->menu_create_func = ui_def_but_luxo__panel_type;
   but->func_argN = KLI_strdup(panel_type);
 }
 
 bool ui_but_menu_draw_as_popover(const uiBut *but)
 {
-  return (but->menu_create_func == ui_def_but_rna__panel_type);
+  return (but->menu_create_func == ui_def_but_luxo__panel_type);
 }
 
-static void ui_def_but_rna__menu_type(kContext *C, uiLayout *layout, void *but_p)
+static void ui_def_but_luxo__menu_type(kContext *C, uiLayout *layout, void *but_p)
 {
   uiBut *but = static_cast<uiBut *>(but_p);
   const TfToken menu_type = TfToken(static_cast<const char *>(but->func_argN));
@@ -4482,12 +4482,12 @@ static void ui_def_but_rna__menu_type(kContext *C, uiLayout *layout, void *but_p
   }
 }
 
-void ui_but_rna_menu_convert_to_menu_type(uiBut *but, const char *menu_type)
+void ui_but_luxo_menu_convert_to_menu_type(uiBut *but, const char *menu_type)
 {
   KLI_assert(but->type == UI_BTYPE_MENU);
-  KLI_assert(but->menu_create_func == ui_def_but_rna__menu);
+  KLI_assert(but->menu_create_func == ui_def_but_luxo__menu);
   KLI_assert((void *)but->poin == but);
-  but->menu_create_func = ui_def_but_rna__menu_type;
+  but->menu_create_func = ui_def_but_luxo__menu_type;
   but->func_argN = KLI_strdup(menu_type);
 }
 
@@ -4498,7 +4498,7 @@ static void ui_but_submenu_enable(uiBlock *block, uiBut *but)
 }
 
 /**
- * ui_def_but_rna_propname and ui_def_but_rna
+ * ui_def_but_luxo_propname and ui_def_but_rna
  * both take the same args except for propname vs prop, this is done so we can
  * avoid an extra lookup on 'prop' when its already available.
  *
@@ -4573,7 +4573,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     }
 
     if (type == UI_BTYPE_MENU) {
-      func = ui_def_but_rna__menu;
+      func = ui_def_but_luxo__menu;
     }
 
     if (free) {
@@ -4676,7 +4676,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     }
   }
 
-  if (but->flag & UI_BUT_UNDO && (ui_but_is_rna_undo(but) == false)) {
+  if (but->flag & UI_BUT_UNDO && (ui_but_is_luxo_undo(but) == false)) {
     but->flag &= ~UI_BUT_UNDO;
   }
 
@@ -4698,7 +4698,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   return but;
 }
 
-static uiBut *ui_def_but_rna_propname(uiBlock *block,
+static uiBut *ui_def_but_luxo_propname(uiBlock *block,
                                       int type,
                                       int retval,
                                       const char *str,
@@ -4783,7 +4783,7 @@ static uiBut *ui_def_but_operator_ptr(uiBlock *block,
   uiBut *but = ui_def_but(block, type, -1, str, x, y, width, height, nullptr, 0, 0, 0, 0, tip);
   but->optype = ot;
   but->opcontext = opcontext;
-  but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_rna_undo(), we never need undo here */
+  but->flag &= ~UI_BUT_UNDO; /* no need for ui_but_is_luxo_undo(), we never need undo here */
 
   if (!ot) {
     UI_but_disable(but, "");
@@ -5268,7 +5268,7 @@ uiBut *uiDefButR(uiBlock *block,
                  float a2,
                  const char *tip)
 {
-  uiBut *but = ui_def_but_rna_propname(block,
+  uiBut *but = ui_def_but_luxo_propname(block,
                                        type,
                                        retval,
                                        str,
@@ -5586,7 +5586,7 @@ uiBut *uiDefIconButR(uiBlock *block,
                      float a2,
                      const char *tip)
 {
-  uiBut *but = ui_def_but_rna_propname(block,
+  uiBut *but = ui_def_but_luxo_propname(block,
                                        type,
                                        retval,
                                        "",
@@ -5776,7 +5776,7 @@ uiBut *uiDefIconTextButR(uiBlock *block,
                          float a2,
                          const char *tip)
 {
-  uiBut *but = ui_def_but_rna_propname(block,
+  uiBut *but = ui_def_but_luxo_propname(block,
                                        type,
                                        retval,
                                        str,
@@ -6764,7 +6764,7 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
               // tmp = KLI_strdup(CTX_TIP_(pt->translation_context, pt->label));
             } else {
               /* Not all panels are from Python. */
-              // if (pt->rna_ext.srna) {
+              // if (pt->luxo_ext.srna) {
               //   /* Panels don't yet have descriptions, this may be added. */
               // }
             }
@@ -6780,7 +6780,7 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
       // } else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
       //   MenuType *mt = UI_but_menutype_get(but);
       //   if (mt) {
-      //     _tmp = LUXO_struct_translation_context(mt->rna_ext.srna);
+      //     _tmp = LUXO_struct_translation_context(mt->luxo_ext.srna);
       //   }
       // }
       // if (BLT_is_default_context(_tmp)) {

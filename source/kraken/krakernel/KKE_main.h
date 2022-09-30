@@ -230,6 +230,11 @@ extern Global G;
  * Setup in KKE_kraken.
  * TODO: Move these into
  * UserDef. */
+extern bool UI_RUNTIME_IS_DIRTY;
+extern short UI_PIE_MENU_RADIUS;
+extern short UI_PIE_MENU_THRESHOLD;
+extern short UI_PIE_ANIMATION_TIMEOUT;
+extern int UI_PIXEL_SIZE;
 extern std::vector<struct kTheme *> UI_THEMES_LIST;
 extern std::vector<struct uiStyle *> UI_STYLES_LIST;
 extern short UI_WIDGET_UNIT;

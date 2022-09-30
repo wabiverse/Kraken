@@ -56,6 +56,10 @@ enum eWmModifierTypes
   KM_OSKEY2 = 128,
 };
 
+/* `KM_MOD_*` flags for #wmKeyMapItem and `wmEvent.alt/shift/oskey/ctrl`. */
+/* Note that #KM_ANY and #KM_NOTHING are used with these defines too. */
+#define KM_MOD_HELD 1
+
 enum eWmModPosTypes
 {
   KM_MOD_FIRST = 1,

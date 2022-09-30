@@ -88,6 +88,8 @@ struct ARegionType
 
   void (*on_view2d_changed)(const kContext *C, ARegion *region);
 
+  std::vector<struct PanelType *> paneltypes;
+
   int minsizex, minsizey;
   int prefsizex, prefsizey;
   int keymapflag;

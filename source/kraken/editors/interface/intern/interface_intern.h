@@ -55,8 +55,8 @@ struct wmTimer;
 
 /* ****************** general defines ************** */
 
-#define RNA_NO_INDEX -1
-#define RNA_ENUM_VALUE -2
+#define LUXO_NO_INDEX -1
+#define LUXO_ENUM_VALUE -2
 
 #define UI_MENU_PADDING (int)(0.2f * UI_UNIT_Y)
 
@@ -77,7 +77,8 @@ struct wmTimer;
 #define UI_POPOVER_WIDTH_UNITS 10
 
 /** #uiBut.flag */
-enum {
+enum
+{
   /** Use when the button is pressed. */
   UI_SELECT = (1 << 0),
   /** Temporarily hidden (scrolled out of the view). */
@@ -99,12 +100,14 @@ enum {
 };
 
 /** #uiBut.dragflag */
-enum {
+enum
+{
   UI_BUT_DRAGPOIN_FREE = (1 << 0),
 };
 
 /** #uiBut.pie_dir */
-typedef enum RadialDirection {
+typedef enum RadialDirection
+{
   UI_RADIAL_NONE = -1,
   UI_RADIAL_N = 0,
   UI_RADIAL_NE = 1,
@@ -141,7 +144,8 @@ extern const short ui_radial_dir_to_angle[8];
 #define USE_UIBUT_SPATIAL_ALIGN
 
 /** #PieMenuData.flags */
-enum {
+enum
+{
   /** Pie menu item collision is detected at 90 degrees. */
   UI_PIE_DEGREES_RANGE_LARGE = (1 << 0),
   /** Use initial center of pie menu to calculate direction. */
@@ -163,7 +167,8 @@ enum {
 /** The maximum number of items a radial menu (pie menu) can contain. */
 #define PIE_MAX_ITEMS 8
 
-struct uiBut {
+struct uiBut
+{
   struct uiBut *next, *prev;
 
   /** Pointer back to the layout item holding this button. */
@@ -294,7 +299,8 @@ struct uiBut {
 };
 
 /** Derived struct for #UI_BTYPE_NUM */
-typedef struct uiButNumber {
+typedef struct uiButNumber
+{
   uiBut but;
 
   float step_size;
@@ -302,7 +308,8 @@ typedef struct uiButNumber {
 } uiButNumber;
 
 /** Derived struct for #UI_BTYPE_COLOR */
-typedef struct uiButColor {
+typedef struct uiButColor
+{
   uiBut but;
 
   bool is_pallete_color;
@@ -310,13 +317,15 @@ typedef struct uiButColor {
 } uiButColor;
 
 /** Derived struct for #UI_BTYPE_TAB */
-typedef struct uiButTab {
+typedef struct uiButTab
+{
   uiBut but;
   struct MenuType *menu;
 } uiButTab;
 
 /** Derived struct for #UI_BTYPE_SEARCH_MENU */
-typedef struct uiButSearch {
+typedef struct uiButSearch
+{
   uiBut but;
 
   uiButSearchCreateFn popup_create_fn;
@@ -344,7 +353,8 @@ typedef struct uiButSearch {
 } uiButSearch;
 
 /** Derived struct for #UI_BTYPE_DECORATOR */
-typedef struct uiButDecorator {
+typedef struct uiButDecorator
+{
   uiBut but;
 
   struct kraken::KrakenPRIM stagepoin;
@@ -353,14 +363,16 @@ typedef struct uiButDecorator {
 } uiButDecorator;
 
 /** Derived struct for #UI_BTYPE_PROGRESS_BAR. */
-typedef struct uiButProgressbar {
+typedef struct uiButProgressbar
+{
   uiBut but;
 
   /* 0..1 range */
   float progress;
 } uiButProgressbar;
 
-typedef struct uiButViewItem {
+typedef struct uiButViewItem
+{
   uiBut but;
 
   /* C-Handle to the view item this button was created for. */
@@ -368,28 +380,32 @@ typedef struct uiButViewItem {
 } uiButViewItem;
 
 /** Derived struct for #UI_BTYPE_HSVCUBE. */
-typedef struct uiButHSVCube {
+typedef struct uiButHSVCube
+{
   uiBut but;
 
   eButGradientType gradient_type;
 } uiButHSVCube;
 
 /** Derived struct for #UI_BTYPE_COLORBAND. */
-typedef struct uiButColorBand {
+typedef struct uiButColorBand
+{
   uiBut but;
 
   struct ColorBand *edit_coba;
 } uiButColorBand;
 
 /** Derived struct for #UI_BTYPE_CURVEPROFILE. */
-typedef struct uiButCurveProfile {
+typedef struct uiButCurveProfile
+{
   uiBut but;
 
   struct CurveProfile *edit_profile;
 } uiButCurveProfile;
 
 /** Derived struct for #UI_BTYPE_CURVE. */
-typedef struct uiButCurveMapping {
+typedef struct uiButCurveMapping
+{
   uiBut but;
 
   struct CurveMapping *edit_cumap;
@@ -397,7 +413,8 @@ typedef struct uiButCurveMapping {
 } uiButCurveMapping;
 
 /** Derived struct for #UI_BTYPE_HOTKEY_EVENT. */
-typedef struct uiButHotkeyEvent {
+typedef struct uiButHotkeyEvent
+{
   uiBut but;
 
   short modifier_key;
@@ -406,7 +423,8 @@ typedef struct uiButHotkeyEvent {
 /**
  * Additional, superimposed icon for a button, invoking an operator.
  */
-typedef struct uiButExtraOpIcon {
+typedef struct uiButExtraOpIcon
+{
   struct uiButExtraOpIcon *next, *prev;
 
   KIFIconID icon;
@@ -416,7 +434,8 @@ typedef struct uiButExtraOpIcon {
   bool disabled;
 } uiButExtraOpIcon;
 
-typedef struct ColorPicker {
+typedef struct ColorPicker
+{
   struct ColorPicker *next, *prev;
 
   /** Color in HSV or HSL, in color picking color space. Used for HSV cube,
@@ -439,11 +458,13 @@ typedef struct ColorPicker {
   float luminosity_lock_value;
 } ColorPicker;
 
-typedef struct ColorPickerData {
+typedef struct ColorPickerData
+{
   ListBase list;
 } ColorPickerData;
 
-struct PieMenuData {
+struct PieMenuData
+{
   /** store title and icon to allow access when pie levels are created */
   const char *title;
   int icon;
@@ -460,7 +481,8 @@ struct PieMenuData {
 };
 
 /** #uiBlock.content_hints */
-enum eBlockContentHints {
+enum eBlockContentHints
+{
   /** In a menu block, if there is a single sub-menu button, we add some
    * padding to the right to put nicely aligned triangle icons there. */
   UI_BLOCK_CONTAINS_SUBMENU_BUT = (1 << 0),
@@ -472,14 +494,17 @@ enum eBlockContentHints {
  * labels (and even their decorators) are separate buttons, but they must be searched and
  * highlighted together.
  */
-typedef struct uiButtonGroup {
+typedef struct uiButtonGroup
+{
   void *next, *prev;
-  ListBase buttons; /* #LinkData with #uiBut data field. */
+  std::vector<uiBut *> buttons; /* #LinkData with #uiBut data field. */
   short flag;
 } uiButtonGroup;
 
 /* #uiButtonGroup.flag. */
-typedef enum uiButtonGroupFlag {
+typedef enum uiButtonGroupFlag
+{
+  UI_BUTTON_GROUP_UNSET = 0,
   /** While this flag is set, don't create new button groups for layout item calls. */
   UI_BUTTON_GROUP_LOCK = (1 << 0),
   /** The buttons in this group are inside a panel header. */
@@ -487,7 +512,8 @@ typedef enum uiButtonGroupFlag {
 } uiButtonGroupFlag;
 ENUM_OPERATORS(uiButtonGroupFlag, UI_BUTTON_GROUP_PANEL_HEADER);
 
-struct uiBlock {
+struct uiBlock
+{
   uiBlock *next, *prev;
 
   std::vector<struct uiBut *> buttons;
@@ -497,7 +523,7 @@ struct uiBlock {
   /** Used for `UI_butstore_*` runtime function. */
   ListBase butstore;
 
-  ListBase button_groups; /* #uiButtonGroup. */
+  std::vector<uiButtonGroup *> button_groups; /* #uiButtonGroup. */
 
   ListBase layouts;
   struct uiLayout *curlayout;
@@ -608,7 +634,8 @@ struct uiBlock {
   struct PieMenuData pie_data;
 };
 
-typedef struct uiSafetyRct {
+typedef struct uiSafetyRct
+{
   struct uiSafetyRct *next, *prev;
   rctf parent;
   rctf safety;
@@ -686,15 +713,24 @@ extern void ui_but_v3_get(uiBut *but, float vec[3]);
  */
 extern void ui_but_v3_set(uiBut *but, const float vec[3]);
 
-extern void ui_hsvcircle_vals_from_pos(
-    const rcti *rect, float mx, float my, float *r_val_rad, float *r_val_dist);
+extern void ui_hsvcircle_vals_from_pos(const rcti *rect,
+                                       float mx,
+                                       float my,
+                                       float *r_val_rad,
+                                       float *r_val_dist);
 /**
  * Cursor in HSV circle, in float units -1 to 1, to map on radius.
  */
-extern void ui_hsvcircle_pos_from_vals(
-    const ColorPicker *cpicker, const rcti *rect, const float *hsv, float *xpos, float *ypos);
-extern void ui_hsvcube_pos_from_vals(
-    const struct uiButHSVCube *hsv_but, const rcti *rect, const float *hsv, float *xp, float *yp);
+extern void ui_hsvcircle_pos_from_vals(const ColorPicker *cpicker,
+                                       const rcti *rect,
+                                       const float *hsv,
+                                       float *xpos,
+                                       float *ypos);
+extern void ui_hsvcube_pos_from_vals(const struct uiButHSVCube *hsv_but,
+                                     const rcti *rect,
+                                     const float *hsv,
+                                     float *xp,
+                                     float *yp);
 
 /**
  * \param float_precision: For number buttons the precision
@@ -739,8 +775,8 @@ void ui_def_but_icon_clear(uiBut *but);
 
 void ui_but_extra_operator_icons_free(uiBut *but);
 
-extern void ui_but_rna_menu_convert_to_panel_type(struct uiBut *but, const char *panel_type);
-extern void ui_but_rna_menu_convert_to_menu_type(struct uiBut *but, const char *menu_type);
+extern void ui_but_luxo_menu_convert_to_panel_type(struct uiBut *but, const char *panel_type);
+extern void ui_but_luxo_menu_convert_to_menu_type(struct uiBut *but, const char *menu_type);
 extern bool ui_but_menu_draw_as_popover(const uiBut *but);
 
 void ui_but_range_set_hard(uiBut *but);
@@ -766,7 +802,7 @@ extern bool ui_but_is_unit(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
  * Check if this button is similar enough to be grouped with another.
  */
 extern bool ui_but_is_compatible(const uiBut *but_a, const uiBut *but_b) ATTR_WARN_UNUSED_RESULT;
-extern bool ui_but_is_rna_valid(uiBut *but) ATTR_WARN_UNUSED_RESULT;
+extern bool ui_but_is_luxo_valid(uiBut *but) ATTR_WARN_UNUSED_RESULT;
 /**
  * Checks if the button supports cycling next/previous menu items (ctrl+mouse-wheel).
  */
@@ -789,7 +825,8 @@ void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3]);
 
 /* interface_regions.c */
 
-struct uiKeyNavLock {
+struct uiKeyNavLock
+{
   /** Set when we're using keyboard-input. */
   bool is_keynav;
   /** Only used to check if we've moved the cursor. */
@@ -800,7 +837,8 @@ typedef uiBlock *(*uiBlockHandleCreateFunc)(struct kContext *C,
                                             struct uiPopupBlockHandle *handle,
                                             void *arg1);
 
-struct uiPopupBlockCreate {
+struct uiPopupBlockCreate
+{
   uiBlockCreateFunc create_func;
   uiBlockHandleCreateFunc handle_create_func;
   void *arg;
@@ -813,7 +851,8 @@ struct uiPopupBlockCreate {
   uiBut *but;
 };
 
-struct uiPopupBlockHandle {
+struct uiPopupBlockHandle
+{
   /* internal */
   struct ARegion *region;
 
@@ -1017,8 +1056,11 @@ void ui_panel_tag_search_filter_match(struct Panel *panel);
 
 /* interface_draw.c */
 
-extern void ui_draw_dropshadow(
-    const rctf *rct, float radius, float aspect, float alpha, int select);
+extern void ui_draw_dropshadow(const rctf *rct,
+                               float radius,
+                               float aspect,
+                               float alpha,
+                               int select);
 
 /**
  * Draws in resolution of 48x4 colors.
@@ -1140,11 +1182,11 @@ float ui_block_calc_pie_segment(struct uiBlock *block, const float event_xy[2]);
  * but this could be supported */
 void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, bool do_strip);
 void ui_but_clipboard_free(void);
-bool ui_but_rna_equals(const uiBut *a, const uiBut *b);
-bool ui_but_rna_equals_ex(const uiBut *but,
-                          const kraken::KrakenPRIM *ptr,
-                          const kraken::KrakenPROP *prop,
-                          int index);
+bool ui_but_luxo_equals(const uiBut *a, const uiBut *b);
+bool ui_but_luxo_equals_ex(const uiBut *but,
+                           const kraken::KrakenPRIM *ptr,
+                           const kraken::KrakenPROP *prop,
+                           int index);
 uiBut *ui_but_find_old(uiBlock *block_old, const uiBut *but_new);
 uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old);
 
@@ -1156,7 +1198,8 @@ struct wmIMEData *ui_but_ime_data_get(uiBut *but);
 /* interface_widgets.c */
 
 /* Widget shader parameters, must match the shader layout. */
-typedef struct uiWidgetBaseParameters {
+typedef struct uiWidgetBaseParameters
+{
   rctf recti, rect;
   float radi, rad;
   float facxi, facyi;
@@ -1176,7 +1219,8 @@ typedef struct uiWidgetBaseParameters {
   float _pad[3];
 } uiWidgetBaseParameters;
 
-enum {
+enum
+{
   ROUNDBOX_TRIA_NONE = 0,
   ROUNDBOX_TRIA_ARROWS,
   ROUNDBOX_TRIA_SCROLL,
@@ -1216,7 +1260,8 @@ extern void ui_draw_but(const struct kContext *C,
  * styles. E.g. we never want a shortcut string to be clipped, but other hint strings can be
  * clipped.
  */
-typedef enum {
+typedef enum
+{
   UI_MENU_ITEM_SEPARATOR_NONE,
   /** Separator is used to indicate shortcut string of this item. Shortcut string will not get
    * clipped. */
@@ -1284,8 +1329,13 @@ int ui_id_icon_get(const struct kContext *C, struct ID *id, bool big);
 
 /* interface_icons_event.c */
 
-void icon_draw_rect_input(
-    float x, float y, int w, int h, float alpha, short event_type, short event_value);
+void icon_draw_rect_input(float x,
+                          float y,
+                          int w,
+                          int h,
+                          float alpha,
+                          short event_type,
+                          short event_value);
 
 /* resources.c */
 
@@ -1395,19 +1445,19 @@ bool ui_but_contains_point_px_icon(const uiBut *but,
                                    struct ARegion *region,
                                    const struct wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 bool ui_but_contains_point_px(const uiBut *but, const struct ARegion *region, const int xy[2])
-    ATTR_NONNULL(1, 2, 3) ATTR_WARN_UNUSED_RESULT;
+  ATTR_NONNULL(1, 2, 3) ATTR_WARN_UNUSED_RESULT;
 
 uiBut *ui_list_find_mouse_over(const struct ARegion *region,
                                const struct wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_list_find_from_row(const struct ARegion *region,
                              const uiBut *row_but) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_list_row_find_mouse_over(const struct ARegion *region, const int xy[2])
-    ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
+  ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_list_row_find_from_index(const struct ARegion *region,
                                    int index,
                                    uiBut *listbox) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_view_item_find_mouse_over(const struct ARegion *region, const int xy[2])
-    ATTR_NONNULL(1, 2);
+  ATTR_NONNULL(1, 2);
 uiBut *ui_view_item_find_active(const struct ARegion *region);
 
 typedef bool (*uiButFindPollFn)(const uiBut *but, const void *customdata);
@@ -1420,19 +1470,19 @@ uiBut *ui_but_find_mouse_over_ex(const struct ARegion *region,
                                  bool for_tooltip,
                                  const uiButFindPollFn find_poll,
                                  const void *find_custom_data)
-    ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
+  ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_but_find_mouse_over(const struct ARegion *region,
                               const struct wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 uiBut *ui_but_find_rect_over(const struct ARegion *region,
                              const rcti *rect_px) ATTR_WARN_UNUSED_RESULT;
 
 uiBut *ui_list_find_mouse_over_ex(const struct ARegion *region, const int xy[2])
-    ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
+  ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
 
 bool ui_but_contains_password(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 
 size_t ui_but_drawstr_without_sep_char(const uiBut *but, char *str, size_t str_maxlen)
-    ATTR_NONNULL(1, 2);
+  ATTR_NONNULL(1, 2);
 size_t ui_but_drawstr_len_without_sep_char(const uiBut *but);
 size_t ui_but_tip_len_only_first_line(const uiBut *but);
 
@@ -1448,7 +1498,7 @@ bool ui_block_is_pie_menu(const uiBlock *block) ATTR_WARN_UNUSED_RESULT;
 bool ui_block_is_popup_any(const uiBlock *block) ATTR_WARN_UNUSED_RESULT;
 
 uiBlock *ui_block_find_mouse_over_ex(const struct ARegion *region, const int xy[2], bool only_clip)
-    ATTR_NONNULL(1, 2);
+  ATTR_NONNULL(1, 2);
 uiBlock *ui_block_find_mouse_over(const struct ARegion *region,
                                   const struct wmEvent *event,
                                   bool only_clip);
@@ -1458,14 +1508,14 @@ uiBut *ui_region_find_first_but_test_flag(struct ARegion *region,
                                           int flag_exclude);
 uiBut *ui_region_find_active_but(struct ARegion *region) ATTR_WARN_UNUSED_RESULT;
 bool ui_region_contains_point_px(const struct ARegion *region, const int xy[2])
-    ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
+  ATTR_NONNULL(1, 2) ATTR_WARN_UNUSED_RESULT;
 bool ui_region_contains_rect_px(const struct ARegion *region, const rcti *rect_px);
 
 /**
  * Check if the cursor is over any popups.
  */
 struct ARegion *ui_screen_region_find_mouse_over_ex(struct kScreen *screen, const int xy[2])
-    ATTR_NONNULL(1, 2);
+  ATTR_NONNULL(1, 2);
 struct ARegion *ui_screen_region_find_mouse_over(struct kScreen *screen,
                                                  const struct wmEvent *event);
 
@@ -1514,9 +1564,10 @@ void UI_OT_eyedropper_gpencil_color(struct wmOperatorType *ot);
 struct uiListType *UI_UL_asset_view(void);
 
 /**
- * For use with #ui_rna_collection_search_update_fn.
+ * For use with #ui_luxo_collection_search_update_fn.
  */
-typedef struct uiRNACollectionSearch {
+typedef struct uiLUXOCollectionSearch
+{
   kraken::KrakenPRIM target_ptr;
   kraken::KrakenPROP *target_prop;
 
@@ -1528,9 +1579,12 @@ typedef struct uiRNACollectionSearch {
   uiButStore *butstore;
   /* Block has to be stored for freeing butstore (uiBut.block doesn't work with undo). */
   uiBlock *butstore_block;
-} uiRNACollectionSearch;
-void ui_rna_collection_search_update_fn(
-    const struct kContext *C, void *arg, const char *str, uiSearchItems *items, bool is_first);
+} uiLUXOCollectionSearch;
+void ui_luxo_collection_search_update_fn(const struct kContext *C,
+                                         void *arg,
+                                         const char *str,
+                                         uiSearchItems *items,
+                                         bool is_first);
 
 /* interface_ops.c */
 
@@ -1547,7 +1601,8 @@ uiViewHandle *ui_block_view_find_matching_in_old_block(const uiBlock *new_block,
                                                        const uiViewHandle *new_view);
 
 uiButViewItem *ui_block_view_find_matching_view_item_but_in_old_block(
-    const uiBlock *new_block, const uiViewItemHandle *new_item_handle);
+  const uiBlock *new_block,
+  const uiViewItemHandle *new_item_handle);
 
 /* interface_templates.c */
 
@@ -1562,5 +1617,3 @@ struct ID *ui_template_id_liboverride_hierarchy_make(struct kContext *C,
 void UI_region_message_subscribe(struct ARegion *region, struct wmMsgBus *mbus);
 
 KRAKEN_NAMESPACE_END
-
-

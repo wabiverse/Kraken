@@ -114,6 +114,22 @@ void LUXO_set_stage_ctx(kContext *C);
 
 wabi::UsdStageWeakPtr LUXO_get_stage();
 
+char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr);
+char *LUXO_pointer_as_string_keywords(kContext *C,
+                                      KrakenPRIM *ptr,
+                                      const bool as_function,
+                                      const bool all_args,
+                                      const bool nested_args,
+                                      const int max_prop_length);
+char *LUXO_pointer_as_string_keywords_ex(kContext *C,
+                                         KrakenPRIM *ptr,
+                                         const bool as_function,
+                                         const bool all_args,
+                                         const bool nested_args,
+                                         const int max_prop_length,
+                                         KrakenPROP *iterprop);
+char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr);
+
 void LUXO_property_enum_items(kContext *C,
                               KrakenPRIM *ptr,
                               KrakenPROP *prop,

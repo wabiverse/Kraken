@@ -94,4 +94,12 @@ wmOperatorType *WM_operatortype_find(const TfToken &idname);
 bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update);
 const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties);
 
+size_t WM_operator_py_idname(char *dst, const char *src);
+char *WM_operator_pystring_ex(kContext *C,
+                              wmOperator *op,
+                              const bool all_args,
+                              const bool macro_args,
+                              wmOperatorType *ot,
+                              KrakenPRIM *opptr);
+
 KRAKEN_NAMESPACE_END

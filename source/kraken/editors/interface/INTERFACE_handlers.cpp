@@ -30,7 +30,7 @@
 #include "USD_userpref.h"
 #include "USD_types.h"
 #include "USD_object.h"
-
+#include "USD_texture_types.h"
 
 #include "WM_cursors_api.h"
 #include "WM_window.h"
@@ -426,7 +426,7 @@ static void ui_apply_but_func(kContext *C, uiBut *but)
     after->context = CTX_store_copy(but->context);
   }
 
-  UI_but_drawstr_without_sep_char(but, after->drawstr, sizeof(after->drawstr));
+  ui_but_drawstr_without_sep_char(but, after->drawstr, sizeof(after->drawstr));
 
   but->optype = NULL;
   // but->opcontext = 0;
@@ -443,7 +443,7 @@ static void ui_apply_but_BUT(kContext *C, uiBut *but, uiHandleButtonData *data)
 
 static void ui_apply_but_BUTM(kContext *C, uiBut *but, uiHandleButtonData *data)
 {
-  UI_but_value_set(but, but->hardmin);
+  ui_but_value_set(but, but->hardmin);
   ui_apply_but_func(C, but);
 
   data->retval = but->retval;
@@ -460,36 +460,36 @@ static void ui_apply_but_BLOCK(kContext *C, uiBut *but, uiHandleButtonData *data
     if (data->value.GetTypeName() == SdfValueTypeNames->Bool) {
       bool typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
-        UI_but_value_set(but, typedVal);
-        UI_but_update_edited(but);
+        ui_but_value_set(but, typedVal);
+        ui_but_update_edited(but);
       }
 
     } else if (data->value.GetTypeName() == SdfValueTypeNames->Int) {
       int typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
-        UI_but_value_set(but, typedVal);
-        UI_but_update_edited(but);
+        ui_but_value_set(but, typedVal);
+        ui_but_update_edited(but);
       }
 
     } else if (data->value.GetTypeName() == SdfValueTypeNames->Float) {
       float typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
-        UI_but_value_set(but, typedVal);
-        UI_but_update_edited(but);
+        ui_but_value_set(but, typedVal);
+        ui_but_update_edited(but);
       }
 
     } else if (data->value.GetTypeName() == SdfValueTypeNames->Token) {
       TfToken typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
-        UI_but_value_set(but, typedVal);
-        UI_but_update_edited(but);
+        ui_but_value_set(but, (double)typedVal.Hash());
+        ui_but_update_edited(but);
       }
 
     } else {
       double typedVal = FormFactory(data->value);
       if (but->type == UI_BTYPE_MENU) {
-        UI_but_value_set(but, typedVal);
-        UI_but_update_edited(but);
+        ui_but_value_set(but, typedVal);
+        ui_but_update_edited(but);
       }
     }
   }
@@ -501,7 +501,7 @@ static void ui_apply_but_BLOCK(kContext *C, uiBut *but, uiHandleButtonData *data
 
 static void ui_apply_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data)
 {
-  const bool value = UI_but_value_get(but);
+  const bool value = ui_but_value_get(but);
   int value_toggle;
   if (but->bit) {
     value_toggle = UI_BITBUT_VALUE_TOGGLED((int)value, but->bitnr);
@@ -512,9 +512,9 @@ static void ui_apply_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data)
     }
   }
 
-  UI_but_value_set(but, (bool)value_toggle);
+  ui_but_value_set(but, (bool)value_toggle);
   if (ELEM(but->type, UI_BTYPE_ICON_TOGGLE, UI_BTYPE_ICON_TOGGLE_N)) {
-    UI_but_update_edited(but);
+    ui_but_update_edited(but);
   }
 
   ui_apply_but_func(C, but);
@@ -525,14 +525,14 @@ static void ui_apply_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data)
 
 static void ui_apply_but_ROW(kContext *C, uiBlock *block, uiBut *but, uiHandleButtonData *data)
 {
-  UI_but_value_set(but, but->hardmax);
+  ui_but_value_set(but, but->hardmax);
 
   ui_apply_but_func(C, but);
 
   /* states of other row buttons */
   for (auto &bt : block->buttons) {
     if (bt != but && bt->poin == but->poin && ELEM(bt->type, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
-      UI_but_update_edited(bt);
+      ui_but_update_edited(bt);
     }
   }
 
@@ -786,13 +786,17 @@ static uiButExtraOpIcon *ui_but_extra_operator_icon_mouse_over_get(uiBut *but,
   }
 
   int x = event->mouse_pos[0], y = event->mouse_pos[1];
-  UI_window_to_block(region, but->block, &x, &y);
+  ui_window_to_block(region, but->block, &x, &y);
   if (!KLI_rctf_isect_pt(but->rect, x, y)) {
     return NULL;
   }
 
-  const float icon_size = 0.8f * KLI_rctf_size_y(but->rect); /* ICON_SIZE_FROM_BUTRECT */
-  float xmax = but->rect[1];
+  const float icon_size = 0.8f *
+                          KLI_rctf_size_y(GfVec4f(but->rect.xmin,
+                                                  but->rect.xmax,
+                                                  but->rect.ymin,
+                                                  but->rect.ymax)); /* ICON_SIZE_FROM_BUTRECT */
+  float xmax = but->rect.xmax;
   /* Same as in 'widget_draw_extra_icons', icon padding from the right edge. */
   xmax -= 0.2 * icon_size;
 
@@ -812,7 +816,11 @@ static uiButExtraOpIcon *ui_but_extra_operator_icon_mouse_over_get(uiBut *but,
   return NULL;
 }
 
-static ARegion *ui_but_tooltip_init(kContext *C, ARegion *region, int *pass, double *r_pass_delay, bool *r_exit_on_event)
+static ARegion *ui_but_tooltip_init(kContext *C,
+                                    ARegion *region,
+                                    int *pass,
+                                    double *r_pass_delay,
+                                    bool *r_exit_on_event)
 {
   bool is_label = false;
   if (*pass == 1) {
@@ -826,7 +834,9 @@ static ARegion *ui_but_tooltip_init(kContext *C, ARegion *region, int *pass, dou
   if (but) {
     const wmWindow *win = CTX_wm_window(C);
     uiButExtraOpIcon *extra_icon = ui_but_extra_operator_icon_mouse_over_get(
-        but, but->active ? but->active->region : region, win->eventstate);
+      but,
+      but->active ? but->active->region : region,
+      win->eventstate);
 
     // return UI_tooltip_create_from_button_or_extra_icon(C, region, but, extra_icon, is_label);
   }
@@ -879,8 +889,7 @@ static void ui_def_but_rna__panel_type(kContext *C, uiLayout *layout, void *but_
   PanelType *pt = WM_paneltype_find(panel_type, true);
   if (pt) {
     ui_item_paneltype_func(C, layout, pt);
-  }
-  else {
+  } else {
     char msg[256];
     SNPRINTF(msg, TIP_("Missing Panel: %s"), panel_type);
     uiItemL(layout, msg, ICON_NONE);
@@ -1094,8 +1103,7 @@ static void button_activate_exit(kContext *C,
 
 #ifdef USE_DRAG_MULTINUM
   if (data->multi_data.has_mbuts) {
-    for(auto &bt, block->buttons)
-    {
+    for (auto &bt, block->buttons) {
       if (bt->flag & UI_BUT_DRAG_MULTI) {
         bt->flag &= ~UI_BUT_DRAG_MULTI;
 
@@ -1145,16 +1153,14 @@ static void button_activate_exit(kContext *C,
       ui_popup_menu_memory_set(block, but);
     }
 
-    if (U.runtime.is_dirty == false) {
+    if (UI_RUNTIME_IS_DIRTY == false) {
       ui_but_update_preferences_dirty(but);
     }
   }
 
   /* Disable tool-tips until mouse-move + last active flag. */
-  for(auto &block_iter : data->region->uiblocks)
-  {
-    for(auto &bt : block_iter->buttons)
-    {
+  for (auto &block_iter : data->region->uiblocks) {
+    for (auto &bt : block_iter->buttons) {
       bt->flag &= ~UI_BUT_LAST_ACTIVE;
     }
 
@@ -1337,7 +1343,7 @@ static int ui_handle_menus_recursive(kContext *C,
       if (is_parent_inside == false) {
         int mx = event->mouse_pos[0];
         int my = event->mouse_pos[1];
-        UI_window_to_block(menu->region, block, &mx, &my);
+        ui_window_to_block(menu->region, block, &mx, &my);
         inside = KLI_rctf_isect_pt(block->rect, mx, my);
       }
 
@@ -1512,7 +1518,7 @@ static void ui_apply_but_funcs_after(kContext *C)
   size_t afterfIdx = 0;
   for (auto &afterf : funcs) {
     uiAfterFunc after = *afterf; /* copy to avoid memleak on exit() */
-    funcs.erase(funcs.begin()+afterfIdx);
+    funcs.erase(funcs.begin() + afterfIdx);
 
     if (after.context) {
       CTX_store_set(C, after.context);
@@ -1530,8 +1536,12 @@ static void ui_apply_but_funcs_after(kContext *C)
     }
 
     if (after.optype) {
-      WM_operator_name_call_ptr_with_depends_on_cursor(
-          C, after.optype, after.opcontext, (after.opptr) ? &opptr : NULL, NULL, after.drawstr);
+      WM_operator_name_call_ptr_with_depends_on_cursor(C,
+                                                       after.optype,
+                                                       after.opcontext,
+                                                       (after.opptr) ? &opptr : NULL,
+                                                       NULL,
+                                                       after.drawstr);
     }
 
     if (after.opptr) {
@@ -1579,10 +1589,12 @@ static void ui_apply_but_funcs_after(kContext *C)
       after.custom_interaction_handle->user_count--;
       KLI_assert(after.custom_interaction_handle->user_count >= 0);
       if (after.custom_interaction_handle->user_count == 0) {
-        ui_block_interaction_update(
-            C, &after.custom_interaction_callbacks, after.custom_interaction_handle);
-        ui_block_interaction_end(
-            C, &after.custom_interaction_callbacks, after.custom_interaction_handle);
+        ui_block_interaction_update(C,
+                                    &after.custom_interaction_callbacks,
+                                    after.custom_interaction_handle);
+        ui_block_interaction_end(C,
+                                 &after.custom_interaction_callbacks,
+                                 after.custom_interaction_handle);
       }
       after.custom_interaction_handle = NULL;
     }
