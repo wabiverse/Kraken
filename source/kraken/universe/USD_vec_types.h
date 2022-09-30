@@ -83,10 +83,10 @@ struct rctf {
 };
 
 /** dual quaternion. */
-struct DualQuat {
+typedef struct DualQuat {
   float quat[4];
   float trans[4];
 
   float scale[4][4];
   float scale_weight;
-};
+} DualQuat;

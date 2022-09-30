@@ -22,7 +22,6 @@
  * Set the Stage.
  */
 
-#include "KLI_icons.h"
 #include "KLI_string.h"
 #include "KLI_path_utils.h"
 

@@ -392,7 +392,10 @@ enum eWmEventType
 {
   EVENT_NONE = 0x0000,
 
-  /* MOUSE : 0x000x, 0x001x */
+  /* Minimum mouse value (inclusive). */
+#define _EVT_MOUSE_MIN 0x0001
+
+  /* MOUSE: 0x000x, 0x001x */
   LEFTMOUSE = 0x0001,
   MIDDLEMOUSE = 0x0002,
   RIGHTMOUSE = 0x0003,
@@ -403,26 +406,45 @@ enum eWmEventType
   /* More mouse buttons - can't use 9 and 10 here (wheel) */
   BUTTON6MOUSE = 0x0012,
   BUTTON7MOUSE = 0x0013,
-  /* Extra trackpad gestures */
+  /* Extra track-pad gestures. */
   MOUSEPAN = 0x000e,
   MOUSEZOOM = 0x000f,
   MOUSEROTATE = 0x0010,
   MOUSESMARTZOOM = 0x0017,
 
-  /* defaults from anchor */
+  /* defaults from ghost */
   WHEELUPMOUSE = 0x000a,
   WHEELDOWNMOUSE = 0x000b,
   /* mapped with userdef */
   WHEELINMOUSE = 0x000c,
   WHEELOUTMOUSE = 0x000d,
+  /* Successive MOUSEMOVE's are converted to this, so we can easily
+   * ignore all but the most recent MOUSEMOVE (for better performance),
+   * paint and drawing tools however will want to handle these. */
   INBETWEEN_MOUSEMOVE = 0x0011,
 
+/* Maximum keyboard value (inclusive). */
+#define _EVT_MOUSE_MAX 0x0011 /* 17 */
+
+  /* IME event, GHOST_kEventImeCompositionStart in ghost */
   WM_IME_COMPOSITE_START = 0x0014,
+  /* IME event, GHOST_kEventImeComposition in ghost */
   WM_IME_COMPOSITE_EVENT = 0x0015,
+  /* IME event, GHOST_kEventImeCompositionEnd in ghost */
   WM_IME_COMPOSITE_END = 0x0016,
 
+  /* Tablet/Pen Specific Events */
   TABLET_STYLUS = 0x001a,
   TABLET_ERASER = 0x001b,
+
+/* *** Start of keyboard codes. *** */
+
+/* Minimum keyboard value (inclusive). */
+#define _EVT_KEYBOARD_MIN 0x0020
+
+  /* Standard keyboard.
+   * - 0x0020 to 0x00ff [#_EVT_KEYBOARD_MIN to #_EVT_KEYBOARD_MAX] inclusive - for keys.
+   * - 0x012c to 0x0143 [#EVT_F1KEY to #EVT_F24KEY] inclusive - for function keys. */
 
   EVT_ZEROKEY = 0x0030,  /* '0' (48). */
   EVT_ONEKEY = 0x0031,   /* '1' (49). */
@@ -534,6 +556,12 @@ enum eWmEventType
   EVT_LEFTBRACKETKEY = 0x00eb,  /* 235 */
   EVT_RIGHTBRACKETKEY = 0x00ec, /* 236 */
 
+/* Maximum keyboard value (inclusive). */
+#define _EVT_KEYBOARD_MAX 0x00ff /* 255 */
+
+  /* WARNING: 0x010x are used for internal events
+   * (but are still stored in the key-map). */
+
   EVT_F1KEY = 0x012c,  /* 300 */
   EVT_F2KEY = 0x012d,  /* 301 */
   EVT_F3KEY = 0x012e,  /* 302 */
@@ -559,9 +587,83 @@ enum eWmEventType
   EVT_F23KEY = 0x0142, /* 322 */
   EVT_F24KEY = 0x0143, /* 323 */
 
+  /* *** End of keyboard codes. *** */
+
+  /* NDOF (from "Space Navigator" & friends)
+   * These must be kept in sync with `GHOST_NDOFManager.h`.
+   * Ordering matters, exact values do not. */
+
+  NDOF_MOTION = 0x0190, /* 400 */
+
+#define _NDOF_MIN NDOF_MOTION
+#define _NDOF_BUTTON_MIN NDOF_BUTTON_MENU
+
+  /* used internally, never sent */
+  NDOF_BUTTON_NONE = NDOF_MOTION,
+  /* these two are available from any 3Dconnexion device */
+
+  NDOF_BUTTON_MENU = 0x0191, /* 401 */
+  NDOF_BUTTON_FIT = 0x0192,  /* 402 */
+  /* standard views */
+  NDOF_BUTTON_TOP = 0x0193,    /* 403 */
+  NDOF_BUTTON_BOTTOM = 0x0194, /* 404 */
+  NDOF_BUTTON_LEFT = 0x0195,   /* 405 */
+  NDOF_BUTTON_RIGHT = 0x0196,  /* 406 */
+  NDOF_BUTTON_FRONT = 0x0197,  /* 407 */
+  NDOF_BUTTON_BACK = 0x0198,   /* 408 */
+  /* more views */
+  NDOF_BUTTON_ISO1 = 0x0199, /* 409 */
+  NDOF_BUTTON_ISO2 = 0x019a, /* 410 */
+  /* 90 degree rotations */
+  NDOF_BUTTON_ROLL_CW = 0x019b,  /* 411 */
+  NDOF_BUTTON_ROLL_CCW = 0x019c, /* 412 */
+  NDOF_BUTTON_SPIN_CW = 0x019d,  /* 413 */
+  NDOF_BUTTON_SPIN_CCW = 0x019e, /* 414 */
+  NDOF_BUTTON_TILT_CW = 0x019f,  /* 415 */
+  NDOF_BUTTON_TILT_CCW = 0x01a0, /* 416 */
+  /* device control */
+  NDOF_BUTTON_ROTATE = 0x01a1,   /* 417 */
+  NDOF_BUTTON_PANZOOM = 0x01a2,  /* 418 */
+  NDOF_BUTTON_DOMINANT = 0x01a3, /* 419 */
+  NDOF_BUTTON_PLUS = 0x01a4,     /* 420 */
+  NDOF_BUTTON_MINUS = 0x01a5,    /* 421 */
+
+/* Disabled as GHOST converts these to keyboard events
+ * which use regular keyboard event handling logic. */
+#if 0
+  /* keyboard emulation */
+  NDOF_BUTTON_ESC = 0x01a6,   /* 422 */
+  NDOF_BUTTON_ALT = 0x01a7,   /* 423 */
+  NDOF_BUTTON_SHIFT = 0x01a8, /* 424 */
+  NDOF_BUTTON_CTRL = 0x01a9,  /* 425 */
+#endif
+
+  /* general-purpose buttons */
+  NDOF_BUTTON_1 = 0x01aa,  /* 426 */
+  NDOF_BUTTON_2 = 0x01ab,  /* 427 */
+  NDOF_BUTTON_3 = 0x01ac,  /* 428 */
+  NDOF_BUTTON_4 = 0x01ad,  /* 429 */
+  NDOF_BUTTON_5 = 0x01ae,  /* 430 */
+  NDOF_BUTTON_6 = 0x01af,  /* 431 */
+  NDOF_BUTTON_7 = 0x01b0,  /* 432 */
+  NDOF_BUTTON_8 = 0x01b1,  /* 433 */
+  NDOF_BUTTON_9 = 0x01b2,  /* 434 */
+  NDOF_BUTTON_10 = 0x01b3, /* 435 */
+  /* more general-purpose buttons */
+  NDOF_BUTTON_A = 0x01b4, /* 436 */
+  NDOF_BUTTON_B = 0x01b5, /* 437 */
+  NDOF_BUTTON_C = 0x01b6, /* 438 */
+
+#define _NDOF_MAX NDOF_BUTTON_C
+#define _NDOF_BUTTON_MAX NDOF_BUTTON_C
+
+  /* ********** End of Input devices. ********** */
+
+  /* ********** Start of Kraken internal events. ********** */
+
   /* XXX Those are mixed inside keyboard 'area'! */
   /* System: 0x010x */
-  INPUTCHANGE = 0x0103,   /* Input connected or disconnected, (259). */
+  // INPUTCHANGE = 0x0103,   /* Input connected or disconnected, (259). */ /* UNUSED. */
   WINDEACTIVATE = 0x0104, /* Window is deactivated, focus lost, (260). */
   /* Timer: 0x011x */
   TIMER = 0x0110,         /* Timer event, passed on to all queues (272). */
@@ -581,18 +683,11 @@ enum eWmEventType
   EVT_ACTIONZONE_REGION = 0x5001,     /* 20481 */
   EVT_ACTIONZONE_FULLSCREEN = 0x5011, /* 20497 */
 
-  /* Tweak events:
-   * Sent as additional event with the mouse coordinates
-   * from where the initial click was placed. */
-
-  /* tweak events for L M R mousebuttons */
-  EVT_TWEAK_L = 0x5002, /* 20482 */
-  EVT_TWEAK_M = 0x5003, /* 20483 */
-  EVT_TWEAK_R = 0x5004, /* 20484 */
-  /* 0x5010 (and lower) should be left to add other tweak types in the future. */
+  /* NOTE: these values are saved in key-map files, do not change them but just add new ones. */
 
   /* 0x5011 is taken, see EVT_ACTIONZONE_FULLSCREEN */
 
+  /* Misc Kraken internals: 0x502x */
   EVT_FILESELECT = 0x5020, /* 20512 */
   EVT_BUT_OPEN = 0x5021,   /* 20513 */
   EVT_MODAL_MAP = 0x5022,  /* 20514 */
@@ -602,6 +697,10 @@ enum eWmEventType
 
   /* could become gizmo callback */
   EVT_GIZMO_UPDATE = 0x5025, /* 20517 */
+
+  /* XR events: 0x503x */
+  EVT_XR_ACTION = 0x5030, /* 20528 */
+  /* ********** End of Kraken internal events. ********** */
 };
 
 enum eWmTabletEventType

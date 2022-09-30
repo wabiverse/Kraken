@@ -95,7 +95,11 @@
   (WABI_VERSION_MAJOR * 10000 + WABI_VERSION_MINOR * 100 + WABI_VERSION_PATCH)
 #define WABI_VERSION 2205
 
-#define WABI_USE_NAMESPACES 1
+#ifdef __cplusplus
+#  define WABI_USE_NAMESPACES 1
+#else /* __cplusplus */
+#  define WABI_USE_NAMESPACES 0
+#endif /* __cplusplus */
 
 #if WABI_USE_NAMESPACES
 

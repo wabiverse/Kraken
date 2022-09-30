@@ -24,6 +24,8 @@
  * Gadget Vault.
  */
 
+#include <string>
+
 #include "KLI_compiler_attrs.h"
 #include "KLI_utildefines.h"
 

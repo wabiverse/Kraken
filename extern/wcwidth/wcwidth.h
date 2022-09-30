@@ -13,23 +13,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ * The Original Code is Copyright (C) 2013 Blender Foundation.
+ * All rights reserved.
  */
 
-/**
- * @file
- * Editors.
- * Tools for Artists.
- */
+#ifndef __WCWIDTH_H__
+#define __WCWIDTH_H__
 
-#pragma once
+#ifndef __cplusplus
+#  if defined(__APPLE__) || defined(__NetBSD__)
+/* The <uchar.h> standard header is missing on macOS. */
+#include <stddef.h>
+typedef unsigned int char32_t;
+#  else
+#    include <uchar.h>
+#  endif
+#endif
 
-#include "KLI_compiler_attrs.h"
-// #include "WM_types.h"
+int mk_wcwidth(char32_t ucs);
+int mk_wcswidth(const char32_t *pwcs, size_t n);
+int mk_wcwidth_cjk(char32_t ucs);
+int mk_wcswidth_cjk(const char32_t *pwcs, size_t n);
 
-struct GPUBatch;
-struct IDRemapper;
-struct Main;
-struct kContext;
-
-void ED_editors_init(struct kContext *C);
+#endif

@@ -4,8 +4,9 @@
  *                   Copyright 2000 Red Hat, Inc.
  * All rights reserved. */
 
-/** \file
- * \ingroup bli
+/**
+ * @file
+ * @ingroup KLI
  */
 
 #include <stdio.h>
@@ -33,14 +34,14 @@
  * so they are considered 1 byte length too.
  */
 static const size_t utf8_skip_data[256] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 1, 1,
 };
 
 ptrdiff_t KLI_str_utf8_invalid_byte(const char *str, size_t length)
@@ -55,11 +56,11 @@ ptrdiff_t KLI_str_utf8_invalid_byte(const char *str, size_t length)
    * length is in bytes, since without knowing whether the string is valid
    * it's hard to know how many characters there are! */
 
-  const unsigned char *p, *perr, *pend = (const unsigned char *)str + length;
-  unsigned char c;
+  const uchar *p, *perr, *pend = (const uchar *)str + length;
+  uchar c;
   int ab;
 
-  for (p = (const unsigned char *)str; p < pend; p++, length--) {
+  for (p = (const uchar *)str; p < pend; p++, length--) {
     c = *p;
     perr = p; /* Erroneous char is always the first of an invalid utf8 sequence... */
     if (ELEM(c, 0xfe, 0xff, 0x00)) {
@@ -204,33 +205,33 @@ int KLI_str_utf8_invalid_strip(char *str, size_t length)
 }
 
 /** Compatible with #KLI_strncpy, but ensure no partial UTF8 chars. */
-#define KLI_STR_UTF8_CPY(dst, src, maxncpy) \
-  { \
-    size_t utf8_size; \
+#define KLI_STR_UTF8_CPY(dst, src, maxncpy)                                \
+  {                                                                        \
+    size_t utf8_size;                                                      \
     while (*src != '\0' && (utf8_size = utf8_skip_data[*src]) < maxncpy) { \
-      maxncpy -= utf8_size; \
-      switch (utf8_size) { \
-        case 6: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 5: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 4: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 3: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 2: \
-          *dst++ = *src++; \
-          ATTR_FALLTHROUGH; \
-        case 1: \
-          *dst++ = *src++; \
-      } \
-    } \
-    *dst = '\0'; \
-  } \
+      maxncpy -= utf8_size;                                                \
+      switch (utf8_size) {                                                 \
+        case 6:                                                            \
+          *dst++ = *src++;                                                 \
+          ATTR_FALLTHROUGH;                                                \
+        case 5:                                                            \
+          *dst++ = *src++;                                                 \
+          ATTR_FALLTHROUGH;                                                \
+        case 4:                                                            \
+          *dst++ = *src++;                                                 \
+          ATTR_FALLTHROUGH;                                                \
+        case 3:                                                            \
+          *dst++ = *src++;                                                 \
+          ATTR_FALLTHROUGH;                                                \
+        case 2:                                                            \
+          *dst++ = *src++;                                                 \
+          ATTR_FALLTHROUGH;                                                \
+        case 1:                                                            \
+          *dst++ = *src++;                                                 \
+      }                                                                    \
+    }                                                                      \
+    *dst = '\0';                                                           \
+  }                                                                        \
   (void)0
 
 char *KLI_strncpy_utf8(char *__restrict dst, const char *__restrict src, size_t maxncpy)
@@ -406,47 +407,41 @@ int KLI_str_utf8_char_width_safe(const char *p)
 /* NOTE(@campbellbarton): glib uses uint for unicode, best we do the same,
  * though we don't typedef it. */
 
-#define UTF8_COMPUTE(Char, Mask, Len, Err) \
-  if (Char < 128) { \
-    Len = 1; \
-    Mask = 0x7f; \
-  } \
-  else if ((Char & 0xe0) == 0xc0) { \
-    Len = 2; \
-    Mask = 0x1f; \
-  } \
-  else if ((Char & 0xf0) == 0xe0) { \
-    Len = 3; \
-    Mask = 0x0f; \
-  } \
-  else if ((Char & 0xf8) == 0xf0) { \
-    Len = 4; \
-    Mask = 0x07; \
-  } \
-  else if ((Char & 0xfc) == 0xf8) { \
-    Len = 5; \
-    Mask = 0x03; \
-  } \
-  else if ((Char & 0xfe) == 0xfc) { \
-    Len = 6; \
-    Mask = 0x01; \
-  } \
-  else { \
+#define UTF8_COMPUTE(Char, Mask, Len, Err)                      \
+  if (Char < 128) {                                             \
+    Len = 1;                                                    \
+    Mask = 0x7f;                                                \
+  } else if ((Char & 0xe0) == 0xc0) {                           \
+    Len = 2;                                                    \
+    Mask = 0x1f;                                                \
+  } else if ((Char & 0xf0) == 0xe0) {                           \
+    Len = 3;                                                    \
+    Mask = 0x0f;                                                \
+  } else if ((Char & 0xf8) == 0xf0) {                           \
+    Len = 4;                                                    \
+    Mask = 0x07;                                                \
+  } else if ((Char & 0xfc) == 0xf8) {                           \
+    Len = 5;                                                    \
+    Mask = 0x03;                                                \
+  } else if ((Char & 0xfe) == 0xfc) {                           \
+    Len = 6;                                                    \
+    Mask = 0x01;                                                \
+  } else {                                                      \
     Len = Err; /* -1 is the typical error value or 1 to skip */ \
-  } \
+  }                                                             \
   (void)0
 
 /* same as glib define but added an 'Err' arg */
 #define UTF8_GET(Result, Chars, Count, Mask, Len, Err) \
-  (Result) = (Chars)[0] & (Mask); \
-  for ((Count) = 1; (Count) < (Len); ++(Count)) { \
-    if (((Chars)[(Count)] & 0xc0) != 0x80) { \
-      (Result) = Err; \
-      break; \
-    } \
-    (Result) <<= 6; \
-    (Result) |= ((Chars)[(Count)] & 0x3f); \
-  } \
+  (Result) = (Chars)[0] & (Mask);                      \
+  for ((Count) = 1; (Count) < (Len); ++(Count)) {      \
+    if (((Chars)[(Count)] & 0xc0) != 0x80) {           \
+      (Result) = Err;                                  \
+      break;                                           \
+    }                                                  \
+    (Result) <<= 6;                                    \
+    (Result) |= ((Chars)[(Count)] & 0x3f);             \
+  }                                                    \
   (void)0
 
 int KLI_str_utf8_size(const char *p)
@@ -454,7 +449,7 @@ int KLI_str_utf8_size(const char *p)
   /* NOTE: uses glib functions but not from GLIB. */
 
   int mask = 0, len;
-  const unsigned char c = (unsigned char)*p;
+  const uchar c = (uchar)*p;
 
   UTF8_COMPUTE(c, mask, len, -1);
 
@@ -466,7 +461,7 @@ int KLI_str_utf8_size(const char *p)
 int KLI_str_utf8_size_safe(const char *p)
 {
   int mask = 0, len;
-  const unsigned char c = (unsigned char)*p;
+  const uchar c = (uchar)*p;
 
   UTF8_COMPUTE(c, mask, len, 1);
 
@@ -482,7 +477,7 @@ uint KLI_str_utf8_as_unicode(const char *p)
   int i, len;
   uint mask = 0;
   uint result;
-  const unsigned char c = (unsigned char)*p;
+  const uchar c = (uchar)*p;
 
   UTF8_COMPUTE(c, mask, len, -1);
   if (UNLIKELY(len == -1)) {
@@ -500,7 +495,7 @@ uint KLI_str_utf8_as_unicode_step_or_error(const char *__restrict p,
   int i, len;
   uint mask = 0;
   uint result;
-  const unsigned char c = (unsigned char)*(p += *index);
+  const uchar c = (uchar) * (p += *index);
 
   KLI_assert(*index < p_len);
   KLI_assert(c != '\0');
@@ -534,30 +529,25 @@ uint KLI_str_utf8_as_unicode_step(const char *__restrict p,
 /* was g_unichar_to_utf8 */
 
 #define UTF8_VARS_FROM_CHAR32(Char, First, Len) \
-  if (Char < 0x80) { \
-    First = 0; \
-    Len = 1; \
-  } \
-  else if (Char < 0x800) { \
-    First = 0xc0; \
-    Len = 2; \
-  } \
-  else if (Char < 0x10000) { \
-    First = 0xe0; \
-    Len = 3; \
-  } \
-  else if (Char < 0x200000) { \
-    First = 0xf0; \
-    Len = 4; \
-  } \
-  else if (Char < 0x4000000) { \
-    First = 0xf8; \
-    Len = 5; \
-  } \
-  else { \
-    First = 0xfc; \
-    Len = 6; \
-  } \
+  if (Char < 0x80) {                            \
+    First = 0;                                  \
+    Len = 1;                                    \
+  } else if (Char < 0x800) {                    \
+    First = 0xc0;                               \
+    Len = 2;                                    \
+  } else if (Char < 0x10000) {                  \
+    First = 0xe0;                               \
+    Len = 3;                                    \
+  } else if (Char < 0x200000) {                 \
+    First = 0xf0;                               \
+    Len = 4;                                    \
+  } else if (Char < 0x4000000) {                \
+    First = 0xf8;                               \
+    Len = 5;                                    \
+  } else {                                      \
+    First = 0xfc;                               \
+    Len = 6;                                    \
+  }                                             \
   (void)0
 
 size_t KLI_str_utf8_from_unicode_len(const uint c)
@@ -616,8 +606,7 @@ size_t KLI_str_utf8_as_utf32(char32_t *__restrict dst_w,
     const uint unicode = KLI_str_utf8_as_unicode_step_or_error(src_c, src_c_len, &index);
     if (unicode != KLI_UTF8_ERR) {
       *dst_w = unicode;
-    }
-    else {
+    } else {
       *dst_w = '?';
       const char *src_c_next = KLI_str_find_next_char_utf8(src_c + index, src_c_end);
       index = (size_t)(src_c_next - src_c);

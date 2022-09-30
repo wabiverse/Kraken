@@ -24,6 +24,14 @@
  * Pixel Magic.
  */
 
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "KLI_compiler_attrs.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "GPU_context.h"

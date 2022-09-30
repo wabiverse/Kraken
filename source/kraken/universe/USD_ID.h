@@ -14,7 +14,9 @@
 // #include "USD_defs.h"
 #include "USD_listBase.h"
 
+#ifdef __cplusplus
 #include <wabi/base/tf/token.h>
+#endif /* __cplusplus */
 
 struct FileData;
 struct RHash;

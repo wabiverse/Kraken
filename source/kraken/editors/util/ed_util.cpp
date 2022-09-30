@@ -9,8 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "KLI_string.h"
-
+#include "KKE_context.h"
 #include "KKE_main.h"
 // #include "KKE_lib_id.h"
 // #include "KKE_lib_remap.h"
@@ -29,6 +28,8 @@
 #include "UI_resources.h"
 
 #include "LUXO_access.h"
+
+KRAKEN_NAMESPACE_BEGIN
 
 void ED_editors_init(kContext *C)
 {
@@ -71,3 +72,5 @@ void ED_editors_init(kContext *C)
   SWAP(int, reports->flag, reports_flag_prev);
   wm->op_undo_depth--;
 }
+
+KRAKEN_NAMESPACE_END

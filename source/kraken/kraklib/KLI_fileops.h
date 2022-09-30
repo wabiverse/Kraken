@@ -24,6 +24,9 @@
  * Purple Underground.
  */
 
+#include "kraken/kraken.h"
+#include <filesystem>
+
 #include "KLI_api.h"
 #include "KLI_compiler_attrs.h"
 
@@ -59,8 +62,8 @@ int KLI_delete(const char *file, bool dir, bool recursive);
 /* Cross Platform Implementations (Seperate by preprocessors) */
 bool KLI_dir_create_recursive(const char *dirname);
 
-bool KLI_exists(const fs::path &path);
-fs::file_status KLI_type(const fs::path &path);
+bool KLI_exists(const std::filesystem::path &path);
+std::filesystem::file_status KLI_type(const std::filesystem::path &path);
 
 #ifdef WIN32
 #  if defined(_MSC_VER)

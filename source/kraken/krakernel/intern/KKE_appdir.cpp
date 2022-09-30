@@ -747,7 +747,7 @@ std::string KKE_appdir_copy_recursive(const int src_id, const int target_id)
   fs::path src = KKE_appdir_folder_id(src_id, NULL);
   fs::path target = KKE_appdir_folder_id_create(target_id, NULL);
 
-  if (!fs::exists(src) || !fs::exists(target)) {
+  if (!std::filesystem::exists(src) || !std::filesystem::exists(target)) {
     return std::string();
   }
 

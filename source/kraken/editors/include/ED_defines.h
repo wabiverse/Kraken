@@ -50,7 +50,6 @@
 #include <wabi/usd/usdGeom/basisCurves.h>
 
 /* kraklib */
-#include "KLI_icons.h"
 #include "KLI_utildefines.h"
 
 #define RGN_MARGINS 0, 0, 0, 0

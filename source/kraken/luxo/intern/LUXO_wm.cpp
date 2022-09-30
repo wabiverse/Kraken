@@ -22,6 +22,12 @@
  * The Universe Gets Animated.
  */
 
+#include <stdbool.h>
+
+#include "KLI_compiler_attrs.h"
+
+#include "MEM_guardedalloc.h"
+
 #include "LUXO_runtime.h"
 
 #include "USD_wm_types.h"
@@ -38,7 +44,6 @@
 #include "USD_workspace.h"
 
 #include "KLI_utildefines.h"
-#include "KLI_icons.h"
 #include "KLI_string.h"
 #include "KLI_path_utils.h"
 

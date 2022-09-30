@@ -14,6 +14,8 @@
 #include <type_traits>
 
 #include "KLI_utildefines.h"
+#include "KLI_compiler_attrs.h"
+
 #include "MEM_guardedalloc.h"
 
 namespace kraken {

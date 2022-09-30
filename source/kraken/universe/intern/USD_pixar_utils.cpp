@@ -22,6 +22,8 @@
  * Set the Stage.
  */
 
+#include <filesystem>
+
 #include "kraken/kraken.h"
 
 #include "KKE_main.h"
@@ -36,10 +38,12 @@ WABI_NAMESPACE_USING
 KRAKEN_NAMESPACE_BEGIN
 
 
-void USD_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool verbose)
+void USD_pixutil_convert_usd(const std::filesystem::path &path,
+                             const TfToken &format,
+                             bool verbose)
 {
-  const fs::path usda_path = STRCAT(path.parent_path().string(),
-                                    "/" + path.stem().string() + ".usda");
+  const std::filesystem::path usda_path = STRCAT(path.parent_path().string(),
+                                                 "/" + path.stem().string() + ".usda");
 
   /**
    * Setup File Formatting Args. */
@@ -55,7 +59,7 @@ void USD_pixutil_convert_usd(const fs::path &path, const TfToken &format, bool v
     args);
 
   if (verbose) {
-    if (success && fs::exists(usda_path)) {
+    if (success && std::filesystem::exists(usda_path)) {
       TF_WARN("Converted new file: %s", CHARALL(usda_path.string()));
       return;
     }

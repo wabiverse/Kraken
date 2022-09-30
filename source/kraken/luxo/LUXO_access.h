@@ -26,6 +26,7 @@
  */
 
 #include <stdarg.h>
+#include <stdbool.h>
 
 #include "LUXO_runtime.h"
 #include "LUXO_types.h"
@@ -149,31 +150,6 @@ short LUXO_type_to_ID_code(const kraken::KrakenPRIM *type);
 void LUXO_property_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax);
 void LUXO_property_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax);
 
-#define LUXO_STRUCT_BEGIN(sptr, prop) \
-  { \
-    CollectionPropertyIterator prim_macro_iter; \
-    for (LUXO_property_collection_begin( \
-             sptr, LUXO_struct_iterator_property((sptr)->type), &prim_macro_iter); \
-         prim_macro_iter.valid; \
-         LUXO_property_collection_next(&prim_macro_iter)) { \
-      PropertyRNA *prop = (PropertyRNA *)prim_macro_iter.ptr.data;
-
-#define LUXO_STRUCT_BEGIN_SKIP_LUXO_TYPE(sptr, prop) \
-  { \
-    CollectionPropertyIterator prim_macro_iter; \
-    LUXO_property_collection_begin( \
-        sptr, LUXO_struct_iterator_property((sptr)->type), &prim_macro_iter); \
-    if (prim_macro_iter.valid) { \
-      LUXO_property_collection_next(&prim_macro_iter); \
-    } \
-    for (; prim_macro_iter.valid; LUXO_property_collection_next(&prim_macro_iter)) { \
-      PropertyRNA *prop = (PropertyRNA *)prim_macro_iter.ptr.data;
-
-#define LUXO_STRUCT_END \
-  } \
-  LUXO_property_collection_end(&prim_macro_iter); \
-  } \
-  ((void)0)
 
 KRAKEN_NAMESPACE_END
 

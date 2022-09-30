@@ -49,7 +49,7 @@ KRAKEN_NAMESPACE_BEGIN
  * @param path: filepath to (usd|usdc|usdz) file.
  * @param format: the file format to convert to (usd|usdc|usdz)
  * @param verbose: whether to log status to console. */
-void USD_pixutil_convert_usd(const fs::path &path,
+void USD_pixutil_convert_usd(const std::filesystem::path &path,
                              const TfToken &format = UsdUsdaFileFormatTokens->Id,
                              bool verbose = false);
 

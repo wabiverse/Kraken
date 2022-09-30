@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_utils.h"

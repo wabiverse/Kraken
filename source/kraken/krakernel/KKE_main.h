@@ -25,6 +25,8 @@
 #ifndef KRAKEN_KERNEL_MAIN_H
 #define KRAKEN_KERNEL_MAIN_H
 
+#include <filesystem>
+
 #include "USD_listBase.h"
 
 #include "KLI_compiler_attrs.h"

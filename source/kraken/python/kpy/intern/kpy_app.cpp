@@ -40,8 +40,6 @@
 #include "KKE_appdir.h"
 #include "KKE_main.h"
 
-#include "KLI_icons.h"
-
 #include "WM_event_system.h"
 
 #include "kpy_capi_utils.h"

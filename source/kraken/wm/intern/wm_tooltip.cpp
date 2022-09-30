@@ -34,6 +34,7 @@
 #include "USD_workspace.h"
 
 #include "WM_window.h"
+#include "WM_tooltip.h"
 
 #include "KLI_time.h"
 

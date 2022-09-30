@@ -34,6 +34,12 @@
 #include "KLI_math_rotation.h"
 #include "KLI_math_vector.h"
 
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "MEM_guardedalloc.h"
 
 using namespace kraken::gpu;

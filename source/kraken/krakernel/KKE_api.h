@@ -27,6 +27,8 @@
 
 #include "KLI_utildefines.h"
 
+#ifdef __cplusplus
+
 #include <wabi/usd/sdf/path.h>
 
 #if defined(WABI_STATIC)
@@ -46,6 +48,8 @@
 #  endif
 #  define KRAKEN_KERNEL_LOCAL ARCH_HIDDEN
 #endif
+
+#endif /* __cplusplus */
 
 #ifdef __BIG_ENDIAN__
 /* big endian */

@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #include "LUXO_runtime.h"
 
 #include "KKE_context.h"

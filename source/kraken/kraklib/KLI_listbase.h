@@ -14,33 +14,6 @@
 // struct LinkData;
 
 #ifdef __cplusplus
-KRAKEN_NAMESPACE_BEGIN
-
-/**
- * Finds the last element of @a store which contains the
- * token @a id, @returns NULL if not found.
- */
-struct kContextStoreEntry *KLI_rfindtoken(const struct kContextStore *store, const wabi::TfToken &id);
-
-/**
- * Removes the head from @a contexts and returns it.
- */
-kContextStore *KLI_pophead(std::vector<struct kContextStore*> contexts);
-
-/**
- * Removes and disposes of the entire contents of @a store using guardedalloc.
- */
-void KLI_freelistN(struct kContextStore *store) ATTR_NONNULL(1);
-
-/**
- * Removes @a store from @a contexts.
- */
-void KLI_remlink(std::vector<struct kContextStore*> contexts, kContextStore *store);
-
-KRAKEN_NAMESPACE_END
-#endif /* __cplusplus */
-
-#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -123,7 +96,13 @@ void *KLI_listbase_string_or_index_find(const struct ListBase *listbase,
  */
 void *KLI_rfindlink(const struct ListBase *listbase, int number) ATTR_WARN_UNUSED_RESULT
   ATTR_NONNULL(1);
-
+/**
+ * Finds the last element of \a listbase which contains the
+ * null-terminated string \a id at the specified offset, returning NULL if not found.
+ */
+void *KLI_rfindstring(const struct ListBase *listbase,
+                      const char *id,
+                      int offset) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(1);
 /**
  * Finds the last element of \a listbase which contains a pointer to the
  * null-terminated string \a id at the specified offset, returning NULL if not found.

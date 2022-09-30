@@ -24,6 +24,9 @@
 
 #include "kraken/kraken.h"
 
+#include "KLI_compiler_attrs.h"
+#include "MEM_guardedalloc.h"
+
 #include "USD_wm_types.h"
 #include "USD_factory.h"
 #include "USD_operator.h"

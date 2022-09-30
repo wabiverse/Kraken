@@ -423,8 +423,8 @@ static bool ui_list_contains_row(const uiBut *listbox_but, const uiBut *listrow_
 {
   KLI_assert(listbox_but->type == UI_BTYPE_LISTBOX);
   KLI_assert(listrow_but->type == UI_BTYPE_LISTROW);
-  /* The list box and its rows have the same RNA data (active data pointer/prop). */
-  return ui_but_rna_equals(listbox_but, listrow_but);
+  /* The list box and its rows have the same PRIM data (active data pointer/prop). */
+  return ui_but_luxo_equals(listbox_but, listrow_but);
 }
 
 static bool ui_but_is_listbox_with_row(const uiBut *but, const void *customdata)

@@ -874,7 +874,8 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
   KLI_assert(oldbut->active);
 
   /* flags from the buttons we want to refresh, may want to add more here... */
-  const int flag_copy = UI_BUT_REDALERT | UI_HAS_ICON | UI_SELECT_DRAW;
+  const int flag_copy = static_cast<int>(UI_BUT_REDALERT) | static_cast<int>(UI_HAS_ICON) |
+                        static_cast<int>(UI_SELECT_DRAW);
   const int drawflag_copy = 0; /* None currently. */
 
   /* still stuff needs to be copied */
@@ -1000,7 +1001,7 @@ static bool ui_but_update_from_old_block(const kContext *C,
 
   if (oldbut->active) {
     /* Move button over from oldblock to new block. */
-    const auto &it = oldblock->buttons.erase(
+    oldblock->buttons.erase(
       std::remove(oldblock->buttons.begin(), oldblock->buttons.end(), oldbut),
       oldblock->buttons.end());
     const auto &prev = std::find(block->buttons.begin(), block->buttons.end(), but);
@@ -1292,7 +1293,7 @@ static bool ui_but_event_operator_string_from_operator(const kContext *C,
                                    prop,
                                    true,
                                    buf,
-                                   buf_len)) {
+                                   (int)buf_len)) {
     found = true;
   }
   return found;
@@ -1321,7 +1322,7 @@ static bool ui_but_event_operator_string_from_menu(const kContext *C,
                                    prop_menu,
                                    true,
                                    buf,
-                                   buf_len)) {
+                                   (int)buf_len)) {
     found = true;
   }
 
@@ -1365,7 +1366,7 @@ static bool ui_but_event_operator_string_from_panel(const kContext *C,
                                      prop_panel,
                                      true,
                                      buf,
-                                     buf_len)) {
+                                     (int)buf_len)) {
       found = true;
       break;
     }
@@ -1449,7 +1450,7 @@ static bool ui_but_event_property_operator_string(const kContext *C,
   const char *prop_enum_value_id = "value";
   KrakenPRIM *ptr = &but->stagepoin;
   KrakenPROP *prop = but->stageprop;
-  int prop_index = but->rnaindex;
+  // int prop_index = but->rnaindex;
   if ((but->type == UI_BTYPE_BUT_MENU) && (but->block->handle != nullptr)) {
     uiBut *but_parent = but->block->handle->popup_create_vars.but;
     if ((but->type == UI_BTYPE_BUT_MENU) && (but_parent && but_parent->stageprop) &&
@@ -1490,7 +1491,7 @@ static bool ui_but_event_property_operator_string(const kContext *C,
           prop_id = TfToken("type");
           prop_enum_value >>= 16;
           prop = LUXO_struct_find_property(ptr, prop_id.GetText());
-          prop_index = -1;
+          // prop_index = -1;
 
           opnames = ctx_enum_opnames_for_Area_ui_type;
           opnames_len = ARRAY_SIZE(ctx_enum_opnames_for_Area_ui_type);
@@ -1514,9 +1515,10 @@ static bool ui_but_event_property_operator_string(const kContext *C,
     prop_path = IDP_New(IDP_GROUP, &group_val, wabi::TfToken(__func__));
     if (!data_path.empty()) {
       std::replace(data_path.begin(), data_path.end(), '/', '.');
-      IDP_AddToGroup(
-        prop_path,
-        IDP_NewString(TfToken(data_path), TfToken("data_path"), strlen(data_path.c_str()) + 1));
+      IDP_AddToGroup(prop_path,
+                     IDP_NewString(TfToken(data_path),
+                                   TfToken("data_path"),
+                                   (int)strlen(data_path.c_str()) + 1));
     }
     if (prop_enum_value_ok) {
       const EnumPropertyItem *item;
@@ -1534,7 +1536,7 @@ static bool ui_but_event_property_operator_string(const kContext *C,
           const TfToken id = item[index].identifier;
           prop_value = IDP_NewString(id,
                                      wabi::TfToken(prop_enum_value_id),
-                                     strlen(id.GetText()) + 1);
+                                     (int)strlen(id.GetText()) + 1);
         }
         IDP_AddToGroup(prop_path, prop_value);
       } else {
@@ -1554,7 +1556,7 @@ static bool ui_but_event_property_operator_string(const kContext *C,
                                        prop_path,
                                        false,
                                        buf,
-                                       buf_len)) {
+                                       (int)buf_len)) {
         found = true;
         break;
       }
@@ -1706,7 +1708,7 @@ static KrakenPRIM *ui_but_extra_operator_icon_add_ptr(uiBut *but,
   extra_op_icon->icon = (KIFIconID)icon;
   extra_op_icon->optype_params = MEM_cnew<wmOperatorCallParams>(__func__);
   extra_op_icon->optype_params->optype = optype;
-  extra_op_icon->optype_params->opptr = MEM_cnew<KrakenPRIM>(__func__);
+  extra_op_icon->optype_params->opptr = MEM_new<KrakenPRIM>(__func__);
   WM_operator_properties_create_ptr(extra_op_icon->optype_params->opptr,
                                     extra_op_icon->optype_params->optype);
   extra_op_icon->optype_params->opcontext = opcontext;
@@ -1779,7 +1781,7 @@ static bool ui_but_icon_extra_is_visible_search_eyedropper(uiBut *but)
     return false;
   }
 
-  KrakenPRIM *type = &KrakenPRIM(but->stagepoin.GetPrim());
+  KrakenPRIM *type = &but->stagepoin;
   const short idcode = LUXO_type_to_ID_code(type);
 
   return ((but->editstr == nullptr) && (idcode == ID_OB || OB_DATA_SUPPORT_ID(idcode)));
@@ -1960,7 +1962,6 @@ bool ui_but_context_poll_operator(kContext *C, wmOperatorType *ot, const uiBut *
 void UI_block_end_ex(const kContext *C, uiBlock *block, const int xy[2], int r_xy[2])
 {
   wmWindow *window = CTX_wm_window(C);
-  Scene *scene = CTX_data_scene(C);
   ARegion *region = CTX_wm_region(C);
   // Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
 
@@ -2007,7 +2008,7 @@ void UI_block_end_ex(const kContext *C, uiBlock *block, const int xy[2], int r_x
   }
 
   /* handle pending stuff */
-  if (block->layouts.first) {
+  if (block->layouts.front()) {
     UI_block_layout_resolve(block, nullptr, nullptr);
   }
   ui_block_align_calc(block, CTX_wm_region(C));
@@ -2278,8 +2279,7 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
           /* uiBut.custom_data points to data this tab represents (e.g. workspace).
            * uiBut.stagepoin/prop store an active value (e.g. active workspace). */
           if (LUXO_property_type(but->stageprop) == PROP_POINTER) {
-            const KrakenPRIM *active_ptr = &KrakenPRIM(
-              but->stagepoin.GetAttribute(but->stageprop->GetName()).GetPrim());
+            const KrakenPRIM *active_ptr = &but->stagepoin;
             if (active_ptr->data == but->custom_data) {
               is_push = true;
             }
@@ -2414,7 +2414,7 @@ void ui_but_v3_set(uiBut *but, const float vec[3])
   }
 
   if (but->stageprop) {
-    KrakenPROP *prop = but->stageprop;
+    // KrakenPROP *prop = but->stageprop;
 
     // if (LUXO_property_type(prop) == PROP_FLOAT) {
     //   int tot;
@@ -2570,7 +2570,7 @@ double ui_but_value_get(uiBut *but)
   }
 
   if (but->stageprop) {
-    KrakenPROP *prop = &KrakenPROP(but->stagepoin.GetAttribute(prop->GetName()));
+    KrakenPROP *prop = but->stageprop;
 
     KLI_assert(but->rnaindex != -1);
 
@@ -2624,34 +2624,34 @@ void ui_but_value_set(uiBut *but, double value)
 {
   /* Value is a HSV value: convert to RGB. */
   if (but->stageprop) {
-    KrakenPROP *prop = &KrakenPROP(but->stagepoin.GetAttribute(but->stageprop->GetName()));
+    KrakenPROP *prop = but->stageprop;
 
     if (prop && prop->IsValid() && !prop->IsHidden()) {
       switch (LUXO_property_type(prop)) {
         case PROP_BOOLEAN: {
           bool vtype = (bool)value;
-          if (prop->Set(&vtype)) {
+          if (prop->Set(vtype)) {
             value = (double)(vtype);
           }
           break;
         }
         case PROP_INT: {
           int vtype = (int)value;
-          if (prop->Set(&vtype)) {
+          if (prop->Set(vtype)) {
             value = (double)(vtype);
           }
           break;
         }
         case PROP_FLOAT: {
           float vtype = (float)value;
-          if (prop->Set(&vtype)) {
+          if (prop->Set(vtype)) {
             value = (float)(vtype);
           }
           break;
         }
         case PROP_ENUM: {
           TfToken vtype = TfToken("INVALID");
-          if (prop->Set(&vtype)) {
+          if (prop->Set(vtype)) {
             value = (double)(vtype.Hash());
           }
           break;
@@ -2744,8 +2744,8 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
     return;
   }
 
-  UnitSettings *unit = but->block->unit;
-  const int unit_type = UI_but_unit_type_get(but);
+  // UnitSettings *unit = but->block->unit;
+  // const int unit_type = UI_but_unit_type_get(but);
   char *orig_str;
 
   orig_str = KLI_strdup(str);
@@ -2797,7 +2797,7 @@ static void ui_get_but_string_unit(uiBut *but,
 
 static float ui_get_but_step_unit(uiBut *but, float step_default)
 {
-  const int unit_type = UI_but_unit_type_get(but);
+  // const int unit_type = UI_but_unit_type_get(but);
   const double step_orig = step_default * UI_PRECISION_FLOAT_SCALE;
   /* Scaling up 'step_origg ' here is a bit arbitrary,
    * its just giving better scales from user POV */
@@ -2844,7 +2844,7 @@ void ui_but_string_get_ex(uiBut *but,
   if (but->stageprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU, UI_BTYPE_TAB)) {
     const PropertyType type = LUXO_property_type(but->stageprop);
 
-    int buf_len;
+    // int buf_len;
     const char *buf = nullptr;
     if ((but->type == UI_BTYPE_TAB) && (but->custom_data)) {
       KrakenPRIM ptr;
@@ -2873,7 +2873,7 @@ void ui_but_string_get_ex(uiBut *but,
     if (buf == nullptr) {
       str[0] = '\0';
     } else if (buf != str) {
-      KLI_assert(maxlen <= buf_len + 1);
+      // KLI_assert(maxlen <= buf_len + 1);
       /* string was too long, we have to truncate */
       if (UI_but_is_utf8(but)) {
         KLI_strncpy_utf8(str, buf, maxlen);
@@ -3600,12 +3600,12 @@ uiBlock *UI_block_begin(const kContext *C,
   wmWindow *window = CTX_wm_window(C);
   Scene *scene = CTX_data_scene(C);
 
-  uiBlock *block = MEM_cnew<uiBlock>(__func__);
+  uiBlock *block = MEM_new<uiBlock>(__func__);
   block->active = true;
   block->emboss = emboss;
   block->evil_C = (void *)C; /* XXX */
 
-  KLI_listbase_clear(&block->button_groups);
+  block->button_groups.clear();
 
   if (scene) {
     /* store display device name, don't lookup for transformations yet
@@ -3791,7 +3791,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
         /* only needed for menus in popup blocks that don't recreate buttons on redraw */
         if (but->block->flag & UI_BLOCK_LOOP) {
           if (but->stageprop && (LUXO_property_type(but->stageprop) == PROP_ENUM)) {
-            KrakenPROP *prop = &KrakenPROP(but->stagepoin.GetAttribute(but->stageprop->GetName()));
+            KrakenPROP *prop = but->stageprop;
 
             TfToken value_token;
             prop->Get(&value_token);
@@ -4526,7 +4526,7 @@ static void ui_def_but_luxo__menu_type(kContext *C, uiLayout *layout, void *but_
     ui_item_menutype_func(C, layout, mt);
   } else {
     char msg[256];
-    SNPRINTF(msg, TIP_("Missing Menu: %s"), menu_type);
+    SNPRINTF(msg, TIP_("Missing Menu: %s"), menu_type.GetText());
     uiItemL(layout, msg, ICON_NONE);
   }
 }
@@ -6038,7 +6038,7 @@ int UI_but_return_value_get(uiBut *but)
 KrakenPRIM *UI_but_operator_ptr_get(uiBut *but)
 {
   if (but->optype && !but->opptr) {
-    but->opptr = MEM_cnew<KrakenPRIM>(__func__);
+    but->opptr = MEM_new<KrakenPRIM>(__func__);
     WM_operator_properties_create_ptr(but->opptr, but->optype);
   }
 
@@ -6547,15 +6547,15 @@ static void operator_enum_search_update_fn(const struct kContext *C,
                                            const bool UNUSED(is_first))
 {
   wmOperatorType *ot = ((uiBut *)but)->optype;
-  KrakenPROP *prop = &KrakenPROP(ot->prim->GetAttribute(ot->idname));
+  KrakenPROP prop = ot->prim->GetAttribute(ot->idname);
 
-  if (prop == nullptr) {
-    printf("%s: %s has no enum property set\n", __func__, ot->idname);
-  } else if (LUXO_property_type(prop) != PROP_ENUM) {
+  if (!prop || !prop.IsValid()) {
+    printf("%s: %s has no enum property set\n", __func__, ot->idname.GetText());
+  } else if (LUXO_property_type(&prop) != PROP_ENUM) {
     printf("%s: %s \"%s\" is not an enum property\n",
            __func__,
-           ot->idname,
-           LUXO_property_identifier(prop));
+           ot->idname.GetText(),
+           LUXO_property_identifier(&prop).GetText());
   } else {
     /* Will create it if needed! */
     KrakenPRIM *ptr = UI_but_operator_ptr_get(static_cast<uiBut *>(but));
@@ -6873,7 +6873,7 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
       }
 
       /* get strings from matching enum item */
-      if (ptr && prop) {
+      if ((ptr && prop) && (ptr->IsValid() && prop->IsValid())) {
         if (!item) {
           int i;
 

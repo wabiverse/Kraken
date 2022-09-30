@@ -11,6 +11,7 @@ set(INC
   ../../imbuf
   ../../kraklib
   ../../krakernel
+  ../../krakfont
   ../../luxo
   ../../universe
   ../../wm

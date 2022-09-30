@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <kraken/kraken.h>
 #include "KKE_api.h"
 
 #include <wabi/usd/usd/stage.h>
@@ -43,6 +44,7 @@ struct ScrArea;
 struct Main;
 struct ReportList;
 struct Scene;
+struct uiBlock;
 struct uiStyle;
 struct UserDef;
 struct wmMsgBus;

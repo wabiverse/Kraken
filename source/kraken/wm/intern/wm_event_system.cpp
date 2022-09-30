@@ -1078,7 +1078,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
     IDPropertyTemplate val = {0};
     op->properties = IDP_New(IDP_GROUP, &val, TfToken("wmOperatorProperties"));
   }
-  LUXO_pointer_create(&wm->id, &ot->prim, op->properties, op->ptr);
+  LUXO_pointer_create(&wm->id, ot->prim, op->properties, op->ptr);
 
   /* Initialize error reports. */
   if (reports) {
@@ -1103,35 +1103,35 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
     if (properties) {
       wmOperatorTypeMacro *otmacro = static_cast<wmOperatorTypeMacro *>(ot->macro.front());
 
-      LUXO_STRUCT_BEGIN(properties, prop)
-      {
+      // LUXO_STRUCT_BEGIN(properties, prop)
+      // {
 
-        if (otmacro == nullptr) {
-          break;
-        }
+      //   if (otmacro == nullptr) {
+      //     break;
+      //   }
 
-        /* Skip invalid properties. */
-        if (STREQ(LUXO_property_identifier(prop), otmacro->idname)) {
-          wmOperatorType *otm = WM_operatortype_find(otmacro->idname, false);
-          KrakenPRIM someptr = LUXO_property_pointer_get(properties, prop);
-          wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
+      //   /* Skip invalid properties. */
+      //   if (STREQ(LUXO_property_identifier(prop), otmacro->idname)) {
+      //     wmOperatorType *otm = WM_operatortype_find(otmacro->idname, false);
+      //     KrakenPRIM someptr = LUXO_property_pointer_get(properties, prop);
+      //     wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
 
-          IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
+      //     IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
 
-          motherop->macro.push_back(opm);
-          opm->opm = motherop; /* Pointer to mom, for modal(). */
+      //     motherop->macro.push_back(opm);
+      //     opm->opm = motherop; /* Pointer to mom, for modal(). */
 
-          otmacro = otmacro->next;
-        }
-      }
-      LUXO_STRUCT_END;
+      //     otmacro = otmacro->next;
+      //   }
+      // }
+      // LUXO_STRUCT_END;
     } else {
-      LISTBASE_FOREACH(wmOperatorTypeMacro *, macro, &ot->macro)
+      for(auto &macro : ot->macro)
       {
-        wmOperatorType *otm = WM_operatortype_find(macro->idname, false);
+        wmOperatorType *otm = WM_operatortype_find(macro->idname);
         wmOperator *opm = wm_operator_create(wm, otm, macro->ptr, nullptr);
 
-        BLI_addtail(&motherop->macro, opm);
+        motherop->macro.push_back(opm);
         opm->opm = motherop; /* Pointer to mom, for modal(). */
       }
     }
@@ -1141,7 +1141,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
     }
   }
 
-  WM_operator_properties_sanitize(op->ptr, false);
+  // WM_operator_properties_sanitize(op->ptr, false);
 
   return op;
 }

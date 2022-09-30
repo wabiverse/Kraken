@@ -29,8 +29,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "KLI_utildefines.h"
+
+#include "atomic_ops.h"
 #include "MEM_guardedalloc.h"
 
 #include "USD_api.h"
@@ -62,7 +65,7 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
   KrakenPRIM *kprim;
   KrakenPROP *prop;
 
-  kprim = &KrakenPRIM(kstage->GetPrimAtPath(K_BEDROCK));
+  *kprim = kstage->GetPrimAtPath(K_BEDROCK);
 
   if (primfrom && primfrom->IsValid()) {
     const TfToken type = primfrom->GetName();
@@ -72,13 +75,13 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
     const SdfPath path_ctx = path.AppendPath(SdfPath(type_ctx)).AppendPath(identifier);
 
     /* Get or create prim at ctx. */
-    kprim = &KrakenPRIM(kstage->DefinePrim(path_ctx, type));
+    *kprim = kstage->DefinePrim(path_ctx, type);
     kprim->py_type = NULL;
     kprim->base = primfrom;
   } else {
     const SdfPath path_ctx = SdfPath(identifier.GetString());
 
-    kprim = &KrakenPRIM(kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx)));
+    *kprim = kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx));
     kprim->py_type = NULL;
     kprim->base = kprim;
   }
@@ -99,15 +102,15 @@ KrakenPRIM *PRIM_def_struct(KrakenPRIM *kprim,
                             const wabi::TfToken &from)
 {
   KrakenPRIM *prim;
-  KrakenSTAGE stage;
   SdfPath path_ctx;
 
   /**
    * -- *** Pixar Style *** --
    * find struct to derive from (optional) */
-  stage = KrakenSTAGE(kprim->GetStage());
+  auto stage = kprim->GetStage();
   path_ctx = kprim->GetPath().AppendPath(identifier);
-  prim = &KrakenPRIM(stage->DefinePrim(path_ctx, from));
+  
+  *prim = stage->DefinePrim(path_ctx, from);
 
   if (!prim->IsValid()) {
     wabi::TF_WARN("prim %s could not be created.", identifier.GetText());

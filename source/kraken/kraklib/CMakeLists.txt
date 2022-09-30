@@ -7,13 +7,14 @@ set(INC
   ../universe
   ../luxo
   ../editors/include
+  ../../../extern/wcwidth
+  ../../../intern/guardedalloc
 )
 
 set(SRC
   intern/KLI_assert.c
   intern/KLI_filelist.cpp
   intern/KLI_fileops.cpp
-  intern/KLI_icons.cpp
   intern/KLI_listbase.cpp
   intern/KLI_math_base_inline.c
   intern/KLI_math_bits_inline.c
@@ -36,6 +37,7 @@ set(SRC
   intern/KLI_threads.cpp
   intern/KLI_winstuff.cpp
 
+  KLI_allocator.hh
   KLI_api.h
   KLI_array.h
   KLI_assert.h
@@ -46,7 +48,6 @@ set(SRC
   KLI_easing.h
   KLI_fileops.h
   KLI_index_range.hh
-  KLI_icons.h
   KLI_kraklib.h
   KLI_link_utils.h
   KLI_listbase.h
@@ -93,6 +94,7 @@ set(INC_SYS
 list(APPEND LIB
   kraken_intern_eigen
   kraken_intern_guardedalloc
+  extern_wcwidth
   maelstrom
   maelstrom_static
   kraken_kernel
@@ -128,5 +130,7 @@ if(APPLE)
 endif()
 
 kraken_add_lib(kraken_lib "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+target_compile_options(kraken_lib PRIVATE -Wno-sign-conversion)
 
 add_dependencies(kraken_lib kraken_intern_eigen)

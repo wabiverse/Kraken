@@ -322,6 +322,11 @@ endif()
 wabi_maelstrom_epilogue()
 
 #-----------------------------------------------------------------------------
+# External Libraries.
+
+add_subdirectory(extern/wcwidth)
+
+#-----------------------------------------------------------------------------
 # Internally Maintained Libraries.
 
 add_subdirectory(intern)

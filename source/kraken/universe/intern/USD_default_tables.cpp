@@ -30,8 +30,6 @@
 #include "USD_userpref.h"
 #include "USD_window.h"
 
-#include "KLI_icons.h"
-
 #include "KKE_context.h"
 
 #include <wabi/usd/usd/stage.h>

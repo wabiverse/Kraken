@@ -28,6 +28,8 @@
 #include <algorithm>
 #include <stdlib.h>
 
+#include "KLI_compiler_attrs.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "KLI_math_base.h"

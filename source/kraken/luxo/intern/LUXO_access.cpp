@@ -22,6 +22,15 @@
  * The Universe Gets Animated.
  */
 
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include "KLI_compiler_attrs.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "KLI_kraklib.h"
@@ -144,14 +153,14 @@ KrakenPROP *luxo_ensure_property(KrakenPROP *prop)
 
 void LUXO_property_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax)
 {
-  KrakenPROP *iprop = luxo_ensure_property(&KrakenPROP(ptr->GetAttribute(prop->GetName())));
+  KrakenPROP *iprop = luxo_ensure_property(prop);
   *hardmin = INT_MIN;
   *hardmax = INT_MAX;
 }
 
 void LUXO_property_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax)
 {
-  KrakenPROP *iprop = luxo_ensure_property(&KrakenPROP(ptr->GetAttribute(prop->GetName())));
+  KrakenPROP *iprop = luxo_ensure_property(prop);
   *hardmin = FLT_MIN;
   *hardmax = FLT_MAX;
 }
@@ -558,32 +567,31 @@ char *LUXO_pointer_as_string_keywords_ex(kContext *C,
 {
   const char *arg_name = NULL;
 
-  KrakenPROP *prop;
-
   DynStr *dynstr = KLI_dynstr_new();
   char *cstring, *buf;
   bool first_iter = true;
   int flag, flag_parameter;
 
   for (auto &prop : ptr->GetAttributes()) {
-    flag = (&KrakenPROP(prop))->flag;
+    KrakenPROP kprop = prop;
+    flag = (&kprop)->flag;
     // flag_parameter =
 
     // if (as_function && (flag_parameter & PARM_OUTPUT)) {
     //   continue;
     // }
 
-    arg_name = LUXO_property_identifier(&KrakenPROP(prop)).GetText();
+    arg_name = LUXO_property_identifier(&kprop).GetText();
 
     if (STREQ(arg_name, "rna_type")) {
       continue;
     }
 
-    if ((nested_args == false) && (LUXO_property_type(&KrakenPROP(prop)) == PROP_POINTER)) {
+    if ((nested_args == false) && (LUXO_property_type(&kprop) == PROP_POINTER)) {
       continue;
     }
 
-    // if (as_function && (&KrakenPROP(prop)->flag_parameter & PARM_REQUIRED)) {
+    // if (as_function && ((&kprop)->flag_parameter & PARM_REQUIRED)) {
     /* required args don't have useful defaults */
     // KLI_dynstr_appendf(dynstr, first_iter ? "%s" : ", %s", arg_name);
     // first_iter = false;
@@ -597,7 +605,7 @@ char *LUXO_pointer_as_string_keywords_ex(kContext *C,
     }
 
     if (ok) {
-      if (as_function && LUXO_property_type(&KrakenPROP(prop)) == PROP_POINTER) {
+      if (as_function && LUXO_property_type(&kprop) == PROP_POINTER) {
         /* don't expand pointers for functions */
         if (flag & PROP_NEVER_NULL) {
           /* we can't really do the right thing here. arg=arg?, hrmf! */
@@ -630,7 +638,7 @@ char *LUXO_pointer_as_string_keywords(kContext *C,
 {
   KrakenPROP *iterprop;
 
-  iterprop = &KrakenPROP(ptr->GetAttributes().front());
+  *iterprop = ptr->GetAttributes().front();
 
   return LUXO_pointer_as_string_keywords_ex(C,
                                             ptr,
@@ -651,8 +659,9 @@ char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr)
 
   KLI_dynstr_append(dynstr, "{");
 
-  for (auto prop : ptr->GetAttributes()) {
-    propname = LUXO_property_identifier(&KrakenPROP(prop)).GetText();
+  for (auto &prop : ptr->GetAttributes()) {
+    KrakenPROP kprop = prop;
+    propname = LUXO_property_identifier(&kprop).GetText();
 
     if (STREQ(propname, "rna_type")) {
       continue;

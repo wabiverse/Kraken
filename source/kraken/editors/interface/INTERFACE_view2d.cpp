@@ -9,6 +9,11 @@
 #include <climits>
 #include <cmath>
 #include <cstring>
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "MEM_guardedalloc.h"
 

@@ -525,7 +525,7 @@ struct uiBlock
 
   std::vector<uiButtonGroup *> button_groups; /* #uiButtonGroup. */
 
-  ListBase layouts;
+  std::vector<uiLayout *> layouts;
   struct uiLayout *curlayout;
 
   std::vector<kContextStore *> contexts;

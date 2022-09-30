@@ -296,7 +296,7 @@ static PyObject *kpy_types_dict = NULL;
 
 static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
 {
-  const char *idname = LUXO_struct_identifier(srna);
+  const char *idname = LUXO_struct_identifier(srna).GetText();
   PyObject *newclass;
 
   if (kpy_types_dict == NULL) {
@@ -377,7 +377,7 @@ static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
     /* Assume RNA_struct_py_type_get(srna) was already checked. */
     PyObject *py_base = pystage_srna_PyBase(srna);
     PyObject *metaclass;
-    const char *idname = LUXO_struct_identifier(srna);
+    const char *idname = LUXO_struct_identifier(srna).GetText();
 
     /* Remove `__doc__` for now because we don't need it to generate docs. */
 #if 0
@@ -560,7 +560,7 @@ static PyObject *kpy_types_module_dir(PyObject *self)
 
   root = &state->ptr;
   for (const KrakenPRIM &prim : root->GetStage()->Traverse()) {
-    PyList_APPEND(ret, PyUnicode_FromString(LUXO_struct_identifier(&prim)));
+    PyList_APPEND(ret, PyUnicode_FromString(LUXO_struct_identifier(&prim).GetText()));
   }
 
   /* Include the modules `__dict__` for Python only types. */
@@ -957,7 +957,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): expected a subclass of a registerable "
                  "LUXO type (%.200s does not support registration)",
-                 LUXO_struct_identifier(srna));
+                 LUXO_struct_identifier(srna).GetText());
     return NULL;
   }
 
@@ -1272,7 +1272,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
 #endif
       Py_DECREF(tp); /* srna owns, can't hold a reference. */
     } else {
-      TF_WARN("kpy: could not make type '%s'", LUXO_struct_identifier(ptr));
+      TF_WARN("kpy: could not make type '%s'", LUXO_struct_identifier(ptr).GetText());
 
 #ifdef USE_PYRNA_STRUCT_REFERENCE
       pystage = (KPyKPy_KrakenStage_StructLUXO *)PyObject_GC_New(KPy_KrakenStage,

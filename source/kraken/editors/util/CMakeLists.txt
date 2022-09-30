@@ -18,7 +18,7 @@ set(INC
 
 
 set(SRC
-  ed_util.c
+  ed_util.cpp
 
   # general includes
   ../include/ED_code.h

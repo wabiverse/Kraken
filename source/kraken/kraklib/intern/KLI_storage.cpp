@@ -22,6 +22,8 @@
  * Purple Underground.
  */
 
+#include <kraken/kraken.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -190,9 +192,9 @@ int64_t KLI_lseek(int fd, int64_t offset, int whence)
 #endif
 }
 
-fs::file_status KLI_type(const fs::path &path)
+std::filesystem::file_status KLI_type(const std::filesystem::path &path)
 {
-  return fs::status(path);
+  return std::filesystem::status(path);
 }
 
 /**

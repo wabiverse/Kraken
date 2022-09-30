@@ -35,31 +35,6 @@
 /* include after _VA_NARGS macro */
 #include "KLI_compiler_typecheck.h"
 
-#ifdef __cplusplus
-#  include "kraken/kraken.h"
-
-/* std */
-#  include <filesystem>
-#  include <iostream>
-#  include <memory>
-#  include <string>
-#  include <vector>
-#  ifdef _WIN32
-#    include <uchar.h>
-#    include <stdbool.h>
-typedef unsigned __int64 size_t;
-
-/* wabi */
-#    include <wabi/wabi.h>
-
-/* base */
-#    include <wabi/base/arch/export.h>
-#    include <wabi/base/tf/stringUtils.h>
-#  endif
-
-namespace fs = std::filesystem;
-#endif /* __cplusplus */
-
 /* -------------------------------------------------------------------- */
 /** \name Min/Max Macros
  * \{ */

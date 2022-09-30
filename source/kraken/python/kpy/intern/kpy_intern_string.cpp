@@ -22,6 +22,8 @@
  * It Bites.
  */
 
+#include "kraken/kraken.h"
+
 #include <Python.h>
 
 #include "KPY_api.h"

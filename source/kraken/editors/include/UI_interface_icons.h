@@ -27,10 +27,6 @@
  * Tools for Artists.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct Collection;
 struct ID;
 
@@ -142,6 +138,3 @@ int UI_icon_color_from_collection(const struct Collection *collection);
 
 KRAKEN_NAMESPACE_END
 
-#ifdef __cplusplus
-}
-#endif

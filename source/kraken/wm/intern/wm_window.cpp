@@ -55,7 +55,6 @@
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
 
-#include "KLI_icons.h"
 #include "KLI_math.h"
 #include "KLI_string.h"
 #include "KLI_time.h"

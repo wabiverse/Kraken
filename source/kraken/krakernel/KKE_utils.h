@@ -24,6 +24,7 @@
 
 #pragma once
 
+#ifdef __cplusplus
 #include "wabi/base/arch/defines.h"
 
 #include "USD_scene.h"
@@ -35,6 +36,7 @@
 #include <wabi/base/arch/systemInfo.h>
 #include <wabi/base/tf/stringUtils.h>
 #include <wabi/base/tf/token.h>
+#endif /* __cplusplus */
 
 #define _RHASH_INTERNAL_ATTR
 #ifndef RHASH_INTERNAL_API

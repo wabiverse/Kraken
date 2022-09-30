@@ -22,9 +22,10 @@
  * Tools for Artists.
  */
 
+#include <string>
+
 #include "ED_fileselect.h"
 
-#include "KLI_icons.h"
 #include "KLI_path_utils.h"
 
 #include "USD_space_types.h"

@@ -674,13 +674,21 @@ if(WABI_BUILD_IMAGING)
             ${STATIC_BLENDER_WEBP}/lib/libwebpmux.a)
           list(APPEND IMATH_LIBRARIES
             ${STATIC_BLENDER_IMATH}/lib/libImath.a)
-          list(APPEND BZIP2_LIBRARIES
-            /opt/homebrew/Cellar/bzip2/1.0.8/lib/libbz2.a)
-          list(APPEND EXPAT_LIBRARIES
-            /opt/homebrew/Cellar/expat/2.4.8/lib/libexpat.a)
-          list(APPEND BLOSC_LIBRARIES
-            /opt/homebrew/Cellar/c-blosc/1.21.1/lib/libblosc.a
-          )
+          # -------------------------------- grab bzip version. ------
+          SUBDIRLIST(subdir_list "/opt/homebrew/Cellar/bzip2")
+          foreach(subdir ${subdir_list})
+            list(APPEND BZIP2_LIBRARIES "/opt/homebrew/Cellar/bzip2/${subdir}/lib/libbz2.a")
+          endforeach()
+          # -------------------------------- grab expat version. -----
+          SUBDIRLIST(subdir_list "/opt/homebrew/Cellar/expat")
+          foreach(subdir ${subdir_list})
+            list(APPEND EXPAT_LIBRARIES "/opt/homebrew/Cellar/expat/${subdir}/lib/libexpat.a")
+          endforeach()
+          # -------------------------------- grab blosc version. -----
+          SUBDIRLIST(subdir_list "/opt/homebrew/Cellar/c-blosc")
+          foreach(subdir ${subdir_list})
+            list(APPEND BLOSC_LIBRARIES "/opt/homebrew/Cellar/c-blosc/${subdir}/lib/libblosc.a")
+          endforeach()
           list(APPEND YAML_CXX_LIBRARIES
             ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/yaml/lib/libyaml-cpp.a
           )

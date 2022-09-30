@@ -25,6 +25,8 @@
 #include <wabi/usd/sdf/path.h>
 #include <wabi/wabi.h>
 
+#include "KLI_compiler_attrs.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "KLI_string.h"

@@ -24,6 +24,7 @@
  * Purple Underground.
  */
 
+#include "kraken/kraken.h"
 #include "KKE_api.h"
 
 KRAKEN_NAMESPACE_BEGIN

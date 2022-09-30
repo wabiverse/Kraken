@@ -10,6 +10,8 @@ set(INC
   ../kraklib
   ../universe
   ../python/kpy
+  ../../../intern/atomic
+  ../../../intern/guardedalloc
 )
 
 set(INC_SYS
