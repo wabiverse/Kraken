@@ -8,6 +8,8 @@ set(INC
   ../editors/include
   ../krakernel
   ../kraklib
+  ../krakfont
+  ../gpu
   ../universe
   ../python/kpy
   ../../../intern/atomic

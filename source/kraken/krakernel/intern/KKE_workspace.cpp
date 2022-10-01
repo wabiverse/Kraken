@@ -40,7 +40,9 @@
 #include "KKE_workspace.h"
 
 #include "KLI_assert.h"
+#include "KLI_listbase.h"
 #include "KLI_string.h"
+#include "KLI_string_utils.h"
 
 KRAKEN_NAMESPACE_BEGIN
 
@@ -136,12 +138,12 @@ static void workspace_layout_name_set(WorkSpace *workspace,
   TfToken new_token(new_name);
   layout->name.Swap(new_token);
 
-  std::vector<void *> void_vec;
-  UNIVERSE_FOR_ALL (alayout, workspace->layouts) {
-    void_vec.push_back(alayout);
+  ListBase wslist = {nullptr, nullptr};
+  for (auto &alayout : workspace->layouts) {
+    KLI_addtail(&wslist, alayout);
   }
 
-  KLI_uniquename(void_vec,
+  KLI_uniquename(&wslist,
                  layout,
                  "Layout",
                  '.',

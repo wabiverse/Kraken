@@ -11,21 +11,28 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** Generic - all structs which are put into linked lists begin with this. */
-struct Link {
+typedef struct Link {
   struct Link *next, *prev;
-};
+} Link;
 
 /** Simple subclass of Link. Use this when it is not worth defining a custom one. */
-struct LinkData {
+typedef struct LinkData {
   struct LinkData *next, *prev;
   void *data;
-};
+} LinkData;
 
 /** Never change the size of this! dna_genfile.c detects pointer_size with it. */
-struct ListBase {
+typedef struct ListBase {
   void *first, *last;
-};
+} ListBase;
 
 /* 8 byte alignment! */
 
+#ifdef __cplusplus
+}
+#endif

@@ -71,7 +71,7 @@ static IDProperty *idp_generic_copy(const IDProperty *prop, const int UNUSED(fla
 {
   IDProperty *newp = (IDProperty *)MEM_callocN(sizeof(IDProperty), __func__);
 
-  KLI_strncpy(newp->name, prop->name, MAX_IDPROP_NAME);
+  newp->name = prop->name;
   newp->type = prop->type;
   newp->flag = prop->flag;
   newp->data.val = prop->data.val;
@@ -352,7 +352,7 @@ IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const char *
   }
 
   prop->type = type;
-  prop->name = name;
+  prop->name = TfToken(name);
 
   return prop;
 }

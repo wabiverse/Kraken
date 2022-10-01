@@ -56,7 +56,7 @@ void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
   }
 
   /* Add to list. */
-  wmDragID *drag_id = MEM_cnew<wmDragID>(__func__);
+  wmDragID *drag_id = MEM_new<wmDragID>(__func__);
   drag_id->id = id;
   drag_id->from_parent = from_parent;
   drag->ids.push_back(drag_id);
@@ -69,7 +69,7 @@ wmDrag *WM_event_start_drag(kContext *C,
                             double value,
                             unsigned int flags)
 {
-  wmDrag *drag = MEM_cnew<wmDrag>(__func__);
+  wmDrag *drag = MEM_new<wmDrag>(__func__);
 
   /* keep track of future multitouch drag too, add a mousepointer id or so */
   /* if multiple drags are added, they're drawn as list */

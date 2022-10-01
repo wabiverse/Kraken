@@ -22,7 +22,15 @@
 #ifdef WIN32
 #  include "utfconv.h"
 #endif
-#ifdef __GNUC__
+#ifdef __clang__
+/**
+ * On L.486 on macOS, we get a implicit conversion changes signedness
+ * due to the "const char" getting converted to a "unsigned int", tho
+ * for now we are disabling this warning error, since the Blender folks
+ * seem to have gotten this file nicely compatible with Microsoft, Linux,
+ * as well as macOS. Further investigation needed as to how macOS performs. */
+#  pragma clang diagnostic ignored "-Wsign-conversion"
+#elif defined(__GNUC__)
 #  pragma GCC diagnostic error "-Wsign-conversion"
 #endif
 

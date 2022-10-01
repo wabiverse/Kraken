@@ -31,6 +31,7 @@
 #include <wabi/usd/usd/prim.h>
 
 struct ID;
+struct IDProperty;
 
 KRAKEN_NAMESPACE_BEGIN
 
@@ -1022,7 +1023,7 @@ uiPopupBlockHandle *ui_popover_panel_create(struct kContext *C,
 void ui_pie_menu_level_create(uiBlock *block,
                               struct wmOperatorType *ot,
                               const char *propname,
-                              struct IDProperty *properties,
+                              IDProperty *properties,
                               const EnumPropertyItem *items,
                               int totitem,
                               kraken::eWmOperatorContext context,

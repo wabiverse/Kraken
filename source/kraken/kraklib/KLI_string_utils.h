@@ -35,20 +35,43 @@ extern "C" {
 
 struct ListBase;
 
+typedef bool (*UniquenameCheckCallback)(void *arg, const char *name);
+
+size_t KLI_split_name_num(char *left, int *nr, const char *name, const char delim);
+
+bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
+                       void *arg,
+                       const char *defname,
+                       char delim,
+                       char *name,
+                       size_t name_len);
+
+bool KLI_uniquename(struct ListBase *list,
+                    void *vlink,
+                    const char *defname,
+                    char delim,
+                    int name_offset,
+                    size_t name_len);
+
 /**
  * Take multiple arguments, pass as (array, length).
  */
-#define KLI_string_join(result, result_len, ...) \
-  KLI_string_join_array( \
-      result, result_len, ((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
+#define KLI_string_join(result, result_len, ...)         \
+  KLI_string_join_array(result,                          \
+                        result_len,                      \
+                        ((const char *[]){__VA_ARGS__}), \
+                        VA_NARGS_COUNT(__VA_ARGS__))
 #define KLI_string_joinN(...) \
   KLI_string_join_arrayN(((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
-#define KLI_string_join_by_sep_charN(sep, ...) \
-  KLI_string_join_array_by_sep_charN( \
-      sep, ((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
-#define KLI_string_join_by_sep_char_with_tableN(sep, table, ...) \
-  KLI_string_join_array_by_sep_char_with_tableN( \
-      sep, table, ((const char *[]){__VA_ARGS__}), VA_NARGS_COUNT(__VA_ARGS__))
+#define KLI_string_join_by_sep_charN(sep, ...)                        \
+  KLI_string_join_array_by_sep_charN(sep,                             \
+                                     ((const char *[]){__VA_ARGS__}), \
+                                     VA_NARGS_COUNT(__VA_ARGS__))
+#define KLI_string_join_by_sep_char_with_tableN(sep, table, ...)                 \
+  KLI_string_join_array_by_sep_char_with_tableN(sep,                             \
+                                                table,                           \
+                                                ((const char *[]){__VA_ARGS__}), \
+                                                VA_NARGS_COUNT(__VA_ARGS__))
 
 #ifdef __cplusplus
 }

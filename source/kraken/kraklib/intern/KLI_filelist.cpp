@@ -24,6 +24,7 @@
 
 #include <stdlib.h> /* malloc */
 #include <string.h>
+#include <vector>
 
 #include <fcntl.h>
 #include <sys/stat.h>

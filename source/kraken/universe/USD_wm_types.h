@@ -41,6 +41,8 @@
 #include <wabi/usd/sdf/path.h>
 #include <wabi/usd/usd/timeCode.h>
 
+struct IDProperty;
+
 KRAKEN_NAMESPACE_BEGIN
 
 /* modifier */
@@ -1257,7 +1259,7 @@ struct wmOperatorTypeMacro
   wabi::TfToken idname;
   /* rna pointer to access properties, like keymap */
   /** Operator properties, assigned to ptr->data and can be written to a file. */
-  struct IDProperty *properties;
+  IDProperty *properties;
   struct KrakenPRIM *ptr;
 };
 

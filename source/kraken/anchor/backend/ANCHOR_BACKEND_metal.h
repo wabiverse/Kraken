@@ -58,6 +58,8 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   eAnchorStatus activateDrawingContext();
 
+  eAnchorStatus setWindowCursorShape(eAnchorStandardCursor shape);
+
   /**
    * Sets the cursor visibility on the window using
    * native window system calls.
@@ -75,8 +77,6 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   eAnchorStatus setModifiedState(bool isUnsavedChanges);
   bool getModifiedState();
-
-  void newDrawingContext(eAnchorDrawingContextType type);
 
   void *getOSWindow() const;
 
@@ -133,8 +133,6 @@ class AnchorAppleMetal : public AnchorSystemWindow
 
   void setNativePixelSize(void);
 
- protected:
-
   /**
    * Sets the cursor grab on the window using
    * native window system calls.
@@ -142,6 +140,14 @@ class AnchorAppleMetal : public AnchorSystemWindow
    * @return Indication of success.
    */
   eAnchorStatus setWindowCursorGrab(eAnchorGrabCursorMode mode);
+
+ protected:
+
+  /**
+   * Tries to install a rendering context in this window.
+   * @param type: The type of rendering context installed.
+   * @return Indication as to whether installation has succeeded. */
+  void newDrawingContext(eAnchorDrawingContextType type);
 
   void SetupMetal();
 

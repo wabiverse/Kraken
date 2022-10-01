@@ -11,6 +11,8 @@ set(INC
   ../luxo
   ../anchor
   ../editors/include
+  ../../../intern/atomic
+  ../../../intern/guardedalloc
 )
 
 set(INC_SYS

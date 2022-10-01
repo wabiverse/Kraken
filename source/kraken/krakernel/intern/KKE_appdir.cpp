@@ -26,12 +26,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <filesystem>
+#include <iostream>
 
 #include "kraken/kraken.h"
 
 #include "KLI_assert.h"
 #include "KLI_path_utils.h"
 #include "KLI_string.h"
+#include "KLI_string_utils.h"
 #include "KLI_fileops.h"
 
 #include "KKE_api.h"
@@ -1123,7 +1125,7 @@ static void tempdir_session_create(char *tempdir_session,
 
   if (tempdir_session_len_required <= tempdir_session_len) {
     /* No need to use path joining utility as we know the last character of #tempdir is a slash. */
-    KLI_string_join(tempdir_session, tempdir_session_len, tempdir, session_name);
+    // KLI_string_join(tempdir_session, tempdir_session_len, tempdir, session_name);
 #ifdef WIN32
     const bool needs_create = (_mktemp_s(tempdir_session, tempdir_session_len_required) == 0);
 #else

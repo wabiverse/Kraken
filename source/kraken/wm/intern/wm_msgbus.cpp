@@ -46,6 +46,9 @@
 #include <string>
 #include <vector>
 
+/* to replace string chars. */
+#include <boost/algorithm/string/replace.hpp>
+
 
 /**
  *  -----  The Kraken WindowManager. ----- */
@@ -192,8 +195,8 @@ void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
 
   const char *none = "<none>";
   printf("rna(id='%s', %s.%s, info='%s')\n",
-         msg_key_params->ptr.owner_id ? ((ID *)msg_key_params->ptr.owner_id)->name : none,
-         msg_key_params->ptr.type ? msg_key_params->ptr.type->identifier : TfToken(none),
+         msg_key_params->ptr.owner_id ? std::string(((ID *)msg_key_params->ptr.owner_id)->name).c_str() : none,
+         msg_key_params->ptr.type ? msg_key_params->ptr.type->identifier.GetText() : none,
          msg_key_params->prop ? ((const IDProperty *)msg_key_params->prop)->name.GetText() : none,
          id_repr);
 
@@ -201,11 +204,11 @@ void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
     WM_msg_subscribe_with_key(mbus, &msg_key_test.head, msg_val_params);
 
   if (msg_val_params->is_persistent) {
-    if (msg_key->msg.params.data_path == NULL) {
-      if (msg_key->msg.params.ptr.data != msg_key->msg.params.ptr.owner_id) {
+    if (msg_key->msg.params.data_path.IsEmpty()) {
+      if ((ID *)msg_key->msg.params.ptr.data != msg_key->msg.params.ptr.owner_id) {
         /* We assume prop type can't change. */
         std::string screenob = msg_key->msg.params.ptr.GetPath().GetAsString();
-        std::replace(screenob.begin(), screenob.end(), "/", ".");
+        boost::replace_all(screenob, "/", ".");
         msg_key->msg.params.data_path = TfToken(screenob);
       }
     }
@@ -218,13 +221,11 @@ void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
                            const wmMsgSubscribeValue *msg_val_params,
                            const char *id_repr)
 {
-  WM_msg_subscribe_prim_params(mbus,
-                               &(const wmMsgParams_PRIM){
-                                 .ptr = *ptr,
-                                 .prop = prop,
-                               },
-                               msg_val_params,
-                               id_repr);
+  const wmMsgParams_PRIM params = {
+    .ptr = *ptr,
+    .prop = prop,
+  };
+  WM_msg_subscribe_prim_params(mbus, &params, msg_val_params, id_repr);
 }
 
 
@@ -263,7 +264,7 @@ wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
 
 void WM_msg_publish_with_key(struct wmMsgBus *mbus, wmMsgSubscribeKey *msg_key)
 {
-  printf("tagging subscribers: (ptr=%p, len=%d)\n", msg_key, msg_key->values.size());
+  printf("tagging subscribers: (ptr=%p, len=%d)\n", msg_key, (int)msg_key->values.size());
 
   for (auto &msg_lnk : msg_key->values) {
     if (false) { /* make an option? */
@@ -295,21 +296,6 @@ void WM_msg_id_remove(struct wmMsgBus *mbus, const struct ID *id)
       info->remove_by_id(mbus, id);
     }
   }
-}
-
-void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
-                           KrakenPRIM *ptr,
-                           const KrakenPROP *prop,
-                           const wmMsgSubscribeValue *msg_val_params,
-                           const char *id_repr)
-{
-  WM_msg_subscribe_prim_params(mbus,
-                               &(const wmMsgParams_PRIM){
-                                 .ptr = *ptr,
-                                 .prop = prop,
-                               },
-                               msg_val_params,
-                               id_repr);
 }
 
 KRAKEN_NAMESPACE_END

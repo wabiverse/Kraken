@@ -30,6 +30,8 @@
 
 #include <wabi/usd/usd/attribute.h>
 
+struct IDProperty;
+
 KRAKEN_NAMESPACE_BEGIN
 
 struct wmOperator

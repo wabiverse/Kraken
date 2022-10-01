@@ -681,6 +681,32 @@ KLI_INLINE bool rhash_insert_safe(RHash *rh,
   return true;
 }
 
+/**
+ * Clear and reset @a rh buckets, reserve again buckets for given number of entries.
+ */
+KLI_INLINE void rhash_buckets_reset(RHash *rh, const uint nentries)
+{
+  MEM_SAFE_FREE(rh->buckets);
+
+  rh->cursize = 0;
+  rh->size_min = 0;
+  rh->nbuckets = hashsizes[rh->cursize];
+
+  rh->limit_grow = RHASH_LIMIT_GROW(rh->nbuckets);
+  rh->limit_shrink = RHASH_LIMIT_SHRINK(rh->nbuckets);
+
+  rh->nentries = 0;
+
+  rhash_buckets_expand(rh, nentries, (nentries != 0));
+}
+
+void *KKE_rhash_lookup(RHash *rh, const void *key)
+{
+  RHashEntry *e = (RHashEntry *)rhash_lookup_entry(rh, key);
+  KLI_assert(!(rh->flag & RHASH_FLAG_IS_RSET));
+  return e ? e->val : NULL;
+}
+
 static RHash *rhash_new(RHashHashFP hashfp,
                         RHashCmpFP cmpfp,
                         const char *info,
@@ -741,32 +767,6 @@ static RHash *rhash_copy(const RHash *rh, RHashKeyCopyFP keycopyfp, RHashValCopy
   rh_new->nentries = rh->nentries;
 
   return rh_new;
-}
-
-/**
- * Clear and reset \a rh buckets, reserve again buckets for given number of entries.
- */
-KLI_INLINE void rhash_buckets_reset(RHash *rh, const uint nentries)
-{
-  MEM_SAFE_FREE(rh->buckets);
-
-  rh->cursize = 0;
-  rh->size_min = 0;
-  rh->nbuckets = hashsizes[rh->cursize];
-
-  rh->limit_grow = RHASH_LIMIT_GROW(rh->nbuckets);
-  rh->limit_shrink = RHASH_LIMIT_SHRINK(rh->nbuckets);
-
-  rh->nentries = 0;
-
-  rhash_buckets_expand(rh, nentries, (nentries != 0));
-}
-
-void *KKE_rhash_lookup(RHash *rh, const void *key)
-{
-  RHashEntry *e = (RHashEntry *)rhash_lookup_entry(rh, key);
-  KLI_assert(!(rh->flag & RHASH_FLAG_IS_RSET));
-  return e ? e->val : NULL;
 }
 
 

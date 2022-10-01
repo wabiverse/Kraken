@@ -81,8 +81,6 @@ struct wmOperatorType
   bool (*poll)(kContext *C) ATTR_WARN_UNUSED_RESULT;
 };
 
-typedef robin_hood::unordered_map<TfToken, wmOperatorType *, TfHash> RHashOp;
-
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(kContext *C);
 void WM_operators_register(kContext *C);

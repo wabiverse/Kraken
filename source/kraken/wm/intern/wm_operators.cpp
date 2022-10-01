@@ -180,10 +180,10 @@ char *WM_operator_pystring_ex(kContext *C,
 
       char *cstring_args = LUXO_pointer_as_string_id(C, opmptr);
       if (first_op) {
-        KLI_dynstr_appendf(dynstr, "%s=%s", opm->type->idname, cstring_args);
+        KLI_dynstr_appendf(dynstr, "%s=%s", opm->type->idname.GetText(), cstring_args);
         first_op = false;
       } else {
-        KLI_dynstr_appendf(dynstr, ", %s=%s", opm->type->idname, cstring_args);
+        KLI_dynstr_appendf(dynstr, ", %s=%s", opm->type->idname.GetText(), cstring_args);
       }
       MEM_freeN(cstring_args);
 
@@ -252,7 +252,7 @@ bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update)
 void WM_operators_init(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  global_ops_hash = new RHashOp();
+  global_ops_hash = KKE_rhash_str_new_ex("wm_operatortype_init rh", 2048);
 }
 
 void WM_operators_register(kContext *C)

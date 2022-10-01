@@ -38,6 +38,9 @@
 
 #include "creator.h"
 
+/* KRAKEN PYTHON */
+#include <kpy/KPY_extern_run.h>
+
 /* PIXAR */
 #include <wabi/usd/usd/stage.h>
 
@@ -127,7 +130,7 @@ static void arg_py_context_backup(kContext *C,
 {
   c_py->wm = CTX_wm_manager(C);
   c_py->scene = CTX_data_scene(C);
-  c_py->has_win = !c_py->wm->windows.empty();
+  c_py->has_win = (c_py->wm->windows.begin()->second != nullptr);
   if (c_py->has_win) {
     c_py->win = CTX_wm_window(C);
     CTX_wm_window_set(C, c_py->wm->windows.begin()->second);
@@ -145,17 +148,17 @@ static void arg_py_context_restore(kContext *C, struct KrakenPyContextStore *c_p
   /* script may load a file, check old data is valid before using */
   if (c_py->has_win) {
 
-    if ((c_py->win == NULL) ||
-        ((std::find(G.main->wm.begin(), G.main->wm.end(), c_py->wm) != G.main->wm.end()) &&
-         (std::find(c_py->wm->windows.begin(), c_py->wm->windows.end(), c_py->win) !=
-          c_py->wm->windows.end()))) {
-      CTX_wm_window_set(C, c_py->win);
+    if (c_py->win == NULL) {
+      if ((c_py->win = G.main->wm.front()->windows.begin()->second)) {
+        CTX_wm_window_set(C, c_py->win);
+      }
     }
   }
 
-  if ((c_py->scene == NULL) ||
-      (std::find(G.main->scenes.begin(), G.main->scenes.end(), c_py->wm) != G.main->wm.end())) {
-    CTX_data_scene_set(C, c_py->scene);
+  if (c_py->scene == NULL) {
+    if ((c_py->scene = G.main->scenes.front())) {
+      CTX_data_scene_set(C, c_py->scene);
+    }
   }
 }
 

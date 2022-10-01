@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 #include "MEM_guardedalloc.h"
 
@@ -180,55 +181,57 @@ kContextStore *CTX_store_add(std::vector<kContextStore *> contexts, const TfToke
 {
   /* ensure we have a context to put the entry in, if it was already used
    * we have to copy the context to ensure */
-  kContextStore *ctx = contexts.back();
+  // kContextStore *ctx = contexts.back();
 
-  if (!ctx || ctx->used) {
-    if (ctx) {
-      kContextStore *lastctx = ctx;
-      ctx = (kContextStore *)MEM_dupallocN(lastctx);
-      std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
-    }
-    else {
-      ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
-    }
+  // if (!ctx || ctx->used) {
+  //   if (ctx) {
+  //     kContextStore *lastctx = ctx;
+  //     ctx = (kContextStore *)MEM_dupallocN(lastctx);
+  //     std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
+  //   }
+  //   else {
+  //     ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
+  //   }
 
-    contexts.push_back(ctx);
-  }
+  //   contexts.push_back(ctx);
+  // }
 
-  kContextStoreEntry *entry = (kContextStoreEntry *)MEM_callocN(sizeof(kContextStoreEntry), "kContextStoreEntry");
-  entry->name = name;
-  entry->ptr = *ptr;
+  // kContextStoreEntry *entry = (kContextStoreEntry *)MEM_callocN(sizeof(kContextStoreEntry), "kContextStoreEntry");
+  // entry->name = name;
+  // *entry->ptr = ptr;
 
-  ctx->entries.push_back(entry);
+  // ctx->entries.push_back(entry);
 
-  return ctx;
+  return nullptr;
 }
 
 kContextStore *CTX_store_add_all(std::vector<kContextStore *> contexts, kContextStore *context)
 {
   /* ensure we have a context to put the entries in, if it was already used
    * we have to copy the context to ensure */
-  kContextStore *ctx = contexts.back();
+  // kContextStore *ctx = contexts.back();
 
-  if (!ctx || ctx->used) {
-    if (ctx) {
-      kContextStore *lastctx = ctx;
-      ctx = (kContextStore *)MEM_dupallocN(lastctx);
-      std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
-    }
-    else {
-      ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
-    }
+  // if (!ctx || ctx->used) {
+  //   if (ctx) {
+  //     kContextStore *lastctx = ctx;
+  //     ctx = (kContextStore *)MEM_dupallocN(lastctx);
+  //     std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
+  //   }
+  //   else {
+  //     ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
+  //   }
 
-    contexts.push_back(ctx);
-  }
+  //   contexts.push_back(ctx);
 
-  for (auto &tentry : context->entries) {
-    kContextStoreEntry *entry = (kContextStoreEntry *)MEM_dupallocN(tentry);
-    ctx->entries.push_back(entry);
-  }
+  return nullptr;
+  // }
 
-  return ctx;
+  // for (auto &tentry : context->entries) {
+  //   kContextStoreEntry *entry = (kContextStoreEntry *)MEM_dupallocN(tentry);
+  //   ctx->entries.push_back(entry);
+  // }
+
+  // return ctx;
 }
 
 kContextStore *CTX_store_get(kContext *C)
@@ -241,41 +244,52 @@ void CTX_store_set(kContext *C, kContextStore *store)
   C->wm.store = store;
 }
 
+static kContextStoreEntry *CTX_lookup_loop(const kContextStore *store, const TfToken &name)
+{
+  // for (auto &needle : store->entries) {
+  //   if (needle->name == name) {
+  //     return needle;
+  //   }
+  // }
+
+  return nullptr;
+}
+
 const KrakenPRIM *CTX_store_ptr_lookup(const kContextStore *store,
                                        const TfToken &name,
                                        const KrakenPRIM *type)
 {
-  kContextStoreEntry *entry = KLI_rfindtoken(store, name);
+  kContextStoreEntry *entry = CTX_lookup_loop(store, name);
   if (!entry) {
     return NULL;
   }
 
-  if (type && !LUXO_struct_is_a(entry->ptr.type, type)) {
+  if (type && !LUXO_struct_is_a(entry->ptr, type)) {
     return NULL;
   }
-  return &entry->ptr;
+  return entry->ptr;
 }
 
 kContextStore *CTX_store_copy(kContextStore *store)
 {
-  kContextStore *ctx = (kContextStore *)MEM_dupallocN(store);
-  std::copy(store->entries.begin(), store->entries.end(), ctx->entries);
+  // kContextStore *ctx = (kContextStore *)MEM_dupallocN(store);
+  // std::copy(store->entries.begin(), store->entries.end(), ctx->entries);
 
-  return ctx;
+  return store;
 }
 
 void CTX_store_free(kContextStore *store)
 {
-  KLI_freelistN(store);
+  store->entries.clear();
   MEM_freeN(store);
 }
 
 void CTX_store_free_list(const std::vector<kContextStore*> &contexts)
 {
-  kContextStore *ctx;
-  while ((ctx = KLI_pophead(contexts))) {
-    CTX_store_free(ctx);
-  }
+  // kContextStore *ctx = contexts.front();
+  // while (ctx = contexts.front()) {
+  // CTX_store_free(ctx);
+  // }
 }
 
 
@@ -416,7 +430,7 @@ void CTX_wm_menu_set(kContext *C, ARegion *menu)
 void CTX_data_scene_set(kContext *C, Scene *cscene)
 {
   C->data.scene = cscene;
-  C->data.stage = cscene->stage;
+  // C->data.stage = cscene->stage;
 }
 
 void CTX_data_prefs_set(kContext *C, UserDef *uprefs)

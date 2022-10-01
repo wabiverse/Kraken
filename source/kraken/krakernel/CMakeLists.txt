@@ -12,6 +12,8 @@ set(INC
   ../universe
   ../gatekeeper
   ../python
+  ../../../intern/atomic
+  ../../../intern/guardedalloc
 )
 
 set(SRC
@@ -68,6 +70,7 @@ set(LIB
   kraken_anchor
   kraken_intern_guardedalloc
   kraken_luxo
+  kraken_python
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

@@ -34,44 +34,24 @@ KRAKEN_NAMESPACE_BEGIN
 
 kContextStoreEntry *KLI_rfindtoken(const kContextStore *store, const wabi::TfToken &id)
 {
-  auto it = store->entries.rbegin();
-  while (it != store->entries.rend()) {
-    if (id == (*it)->name) {
-      return *it;
-    }
-    it++;
-  }
+  // auto it = store->entries.rbegin();
+  // while (it != store->entries.rend()) {
+  //   if (id == (*it)->name) {
+  //     return *it;
+  //   }
+  //   it++;
+  // }
 
-  return nullptr;
+  return store->entries[0];
 }
 
 void KLI_freelistN(kContextStore *store)
 {
-  for (size_t i = 0; i < store->entries.size(); i++) 
-  {       
-    delete store->entries[i];    
-  }    
+  // for (size_t i = 0; i < store->entries.size(); i++) 
+  // {       
+  //   delete store->entries[i];    
+  // }    
   store->entries.clear();
-}
-
-kContextStore *KLI_pophead(std::vector<struct kContextStore*> contexts)
-{
-  kContextStore *store;
-  if ((store = contexts.front())) {
-    KLI_remlink(contexts, store);
-  }
-  return store;
-}
-
-void KLI_remlink(std::vector<struct kContextStore*> contexts, kContextStore *store)
-{
-  kContextStore *link = store;
-
-  if (link == nullptr) {
-    return;
-  }
-
-  contexts.erase(std::remove(contexts.begin(), contexts.end(), link), contexts.end());
 }
 
 KRAKEN_NAMESPACE_END

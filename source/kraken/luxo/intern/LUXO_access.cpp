@@ -44,6 +44,7 @@
 #include "USD_types.h"
 #include "USD_object.h"
 #include "USD_scene.h"
+#include "USD_ID.h"
 
 #include "LUXO_runtime.h"
 #include "LUXO_access.h"
@@ -374,30 +375,30 @@ IDProperty *prim_idproperty_find(KrakenPRIM *ptr, const TfToken &name)
   return NULL;
 }
 
-static KrakenPROP *typemap[IDP_NUMTYPES] = {
-    &prim_PropertyGroupItem_string,
-    &prim_PropertyGroupItem_int,
-    &prim_PropertyGroupItem_float,
-    NULL,
-    NULL,
-    NULL,
-    &prim_PropertyGroupItem_group,
-    &prim_PropertyGroupItem_id,
-    &prim_PropertyGroupItem_double,
-    &prim_PropertyGroupItem_idp_array,
-};
+// static KrakenPROP *typemap[IDP_NUMTYPES] = {
+//     &prim_PropertyGroupItem_string,
+//     &prim_PropertyGroupItem_int,
+//     &prim_PropertyGroupItem_float,
+//     NULL,
+//     NULL,
+//     NULL,
+//     &prim_PropertyGroupItem_group,
+//     &prim_PropertyGroupItem_id,
+//     &prim_PropertyGroupItem_double,
+//     &prim_PropertyGroupItem_idp_array,
+// };
 
-static KrakenPROP *arraytypemap[IDP_NUMTYPES] = {
-    NULL,
-    &prim_PropertyGroupItem_int_array,
-    &prim_PropertyGroupItem_float_array,
-    NULL,
-    NULL,
-    NULL,
-    &prim_PropertyGroupItem_collection,
-    NULL,
-    &prim_PropertyGroupItem_double_array,
-};
+// static KrakenPROP *arraytypemap[IDP_NUMTYPES] = {
+//     NULL,
+//     &prim_PropertyGroupItem_int_array,
+//     &prim_PropertyGroupItem_float_array,
+//     NULL,
+//     NULL,
+//     NULL,
+//     &prim_PropertyGroupItem_collection,
+//     NULL,
+//     &prim_PropertyGroupItem_double_array,
+// };
 
 void prim_property_prim_or_id_get(KrakenPROP *prop,
                                   KrakenPRIM *ptr,
@@ -430,11 +431,11 @@ void prim_property_prim_or_id_get(KrakenPROP *prop,
 
   r_prop_rna_or_id->identifier = idprop->name;
   if (idprop->type == IDP_ARRAY) {
-    r_prop_rna_or_id->rnaprop = arraytypemap[(int)(idprop->subtype)];
+    // r_prop_rna_or_id->rnaprop = arraytypemap[(int)(idprop->subtype)];
     r_prop_rna_or_id->is_array = true;
     r_prop_rna_or_id->array_len = idprop_evaluated != NULL ? (uint)idprop_evaluated->len : 0;
   } else {
-    r_prop_rna_or_id->rnaprop = typemap[(int)(idprop->type)];
+    // r_prop_rna_or_id->rnaprop = typemap[(int)(idprop->type)];
   }
 }
 
@@ -493,7 +494,7 @@ void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr)
 
 void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
-  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios"));
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(K_FOUNDATION);
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_StageData;
   r_ptr->data = main;
@@ -735,7 +736,7 @@ void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
-  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(wabi::SdfPath("/WabiAnimationStudios"));
+  *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(K_FOUNDATION);
   r_ptr->owner_id = NULL;
   r_ptr->type = &LUXO_KrakenPixar;
   r_ptr->data = (void *&)KRAKEN_STAGE;

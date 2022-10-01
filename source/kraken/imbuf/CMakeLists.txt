@@ -42,7 +42,7 @@ list(APPEND LIB
   maelstrom
   maelstrom_static
   kraken_kernel
-  bf_blenlib
+  kraken_lib
   kraken_intern_guardedalloc
   kraken_intern_opencolorio
   ${BOOST_LIBRARIES}

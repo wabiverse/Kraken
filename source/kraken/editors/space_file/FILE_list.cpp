@@ -30,6 +30,8 @@
 
 #include "USD_space_types.h"
 
+#include "UI_resources.h"
+
 #include <boost/python.hpp>
 #include <boost/python/overloads.hpp>
 
@@ -321,13 +323,13 @@ int ED_file_extension_icon(const std::string &path)
       return ICON_KRAKEN;
 
     case FILE_TYPE_IMAGE:
-      return ICON_IMAGING;
+      return ICON_IMAGE;
 
     case FILE_TYPE_MOVIE:
-      return ICON_ANIMATION;
+      return ICON_ANIM;
 
     case FILE_TYPE_PYSCRIPT:
-      return ICON_SCRIPTING;
+      return ICON_SCRIPT;
 
     case FILE_TYPE_SOUND:
       return ICON_GRID;
@@ -341,7 +343,7 @@ int ED_file_extension_icon(const std::string &path)
     case FILE_TYPE_COLLADA:
     case FILE_TYPE_ALEMBIC:
     case FILE_TYPE_OBJECT_IO:
-      return ICON_GEOM;
+      return ICON_CUBE;
 
     case FILE_TYPE_TEXT:
       return ICON_GRID;
@@ -350,7 +352,7 @@ int ED_file_extension_icon(const std::string &path)
       return ICON_GRID;
 
     case FILE_TYPE_VOLUME:
-      return ICON_SIMULATION;
+      return ICON_PHYSICS;
 
     default:
       return ICON_GRID;

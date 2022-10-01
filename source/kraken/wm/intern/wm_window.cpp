@@ -1006,7 +1006,7 @@ wmWindow *WM_window_open(kContext *C,
   return nullptr;
 }
 
-static void WM_generic_callback_free(wmGenericCallback *callback)
+void WM_generic_callback_free(wmGenericCallback *callback)
 {
   if (callback->free_user_data) {
     callback->free_user_data(callback->user_data);

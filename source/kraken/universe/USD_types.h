@@ -42,6 +42,8 @@ struct kContext;
 
 struct KrakenSTAGE : public wabi::UsdStageRefPtr
 {
+  KrakenSTAGE();
+  
   std::vector<struct KrakenPRIM *> structs;
 };
 

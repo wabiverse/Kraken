@@ -840,6 +840,18 @@ eAnchorStatus AnchorAppleMetal::setWindowCursorVisibility(bool visible)
   return ANCHOR_SUCCESS;
 }
 
+eAnchorStatus AnchorAppleMetal::setWindowCursorShape(eAnchorStandardCursor shape)
+{
+  // NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
+
+  // if (m_window->isVisible()) {
+    loadCursor(getCursorVisibility(), shape);
+  // }
+
+  // pool->drain();
+  return ANCHOR_SUCCESS;
+}
+
 void *AnchorAppleMetal::getStandardCursor(eAnchorStandardCursor shape) const
 {
   switch (shape) {

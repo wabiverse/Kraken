@@ -73,7 +73,7 @@ MenuType *WM_menutype_find(const TfToken &idname, bool quiet)
   }
 
   if (!quiet) {
-    printf("search for unknown menutype %s\n", idname);
+    printf("search for unknown menutype %s\n", idname.GetText());
   }
 
   return NULL;

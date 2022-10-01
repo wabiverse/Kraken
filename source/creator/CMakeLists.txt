@@ -25,6 +25,7 @@ kraken_include_dirs(
   ../kraken/wm
   ../kraken/luxo
   ../kraken/universe
+  ../kraken/python
 )
 
 set(LIB

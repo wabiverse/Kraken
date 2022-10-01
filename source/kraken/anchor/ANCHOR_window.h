@@ -306,6 +306,12 @@ class AnchorSystemWindow : public AnchorISystemWindow
   }
 
   /**
+   * Sets the cursor shape on the window using
+   * native window system calls.
+   */
+  virtual eAnchorStatus setWindowCursorShape(eAnchorStandardCursor shape) = 0;
+
+  /**
    * Sets the cursor visibility on the window using
    * native window system calls. */
   virtual eAnchorStatus setWindowCursorVisibility(bool visible) = 0;
@@ -320,6 +326,12 @@ class AnchorSystemWindow : public AnchorISystemWindow
                                                    int hotX,
                                                    int hotY,
                                                    bool canInvertColor) = 0;
+
+  /**
+   * Set the shape of the cursor.
+   * @param cursorShape: The new cursor shape type id.
+   * @return Indication of success. */
+  eAnchorStatus setCursorShape(eAnchorStandardCursor cursorShape) override;
 
   /**
    * Returns the visibility state of the cursor.

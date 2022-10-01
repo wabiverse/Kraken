@@ -30,6 +30,8 @@
 #include "KLI_utildefines.h"
 #include "USD_wm_types.h"
 
+struct IDProperty;
+
 KRAKEN_NAMESPACE_BEGIN
 
 wmKeyMap *WM_keymap_list_find(std::vector<wmKeyMap *> keymaps, const wabi::TfToken &idname, int spaceid, int regionid);
@@ -50,7 +52,7 @@ int WM_keymap_item_raw_to_string(const short shift,
 char *WM_key_event_operator_string(const struct kContext *C,
                                    const TfToken &opname,
                                    eWmOperatorContext opcontext,
-                                   struct IDProperty *properties,
+                                   IDProperty *properties,
                                    bool is_strict,
                                    char *result,
                                    int result_len);

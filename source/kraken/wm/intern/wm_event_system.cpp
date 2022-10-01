@@ -1064,14 +1064,14 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
                                       ReportList *reports)
 {
   /* Operator-type names are static still. pass to allocation name for debugging. */
-  wmOperator *op = MEM_cnew<wmOperator>(ot->idname.GetText());
+  wmOperator *op = MEM_new<wmOperator>(ot->idname.GetText());
 
   /* Adding new operator could be function, only happens here now. */
   op->type = ot;
   op->idname = ot->idname;
 
   /* Initialize properties, either copy or create. */
-  op->ptr = MEM_cnew<KrakenPRIM>("wmOperatorPtrPRIM");
+  op->ptr = MEM_new<KrakenPRIM>("wmOperatorPtrPRIM");
   if (properties && properties->data) {
     op->properties = IDP_CopyProperty(static_cast<const IDProperty *>(properties->data));
   } else {
@@ -1084,7 +1084,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
   if (reports) {
     op->reports = reports; /* Must be initialized already. */
   } else {
-    op->reports = MEM_cnew<ReportList>("wmOperatorReportList");
+    op->reports = MEM_new<ReportList>("wmOperatorReportList");
     KKE_reports_init(op->reports, RPT_STORE | RPT_FREE);
   }
 

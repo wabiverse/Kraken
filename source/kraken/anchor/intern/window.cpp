@@ -80,6 +80,15 @@ eAnchorStatus AnchorSystemWindow::setCustomCursorShape(uint8_t *bitmap,
   return ANCHOR_FAILURE;
 }
 
+eAnchorStatus AnchorSystemWindow::setCursorShape(eAnchorStandardCursor cursorShape)
+{
+  if (setWindowCursorShape(cursorShape)) {
+    m_cursorShape = cursorShape;
+    return ANCHOR_SUCCESS;
+  }
+  return ANCHOR_FAILURE;
+}
+
 eAnchorStatus AnchorSystemWindow::setCursorGrab(eAnchorGrabCursorMode mode,
                                                 eAnchorAxisFlag wrap_axis,
                                                 AnchorRect *bounds,

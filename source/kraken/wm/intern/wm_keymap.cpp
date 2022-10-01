@@ -59,7 +59,8 @@
 
 KRAKEN_NAMESPACE_BEGIN
 
-struct wmKeyMapItemFind_Params {
+struct wmKeyMapItemFind_Params
+{
   bool (*filter_fn)(const wmKeyMap *km, const wmKeyMapItem *kmi, void *user_data);
   void *user_data;
 };
@@ -361,7 +362,8 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
         }
 #endif
 
-        if (kmi->ptr && IDP_EqualsProperties_ex(properties, (IDProperty *)kmi->ptr->data, is_strict)) {
+        if (kmi->ptr &&
+            IDP_EqualsProperties_ex(properties, (IDProperty *)kmi->ptr->data, is_strict)) {
           kmi_match = true;
         }
         /* Debug only, helps spotting mismatches between menu entries and shortcuts! */
@@ -373,7 +375,7 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
               KrakenPRIM opptr;
               IDProperty *properties_default = IDP_CopyProperty((IDProperty *)kmi->ptr->data);
 
-              LUXO_pointer_create(nullptr, &ot->prim, properties_default, &opptr);
+              LUXO_pointer_create(nullptr, ot->prim, properties_default, &opptr);
               WM_operator_properties_default(&opptr, true);
 
               if (IDP_EqualsProperties_ex(properties, properties_default, is_strict)) {
@@ -381,16 +383,16 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
                 WM_keymap_item_to_string(kmi, false, kmi_str, sizeof(kmi_str));
                 /* NOTE: given properties could come from other things than menu entry. */
                 printf(
-                    "%s: Some set values in menu entry match default op values, "
-                    "this might not be desired!\n",
-                    opname);
-                printf("\tkm: '%s', kmi: '%s'\n", keymap->idname, kmi_str);
+                  "%s: Some set values in menu entry match default op values, "
+                  "this might not be desired!\n",
+                  opname.GetText());
+                printf("\tkm: '%s', kmi: '%s'\n", keymap->idname.GetText(), kmi_str);
 #ifndef NDEBUG
 #  ifdef WITH_PYTHON
                 printf("OPERATOR\n");
-                IDP_print(properties);
+                // IDP_print(properties);
                 printf("KEYMAP\n");
-                IDP_print(kmi->ptr->data);
+                // IDP_print(kmi->ptr->data);
 #  endif
 #endif
                 printf("\n");
@@ -400,8 +402,7 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
             }
           }
         }
-      }
-      else {
+      } else {
         kmi_match = true;
       }
 
@@ -646,16 +647,13 @@ char *WM_key_event_operator_string(const kContext *C,
                                    char *result,
                                    const int result_len)
 {
-  wmKeyMapItem *kmi = wm_keymap_item_find(C,
-                                          opname,
-                                          opcontext,
-                                          properties,
-                                          is_strict,
-                                          &(struct wmKeyMapItemFind_Params){
-                                            .filter_fn = kmi_filter_is_visible,
-                                            .user_data = NULL,
-                                          },
-                                          NULL);
+  const wmKeyMapItemFind_Params params = {
+    .filter_fn = kmi_filter_is_visible,
+    .user_data = NULL,
+  };
+
+  wmKeyMapItem *kmi =
+    wm_keymap_item_find(C, opname, opcontext, properties, is_strict, &params, NULL);
   if (kmi) {
     WM_keymap_item_to_string(kmi, false, result, result_len);
     return result;

@@ -40,6 +40,8 @@
 #include <wabi/usd/usd/typed.h>
 #include <wabi/usd/usd/collectionAPI.h>
 
+typedef struct IDProperty **(*IDPropertiesFunc)(struct kraken::KrakenPRIM *ptr);
+
 KRAKEN_NAMESPACE_BEGIN
 
 enum PropertyType
@@ -374,8 +376,6 @@ struct KrakenFUNC
 
   KrakenPRIM *c_ret;
 };
-
-typedef struct IDProperty **(*IDPropertiesFunc)(struct KrakenPRIM *ptr);
 
 struct KrakenPRIM : public wabi::UsdPrim
 {

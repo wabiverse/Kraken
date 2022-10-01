@@ -30,6 +30,7 @@ set(SRC
   intern/KLI_path_utils.cpp
   intern/KLI_rect.cpp
   intern/KLI_string_utf8.c
+  intern/KLI_string_utils.c
   intern/KLI_storage.cpp
   intern/KLI_system.c
   intern/KLI_string.c
@@ -130,7 +131,5 @@ if(APPLE)
 endif()
 
 kraken_add_lib(kraken_lib "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
-
-target_compile_options(kraken_lib PRIVATE -Wno-sign-conversion)
 
 add_dependencies(kraken_lib kraken_intern_eigen)

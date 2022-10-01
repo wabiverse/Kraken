@@ -28,6 +28,8 @@
 
 #include <wabi/base/gf/vec4f.h>
 
+struct IDProperty;
+
 KRAKEN_NAMESPACE_BEGIN
 
 /* general defines for kernel functions */
@@ -303,7 +305,7 @@ typedef struct ImBuf {
   /** used to set imbuf to dirty and other stuff */
   int userflags;
   /** image metadata */
-  struct IDProperty *metadata;
+  IDProperty *metadata;
   /** temporary storage */
   void *userdata;
 
