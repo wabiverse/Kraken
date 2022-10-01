@@ -28,7 +28,7 @@
 #include "KLI_string_ref.hh"
 
 #include "GPU_shader.h"
-// #include "gpu_shader_create_info.hh"
+#include "gpu_shader_create_info.hh"
 #include "gpu_shader_interface.hh"
 #include "gpu_vertex_buffer_private.hh"
 

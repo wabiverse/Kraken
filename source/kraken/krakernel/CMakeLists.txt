@@ -33,11 +33,15 @@ set(SRC
   intern/KKE_screen.cpp
   intern/KKE_utils.cpp
   intern/KKE_workspace.cpp
+  intern/cryptomatte.cc
 
   KKE_api.h
   KKE_appdir.h
   KKE_colortools.h
+  KKE_cryptomatte.h
+  KKE_cryptomatte.hh
   KKE_context.h
+  KKE_global.h
   KKE_icons.h
   KKE_idprop.h
   KKE_idtype.h
@@ -72,6 +76,7 @@ set(LIB
   kraken_intern_guardedalloc
   kraken_luxo
   kraken_python
+  kraken_intern_clog
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

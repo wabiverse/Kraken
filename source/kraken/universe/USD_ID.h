@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 struct FileData;
-struct GHash;
+struct RHash;
 struct GPUTexture;
 struct ID;
 struct Library;
@@ -312,7 +312,7 @@ enum
 
 typedef struct IDOverrideLibraryRuntime
 {
-  struct GHash *rna_path_to_override_properties;
+  struct RHash *rna_path_to_override_properties;
   uint tag;
 } IDOverrideLibraryRuntime;
 

@@ -79,7 +79,8 @@ namespace gpu
    public:
 
     typedef std::vector<MTLBackendBuffer *> MTLBackendBufferCache;
-    typedef wabi::TfHashMap<MTLBackendFramebufferDescriptor *, MTL::RenderPipelineState *> MTLRenderPipelineStateCache;
+    typedef wabi::TfHashMap<MTLBackendFramebufferDescriptor *, MTL::RenderPipelineState *>
+      MTLRenderPipelineStateCache;
 
     static MTLBackend &getInstance()
     {

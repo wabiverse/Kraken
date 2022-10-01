@@ -27,14 +27,15 @@
 #include "GPU_vertex_format.h"
 #include "GPU_capabilities.h"
 
-// #include "gpu_shader_create_info.hh"
+#include "gpu_shader_create_info.hh"
 #include "gpu_shader_private.hh"
 #include "gpu_vertex_format_private.h"
 
 #include <cstddef>
 #include <cstring>
 
-#include "KKE_utils.h"
+#include "KLI_rhash.h"
+#include "KLI_hash.h"
 #include "KLI_string.h"
 #include "KLI_utildefines.h"
 
@@ -281,7 +282,7 @@ void GPU_vertformat_safe_attr_name(const char *attr_name, char *r_safe_name, uin
     /* We use a hash to identify each data layer based on its name.
      * NOTE: This is still prone to hash collision but the risks are very low. */
     /* Start hashing after the first 2 chars. */
-    *(uint *)&data[4] = KLI_ghashutil_strhash_p_murmur(attr_name + 4);
+    *(uint *)&data[4] = KLI_rhashutil_strhash_p_murmur(attr_name + 4);
   } else {
     /* Copy the whole name. Collision is barely possible
      * (hash would have to be equal to the last 4 bytes). */

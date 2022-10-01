@@ -29,8 +29,12 @@
 #include "KLI_string_utils.h"
 #include "KLI_vector.hh"
 
-// #include "gpu_shader_dependency_private.h"
+#include "gpu_shader_dependency_private.h"
 #include "gpu_shader_private.hh"
+
+#include "CLG_log.h"
+
+static CLG_LogRef LOG = {"gpu.shader"};
 
 namespace kraken::gpu
 {

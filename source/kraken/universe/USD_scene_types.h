@@ -37,7 +37,7 @@
 
 #include "USD_ID.h"
 #include "USD_color_types.h" /* color management */
-// #include "USD_customdata_types.h" /* Scene's runtime custom-data masks. */
+#include "USD_customdata_types.h" /* Scene's runtime custom-data masks. */
 // #include "USD_layer_types.h"
 #include "USD_listBase.h"
 #include "USD_vec_types.h"
@@ -1813,7 +1813,7 @@ typedef struct Scene
   void *fps_info;
 
   /* None of the dependency graph vars is mean to be saved. */
-  struct GHash *depsgraph_hash;
+  struct RHash *depsgraph_hash;
   char _pad7[4];
 
   /* User-Defined KeyingSets */

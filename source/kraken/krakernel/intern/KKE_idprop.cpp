@@ -52,15 +52,15 @@
 
 /* Local size table. */
 static size_t idp_size_table[] = {
-    1, /*strings*/
-    sizeof(int),
-    sizeof(float),
-    sizeof(float[3]),  /* Vector type, deprecated. */
-    sizeof(float[16]), /* Matrix type, deprecated. */
-    0,                 /* Arrays don't have a fixed size. */
-    sizeof(ListBase),  /* Group type. */
-    sizeof(void *),
-    sizeof(double),
+  1, /*strings*/
+  sizeof(int),
+  sizeof(float),
+  sizeof(float[3]),  /* Vector type, deprecated. */
+  sizeof(float[16]), /* Matrix type, deprecated. */
+  0,                 /* Arrays don't have a fixed size. */
+  sizeof(ListBase),  /* Group type. */
+  sizeof(void *),
+  sizeof(double),
 };
 
 /* -------------------------------------------------------------------- */
@@ -71,7 +71,9 @@ static IDProperty *idp_generic_copy(const IDProperty *prop, const int UNUSED(fla
 {
   IDProperty *newp = (IDProperty *)MEM_callocN(sizeof(IDProperty), __func__);
 
-  newp->name = prop->name;
+  int stlen = (int)strlen(prop->name) + 1;
+  KLI_strncpy(newp->name, prop->name, (size_t)stlen);
+
   newp->type = prop->type;
   newp->flag = prop->flag;
   newp->data.val = prop->data.val;
@@ -94,8 +96,9 @@ static IDProperty *IDP_CopyGroup(const IDProperty *prop, const int flag)
   newp->len = prop->len;
   newp->subtype = prop->subtype;
 
-  for (auto &link : prop->data.group) {
-    newp->data.group.push_back(IDP_CopyProperty_ex(link, flag));
+  LISTBASE_FOREACH(IDProperty *, link, &newp->data.group)
+  {
+    KLI_addtail(&newp->data.group, IDP_CopyProperty_ex(link, flag));
   }
 
   return newp;
@@ -287,8 +290,9 @@ IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const char *
         prop = (IDProperty *)MEM_callocN(sizeof(IDProperty), "IDProperty array");
         prop->subtype = val->array.type;
         if (val->array.len) {
-          prop->data.pointer = MEM_callocN(
-              idp_size_table[val->array.type] * (size_t)val->array.len, "id property array");
+          prop->data.pointer = MEM_callocN(idp_size_table[val->array.type] *
+                                             (size_t)val->array.len,
+                                           "id property array");
         }
         prop->len = prop->totallen = val->array.len;
         break;
@@ -306,23 +310,20 @@ IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const char *
           *IDP_String(prop) = '\0';
           prop->totallen = DEFAULT_ALLOC_FOR_NULL_STRINGS;
           prop->len = 0;
-        }
-        else {
+        } else {
           prop->data.pointer = MEM_mallocN((size_t)val->string.len, "id property string 2");
           prop->len = prop->totallen = val->string.len;
           memcpy(prop->data.pointer, st, (size_t)val->string.len);
         }
         prop->subtype = IDP_STRING_SUB_BYTE;
-      }
-      else {
+      } else {
         if (st == NULL || val->string.len <= 1) {
           prop->data.pointer = MEM_mallocN(DEFAULT_ALLOC_FOR_NULL_STRINGS, "id property string 1");
           *IDP_String(prop) = '\0';
           prop->totallen = DEFAULT_ALLOC_FOR_NULL_STRINGS;
           /* NULL string, has len of 1 to account for null byte. */
           prop->len = 1;
-        }
-        else {
+        } else {
           KLI_assert((int)val->string.len <= (int)strlen(st) + 1);
           prop->data.pointer = MEM_mallocN((size_t)val->string.len, "id property string 3");
           memcpy(prop->data.pointer, st, (size_t)val->string.len - 1);
@@ -352,7 +353,9 @@ IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const char *
   }
 
   prop->type = type;
-  prop->name = TfToken(name);
+
+  int stlen = (int)strlen(name) + 1;
+  KLI_strncpy(prop->name, name, (size_t)stlen);
 
   return prop;
 }
@@ -361,7 +364,7 @@ IDProperty *IDP_GetPropertyFromGroup(const IDProperty *prop, const wabi::TfToken
 {
   KLI_assert(prop->type == IDP_GROUP);
 
-  for (auto &gprop : prop->data.group)
+  LISTBASE_FOREACH(IDProperty *, gprop, &prop->data.group)
   {
     if (gprop->name == name) {
       return gprop;
@@ -375,9 +378,10 @@ bool IDP_AddToGroup(IDProperty *group, IDProperty *prop)
 {
   KLI_assert(group->type == IDP_GROUP);
 
-  if (IDP_GetPropertyFromGroup(group, prop->name) == NULL) {
+  if (IDP_GetPropertyFromGroup(group, TfToken(prop->name)) == NULL) {
     group->len++;
-    group->data.group.push_back(prop);
+    // group->data.group.push_back(prop);
+    KLI_addtail(&group->data.group, prop);
     return true;
   }
 
@@ -393,8 +397,7 @@ IDProperty *IDP_NewString(const wabi::TfToken &st, const wabi::TfToken &name, in
     *IDP_String(prop) = '\0';
     prop->totallen = DEFAULT_ALLOC_FOR_NULL_STRINGS;
     prop->len = 1; /* NULL string, has len of 1 to account for null byte. */
-  }
-  else {
+  } else {
     /* include null terminator '\0' */
     int stlen = (int)strlen(st.GetText()) + 1;
 
@@ -408,7 +411,10 @@ IDProperty *IDP_NewString(const wabi::TfToken &st, const wabi::TfToken &name, in
   }
 
   prop->type = IDP_STRING;
-  prop->name = name;
+  // prop->name = name;
+
+  int stlen = (int)strlen(name.GetText()) + 1;
+  KLI_strncpy(prop->name, name.data(), (size_t)stlen);
 
   return prop;
 }
@@ -435,14 +441,14 @@ bool IDP_EqualsProperties_ex(IDProperty *prop1, IDProperty *prop2, const bool is
       float p2 = IDP_Float(prop2);
       if ((p1 != p2) && ((fabsf(p1 - p2) / max_ff(p1, p2)) < 0.001f)) {
         printf(
-            "WARNING: Comparing two float properties that have nearly the same value (%f vs. "
-            "%f)\n",
-            p1,
-            p2);
+          "WARNING: Comparing two float properties that have nearly the same value (%f vs. "
+          "%f)\n",
+          p1,
+          p2);
         printf("    p1: ");
-//        IDP_print(prop1);
+        //        IDP_print(prop1);
         printf("    p2: ");
-//        IDP_print(prop2);
+        //        IDP_print(prop2);
       }
     }
 #endif
@@ -465,8 +471,9 @@ bool IDP_EqualsProperties_ex(IDProperty *prop1, IDProperty *prop2, const bool is
         return false;
       }
 
-      for (auto &link1 : prop1->data.group) {
-        IDProperty *link2 = IDP_GetPropertyFromGroup(prop2, link1->name);
+      LISTBASE_FOREACH(IDProperty *, link1, &prop1->data.group)
+      {
+        IDProperty *link2 = IDP_GetPropertyFromGroup(prop2, TfToken(link1->name));
 
         if (!IDP_EqualsProperties_ex(link1, link2, is_strict)) {
           return false;
@@ -510,11 +517,15 @@ void IDP_ReplaceGroupInGroup(IDProperty *dest, const IDProperty *src)
   KLI_assert(dest->type == IDP_GROUP);
   KLI_assert(src->type == IDP_GROUP);
 
-  for (auto &prop : src->data.group) {
+
+  LISTBASE_FOREACH(IDProperty *, prop, &src->data.group)
+  {
     size_t index = 0;
-    for (auto &loop : dest->data.group) {
-      if (loop->name == prop->name) {
-        dest->data.group.insert(dest->data.group.begin() + index, IDP_CopyProperty(prop));
+    LISTBASE_FOREACH(IDProperty *, loop, &dest->data.group)
+    {
+      if (STREQ(loop->name, prop->name)) {
+        KLI_insertlinkafter(&dest->data.group, loop, IDP_CopyProperty(prop));
+        // dest->data.group.insert(dest->data.group.begin() + index, IDP_CopyProperty(prop));
         // IDP_FreeProperty(loop);
         break;
       }
@@ -523,10 +534,10 @@ void IDP_ReplaceGroupInGroup(IDProperty *dest, const IDProperty *src)
     }
 
     /* only add at end if not added yet */
-    if (index == dest->data.group.size()) {
+    if (index == KLI_listbase_count(&dest->data.group)) {
       IDProperty *copy = IDP_CopyProperty(prop);
       dest->len++;
-      dest->data.group.push_back(copy);
+      KLI_addtail(&dest->data.group, copy);
     }
   }
 }
@@ -534,24 +545,26 @@ void IDP_ReplaceGroupInGroup(IDProperty *dest, const IDProperty *src)
 void IDP_ReplaceInGroup_ex(IDProperty *group, IDProperty *prop, IDProperty *prop_exist)
 {
   KLI_assert(group->type == IDP_GROUP);
-  KLI_assert(prop_exist == IDP_GetPropertyFromGroup(group, prop->name));
+  KLI_assert(prop_exist == IDP_GetPropertyFromGroup(group, TfToken(prop->name)));
 
   if (prop_exist != NULL) {
-    const auto &idx = std::find(group->data.group.begin(), group->data.group.end(), prop_exist);
-    if (idx != group->data.group.end()) {
-      group->data.group.insert(idx, prop);
+    int idx = KLI_findindex(&group->data.group, prop_exist);
+    // const auto &idx = std::find(group->data.group.begin(), group->data.group.end(), prop_exist);
+    if (idx != KLI_listbase_count(&group->data.group)) {
+      KLI_insertlinkreplace(&group->data.group, prop_exist, prop);
+      // group->data.group.insert(idx, prop);
     }
     // IDP_FreeProperty(prop_exist);
-  }
-  else {
+  } else {
     group->len++;
-    group->data.group.push_back(prop);
+    KLI_addtail(&group->data.group, prop);
+    // group->data.group.push_back(prop);
   }
 }
 
 void IDP_ReplaceInGroup(IDProperty *group, IDProperty *prop)
 {
-  IDProperty *prop_exist = IDP_GetPropertyFromGroup(group, prop->name);
+  IDProperty *prop_exist = IDP_GetPropertyFromGroup(group, TfToken(prop->name));
 
   IDP_ReplaceInGroup_ex(group, prop, prop_exist);
 }

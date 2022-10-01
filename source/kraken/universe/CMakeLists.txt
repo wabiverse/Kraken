@@ -27,6 +27,7 @@ set(SRC
   USD_color_types.h
   USD_context.h
   USD_curveprofile_types.h
+  USD_customdata_types.h
   USD_default_tables.h
   USD_defs.h
   USD_factory.h

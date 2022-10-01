@@ -230,7 +230,7 @@ static const TfToken luxo_ensure_property_identifier(const KrakenPROP *prop)
   // if (prop->magic == LUXO_MAGIC) {
   //   return prop->identifier;
   // }
-  return ((const IDProperty *)prop)->name;
+  return TfToken(((const IDProperty *)prop)->name);
 }
 
 const TfToken LUXO_property_identifier(const KrakenPROP *prop)
@@ -419,7 +419,7 @@ void prim_property_prim_or_id_get(KrakenPROP *prop,
   IDProperty *idprop = (IDProperty *)prop;
   /* Given prop may come from the custom properties of another data, ensure we get the one from
    * given data ptr. */
-  IDProperty *idprop_evaluated = prim_idproperty_find(ptr, idprop->name);
+  IDProperty *idprop_evaluated = prim_idproperty_find(ptr, TfToken(idprop->name));
   if (idprop_evaluated != NULL && idprop->type != idprop_evaluated->type) {
     idprop_evaluated = NULL;
   }
@@ -429,7 +429,7 @@ void prim_property_prim_or_id_get(KrakenPROP *prop,
   /* Full IDProperties are always set, if it exists. */
   r_prop_rna_or_id->is_set = (idprop_evaluated != NULL);
 
-  r_prop_rna_or_id->identifier = idprop->name;
+  r_prop_rna_or_id->identifier = TfToken(idprop->name);
   if (idprop->type == IDP_ARRAY) {
     // r_prop_rna_or_id->rnaprop = arraytypemap[(int)(idprop->subtype)];
     r_prop_rna_or_id->is_array = true;
@@ -463,25 +463,25 @@ void LUXO_property_collection_begin(KrakenPRIM *ptr,
     iter->parent = *ptr;
     iter->prop = prop;
 
-  //   if (idprop) {
-  //     prim_iterator_array_begin(iter,
-  //                              IDP_IDPArray(idprop),
-  //                              sizeof(IDProperty),
-  //                              idprop->len,
-  //                              0,
-  //                              NULL);
-  //   } else {
-  //     prim_iterator_array_begin(iter, NULL, sizeof(IDProperty), 0, 0, NULL);
-  //   }
+    //   if (idprop) {
+    //     prim_iterator_array_begin(iter,
+    //                              IDP_IDPArray(idprop),
+    //                              sizeof(IDProperty),
+    //                              idprop->len,
+    //                              0,
+    //                              NULL);
+    //   } else {
+    //     prim_iterator_array_begin(iter, NULL, sizeof(IDProperty), 0, 0, NULL);
+    //   }
 
-  //   if (iter->valid) {
-  //     prim_property_collection_get_idp(iter);
-  //   }
+    //   if (iter->valid) {
+    //     prim_property_collection_get_idp(iter);
+    //   }
 
-  //   iter->idprop = 1;
-  // } else {
-  //   CollectionPropertyPRIM *cprop = (CollectionPropertyPRIM *)prop;
-  //   cprop->begin(iter, ptr);
+    //   iter->idprop = 1;
+    // } else {
+    //   CollectionPropertyPRIM *cprop = (CollectionPropertyPRIM *)prop;
+    //   cprop->begin(iter, ptr);
   }
 }
 

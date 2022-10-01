@@ -8,6 +8,7 @@ set(INC
   ../luxo
   ../editors/include
   ../../../extern/wcwidth
+  ../../../intern/atomic
   ../../../intern/guardedalloc
 )
 
@@ -17,30 +18,41 @@ set(SRC
   intern/KLI_fileops.cpp
   intern/KLI_listbase.cpp
   intern/KLI_math_base_inline.c
+  intern/KLI_math_base_safe_inline.c
   intern/KLI_math_bits_inline.c
   intern/KLI_math_color_inline.c
-  intern/KLI_math_geom_inline.c
   intern/KLI_math_geom.c
+  intern/KLI_math_geom_inline.c
   intern/KLI_math_matrix.c
   intern/KLI_math_rotation.c
   intern/KLI_math_solvers.c
-  intern/KLI_math_vector_inline.c
   intern/KLI_math_vector.c
+  intern/KLI_math_vector_inline.c
+  intern/KLI_mempool.c
   intern/KLI_numaapi.cpp
   intern/KLI_path_utils.cpp
   intern/KLI_rect.cpp
+  intern/KLI_rhash.c
+  intern/KLI_storage.cpp
+  intern/KLI_string.c
   intern/KLI_string_utf8.c
   intern/KLI_string_utils.c
-  intern/KLI_storage.cpp
   intern/KLI_system.c
-  intern/KLI_string.c
-  intern/KLI_time.cpp
   intern/KLI_threads.cpp
+  intern/KLI_time.cpp
   intern/KLI_winstuff.cpp
+  intern/gsqueue.c
+  intern/hash_mm2a.c
+  intern/hash_mm3.c
+  intern/lazy_threading.cc
+  intern/task_scheduler.cc
+
+  intern/KLI_mempool_private.h
 
   KLI_allocator.hh
   KLI_api.h
   KLI_array.h
+  KLI_array.hh
   KLI_assert.h
   KLI_compiler_attrs.h
   KLI_compiler_compat.h
@@ -48,12 +60,26 @@ set(SRC
   KLI_dynstr.h
   KLI_easing.h
   KLI_fileops.h
+  KLI_float4x4.hh
+  KLI_function_ref.hh
+  KLI_gsqueue.h
+  KLI_hash.h
+  KLI_hash.hh
+  KLI_hash_mm2a.h
+  KLI_hash_mm3.h
+  KLI_hash_tables.hh
   KLI_index_range.hh
   KLI_kraklib.h
+  KLI_lazy_threading.hh
   KLI_link_utils.h
   KLI_listbase.h
-  KLI_memory_utils.hh
+  KLI_listbase_wrapper.hh
+  KLI_map.hh
+  KLI_map_slots.hh
+  KLI_math.h
   KLI_math_base.h
+  KLI_math_base.hh
+  KLI_math_base_safe.h
   KLI_math_bits.h
   KLI_math_color.h
   KLI_math_geom.h
@@ -61,26 +87,35 @@ set(SRC
   KLI_math_matrix.h
   KLI_math_rotation.h
   KLI_math_solvers.h
+  KLI_math_vec_types.hh
   KLI_math_vector.h
-  KLI_math.h
+  KLI_math_vector.hh
+  KLI_memory_utils.hh
+  KLI_mempool.h
   KLI_numaapi.h
   KLI_path_utils.h
+  KLI_probing_strategies.hh
   KLI_rect.h
+  KLI_rhash.h
+  KLI_set.hh
+  KLI_set_slots.hh
   KLI_simd.h
   KLI_span.hh
   KLI_strict_flags.h
-  KLI_string_ref.hh
-  KLI_string_utils.h
-  KLI_string_utf8.h
   KLI_string.h
+  KLI_string_ref.hh
+  KLI_string_utf8.h
+  KLI_string_utils.h
   KLI_sys_types.h
   KLI_system.h
+  KLI_task.h
+  KLI_task.hh
   KLI_threads.h
   KLI_time.h
   KLI_utildefines.h
   KLI_utildefines_variadic.h
-  KLI_winstuff.h
   KLI_vector.hh
+  KLI_winstuff.h
 )
 
 set(INC_SYS

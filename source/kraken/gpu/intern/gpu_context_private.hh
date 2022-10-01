@@ -32,7 +32,7 @@
 
 #include "gpu_debug_private.hh"
 #include "gpu_framebuffer_private.hh"
-// #include "gpu_immediate_private.hh"
+#include "gpu_immediate_private.hh"
 #include "gpu_shader_private.hh"
 #include "gpu_state_private.hh"
 

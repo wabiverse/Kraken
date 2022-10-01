@@ -18,9 +18,10 @@
 
 #pragma once
 
-/** 
+/**
  * @file
- * @ingroup kli
+ * KRAKEN Library.
+ * Gadget Vault.
  */
 
 #include "KLI_compiler_attrs.h"

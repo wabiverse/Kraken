@@ -16,13 +16,13 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * KRAKEN Library.
  * Gadget Vault.
  */
-
-#pragma once
 
 
 #include <algorithm>

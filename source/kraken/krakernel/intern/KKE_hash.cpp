@@ -938,7 +938,7 @@ uint KKE_rhashutil_ptrhash(const void *key)
 }
 
 /* -------------------------------------------------------------------- */
-/** \name GSet Public API
+/** \name RSet Public API
  * \{ */
 
 RSet *KKE_rset_new_ex(RSetHashFP hashfp,

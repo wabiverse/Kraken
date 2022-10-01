@@ -195,9 +195,11 @@ void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
 
   const char *none = "<none>";
   printf("rna(id='%s', %s.%s, info='%s')\n",
-         msg_key_params->ptr.owner_id ? std::string(((ID *)msg_key_params->ptr.owner_id)->name).c_str() : none,
+         msg_key_params->ptr.owner_id ?
+           std::string(((ID *)msg_key_params->ptr.owner_id)->name).c_str() :
+           none,
          msg_key_params->ptr.type ? msg_key_params->ptr.type->identifier.GetText() : none,
-         msg_key_params->prop ? ((const IDProperty *)msg_key_params->prop)->name.GetText() : none,
+         msg_key_params->prop ? ((const IDProperty *)msg_key_params->prop)->name : none,
          id_repr);
 
   wmMsgSubscribeKey_PRIM *msg_key = (wmMsgSubscribeKey_PRIM *)

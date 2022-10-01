@@ -18,9 +18,10 @@
 
 #pragma once
 
-/** \file
- * \ingroup kli
- * \brief A (mainly) macro array library.
+/**
+ * @file
+ * KRAKEN Library.
+ * Gadget Vault.
  */
 
 /* -------------------------------------------------------------------- */

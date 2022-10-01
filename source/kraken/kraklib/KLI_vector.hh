@@ -47,7 +47,7 @@
 
 #include "KLI_allocator.hh"
 #include "KLI_index_range.hh"
-// #include "KLI_listbase_wrapper.hh"
+#include "KLI_listbase_wrapper.hh"
 #include "KLI_math_base.h"
 #include "KLI_memory_utils.hh"
 #include "KLI_span.hh"

@@ -29,7 +29,7 @@
 #include "KLI_math_base.h"
 
 #include "gpu_backend.hh"
-// #include "gpu_node_graph.h"
+#include "gpu_node_graph.h"
 
 #include "GPU_material.h"
 

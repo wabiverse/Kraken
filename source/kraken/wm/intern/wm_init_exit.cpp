@@ -40,6 +40,8 @@
 #include "USD_userpref.h"
 #include "USD_factory.h"
 
+#include "KLI_threads.h"
+
 #include "KKE_appdir.h"
 #include "KKE_context.h"
 #include "KKE_icons.h"

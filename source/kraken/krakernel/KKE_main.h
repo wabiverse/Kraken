@@ -72,6 +72,10 @@ struct Main
 
   char launch_time[USD_MAX_TIME];
 
+  /* these are currently used for cryptomatte. */
+  ListBase objects;
+  ListBase materials;
+
   std::vector<struct wmWindowManager *> wm;
   std::vector<struct WorkSpace *> workspaces;
   std::vector<struct kScreen *> screens;

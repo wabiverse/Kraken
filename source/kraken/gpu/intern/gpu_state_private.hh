@@ -28,7 +28,7 @@
 
 #include "GPU_state.h"
 
-// #include "gpu_texture_private.hh"
+#include "gpu_texture_private.hh"
 
 #include <cstring>
 

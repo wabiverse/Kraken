@@ -178,7 +178,7 @@ void DRW_render_gpencil(struct RenderEngine *engine, struct Hydra *hydra);
  */
 struct DRWInstanceDataList *DRW_instance_data_list_create(void);
 void DRW_instance_data_list_free(struct DRWInstanceDataList *idatalist);
-void DRW_uniform_attrs_pool_free(struct GHash *table);
+void DRW_uniform_attrs_pool_free(struct RHash *table);
 
 void DRW_render_context_enable(struct Render *render);
 void DRW_render_context_disable(struct Render *render);

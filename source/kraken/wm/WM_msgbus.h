@@ -66,7 +66,7 @@ struct wmMsgTypeInfo {
     unsigned int (*hash_fn)(const void *msg);
     bool (*cmp_fn)(const void *a, const void *b);
     void (*key_free_fn)(void *key);
-  } gset;
+  } rset;
 
   void (*update_by_id)(struct wmMsgBus *mbus, struct ID *id_src, struct ID *id_dst);
   void (*remove_by_id)(struct wmMsgBus *mbus, const struct ID *id);

@@ -24,7 +24,7 @@
  * Pixel Magic.
  */
 
-// #include "USD_customdata_types.h" /* for eCustomDataType */
+#include "USD_customdata_types.h" /* for eCustomDataType */
 // #include "USD_image_types.h"
 #include "USD_listBase.h"
 
@@ -172,14 +172,14 @@ typedef void (*GPUCodegenCallbackFn)(void *thunk, GPUMaterial *mat, GPUCodegenOu
 
 GPUNodeLink *GPU_constant(const float *num);
 GPUNodeLink *GPU_uniform(const float *num);
-GPUNodeLink *GPU_attribute(GPUMaterial *mat, int type, const char *name);
+GPUNodeLink *GPU_attribute(GPUMaterial *mat, eCustomDataType type, const char *name);
 /**
  * Add a GPU attribute that refers to the default color attribute on a geometry.
  * The name, type, and domain are unknown and do not depend on the material.
  */
 GPUNodeLink *GPU_attribute_default_color(GPUMaterial *mat);
 GPUNodeLink *GPU_attribute_with_default(GPUMaterial *mat,
-                                        int type,
+                                        eCustomDataType type,
                                         const char *name,
                                         eGPUDefaultValue default_value);
 GPUNodeLink *GPU_uniform_attribute(GPUMaterial *mat,
@@ -301,7 +301,7 @@ struct GPUUniformBuf *GPU_material_uniform_buffer_get(GPUMaterial *material);
 /**
  * Create dynamic UBO from parameters
  *
- * \param inputs: Items are #LinkData, data is #GPUInput (`BLI_genericNodeN(GPUInput)`).
+ * \param inputs: Items are #LinkData, data is #GPUInput (`KLI_genericNodeN(GPUInput)`).
  */
 void GPU_material_uniform_buffer_create(GPUMaterial *material, ListBase *inputs);
 struct GPUUniformBuf *GPU_material_create_sss_profile_ubo(void);

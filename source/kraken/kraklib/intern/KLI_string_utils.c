@@ -35,7 +35,9 @@
 
 #include "USD_listBase.h"
 
-/* Unique name utils. */
+#ifdef __GNUC__
+#  pragma GCC diagnostic error "-Wsign-conversion"
+#endif
 
 size_t KLI_split_name_num(char *left, int *nr, const char *name, const char delim)
 {
@@ -66,6 +68,182 @@ size_t KLI_split_name_num(char *left, int *nr, const char *name, const char deli
 
   return name_len;
 }
+
+bool KLI_string_is_decimal(const char *string)
+{
+  if (*string == '\0') {
+    return false;
+  }
+
+  /* Keep iterating over the string until a non-digit is found. */
+  while (isdigit(*string)) {
+    string++;
+  }
+
+  /* If the non-digit we found is the terminating \0, everything was digits. */
+  return *string == '\0';
+}
+
+static bool is_char_sep(const char c)
+{
+  return ELEM(c, '.', ' ', '-', '_');
+}
+
+void KLI_string_split_suffix(const char *string, char *r_body, char *r_suf, const size_t str_len)
+{
+  size_t len = KLI_strnlen(string, str_len);
+  size_t i;
+
+  r_body[0] = r_suf[0] = '\0';
+
+  for (i = len; i > 0; i--) {
+    if (is_char_sep(string[i])) {
+      KLI_strncpy(r_body, string, i + 1);
+      KLI_strncpy(r_suf, string + i, (len + 1) - i);
+      return;
+    }
+  }
+
+  memcpy(r_body, string, len + 1);
+}
+
+void KLI_string_split_prefix(const char *string, char *r_pre, char *r_body, const size_t str_len)
+{
+  size_t len = KLI_strnlen(string, str_len);
+  size_t i;
+
+  r_body[0] = r_pre[0] = '\0';
+
+  for (i = 1; i < len; i++) {
+    if (is_char_sep(string[i])) {
+      i++;
+      KLI_strncpy(r_pre, string, i + 1);
+      KLI_strncpy(r_body, string + i, (len + 1) - i);
+      return;
+    }
+  }
+
+  KLI_strncpy(r_body, string, len);
+}
+
+size_t KLI_string_flip_side_name(char *r_name,
+                                 const char *from_name,
+                                 const bool strip_number,
+                                 const size_t name_len)
+{
+  size_t len;
+  char *prefix = alloca(name_len);  /* The part before the facing */
+  char *suffix = alloca(name_len);  /* The part after the facing */
+  char *replace = alloca(name_len); /* The replacement string */
+  char *number = alloca(name_len);  /* The number extension string */
+  char *index = NULL;
+  bool is_set = false;
+
+  *prefix = *suffix = *replace = *number = '\0';
+
+  /* always copy the name, since this can be called with an uninitialized string */
+  len = KLI_strncpy_rlen(r_name, from_name, name_len);
+  if (len < 3) {
+    /* we don't do names like .R or .L */
+    return len;
+  }
+
+  /* We first check the case with a .### extension, let's find the last period */
+  if (isdigit(r_name[len - 1])) {
+    index = strrchr(r_name, '.');     /* Last occurrence. */
+    if (index && isdigit(index[1])) { /* Doesn't handle case `bone.1abc2` correct..., whatever! */
+      if (strip_number == false) {
+        KLI_strncpy(number, index, name_len);
+      }
+      *index = 0;
+      len = KLI_strnlen(r_name, name_len);
+    }
+  }
+
+  KLI_strncpy(prefix, r_name, name_len);
+
+  /* First case; separator (`.` or `_`) with extensions in `r R l L`. */
+  if ((len > 1) && is_char_sep(r_name[len - 2])) {
+    is_set = true;
+    switch (r_name[len - 1]) {
+      case 'l':
+        prefix[len - 1] = 0;
+        strcpy(replace, "r");
+        break;
+      case 'r':
+        prefix[len - 1] = 0;
+        strcpy(replace, "l");
+        break;
+      case 'L':
+        prefix[len - 1] = 0;
+        strcpy(replace, "R");
+        break;
+      case 'R':
+        prefix[len - 1] = 0;
+        strcpy(replace, "L");
+        break;
+      default:
+        is_set = false;
+    }
+  }
+
+  /* case; beginning with r R l L, with separator after it */
+  if (!is_set && is_char_sep(r_name[1])) {
+    is_set = true;
+    switch (r_name[0]) {
+      case 'l':
+        strcpy(replace, "r");
+        KLI_strncpy(suffix, r_name + 1, name_len);
+        prefix[0] = 0;
+        break;
+      case 'r':
+        strcpy(replace, "l");
+        KLI_strncpy(suffix, r_name + 1, name_len);
+        prefix[0] = 0;
+        break;
+      case 'L':
+        strcpy(replace, "R");
+        KLI_strncpy(suffix, r_name + 1, name_len);
+        prefix[0] = 0;
+        break;
+      case 'R':
+        strcpy(replace, "L");
+        KLI_strncpy(suffix, r_name + 1, name_len);
+        prefix[0] = 0;
+        break;
+      default:
+        is_set = false;
+    }
+  }
+
+  if (!is_set && len > 5) {
+    /* hrms, why test for a separator? lets do the rule 'ultimate left or right' */
+    if (((index = KLI_strcasestr(prefix, "right")) == prefix) || (index == prefix + len - 5)) {
+      is_set = true;
+      if (index[0] == 'r') {
+        strcpy(replace, "left");
+      } else {
+        strcpy(replace, (index[1] == 'I') ? "LEFT" : "Left");
+      }
+      *index = 0;
+      KLI_strncpy(suffix, index + 5, name_len);
+    } else if (((index = KLI_strcasestr(prefix, "left")) == prefix) ||
+               (index == prefix + len - 4)) {
+      is_set = true;
+      if (index[0] == 'l') {
+        strcpy(replace, "right");
+      } else {
+        strcpy(replace, (index[1] == 'E') ? "RIGHT" : "Right");
+      }
+      *index = 0;
+      KLI_strncpy(suffix, index + 4, name_len);
+    }
+  }
+
+  return KLI_snprintf_rlen(r_name, name_len, "%s%s%s%s", prefix, replace, suffix, number);
+}
+
+/* Unique name utils. */
 
 bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
                        void *arg,
@@ -114,7 +292,7 @@ bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
  *
  * For places where this is used, see constraint.c for example...
  *
- * @param name_offset: should be calculated using `offsetof(structname, membername)`
+ * \param name_offset: should be calculated using `offsetof(structname, membername)`
  * macro from `stddef.h`
  */
 static bool uniquename_find_dupe(ListBase *list, void *vlink, const char *name, int name_offset)
@@ -156,7 +334,6 @@ bool KLI_uniquename(ListBase *list,
     void *vlink;
     int name_offset;
   } data;
-
   data.lb = list;
   data.vlink = vlink;
   data.name_offset = name_offset;
@@ -175,3 +352,124 @@ bool KLI_uniquename(ListBase *list,
                            POINTER_OFFSET(vlink, name_offset),
                            name_len);
 }
+
+/* ------------------------------------------------------------------------- */
+/** \name Join Strings
+ *
+ * For non array versions of these functions, use the macros:
+ * - #KLI_string_join
+ * - #KLI_string_joinN
+ * - #KLI_string_join_by_sep_charN
+ * - #KLI_string_join_by_sep_char_with_tableN
+ *
+ * \{ */
+
+char *KLI_string_join_array(char *result,
+                            size_t result_len,
+                            const char *strings[],
+                            uint strings_len)
+{
+  char *c = result;
+  char *c_end = &result[result_len - 1];
+  for (uint i = 0; i < strings_len; i++) {
+    const char *p = strings[i];
+    while (*p && (c < c_end)) {
+      *c++ = *p++;
+    }
+  }
+  *c = '\0';
+  return c;
+}
+
+char *KLI_string_join_array_by_sep_char(char *result,
+                                        size_t result_len,
+                                        char sep,
+                                        const char *strings[],
+                                        uint strings_len)
+{
+  char *c = result;
+  char *c_end = &result[result_len - 1];
+  for (uint i = 0; i < strings_len; i++) {
+    if (i != 0) {
+      if (c < c_end) {
+        *c++ = sep;
+      }
+    }
+    const char *p = strings[i];
+    while (*p && (c < c_end)) {
+      *c++ = *p++;
+    }
+  }
+  *c = '\0';
+  return c;
+}
+
+char *KLI_string_join_arrayN(const char *strings[], uint strings_len)
+{
+  uint total_len = 1;
+  for (uint i = 0; i < strings_len; i++) {
+    total_len += strlen(strings[i]);
+  }
+  char *result = MEM_mallocN(sizeof(char) * total_len, __func__);
+  char *c = result;
+  for (uint i = 0; i < strings_len; i++) {
+    c += KLI_strcpy_rlen(c, strings[i]);
+  }
+  /* Only needed when `strings_len == 0`. */
+  *c = '\0';
+  return result;
+}
+
+char *KLI_string_join_array_by_sep_charN(char sep, const char *strings[], uint strings_len)
+{
+  uint total_len = 0;
+  for (uint i = 0; i < strings_len; i++) {
+    total_len += strlen(strings[i]) + 1;
+  }
+  if (total_len == 0) {
+    total_len = 1;
+  }
+
+  char *result = MEM_mallocN(sizeof(char) * total_len, __func__);
+  char *c = result;
+  if (strings_len != 0) {
+    for (uint i = 0; i < strings_len; i++) {
+      c += KLI_strcpy_rlen(c, strings[i]);
+      *c = sep;
+      c++;
+    }
+    c--;
+  }
+  *c = '\0';
+  return result;
+}
+
+char *KLI_string_join_array_by_sep_char_with_tableN(char sep,
+                                                    char *table[],
+                                                    const char *strings[],
+                                                    uint strings_len)
+{
+  uint total_len = 0;
+  for (uint i = 0; i < strings_len; i++) {
+    total_len += strlen(strings[i]) + 1;
+  }
+  if (total_len == 0) {
+    total_len = 1;
+  }
+
+  char *result = MEM_mallocN(sizeof(char) * total_len, __func__);
+  char *c = result;
+  if (strings_len != 0) {
+    for (uint i = 0; i < strings_len; i++) {
+      table[i] = c; /* <-- only difference to KLI_string_join_array_by_sep_charN. */
+      c += KLI_strcpy_rlen(c, strings[i]);
+      *c = sep;
+      c++;
+    }
+    c--;
+  }
+  *c = '\0';
+  return result;
+}
+
+/** \} */
