@@ -1,5 +1,5 @@
 
-#pragma BLENDER_REQUIRE(common_math_geom_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_math_geom_lib.glsl)
 
 /**
  * Geometric shape structures.

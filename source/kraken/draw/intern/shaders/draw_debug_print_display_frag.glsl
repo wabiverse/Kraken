@@ -3,7 +3,7 @@
  * Display characters using an ascii table.
  **/
 
-#pragma BLENDER_REQUIRE(common_math_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_math_lib.glsl)
 
 bool char_intersect(uvec2 bitmap_position)
 {

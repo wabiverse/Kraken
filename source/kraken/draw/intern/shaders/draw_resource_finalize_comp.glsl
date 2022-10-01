@@ -3,7 +3,7 @@
  * Finish computation of a few draw resource after sync.
  */
 
-#pragma BLENDER_REQUIRE(common_math_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_math_lib.glsl)
 
 void main()
 {

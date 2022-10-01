@@ -1,5 +1,5 @@
 
-#pragma BLENDER_REQUIRE(common_view_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_view_lib.glsl)
 
 #if defined(GPU_VERTEX_SHADER) || defined(GPU_GEOMETRY_SHADER)
 

@@ -1,4 +1,4 @@
-#pragma BLENDER_REQUIRE(common_hair_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_hair_lib.glsl)
 
 #ifndef USE_GPU_SHADER_CREATE_INFO
 /*

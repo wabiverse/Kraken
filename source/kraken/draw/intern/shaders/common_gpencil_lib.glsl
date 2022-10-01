@@ -1,6 +1,6 @@
 
-#pragma BLENDER_REQUIRE(common_view_lib.glsl)
-#pragma BLENDER_REQUIRE(common_math_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_view_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_math_lib.glsl)
 
 #ifndef DRW_GPENCIL_INFO
 #  error Missing additional info draw_gpencil

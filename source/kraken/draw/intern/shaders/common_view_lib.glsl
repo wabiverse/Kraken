@@ -1,5 +1,5 @@
 
-/* WORKAROUND: to guard against double include in EEVEE. */
+/* WORKAROUND: to guard against double include in PHOENIX. */
 #ifndef COMMON_VIEW_LIB_GLSL
 #define COMMON_VIEW_LIB_GLSL
 
@@ -132,7 +132,7 @@ uniform int drw_ResourceID;
 
 /* Use this to declare and pass the value if
  * the fragment shader uses the resource_id. */
-#    if defined(EEVEE_GENERATED_INTERFACE)
+#    if defined(PHOENIX_GENERATED_INTERFACE)
 #      define RESOURCE_ID_VARYING
 #      define PASS_RESOURCE_ID resourceIDFrag = resource_id;
 #    elif defined(USE_GEOMETRY_SHADER)
@@ -178,7 +178,7 @@ uniform int drw_ResourceID;
  * resource_id as varying. */
 #  ifdef GPU_GEOMETRY_SHADER
 /* TODO(fclem): Remove. This is getting ridiculous. */
-#    if !defined(EEVEE_GENERATED_INTERFACE)
+#    if !defined(PHOENIX_GENERATED_INTERFACE)
 #      define RESOURCE_ID_VARYING \
         flat out int resourceIDFrag; \
         flat in int resourceIDGeom[];
@@ -191,7 +191,7 @@ uniform int drw_ResourceID;
 #  endif
 
 #  if defined(GPU_FRAGMENT_SHADER)
-#    if !defined(EEVEE_GENERATED_INTERFACE)
+#    if !defined(PHOENIX_GENERATED_INTERFACE)
 flat in int resourceIDFrag;
 #    endif
 #    define resource_id resourceIDFrag

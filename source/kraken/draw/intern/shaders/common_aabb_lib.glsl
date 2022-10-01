@@ -1,5 +1,5 @@
 
-#pragma BLENDER_REQUIRE(common_shape_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_shape_lib.glsl)
 
 /* ---------------------------------------------------------------------- */
 /** \name Axis Aligned Bound Box

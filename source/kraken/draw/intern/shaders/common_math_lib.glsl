@@ -1,5 +1,5 @@
 
-/* WORKAROUND: to guard against double include in EEVEE. */
+/* WORKAROUND: to guard against double include in PHOENIX. */
 #ifndef COMMON_MATH_LIB_GLSL
 #define COMMON_MATH_LIB_GLSL
 

@@ -4,9 +4,9 @@
  * Results are meant to be conservative.
  */
 
-#pragma BLENDER_REQUIRE(common_view_lib.glsl)
-#pragma BLENDER_REQUIRE(common_math_geom_lib.glsl)
-#pragma BLENDER_REQUIRE(common_shape_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_view_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_math_geom_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_shape_lib.glsl)
 
 /* ---------------------------------------------------------------------- */
 /** \name Plane extraction functions.

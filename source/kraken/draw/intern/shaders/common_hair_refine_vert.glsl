@@ -1,4 +1,4 @@
-#pragma BLENDER_REQUIRE(common_hair_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_hair_lib.glsl)
 
 #ifdef USE_TF
 out vec4 finalColor;

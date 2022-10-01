@@ -1,6 +1,6 @@
 
 /* NOTE: To be used with UNIFORM_RESOURCE_ID and INSTANCED_ATTR as define. */
-#pragma BLENDER_REQUIRE(common_view_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_view_lib.glsl)
 
 #ifndef DRW_SHADER_SHARED_H
 

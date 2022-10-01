@@ -1,5 +1,5 @@
 
-#pragma BLENDER_REQUIRE(common_math_lib.glsl)
+#pragma KRAKEN_REQUIRE(common_math_lib.glsl)
 
 /* ---------------------------------------------------------------------- */
 /** \name Math intersection & projection functions.
