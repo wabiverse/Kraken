@@ -36,6 +36,7 @@ set(SRC
 
   KKE_api.h
   KKE_appdir.h
+  KKE_colortools.h
   KKE_context.h
   KKE_icons.h
   KKE_idprop.h

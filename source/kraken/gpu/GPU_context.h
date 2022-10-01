@@ -22,12 +22,12 @@
  * @file
  * @ingroup GPU.
  * Pixel Magic.
- * 
+ *
  * This interface allow GPU to manage VAOs for multiple context and threads.
  */
 
-// #include "GPU_batch.h"
-// #include "GPU_common.h"
+#include "GPU_batch.h"
+#include "GPU_common.h"
 #include "GPU_platform.h"
 
 #ifdef __cplusplus
@@ -43,7 +43,7 @@ eGPUBackendType GPU_backend_get_type(void);
 /** Opaque type hiding kraken::gpu::Context. */
 typedef struct GPUContext GPUContext;
 
-GPUContext *GPU_context_create(void *anchor_window);
+GPUContext *GPU_context_create(void *anchor_window, void *anchor_context);
 /**
  * To be called after #GPU_context_active_set(ctx_to_destroy).
  */

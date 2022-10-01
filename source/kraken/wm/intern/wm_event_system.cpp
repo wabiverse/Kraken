@@ -84,7 +84,7 @@ static uint note_hash_for_queue_fn(const void *ptr)
 /**
  * Comparison for #wmWindowManager.notifier_queue_set
  *
- * \note This is not an exact equality function as the `window` is ignored.
+ * @note This is not an exact equality function as the `window` is ignored.
  */
 static bool note_cmp_for_queue_fn(const void *a, const void *b)
 {
@@ -1383,7 +1383,7 @@ static int wm_operator_invoke(kContext *C,
         int bounds[4] = {-1, -1, -1, -1};
         int wrap = WM_CURSOR_WRAP_NONE;
 
-        UserDef *uprefs = CTX_data_prefs(C);
+        kUserDef *uprefs = CTX_data_prefs(C);
 
         if (event && (uprefs->uiflag & USER_CONTINUOUS_MOUSE)) {
           const wmOperator *op_test = op->opm ? op->opm : op;

@@ -60,7 +60,7 @@ void copy_qt_qt(float q[4], const float a[4]);
 
 void mul_qt_qtqt(float q[4], const float a[4], const float b[4]);
 /**
- * \note
+ * @note
  * Assumes a unit quaternion?
  *
  * in fact not, but you may want to use a unit quaternion read on...
@@ -76,7 +76,7 @@ void mul_qt_qtqt(float q[4], const float a[4], const float b[4]);
  * For people used to python mathutils, its like:
  * def mul_qt_v3(q, v): (q * Quaternion((0.0, v[0], v[1], v[2])) * q.conjugated())[1:]
  *
- * \note Multiplying by 3x3 matrix is ~25% faster.
+ * @note Multiplying by 3x3 matrix is ~25% faster.
  */
 void mul_qt_v3(const float q[4], float r[3]);
 /**
@@ -115,9 +115,9 @@ bool is_zero_qt(const float q[4]);
  * Generic function for implementing slerp
  * (quaternions and spherical vector coords).
  *
- * \param t: factor in [0..1]
- * \param cosom: dot product from normalized vectors/quats.
- * \param r_w: calculated weights.
+ * @param t: factor in [0..1]
+ * @param cosom: dot product from normalized vectors/quats.
+ * @param r_w: calculated weights.
  */
 void interp_dot_slerp(float t, float cosom, float r_w[2]);
 void interp_qt_qtqt(float q[4], const float a[4], const float b[4], float t);
@@ -159,11 +159,11 @@ float tri_to_quat(float q[4], const float a[3], const float b[3], const float c[
 void vec_to_quat(float q[4], const float vec[3], short axis, short upflag);
 /**
  * Calculate a rotation matrix from 2 normalized vectors.
- * \note `v1` and `v2` must be normalized.
+ * @note `v1` and `v2` must be normalized.
  */
 void rotation_between_vecs_to_mat3(float m[3][3], const float v1[3], const float v2[3]);
 /**
- * \note Expects vectors to be normalized.
+ * @note Expects vectors to be normalized.
  */
 void rotation_between_vecs_to_quat(float q[4], const float v1[3], const float v2[3]);
 void rotation_between_quats_to_quat(float q[4], const float q1[4], const float q2[4]);
@@ -172,10 +172,10 @@ void rotation_between_quats_to_quat(float q[4], const float q1[4], const float q
  * Decompose a quaternion into a swing rotation (quaternion with the selected
  * axis component locked at zero), followed by a twist rotation around the axis.
  *
- * \param q: input quaternion.
- * \param axis: twist axis in [0,1,2]
- * \param r_swing: if not NULL, receives the swing quaternion.
- * \param r_twist: if not NULL, receives the twist quaternion.
+ * @param q: input quaternion.
+ * @param axis: twist axis in [0,1,2]
+ * @param r_swing: if not NULL, receives the swing quaternion.
+ * @param r_twist: if not NULL, receives the twist quaternion.
  * \returns twist angle.
  */
 float quat_split_swing_and_twist(const float q_in[4],
@@ -213,10 +213,10 @@ void mat3_to_quat_legacy(float q[4], const float wmat[3][3]);
  * *r_cos = cosf(phi);
  * \endcode
  *
- * \param numerator: An integer factor in [0..denominator] (inclusive).
- * \param denominator: The fraction denominator (typically the number of segments of the circle).
- * \param r_sin: The resulting sine.
- * \param r_cos: The resulting cosine.
+ * @param numerator: An integer factor in [0..denominator] (inclusive).
+ * @param denominator: The fraction denominator (typically the number of segments of the circle).
+ * @param r_sin: The resulting sine.
+ * @param r_cos: The resulting cosine.
  */
 void sin_cos_from_fraction(int numerator, int denominator, float *r_sin, float *r_cos);
 
@@ -243,9 +243,9 @@ void axis_angle_to_mat3(float R[3][3], const float axis[3], float angle);
  *
  * This takes the angle with sin/cos applied so we can avoid calculating it in some cases.
  *
- * \param axis: rotation axis (must be normalized).
- * \param angle_sin: sin(angle)
- * \param angle_cos: cos(angle)
+ * @param axis: rotation axis (must be normalized).
+ * @param angle_sin: sin(angle)
+ * @param angle_cos: cos(angle)
  */
 void axis_angle_normalized_to_mat3_ex(float mat[3][3],
                                       const float axis[3],
@@ -335,7 +335,7 @@ void sub_eul_euleul(float r_eul[3], float a[3], float b[3], short order);
  * order matters - types are saved to file. */
 
 typedef enum eEulerRotationOrders {
-  EULER_ORDER_DEFAULT = 1, /* blender classic = XYZ */
+  EULER_ORDER_DEFAULT = 1, /* kraken classic = XYZ */
   EULER_ORDER_XYZ = 1,
   EULER_ORDER_XZY,
   EULER_ORDER_YXZ,

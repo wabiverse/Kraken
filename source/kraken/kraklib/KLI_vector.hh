@@ -55,6 +55,8 @@
 #include "KLI_string_ref.hh"
 #include "KLI_utildefines.h"
 
+#include "MEM_guardedalloc.h"
+
 namespace kraken
 {
 

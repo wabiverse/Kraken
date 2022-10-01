@@ -58,7 +58,7 @@ int KLI_str_utf8_size(const char *p) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(1);
  */
 int KLI_str_utf8_size_safe(const char *p) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(1);
 /**
- * \param p: a pointer to Unicode character encoded as UTF-8
+ * @param p: a pointer to Unicode character encoded as UTF-8
  *
  * Converts a sequence of bytes encoded as UTF-8 to a Unicode character.
  * If \a p does not point to a valid UTF-8 encoded character, results are
@@ -72,12 +72,12 @@ unsigned int KLI_str_utf8_as_unicode(const char *p) ATTR_WARN_UNUSED_RESULT ATTR
 /**
  * UTF8 decoding that steps over the index (unless an error is encountered).
  *
- * \param p: The text to step over.
- * \param p_len: The length of `p`.
- * \param index: Index of `p` to step over.
+ * @param p: The text to step over.
+ * @param p_len: The length of `p`.
+ * @param index: Index of `p` to step over.
  * \return the code-point `(p + *index)` if there is a decoding error.
  *
- * \note Falls back to `LATIN1` for text drawing.
+ * @note Falls back to `LATIN1` for text drawing.
  */
 unsigned int KLI_str_utf8_as_unicode_step(const char *__restrict p,
                                           size_t p_len,
@@ -86,12 +86,12 @@ unsigned int KLI_str_utf8_as_unicode_step(const char *__restrict p,
 /**
  * UTF8 decoding that steps over the index (unless an error is encountered).
  *
- * \param p: The text to step over.
- * \param p_len: The length of `p`.
- * \param index: Index of `p` to step over.
+ * @param p: The text to step over.
+ * @param p_len: The length of `p`.
+ * @param index: Index of `p` to step over.
  * \return the code-point or #KLI_UTF8_ERR if there is a decoding error.
  *
- * \note The behavior for clipped text (where `p_len` limits decoding trailing bytes)
+ * @note The behavior for clipped text (where `p_len` limits decoding trailing bytes)
  * must have the same behavior is encountering a nil byte,
  * so functions that only use the first part of a string has matching behavior to functions
  * that null terminate the text.
@@ -105,8 +105,8 @@ size_t KLI_str_utf8_from_unicode_len(unsigned int c) ATTR_WARN_UNUSED_RESULT;
 /**
  * KLI_str_utf8_from_unicode:
  *
- * \param c: a Unicode character code
- * \param outbuf: output buffer, must have at least `outbuf_len` bytes of space.
+ * @param c: a Unicode character code
+ * @param outbuf: output buffer, must have at least `outbuf_len` bytes of space.
  * If the length required by `c` exceeds `outbuf_len`,
  * the bytes available bytes will be zeroed and `outbuf_len` returned.
  *
@@ -127,8 +127,8 @@ size_t KLI_str_utf32_as_utf8_len(const char32_t *src) ATTR_WARN_UNUSED_RESULT AT
 
 /**
  * KLI_str_find_prev_char_utf8:
- * \param p: pointer to some position within \a str
- * \param str_start: pointer to the beginning of a UTF-8 encoded string
+ * @param p: pointer to some position within \a str
+ * @param str_start: pointer to the beginning of a UTF-8 encoded string
  *
  * Given a position \a p with a UTF-8 encoded string \a str, find the start
  * of the previous UTF-8 character starting before. \a p Returns \a str_start if no
@@ -143,8 +143,8 @@ size_t KLI_str_utf32_as_utf8_len(const char32_t *src) ATTR_WARN_UNUSED_RESULT AT
 const char *KLI_str_find_prev_char_utf8(const char *p, const char *str_start)
   ATTR_WARN_UNUSED_RESULT ATTR_RETURNS_NONNULL ATTR_NONNULL(1, 2);
 /**
- * \param p: a pointer to a position within a UTF-8 encoded string
- * \param str_end: a pointer to the byte following the end of the string.
+ * @param p: a pointer to a position within a UTF-8 encoded string
+ * @param str_end: a pointer to the byte following the end of the string.
  *
  * Finds the start of the next UTF-8 character in the string after \a p
  *
@@ -167,8 +167,8 @@ size_t KLI_strlen_utf8(const char *strc) ATTR_NONNULL(1) ATTR_WARN_UNUSED_RESULT
 size_t KLI_strnlen_utf8_ex(const char *strc, size_t maxlen, size_t *r_len_bytes)
   ATTR_NONNULL(1, 3);
 /**
- * \param strc: the string to measure the length.
- * \param maxlen: the string length (in bytes)
+ * @param strc: the string to measure the length.
+ * @param maxlen: the string length (in bytes)
  * \return the unicode length (not in bytes!)
  */
 size_t KLI_strnlen_utf8(const char *strc, size_t maxlen) ATTR_NONNULL(1) ATTR_WARN_UNUSED_RESULT;
@@ -222,7 +222,7 @@ int KLI_str_utf8_offset_from_column(const char *str, int column) ATTR_WARN_UNUSE
 /* -------------------------------------------------------------------- */
 /** \name String Copy/Format Macros
  * Avoid repeating destination with `sizeof(..)`.
- * \note `ARRAY_SIZE` allows pointers on some platforms.
+ * @note `ARRAY_SIZE` allows pointers on some platforms.
  * \{ */
 
 #define STRNCPY_UTF8(dst, src) KLI_strncpy_utf8(dst, src, ARRAY_SIZE(dst))

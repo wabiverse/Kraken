@@ -269,7 +269,7 @@ static void ui_selectcontext_apply(kContext *C,
  * How strict to be when detecting a vertical gesture:
  * [0.5 == sloppy], [0.9 == strict], (unsigned dot-product).
  *
- * \note We should be quite strict here,
+ * @note We should be quite strict here,
  * since doing a vertical gesture by accident should be avoided,
  * however with some care a user should be able to do a vertical movement without _missing_.
  */
@@ -598,7 +598,7 @@ static void ui_multibut_free(uiHandleButtonData *data, uiBlock *block)
     }
   }
 #  else
-  BLI_linklist_freeN(data->multi_data.mbuts);
+  KLI_linklist_freeN(data->multi_data.mbuts);
 #  endif
 
   data->multi_data.mbuts = {NULL};
@@ -4425,7 +4425,7 @@ static int ui_popup_handler(kContext *C, const wmEvent *event, void *userdata)
     /* EVT_DROP:
      *   If we're handling drop event we'll want it to be handled by popup callee as well,
      *   so it'll be possible to perform such operations as opening .blend files by dropping
-     *   them into blender, even if there's opened popup like splash screen (sergey).
+     *   them into kraken, even if there's opened popup like splash screen (sergey).
      * KM_DBL_CLICK:
      *   Continue in case of double click so wm_handlers_do calls handler again with KM_PRESS
      *   event. This is needed to ensure correct button handling for fast clicking (T47532).

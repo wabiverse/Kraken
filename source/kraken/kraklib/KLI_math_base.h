@@ -181,16 +181,16 @@ MINLINE size_t clamp_z(size_t value, size_t min, size_t max);
 /**
  * Almost-equal for IEEE floats, using absolute difference method.
  *
- * \param max_diff: the maximum absolute difference.
+ * @param max_diff: the maximum absolute difference.
  */
 MINLINE int compare_ff(float a, float b, float max_diff);
 /**
  * Almost-equal for IEEE floats, using their integer representation
  * (mixing ULP and absolute difference methods).
  *
- * \param max_diff: is the maximum absolute difference (allows to take care of the near-zero area,
+ * @param max_diff: is the maximum absolute difference (allows to take care of the near-zero area,
  * where relative difference methods cannot really work).
- * \param max_ulps: is the 'maximum number of floats + 1'
+ * @param max_ulps: is the 'maximum number of floats + 1'
  * allowed between \a a and \a b to consider them equal.
  *
  * \see https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
@@ -293,7 +293,7 @@ MINLINE unsigned int round_db_to_uint_clamp(double a);
 int pow_i(int base, int exp);
 
 /**
- * \param ndigits: must be between 0 and 21.
+ * @param ndigits: must be between 0 and 21.
  */
 double double_round(double x, int ndigits);
 
@@ -303,8 +303,8 @@ double double_round(double x, int ndigits);
  * - 0.015 -> 0.01
  * - 1.0 -> 1.0
  *
- * \param f: Value to floor, must be over 0.0.
- * \note If we wanted to support signed values we could if this becomes necessary.
+ * @param f: Value to floor, must be over 0.0.
+ * @note If we wanted to support signed values we could if this becomes necessary.
  */
 float floor_power_of_10(float f);
 /**
@@ -313,8 +313,8 @@ float floor_power_of_10(float f);
  * - 0.015 -> 0.1
  * - 1.0 -> 1.0
  *
- * \param f: Value to ceiling, must be over 0.0.
- * \note If we wanted to support signed values we could if this becomes necessary.
+ * @param f: Value to ceiling, must be over 0.0.
+ * @note If we wanted to support signed values we could if this becomes necessary.
  */
 float ceil_power_of_10(float f);
 
@@ -326,11 +326,11 @@ float ceil_power_of_10(float f);
  * check the vector is unit length, or zero length (which can't be helped in some cases). */
 
 #ifndef NDEBUG
-/** \note 0.0001 is too small because normals may be converted from short's: see T34322. */
+/** @note 0.0001 is too small because normals may be converted from short's: see T34322. */
 #  define KLI_ASSERT_UNIT_EPSILON 0.0002f
 #  define KLI_ASSERT_UNIT_EPSILON_DB 0.0002
 /**
- * \note Checks are flipped so NAN doesn't assert.
+ * @note Checks are flipped so NAN doesn't assert.
  * This is done because we're making sure the value was normalized and in the case we
  * don't want NAN to be raising asserts since there is nothing to be done in that case.
  */

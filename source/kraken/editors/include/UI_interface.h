@@ -439,10 +439,10 @@ void UI_draw_text_underline(int pos_x, int pos_y, int len, int height, const flo
 /**
  * Draw title and text safe areas.
  *
- * \note This function is to be used with the 2D dashed shader enabled.
+ * @note This function is to be used with the 2D dashed shader enabled.
  *
- * \param pos: is a #PRIM_FLOAT, 2, #GPU_FETCH_FLOAT vertex attribute.
- * \param rect: The offsets for the view, not the zones.
+ * @param pos: is a #PRIM_FLOAT, 2, #GPU_FETCH_FLOAT vertex attribute.
+ * @param rect: The offsets for the view, not the zones.
  */
 void UI_draw_safe_areas(uint pos,
                         const struct rctf *rect,
@@ -468,7 +468,7 @@ void UI_draw_widget_scroll(struct uiWidgetColors *wcol,
  *
  * Cut off the middle of the text to fit into the given width.
  *
- * \note in case this middle clipping would just remove a few chars,
+ * @note in case this middle clipping would just remove a few chars,
  * it rather clips right, which is more readable.
  *
  * If rpart_sep is not Null, the part of str starting to first occurrence of rpart_sep
@@ -513,8 +513,8 @@ typedef bool (*uiButIdentityCompareFunc)(const uiBut *a, const uiBut *b);
 
 /* Search types. */
 typedef ARegion *(*uiButSearchCreateFn)(struct kContext *C,
-                                               ARegion *butregion,
-                                               struct uiButSearch *search_but);
+                                        ARegion *butregion,
+                                        struct uiButSearch *search_but);
 /**
  * `is_first` is typically used to ignore search filtering when the menu is first opened in order
  * to display the full list of options. The value will be false after the button's text is edited
@@ -530,10 +530,10 @@ typedef bool (*uiButSearchContextMenuFn)(struct kContext *C,
                                          void *active,
                                          const struct wmEvent *event);
 typedef ARegion *(*uiButSearchTooltipFn)(struct kContext *C,
-                                                ARegion *region,
-                                                const struct rcti *item_rect,
-                                                void *arg,
-                                                void *active);
+                                         ARegion *region,
+                                         const struct rcti *item_rect,
+                                         void *arg,
+                                         void *active);
 typedef void (*uiButSearchListenFn)(const struct wmRegionListenerParams *params, void *arg);
 
 /* Must return allocated string. */
@@ -598,8 +598,8 @@ typedef void (*uiMenuCreateFunc)(struct kContext *C, struct uiLayout *layout, vo
 typedef void (*uiMenuHandleFunc)(struct kContext *C, void *arg, int event);
 /**
  * Used for cycling menu values without opening the menu (Ctrl-Wheel).
- * \param direction: forward or backwards [1 / -1].
- * \param arg1: uiBut.poin (as with #uiMenuCreateFunc).
+ * @param direction: forward or backwards [1 / -1].
+ * @param arg1: uiBut.poin (as with #uiMenuCreateFunc).
  * \return true when the button was changed.
  */
 typedef bool (*uiMenuStepFunc)(struct kContext *C, int direction, void *arg1);
@@ -636,7 +636,7 @@ typedef struct uiPopupMenu uiPopupMenu;
 uiPopupMenu *UI_popup_menu_begin(struct kContext *C, const char *title, int icon) ATTR_NONNULL();
 /**
  * Only return handler, and set optional title.
- * \param block_name: Assigned to uiBlock.name (useful info for debugging).
+ * @param block_name: Assigned to uiBlock.name (useful info for debugging).
  */
 uiPopupMenu *UI_popup_menu_begin_ex(struct kContext *C,
                                     const char *title,
@@ -675,7 +675,7 @@ int UI_popover_panel_invoke(struct kContext *C,
 /**
  * Only return handler, and set optional title.
  *
- * \param from_active_button: Use the active button for positioning,
+ * @param from_active_button: Use the active button for positioning,
  * use when the popover is activated from an operator instead of directly from the button.
  */
 uiPopover *UI_popover_begin(struct kContext *C, int menu_width, bool from_active_button)
@@ -890,10 +890,7 @@ bool UI_but_active_only_ex(const struct kContext *C,
                            uiBlock *block,
                            uiBut *but,
                            bool remove_on_failure);
-bool UI_but_active_only(const struct kContext *C,
-                        ARegion *region,
-                        uiBlock *block,
-                        uiBut *but);
+bool UI_but_active_only(const struct kContext *C, ARegion *region, uiBlock *block, uiBut *but);
 /**
  * \warning This must run after other handlers have been added,
  * otherwise the handler won't be removed, see: T71112.
@@ -1362,7 +1359,8 @@ struct kContextStore *UI_but_context_get(const uiBut *but);
 void UI_but_unit_type_set(uiBut *but, int unit_type);
 int UI_but_unit_type_get(const uiBut *but);
 
-enum uiStringInfoType {
+enum uiStringInfoType
+{
   BUT_GET_PRIMPROP_IDENTIFIER = 1,
   BUT_GET_PRIMSTRUCT_IDENTIFIER,
   BUT_GET_PRIMENUM_IDENTIFIER,
@@ -1425,7 +1423,7 @@ enum
 
 /**
  * Ways to limit what is displayed in ID-search popup.
- * \note We may want to add LOCAL, LIBRARY ... as needed.
+ * @note We may want to add LOCAL, LIBRARY ... as needed.
  */
 enum
 {
@@ -1529,7 +1527,7 @@ uiBut *uiDefIconTextBlockBut(uiBlock *block,
                              const char *tip);
 
 /**
- * \param arg: A pointer to string/name, use #UI_but_func_search_set() below to make this work.
+ * @param arg: A pointer to string/name, use #UI_but_func_search_set() below to make this work.
  * here `a1` and `a2`, if set, control thumbnail preview rows/cols.
  */
 uiBut *uiDefSearchBut(uiBlock *block,
@@ -1607,7 +1605,7 @@ void uiDefAutoButsArrayR(uiBlock *block,
  * \a check_prop callback filters functions to avoid drawing certain properties,
  * in cases where PROP_HIDDEN flag can't be used for a property.
  *
- * \param prop_activate_init: Property to activate on initial popup (#UI_BUT_ACTIVATE_ON_INIT).
+ * @param prop_activate_init: Property to activate on initial popup (#UI_BUT_ACTIVATE_ON_INIT).
  */
 eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
                                      struct kraken::KrakenPRIM *ptr,
@@ -1636,11 +1634,11 @@ void UI_but_func_identity_compare_set(uiBut *but, uiButIdentityCompareFunc cmp_f
  *
  * Use inside searchfunc to add items.
  *
- * \param items: Stores the items.
- * \param name: Text to display for the item.
- * \param poin: Opaque pointer (for use by the caller).
- * \param iconid: The icon, #ICON_NONE for no icon.
- * \param but_flag: Button flags (#uiBut.flag) indicating the state of the item, typically
+ * @param items: Stores the items.
+ * @param name: Text to display for the item.
+ * @param poin: Opaque pointer (for use by the caller).
+ * @param iconid: The icon, #ICON_NONE for no icon.
+ * @param but_flag: Button flags (#uiBut.flag) indicating the state of the item, typically
  *                  #UI_BUT_DISABLED, #UI_BUT_INACTIVE or #UI_BUT_HAS_SEP_CHAR.
  *
  * \return false if there is nothing to add.
@@ -1653,18 +1651,18 @@ bool UI_search_item_add(uiSearchItems *items,
                         uint8_t name_prefix_offset);
 
 /**
- * \note The item-pointer (referred to below) is a per search item user pointer
+ * @note The item-pointer (referred to below) is a per search item user pointer
  * passed to #UI_search_item_add (stored in  #uiSearchItems.pointers).
  *
- * \param search_create_fn: Function to create the menu.
- * \param search_update_fn: Function to refresh search content after the search text has changed.
- * \param arg: user value.
- * \param free_arg: Set to true if the argument is newly allocated memory for every redraw and
+ * @param search_create_fn: Function to create the menu.
+ * @param search_update_fn: Function to refresh search content after the search text has changed.
+ * @param arg: user value.
+ * @param free_arg: Set to true if the argument is newly allocated memory for every redraw and
  * should be freed when the button is destroyed.
- * \param search_arg_free_fn: When non-null, use this function to free \a arg.
- * \param search_exec_fn: Function that executes the action, gets \a arg as the first argument.
+ * @param search_arg_free_fn: When non-null, use this function to free \a arg.
+ * @param search_exec_fn: Function that executes the action, gets \a arg as the first argument.
  * The second argument as the active item-pointer
- * \param active: When non-null, this item-pointer item will be visible and selected,
+ * @param active: When non-null, this item-pointer item will be visible and selected,
  * otherwise the first item will be selected.
  */
 void UI_but_func_search_set(uiBut *but,
@@ -1679,7 +1677,7 @@ void UI_but_func_search_set_context_menu(uiBut *but, uiButSearchContextMenuFn co
 void UI_but_func_search_set_tooltip(uiBut *but, uiButSearchTooltipFn tooltip_fn);
 void UI_but_func_search_set_listen(uiBut *but, uiButSearchListenFn listen_fn);
 /**
- * \param search_sep_string: when not NULL, this string is used as a separator,
+ * @param search_sep_string: when not NULL, this string is used as a separator,
  * showing the icon and highlighted text after the last instance of this string.
  */
 void UI_but_func_search_set_sep_string(uiBut *but, const char *search_sep_string);
@@ -1795,7 +1793,7 @@ void UI_but_drag_set_id(uiBut *but, struct ID *id);
  */
 void UI_but_drag_attach_image(uiBut *but, struct ImBuf *imb, float scale);
 /**
- * \param asset: May be passed from a temporary variable, drag data only stores a copy of this.
+ * @param asset: May be passed from a temporary variable, drag data only stores a copy of this.
  */
 void UI_but_drag_set_asset(uiBut *but,
                            const struct AssetHandle *asset,
@@ -1834,7 +1832,7 @@ void UI_panels_draw(const struct kContext *C, ARegion *region);
 
 struct Panel *UI_panel_find_by_type(struct ListBase *lb, const struct PanelType *pt);
 /**
- * \note \a panel should be return value from #UI_panel_find_by_type and can be NULL.
+ * @note \a panel should be return value from #UI_panel_find_by_type and can be NULL.
  */
 struct Panel *UI_panel_begin(ARegion *region,
                              struct ListBase *lb,
@@ -1873,8 +1871,7 @@ bool UI_panel_is_active(const struct Panel *panel);
  * For button layout next to label.
  */
 void UI_panel_label_offset(const struct uiBlock *block, int *r_x, int *r_y);
-bool UI_panel_should_show_background(const ARegion *region,
-                                     const struct PanelType *panel_type);
+bool UI_panel_should_show_background(const ARegion *region, const struct PanelType *panel_type);
 int UI_panel_size_y(const struct Panel *panel);
 bool UI_panel_is_dragging(const struct Panel *panel);
 /**
@@ -1887,8 +1884,7 @@ bool UI_panel_can_be_pinned(const struct Panel *panel);
 bool UI_panel_category_is_visible(const ARegion *region);
 void UI_panel_category_add(ARegion *region, const char *name);
 struct PanelCategoryDyn *UI_panel_category_find(const ARegion *region, const char *idname);
-struct PanelCategoryStack *UI_panel_category_active_find(ARegion *region,
-                                                         const char *idname);
+struct PanelCategoryStack *UI_panel_category_active_find(ARegion *region, const char *idname);
 const char *UI_panel_category_active_get(ARegion *region, bool set_fallback);
 void UI_panel_category_active_set(ARegion *region, const char *idname);
 void UI_panel_category_active_set_default(ARegion *region, const char *idname);
@@ -1917,7 +1913,7 @@ struct Panel *UI_panel_add_instanced(const struct kContext *C,
 /**
  * Remove instanced panels from the region's panel list.
  *
- * \note Can be called with NULL \a C, but it should be avoided because
+ * @note Can be called with NULL \a C, but it should be avoided because
  * handlers might not be removed.
  */
 void UI_panels_free_instanced(const struct kContext *C, ARegion *region);
@@ -1935,8 +1931,8 @@ typedef void (*uiListPanelIDFromDataFunc)(void *data_link, char *r_idname);
  * represent. Returns false if the panels have been reordered or if the types from the list data
  * don't match in any way.
  *
- * \param data: The list of data to check against the instanced panels.
- * \param panel_idname_func: Function to find the #PanelType.idname for each item in the data list.
+ * @param data: The list of data to check against the instanced panels.
+ * @param panel_idname_func: Function to find the #PanelType.idname for each item in the data list.
  * For a readability and generality, this lookup happens separately for each type of panel list.
  */
 bool UI_panel_list_matches_data(ARegion *region,
@@ -2082,7 +2078,7 @@ uiLayout *UI_block_layout(uiBlock *block,
                           int size,
                           int em,
                           int padding,
-                          const struct uiStyle *style);
+                          const uiStyle *style);
 void UI_block_layout_set_current(uiBlock *block, uiLayout *layout);
 void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y);
 bool UI_block_layout_needs_resolving(const uiBlock *block);
@@ -2096,7 +2092,7 @@ void UI_block_layout_free(uiBlock *block);
 /**
  * Apply property search behavior, setting panel flags and deactivating buttons that don't match.
  *
- * \note Must not be run after #UI_block_layout_resolve.
+ * @note Must not be run after #UI_block_layout_resolve.
  */
 bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter);
 
@@ -2113,10 +2109,10 @@ void uiLayoutContextCopy(uiLayout *layout, struct kContextStore *context);
  * Set tooltip function for all buttons in the layout.
  * func, arg and free_arg are passed on to UI_but_func_tooltip_set, so their meaning is the same.
  *
- * \param func: The callback function that gets called to get tooltip content
- * \param arg: An optional opaque pointer that gets passed to func
- * \param free_arg: An optional callback for freeing arg (can be set to e.g. MEM_freeN)
- * \param copy_arg: An optional callback for duplicating arg in case UI_but_func_tooltip_set
+ * @param func: The callback function that gets called to get tooltip content
+ * @param arg: An optional opaque pointer that gets passed to func
+ * @param free_arg: An optional callback for freeing arg (can be set to e.g. MEM_freeN)
+ * @param copy_arg: An optional callback for duplicating arg in case UI_but_func_tooltip_set
  * is being called on multiple buttons (can be set to e.g. MEM_dupallocN). If set to NULL, arg will
  * be passed as-is to all buttons.
  */
@@ -2263,8 +2259,8 @@ void uiTemplateIDTabs(uiLayout *layout,
  * This is for selecting the type of ID-block to use,
  * and then from the relevant type choosing the block to use.
  *
- * \param propname: property identifier for property that ID-pointer gets stored to.
- * \param proptypename: property identifier for property
+ * @param propname: property identifier for property that ID-pointer gets stored to.
+ * @param proptypename: property identifier for property
  * used to determine the type of ID-pointer that can be used.
  */
 void uiTemplateAnyID(uiLayout *layout,
@@ -2344,11 +2340,11 @@ void uiTemplateColorRamp(uiLayout *layout,
                          const char *propname,
                          bool expand);
 /**
- * \param icon_scale: Scale of the icon, 1x == button height.
+ * @param icon_scale: Scale of the icon, 1x == button height.
  */
 void uiTemplateIcon(uiLayout *layout, int icon_value, float icon_scale);
 /**
- * \param icon_scale: Scale of the icon, 1x == button height.
+ * @param icon_scale: Scale of the icon, 1x == button height.
  */
 void uiTemplateIconView(uiLayout *layout,
                         struct kraken::KrakenPRIM *ptr,
@@ -2417,14 +2413,8 @@ void uiTemplateImageViews(uiLayout *layout, struct kraken::KrakenPRIM *imaptr);
 void uiTemplateImageFormatViews(uiLayout *layout,
                                 struct kraken::KrakenPRIM *imfptr,
                                 struct kraken::KrakenPRIM *ptr);
-void uiTemplateImageLayers(uiLayout *layout,
-                           struct kContext *C,
-                           struct Image *ima,
-                           struct ImageUser *iuser);
-void uiTemplateImageInfo(uiLayout *layout,
-                         struct kContext *C,
-                         struct Image *ima,
-                         struct ImageUser *iuser);
+void uiTemplateImageLayers(uiLayout *layout, struct kContext *C, void *ima, void *iuser);
+void uiTemplateImageInfo(uiLayout *layout, struct kContext *C, void *ima, void *iuser);
 void uiTemplateRunningJobs(uiLayout *layout, struct kContext *C);
 void UI_but_func_operator_search(uiBut *but);
 void uiTemplateOperatorSearch(uiLayout *layout);
@@ -2552,12 +2542,12 @@ struct uiList *uiTemplateList_ex(uiLayout *layout,
 
 void uiTemplateNodeLink(uiLayout *layout,
                         struct kContext *C,
-                        struct bNodeTree *ntree,
+                        struct kNodeTree *ntree,
                         struct bNode *node,
                         struct kNodeSocket *input);
 void uiTemplateNodeView(uiLayout *layout,
                         struct kContext *C,
-                        struct bNodeTree *ntree,
+                        struct kNodeTree *ntree,
                         struct bNode *node,
                         struct kNodeSocket *input);
 void uiTemplateTextureUser(uiLayout *layout, struct kContext *C);
@@ -3023,9 +3013,7 @@ struct ID *UI_context_active_but_get_tab_ID(struct kContext *C);
 
 uiBut *UI_region_active_but_get(const ARegion *region);
 uiBut *UI_region_but_find_rect_over(const ARegion *region, const struct rcti *rect_px);
-uiBlock *UI_region_block_find_mouse_over(const ARegion *region,
-                                         const int xy[2],
-                                         bool only_clip);
+uiBlock *UI_region_block_find_mouse_over(const ARegion *region, const int xy[2], bool only_clip);
 /**
  * Try to find a search-box region opened from a button in \a button_region.
  */
@@ -3115,9 +3103,9 @@ int UI_fontstyle_height_max(const struct uiFontStyle *fs);
 void UI_draw_icon_tri(float x, float y, char dir, const float[4]);
 
 /* XXX: read a style configure */
-const struct uiStyle *UI_style_get(void); /* use for fonts etc */
+const uiStyle *UI_style_get(void); /* use for fonts etc */
 /* for drawing, scaled with DPI setting */
-const struct uiStyle *UI_style_get_dpi(void); /* DPI scaled settings for drawing */
+const uiStyle *UI_style_get_dpi(void); /* DPI scaled settings for drawing */
 
 /* linker workaround ack! */
 void UI_template_fix_linking(void);
@@ -3138,7 +3126,7 @@ void UI_editsource_but_replace(const uiBut *old_but, uiBut *new_but);
  * #UI_panels_end() modifies them, so if that is executed, this function must not be called before
  * it.
  *
- * \param region: The region the button is placed in. Make sure this is actually the one the button
+ * @param region: The region the button is placed in. Make sure this is actually the one the button
  *                is placed in, not just the context region.
  */
 void UI_but_ensure_in_view(const struct kContext *C, ARegion *region, const uiBut *but);
@@ -3172,18 +3160,18 @@ void UI_butstore_unregister(uiButStore *bs_handle, uiBut **but_p);
 /* ui_interface_region_tooltip.c */
 
 /**
- * \param is_label: When true, show a small tip that only shows the name, otherwise show the full
+ * @param is_label: When true, show a small tip that only shows the name, otherwise show the full
  *                  tooltip.
  */
 ARegion *UI_tooltip_create_from_button(struct kContext *C,
-                                              ARegion *butregion,
-                                              uiBut *but,
-                                              bool is_label);
+                                       ARegion *butregion,
+                                       uiBut *but,
+                                       bool is_label);
 ARegion *UI_tooltip_create_from_button_or_extra_icon(struct kContext *C,
-                                                            ARegion *butregion,
-                                                            uiBut *but,
-                                                            uiButExtraOpIcon *extra_icon,
-                                                            bool is_label);
+                                                     ARegion *butregion,
+                                                     uiBut *but,
+                                                     uiButExtraOpIcon *extra_icon,
+                                                     bool is_label);
 ARegion *UI_tooltip_create_from_gizmo(struct kContext *C, struct wmGizmo *gz);
 void UI_tooltip_free(struct kContext *C, struct kScreen *screen, ARegion *region);
 
@@ -3201,7 +3189,7 @@ typedef struct
  * Create a tooltip from search-item tooltip data \a item_tooltip data.
  * To be called from a callback set with #UI_but_func_search_set_tooltip().
  *
- * \param item_rect: Rectangle of the search item in search region space (#ui_searchbox_butrect())
+ * @param item_rect: Rectangle of the search item in search region space (#ui_searchbox_butrect())
  *                   which is passed to the tooltip callback.
  */
 ARegion *UI_tooltip_create_from_search_item_generic(
@@ -3237,7 +3225,7 @@ void UI_widgetbase_draw_cache_end(void);
 /**
  * Initialize default theme.
  *
- * \note When you add new colors, created & saved themes need initialized
+ * @note When you add new colors, created & saved themes need initialized
  * use function below, #init_userdef_do_versions.
  */
 void UI_theme_init_default(void);
@@ -3287,7 +3275,7 @@ bool UI_view_item_drop_handle(struct kContext *C,
                               const std::vector<wmDrag *> *drags);
 
 /**
- * \param xy: Coordinate to find a view item at, in window space.
+ * @param xy: Coordinate to find a view item at, in window space.
  */
 uiViewItemHandle *UI_region_views_find_item_at(const ARegion *region, const int xy[2])
   ATTR_NONNULL();

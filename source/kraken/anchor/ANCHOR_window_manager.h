@@ -47,21 +47,21 @@ class AnchorWindowManager
   /**
    * Add a window to our list.
    * It is only added if it is not already in the list.
-   * \param window: Pointer to the window to be added.
+   * @param window: Pointer to the window to be added.
    * \return Indication of success.
    */
   eAnchorStatus addWindow(AnchorISystemWindow *window);
 
   /**
    * Remove a window from our list.
-   * \param window: Pointer to the window to be removed.
+   * @param window: Pointer to the window to be removed.
    * \return Indication of success.
    */
   eAnchorStatus removeWindow(const AnchorISystemWindow *window);
 
   /**
    * Returns whether the window is in our list.
-   * \param window: Pointer to the window to query.
+   * @param window: Pointer to the window to query.
    * \return A boolean indicator.
    */
   bool getWindowFound(const AnchorISystemWindow *window) const;
@@ -80,7 +80,7 @@ class AnchorWindowManager
 
   /**
    * Activates full-screen mode for a window.
-   * \param window: The window displayed full-screen.
+   * @param window: The window displayed full-screen.
    * \return Indication of success.
    */
   eAnchorStatus beginFullScreen(AnchorISystemWindow *window, const bool stereoVisual);
@@ -94,7 +94,7 @@ class AnchorWindowManager
   /**
    * Sets new window as active window (the window receiving events).
    * There can be only one window active which should be in the current window list.
-   * \param window: The new active window.
+   * @param window: The new active window.
    */
   eAnchorStatus setActiveWindow(AnchorISystemWindow *window);
 
@@ -107,7 +107,7 @@ class AnchorWindowManager
 
   /**
    * Set this window to be inactive (not receiving events).
-   * \param window: The window to deactivate.
+   * @param window: The window to deactivate.
    */
   void setWindowInactive(const AnchorISystemWindow *window);
 
@@ -120,7 +120,7 @@ class AnchorWindowManager
 
   /**
    * Finds the window associated with an OS window object/handle.
-   * \param osWindow: The OS window object/handle.
+   * @param osWindow: The OS window object/handle.
    * \return The associated window, null if none corresponds.
    */
   AnchorISystemWindow *getWindowAssociatedWithOSWindow(void *osWindow);

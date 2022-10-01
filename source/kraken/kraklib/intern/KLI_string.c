@@ -414,8 +414,8 @@ bool KLI_str_quoted_substr_range(const char *__restrict str,
  * Makes a copy of the text within the "" that appear after the contents of \a prefix.
  * i.e. for string `pose["apples"]` with prefix `pose[`, it will return `apples`.
  *
- * \param str: is the entire string to chop.
- * \param prefix: is the part of the string to step over.
+ * @param str: is the entire string to chop.
+ * @param prefix: is the part of the string to step over.
  *
  * Assume that the strings returned must be freed afterwards,
  * and that the inputs will contain data we want.

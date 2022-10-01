@@ -317,7 +317,7 @@ struct uiTextIconPadFactor
  * this is done because most buttons need additional space (drop-down chevron for example).
  * menus and labels use much smaller `text` values compared to this default.
  *
- * \note It may seem odd that the icon only adds 0.25
+ * @note It may seem odd that the icon only adds 0.25
  * but taking margins into account its fine,
  * except for #ui_text_pad_compact where a bit more margin is required.
  */
@@ -1042,7 +1042,7 @@ static void ui_keymap_but_cb(kContext *UNUSED(C), void *but_v, void *UNUSED(key_
 /**
  * Create label + button for RNA property
  *
- * \param w_hint: For varying width layout, this becomes the label width.
+ * @param w_hint: For varying width layout, this becomes the label width.
  *                Otherwise it's used to fit both items into it.
  */
 static uiBut *ui_item_with_label(uiLayout *layout,
@@ -1262,7 +1262,7 @@ static void ui_item_disabled(uiLayout *layout, const char *name)
 
 /**
  * Operator Item
- * \param r_opptr: Optional, initialize with operator properties when not NULL.
+ * @param r_opptr: Optional, initialize with operator properties when not NULL.
  * Will always be written to even in the case of errors.
  */
 static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
@@ -5411,7 +5411,7 @@ static bool button_group_has_search_match(uiButtonGroup *button_group, const cha
  * Apply the search filter, tagging all buttons with whether they match or not.
  * Tag every button in the group as a result if any button in the group matches.
  *
- * \note It would be great to return early here if we found a match, but because
+ * @note It would be great to return early here if we found a match, but because
  * the results may be visible we have to continue searching the entire block.
  *
  * \return True if the block has any search results.
@@ -6137,7 +6137,7 @@ void UI_paneltype_draw(kContext *C, PanelType *pt, uiLayout *layout)
  *
  * Serialize the layout as a Python compatible dictionary,
  *
- * \note Proper string escaping isn't used,
+ * @note Proper string escaping isn't used,
  * triple quotes are used to prevent single quotes from interfering with Python syntax.
  * If we want this to be fool-proof, we would need full Python compatible string escape support.
  * As we don't use triple quotes in the UI it's good-enough in practice.

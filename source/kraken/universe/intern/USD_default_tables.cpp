@@ -68,7 +68,7 @@ void USD_default_table_main_window(kContext *C)
 
 void USD_default_table_user_prefs(kContext *C)
 {
-  UserDef *prefs = CTX_data_prefs(C);
+  kUserDef *prefs = CTX_data_prefs(C);
 
   FormFactory(PROP_IFACE(prefs->showsave), VALUE_IFACE(bool(true)));
   FormFactory(PROP_IFACE(prefs->dpifac),   VALUE_IFACE(float(1.0)));

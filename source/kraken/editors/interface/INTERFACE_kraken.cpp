@@ -863,10 +863,10 @@ static void ui_but_extra_icons_update_from_old_but(const uiBut *new_but, const u
  * Update pointers and other information in the old active button based on new information in the
  * corresponding new button from the current layout pass.
  *
- * \param oldbut: The button from the last layout pass that will be moved to the new block.
- * \param but: The newly added button with much of the up to date information, to be feed later.
+ * @param oldbut: The button from the last layout pass that will be moved to the new block.
+ * @param but: The newly added button with much of the up to date information, to be feed later.
  *
- * \note #uiBut has ownership of many of its pointers. When the button is freed all these
+ * @note #uiBut has ownership of many of its pointers. When the button is freed all these
  * pointers are freed as well, so ownership has to be moved out of \a but in order to free it.
  */
 static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
@@ -2756,7 +2756,7 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
 }
 
 /**
- * \param float_precision: Override the button precision.
+ * @param float_precision: Override the button precision.
  */
 static void ui_get_but_string_unit(uiBut *but,
                                    char *str,
@@ -3726,8 +3726,8 @@ static void ui_but_build_drawstr_int(uiBut *but, int value)
 }
 
 /**
- * \param but: Button to update.
- * \param validate: When set, this function may change the button value.
+ * @param but: Button to update.
+ * @param validate: When set, this function may change the button value.
  * Otherwise treat the button value as read-only.
  */
 static void ui_but_update_ex(uiBut *but, const bool validate)
@@ -4097,12 +4097,12 @@ uiBut *ui_but_change_type(uiBut *but, eButType new_type)
 /**
  * \brief ui_def_but is the function that draws many button types
  *
- * \param x, y: The lower left hand corner of the button (X axis)
- * \param width, height: The size of the button.
+ * @param x, y: The lower left hand corner of the button (X axis)
+ * @param width, height: The size of the button.
  *
  * for float buttons:
- * \param a1: Click Step (how much to change the value each click)
- * \param a2: Number of decimal point values to display. 0 defaults to 3 (0.000)
+ * @param a1: Click Step (how much to change the value each click)
+ * @param a2: Number of decimal point values to display. 0 defaults to 3 (0.000)
  * 1,2,3, and a maximum of 4, all greater values will be clamped to 4.
  */
 static uiBut *ui_def_but(uiBlock *block,

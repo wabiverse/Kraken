@@ -38,7 +38,7 @@
 
 #include "KRF_api.h"
 
-// #include "GPU_batch.h"
+#include "GPU_batch.h"
 #include "GPU_matrix.h"
 
 #include "krf_internal.h"
@@ -86,7 +86,7 @@ static void krf_face_finalizer(void *object)
 /**
  * Called in response to #FTC_Manager_LookupFace. Now add a face to our font.
  *
- * \note Unused arguments are kept to match #FTC_Face_Requester function signature.
+ * @note Unused arguments are kept to match #FTC_Face_Requester function signature.
  */
 static FT_Error krf_cache_face_requester(FTC_FaceID faceID,
                                          FT_Library lib,
@@ -980,7 +980,7 @@ void krf_font_boundbox_foreach_glyph(FontKRF *font,
  * Wraps on spaces and respects newlines.
  * Intentionally ignores non-unix newlines, tabs and more advanced text formatting.
  *
- * \note If we want rich text - we better have a higher level API to handle that
+ * @note If we want rich text - we better have a higher level API to handle that
  * (color, bold, switching fonts... etc).
  */
 static void krf_font_wrap_apply(FontKRF *font,

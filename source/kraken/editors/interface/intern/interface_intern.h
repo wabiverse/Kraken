@@ -32,13 +32,15 @@
 
 struct ID;
 struct IDProperty;
+struct CurveMapping;
+struct CurveProfile;
+struct uiStyle;
+struct uiWidgetColors;
 
 KRAKEN_NAMESPACE_BEGIN
 
 struct ARegion;
 struct AnimationEvalContext;
-struct CurveMapping;
-struct CurveProfile;
 struct ImBuf;
 struct Main;
 struct Scene;
@@ -46,9 +48,7 @@ struct kContext;
 struct kContextStore;
 struct uiHandleButtonData;
 struct uiLayout;
-struct uiStyle;
 struct uiUndoStack_Text;
-struct uiWidgetColors;
 struct wmEvent;
 struct wmKeyConfig;
 struct wmOperatorType;
@@ -620,7 +620,7 @@ struct uiBlock
   /** unit system, used a lot for numeric buttons so include here
    * rather than fetching through the scene every time. */
   struct UnitSettings *unit;
-  /** \note only accessed by color picker templates. */
+  /** @note only accessed by color picker templates. */
   ColorPickerData color_pickers;
 
   /** Block for color picker with gamma baked in. */
@@ -694,7 +694,7 @@ extern void ui_region_winrct_get_no_margin(const struct ARegion *region, struct 
  * Reallocate the button (new address is returned) for a new button type.
  * This should generally be avoided and instead the correct type be created right away.
  *
- * \note Only the #uiBut data can be kept. If the old button used a derived type (e.g. #uiButTab),
+ * @note Only the #uiBut data can be kept. If the old button used a derived type (e.g. #uiButTab),
  *       the data that is not inside #uiBut will be lost.
  */
 uiBut *ui_but_change_type(uiBut *but, eButType new_type);
@@ -734,9 +734,9 @@ extern void ui_hsvcube_pos_from_vals(const struct uiButHSVCube *hsv_but,
                                      float *yp);
 
 /**
- * \param float_precision: For number buttons the precision
+ * @param float_precision: For number buttons the precision
  * to use or -1 to fallback to the button default.
- * \param use_exp_float: Use exponent representation of floats
+ * @param use_exp_float: Use exponent representation of floats
  * when out of reasonable range (outside of 1e3/1e-3).
  */
 extern void ui_but_string_get_ex(uiBut *but,
@@ -750,11 +750,11 @@ extern void ui_but_string_get(uiBut *but, char *str, size_t maxlen) ATTR_NONNULL
  * A version of #ui_but_string_get_ex for dynamic buffer sizes
  * (where #ui_but_string_get_max_length returns 0).
  *
- * \param r_str_size: size of the returned string (including terminator).
+ * @param r_str_size: size of the returned string (including terminator).
  */
 extern char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size);
 /**
- * \param str: will be overwritten.
+ * @param str: will be overwritten.
  */
 extern void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen) ATTR_NONNULL();
 extern bool ui_but_string_set(struct kContext *C, uiBut *but, const char *str) ATTR_NONNULL();
@@ -793,7 +793,7 @@ void ui_but_range_set_soft(uiBut *but);
 bool ui_but_context_poll_operator(struct kContext *C, struct wmOperatorType *ot, const uiBut *but);
 /**
  * Check if the operator \a ot poll is successful with the context given by \a but (optionally).
- * \param but: The button that might store context. Can be NULL for convenience (e.g. if there is
+ * @param but: The button that might store context. Can be NULL for convenience (e.g. if there is
  *             no button to take context from, but we still want to poll the operator).
  */
 bool ui_but_context_poll_operator_ex(struct kContext *C,
@@ -1045,7 +1045,7 @@ void ui_popup_block_scrolltest(struct uiBlock *block);
 /**
  * Handle region panel events like opening and closing panels, changing categories, etc.
  *
- * \note Could become a modal key-map.
+ * @note Could become a modal key-map.
  */
 extern int ui_handler_panel_region(struct kContext *C,
                                    const struct wmEvent *event,
@@ -1054,7 +1054,7 @@ extern int ui_handler_panel_region(struct kContext *C,
 /**
  * Draw a panel integrated in buttons-window, tool/property lists etc.
  */
-extern void ui_draw_aligned_panel(const struct uiStyle *style,
+extern void ui_draw_aligned_panel(const uiStyle *style,
                                   const uiBlock *block,
                                   const rcti *rect,
                                   bool show_pin,
@@ -1123,14 +1123,14 @@ void ui_draw_but_TRACKPREVIEW(struct ARegion *region,
 /**
  * Start the undo stack.
  *
- * \note The current state should be pushed immediately after calling this.
+ * @note The current state should be pushed immediately after calling this.
  */
 struct uiUndoStack_Text *ui_textedit_undo_stack_create(void);
 void ui_textedit_undo_stack_destroy(struct uiUndoStack_Text *undo_stack);
 /**
  * Push the information in the arguments to a new state in the undo stack.
  *
- * \note Currently the total length of the undo stack is not limited.
+ * @note Currently the total length of the undo stack is not limited.
  */
 void ui_textedit_undo_push(struct uiUndoStack_Text *undo_stack,
                            const char *text,
@@ -1149,7 +1149,7 @@ extern void ui_handle_afterfunc_add_operator(struct wmOperatorType *ot,
 extern void ui_pan_to_scroll(const struct wmEvent *event, int *type, int *val);
 /**
  * Exported to interface.c: #UI_but_active_only()
- * \note The region is only for the button.
+ * @note The region is only for the button.
  * The context needs to be set by the caller.
  */
 extern void ui_but_activate_event(struct kContext *C, struct ARegion *region, uiBut *but);
@@ -1179,7 +1179,7 @@ extern void ui_but_text_password_hide(char password_str[128], uiBut *but, bool r
 /**
  * Finds the pressed button in an aligned row (typically an expanded enum).
  *
- * \param direction: Use when there may be multiple buttons pressed.
+ * @param direction: Use when there may be multiple buttons pressed.
  */
 extern uiBut *ui_but_find_select_in_enum(uiBut *but, int direction);
 bool ui_but_is_editing(const uiBut *but);
@@ -1242,9 +1242,9 @@ enum
 struct GPUBatch *ui_batch_roundbox_widget_get(void);
 struct GPUBatch *ui_batch_roundbox_shadow_get(void);
 
-void ui_draw_menu_back(struct uiStyle *style, uiBlock *block, rcti *rect);
+void ui_draw_menu_back(uiStyle *style, uiBlock *block, rcti *rect);
 void ui_draw_popover_back(struct ARegion *region,
-                          struct uiStyle *style,
+                          uiStyle *style,
                           uiBlock *block,
                           rcti *rect);
 void ui_draw_pie_center(uiBlock *block);
@@ -1252,14 +1252,14 @@ const struct uiWidgetColors *ui_tooltip_get_theme(void);
 
 void ui_draw_widget_menu_back_color(const rcti *rect, bool use_shadow, const float color[4]);
 void ui_draw_widget_menu_back(const rcti *rect, bool use_shadow);
-void ui_draw_tooltip_background(const struct uiStyle *style, uiBlock *block, rcti *rect);
+void ui_draw_tooltip_background(const uiStyle *style, uiBlock *block, rcti *rect);
 
 /**
  * Conversion from old to new buttons, so still messy.
  */
 extern void ui_draw_but(const struct kContext *C,
                         struct ARegion *region,
-                        struct uiStyle *style,
+                        uiStyle *style,
                         uiBut *but,
                         rcti *rect);
 
@@ -1281,10 +1281,10 @@ typedef enum
 /**
  * Helper call to draw a menu item without a button.
  *
- * \param but_flag: Button flags (#uiBut.flag) indicating the state of the item, typically
+ * @param but_flag: Button flags (#uiBut.flag) indicating the state of the item, typically
  *                  #UI_ACTIVE, #UI_BUT_DISABLED, #UI_BUT_INACTIVE.
- * \param separator_type: The kind of separator which controls if and how the string is clipped.
- * \param r_xmax: The right hand position of the text, this takes into the icon, padding and text
+ * @param separator_type: The kind of separator which controls if and how the string is clipped.
+ * @param r_xmax: The right hand position of the text, this takes into the icon, padding and text
  *                clipping when there is not enough room to display the full text.
  */
 void ui_draw_menu_item(const struct uiFontStyle *fstyle,
@@ -1359,7 +1359,7 @@ void ui_layout_remove_but(uiLayout *layout, const uiBut *but);
  */
 bool ui_layout_replace_but_ptr(uiLayout *layout, const void *old_but_ptr, uiBut *new_but);
 /**
- * \note May reallocate \a but, so the possibly new address is returned. May also override the
+ * @note May reallocate \a but, so the possibly new address is returned. May also override the
  *       #UI_BUT_DISABLED flag depending on if a search pointer-property pair was provided/found.
  */
 uiBut *ui_but_add_search(uiBut *but,
@@ -1435,7 +1435,7 @@ bool ui_but_is_editable_as_text(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 bool ui_but_is_toggle(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 /**
  * Can we mouse over the button or is it hidden/disabled/layout.
- * \note ctrl is kind of a hack currently,
+ * @note ctrl is kind of a hack currently,
  * so that non-embossed UI_BTYPE_TEXT button behaves as a label when ctrl is not pressed.
  */
 bool ui_but_is_interactive_ex(const uiBut *but, const bool labeledit, const bool for_tooltip);

@@ -130,7 +130,7 @@ struct wmMsgSubscribeValueLink {
 };
 
 struct wmMsgSubscribeKey {
-  /** Linked list for predictable ordering, otherwise we would depend on #GHash bucketing. */
+  /** Linked list for predictable ordering, otherwise we would depend on #RHash bucketing. */
   struct wmMsgSubscribeKey *next, *prev;
   std::vector<wmMsgSubscribeValueLink *> values;
   /* over-alloc, eg: wmMsgSubscribeKey_RNA */

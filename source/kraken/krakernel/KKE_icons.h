@@ -12,10 +12,6 @@
  * different design need to be introduced.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "KLI_compiler_attrs.h"
 
 #include "USD_ID_enums.h"
@@ -38,13 +34,13 @@ enum {
 };
 
 /**
- * \note See comment at the top regarding thread safety.
+ * @note See comment at the top regarding thread safety.
  */
 struct Icon {
   void *drawinfo;
   /**
    * Data defined by #obj_type
-   * \note for #ICON_DATA_GEOM the memory is owned by the icon,
+   * @note for #ICON_DATA_GEOM the memory is owned by the icon,
    * could be made into a flag if we want that to be optional.
    */
   void *obj;
@@ -86,6 +82,3 @@ struct Icon *KKE_icon_get(int icon_id);
 
 #define ICON_RENDER_DEFAULT_HEIGHT 32
 
-#ifdef __cplusplus
-}
-#endif

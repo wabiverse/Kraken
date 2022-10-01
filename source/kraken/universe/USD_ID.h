@@ -1,25 +1,39 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
-
-/** \file
- * \ingroup DNA
- * \brief ID and Library types, which are fundamental for sdna.
+/*
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
 #pragma once
 
-#include <vector>
+/**
+ * @file
+ * Universe.
+ * Set the Stage.
+ */
 
 #include "USD_ID_enums.h"
-// #include "USD_defs.h"
+#include "USD_defs.h"
 #include "USD_listBase.h"
 
 #ifdef __cplusplus
-#include <wabi/base/tf/token.h>
-#endif /* __cplusplus */
+extern "C" {
+#endif
 
 struct FileData;
-struct RHash;
+struct GHash;
 struct GPUTexture;
 struct ID;
 struct Library;
@@ -31,7 +45,8 @@ struct DrawData;
 typedef void (*DrawDataInitCb)(struct DrawData *engine_data);
 typedef void (*DrawDataFreeCb)(struct DrawData *engine_data);
 
-struct DrawData
+
+typedef struct DrawData
 {
   struct DrawData *next, *prev;
   struct DrawEngineType *engine_type;
@@ -39,14 +54,14 @@ struct DrawData
   DrawDataFreeCb free;
   /* Accumulated recalc flags, which corresponds to ID->recalc flags. */
   unsigned int recalc;
-};
+} DrawData;
 
-struct DrawDataList
+typedef struct DrawDataList
 {
   struct DrawData *first, *last;
-};
+} DrawDataList;
 
-struct IDPropertyUIData
+typedef struct IDPropertyUIData
 {
   /** Tooltip / property description pointer. Owned by the IDProperty. */
   char *description;
@@ -54,10 +69,10 @@ struct IDPropertyUIData
   int rna_subtype;
 
   char _pad[4];
-};
+} IDPropertyUIData;
 
 /* IDP_UI_DATA_TYPE_INT */
-struct IDPropertyUIDataInt
+typedef struct IDPropertyUIDataInt
 {
   IDPropertyUIData base;
   int *default_array; /* Only for array properties. */
@@ -70,10 +85,10 @@ struct IDPropertyUIDataInt
   int soft_max;
   int step;
   int default_value;
-};
+} IDPropertyUIDataInt;
 
 /* IDP_UI_DATA_TYPE_FLOAT */
-struct IDPropertyUIDataFloat
+typedef struct IDPropertyUIDataFloat
 {
   IDPropertyUIData base;
   double *default_array; /* Only for array properties. */
@@ -88,36 +103,36 @@ struct IDPropertyUIDataFloat
   double soft_min;
   double soft_max;
   double default_value;
-};
+} IDPropertyUIDataFloat;
 
 /* IDP_UI_DATA_TYPE_STRING */
-struct IDPropertyUIDataString
+typedef struct IDPropertyUIDataString
 {
   IDPropertyUIData base;
   char *default_value;
-};
+} IDPropertyUIDataString;
 
 /* IDP_UI_DATA_TYPE_ID */
-struct IDPropertyUIDataID
+typedef struct IDPropertyUIDataID
 {
   IDPropertyUIData base;
-};
+} IDPropertyUIDataID;
 
-struct IDPropertyData
+typedef struct IDPropertyData
 {
   void *pointer;
-  std::vector<struct IDProperty *> group;
+  ListBase group;
   /** NOTE: we actually fit a double into these two 32bit integers. */
   int val, val2;
-};
+} IDPropertyData;
 
-struct IDProperty
+typedef struct IDProperty
 {
   struct IDProperty *next, *prev;
   char type, subtype;
   short flag;
   /** MAX_IDPROP_NAME. */
-  wabi::TfToken name;
+  char name[64];
 
   /* saved is used to indicate if this struct has been saved yet.
    * seemed like a good idea as a '_pad' var was needed anyway :) */
@@ -135,13 +150,13 @@ struct IDProperty
   int totallen;
 
   IDPropertyUIData *ui_data;
-};
+} IDProperty;
 
 #define MAX_IDPROP_NAME 64
 #define DEFAULT_ALLOC_FOR_NULL_STRINGS 64
 
 /*->type*/
-enum eIDPropertyType
+typedef enum eIDPropertyType
 {
   IDP_STRING = 0,
   IDP_INT = 1,
@@ -152,7 +167,7 @@ enum eIDPropertyType
   IDP_ID = 7,
   IDP_DOUBLE = 8,
   IDP_IDPARRAY = 9,
-};
+} eIDPropertyType;
 #define IDP_NUMTYPES 10
 
 /** Used by some IDP utils, keep values in sync with type enum above. */
@@ -198,7 +213,7 @@ enum
 
 /* Static ID override structs. */
 
-struct IDOverrideLibraryPropertyOperation
+typedef struct IDOverrideLibraryPropertyOperation
 {
   struct IDOverrideLibraryPropertyOperation *next, *prev;
 
@@ -224,7 +239,7 @@ struct IDOverrideLibraryPropertyOperation
   char *subitem_local_name;
   int subitem_reference_index;
   int subitem_local_index;
-};
+} IDOverrideLibraryPropertyOperation;
 
 /* IDOverrideLibraryPropertyOperation->operation. */
 enum
@@ -261,7 +276,7 @@ enum
 };
 
 /** A single overridden property, contain all operations on this one. */
-struct IDOverrideLibraryProperty
+typedef struct IDOverrideLibraryProperty
 {
   struct IDOverrideLibraryProperty *next, *prev;
 
@@ -285,7 +300,7 @@ struct IDOverrideLibraryProperty
 
   /** The property type matching the rna_path. */
   unsigned int rna_prop_type;
-};
+} IDOverrideLibraryProperty;
 
 /* IDOverrideLibraryProperty->tag and IDOverrideLibraryPropertyOperation->tag. */
 enum
@@ -294,11 +309,12 @@ enum
   IDOVERRIDE_LIBRARY_TAG_UNUSED = 1 << 0,
 };
 
-struct IDOverrideLibraryRuntime
+
+typedef struct IDOverrideLibraryRuntime
 {
   struct GHash *rna_path_to_override_properties;
   uint tag;
-};
+} IDOverrideLibraryRuntime;
 
 /* IDOverrideLibraryRuntime->tag. */
 enum
@@ -308,7 +324,7 @@ enum
 };
 
 /* Main container for all overriding data info of a data-block. */
-struct IDOverrideLibrary
+typedef struct IDOverrideLibrary
 {
   /** Reference linked ID which this one overrides. */
   struct ID *reference;
@@ -331,7 +347,7 @@ struct IDOverrideLibrary
 
   unsigned int flag;
   char _pad_1[4];
-};
+} IDOverrideLibrary;
 
 /* IDOverrideLibrary->flag */
 enum
@@ -367,7 +383,7 @@ enum
 };
 
 /** Status used and counters created during id-remapping. */
-struct ID_Runtime_Remap
+typedef struct ID_Runtime_Remap
 {
   /** Status during ID remapping. */
   int status;
@@ -380,16 +396,16 @@ struct ID_Runtime_Remap
   int skipped_direct;
   /** During ID remapping, the number of indirect use cases that could not be remapped. */
   int skipped_indirect;
-};
+} ID_Runtime_Remap;
 
-struct ID_Runtime
+typedef struct ID_Runtime
 {
   ID_Runtime_Remap remap;
-};
+} ID_Runtime;
 
 /* There's a nasty circular dependency here.... 'void *' to the rescue! I
  * really wonder why this is needed. */
-struct ID
+typedef struct ID
 {
   void *next, *prev;
   struct ID *newid;
@@ -468,19 +484,19 @@ struct ID
   struct LibraryWeakReference *library_weak_reference;
 
   struct ID_Runtime runtime;
-};
+} ID;
 
-struct Library_Runtime
+typedef struct Library_Runtime
 {
   /* Used for efficient calculations of unique names. */
   struct UniqueName_Map *name_map;
-};
+} Library_Runtime;
 
 /**
  * For each library file used, a Library struct is added to Main
  * WARNING: readfile.c, expand_doit() reads this struct without DNA check!
  */
-struct Library
+typedef struct Library
 {
   ID id;
   struct FileData *filedata;
@@ -497,7 +513,7 @@ struct Library
    */
   char filepath_abs[1024];
 
-  /** Set for indirectly linked libs, used in the outliner and while reading. */
+  /** Set for indirectly linked libraries, used in the outliner and while reading. */
   struct Library *parent;
 
   struct PackedFile *packedfile;
@@ -511,7 +527,7 @@ struct Library
   short versionfile, subversionfile;
 
   struct Library_Runtime runtime;
-};
+} Library;
 
 /** #Library.tag */
 enum eLibrary_Tag
@@ -530,7 +546,7 @@ enum eLibrary_Tag
  * NOTE: There should always be only one single ID in current Main matching a given linked
  * reference.
  */
-struct LibraryWeakReference
+typedef struct LibraryWeakReference
 {
   /**  Expected to match a `Library.filepath`. */
   char library_filepath[1024];
@@ -539,7 +555,7 @@ struct LibraryWeakReference
   char library_id_name[66];
 
   char _pad[2];
-};
+} LibraryWeakReference;
 
 /* for PreviewImage->flag */
 enum ePreviewImage_Flag
@@ -557,7 +573,7 @@ enum
   PRV_TAG_DEFFERED_DELETE = (1 << 2),    /* Deferred preview should be deleted asap. */
 };
 
-struct PreviewImage
+typedef struct PreviewImage
 {
   /* All values of 2 are really NUM_ICON_SIZES */
   unsigned int w[2];
@@ -574,7 +590,7 @@ struct PreviewImage
   /** Runtime data. */
   short tag;
   char _pad[2];
-};
+} PreviewImage;
 
 #define PRV_DEFERRED_DATA(prv)                \
   (CHECK_TYPE_INLINE(prv, PreviewImage *),    \
@@ -589,9 +605,9 @@ struct PreviewImage
   ((GS((id)->name) != ID_SCR) && (GS((id)->name) != ID_WM) && (GS((id)->name) != ID_WS))
 
 #define ID_BLEND_PATH(_bmain, _id) \
-  ((_id)->lib ? (_id)->lib->filepath_abs : KKE_main_usdfile_path((_bmain)))
+  ((_id)->lib ? (_id)->lib->filepath_abs : BKE_main_blendfile_path((_bmain)))
 #define ID_BLEND_PATH_FROM_GLOBAL(_id) \
-  ((_id)->lib ? (_id)->lib->filepath_abs : KKE_main_usdfile_path_from_global())
+  ((_id)->lib ? (_id)->lib->filepath_abs : BKE_main_blendfile_path_from_global())
 
 #define ID_MISSING(_id) ((((const ID *)(_id))->tag & LIB_TAG_MISSING) != 0)
 
@@ -601,7 +617,7 @@ struct PreviewImage
  * BKE_library_override typically (especially due to the check on LIB_TAG_EXTERN). */
 #define ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(_id)                                                \
   (ID_IS_LINKED(_id) && !ID_MISSING(_id) &&                                                     \
-   (KKE_idtype_get_info_from_id((const ID *)(_id))->flags & IDTYPE_FLAGS_NO_LIBLINKING) == 0 && \
+   (BKE_idtype_get_info_from_id((const ID *)(_id))->flags & IDTYPE_FLAGS_NO_LIBLINKING) == 0 && \
    !ELEM(GS(((ID *)(_id))->name), ID_SCE))
 #define ID_IS_OVERRIDABLE_LIBRARY(_id) \
   (ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY((_id)) && (((const ID *)(_id))->tag & LIB_TAG_EXTERN) != 0)
@@ -768,7 +784,7 @@ enum
    *
    * RESET_NEVER
    *
-   * \note This tag does not necessarily mean the actual user count of the ID is increased, this is
+   * @note This tag does not necessarily mean the actual user count of the ID is increased, this is
    * defined by #LIB_TAG_EXTRAUSER_SET.
    */
   LIB_TAG_EXTRAUSER = 1 << 2,
@@ -784,7 +800,7 @@ enum
    *
    * RESET_AFTER_USE
    *
-   * \note Also used internally in readfile.c to mark data-blocks needing do_versions.
+   * @note Also used internally in readfile.c to mark data-blocks needing do_versions.
    */
   LIB_TAG_NEW = 1 << 8,
   /**
@@ -830,7 +846,7 @@ enum
    *
    * RESET_NEVER
    *
-   * \note Only used by node-trees currently.
+   * @note Only used by node-trees currently.
    */
   LIB_TAG_LOCALIZED = 1 << 14,
 
@@ -882,7 +898,7 @@ enum
 };
 
 /* Tag given ID for an update in all the dependency graphs. */
-enum IDRecalcFlag
+typedef enum IDRecalcFlag
 {
   /***************************************************************************
    * Individual update tags, this is what ID gets tagged for update with. */
@@ -1025,7 +1041,7 @@ enum IDRecalcFlag
   ID_RECALC_PSYS_ALL = (ID_RECALC_PSYS_REDO | ID_RECALC_PSYS_RESET | ID_RECALC_PSYS_CHILD |
                         ID_RECALC_PSYS_PHYS),
 
-};
+} IDRecalcFlag;
 
 /* To filter ID types (filter_id). 64 bit to fit all types. */
 #define FILTER_ID_AC (1ULL << 0)
@@ -1191,3 +1207,6 @@ enum
   INDEX_ID_MAX,
 };
 
+#ifdef __cplusplus
+}
+#endif

@@ -30,7 +30,7 @@ KRAKEN_NAMESPACE_BEGIN
 
 /**
  * Each control point that makes up the profile.
- * \note The flags use the same enum as Bezier curves, but they aren't guaranteed
+ * @note The flags use the same enum as Bezier curves, but they aren't guaranteed
  * to have identical functionality, and all types aren't implemented.
  */
 struct CurveProfilePoint {
@@ -41,7 +41,7 @@ struct CurveProfilePoint {
   /** Flags for both handle's type (eBezTriple_Handle auto, vect, free, and aligned supported). */
   char h1, h2;
   /** Handle locations, keep together.
-   * \note For now the two handle types are set to the same type in RNA. */
+   * @note For now the two handle types are set to the same type in RNA. */
   float h1_loc[2];
   float h2_loc[2];
   /** Runtime pointer to the point's profile for updating the curve with no direct reference. */

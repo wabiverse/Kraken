@@ -57,4 +57,4 @@ endif()
 kraken_add_lib(kraken_editor_util "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 # RNA_prototypes.h
-add_dependencies(kraken_editor_util bf_rna)
+add_dependencies(kraken_editor_util kraken_luxo)

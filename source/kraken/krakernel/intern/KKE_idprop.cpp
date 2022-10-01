@@ -440,9 +440,9 @@ bool IDP_EqualsProperties_ex(IDProperty *prop1, IDProperty *prop2, const bool is
             p1,
             p2);
         printf("    p1: ");
-        IDP_print(prop1);
+//        IDP_print(prop1);
         printf("    p2: ");
-        IDP_print(prop2);
+//        IDP_print(prop2);
       }
     }
 #endif

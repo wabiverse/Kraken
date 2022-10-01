@@ -114,7 +114,7 @@ bool KLI_uniquename_cb(UniquenameCheckCallback unique_check,
  *
  * For places where this is used, see constraint.c for example...
  *
- * \param name_offset: should be calculated using `offsetof(structname, membername)`
+ * @param name_offset: should be calculated using `offsetof(structname, membername)`
  * macro from `stddef.h`
  */
 static bool uniquename_find_dupe(ListBase *list, void *vlink, const char *name, int name_offset)

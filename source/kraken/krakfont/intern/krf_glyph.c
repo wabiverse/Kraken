@@ -29,7 +29,7 @@
 
 #include "KRF_api.h"
 
-// #include "GPU_capabilities.h"
+#include "GPU_capabilities.h"
 
 #include "krf_internal.h"
 #include "krf_internal_types.h"
@@ -759,9 +759,9 @@ static bool krf_glyph_render_bitmap(FontKRF *font, FT_GlyphSlot glyph)
 /**
  * Return a design axis that matches an identifying tag.
  *
- * \param variations: Variation descriptors from `FT_Get_MM_Var`.
- * \param tag: Axis tag (4-character string as uint), like 'wght'
- * \param r_axis_index: returns index of axis in variations array.
+ * @param variations: Variation descriptors from `FT_Get_MM_Var`.
+ * @param tag: Axis tag (4-character string as uint), like 'wght'
+ * @param r_axis_index: returns index of axis in variations array.
  */
 static const FT_Var_Axis *krf_var_axis_by_tag(const FT_MM_Var *variations,
                                               const uint tag,
@@ -784,8 +784,8 @@ static const FT_Var_Axis *krf_var_axis_by_tag(const FT_MM_Var *variations,
 /**
  * Convert a float factor to a fixed-point design coordinate.
  *
- * \param axis: Pointer to a design space axis structure.
- * \param factor: -1 to 1 with 0 meaning "default"
+ * @param axis: Pointer to a design space axis structure.
+ * @param factor: -1 to 1 with 0 meaning "default"
  */
 static FT_Fixed krf_factor_to_coordinate(const FT_Var_Axis *axis, const float factor)
 {
@@ -804,9 +804,9 @@ static FT_Fixed krf_factor_to_coordinate(const FT_Var_Axis *axis, const float fa
 /**
  * Alter a face variation axis by a factor
  *
- * \param coords: array of design coordinates, per axis.
- * \param tag: Axis tag (4-character string as uint), like 'wght'
- * \param factor: -1 to 1 with 0 meaning "default"
+ * @param coords: array of design coordinates, per axis.
+ * @param tag: Axis tag (4-character string as uint), like 'wght'
+ * @param factor: -1 to 1 with 0 meaning "default"
  */
 static bool krf_glyph_set_variation_normalized(const FontKRF *font,
                                                FT_Fixed coords[],
@@ -825,9 +825,9 @@ static bool krf_glyph_set_variation_normalized(const FontKRF *font,
 /**
  * Set a face variation axis to an exact float value
  *
- * \param coords: array of design coordinates, per axis.
- * \param tag: Axis tag (4-character string as uint), like 'opsz'
- * \param value: New float value. Converted to 16.16 and clamped within allowed range.
+ * @param coords: array of design coordinates, per axis.
+ * @param tag: Axis tag (4-character string as uint), like 'opsz'
+ * @param value: New float value. Converted to 16.16 and clamped within allowed range.
  */
 static bool krf_glyph_set_variation_float(FontKRF *font, FT_Fixed coords[], uint tag, float value)
 {
@@ -851,7 +851,7 @@ static bool krf_glyph_set_variation_float(FontKRF *font, FT_Fixed coords[], uint
 /**
  * Adjust the glyphs weight by a factor.
  *
- * \param factor: -1 (min stroke width) <= 0 (normal) => 1 (max boldness).
+ * @param factor: -1 (min stroke width) <= 0 (normal) => 1 (max boldness).
  */
 static bool krf_glyph_transform_weight(FT_GlyphSlot glyph, float factor, bool monospaced)
 {
@@ -878,9 +878,9 @@ static bool krf_glyph_transform_weight(FT_GlyphSlot glyph, float factor, bool mo
 /**
  * Adjust the glyphs slant by a factor (making it oblique).
  *
- * \param factor: -1 (max negative) <= 0 (no slant) => 1 (max positive).
+ * @param factor: -1 (max negative) <= 0 (no slant) => 1 (max positive).
  *
- * \note that left-leaning italics are possible in some RTL writing systems.
+ * @note that left-leaning italics are possible in some RTL writing systems.
  */
 static bool krf_glyph_transform_slant(FT_GlyphSlot glyph, float factor)
 {
@@ -895,7 +895,7 @@ static bool krf_glyph_transform_slant(FT_GlyphSlot glyph, float factor)
 /**
  * Adjust the glyph width by factor.
  *
- * \param factor: -1 (min width) <= 0 (normal) => 1 (max width).
+ * @param factor: -1 (min width) <= 0 (normal) => 1 (max width).
  */
 static bool krf_glyph_transform_width(FT_GlyphSlot glyph, float factor)
 {
@@ -912,7 +912,7 @@ static bool krf_glyph_transform_width(FT_GlyphSlot glyph, float factor)
 /**
  * Change glyph advance to alter letter-spacing (tracking).
  *
- * \param factor: -1 (min tightness) <= 0 (normal) => 1 (max looseness).
+ * @param factor: -1 (min tightness) <= 0 (normal) => 1 (max looseness).
  */
 static bool krf_glyph_transform_spacing(FT_GlyphSlot glyph, float factor)
 {

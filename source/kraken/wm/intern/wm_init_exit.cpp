@@ -104,7 +104,7 @@ void WM_exit_ex(kContext *C, const bool do_python)
       ED_screen_exit(C, VALUE(win), WM_window_get_active_screen(VALUE(win)));
     }
 
-    UserDef *uprefs = CTX_data_prefs(C);
+    kUserDef *uprefs = CTX_data_prefs(C);
     KrakenSTAGE stage = CTX_data_stage(C);
 
     bool show_save = FormFactory(uprefs->showsave);

@@ -67,14 +67,7 @@ set(SRC
 
 set(LIB
   maelstrom
-  maelstrom_static
-  # kraken_editor_interface
-  # kraken_editor_spacefile
-  # kraken_editor_screen
-  # kraken_editor_spaceview3d
-  # kraken_editor_code
-  kraken_kernel
-  kraken_lib
+  kraken_editor_screen
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}
@@ -86,3 +79,6 @@ set(LIB
 add_definitions(-DKRAKEN_WM_EXPORTS)
 
 kraken_add_lib(kraken_wm "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+add_dependencies(kraken_wm kraken_universe)
+add_dependencies(kraken_wm kraken_luxo)

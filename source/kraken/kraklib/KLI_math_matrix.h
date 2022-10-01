@@ -264,7 +264,7 @@ bool invert_m4_m4(float inverse[4][4], const float mat[4][4]);
  * \return true on success (i.e. can always find a pivot) and false on failure.
  * Mark Segal - 1992.
  *
- * \note this has worse performance than #EIG_invert_m4_m4 (Eigen), but e.g.
+ * @note this has worse performance than #EIG_invert_m4_m4 (Eigen), but e.g.
  * for non-invertible scale matrices, finding a partial solution can
  * be useful to have a valid local transform center, see T57767.
  */
@@ -289,7 +289,7 @@ void mul_m3_v3_db(const double M[3][3], double r[3]);
 void transpose_m3(float R[3][3]);
 void transpose_m3_m3(float R[3][3], const float M[3][3]);
 /**
- * \note Seems obscure but in-fact a common operation.
+ * @note Seems obscure but in-fact a common operation.
  */
 void transpose_m3_m4(float R[3][3], const float M[4][4]);
 void transpose_m4(float R[4][4]);
@@ -313,13 +313,13 @@ void normalize_m4_m4(float rmat[4][4], const float mat[4][4]) ATTR_NONNULL();
 /**
  * Make an orthonormal matrix around the selected axis of the given matrix.
  *
- * \param axis: Axis to build the orthonormal basis around.
+ * @param axis: Axis to build the orthonormal basis around.
  */
 void orthogonalize_m3(float R[3][3], int axis);
 /**
  * Make an orthonormal matrix around the selected axis of the given matrix.
  *
- * \param axis: Axis to build the orthonormal basis around.
+ * @param axis: Axis to build the orthonormal basis around.
  */
 void orthogonalize_m4(float R[4][4], int axis);
 
@@ -328,8 +328,8 @@ void orthogonalize_m4(float R[4][4], int axis);
  * in a way that is symmetric and stable to variations in the input, and
  * preserving the value of the determinant, i.e. the overall volume change.
  *
- * \param axis: Axis to build the orthonormal basis around.
- * \param normalize: Normalize the matrix instead of preserving volume.
+ * @param axis: Axis to build the orthonormal basis around.
+ * @param normalize: Normalize the matrix instead of preserving volume.
  */
 void orthogonalize_m3_stable(float R[3][3], int axis, bool normalize);
 /**
@@ -337,8 +337,8 @@ void orthogonalize_m3_stable(float R[3][3], int axis, bool normalize);
  * in a way that is symmetric and stable to variations in the input, and
  * preserving the value of the determinant, i.e. the overall volume change.
  *
- * \param axis: Axis to build the orthonormal basis around.
- * \param normalize: Normalize the matrix instead of preserving volume.
+ * @param axis: Axis to build the orthonormal basis around.
+ * @param normalize: Normalize the matrix instead of preserving volume.
  */
 void orthogonalize_m4_stable(float R[4][4], int axis, bool normalize);
 
@@ -455,7 +455,7 @@ void translate_m4(float mat[4][4], float Tx, float Ty, float Tz);
 /**
  * Rotate a matrix in-place.
  *
- * \note To create a new rotation matrix see:
+ * @note To create a new rotation matrix see:
  * #axis_angle_to_mat4_single, #axis_angle_to_mat3_single, #angle_to_mat2
  * (axis & angle args are compatible).
  */
@@ -473,18 +473,18 @@ void rescale_m4(float mat[4][4], const float scale[3]);
 void transform_pivot_set_m4(float mat[4][4], const float pivot[3]);
 
 /**
- * \param rot: A 3x3 rotation matrix, normalized never negative.
+ * @param rot: A 3x3 rotation matrix, normalized never negative.
  */
 void mat4_to_rot(float rot[3][3], const float wmat[4][4]);
 
 /**
- * \param rot: A 3x3 rotation matrix, normalized never negative.
- * \param size: The scale, negative if `mat3` is negative.
+ * @param rot: A 3x3 rotation matrix, normalized never negative.
+ * @param size: The scale, negative if `mat3` is negative.
  */
 void mat3_to_rot_size(float rot[3][3], float size[3], const float mat3[3][3]);
 /**
- * \param rot: A 3x3 rotation matrix, normalized never negative.
- * \param size: The scale, negative if `mat3` is negative.
+ * @param rot: A 3x3 rotation matrix, normalized never negative.
+ * @param size: The scale, negative if `mat3` is negative.
  */
 void mat4_to_loc_rot_size(float loc[3], float rot[3][3], float size[3], const float wmat[4][4]);
 void mat4_to_loc_quat(float loc[3], float quat[4], const float wmat[4][4]);
@@ -533,7 +533,7 @@ void blend_m4_m4m4(float out[4][4], const float dst[4][4], const float src[4][4]
 /**
  * A polar-decomposition-based interpolation between matrix A and matrix B.
  *
- * \note This code is about five times slower as the 'naive' interpolation done by #blend_m3_m3m3
+ * @note This code is about five times slower as the 'naive' interpolation done by #blend_m3_m3m3
  * (it typically remains below 2 usec on an average i74700,
  * while #blend_m3_m3m3 remains below 0.4 usec).
  * However, it gives expected results even with non-uniformly scaled matrices,
@@ -541,27 +541,27 @@ void blend_m4_m4m4(float out[4][4], const float dst[4][4], const float src[4][4]
  *
  * Based on "Matrix Animation and Polar Decomposition", by Ken Shoemake & Tom Duff
  *
- * \param R: Resulting interpolated matrix.
- * \param A: Input matrix which is totally effective with `t = 0.0`.
- * \param B: Input matrix which is totally effective with `t = 1.0`.
- * \param t: Interpolation factor.
+ * @param R: Resulting interpolated matrix.
+ * @param A: Input matrix which is totally effective with `t = 0.0`.
+ * @param B: Input matrix which is totally effective with `t = 1.0`.
+ * @param t: Interpolation factor.
  */
 void interp_m3_m3m3(float R[3][3], const float A[3][3], const float B[3][3], float t);
 /**
  * Complete transform matrix interpolation,
  * based on polar-decomposition-based interpolation from #interp_m3_m3m3.
  *
- * \param R: Resulting interpolated matrix.
- * \param A: Input matrix which is totally effective with `t = 0.0`.
- * \param B: Input matrix which is totally effective with `t = 1.0`.
- * \param t: Interpolation factor.
+ * @param R: Resulting interpolated matrix.
+ * @param A: Input matrix which is totally effective with `t = 0.0`.
+ * @param B: Input matrix which is totally effective with `t = 1.0`.
+ * @param t: Interpolation factor.
  */
 void interp_m4_m4m4(float R[4][4], const float A[4][4], const float B[4][4], float t);
 
 /**
  * Return true when the matrices determinant is less than zero.
  *
- * \note This is often used to check if a matrix flips content in 3D space,
+ * @note This is often used to check if a matrix flips content in 3D space,
  * where transforming geometry (for example) would flip the direction of polygon normals
  * from pointing outside a closed volume, to pointing inside (or the reverse).
  *

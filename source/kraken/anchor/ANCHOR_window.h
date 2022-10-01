@@ -268,10 +268,10 @@ class AnchorSystemWindow : public AnchorISystemWindow
 
   /**
    * Set the shape of the cursor to a custom cursor.
-   * \param bitmap: The bitmap data for the cursor.
-   * \param mask: The mask data for the cursor.
-   * \param hotX: The X coordinate of the cursor hot-spot.
-   * \param hotY: The Y coordinate of the cursor hot-spot.
+   * @param bitmap: The bitmap data for the cursor.
+   * @param mask: The mask data for the cursor.
+   * @param hotX: The X coordinate of the cursor hot-spot.
+   * @param hotY: The Y coordinate of the cursor hot-spot.
    * \return Indication of success.
    */
   eAnchorStatus setCustomCursorShape(uint8_t *bitmap,

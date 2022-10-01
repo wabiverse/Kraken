@@ -836,7 +836,7 @@ static int pystage_deferred_register_class_recursive(KrakenPRIM *srna, PyTypeObj
      * looping then is needed (SomeOperator would scan Operator.__dict__)
      * which is harmless, but not at all useful.
      *
-     * So only scan base classes which are not subclasses if blender types.
+     * So only scan base classes which are not subclasses if pixar types.
      * This best fits having 'mix-in' classes for operators and render engines.
      */
     if (py_superclass != &PyBaseObject_Type &&

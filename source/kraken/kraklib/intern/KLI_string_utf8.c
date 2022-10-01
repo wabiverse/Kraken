@@ -38,7 +38,7 @@
 
 /**
  * Array copied from GLIB's `gutf8.c`.
- * \note last two values (0xfe and 0xff) are forbidden in UTF-8,
+ * @note last two values (0xfe and 0xff) are forbidden in UTF-8,
  * so they are considered 1 byte length too.
  */
 static const size_t utf8_skip_data[256] = {

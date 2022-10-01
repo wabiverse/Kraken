@@ -370,7 +370,7 @@ MINLINE int divide_round_i(int a, int b)
 
 /**
  * Integer division that floors negative result.
- * \note This works like Python's int division.
+ * @note This works like Python's int division.
  */
 MINLINE int divide_floor_i(int a, int b)
 {

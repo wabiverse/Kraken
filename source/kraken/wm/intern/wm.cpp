@@ -144,7 +144,7 @@ void wm_add_default(Main *kmain, kContext *C)
 
   /**
    * Create default user preferences. */
-  UserDef *uprefs = new UserDef(C);
+  kUserDef *uprefs = new kUserDef(C);
   CTX_data_prefs_set(C, uprefs);
   USD_default_table_user_prefs(C);
 

@@ -23,17 +23,21 @@
  * @ingroup kli
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* types */
 
 /** vector of two shorts. */
-struct vec2s {
+typedef struct vec2s {
   short x, y;
-};
+} vec2s;
 
 /** vector of two floats. */
-struct vec2f {
+typedef struct vec2f {
   float x, y;
-};
+} vec2f;
 
 /* not used at the moment */
 /*
@@ -49,9 +53,9 @@ typedef struct vec3i {
   int x, y, z;
 } vec3i;
 */
-struct vec3f {
+typedef struct vec3f {
   float x, y, z;
-} ;
+} vec3f;
 /*
 typedef struct vec3d {
   double x, y, z;
@@ -71,16 +75,16 @@ typedef struct vec4d {
 */
 
 /** integer rectangle. */
-struct rcti {
+typedef struct rcti {
   int xmin, xmax;
   int ymin, ymax;
-} ;
+} rcti;
 
 /** float rectangle. */
-struct rctf {
+typedef struct rctf {
   float xmin, xmax;
   float ymin, ymax;
-};
+} rctf;
 
 /** dual quaternion. */
 typedef struct DualQuat {
@@ -90,3 +94,7 @@ typedef struct DualQuat {
   float scale[4][4];
   float scale_weight;
 } DualQuat;
+
+#ifdef __cplusplus
+}
+#endif

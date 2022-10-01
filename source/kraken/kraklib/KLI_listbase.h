@@ -80,7 +80,7 @@ void *KLI_listbase_bytes_find(const ListBase *listbase,
 /**
  * Find the first item in the list that matches the given string, or the given index as fallback.
  *
- * \note The string is only used is non-NULL and non-empty.
+ * @note The string is only used is non-NULL and non-empty.
  *
  * \return The found item, or NULL.
  */
@@ -190,7 +190,7 @@ void KLI_listbase_sort_r(ListBase *listbase,
  * Reinsert \a vlink relative to its current position but offset by \a step. Doesn't move
  * item if new position would exceed list (could optionally move to head/tail).
  *
- * \param step: Absolute value defines step size, sign defines direction. E.g pass -1
+ * @param step: Absolute value defines step size, sign defines direction. E.g pass -1
  *              to move \a vlink before previous, or 1 to move behind next.
  * \return If position of \a vlink has changed.
  */
@@ -208,7 +208,7 @@ void KLI_freelist(struct ListBase *listbase) ATTR_NONNULL(1);
 /**
  * Returns the number of elements in \a listbase, up until (and including count_max)
  *
- * \note Use to avoid redundant looping.
+ * @note Use to avoid redundant looping.
  */
 int KLI_listbase_count_at_most(const struct ListBase *listbase,
                                int count_max) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(1);
@@ -249,11 +249,11 @@ void KLI_movelisttolist_reverse(struct ListBase *dst, struct ListBase *src) ATTR
 void KLI_duplicatelist(struct ListBase *dst, const struct ListBase *src) ATTR_NONNULL(1, 2);
 void KLI_listbase_reverse(struct ListBase *lb) ATTR_NONNULL(1);
 /**
- * \param vlink: Link to make first.
+ * @param vlink: Link to make first.
  */
 void KLI_listbase_rotate_first(struct ListBase *lb, void *vlink) ATTR_NONNULL(1, 2);
 /**
- * \param vlink: Link to make last.
+ * @param vlink: Link to make last.
  */
 void KLI_listbase_rotate_last(struct ListBase *lb, void *vlink) ATTR_NONNULL(1, 2);
 

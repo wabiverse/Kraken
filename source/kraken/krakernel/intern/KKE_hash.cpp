@@ -85,9 +85,9 @@ enum
   KKE_MEMPOOL_NOP = 0,
   /** allow iterating on this mempool.
    *
-   * \note this requires that the first four bytes of the elements
+   * @note this requires that the first four bytes of the elements
    * never begin with 'free' (#FREEWORD).
-   * \note order of iteration is only assured to be the
+   * @note order of iteration is only assured to be the
    * order of allocation when no chunks have been freed.
    */
   KKE_MEMPOOL_ALLOW_ITER = (1 << 0),
@@ -186,9 +186,9 @@ static KKE_mempool_chunk *mempool_chunk_alloc(KKE_mempool *pool)
 /**
  * Initialize a chunk and add into \a pool->chunks
  *
- * \param pool: The pool to add the chunk into.
- * \param mpchunk: The new uninitialized chunk (can be malloc'd)
- * \param last_tail: The last element of the previous chunk
+ * @param pool: The pool to add the chunk into.
+ * @param mpchunk: The new uninitialized chunk (can be malloc'd)
+ * @param last_tail: The last element of the previous chunk
  * (used when building free chunks initially)
  * \return The last chunk,
  */
@@ -344,7 +344,7 @@ void *KKE_mempool_alloc(KKE_mempool *pool)
 /**
  * Next prime after `2^n` (skipping 2 & 3).
  *
- * \note Also used by: `KKE_edgehash` & `KKE_smallhash`.
+ * @note Also used by: `KKE_edgehash` & `KKE_smallhash`.
  */
 extern const uint KKE_rhash_hash_sizes[]; /* Quiet warning, this is only used by smallhash.c */
 const uint KKE_rhash_hash_sizes[] = {
@@ -550,7 +550,7 @@ static void rhash_buckets_resize(RHash *rh, const uint nbuckets)
 }
 
 /**
- * Check if the number of items in the GHash is large enough to require more buckets,
+ * Check if the number of items in the RHash is large enough to require more buckets,
  * or small enough to require less buckets, and resize \a gh accordingly.
  */
 static void rhash_buckets_expand(RHash *rh, const uint nentries, const bool user_defined)

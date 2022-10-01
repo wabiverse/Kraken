@@ -93,14 +93,14 @@ struct PanelType
   /**
    * Get the panel and sub-panel's expansion state from the expansion flag in the corresponding
    * data item. Called on draw updates.
-   * \note Sub-panels are indexed in depth first order,
+   * @note Sub-panels are indexed in depth first order,
    * the visual order you would see if all panels were expanded.
    */
   short (*get_list_data_expand_flag)(const struct kContext *C, struct Panel *pa);
   /**
    * Set the expansion bit-field from the closed / open state of this panel and its sub-panels.
    * Called when the expansion state of the panel changes with user input.
-   * \note Sub-panels are indexed in depth first order,
+   * @note Sub-panels are indexed in depth first order,
    * the visual order you would see if all panels were expanded.
    */
   void (*set_list_data_expand_flag)(const struct kContext *C, struct Panel *pa, short expand_flag);
@@ -132,7 +132,7 @@ struct Panel_Runtime
    * Pointer for storing which data the panel corresponds to.
    * Useful when there can be multiple instances of the same panel type.
    *
-   * \note A panel and its sub-panels share the same custom data pointer.
+   * @note A panel and its sub-panels share the same custom data pointer.
    * This avoids freeing the same pointer twice when panels are removed.
    */
   KrakenPRIM *custom_data_ptr;

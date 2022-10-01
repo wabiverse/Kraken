@@ -355,13 +355,13 @@ class AnchorSystem : public AnchorISystem
 
   /**
    * Returns the state of all modifier keys.
-   * \param keys: The state of all modifier keys (true == pressed).
+   * @param keys: The state of all modifier keys (true == pressed).
    * \return Indication of success. */
   virtual eAnchorStatus getModifierKeys(AnchorModifierKeys &keys) const = 0;
 
   /**
    * Returns the state of the mouse buttons (outside the message queue).
-   * \param buttons: The state of the buttons.
+   * @param buttons: The state of the buttons.
    * \return Indication of success. */
   virtual eAnchorStatus getButtons(AnchorButtons &buttons) const = 0;
 

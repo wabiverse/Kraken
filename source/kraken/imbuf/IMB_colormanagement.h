@@ -49,12 +49,41 @@ struct ColorManagedDisplay;
 struct ColorSpace;
 
 /* -------------------------------------------------------------------- */
-/** \name Display Functions
- * \{ */
+/** @name Display Functions
+ * @{ */
 
 const char *IMB_colormanagement_display_get_default_name(void);
 
-/** \} */
+/**
+ * @note Same as IMB_colormanagement_setup_glsl_draw,
+ * but display space conversion happens from a specified space.
+ *
+ * Configures GLSL shader for conversion from specified to
+ * display color space
+ *
+ * Will create appropriate OCIO processor and setup GLSL shader,
+ * so further 2D texture usage will use this conversion.
+ *
+ * When there's no need to apply transform on 2D textures, use
+ * IMB_colormanagement_finish_glsl_draw().
+ *
+ * This is low-level function, use ED_draw_imbuf_ctx if you
+ * only need to display given image buffer
+ */
+bool IMB_colormanagement_setup_glsl_draw_from_space(
+    const struct ColorManagedViewSettings *view_settings,
+    const struct ColorManagedDisplaySettings *display_settings,
+    struct ColorSpace *colorspace,
+    float dither,
+    bool predivide,
+    bool do_overlay_merge);
+
+/**
+ * Finish GLSL-based display space conversion.
+ */
+void IMB_colormanagement_finish_glsl_draw(void);
+
+/** @} */
 
 #ifdef __cplusplus
 }

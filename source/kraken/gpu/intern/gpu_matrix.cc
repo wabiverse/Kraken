@@ -126,9 +126,9 @@ static void checkmat(cosnt float *m)
   const int n = 16;
   for (int i = 0; i < n; i++) {
 #  if _MSC_VER
-    BLI_assert(_finite(m[i]));
+    KLI_assert(_finite(m[i]));
 #  else
-    BLI_assert(!isinf(m[i]));
+    KLI_assert(!isinf(m[i]));
 #  endif
   }
 }

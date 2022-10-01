@@ -32,7 +32,7 @@
  * The lines below use regex from scripts to extract their values,
  * Keep this in mind when modifying this file and keep this comment above the defines.
  *
- * \note Use #STRINGIFY() rather than defining with quotes.
+ * @note Use #STRINGIFY() rather than defining with quotes.
  */
 
 /* KRAKEN major and minor version. */

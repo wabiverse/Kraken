@@ -95,13 +95,18 @@ void GPU_matrix_projection_set(const float m[4][4]);
 void GPU_matrix_ortho_set(float left, float right, float bottom, float top, float near, float far);
 void GPU_matrix_ortho_set_z(float near, float far);
 
-void GPU_matrix_frustum_set(
-    float left, float right, float bottom, float top, float near, float far);
+void GPU_matrix_frustum_set(float left,
+                            float right,
+                            float bottom,
+                            float top,
+                            float near,
+                            float far);
 void GPU_matrix_perspective_set(float fovy, float aspect, float near, float far);
 
 /* 3D Projection between Window and World Space */
 
-struct GPUMatrixUnproject_Precalc {
+struct GPUMatrixUnproject_Precalc
+{
   float model_inverted[4][4];
   float view[4];
   bool is_persp;
@@ -110,7 +115,8 @@ struct GPUMatrixUnproject_Precalc {
    * Using double precision here is important as far clipping ranges
    * can cause divide-by-zero when using float, see: T66937.
    */
-  struct {
+  struct
+  {
     double xmin, xmax;
     double ymin, ymax;
     double zmin, zmax;
@@ -164,7 +170,7 @@ bool GPU_matrix_dirty_get(void); /* since last bind */
  */
 float GPU_polygon_offset_calc(const float (*winmat)[4], float viewdist, float dist);
 /**
- * \note \a viewdist is only for orthographic projections at the moment.
+ * @note \a viewdist is only for orthographic projections at the moment.
  */
 void GPU_polygon_offset(float viewdist, float dist);
 

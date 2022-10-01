@@ -306,12 +306,12 @@ MINLINE double len_v3_db(const double a[3]) ATTR_WARN_UNUSED_RESULT;
 MINLINE double len_squared_v3_db(const double v[3]) ATTR_WARN_UNUSED_RESULT;
 MINLINE float normalize_v2_length(float n[2], float unit_length);
 /**
- * \note any vectors containing `nan` will be zeroed out.
+ * @note any vectors containing `nan` will be zeroed out.
  */
 MINLINE float normalize_v2_v2_length(float r[2], const float a[2], float unit_length);
 MINLINE float normalize_v3_length(float n[3], float unit_length);
 /**
- * \note any vectors containing `nan` will be zeroed out.
+ * @note any vectors containing `nan` will be zeroed out.
  */
 MINLINE float normalize_v3_v3_length(float r[3], const float a[3], float unit_length);
 MINLINE double normalize_v3_length_db(double n[3], double unit_length);
@@ -596,9 +596,9 @@ void project_v3_v3v3_normalized(float out[3], const float p[3], const float v_pr
  *
  * Projecting will make \a out a copy of \a p orthogonal to \a v_plane.
  *
- * \note If \a p is exactly perpendicular to \a v_plane, \a out will just be a copy of \a p.
+ * @note If \a p is exactly perpendicular to \a v_plane, \a out will just be a copy of \a p.
  *
- * \note This function is a convenience to call:
+ * @note This function is a convenience to call:
  * \code{.c}
  * project_v3_v3v3(out, p, v_plane);
  * sub_v3_v3v3(out, p, out);
@@ -633,13 +633,13 @@ void reflect_v3_v3v3_db(double out[3], const double v[3], const double normal[3]
 /**
  * Takes a vector and computes 2 orthogonal directions.
  *
- * \note if \a n is n unit length, computed values will be too.
+ * @note if \a n is n unit length, computed values will be too.
  */
 void ortho_basis_v3v3_v3(float r_n1[3], float r_n2[3], const float n[3]);
 /**
  * Calculates \a p - a perpendicular vector to \a v
  *
- * \note return vector won't maintain same length.
+ * @note return vector won't maintain same length.
  */
 void ortho_v3_v3(float out[3], const float v[3]);
 /**

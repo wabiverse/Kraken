@@ -44,7 +44,7 @@ enum eKrakenFileType
 struct KrakenFileData
 {
   struct Main *main;
-  struct UserDef *user;
+  struct kUserDef *user;
 
   int fileflags;
   int globalf;

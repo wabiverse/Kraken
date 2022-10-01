@@ -38,6 +38,9 @@
 
 #include "USD_object.h"
 
+struct kTheme;
+struct uiStyle;
+
 KRAKEN_NAMESPACE_BEGIN
 
 struct KKE_mempool;
@@ -240,8 +243,8 @@ extern short UI_PIE_MENU_RADIUS;
 extern short UI_PIE_MENU_THRESHOLD;
 extern short UI_PIE_ANIMATION_TIMEOUT;
 extern int UI_PIXEL_SIZE;
-extern std::vector<struct kTheme *> UI_THEMES_LIST;
-extern std::vector<struct uiStyle *> UI_STYLES_LIST;
+extern std::vector<kTheme *> UI_THEMES_LIST;
+extern std::vector<uiStyle *> UI_STYLES_LIST;
 extern short UI_WIDGET_UNIT;
 extern int UI_FACTOR_DISPLAY_TYPE;
 extern float UI_DPI_FAC;

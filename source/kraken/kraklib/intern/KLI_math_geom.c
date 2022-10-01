@@ -4058,7 +4058,7 @@ static float mean_value_half_tan_v3(const struct Float3_Len *d_curr,
 /**
  * Mean value weights - same as #mean_value_half_tan_v3 but for 2D vectors.
  *
- * \note When interpolating a 2D polygon, a point can be considered "outside"
+ * @note When interpolating a 2D polygon, a point can be considered "outside"
  * the polygon's bounds. Thus, when the point is very distant and the vectors
  * have relatively close values, the precision problems are evident since they
  * do not indicate a point "inside" the polygon.

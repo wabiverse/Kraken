@@ -58,7 +58,7 @@ KRAKEN_NAMESPACE_BEGIN
  * with their immediate neighbors (if found),
  * and needed value to compute 'stitching' of aligned buttons.
  *
- * \note This simplistic struct cannot fully represent complex layouts where buttons share some
+ * @note This simplistic struct cannot fully represent complex layouts where buttons share some
  *       'align space' with several others (see schema below), we'd need linked list and more
  *       complex code to handle that. However, looks like we can do without that for now,
  *       which is rather lucky!
@@ -151,7 +151,7 @@ bool ui_but_can_align(const uiBut *but)
  * This function checks a pair of buttons (assumed in a same align group),
  * and if they are neighbors, set needed data accordingly.
  *
- * \note It is designed to be called in total random order of buttons.
+ * @note It is designed to be called in total random order of buttons.
  * Order-based optimizations are done by caller.
  */
 static void block_align_proximity_compute(ButAlign *butal, ButAlign *butal_other)
@@ -283,7 +283,7 @@ static void block_align_proximity_compute(ButAlign *butal, ButAlign *butal_other
  * if BUT 1 and BUT 3 were detected as needing top-right corner stitching in
  * #block_align_proximity_compute() step.
  *
- * \note To avoid doing this twice, some stitching flags are cleared to break the
+ * @note To avoid doing this twice, some stitching flags are cleared to break the
  * 'stitching connection' between neighbors.
  */
 static void block_align_stitch_neighbors(ButAlign *butal,

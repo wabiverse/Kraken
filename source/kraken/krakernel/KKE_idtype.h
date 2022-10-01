@@ -73,7 +73,7 @@ bool KKE_idtype_cache_key_cmp(const void *key_a_v, const void *key_b_v);
 
 typedef void (*IDTypeInitDataFunction)(struct ID *id);
 
-/** \param flag: Copying options (see KKE_lib_id.h's LIB_ID_COPY_... flags for more). */
+/** @param flag: Copying options (see KKE_lib_id.h's LIB_ID_COPY_... flags for more). */
 typedef void (*IDTypeCopyDataFunction)(struct Main *bmain,
                                        struct ID *id_dst,
                                        const struct ID *id_src,
@@ -81,7 +81,7 @@ typedef void (*IDTypeCopyDataFunction)(struct Main *bmain,
 
 typedef void (*IDTypeFreeDataFunction)(struct ID *id);
 
-/** \param flags: See KKE_lib_id.h's LIB_ID_MAKELOCAL_... flags. */
+/** @param flags: See KKE_lib_id.h's LIB_ID_MAKELOCAL_... flags. */
 typedef void (*IDTypeMakeLocalFunction)(struct Main *bmain, struct ID *id, int flags);
 
 typedef void (*IDTypeForeachIDFunction)(struct ID *id, struct LibraryForeachIDData *data);
@@ -226,14 +226,14 @@ typedef struct IDTypeInfo {
   /**
    * Allow an ID type to preserve some of its data across (memfile) undo steps.
    *
-   * \note Called from #setup_app_data when undoing or redoing a memfile step.
+   * @note Called from #setup_app_data when undoing or redoing a memfile step.
    */
   IDTypeBlendReadUndoPreserve usd_read_undo_preserve;
 
   /**
    * Called after library override operations have been applied.
    *
-   * \note Currently needed for some update operation on point caches.
+   * @note Currently needed for some update operation on point caches.
    */
   IDTypeLibOverrideApplyPost lib_override_apply_post;
 } IDTypeInfo;
@@ -297,21 +297,21 @@ const struct IDTypeInfo *KKE_idtype_get_info_from_id(const struct ID *id);
 /**
  * Convert an \a idcode into a name.
  *
- * \param idcode: The code to convert.
+ * @param idcode: The code to convert.
  * \return A static string representing the name of the code.
  */
 const char *KKE_idtype_idcode_to_name(short idcode);
 /**
  * Convert an \a idcode into a name (plural).
  *
- * \param idcode: The code to convert.
+ * @param idcode: The code to convert.
  * \return A static string representing the name of the code.
  */
 const char *KKE_idtype_idcode_to_name_plural(short idcode);
 /**
  * Convert an \a idcode into its translations' context.
  *
- * \param idcode: The code to convert.
+ * @param idcode: The code to convert.
  * \return A static string representing the i18n context of the code.
  */
 const char *KKE_idtype_idcode_to_translation_context(short idcode);
@@ -319,7 +319,7 @@ const char *KKE_idtype_idcode_to_translation_context(short idcode);
 /**
  * Return if the ID code is a valid ID code.
  *
- * \param idcode: The code to check.
+ * @param idcode: The code to check.
  * \return Boolean, 0 when invalid.
  */
 bool KKE_idtype_idcode_is_valid(short idcode);
@@ -327,21 +327,21 @@ bool KKE_idtype_idcode_is_valid(short idcode);
 /**
  * Check if an ID type is linkable.
  *
- * \param idcode: The IDType code to check.
+ * @param idcode: The IDType code to check.
  * \return Boolean, false when non linkable, true otherwise.
  */
 bool KKE_idtype_idcode_is_linkable(short idcode);
 /**
  * Check if an ID type is only appendable.
  *
- * \param idcode: The IDType code to check.
+ * @param idcode: The IDType code to check.
  * \return Boolean, false when also linkable, true when only appendable.
  */
 bool KKE_idtype_idcode_is_only_appendable(short idcode);
 /**
  * Check if an ID type can try to reuse and existing matching local one when being appended again.
  *
- * \param idcode: The IDType code to check.
+ * @param idcode: The IDType code to check.
  * \return Boolean, false when it cannot be re-used, true otherwise.
  */
 bool KKE_idtype_idcode_append_is_reusable(short idcode);
@@ -351,7 +351,7 @@ bool KKE_idtype_idcode_append_is_reusable(short idcode);
 /**
  * Convert an ID-type name into an \a idcode (ie. #ID_SCE)
  *
- * \param idtype_name: The ID-type's "user visible name" to convert.
+ * @param idtype_name: The ID-type's "user visible name" to convert.
  * \return The \a idcode for the name, or 0 if invalid.
  */
 short KKE_idtype_idcode_from_name(const char *idtype_name);
@@ -377,7 +377,7 @@ short KKE_idtype_idcode_from_index(int index);
 /**
  * Return an ID code and steps the index forward 1.
  *
- * \param index: start as 0.
+ * @param index: start as 0.
  * \return the code, 0 when all codes have been returned.
  */
 short KKE_idtype_idcode_iter_step(int *index);

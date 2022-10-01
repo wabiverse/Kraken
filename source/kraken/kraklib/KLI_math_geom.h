@@ -91,7 +91,7 @@ float cross_poly_v2(const float verts[][2], unsigned int nr);
 
 /**
  * Calculate a plane from a point and a direction,
- * \note \a point_no isn't required to be normalized.
+ * @note \a point_no isn't required to be normalized.
  */
 void plane_from_point_normal_v3(float r_plane[4],
                                 const float plane_co[3],
@@ -211,9 +211,9 @@ float dist_to_line_v3(const float p[3], const float l1[3], const float l2[3]);
  * Check if \a p is inside the 2x planes defined by `(v1, v2, v3)`
  * where the 3x points define 2x planes.
  *
- * \param axis_ref: used when v1,v2,v3 form a line and to check if the corner is concave/convex.
+ * @param axis_ref: used when v1,v2,v3 form a line and to check if the corner is concave/convex.
  *
- * \note the distance from \a v1 & \a v3 to \a v2 doesn't matter
+ * @note the distance from \a v1 & \a v3 to \a v2 doesn't matter
  * (it just defines the planes).
  *
  * \return the lowest squared distance to either of the planes.
@@ -237,18 +237,18 @@ float dist_signed_squared_to_corner_v3v3v3(const float p[3],
                                            const float axis_ref[3]);
 /**
  * Compute the squared distance of a point to a line (defined as ray).
- * \param ray_origin: A point on the line.
- * \param ray_direction: Normalized direction of the line.
- * \param co: Point to which the distance is to be calculated.
+ * @param ray_origin: A point on the line.
+ * @param ray_direction: Normalized direction of the line.
+ * @param co: Point to which the distance is to be calculated.
  */
 float dist_squared_to_ray_v3_normalized(const float ray_origin[3],
                                         const float ray_direction[3],
                                         const float co[3]);
 /**
  * Find the closest point in a seg to a ray and return the distance squared.
- * \param r_point: Is the point on segment closest to ray
+ * @param r_point: Is the point on segment closest to ray
  * (or to ray_origin if the ray and the segment are parallel).
- * \param r_depth: the distance of r_point projection on ray to the ray_origin.
+ * @param r_depth: the distance of r_point projection on ray to the ray_origin.
  */
 float dist_squared_ray_to_seg_v3(const float ray_origin[3],
                                  const float ray_direction[3],
@@ -300,7 +300,7 @@ struct DistProjectedAABBPrecalc {
   float mval[2];
 };
 /**
- * \param projmat: Projection Matrix (usually perspective
+ * @param projmat: Projection Matrix (usually perspective
  * matrix multiplied by object matrix).
  */
 void dist_squared_to_projected_aabb_precalc(struct DistProjectedAABBPrecalc *precalc,
@@ -377,11 +377,11 @@ void closest_to_plane_normalized_v3(float r_close[3], const float plane[4], cons
 /**
  * Find the closest point on a plane.
  *
- * \param r_close: Return coordinate
- * \param plane: The plane to test against.
- * \param pt: The point to find the nearest of
+ * @param r_close: Return coordinate
+ * @param plane: The plane to test against.
+ * @param pt: The point to find the nearest of
  *
- * \note non-unit-length planes are supported.
+ * @note non-unit-length planes are supported.
  */
 void closest_to_plane_v3(float r_close[3], const float plane[4], const float pt[3]);
 void closest_to_plane3_normalized_v3(float r_close[3], const float plane[3], const float pt[3]);
@@ -406,7 +406,7 @@ float ray_point_factor_v3(const float p[3],
  * A simplified version of #closest_to_line_v3
  * we only need to return the `lambda`
  *
- * \param epsilon: avoid approaching divide-by-zero.
+ * @param epsilon: avoid approaching divide-by-zero.
  * Passing a zero will just check for nonzero division.
  */
 float line_point_factor_v3_ex(
@@ -418,7 +418,7 @@ float line_point_factor_v2_ex(
 float line_point_factor_v2(const float p[2], const float l1[2], const float l2[2]);
 
 /**
- * \note #isect_line_plane_v3() shares logic.
+ * @note #isect_line_plane_v3() shares logic.
  */
 float line_plane_factor_v3(const float plane_co[3],
                            const float plane_no[3],
@@ -466,7 +466,7 @@ int isect_seg_seg_v2_int(const int v1[2], const int v2[2], const int v3[2], cons
 /**
  * Get intersection point of two 2D segments.
  *
- * \param endpoint_bias: Bias to use when testing for end-point overlap.
+ * @param endpoint_bias: Bias to use when testing for end-point overlap.
  * A positive value considers intersections that extend past the endpoints,
  * negative values contract the endpoints.
  * Note the bias is applied to a 0-1 factor, not scaled to the length of segments.
@@ -507,11 +507,11 @@ int isect_seg_seg_v2_lambda_mu_db(const double v1[2],
                                   double *r_lambda,
                                   double *r_mu);
 /**
- * \param l1, l2: Coordinates (point of line).
- * \param sp, r: Coordinate and radius (sphere).
+ * @param l1, l2: Coordinates (point of line).
+ * @param sp, r: Coordinate and radius (sphere).
  * \return r_p1, r_p2: Intersection coordinates.
  *
- * \note The order of assignment for intersection points (\a r_p1, \a r_p2) is predictable,
+ * @note The order of assignment for intersection points (\a r_p1, \a r_p2) is predictable,
  * based on the direction defined by `l2 - l1`,
  * this direction compared with the normal of each point on the sphere:
  * \a r_p1 always has a >= 0.0 dot product.
@@ -570,7 +570,7 @@ bool isect_line_line_strict_v3(const float v1[3],
  * Check if two rays are not parallel and returns a factor that indicates
  * the distance from \a ray_origin_b to the closest point on ray-a to ray-b.
  *
- * \note Neither directions need to be normalized.
+ * @note Neither directions need to be normalized.
  */
 bool isect_ray_ray_epsilon_v3(const float ray_origin_a[3],
                               const float ray_direction_a[3],
@@ -590,7 +590,7 @@ bool isect_ray_ray_v3(const float ray_origin_a[3],
  * if clip is nonzero, will only return true if lambda is >= 0.0
  * (i.e. intersection point is along positive \a ray_direction)
  *
- * \note #line_plane_factor_v3() shares logic.
+ * @note #line_plane_factor_v3() shares logic.
  */
 bool isect_ray_plane_v3(const float ray_origin[3],
                         const float ray_direction[3],
@@ -611,13 +611,13 @@ bool isect_point_planes_v3_negated(const float (*planes)[4], int totplane, const
 /**
  * Intersect line/plane.
  *
- * \param r_isect_co: The intersection point.
- * \param l1: The first point of the line.
- * \param l2: The second point of the line.
- * \param plane_co: A point on the plane to intersect with.
- * \param plane_no: The direction of the plane (does not need to be normalized).
+ * @param r_isect_co: The intersection point.
+ * @param l1: The first point of the line.
+ * @param l2: The second point of the line.
+ * @param plane_co: A point on the plane to intersect with.
+ * @param plane_no: The direction of the plane (does not need to be normalized).
  *
- * \note #line_plane_factor_v3() shares logic.
+ * @note #line_plane_factor_v3() shares logic.
  */
 bool isect_line_plane_v3(float r_isect_co[3],
                          const float l1[3],
@@ -629,8 +629,8 @@ bool isect_line_plane_v3(float r_isect_co[3],
  * Intersect three planes, return the point where all 3 meet.
  * See Graphics Gems 1 pg 305
  *
- * \param plane_a, plane_b, plane_c: Planes.
- * \param r_isect_co: The resulting intersection point.
+ * @param plane_a, plane_b, plane_c: Planes.
+ * @param r_isect_co: The resulting intersection point.
  */
 bool isect_plane_plane_plane_v3(const float plane_a[4],
                                 const float plane_b[4],
@@ -639,13 +639,13 @@ bool isect_plane_plane_plane_v3(const float plane_a[4],
 /**
  * Intersect two planes, return a point on the intersection and a vector
  * that runs on the direction of the intersection.
- * \note this is a slightly reduced version of #isect_plane_plane_plane_v3
+ * @note this is a slightly reduced version of #isect_plane_plane_plane_v3
  *
- * \param plane_a, plane_b: Planes.
- * \param r_isect_co: The resulting intersection point.
- * \param r_isect_no: The resulting vector of the intersection.
+ * @param plane_a, plane_b: Planes.
+ * @param r_isect_co: The resulting intersection point.
+ * @param r_isect_no: The resulting vector of the intersection.
  *
- * \note \a r_isect_no isn't unit length.
+ * @note \a r_isect_no isn't unit length.
  */
 bool isect_plane_plane_v3(const float plane_a[4],
                           const float plane_b[4],
@@ -658,12 +658,12 @@ bool isect_plane_plane_v3(const float plane_a[4],
  *
  * This can be thought of as calculating a convex-hull from an array of planes.
  *
- * \param eps_coplanar: Epsilon for testing if two planes are aligned (co-planar).
- * \param eps_isect: Epsilon for testing of a point is behind any of the planes.
+ * @param eps_coplanar: Epsilon for testing if two planes are aligned (co-planar).
+ * @param eps_isect: Epsilon for testing of a point is behind any of the planes.
  *
  * \warning As complexity is a little under `O(N^3)`, this is only suitable for small arrays.
  *
- * \note This function could be optimized by some spatial structure.
+ * @note This function could be optimized by some spatial structure.
  */
 bool isect_planes_v3_fn(
     const float planes[][4],
@@ -735,12 +735,12 @@ bool isect_ray_tri_epsilon_v3(const float ray_origin[3],
 /**
  * Intersect two triangles.
  *
- * \param r_i1, r_i2: Retrieve the overlapping edge between the 2 triangles.
- * \param r_tri_a_edge_isect_count: Indicates how many edges in the first triangle are intersected.
+ * @param r_i1, r_i2: Retrieve the overlapping edge between the 2 triangles.
+ * @param r_tri_a_edge_isect_count: Indicates how many edges in the first triangle are intersected.
  * \return true when the triangles intersect.
  *
- * \note If it exists, \a r_i1 will be a point on the edge of the 1st triangle.
- * \note intersections between coplanar triangles are currently undetected.
+ * @note If it exists, \a r_i1 will be a point on the edge of the 1st triangle.
+ * @note intersections between coplanar triangles are currently undetected.
  */
 bool isect_tri_tri_v3_ex(const float tri_a[3][3],
                          const float tri_b[3][3],
@@ -847,9 +847,9 @@ bool isect_point_tri_prism_v3(const float p[3],
                               const float v2[3],
                               const float v3[3]);
 /**
- * \param r_isect_co: The point \a p projected onto the triangle.
+ * @param r_isect_co: The point \a p projected onto the triangle.
  * \return True when \a p is inside the triangle.
- * \note Its up to the caller to check the distance between \a p and \a r_vi
+ * @note Its up to the caller to check the distance between \a p and \a r_vi
  * against an error margin.
  */
 bool isect_point_tri_v3(const float p[3],
@@ -883,7 +883,7 @@ bool isect_ray_aabb_v3(const struct IsectRayAABB_Precalc *data,
  * Test a bounding box (AABB) for ray intersection.
  * Assumes the ray is already local to the boundbox space.
  *
- * \note \a direction should be normalized
+ * @note \a direction should be normalized
  * if you intend to use the \a tmin or \a tmax distance results!
  */
 bool isect_ray_aabb_v3_simple(const float orig[3],
@@ -988,9 +988,9 @@ void transform_point_by_seg_v3(float p_dst[3],
                                const float l_src_p2[3]);
 
 /**
- * \note Using #cross_tri_v2 means locations outside the triangle are correctly weighted.
+ * @note Using #cross_tri_v2 means locations outside the triangle are correctly weighted.
  *
- * \note This is *exactly* the same calculation as #resolve_tri_uv_v2,
+ * @note This is *exactly* the same calculation as #resolve_tri_uv_v2,
  * although it has double precision and is used for texture baking, so keep both.
  */
 void barycentric_weights_v2(
@@ -1038,7 +1038,7 @@ int barycentric_inside_triangle_v2(const float w[3]);
  *
  * Compute coordinates (u, v) for point \a st with respect to triangle (\a st0, \a st1, \a st2)
  *
- * \note same basic result as #barycentric_weights_v2, see its comment for details.
+ * @note same basic result as #barycentric_weights_v2, see its comment for details.
  */
 void resolve_tri_uv_v2(
     float r_uv[2], const float st[2], const float st0[2], const float st1[2], const float st2[2]);
@@ -1159,9 +1159,9 @@ void projmat_dimensions_db(const float winmat[4][4],
 /**
  * Creates a projection matrix for a small region of the viewport.
  *
- * \param projmat: Projection Matrix.
- * \param win_size: Viewport Size.
- * \param x_min, x_max, y_min, y_max: Coordinates of the subregion.
+ * @param projmat: Projection Matrix.
+ * @param win_size: Viewport Size.
+ * @param x_min, x_max, y_min, y_max: Coordinates of the subregion.
  * \return r_projmat: Resulting Projection Matrix.
  */
 void projmat_from_subregion(const float projmat[4][4],
@@ -1244,19 +1244,19 @@ void tangent_from_uv_v3(const float uv1[2],
 /**
  * Input:
  *
- * \param list_size: 4 lists as pointer to array[list_size]
- * \param pos: current pos array of 'new' positions
- * \param weight: current weight array of 'new'weights (may be NULL pointer if you have no weights)
- * \param rpos: Reference rpos array of 'old' positions
- * \param rweight: Reference rweight array of 'old'weights
+ * @param list_size: 4 lists as pointer to array[list_size]
+ * @param pos: current pos array of 'new' positions
+ * @param weight: current weight array of 'new'weights (may be NULL pointer if you have no weights)
+ * @param rpos: Reference rpos array of 'old' positions
+ * @param rweight: Reference rweight array of 'old'weights
  * (may be NULL pointer if you have no weights).
  *
  * Output:
  *
- * \param lloc: Center of mass pos.
- * \param rloc: Center of mass rpos.
- * \param lrot: Rotation matrix.
- * \param lscale: Scale matrix.
+ * @param lloc: Center of mass pos.
+ * @param rloc: Center of mass rpos.
+ * @param lrot: Rotation matrix.
+ * @param lscale: Scale matrix.
  *
  * pointers may be NULL if not needed
  */
@@ -1327,8 +1327,8 @@ void axis_dominant_v3_to_m3_negate(float r_mat[3][3], const float normal[3]);
  * This matrix can be applied to vectors so their 'z' axis runs along \a normal.
  * In practice it means you can use x,y as 2d coords. \see
  *
- * \param r_mat: The matrix to return.
- * \param normal: A unit length vector.
+ * @param r_mat: The matrix to return.
+ * @param normal: A unit length vector.
  */
 void axis_dominant_v3_to_m3(float r_mat[3][3], const float normal[3]);
 
@@ -1359,9 +1359,9 @@ MINLINE int min_axis_v3(const float vec[3]);
  * - Calculate how many triangles needed from the total number of polygons + loops.
  * - Calculate the first triangle index from the polygon index & that polygons loop-start.
  *
- * \param poly_count: The number of polygons or polygon-index
+ * @param poly_count: The number of polygons or polygon-index
  * (3+ sided faces, 1-2 sided give incorrect results).
- * \param corner_count: The number of corners (also called loop-index).
+ * @param corner_count: The number of corners (also called loop-index).
  */
 MINLINE int poly_to_tri_count(int poly_count, int corner_count);
 
@@ -1401,7 +1401,7 @@ MINLINE float shell_v2v2_mid_normalized_to_dist(const float a[2], const float b[
  *
  * Use when we want a bezier curve to match a circle as closely as possible.
  *
- * \note the return value will need to be divided by 0.75 for correct results.
+ * @note the return value will need to be divided by 0.75 for correct results.
  */
 float cubic_tangent_factor_circle_v3(const float tan_l[3], const float tan_r[3]);
 

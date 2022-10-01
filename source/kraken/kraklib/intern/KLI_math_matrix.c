@@ -1716,7 +1716,7 @@ void orthogonalize_m4_stable(float R[4][4], int axis, bool normalize)
  *
  * Typically used so matrix inversion can be performed.
  *
- * \note If an object has a zero scaled axis, this function can be used to "clean" the matrix
+ * @note If an object has a zero scaled axis, this function can be used to "clean" the matrix
  * to behave as if the scale on that axis was `unit_length`. So it can be inverted
  * or used in matrix multiply without creating degenerate matrices, see: T50103
  * \{ */
@@ -3164,7 +3164,7 @@ void invert_m4_m4_safe(float inverse[4][4], const float mat[4][4])
  * - Scaling by a large value on the resulting matrix.
  * - Changing axis which aren't degenerate.
  *
- * \note We could support passing in a length value if there is a good use-case
+ * @note We could support passing in a length value if there is a good use-case
  * where we want to specify the length of the degenerate axes.
  * \{ */
 

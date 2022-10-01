@@ -133,7 +133,7 @@ class AbstractViewItem {
    * If an item wants to support dropping data into it, it has to return a drop controller here.
    * That is an object implementing #AbstractViewItemDropController.
    *
-   * \note This drop controller may be requested for each event. The view doesn't keep a drop
+   * @note This drop controller may be requested for each event. The view doesn't keep a drop
    *       controller around currently. So it can not contain persistent state.
    */
   virtual std::unique_ptr<AbstractViewItemDropController> create_drop_controller() const;
@@ -172,7 +172,7 @@ class AbstractViewItem {
    * the last redraw to this item. If sub-classes introduce more advanced state they should
    * override this and make it update their state accordingly.
    *
-   * \note Always call the base class implementation when overriding this!
+   * @note Always call the base class implementation when overriding this!
    */
   virtual void update_from_old(const AbstractViewItem &old);
 
@@ -232,7 +232,7 @@ class AbstractViewItemDropController {
 
   /**
    * Check if the data dragged with \a drag can be dropped on the item this controller is for.
-   * \param r_disabled_hint: Return a static string to display to the user, explaining why dropping
+   * @param r_disabled_hint: Return a static string to display to the user, explaining why dropping
    *                         isn't possible on this item. Shouldn't be done too aggressively, e.g.
    *                         don't set this if the drag-type can't be dropped here; only if it can
    *                         but there's another reason it can't be dropped.

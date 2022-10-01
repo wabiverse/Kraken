@@ -1,7 +1,22 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later
- * Copyright 2016 by Mike Erwin. All rights reserved. */
+/*
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ */
 
-/** 
+/**
  * @file
  * @ingroup GPU.
  * Pixel Magic.
@@ -14,26 +29,18 @@
  * - free can be called from any thread
  */
 
-#if WITH_OPENGL
-#  define WITH_OPENGL_BACKEND 1
-#endif
-
 #include "KLI_assert.h"
 #include "KLI_utildefines.h"
 
 #include "GPU_context.h"
-// #include "GPU_framebuffer.h"
+#include "GPU_framebuffer.h"
 
 #include "gpu_backend.hh"
-// #include "gpu_batch_private.hh"
+#include "gpu_batch_private.hh"
 #include "gpu_context_private.hh"
 #include "gpu_matrix_private.h"
-// #include "gpu_private.h"
+#include "gpu_private.h"
 
-#ifdef WITH_OPENGL_BACKEND
-#  include "gl_backend.hh"
-#  include "gl_context.hh"
-#endif
 #ifdef WITH_METAL_BACKEND
 #  include "mtl_backend.hh"
 #endif
@@ -55,39 +62,40 @@ static void gpu_backend_discard();
 /** \name gpu::Context methods
  * \{ */
 
-namespace kraken::gpu {
-
-int Context::context_counter = 0;
-Context::Context()
+namespace kraken::gpu
 {
-  thread_ = pthread_self();
-  is_active_ = false;
-  matrix_state = GPU_matrix_state_create();
 
-  context_id = Context::context_counter;
-  Context::context_counter++;
-}
+  int Context::context_counter = 0;
+  Context::Context()
+  {
+    thread_ = pthread_self();
+    is_active_ = false;
+    matrix_state = GPU_matrix_state_create();
 
-Context::~Context()
-{
-  GPU_matrix_state_discard(matrix_state);
-  // delete state_manager;
-  // delete front_left;
-  // delete back_left;
-  // delete front_right;
-  // delete back_right;
-  // delete imm;
-}
+    context_id = Context::context_counter;
+    Context::context_counter++;
+  }
 
-bool Context::is_active_on_thread()
-{
-  return (this == active_ctx) && pthread_equal(pthread_self(), thread_);
-}
+  Context::~Context()
+  {
+    GPU_matrix_state_discard(matrix_state);
+    delete state_manager;
+    delete front_left;
+    delete back_left;
+    delete front_right;
+    delete back_right;
+    delete imm;
+  }
 
-Context *Context::get()
-{
-  return active_ctx;
-}
+  bool Context::is_active_on_thread()
+  {
+    return (this == active_ctx) && pthread_equal(pthread_self(), thread_);
+  }
+
+  Context *Context::get()
+  {
+    return active_ctx;
+  }
 
 }  // namespace kraken::gpu
 
@@ -95,7 +103,7 @@ Context *Context::get()
 
 /* -------------------------------------------------------------------- */
 
-GPUContext *GPU_context_create(void *anchor_window)
+GPUContext *GPU_context_create(void *anchor_window, void *anchor_context)
 {
   {
     std::scoped_lock lock(backend_users_mutex);
@@ -106,7 +114,7 @@ GPUContext *GPU_context_create(void *anchor_window)
     num_backend_users++;
   }
 
-  Context *ctx = GPUBackend::get()->context_alloc(anchor_window);
+  Context *ctx = GPUBackend::get()->context_alloc(anchor_window, anchor_context);
 
   GPU_context_active_set(wrap(ctx));
   return wrap(ctx);
@@ -196,7 +204,11 @@ void GPU_render_begin()
 {
   GPUBackend *backend = GPUBackend::get();
   KLI_assert(backend);
-  backend->render_begin();
+  /* WORKAROUND: Currently a band-aid for the heist production. Has no side effect for GL backend
+   * but should be fixed for Metal. */
+  if (backend) {
+    backend->render_begin();
+  }
 }
 void GPU_render_end()
 {
@@ -217,18 +229,15 @@ void GPU_render_step()
 /** \name Backend selection
  * \{ */
 
-static const eGPUBackendType g_backend_type = GPU_BACKEND_OPENGL;
+/* NOTE: To enable Metal API, we need to temporarily change this to `GPU_BACKEND_METAL`.
+ * Until a global switch is added, Metal also needs to be enabled in ANCHOR::Context:
+ * `m_useMetalForRendering = true`. */
+static const eGPUBackendType g_backend_type = GPU_BACKEND_METAL;
 static GPUBackend *g_backend = nullptr;
 
 bool GPU_backend_supported(void)
 {
   switch (g_backend_type) {
-    case GPU_BACKEND_OPENGL:
-#ifdef WITH_OPENGL_BACKEND
-      return true;
-#else
-      return false;
-#endif
     case GPU_BACKEND_METAL:
 #ifdef WITH_METAL_BACKEND
       return MTLBackend::metal_is_supported();
@@ -247,11 +256,6 @@ static void gpu_backend_create()
   KLI_assert(GPU_backend_supported());
 
   switch (g_backend_type) {
-#ifdef WITH_OPENGL_BACKEND
-    case GPU_BACKEND_OPENGL:
-      g_backend = new GLBackend;
-      break;
-#endif
 #ifdef WITH_METAL_BACKEND
     case GPU_BACKEND_METAL:
       g_backend = new MTLBackend;
@@ -278,12 +282,6 @@ void gpu_backend_discard()
 
 eGPUBackendType GPU_backend_get_type()
 {
-
-#ifdef WITH_OPENGL_BACKEND
-  if (g_backend && dynamic_cast<GLBackend *>(g_backend) != nullptr) {
-    return GPU_BACKEND_OPENGL;
-  }
-#endif
 
 #ifdef WITH_METAL_BACKEND
   if (g_backend && dynamic_cast<MTLBackend *>(g_backend) != nullptr) {

@@ -395,7 +395,7 @@ static void where_am_i(char *fullname, const size_t maxlen, const char *name)
 
 #if defined(DEBUG)
     if (!STREQ(name, fullname)) {
-      TF_INFO("guessing '%s' == '%s'", name, fullname);
+      TF_WARN("guessing '%s' == '%s'", name, fullname);
     }
 #endif
   }

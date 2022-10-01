@@ -28,6 +28,7 @@ set(SRC
   USD_context.h
   USD_curveprofile_types.h
   USD_default_tables.h
+  USD_defs.h
   USD_factory.h
   USD_file.h
   USD_ID.h
@@ -39,10 +40,12 @@ set(SRC
   USD_pixar_utils.h
   USD_region.h
   USD_scene.h
+  USD_scene_types.h
   USD_screen.h
   USD_system.h
   USD_texture_types.h
   USD_types.h
+  USD_userdef_types.h
   USD_userpref.h
   USD_wm_types.h
   USD_window.h

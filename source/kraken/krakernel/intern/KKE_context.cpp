@@ -90,7 +90,7 @@ struct kContext
     Main *main;
     Scene *scene;
     KrakenSTAGE stage;
-    UserDef *prefs;
+    kUserDef *prefs;
 
     bool py_init;
     void *py_context;
@@ -373,7 +373,7 @@ KrakenSTAGE CTX_data_stage(const kContext *C)
   return C->data.stage;
 }
 
-UserDef *CTX_data_prefs(const kContext *C)
+kUserDef *CTX_data_prefs(const kContext *C)
 {
   return C->data.prefs;
 }
@@ -433,7 +433,7 @@ void CTX_data_scene_set(kContext *C, Scene *cscene)
   // C->data.stage = cscene->stage;
 }
 
-void CTX_data_prefs_set(kContext *C, UserDef *uprefs)
+void CTX_data_prefs_set(kContext *C, kUserDef *uprefs)
 {
   C->data.prefs = uprefs;
 }

@@ -6,6 +6,7 @@ set(INC
   ./metal
   ../krakernel
   ../kraklib
+  ../imbuf
   ../draw
   ../universe
   ../luxo
@@ -21,22 +22,116 @@ set(INC_SYS
   ${PYTHON_INCLUDE_DIR}
 )
 
+# Shared & Agnostic GPU API.
 set(SRC
-  intern/gpu_matrix.cpp
+  # intern/gpu_batch.cc
+  # intern/gpu_batch_presets.c
+  # intern/gpu_batch_utils.c
+  # intern/gpu_capabilities.cc
+  # intern/gpu_codegen.cc
+  # intern/gpu_compute.cc
+  intern/gpu_context.cc
+  intern/gpu_debug.cc
+  # intern/gpu_drawlist.cc
+  # intern/gpu_framebuffer.cc
+  # intern/gpu_immediate.cc
+  # intern/gpu_immediate_util.c
+  intern/gpu_index_buffer.cc
+  # intern/gpu_init_exit.c
+  # intern/gpu_material.c
+  intern/gpu_matrix.cc
+  # intern/gpu_node_graph.c
+  # intern/gpu_platform.cc
+  # intern/gpu_query.cc
+  # intern/gpu_select.c
+  # intern/gpu_select_pick.c
+  # intern/gpu_select_sample_query.cc
+  intern/gpu_shader.cc
+  # intern/gpu_shader_builtin.c
+  # intern/gpu_shader_create_info.cc
+  # intern/gpu_shader_dependency.cc
+  # intern/gpu_shader_interface.cc
+  intern/gpu_shader_log.cc
+  intern/gpu_state.cc
+  intern/gpu_storage_buffer.cc
+  intern/gpu_texture.cc
+  intern/gpu_uniform_buffer.cc
+  intern/gpu_vertex_buffer.cc
+  intern/gpu_vertex_format.cc
+  intern/gpu_viewport.c
 
-  intern/gpu_matrix_private.h
-  intern/gpu_context_private.hh
-
-  GPU_viewport.h
+  GPU_batch.h
+  # GPU_batch_presets.h
+  # GPU_batch_utils.h
+  GPU_capabilities.h
+  GPU_common.h
+  GPU_common_types.h
+  # GPU_compute.h
+  GPU_context.h
+  GPU_debug.h
+  # GPU_drawlist.h
+  GPU_framebuffer.h
+  GPU_immediate.h
+  # GPU_immediate_util.h
+  GPU_index_buffer.h
+  # GPU_init_exit.h
+  GPU_material.h
   GPU_matrix.h
+  GPU_platform.h
+  GPU_primitive.h
+  # GPU_select.h
+  GPU_shader.h
+  # GPU_shader_shared.h
+  GPU_state.h
+  GPU_storage_buffer.h
+  GPU_texture.h
+  GPU_uniform_buffer.h
+  GPU_vertex_buffer.h
+  GPU_vertex_format.h
+  GPU_viewport.h
+
+  intern/gpu_backend.hh
+  intern/gpu_batch_private.hh
+  # intern/gpu_capabilities_private.hh
+  # intern/gpu_codegen.h
+  intern/gpu_context_private.hh
+  intern/gpu_debug_private.hh
+  # intern/gpu_drawlist_private.hh
+  intern/gpu_framebuffer_private.hh
+  # intern/gpu_immediate_private.hh
+  intern/gpu_index_buffer_private.hh
+  # intern/gpu_material_library.h
+  intern/gpu_matrix_private.h
+  # intern/gpu_node_graph.h
+  # intern/gpu_platform_private.hh
+  # intern/gpu_private.h
+  # intern/gpu_query.hh
+  # intern/gpu_select_private.h
+  # intern/gpu_shader_create_info.hh
+  # intern/gpu_shader_create_info_private.hh
+  # intern/gpu_shader_dependency_private.h
+  intern/gpu_shader_interface.hh
+  intern/gpu_shader_private.hh
+  intern/gpu_state_private.hh
+  intern/gpu_storage_buffer_private.hh
+  intern/gpu_texture_private.hh
+  intern/gpu_uniform_buffer_private.hh
+  intern/gpu_vertex_buffer_private.hh
+  intern/gpu_vertex_format_private.h
 )
 
+# OpenGL Implementation.
 set(OPENGL_SRC "")
 
+# Vulkan Implementation.
+set(VULKAN_SRC "")
+
+# DirectX3D Implementation.
 set(DX3D_SRC
   dx3d/dx3d_stub.cpp
 )
 
+# Metal Implementation.
 set(METAL_SRC
   metal/mtl_context.cpp
 

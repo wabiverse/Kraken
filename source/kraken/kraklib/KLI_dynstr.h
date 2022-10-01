@@ -58,24 +58,24 @@ DynStr *KLI_dynstr_new_memarena(void) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
 /**
  * Append a c-string to a #DynStr.
  *
- * \param ds: The #DynStr to append to.
- * \param cstr: The c-string to append.
+ * @param ds: The #DynStr to append to.
+ * @param cstr: The c-string to append.
  */
 void KLI_dynstr_append(DynStr *__restrict ds, const char *cstr) ATTR_NONNULL();
 /**
  * Append a length clamped c-string to a #DynStr.
  *
- * \param ds: The #DynStr to append to.
- * \param cstr: The c-string to append.
- * \param len: The maximum length of the c-string to copy.
+ * @param ds: The #DynStr to append to.
+ * @param cstr: The c-string to append.
+ * @param len: The maximum length of the c-string to copy.
  */
 void KLI_dynstr_nappend(DynStr *__restrict ds, const char *cstr, int len) ATTR_NONNULL();
 
 /**
  * Append a c-string to a #DynStr, but with formatting like `printf`.
  *
- * \param ds: The #DynStr to append to.
- * \param format: The `printf` format string to use.
+ * @param ds: The #DynStr to append to.
+ * @param format: The `printf` format string to use.
  */
 void KLI_dynstr_appendf(DynStr *__restrict ds, const char *__restrict format, ...)
     ATTR_PRINTF_FORMAT(2, 3) ATTR_NONNULL(1, 2);
@@ -85,7 +85,7 @@ void KLI_dynstr_vappendf(DynStr *__restrict ds, const char *__restrict format, v
 /**
  * Find the length of a #DynStr.
  *
- * \param ds: The #DynStr of interest.
+ * @param ds: The #DynStr of interest.
  * \return The length of \a ds.
  */
 int KLI_dynstr_get_len(const DynStr *ds) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
@@ -93,7 +93,7 @@ int KLI_dynstr_get_len(const DynStr *ds) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
  * Get a #DynStr's contents as a c-string.
  * \return The c-string which must be freed using #MEM_freeN.
  *
- * \param ds: The #DynStr of interest.
+ * @param ds: The #DynStr of interest.
  * \return The contents of \a ds as a c-string.
  */
 char *KLI_dynstr_get_cstring(const DynStr *ds) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
@@ -102,21 +102,21 @@ char *KLI_dynstr_get_cstring(const DynStr *ds) ATTR_MALLOC ATTR_WARN_UNUSED_RESU
  * The \a rets argument must be allocated to be at
  * least the size of `KLI_dynstr_get_len(ds) + 1`.
  *
- * \param ds: The DynStr of interest.
- * \param rets: The string to fill.
+ * @param ds: The DynStr of interest.
+ * @param rets: The string to fill.
  */
 void KLI_dynstr_get_cstring_ex(const DynStr *__restrict ds, char *__restrict rets) ATTR_NONNULL();
 
 /**
  * Clear the #DynStr
  *
- * \param ds: The DynStr to clear.
+ * @param ds: The DynStr to clear.
  */
 void KLI_dynstr_clear(DynStr *ds) ATTR_NONNULL();
 /**
  * Free the #DynStr
  *
- * \param ds: The DynStr to free.
+ * @param ds: The DynStr to free.
  */
 void KLI_dynstr_free(DynStr *ds) ATTR_NONNULL();
 

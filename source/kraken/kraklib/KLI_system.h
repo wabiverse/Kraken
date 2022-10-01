@@ -44,8 +44,8 @@ char *KLI_cpu_brand_string(void);
  * IP address of the machine. As such, it's only usable for identification
  * purposes, and not for reachability over a network.
  *
- * \param buffer: Character buffer to write the hostname into.
- * \param bufsize: Size of the character buffer, including trailing '\0'.
+ * @param buffer: Character buffer to write the hostname into.
+ * @param bufsize: Size of the character buffer, including trailing '\0'.
  */
 void KLI_hostname_get(char *buffer, size_t bufsize);
 
@@ -59,7 +59,7 @@ int KLI_system_memory_max_in_megabytes_int(void);
 #  define KLI_SYSTEM_PID_H <process.h>
 
 /**
- * \note Use `void *` for `exception` since we really do not want to drag Windows.h
+ * @note Use `void *` for `exception` since we really do not want to drag Windows.h
  * in to get the proper `typedef`.
  */
 void KLI_windows_handle_exception(void *exception);

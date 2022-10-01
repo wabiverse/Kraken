@@ -157,7 +157,7 @@ PyObject *PyC_UnicodeFromByte(const char *str)
 /* -------------------------------------------------------------------- */
 /** \name Int Conversion
  *
- * \note Python doesn't provide overflow checks for specific bit-widths.
+ * @note Python doesn't provide overflow checks for specific bit-widths.
  *
  * \{ */
 

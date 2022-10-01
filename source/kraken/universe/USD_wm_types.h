@@ -1189,7 +1189,7 @@ enum
   /**
    * When set, ignore events with `wmEvent.flag & WM_EVENT_IS_REPEAT` enabled.
    *
-   * \note this flag isn't cleared when editing/loading the key-map items,
+   * @note this flag isn't cleared when editing/loading the key-map items,
    * so it may be set in cases which don't make sense (modifier-keys or mouse-motion for example).
    *
    * Knowing if an event may repeat is something set at the operating-systems event handling level

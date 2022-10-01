@@ -80,8 +80,9 @@ WABI_NAMESPACE_USING
 KRAKEN_NAMESPACE_BEGIN
 
 Global G;
+UserDef U;
 
-/** User Prefs modifies this value globally. */
+/** TODO: deprecate me, use "U" above. */
 int UI_MOVE_THRESHOLD = int(2);
 int UI_MENU_THRESHOLD1 = int(5);
 int UI_MENU_THRESHOLD2 = int(2);
@@ -90,8 +91,8 @@ short UI_PIE_MENU_RADIUS = short(100);
 short UI_PIE_MENU_THRESHOLD = short(12);
 short UI_PIE_ANIMATION_TIMEOUT = short(6);
 int UI_PIXEL_SIZE = int(1);
-std::vector<struct kTheme *> UI_THEMES_LIST;
-std::vector<struct uiStyle *> UI_STYLES_LIST;
+std::vector<kTheme *> UI_THEMES_LIST;
+std::vector<uiStyle *> UI_STYLES_LIST;
 short UI_WIDGET_UNIT = 20;
 int UI_FACTOR_DISPLAY_TYPE = USER_FACTOR_AS_FACTOR;
 float UI_DPI_FAC = float(1.0f);

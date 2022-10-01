@@ -127,10 +127,10 @@ typedef bool (*KRF_GlyphBoundsFn)(const char *str,
 /**
  * Run \a user_fn for each character, with the bound-box that would be used for drawing.
  *
- * \param user_fn: Callback that runs on each glyph, returning false early exits.
- * \param user_data: User argument passed to \a user_fn.
+ * @param user_fn: Callback that runs on each glyph, returning false early exits.
+ * @param user_data: User argument passed to \a user_fn.
  *
- * \note The font position, clipping, matrix and rotation are not applied.
+ * @note The font position, clipping, matrix and rotation are not applied.
  */
 void KRF_boundbox_foreach_glyph_ex(int fontid,
                                    const char *str,
@@ -288,7 +288,7 @@ void KRF_dir_free(char **dirs, int count) ATTR_NONNULL();
 /**
  * This function is used for generating thumbnail previews.
  *
- * \note called from a thread, so it bypasses the normal KRF_* api (which isn't thread-safe).
+ * @note called from a thread, so it bypasses the normal KRF_* api (which isn't thread-safe).
  */
 void KRF_thumb_preview(const char *filepath,
                        const char **draw_str,

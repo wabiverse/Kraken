@@ -182,7 +182,7 @@ static PyTypeObject kpy_pixar_data_context_Type = {
 PyDoc_STRVAR(kpy_pixar_data_context_load_doc,
              ".. method:: temp_data(filepath=None)\n"
              "\n"
-             "   A context manager that temporarily creates blender file data.\n"
+             "   A context manager that temporarily creates Pixar USD file data.\n"
              "\n"
              "   :arg filepath: The file path for the newly temporary data. "
              "When None, the path of the currently open file is used.\n"

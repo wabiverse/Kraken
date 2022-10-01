@@ -37,7 +37,7 @@ extern "C" {
 /**
  * \brief Compute the eigen values and/or vectors of given 3D symmetric (aka adjoint) matrix.
  *
- * \param m3: the 3D symmetric matrix.
+ * @param m3: the 3D symmetric matrix.
  * \return r_eigen_values the computed eigen values (NULL if not needed).
  * \return r_eigen_vectors the computed eigen vectors (NULL if not needed).
  */
@@ -48,7 +48,7 @@ bool KLI_eigen_solve_selfadjoint_m3(const float m3[3][3],
 /**
  * \brief Compute the SVD (Singular Values Decomposition) of given 3D matrix (m3 = USV*).
  *
- * \param m3: the matrix to decompose.
+ * @param m3: the matrix to decompose.
  * \return r_U the computed left singular vector of \a m3 (NULL if not needed).
  * \return r_S the computed singular values of \a m3 (NULL if not needed).
  * \return r_V the computed right singular vector of \a m3 (NULL if not needed).
@@ -68,7 +68,7 @@ void KLI_svd_m3(const float m3[3][3], float r_U[3][3], float r_S[3], float r_V[3
  *
  * Ignores a[0] and c[count-1]. Uses the Thomas algorithm, e.g. see wiki.
  *
- * \param r_x: output vector, may be shared with any of the input ones
+ * @param r_x: output vector, may be shared with any of the input ones
  * \return true if success
  */
 bool KLI_tridiagonal_solve(
@@ -76,7 +76,7 @@ bool KLI_tridiagonal_solve(
 /**
  * \brief Solve a possibly cyclic tridiagonal system using the Sherman-Morrison formula.
  *
- * \param r_x: output vector, may be shared with any of the input ones
+ * @param r_x: output vector, may be shared with any of the input ones
  * \return true if success
  */
 bool KLI_tridiagonal_solve_cyclic(
@@ -95,16 +95,16 @@ typedef bool (*Newton3D_CorrectionFunc)(void *userdata,
 /**
  * \brief Solve a generic f(x) = 0 equation using Newton's method.
  *
- * \param func_delta: Callback computing the value of f(x).
- * \param func_jacobian: Callback computing the Jacobian matrix of the function at x.
- * \param func_correction: Callback for forcing the search into an arbitrary custom domain.
+ * @param func_delta: Callback computing the value of f(x).
+ * @param func_jacobian: Callback computing the Jacobian matrix of the function at x.
+ * @param func_correction: Callback for forcing the search into an arbitrary custom domain.
  * May be NULL.
- * \param userdata: Data for the callbacks.
- * \param epsilon: Desired precision.
- * \param max_iterations: Limit on the iterations.
- * \param trace: Enables logging to console.
- * \param x_init: Initial solution vector.
- * \param result: Final result.
+ * @param userdata: Data for the callbacks.
+ * @param epsilon: Desired precision.
+ * @param max_iterations: Limit on the iterations.
+ * @param trace: Enables logging to console.
+ * @param x_init: Initial solution vector.
+ * @param result: Final result.
  * \return true if success
  */
 bool KLI_newton3d_solve(Newton3D_DeltaFunc func_delta,

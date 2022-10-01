@@ -154,7 +154,7 @@ enum PropertyFlag
    * NOTE: not to be confused with `prop->enumbitflags`
    * this exposes the flag as multiple options in python and the UI.
    *
-   * \note These can't be animated so use with care.
+   * @note These can't be animated so use with care.
    */
   PROP_ENUM_FLAG = (1 << 21),
 
@@ -172,7 +172,7 @@ enum PropertyFlag
    *
    * It can be used for properties which are dynamically allocated too.
    *
-   * \note Currently dynamic sized thick wrapped data isn't supported.
+   * @note Currently dynamic sized thick wrapped data isn't supported.
    * This would be a useful addition and avoid a fixed maximum sized as in done at the moment.
    */
   PROP_THICK_WRAP = (1 << 23),

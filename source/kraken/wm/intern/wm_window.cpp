@@ -1148,7 +1148,7 @@ void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
    * here (this function gets called outside of normal event handling loop). */
   CTX_wm_window_set(C, win);
 
-  UserDef *uprefs = CTX_data_prefs(C);
+  kUserDef *uprefs = CTX_data_prefs(C);
   bool show_save = FormFactory(uprefs->showsave);
 
   if (show_save) {
@@ -1607,7 +1607,7 @@ static int wm_exit_kraken_exec(kContext *C, wmOperator *UNUSED(op))
 
 static int wm_exit_kraken_invoke(kContext *C, wmOperator *UNUSED(op), wmEvent *UNUSED(event))
 {
-  UserDef *uprefs = CTX_data_prefs(C);
+  kUserDef *uprefs = CTX_data_prefs(C);
 
   bool prompt_save = FormFactory(uprefs->showsave);
 

@@ -161,14 +161,14 @@ void KKE_linklist_lockfree_init(LockfreeLinkList *list);
  * \{ */
 
 /**
- * Creates a new, empty GHash.
+ * Creates a new, empty RHash.
  *
- * \param hashfp: Hash callback.
- * \param cmpfp: Comparison callback.
- * \param info: Identifier string for the GHash.
- * \param nentries_reserve: Optionally reserve the number of members that the hash will hold.
+ * @param hashfp: Hash callback.
+ * @param cmpfp: Comparison callback.
+ * @param info: Identifier string for the RHash.
+ * @param nentries_reserve: Optionally reserve the number of members that the hash will hold.
  * Use this to avoid resizing buckets if the size is known or can be closely approximated.
- * \return  An empty GHash.
+ * \return  An empty RHash.
  */
 RHash *KKE_rhash_new_ex(RHashHashFP hashfp,
                         RHashCmpFP cmpfp,
@@ -192,7 +192,7 @@ RHash *KKE_rhash_int_new_ex(const char *info,
 RHash *KKE_rhash_int_new(const char *info) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
 
 /**
- * Copy given GHash. Keys and values are also copied if relevant callback is provided,
+ * Copy given RHash. Keys and values are also copied if relevant callback is provided,
  * else pointers remain the same.
  */
 RHash *KKE_rhash_copy(const RHash *gh,

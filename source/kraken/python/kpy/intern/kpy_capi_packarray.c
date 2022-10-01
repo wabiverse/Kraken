@@ -32,7 +32,7 @@
 /* -------------------------------------------------------------------- */
 /** \name Typed Tuple Packing
  *
- * \note See #PyC_Tuple_Pack_* macros that take multiple arguments.
+ * @note See #PyC_Tuple_Pack_* macros that take multiple arguments.
  * \{ */
 
 /* array utility function */
