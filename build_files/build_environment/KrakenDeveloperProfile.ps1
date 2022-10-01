@@ -155,6 +155,14 @@ function SetupUnrealEngine5Dependencies
   }
 }
 
+function xcprettyfix
+{
+  # Small fixup for xc | pretty utility on macOS to ensure it shows possible undefined
+  # symbols if any are reported at the end of the build. Else we have to resort to opening
+  # xcode up or dealing with the vanilla super verbose output of xcodebuild.
+  python $KrakenGlobalView/build_files/build_environment/patches/xcpretty_fix.py | xcpretty
+}
+
 function BuildUnrealEngine5
 {
   $buildaction = "build"
