@@ -13,7 +13,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ * Derived from original work by Copyright 2022, Blender Foundation.
+ * From the Blender Library. (source/blender/blenlib).
+ *
+ * With any additions or modifications specific to Kraken.
+ *
+ * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
 #ifndef __KLI_TASK_H__

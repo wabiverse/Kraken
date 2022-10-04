@@ -34,6 +34,7 @@ set(SRC
   intern/KLI_mempool.c
   intern/KLI_numaapi.cpp
   intern/path_util.c
+  intern/KLI_rect.c
   intern/KLI_rect.cpp
   intern/KLI_rhash.c
   intern/KLI_rhash_utils.c

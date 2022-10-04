@@ -13,7 +13,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ * Derived from original work by Copyright 2022, Blender Foundation.
+ * From the Blender Library. (source/blender/blenlib).
+ *
+ * With any additions or modifications specific to Kraken.
+ *
+ * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
 /**
@@ -28,14 +33,16 @@
 #include "KLI_sys_types.h" /* bool */
 #include "USD_vec_types.h"
 
-struct rctf;
-struct rcti;
-
 #ifdef __cplusplus
 #  include <wabi/base/arch/attributes.h>
 #  include <wabi/base/gf/vec4i.h>
 #  include <wabi/base/gf/vec4f.h>
+#endif /* __cplusplus */
 
+struct rctf;
+struct rcti;
+
+#ifdef __cplusplus
 void KLI_rcti_rctf_copy_round(wabi::GfVec4i *dst, const wabi::GfVec4f &src);
 bool KLI_rctf_isect_pt(const wabi::GfVec4f &rect, const float x, const float y);
 
