@@ -713,7 +713,7 @@ typedef struct UserDef
   /** UserDef has separate do-version handling, and can be read from other files. */
   int versionfile, subversionfile;
 
-  /** #eUserPref_Flag. */
+  /** #eUserPrefFlag. */
   int flag;
   /** #eDupli_ID_Flags. */
   unsigned int dupflag;
@@ -765,9 +765,9 @@ typedef struct UserDef
 
   char _pad0[3];
   char mini_axis_type;
-  /** #eUserpref_UI_Flag. */
+  /** #eUserprefUIFlag. */
   int uiflag;
-  /** #eUserpref_UI_Flag2. */
+  /** #eUserprefUIFlag2. */
   char uiflag2;
   char gpu_flag;
   char _pad8[6];
@@ -999,6 +999,8 @@ typedef struct UserDef
 /** From krakernel `KKE_kraken.cpp`. */
 extern UserDef U;
 
+extern const kTheme U_theme_default;
+
 /* ***************** USERDEF ****************** */
 
 //#define WITH_USERDEF_WORKSPACES
@@ -1036,7 +1038,7 @@ typedef enum eUserPref_SpaceData_Flag
 } eUserPref_SpaceData_Flag;
 
 /** #UserDef.flag */
-typedef enum eUserPref_Flag
+typedef enum eUserPrefFlag
 {
   USER_AUTOSAVE = (1 << 0),
   USER_FLAG_NUMINPUT_ADVANCED = (1 << 1),
@@ -1066,7 +1068,7 @@ typedef enum eUserPref_Flag
   USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
   USER_TOOLTIPS_PYTHON = (1 << 26),
   USER_FLAG_UNUSED_27 = (1 << 27), /* dirty */
-} eUserPref_Flag;
+} eUserPrefFlag;
 
 /** #UserDef.file_preview_type */
 typedef enum eUserpref_File_Preview_Type
@@ -1131,7 +1133,7 @@ typedef enum eWalkNavigation_Flag
 } eWalkNavigation_Flag;
 
 /** #UserDef.uiflag */
-typedef enum eUserpref_UI_Flag
+typedef enum eUserprefUIFlag
 {
   USER_NO_MULTITOUCH_GESTURES = (1 << 0),
   USER_UIFLAG_UNUSED_1 = (1 << 1), /* cleared */
@@ -1165,20 +1167,20 @@ typedef enum eUserpref_UI_Flag
   USER_HIDE_RECENT = (1 << 28),
   USER_SAVE_PROMPT = (1 << 30),
   USER_HIDE_SYSTEM_BOOKMARKS = (1u << 31),
-} eUserpref_UI_Flag;
+} eUserprefUIFlag;
 
 /**
  * #UserDef.uiflag2
  *
  * @note don't add new flags here, use 'uiflag' which has flags free.
  */
-typedef enum eUserpref_UI_Flag2
+typedef enum eUserprefUIFlag2
 {
   USER_UIFLAG2_UNUSED_0 = (1 << 0), /* cleared */
   USER_REGION_OVERLAP = (1 << 1),
   USER_UIFLAG2_UNUSED_2 = (1 << 2),
   USER_UIFLAG2_UNUSED_3 = (1 << 3), /* dirty */
-} eUserpref_UI_Flag2;
+} eUserprefUIFlag2;
 
 /** #UserDef.gpu_flag */
 typedef enum eUserpref_GPU_Flag

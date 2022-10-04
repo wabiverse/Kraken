@@ -41,7 +41,7 @@
 #  include <wabi/imaging/hgiVulkan/diagnostic.h>
 #endif /* WITH_VULKAN */
 
-KRAKEN_NAMESPACE_BEGIN
+WABI_NAMESPACE_USING
 
 void KKE_kraken_enable_debug_codes()
 {
@@ -80,5 +80,3 @@ void KKE_kraken_enable_debug_codes()
   // TfDebug::Enable(KRAKEN_DEBUG_MSGBUS);
 }
 
-
-KRAKEN_NAMESPACE_END

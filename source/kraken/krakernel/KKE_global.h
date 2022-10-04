@@ -90,6 +90,9 @@ typedef struct Global
   /** To indicate render is busy, prevent render-window events, animation playback etc. */
   bool is_rendering;
 
+  /** Launch interactive python console, and use kpy from interactive shell. */
+  bool interactive_console;
+
   /**
    * Debug value, can be set from the UI and python, used for testing nonstandard features.
    * DO NOT abuse it with generic checks like `if (G.debug_value > 0)`. Do not use it as bitflags.
@@ -219,13 +222,13 @@ enum
   G_DEBUG_XR = (1 << 20),                     /* XR/OpenXR messages */
   G_DEBUG_XR_TIME = (1 << 21),                /* XR/OpenXR timing messages */
 
-  G_DEBUG_GHOST = (1 << 22),  /* Debug GHOST module. */
+  G_DEBUG_ANCHOR = (1 << 22),  /* Debug ANCHOR module. */
   G_DEBUG_WINTAB = (1 << 23), /* Debug Wintab. */
 };
 
 #define G_DEBUG_ALL                                                                         \
   (G_DEBUG | G_DEBUG_FFMPEG | G_DEBUG_PYTHON | G_DEBUG_EVENTS | G_DEBUG_WM | G_DEBUG_JOBS | \
-   G_DEBUG_FREESTYLE | G_DEBUG_DEPSGRAPH | G_DEBUG_IO | G_DEBUG_GHOST | G_DEBUG_WINTAB)
+   G_DEBUG_FREESTYLE | G_DEBUG_DEPSGRAPH | G_DEBUG_IO | G_DEBUG_ANCHOR | G_DEBUG_WINTAB)
 
 /** #Global.fileflags */
 enum
@@ -282,7 +285,7 @@ enum
   G_TRANSFORM_CURSOR = (1 << 5),
 };
 
-/** Defined in blender.c */
+/** Defined in KKE_kraken.cpp */
 extern Global G;
 
 /**
@@ -294,3 +297,5 @@ extern Global G;
 #ifdef __cplusplus
 }
 #endif
+
+struct Global KKE_kraken_globals_init();

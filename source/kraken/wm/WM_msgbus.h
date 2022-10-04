@@ -42,7 +42,7 @@
  *  -----  The Kraken WindowManager. ----- */
 
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 
 /* ------ */
@@ -205,4 +205,3 @@ KLI_INLINE wmMsg *wm_msg_subscribe_value_msg_cast_mut(wmMsgSubscribeKey *key)
 
 /* ------ */
 
-KRAKEN_NAMESPACE_END

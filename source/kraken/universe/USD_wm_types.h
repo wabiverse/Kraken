@@ -24,26 +24,20 @@
  * Set the Stage.
  */
 
-#include "USD_api.h"
+#include "USD_listBase.h"
 
 #include "KLI_utildefines.h"
 #include "KLI_compiler_attrs.h"
 #include "KLI_compiler_compat.h"
 #include "KLI_sys_types.h"
 
+#include "KLI_rhash.h"
 #include "KLI_math.h"
 #include "KLI_compiler_compat.h"
 #include "KLI_utildefines.h"
-
-#include "KKE_context.h"
-
-#include <wabi/base/gf/vec2f.h>
-#include <wabi/usd/sdf/path.h>
-#include <wabi/usd/usd/timeCode.h>
+#include "KLI_rect.h"
 
 struct IDProperty;
-
-KRAKEN_NAMESPACE_BEGIN
 
 /* modifier */
 enum eWmModifierTypes
@@ -323,7 +317,7 @@ enum eWmMiscKmTypes
  *
  * Always check for <= this value since it may be zero.
  */
-#define WM_EVENT_CURSOR_MOTION_THRESHOLD ((float)UI_MOVE_THRESHOLD * UI_DPI_FAC)
+#define WM_EVENT_CURSOR_MOTION_THRESHOLD ((float)U.move_threshold * U.dpi_fac)
 
 /** Timer flags. */
 enum eWmTimerFlags
@@ -394,7 +388,7 @@ enum eWmEventType
 {
   EVENT_NONE = 0x0000,
 
-  /* Minimum mouse value (inclusive). */
+/* Minimum mouse value (inclusive). */
 #define _EVT_MOUSE_MIN 0x0001
 
   /* MOUSE: 0x000x, 0x001x */
@@ -750,69 +744,54 @@ struct wmTimer
   struct wmWindow *win;
 
   /** Set by timer user. */
-  wabi::UsdTimeCode timestep;
+  double timestep;
   /** Set by timer user, goes to event system. */
   int event_type;
   /** Various flags controlling timer options, see below. */
-  eWmTimerFlags flags;
+  short flags;
   /** Set by timer user, to allow custom values. */
   void *customdata;
 
   /** Total running time in seconds. */
-  wabi::UsdTimeCode duration;
+  double duration;
   /** Time since previous step in seconds. */
-  wabi::UsdTimeCode delta;
+  double delta;
 
   /** Internal, last time timer was activated. */
-  wabi::UsdTimeCode ltime;
+  double ltime;
   /** Internal, next time we want to activate the timer. */
-  wabi::UsdTimeCode ntime;
+  double ntime;
   /** Internal, when the timer started. */
-  wabi::UsdTimeCode stime;
+  double stime;
   /** Internal, put timers to sleep when needed. */
   bool sleep;
-
-  wmTimer()
-    : win(POINTER_ZERO),
-      timestep(TIMECODE_DEFAULT),
-      event_type(VALUE_ZERO),
-      flags(WM_TIMER_NO_FREE_CUSTOM_DATA),
-      customdata(POINTER_ZERO),
-      duration(TIMECODE_DEFAULT),
-      delta(TIMECODE_DEFAULT),
-      ltime(TIMECODE_DEFAULT),
-      ntime(TIMECODE_DEFAULT),
-      stime(TIMECODE_DEFAULT),
-      sleep(VALUE_ZERO)
-  {}
 };
 
-struct Report
-{
+typedef struct Report {
+  struct Report *next, *prev;
   /** eReportType. */
   short type;
   short flag;
-
+  /** `strlen(message)`, saves some time calculating the word wrap. */
   int len;
   const char *typestr;
   const char *message;
-};
+} Report;
 
-struct ReportList
-{
-  std::vector<Report *> list;
+typedef struct ReportList {
+  ListBase list;
   /** eReportType. */
-  eReportType printlevel;
+  int printlevel;
   /** eReportType. */
-  eReportType storelevel;
+  int storelevel;
   int flag;
-  wmTimer *reporttimer;
-};
+  char _pad[4];
+  struct wmTimer *reporttimer;
+} ReportList;
 
-struct wmTabletData
-{
+typedef struct wmTabletData {
   /** 0=EVT_TABLET_NONE, 1=EVT_TABLET_STYLUS, 2=EVT_TABLET_ERASER. */
-  eWmTabletEventType active;
+  int active;
   /** range 0.0 (not touching) to 1.0 (full pressure). */
   float pressure;
   /** range 0.0 (upright) to 1.0 (tilted fully against the tablet surface). */
@@ -820,8 +799,8 @@ struct wmTabletData
   /** as above. */
   float y_tilt;
   /** Interpret mouse motion as absolute as typical for tablets. */
-  bool is_motion_absolute;
-};
+  char is_motion_absolute;
+} wmTabletData;
 
 /**
  * Wrapper to reference a #wmOperatorType together with some set properties and other relevant
@@ -831,7 +810,7 @@ struct wmOperatorCallParams
 {
   struct wmOperatorType *optype;
   struct KrakenPRIM *opptr;
-  eWmOperatorContext opcontext;
+  short opcontext;
 };
 
 struct wmEvent
@@ -841,7 +820,7 @@ struct wmEvent
   /** Press, release, scroll-value. */
   short val;
   /** Mouse pointer position, screen coord. */
-  GfVec2i mouse_pos;
+  int mouse_pos[2];
   int mval[2];
   /**
    * From, anchor if utf8 is enabled for the platform,
@@ -873,7 +852,7 @@ struct wmEvent
    * Unlike other previous state variables, this is set on any mouse motion.
    * Use `prevclickx` & `prevclicky` for the value at time of pressing.
    */
-  GfVec2i prev_mouse_pos;
+  int prev_mouse_pos[2];
 
   /** Modifier states. */
   /** 'oskey' is apple or windows-key, value denotes order of pressed. */
@@ -900,30 +879,7 @@ struct wmEvent
 
   char modifier;
 
-  wmEvent()
-    : type(EVENT_NONE),
-      val(VALUE_ZERO),
-      mouse_pos(VALUE_ZERO),
-      mval{VALUE_ZERO},
-      utf8_buf{VALUE_ZERO},
-      ascii(VALUE_ZERO),
-      is_repeat(VALUE_ZERO),
-      prevtype(VALUE_ZERO),
-      prevclicktime(VALUE_ZERO),
-      prevclickx(VALUE_ZERO),
-      prevclicky(VALUE_ZERO),
-      prev_mouse_pos(VALUE_ZERO),
-      shift(VALUE_ZERO),
-      ctrl(VALUE_ZERO),
-      alt(VALUE_ZERO),
-      oskey(VALUE_ZERO),
-      keymodifier(VALUE_ZERO),
-      tablet{},
-      custom(VALUE_ZERO),
-      customdatafree(VALUE_ZERO),
-      customdata(POINTER_ZERO),
-      is_direction_inverted(VALUE_ZERO)
-  {}
+  short flag;
 };
 
 enum eWmEventHandlerType
@@ -949,7 +905,7 @@ typedef bool (*EventHandlerPoll)(const struct ARegion *region, const struct wmEv
 
 struct wmEventHandler
 {
-  eWmEventHandlerType type;
+  short type;
   char flag;
 
   EventHandlerPoll poll;
@@ -961,10 +917,12 @@ struct wmEventHandler_KeymapResult
   int keymaps_len;
 };
 
+typedef void(wmEventHandler_PostFn)(struct wmKeyMap *keymap, struct wmKeyMapItem *kmi, void *user_data);
+
 /** Run after the keymap item runs. */
 struct wmEventHandler_KeymapPost
 {
-  void (*post_fn)(struct wmKeyMap *keymap, struct wmKeyMapItem *kmi, void *user_data);
+  wmEventHandler_PostFn *post_fun;
   void *user_data;
 };
 
@@ -983,7 +941,7 @@ struct wmEventHandler_KeymapDynamic
 /** #WM_HANDLER_TYPE_KEYMAP */
 struct wmEventHandler_Keymap
 {
-  wmEventHandler head;
+  struct wmEventHandler head;
 
   /** Pointer to builtin/custom keymaps (never NULL). */
   struct wmKeyMap *keymap;
@@ -997,12 +955,14 @@ struct wmEventHandler_Keymap
 typedef int (*wmUIHandlerFunc)(struct kContext *C, const struct wmEvent *event, void *userdata);
 typedef void (*wmUIHandlerRemoveFunc)(struct kContext *C, void *userdata);
 
-struct wmEventHandlerUI : public wmEventHandler
+struct wmEventHandlerUI
 {
-  wmEventHandler head;
+  struct wmEventHandler head;
   wmUIHandlerFunc handle_fn;
   wmUIHandlerRemoveFunc remove_fn;
   void *user_data;
+  short type;
+  short flag;
 
   struct
   {
@@ -1022,9 +982,9 @@ enum
 
 struct wmMsgBus
 {
-  struct RSet *messages_rset[WM_MSG_TYPE_NUM];
+  RSet *messages_rset[WM_MSG_TYPE_NUM];
   /** Messages in order of being added. */
-  std::vector<struct wmMsgSubscribeKey *> messages;
+  ListBase messages;
   /** Avoid checking messages when no tags exist. */
   uint messages_tag_count;
 };
@@ -1052,11 +1012,11 @@ typedef enum eWmDragFlags
 ENUM_OPERATORS(eWmDragFlags, WM_DRAG_FREE_DATA)
 
 
-struct wmDragID
-{
-  SdfPath id;
-  SdfPath from_parent;
-};
+typedef struct wmDragID {
+  struct wmDragID *next, *prev;
+  struct ID *id;
+  struct ID *from_parent;
+} wmDragID;
 
 
 struct wmDragAsset
@@ -1066,44 +1026,32 @@ struct wmDragAsset
   const char *path;
   int id_type;
   int import_type; /* eFileAssetImportType */
-
-  wmDragAsset()
-    : name{VALUE_ZERO},
-      path(POINTER_ZERO),
-      id_type(VALUE_ZERO),
-      import_type(VALUE_ZERO)
-  {}
 };
 
 
-struct wmDrag : public wmEvent
-{
+typedef struct wmDrag {
+  struct wmDrag *next, *prev;
+
   int icon;
+  /** See 'WM_DRAG_' defines above. */
+  int type;
   void *poin;
   char path[1024]; /* FILE_MAX */
   double value;
 
-  float scale;
-  int sx, sy;
+  /** If no icon but imbuf should be drawn around cursor. */
+  struct ImBuf *imb;
+  float imbuf_scale;
 
-  /** If set, draws operator name. */
-  char opname[200];
-  unsigned int flags;
+  // wmDragActiveDropState drop_state;
 
-  std::vector<wmDragID *> ids;
+  short flags;
 
-  wmDrag()
-    : icon(VALUE_ZERO),
-      poin(POINTER_ZERO),
-      path{VALUE_ZERO},
-      value(VALUE_ZERO),
-      scale(VALUE_ZERO),
-      sx(VALUE_ZERO),
-      sy(VALUE_ZERO),
-      opname{VALUE_ZERO},
-      flags(VALUE_ZERO)
-  {}
-};
+  /** List of wmDragIDs, all are guaranteed to have the same ID type. */
+  ListBase ids;
+  /** List of `wmDragAssetListItem`s. */
+  ListBase asset_items;
+} wmDrag;
 
 
 /**
@@ -1119,14 +1067,12 @@ struct wmKeyConfigPref
   char idname[64];
 };
 
-typedef std::vector<wabi::UsdProperty> UsdPropertyVector;
-
 struct wmKeyMapItem
 {
   /* operator */
   /** Used to retrieve operator type pointer. */
-  TfToken idname;
-  UsdPropertyVector properties;
+  char idname[MAX_NAME];
+  ListBase properties;
 
   /* modal */
   /** Runtime temporary storage for loading. */
@@ -1151,32 +1097,14 @@ struct wmKeyMapItem
   /** Keymap editor. */
   short maptype;
   short id;
-  KrakenPRIM *ptr;
-
-  wmKeyMapItem()
-    : idname(EMPTY),
-      properties(EMPTY),
-      propvalue_str{VALUE_ZERO},
-      propvalue(VALUE_ZERO),
-      type(VALUE_ZERO),
-      val(VALUE_ZERO),
-      shift(VALUE_ZERO),
-      ctrl(VALUE_ZERO),
-      alt(VALUE_ZERO),
-      oskey(VALUE_ZERO),
-      keymodifier(VALUE_ZERO),
-      flag(VALUE_ZERO),
-      maptype(VALUE_ZERO),
-      id(VALUE_ZERO),
-      ptr(POINTER_ZERO)
-  {}
+  struct KrakenPRIM *ptr;
 };
 
 /** Used instead of wmKeyMapItem for diff keymaps. */
 struct wmKeyMapDiffItem
 {
-  wmKeyMapItem *remove_item;
-  wmKeyMapItem *add_item;
+  struct wmKeyMapItem *remove_item;
+  struct wmKeyMapItem *add_item;
 };
 
 /** #wmKeyMapItem.flag */
@@ -1213,17 +1141,17 @@ enum
   KMI_TYPE_NDOF = 5,
 };
 
-struct wmKeyMap
+typedef struct wmKeyMap
 {
-  std::vector<struct wmKeyMapItem *> items;
-  std::vector<struct wmKeyMapDiffItem *> diff_items;
+  ListBase items;
+  ListBase diff_items;
 
   /** Global editor keymaps, or for more per space/region. */
-  wabi::TfToken idname;
+  char idname[MAX_NAME];
 
   short spaceid;
   short regionid;
-  wabi::TfToken owner_id;
+  char owner_id[MAX_NAME];
 
   /** General flags. */
   short flag;
@@ -1236,19 +1164,7 @@ struct wmKeyMap
   bool (*poll_modal_item)(const struct wmOperator *op, int value);
 
   const void *modal_items;
-
-  wmKeyMap()
-    : items(EMPTY),
-      diff_items(EMPTY),
-      idname{VALUE_ZERO},
-      spaceid(VALUE_ZERO),
-      regionid(VALUE_ZERO),
-      owner_id{VALUE_ZERO},
-      flag(VALUE_ZERO),
-      kmi_id(VALUE_ZERO),
-      modal_items(POINTER_ZERO)
-  {}
-};
+} wmKeyMap;
 
 /* These two Lines with # tell makesdna this struct can be excluded. */
 /* should be something like DNA_EXCLUDE
@@ -1256,7 +1172,7 @@ struct wmKeyMap
 struct wmOperatorTypeMacro
 {
   /* operator id */
-  wabi::TfToken idname;
+  char idname[MAX_NAME];
   /* rna pointer to access properties, like keymap */
   /** Operator properties, assigned to ptr->data and can be written to a file. */
   IDProperty *properties;
@@ -1267,20 +1183,12 @@ struct wmOperatorTypeMacro
 struct wmKeyConfig
 {
   /** Unique name. */
-  TfToken idname;
-  TfToken basename;
+  char idname[MAX_NAME];
+  char basename[MAX_NAME];
 
-  std::vector<wmKeyMap *> keymaps;
+  ListBase keymaps;
   int actkeymap;
   short flag;
-
-  wmKeyConfig()
-    : idname(EMPTY),
-      basename(EMPTY),
-      keymaps(EMPTY),
-      actkeymap(VALUE_ZERO),
-      flag(VALUE_ZERO)
-  {}
 };
 
 
@@ -1314,9 +1222,8 @@ struct wmTooltipState
 
 
 /* timer customdata to control reports display */
-struct ReportTimerInfo {
+struct ReportTimerInfo
+{
   float col[4];
   float widthfac;
 };
-
-KRAKEN_NAMESPACE_END

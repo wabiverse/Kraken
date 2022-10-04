@@ -30,7 +30,7 @@
 
 WABI_NAMESPACE_USING
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /**
  * These are the default Kraken data  structure  locations
@@ -70,4 +70,4 @@ struct KRAKEN_PATH_DEFAULTS
     "/WabiAnimationStudios/Structs/Workspaces");
 };
 
-KRAKEN_NAMESPACE_END
+

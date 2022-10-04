@@ -22,6 +22,8 @@
  * Making GUI Fly.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "WM_operators.h"
 #include "WM_debug_codes.h"
 #include "WM_msgbus.h"
@@ -40,8 +42,9 @@
 
 #include "KKE_context.h"
 #include "KKE_utils.h"
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
 #include "KKE_report.h"
+#include "KKE_global.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -51,7 +54,6 @@
 
 namespace fs = std::filesystem;
 
-KRAKEN_NAMESPACE_BEGIN
 
 static int wm_user_datafiles_write_exec(kContext *C, wmOperator *op)
 {
@@ -102,9 +104,17 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
   ot->exec = wm_open_mainfile_exec;
 
   PRIM_def_struct(ot->prim, SdfPath(ot->idname), TfToken("Operator"));
-  PRIM_def_boolean(ot->prim, "load_ui", true, "Load UI", "Load user interface setup in the .usd file");
+  PRIM_def_boolean(ot->prim,
+                   "load_ui",
+                   true,
+                   "Load UI",
+                   "Load user interface setup in the .usd file");
   PRIM_def_boolean(ot->prim, "display_file_selector", true, "Display File Selector", "");
-  PRIM_def_asset(ot->prim, "filepath", G.main->stage_id, "File Path", "The path to a .usd file path to open");
+  PRIM_def_asset(ot->prim,
+                 "filepath",
+                 G.main->stage_id,
+                 "File Path",
+                 "The path to a .usd file path to open");
 }
 
 static void wm_block_file_close_cancel(kContext *C, void *arg_block, void *UNUSED(arg_data))
@@ -148,14 +158,14 @@ static void wm_block_file_close_save(kContext *C, void *arg_block, void *arg_dat
   //   }
   // }
 
-  bool file_has_been_saved_before = !KKE_main_usdfile_path(kmain).empty();
+  bool file_has_been_saved_before = !std::string(KKE_main_usdfile_path(kmain)).empty();
 
   if (file_has_been_saved_before) {
-    if (WM_operator_name_call(C, WM_ID_(WM_OT_save_mainfile), WM_OP_EXEC_DEFAULT, NULL) & OPERATOR_CANCELLED) {
+    if (WM_operator_name_call(C, WM_ID_(WM_OT_save_mainfile), WM_OP_EXEC_DEFAULT, NULL) &
+        OPERATOR_CANCELLED) {
       execute_callback = false;
     }
-  }
-  else {
+  } else {
     WM_operator_name_call(C, WM_ID_(WM_OT_save_mainfile), WM_OP_INVOKE_DEFAULT, NULL);
     execute_callback = false;
   }
@@ -168,8 +178,21 @@ static void wm_block_file_close_save(kContext *C, void *arg_block, void *arg_dat
 
 static void wm_block_file_close_save_button(uiBlock *block, wmGenericCallback *post_action)
 {
-  uiBut *but = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, 0, IFACE_("Save"), 0, 0, 0, UI_UNIT_Y, 0, 0, 0, 0, 0, "");
+  uiBut *but = uiDefIconTextBut(block,
+                                UI_BTYPE_BUT,
+                                0,
+                                0,
+                                IFACE_("Save"),
+                                0,
+                                0,
+                                0,
+                                UI_UNIT_Y,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                "");
   UI_but_func_set(but, wm_block_file_close_save, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
   UI_but_flag_enable(but, UI_BUT_ACTIVE_DEFAULT);
@@ -177,16 +200,42 @@ static void wm_block_file_close_save_button(uiBlock *block, wmGenericCallback *p
 
 static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback *post_action)
 {
-  uiBut *but = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, 0, IFACE_("Cancel"), 0, 0, 0, UI_UNIT_Y, 0, 0, 0, 0, 0, "");
+  uiBut *but = uiDefIconTextBut(block,
+                                UI_BTYPE_BUT,
+                                0,
+                                0,
+                                IFACE_("Cancel"),
+                                0,
+                                0,
+                                0,
+                                UI_UNIT_Y,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                "");
   UI_but_func_set(but, wm_block_file_close_cancel, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
 
 static void wm_block_file_close_discard_button(uiBlock *block, wmGenericCallback *post_action)
 {
-  uiBut *but = uiDefIconTextBut(
-      block, UI_BTYPE_BUT, 0, 0, IFACE_("Don't Save"), 0, 0, 0, UI_UNIT_Y, 0, 0, 0, 0, 0, "");
+  uiBut *but = uiDefIconTextBut(block,
+                                UI_BTYPE_BUT,
+                                0,
+                                0,
+                                IFACE_("Don't Save"),
+                                0,
+                                0,
+                                0,
+                                UI_UNIT_Y,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                                "");
   UI_but_func_set(but, wm_block_file_close_discard, block, post_action);
   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
 }
@@ -199,8 +248,9 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   Main *kmain = CTX_data_main(C);
 
   uiBlock *block = UI_block_begin(C, region, UI_ID(UI_POPUP_file_close), UI_EMBOSS);
-  UI_block_flag_enable(
-      block, UI_BLOCK_KEEP_OPEN | UI_BLOCK_LOOP | UI_BLOCK_NO_WIN_CLIP | UI_BLOCK_NUMSELECT);
+  UI_block_flag_enable(block,
+                       UI_BLOCK_KEEP_OPEN | UI_BLOCK_LOOP | UI_BLOCK_NO_WIN_CLIP |
+                         UI_BLOCK_NUMSELECT);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
   uiLayout *layout = uiItemsAlertBox(block, 34, ALERT_ICON_QUESTION);
@@ -213,8 +263,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   std::string filename;
   if (!usdfile_path.empty()) {
     filename = usdfile_path.filename();
-  }
-  else {
+  } else {
     filename = "untitled.usda";
   }
   uiItemL(layout, filename.c_str(), ICON_NONE);
@@ -224,7 +273,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   KKE_reports_init(&reports, RPT_STORE);
   // uint modified_images_count = ED_image_save_all_modified_info(kmain, &reports);
 
-  for (auto &report : reports.list) {
+  LISTBASE_FOREACH (const Report *, report, &reports.list) {
     uiLayout *row = uiLayoutColumn(layout, false);
     uiLayoutSetScaleY(row, 0.6f);
     uiItemS(row);
@@ -279,7 +328,8 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   // if (KKE_asset_library_has_any_unsaved_catalogs()) {
   //   static char save_catalogs_when_file_is_closed;
 
-  //   save_catalogs_when_file_is_closed = ED_asset_catalogs_get_save_catalogs_when_file_is_saved();
+  //   save_catalogs_when_file_is_closed =
+  //   ED_asset_catalogs_get_save_catalogs_when_file_is_saved();
 
   //   /* Only the first checkbox should get extra separation. */
   //   if (!has_extra_checkboxes) {
@@ -301,7 +351,8 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   //                             0,
   //                             "");
   //   UI_but_func_set(
-  //       but, save_catalogs_when_file_is_closed_set_fn, &save_catalogs_when_file_is_closed, NULL);
+  //       but, save_catalogs_when_file_is_closed_set_fn, &save_catalogs_when_file_is_closed,
+  //       NULL);
   //   has_extra_checkboxes = true;
   // }
 
@@ -330,8 +381,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
 
     uiLayoutColumn(split, false);
     wm_block_file_close_cancel_button(block, post_action);
-  }
-  else {
+  } else {
     /* Non-Windows layout (macOS and Linux). */
 
     uiLayout *split = uiLayoutSplit(layout, 0.3f, true);
@@ -352,7 +402,7 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
     wm_block_file_close_save_button(block, post_action);
   }
 
-  UI_block_bounds_set_centered(block, 14 * UI_DPI_FAC);
+  UI_block_bounds_set_centered(block, 14 * U.dpi_fac);
   return block;
 }
 
@@ -395,5 +445,3 @@ void WM_files_init(kContext *C)
   WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
   WM_operator_properties_free(&props_ptr);
 }
-
-KRAKEN_NAMESPACE_END

@@ -28,7 +28,7 @@
 #include "USD_types.h"
 #include "USD_context.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void USD_save_stage(kContext *C)
 {
@@ -36,4 +36,3 @@ void USD_save_stage(kContext *C)
   stage->GetRootLayer()->Save();
 }
 
-KRAKEN_NAMESPACE_END

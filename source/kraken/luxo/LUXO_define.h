@@ -37,7 +37,7 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
                                 const wabi::SdfPath &identifier,
@@ -67,4 +67,4 @@ void PRIM_def_asset(KrakenPRIM *prim,
                     const std::string &ui_name,
                     const std::string &ui_description);
 
-KRAKEN_NAMESPACE_END
+

@@ -37,6 +37,9 @@
 #include "WM_operators.h"
 #include "WM_window.h"
 
+#include "KLI_rhash.h"
+#include "KLI_listbase.h"
+
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
@@ -54,7 +57,7 @@
  *  -----  The Kraken WindowManager. ----- */
 
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 
 /* ------ */
@@ -242,10 +245,10 @@ wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
   KLI_assert(wm_msg_subscribe_value_msg_cast(msg_key_test)->id != NULL);
 
   void **r_key;
-  if (!KKE_rset_ensure_p_ex(mbus->messages_rset[type], msg_key_test, &r_key)) {
+  if (!KLI_rset_ensure_p_ex(mbus->messages_rset[type], msg_key_test, &r_key)) {
     key = static_cast<wmMsgSubscribeKey *>(*r_key = MEM_mallocN(info->msg_key_size, __func__));
     memcpy(key, msg_key_test, info->msg_key_size);
-    mbus->messages.push_back(key);
+    KLI_addtail(&mbus->messages, key);
   } else {
     key = static_cast<wmMsgSubscribeKey *>(*r_key);
     for (auto &msg_lnk : key->values) {
@@ -300,4 +303,3 @@ void WM_msg_id_remove(struct wmMsgBus *mbus, const struct ID *id)
   }
 }
 
-KRAKEN_NAMESPACE_END

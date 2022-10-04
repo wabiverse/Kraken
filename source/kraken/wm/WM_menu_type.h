@@ -31,8 +31,7 @@
 #include "USD_wm_types.h"
 #include "USD_screen.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 MenuType *WM_menutype_find(const TfToken &idname, bool quiet);
 
-KRAKEN_NAMESPACE_END

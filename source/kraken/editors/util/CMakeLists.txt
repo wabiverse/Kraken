@@ -12,6 +12,10 @@ set(INC
   ../../luxo
   # ../../sequencer
   ../../wm
+  ../../../../intern/atomic
+  ../../../../intern/clog
+  ../../../../intern/guardedalloc
+
   # PRIM_prototypes.h
   ${CMAKE_BINARY_DIR}/source/kraken/luxo
 )

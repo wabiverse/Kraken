@@ -31,8 +31,6 @@
 #include "USD_screen.h"
 #include "USD_workspace.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 /* clang-format off */
 #define GETTER_ATTRS ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT
 #define SETTER_ATTRS ATTR_NONNULL(1)
@@ -70,5 +68,3 @@ void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
 WorkSpace *KKE_workspace_active_get(WorkSpaceInstanceHook *hook);
 WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid);
 bool KKE_workspace_owner_id_check(const struct WorkSpace *workspace, const TfToken &owner_id) ATTR_NONNULL();
-
-KRAKEN_NAMESPACE_END

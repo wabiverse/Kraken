@@ -30,6 +30,8 @@
 #  include <cstdlib>
 #endif /*__GNUC__ */
 
+#include "MEM_guardedalloc.h"
+
 /* KRAKEN */
 #include "kraken/kraken.h"
 
@@ -48,6 +50,7 @@
 #include "USD_workspace.h"
 
 /* KRAKEN LIBRARY */
+#include "KLI_listbase.h"
 #include "KLI_string.h"
 
 /* KRAKEN KERNEL */
@@ -55,6 +58,7 @@
 #include "KKE_main.h"
 #include "KKE_screen.h"
 #include "KKE_utils.h"
+#include "KKE_global.h"
 
 /* ANCHOR */
 #include "ANCHOR_api.h"
@@ -75,35 +79,8 @@
 #include <wabi/usd/usd/stage.h>
 #include <wabi/wabi.h>
 
-WABI_NAMESPACE_USING
-
-KRAKEN_NAMESPACE_BEGIN
-
 Global G;
 UserDef U;
-
-/** TODO: deprecate me, use "U" above. */
-int UI_MOVE_THRESHOLD = int(2);
-int UI_MENU_THRESHOLD1 = int(5);
-int UI_MENU_THRESHOLD2 = int(2);
-bool UI_RUNTIME_IS_DIRTY = bool(false);
-short UI_PIE_MENU_RADIUS = short(100);
-short UI_PIE_MENU_THRESHOLD = short(12);
-short UI_PIE_ANIMATION_TIMEOUT = short(6);
-int UI_PIXEL_SIZE = int(1);
-std::vector<kTheme *> UI_THEMES_LIST;
-std::vector<uiStyle *> UI_STYLES_LIST;
-short UI_WIDGET_UNIT = 20;
-int UI_FACTOR_DISPLAY_TYPE = USER_FACTOR_AS_FACTOR;
-float UI_DPI_FAC = float(1.0f);
-float UI_PRESSURE_SOFTNESS = float(1.0f);
-float UI_PRESSURE_THRESHOLD_MAX = float(0.0f);
-int UI_FLAG = int(0);
-bool UI_MOUSE_EMULATE_3BUTTON_MODIFIER = bool(false);
-int UI_DRAG_THRESHOLD_MOUSE = int(0);
-int UI_DRAG_THRESHOLD_TABLET = int(0);
-int UI_DRAG_THRESHOLD = int(0);
-short UI_DOUBLE_CLICK_TIME = short(0);
 
 static char kraken_version_string[48] = "";
 
@@ -137,12 +114,12 @@ Main *KKE_main_new(void)
   return kmain;
 }
 
-std::filesystem::path KKE_main_usdfile_path(const Main *kmain)
+const char *KKE_main_usdfile_path(const Main *kmain)
 {
   return kmain->stage_id;
 }
 
-Global &KKE_kraken_globals_init()
+Global KKE_kraken_globals_init()
 {
   kraken_version_init();
 
@@ -150,26 +127,24 @@ Global &KKE_kraken_globals_init()
 
   G.main = KKE_main_new();
 
-  G.main->exe_path = kraken_exe_path_init();
-  G.main->temp_dir = kraken_system_tempdir_path();
-
-  G.main->kraken_version_decimal = kraken_get_version_decimal();
-
-  G.main->datafiles_path = kraken_datafiles_path_init();
-  G.main->fonts_path = kraken_fonts_path_init();
-  G.main->python_path = kraken_python_path_init();
-  G.main->icons_path = kraken_icon_path_init();
-  G.main->stage_id = kraken_startup_file_init();
-  G.main->ocio_cfg = kraken_ocio_file_init();
+  KLI_strncpy(G.main->exe_path, kraken_exe_path_init().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->temp_dir, kraken_system_tempdir_path().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->kraken_version_decimal, kraken_get_version_decimal().c_str(), 32);
+  KLI_strncpy(G.main->datafiles_path, kraken_datafiles_path_init().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->fonts_path, kraken_fonts_path_init().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->python_path, kraken_python_path_init().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->icons_path, kraken_icon_path_init().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->stage_id, kraken_startup_file_init().c_str(), FILE_MAX);
+  KLI_strncpy(G.main->ocio_cfg, kraken_ocio_file_init().c_str(), FILE_MAX);
 
   return G;
 }
 
-void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
+void KKE_kraken_main_init(kContext *C)
 {
   /* Determine stage to load (from user or factory default). */
   if (!std::filesystem::exists(G.main->stage_id) ||
-      G.main->stage_id.string().find("userpref.usda") != std::string::npos) {
+      std::string(G.main->stage_id).find("userpref.usda") != std::string::npos) {
     G.factory_startup = true;
   }
 
@@ -186,20 +161,23 @@ void KKE_kraken_main_init(kContext *C, int argc, const char **argv)
 
 void KKE_main_free(Main *mainvar)
 {
-  UNIVERSE_FOR_ALL (windowmanager, mainvar->wm) {
+  LISTBASE_FOREACH(wmWindowManager *, windowmanager, &mainvar->wm)
+  {
     delete windowmanager;
   }
-  mainvar->wm.clear();
+  KLI_listbase_clear(&mainvar->wm);
 
-  UNIVERSE_FOR_ALL (workspace, mainvar->workspaces) {
+  LISTBASE_FOREACH(WorkSpace *, workspace, &mainvar->workspaces)
+  {
     delete workspace;
   }
-  mainvar->workspaces.clear();
+  KLI_listbase_clear(&mainvar->workspaces);
 
-  UNIVERSE_FOR_ALL (screen, mainvar->screens) {
+  LISTBASE_FOREACH(kScreen *, screen, &mainvar->screens)
+  {
     delete screen;
   }
-  mainvar->screens.clear();
+  KLI_listbase_clear(&mainvar->screens);
 
   delete mainvar;
 }
@@ -279,5 +257,3 @@ void KKE_kraken_atexit(void)
   }
   g_atexit = NULL;
 }
-
-KRAKEN_NAMESPACE_END

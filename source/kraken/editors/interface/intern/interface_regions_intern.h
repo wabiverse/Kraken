@@ -41,10 +41,6 @@
 
 #include "UI_interface.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 void ui_region_temp_remove(struct kContext *C, kScreen *screen, ARegion *region);
-
-KRAKEN_NAMESPACE_END
 
 #endif /* KRAKEN_EDITORS_INTERFACE_REGIONS_INTERN_H */

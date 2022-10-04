@@ -30,7 +30,7 @@
 
 #include <wabi/base/tf/token.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct KRAKEN_WM_TOKENS_TYPE
 {
@@ -257,4 +257,3 @@ struct KRAKEN_WM_TOKENS_TYPE
 
 extern TfStaticData<KRAKEN_WM_TOKENS_TYPE> KRAKEN_WM_TOKENS;
 
-KRAKEN_NAMESPACE_END

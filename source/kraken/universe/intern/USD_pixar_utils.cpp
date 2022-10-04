@@ -35,7 +35,7 @@
 
 WABI_NAMESPACE_USING
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 
 void USD_pixutil_convert_usd(const std::filesystem::path &path,
@@ -87,4 +87,3 @@ std::string USD_pixutil_resolve_asset(const std::string &asset, bool verbose)
 }
 
 
-KRAKEN_NAMESPACE_END

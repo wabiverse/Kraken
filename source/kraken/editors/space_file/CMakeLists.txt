@@ -9,6 +9,9 @@ set(INC
   ../../luxo
   ../../universe
   ../../wm
+  ../../../../intern/atomic
+  ../../../../intern/clog
+  ../../../../intern/guardedalloc
 )
 
 set(INC_SYS

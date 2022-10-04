@@ -81,8 +81,6 @@
 /** Figure out why this is the magical timecode multiplier value. */
 #define MAGIC_TIMECODE_MULTIPLIER 0.2
 
-KRAKEN_NAMESPACE_BEGIN
-
 /** Use with #View3D.shading.mode */
 enum eView3DShadingMode
 {
@@ -224,5 +222,3 @@ void ED_view3d_init_engine(const wabi::SdfPath &root, bool &reset);
 
 VIEW3D_EDITOR_API
 void ED_view3d_run(bool *show = NULL);
-
-KRAKEN_NAMESPACE_END

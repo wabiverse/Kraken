@@ -16,6 +16,9 @@ set(INC
   ../../krakernel
   ../../luxo
   ../../universe
+  ../../../../intern/atomic
+  ../../../../intern/clog
+  ../../../../intern/guardedalloc
 )
 
 set(INC_SYS

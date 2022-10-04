@@ -22,7 +22,7 @@
  * It Bites.
  */
 
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
 #include "KKE_context.h"
 #include "KKE_report.h"
 
@@ -47,7 +47,7 @@ KRAKEN_NAMESPACE_USING
  * @param mode: Passed to #PyRun_String, matches Python's
  * `compile` functions mode argument. #Py_eval_input for
  * `eval`, #Py_file_input for `exec`. */
-static bool kpy_run_string_impl(kraken::kContext *C,
+static bool kpy_run_string_impl(kContext *C,
                                 const char *imports[],
                                 const char *expr,
                                 const int mode)
@@ -84,8 +84,8 @@ static bool kpy_run_string_impl(kraken::kContext *C,
     PyErr_Clear();
 
     /* Ensure the reports are printed. */
-    if (!kraken::KKE_reports_print_test(&reports, RPT_ERROR)) {
-      kraken::KKE_reports_print(&reports, RPT_ERROR);
+    if (!KKE_reports_print_test(&reports, RPT_ERROR)) {
+      KKE_reports_print(&reports, RPT_ERROR);
     }
 
   } else {
@@ -135,7 +135,7 @@ static void run_string_handle_error(struct KPy_RunErrInfo *err_info)
   }
 
   /* Print the reports if they were not printed already. */
-  if ((err_info->reports == NULL) || !kraken::KKE_reports_print_test(err_info->reports, RPT_ERROR)) {
+  if ((err_info->reports == NULL) || !KKE_reports_print_test(err_info->reports, RPT_ERROR)) {
     if (err_info->report_prefix) {
       fprintf(stderr, "%s: ", err_info->report_prefix);
     }
@@ -149,7 +149,7 @@ static void run_string_handle_error(struct KPy_RunErrInfo *err_info)
   Py_XDECREF(py_err_str);
 }
 
-bool KPY_run_string_as_number(struct kraken::kContext *C,
+bool KPY_run_string_as_number(struct kContext *C,
                               const char *imports[],
                               const char *expr,
                               struct KPy_RunErrInfo *err_info,
@@ -178,14 +178,14 @@ bool KPY_run_string_as_number(struct kraken::kContext *C,
 
 /**
  * Run an expression, matches: `exec(compile(..., "eval"))` */
-bool KPY_run_string_eval(kraken::kContext *C, const char *imports[], const char *expr)
+bool KPY_run_string_eval(kContext *C, const char *imports[], const char *expr)
 {
   return kpy_run_string_impl(C, imports, expr, Py_eval_input);
 }
 
 /**
  * Run an entire script, matches: `exec(compile(..., "exec"))` */
-bool KPY_run_string_exec(kraken::kContext *C, const char *imports[], const char *expr)
+bool KPY_run_string_exec(kContext *C, const char *imports[], const char *expr)
 {
   return kpy_run_string_impl(C, imports, expr, Py_file_input);
 }

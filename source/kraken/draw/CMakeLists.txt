@@ -1,9 +1,11 @@
 set(INC
   .
+  ../../../. # Pixar USD
+  ../../../source
+  ../krakernel
   intern
 
   ../krakfont
-  ../krakkernel
   ../kraklib
   ../editors/include
   ../editors/space_view3d

@@ -7,28 +7,33 @@
 
 #pragma once
 
-#include <vector>
+#ifdef __cplusplus
+#  include <vector>
+#endif /* __cplusplus */
 
-#include "KKE_utils.h"
+#include "KLI_rhash.h"
 
 #include "KLI_compiler_attrs.h"
 #include "KLI_listbase.h"
 #include "KLI_rect.h"
 
 #include "USD_listBase.h"
-#include "USD_types.h"
-#include "USD_object.h"
-#include "USD_area.h"
-#include "USD_region.h"
-#include "USD_screen.h"
 #include "USD_vec_types.h"
+
+#ifdef __cplusplus
+#  include "USD_types.h"
+#  include "USD_object.h"
+#  include "USD_area.h"
+#  include "USD_region.h"
+#  include "USD_screen.h"
+#  include <wabi/usd/usd/prim.h>
+
+#  include "LUXO_types.h"
+#endif /* __cplusplus */
 
 #include "UI_interface.h"
 #include "UI_resources.h"
 
-#include "LUXO_types.h"
-
-#include <wabi/usd/usd/prim.h>
 
 struct ID;
 struct IDProperty;
@@ -36,14 +41,12 @@ struct CurveMapping;
 struct CurveProfile;
 struct uiStyle;
 struct uiWidgetColors;
-
-KRAKEN_NAMESPACE_BEGIN
-
+struct Scene;
+struct UnitSettings;
 struct ARegion;
 struct AnimationEvalContext;
 struct ImBuf;
 struct Main;
-struct Scene;
 struct kContext;
 struct kContextStore;
 struct uiHandleButtonData;
@@ -184,7 +187,7 @@ struct uiBut
   char strdata[UI_MAX_NAME_STR];
   char drawstr[UI_MAX_DRAW_STR];
 
-  rctf rect; /* block relative coords */
+  struct rctf rect; /* block relative coords */
 
   char *poin;
   float hardmin, hardmax, softmin, softmax;
@@ -241,11 +244,11 @@ struct uiBut
   /** info on why button is disabled, displayed in tooltip */
   const char *disabled_info;
 
-  KIFIconID icon;
+  int icon;
   /** Copied from the #uiBlock.emboss */
-  eUIEmbossType emboss;
+  short emboss;
   /** direction in a pie menu, used for collision detection. */
-  RadialDirection pie_dir;
+  short pie_dir;
   /** could be made into a single flag */
   bool changed;
   /** so buttons can support unit systems which are not RNA */
@@ -261,19 +264,21 @@ struct uiBut
   uiMenuStepFunc menu_step_func;
 
   /* RNA data */
-  struct kraken::KrakenPRIM stagepoin;
-  struct kraken::KrakenPROP *stageprop;
+  struct KrakenPRIM *stagepoin;
+  struct KrakenPROP *stageprop;
   int rnaindex;
 
   /* Operator data */
   struct wmOperatorType *optype;
-  struct kraken::KrakenPRIM *opptr;
-  kraken::eWmOperatorContext opcontext;
+  struct KrakenPRIM *opptr;
+  short opcontext;
 
   /** When non-zero, this is the key used to activate a menu items (`a-z` always lower case). */
   uchar menu_key;
 
+#ifdef __cplusplus
   std::vector<struct uiButExtraOpIcon *> extra_op_icons; /** #uiButExtraOpIcon */
+#endif                                                   /* __cplusplus */
 
   /* Drag-able data, type is WM_DRAG_... */
   char dragtype;
@@ -343,8 +348,8 @@ typedef struct uiButSearch
 
   const char *item_sep_string;
 
-  struct kraken::KrakenPRIM rnasearchpoin;
-  struct kraken::KrakenPROP *rnasearchprop;
+  struct KrakenPRIM *rnasearchpoin;
+  struct KrakenPROP *rnasearchprop;
 
   /**
    * The search box only provides suggestions, it does not force
@@ -358,8 +363,8 @@ typedef struct uiButDecorator
 {
   uiBut but;
 
-  struct kraken::KrakenPRIM stagepoin;
-  struct kraken::KrakenPROP *stageprop;
+  struct KrakenPRIM *stagepoin;
+  struct KrakenPROP *stageprop;
   int rnaindex;
 } uiButDecorator;
 
@@ -498,7 +503,9 @@ enum eBlockContentHints
 typedef struct uiButtonGroup
 {
   void *next, *prev;
+#ifdef __cplusplus
   std::vector<uiBut *> buttons; /* #LinkData with #uiBut data field. */
+#endif                          /* __cplusplus */
   short flag;
 } uiButtonGroup;
 
@@ -517,26 +524,31 @@ struct uiBlock
 {
   uiBlock *next, *prev;
 
+#ifdef __cplusplus
   std::vector<struct uiBut *> buttons;
+#endif /* __cplusplus */
+
   struct Panel *panel;
   uiBlock *oldblock;
 
   /** Used for `UI_butstore_*` runtime function. */
   ListBase butstore;
 
+#ifdef __cplusplus
   std::vector<uiButtonGroup *> button_groups; /* #uiButtonGroup. */
-
   std::vector<uiLayout *> layouts;
+  std::vector<kContextStore *> contexts;
+#endif /* __cplusplus */
+
   struct uiLayout *curlayout;
 
-  std::vector<kContextStore *> contexts;
 
   /** A block can store "views" on data-sets. Currently tree-views (#AbstractTreeView) only.
    * Others are imaginable, e.g. table-views, grid-views, etc. These are stored here to support
    * state that is persistent over redraws (e.g. collapsed tree-view items). */
   ListBase views;
 
-  wabi::TfToken name;
+  char name[MAX_NAME];
 
   float winmat[4][4];
 
@@ -802,7 +814,7 @@ bool ui_but_context_poll_operator_ex(struct kContext *C,
 
 extern void ui_but_update(uiBut *but);
 extern void ui_but_update_edited(uiBut *but);
-extern PropertyScaleType ui_but_scale_type(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
+extern short ui_but_scale_type(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 extern bool ui_but_is_float(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 extern bool ui_but_is_bool(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 extern bool ui_but_is_unit(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
@@ -887,8 +899,8 @@ struct uiPopupBlockHandle
 
   /* for operator popups */
   struct wmOperator *popup_op;
-  ScrArea *ctx_area;
-  ARegion *ctx_region;
+  struct ScrArea *ctx_area;
+  struct ARegion *ctx_region;
 
   /* return values */
   int butretval;
@@ -1024,10 +1036,10 @@ void ui_pie_menu_level_create(uiBlock *block,
                               struct wmOperatorType *ot,
                               const char *propname,
                               IDProperty *properties,
-                              const EnumPropertyItem *items,
+                              const struct EnumPropertyItem *items,
                               int totitem,
-                              kraken::eWmOperatorContext context,
-                              kraken::eWmOperatorContext flag);
+                              short context,
+                              short flag);
 
 /* interface_region_popup.c */
 
@@ -1141,8 +1153,7 @@ const char *ui_textedit_undo(struct uiUndoStack_Text *undo_stack,
 
 /* interface_handlers.c */
 
-extern void ui_handle_afterfunc_add_operator(struct wmOperatorType *ot,
-                                             kraken::eWmOperatorContext opcontext);
+extern void ui_handle_afterfunc_add_operator(struct wmOperatorType *ot, short opcontext);
 /**
  * Assumes event type is MOUSEPAN.
  */
@@ -1192,8 +1203,8 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, bool do_strip);
 void ui_but_clipboard_free(void);
 bool ui_but_luxo_equals(const uiBut *a, const uiBut *b);
 bool ui_but_luxo_equals_ex(const uiBut *but,
-                           const kraken::KrakenPRIM *ptr,
-                           const kraken::KrakenPROP *prop,
+                           const struct KrakenPRIM *ptr,
+                           const struct KrakenPROP *prop,
                            int index);
 uiBut *ui_but_find_old(uiBlock *block_old, const uiBut *but_new);
 uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old);
@@ -1243,10 +1254,7 @@ struct GPUBatch *ui_batch_roundbox_widget_get(void);
 struct GPUBatch *ui_batch_roundbox_shadow_get(void);
 
 void ui_draw_menu_back(uiStyle *style, uiBlock *block, rcti *rect);
-void ui_draw_popover_back(struct ARegion *region,
-                          uiStyle *style,
-                          uiBlock *block,
-                          rcti *rect);
+void ui_draw_popover_back(struct ARegion *region, uiStyle *style, uiBlock *block, rcti *rect);
 void ui_draw_pie_center(uiBlock *block);
 const struct uiWidgetColors *ui_tooltip_get_theme(void);
 
@@ -1363,10 +1371,10 @@ bool ui_layout_replace_but_ptr(uiLayout *layout, const void *old_but_ptr, uiBut 
  *       #UI_BUT_DISABLED flag depending on if a search pointer-property pair was provided/found.
  */
 uiBut *ui_but_add_search(uiBut *but,
-                         kraken::KrakenPRIM *ptr,
-                         kraken::KrakenPROP *prop,
-                         kraken::KrakenPRIM *searchptr,
-                         kraken::KrakenPROP *searchprop,
+                         struct KrakenPRIM *ptr,
+                         struct KrakenPROP *prop,
+                         struct KrakenPRIM *searchptr,
+                         struct KrakenPROP *searchprop,
                          bool results_are_suggestions);
 /**
  * Check all buttons defined in this layout,
@@ -1417,16 +1425,16 @@ void ui_but_anim_paste_driver(struct kContext *C);
  * \a str can be NULL to only perform check if \a but has an expression at all.
  * \return if button has an expression.
  */
-bool ui_but_anim_expression_get(uiBut *but, char *str, size_t maxlen);
-bool ui_but_anim_expression_set(uiBut *but, const char *str);
+bool ui_but_anim_expression_get(struct uiBut *but, char *str, size_t maxlen);
+bool ui_but_anim_expression_set(struct uiBut *but, const char *str);
 /**
  * Create new expression for button (i.e. a "scripted driver"), if it can be created.
  */
-bool ui_but_anim_expression_create(uiBut *but, const char *str);
-void ui_but_anim_autokey(struct kContext *C, uiBut *but, struct Scene *scene, float cfra);
+bool ui_but_anim_expression_create(struct uiBut *but, const char *str);
+void ui_but_anim_autokey(struct kContext *C, struct uiBut *but, struct kScene *scene, float cfra);
 
 void ui_but_anim_decorate_cb(struct kContext *C, void *arg_but, void *arg_dummy);
-void ui_but_anim_decorate_update_from_flag(uiButDecorator *but);
+void ui_but_anim_decorate_update_from_flag(struct uiButDecorator *but);
 
 /* interface_query.c */
 
@@ -1576,11 +1584,11 @@ struct uiListType *UI_UL_asset_view(void);
  */
 typedef struct uiLUXOCollectionSearch
 {
-  kraken::KrakenPRIM target_ptr;
-  kraken::KrakenPROP *target_prop;
+  struct KrakenPRIM *target_ptr;
+  struct KrakenPROP *target_prop;
 
-  kraken::KrakenPRIM search_ptr;
-  kraken::KrakenPROP *search_prop;
+  struct KrakenPRIM *search_ptr;
+  struct KrakenPROP *search_prop;
 
   uiBut *search_but;
   /* Let UI_butstore_ API update search_but pointer above over redraws. */
@@ -1623,5 +1631,3 @@ struct ID *ui_template_id_liboverride_hierarchy_make(struct kContext *C,
                                                      const char **r_undo_push_label);
 
 void UI_region_message_subscribe(struct ARegion *region, struct wmMsgBus *mbus);
-
-KRAKEN_NAMESPACE_END

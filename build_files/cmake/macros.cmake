@@ -764,7 +764,7 @@ function(ADD_CHECK_C_COMPILER_FLAG
 
   include(CheckCCompilerFlag)
 
-  CHECK_C_COMPILER_FLAG("${_FLAG}" "${_CACHE_VAR}")
+  check_c_compiler_flag("${_FLAG}" "${_CACHE_VAR}")
   if(${_CACHE_VAR})
     # message(STATUS "Using CFLAG: ${_FLAG}")
     set(${_CFLAGS} "${${_CFLAGS}} ${_FLAG}" PARENT_SCOPE)
@@ -781,7 +781,7 @@ function(ADD_CHECK_CXX_COMPILER_FLAG
 
   include(CheckCXXCompilerFlag)
 
-  CHECK_CXX_COMPILER_FLAG("${_FLAG}" "${_CACHE_VAR}")
+  check_cxx_compiler_flag("${_FLAG}" "${_CACHE_VAR}")
   if(${_CACHE_VAR})
     # message(STATUS "Using CXXFLAG: ${_FLAG}")
     set(${_CXXFLAGS} "${${_CXXFLAGS}} ${_FLAG}" PARENT_SCOPE)

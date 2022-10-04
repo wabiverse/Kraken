@@ -36,7 +36,7 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
-void KPY_context_set(kraken::kContext *C);
-kraken::kContext *KPY_context_get(void);
+void KPY_context_set(kContext *C);
+kContext *KPY_context_get(void);
 
-void KPY_context_update(kraken::kContext *C);
+void KPY_context_update(kContext *C);

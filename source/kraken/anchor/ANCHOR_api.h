@@ -724,11 +724,7 @@ typedef signed long long AnchorS64;    // 64-bit signed integer (post C++11)
 typedef unsigned long long AnchorU64;  // 64-bit unsigned integer (post C++11)
 #endif
 
-KRAKEN_NAMESPACE_BEGIN
-
 using UsdImagingGLEngineSharedPtr = std::shared_ptr<class wabi::UsdImagingGLEngine>;
-
-KRAKEN_NAMESPACE_END
 
 /**
  * ----- ANCHOR STRUCTS ----- */
@@ -1199,7 +1195,7 @@ namespace ANCHOR
    *      - Game Engine (RTX)
    *      - Misc. */
   ANCHOR_API
-  kraken::UsdImagingGLEngineSharedPtr GetEngineGL();
+  UsdImagingGLEngineSharedPtr GetEngineGL();
 
   /**
    * Access the IO structure.

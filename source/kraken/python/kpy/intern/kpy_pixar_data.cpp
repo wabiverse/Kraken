@@ -29,11 +29,12 @@
 #include "KLI_utildefines.h"
 #include "KLI_string.h"
 
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
+#include "KKE_global.h"
 
 #include "LUXO_access.h"
 #include "LUXO_runtime.h"
@@ -209,7 +210,7 @@ static PyObject *kpy_pixar_data_temp_data(PyObject *UNUSED(self), PyObject *args
 
   ret = PyObject_GC_New(KPy_DataContext, &kpy_pixar_data_context_Type);
 
-  STRNCPY(ret->filepath, filepath ? filepath : G.filepath);
+  STRNCPY(ret->filepath, filepath ? filepath : G_MAIN->stage_id);
 
   return (PyObject *)ret;
 }

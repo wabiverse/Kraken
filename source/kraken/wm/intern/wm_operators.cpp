@@ -40,27 +40,25 @@
 #include "LUXO_access.h"
 #include "LUXO_define.h"
 
+#include "KLI_rhash.h"
 #include "KLI_dynstr.h"
 
 #include "KKE_context.h"
 #include "KKE_utils.h"
+#include "KKE_global.h"
 
 #define UNDOCUMENTED_OPERATOR_TIP N_("(undocumented operator)")
-
-KRAKEN_NAMESPACE_BEGIN
 
 static RHash *global_ops_hash = NULL;
 /** Counter for operator-properties that should not be tagged with #OP_PROP_TAG_ADVANCED. */
 static int ot_prop_basic_count = -1;
-
-wmOperatorType::wmOperatorType() {}
 
 wmOperatorType *WM_operatortype_find(const TfToken &idname)
 {
   if (!idname.IsEmpty()) {
     wmOperatorType *ot;
 
-    ot = (wmOperatorType *)KKE_rhash_lookup((RHash *)global_ops_hash, idname);
+    ot = (wmOperatorType *)KLI_rhash_lookup((RHash *)global_ops_hash, idname.data());
     if (ot) {
       return ot;
     }
@@ -105,7 +103,7 @@ static void wm_operatortype_append__end(wmOperatorType *ot)
                           ot->description ? ot->description : UNDOCUMENTED_OPERATOR_TIP);
   PRIM_def_struct_identifier(KRAKEN_STAGE, ot->prim, ot->idname);
 
-  KKE_rhash_insert(global_ops_hash, ot->idname, ot);
+  KLI_rhash_insert(global_ops_hash, (void *)ot->idname.data(), ot);
 }
 
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *))
@@ -220,7 +218,7 @@ char *WM_operator_pystring_ex(kContext *C,
 
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
 {
-  LUXO_pointer_create(&G.main->wm.front()->id, ot->prim, NULL, ptr);
+  LUXO_pointer_create(&((wmWindowManager *)G.main->wm.first)->id, ot->prim, NULL, ptr);
 }
 
 const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties)
@@ -252,7 +250,7 @@ bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update)
 void WM_operators_init(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  global_ops_hash = KKE_rhash_str_new_ex("wm_operatortype_init rh", 2048);
+  global_ops_hash = KLI_rhash_str_new_ex("wm_operatortype_init rh", 2048);
 }
 
 void WM_operators_register(kContext *C)
@@ -261,4 +259,3 @@ void WM_operators_register(kContext *C)
   WM_file_operators_register();
 }
 
-KRAKEN_NAMESPACE_END

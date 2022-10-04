@@ -62,7 +62,7 @@
 
 #include <wabi/base/tf/token.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 const EnumPropertyItem luxo_enum_event_type_items[] = {
   /* - Note we abuse 'tooltip' message here to store a 'compact' form of some (too) long names.
@@ -303,4 +303,3 @@ void PRIM_def_wm(const KrakenSTAGE &kstage)
   /* ... */
 }
 
-KRAKEN_NAMESPACE_END

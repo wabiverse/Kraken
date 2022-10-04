@@ -24,10 +24,15 @@
  * Purple Underground.
  */
 
-#include "kraken/kraken.h"
-#include "KKE_api.h"
+#include <stddef.h>
 
-KRAKEN_NAMESPACE_BEGIN
+#include "KLI_compiler_attrs.h"
+
+#ifdef __cplusplus
+#  include <string>
+#endif /* __cplusplus */
+
+struct ListBase;
 
 void KKE_appdir_init(void);
 void KKE_appdir_exit(void);
@@ -56,7 +61,9 @@ bool KKE_appdir_program_python_search(char *fullpath,
                                       const int version_major,
                                       const int version_minor);
 
+#ifdef __cplusplus
 std::string KKE_appdir_copy_recursive(const int src_id, const int target_id);
+#endif /* __cplusplus */
 
 /* Initialize path to temporary directory. */
 void KKE_tempdir_init(const char *userdir);
@@ -97,5 +104,3 @@ enum
 #define KRAKEN_BOOKMARK_FILE "bookmarks.txt"
 #define KRAKEN_HISTORY_FILE "recent-files.txt"
 #define KRAKEN_PLATFORM_SUPPORT_FILE "platform_support.txt"
-
-KRAKEN_NAMESPACE_END

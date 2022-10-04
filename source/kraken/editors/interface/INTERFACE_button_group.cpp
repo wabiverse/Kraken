@@ -47,8 +47,6 @@
 
 #include "interface_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 /* -------------------------------------------------------------------- */
 /** \name Button Groups
  * \{ */
@@ -70,5 +68,3 @@ void UI_block_new_button_group(uiBlock *block, uiButtonGroupFlag flag)
 }
 
 /** \} */
-
-KRAKEN_NAMESPACE_END

@@ -107,9 +107,9 @@ enum StructFlag
 
 struct CollectionPropertyIterator {
   /* internal */
-  kraken::KrakenPRIM parent;
-  kraken::KrakenPRIM builtin_parent;
-  struct kraken::KrakenPROP *prop;
+  KrakenPRIM parent;
+  KrakenPRIM builtin_parent;
+  struct KrakenPROP *prop;
   union {
     void *custom;
   } internal;
@@ -117,7 +117,7 @@ struct CollectionPropertyIterator {
   int level;
 
   /* external */
-  kraken::KrakenPRIM ptr;
+  KrakenPRIM ptr;
   int valid;
 };
 

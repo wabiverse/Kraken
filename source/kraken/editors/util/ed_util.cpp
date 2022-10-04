@@ -29,12 +29,10 @@
 
 #include "LUXO_access.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 void ED_editors_init(kContext *C)
 {
   Main *kmain = CTX_data_main(C);
-  Scene *scene = CTX_data_scene(C);
+  kScene *scene = CTX_data_scene(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
   ReportList *reports = CTX_wm_reports(C);
@@ -72,5 +70,3 @@ void ED_editors_init(kContext *C)
   SWAP(int, reports->flag, reports_flag_prev);
   wm->op_undo_depth--;
 }
-
-KRAKEN_NAMESPACE_END

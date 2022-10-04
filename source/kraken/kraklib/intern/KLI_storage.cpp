@@ -80,8 +80,6 @@
 
 #include <filesystem>
 
-KRAKEN_NAMESPACE_BEGIN
-
 int KLI_exists(const char *path)
 {
 #if defined(WIN32)
@@ -211,5 +209,3 @@ bool KLI_is_file(const char *path)
   const int mode = KLI_exists(path);
   return (mode && !S_ISDIR(mode));
 }
-
-KRAKEN_NAMESPACE_END

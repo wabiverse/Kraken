@@ -39,16 +39,16 @@
 
 float UI_view2d_scale_get_x(const struct View2D *v2d);
 
-char UI_view2d_mouse_in_scrollers_ex(const struct kraken::ARegion *region,
+char UI_view2d_mouse_in_scrollers_ex(const struct ARegion *region,
                                      const struct View2D *v2d,
                                      const int xy[2],
                                      int *r_scroll) ATTR_NONNULL(1, 2, 3, 4);
-char UI_view2d_mouse_in_scrollers(const struct kraken::ARegion *region,
+char UI_view2d_mouse_in_scrollers(const struct ARegion *region,
                                   const struct View2D *v2d,
                                   const int xy[2]) ATTR_NONNULL(1, 2, 3);
 
-char UI_view2d_rect_in_scrollers(const kraken::ARegion *region, const View2D *v2d, const rcti *rect);
-char UI_view2d_rect_in_scrollers_ex(const kraken::ARegion *region,
+char UI_view2d_rect_in_scrollers(const ARegion *region, const View2D *v2d, const rcti *rect);
+char UI_view2d_rect_in_scrollers_ex(const ARegion *region,
                                     const View2D *v2d,
                                     const rcti *rect,
                                     int *r_scroll);

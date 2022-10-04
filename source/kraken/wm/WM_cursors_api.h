@@ -35,7 +35,7 @@
 #include <wabi/base/tf/debug.h>
 #include <wabi/wabi.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void WM_cursor_set(wmWindow *win, int curs);
 void WM_cursor_modal_set(wmWindow *win, int val);
@@ -46,4 +46,3 @@ void WM_cursor_grab_disable(wmWindow *win, const int mouse_ungrab_xy[2]);
 void WM_cursor_position_from_anchor(wmWindow *win, int *x, int *y);
 void WM_cursor_position_to_anchor(wmWindow *win, int *x, int *y);
 
-KRAKEN_NAMESPACE_END

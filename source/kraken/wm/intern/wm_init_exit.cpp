@@ -42,10 +42,11 @@
 
 #include "KLI_threads.h"
 
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
 #include "KKE_context.h"
 #include "KKE_icons.h"
 #include "KKE_main.h"
+#include "KKE_global.h"
 
 #include "KPY_extern_python.h"
 #include "KPY_extern_run.h"
@@ -57,9 +58,6 @@
 #include "UI_resources.h"
 
 #include <wabi/base/tf/stringUtils.h>
-
-KRAKEN_NAMESPACE_BEGIN
-
 
 void WM_init(kContext *C, int argc, const char **argv)
 {
@@ -102,7 +100,7 @@ void WM_exit_ex(kContext *C, const bool do_python)
 
     UNIVERSE_FOR_ALL (win, wm->windows) {
       CTX_wm_window_set(C, VALUE(win));
-      WM_event_remove_handlers(C, VALUE(win)->modalhandlers);
+      WM_event_remove_handlers(C, &VALUE(win)->modalhandlers);
       ED_screen_exit(C, VALUE(win), WM_window_get_active_screen(VALUE(win)));
     }
 
@@ -296,4 +294,3 @@ void WM_exit(kContext *C)
   exit(G.is_break == true);
 }
 
-KRAKEN_NAMESPACE_END

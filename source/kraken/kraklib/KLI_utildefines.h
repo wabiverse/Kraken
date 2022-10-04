@@ -903,10 +903,14 @@ extern bool KLI_memory_is_zero(const void *arr, size_t arr_size);
 #    define setenv(x, y, z) _putenv(CHARALL(STRINGALL(x) + "=" + y))
 #    define DebugOutput(w) OutputDebugString(TEXT(w))
 #  endif
+#endif /* __cplusplus */
 
-#  ifndef MAX_PATH
-#    define MAX_PATH 260
-#  endif /* MAX_PATH */
-#endif   /* __cplusplus */
+#ifndef MAX_NAME
+#  define MAX_NAME 64
+#endif /* MAX_NAME */
+
+#ifndef MAX_PATH
+#  define MAX_PATH 260
+#endif /* MAX_PATH */
 
 #endif /* __KLI_UTILDEFINES_H__ */

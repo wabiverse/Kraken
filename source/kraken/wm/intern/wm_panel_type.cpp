@@ -33,6 +33,7 @@
 
 #include "WM_window.h"
 
+#include "KLI_rhash.h"
 #include "KLI_time.h"
 
 #include "KKE_context.h"
@@ -43,14 +44,14 @@
 
 #include "UI_interface.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 static RHash *g_paneltypes_hash = NULL;
 
 PanelType *WM_paneltype_find(const char *idname, bool quiet)
 {
   if (idname[0]) {
-    PanelType *pt = (PanelType *)KKE_rhash_lookup(g_paneltypes_hash, idname);
+    PanelType *pt = (PanelType *)KLI_rhash_lookup(g_paneltypes_hash, idname);
     if (pt) {
       return pt;
     }
@@ -63,4 +64,3 @@ PanelType *WM_paneltype_find(const char *idname, bool quiet)
   return NULL;
 }
 
-KRAKEN_NAMESPACE_END

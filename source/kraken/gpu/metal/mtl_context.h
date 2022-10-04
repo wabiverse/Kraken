@@ -34,126 +34,127 @@
 
 class AnchorDrawData;
 
-KRAKEN_NAMESPACE_BEGIN
-
-namespace gpu
+namespace kraken
 {
-  /**
-   * @METAL: Buffer.
-   * A wrapper around a Metal Buffer object that knows the last time it was
-   * reused. */
-  class MTLBackendBuffer
+
+  namespace gpu
   {
-   public:
-
-    MTLBackendBuffer *init(MTL::Buffer *buffer);
-
-    MTL::Buffer *buffer;
-    double lastReuseTime;
-  };
-
-  /**
-   * @METAL: Framebuffer.
-   * An object that encapsulates the data necessary to uniquely identify a
-   * render pipeline state. These are used as cache keys. */
-  class MTLBackendFramebufferDescriptor
-  {
-   public:
-
-    MTLBackendFramebufferDescriptor *init(MTL::RenderPassDescriptor *desc);
-
-    unsigned long sampleCount;
-    MTL::PixelFormat colorPixelFormat;
-    MTL::PixelFormat depthPixelFormat;
-    MTL::PixelFormat stencilPixelFormat;
-  };
-
-  /**
-   * @METAL: Backend.
-   * A lazy evaluated, correctly destroyed, thread-safe singleton that stores
-   * long-lived objects that are needed by the Metal renderer backend. Stores
-   * the render pipeline state cache and the default font texture, and manages
-   * the reusable buffer cache. */
-  class MTLBackend
-  {
-   public:
-
-    typedef std::vector<MTLBackendBuffer *> MTLBackendBufferCache;
-    typedef wabi::TfHashMap<MTLBackendFramebufferDescriptor *, MTL::RenderPipelineState *>
-      MTLRenderPipelineStateCache;
-
-    static MTLBackend &getInstance()
+    /**
+     * @METAL: Buffer.
+     * A wrapper around a Metal Buffer object that knows the last time it was
+     * reused. */
+    class MTLBackendBuffer
     {
-      static MTLBackend instance;
-      return instance;
+     public:
+
+      MTLBackendBuffer *init(MTL::Buffer *buffer);
+
+      MTL::Buffer *buffer;
+      double lastReuseTime;
+    };
+
+    /**
+     * @METAL: Framebuffer.
+     * An object that encapsulates the data necessary to uniquely identify a
+     * render pipeline state. These are used as cache keys. */
+    class MTLBackendFramebufferDescriptor
+    {
+     public:
+
+      MTLBackendFramebufferDescriptor *init(MTL::RenderPassDescriptor *desc);
+
+      unsigned long sampleCount;
+      MTL::PixelFormat colorPixelFormat;
+      MTL::PixelFormat depthPixelFormat;
+      MTL::PixelFormat stencilPixelFormat;
+    };
+
+    /**
+     * @METAL: Backend.
+     * A lazy evaluated, correctly destroyed, thread-safe singleton that stores
+     * long-lived objects that are needed by the Metal renderer backend. Stores
+     * the render pipeline state cache and the default font texture, and manages
+     * the reusable buffer cache. */
+    class MTLBackend
+    {
+     public:
+
+      typedef std::vector<MTLBackendBuffer *> MTLBackendBufferCache;
+      typedef wabi::TfHashMap<MTLBackendFramebufferDescriptor *, MTL::RenderPipelineState *>
+        MTLRenderPipelineStateCache;
+
+      static MTLBackend &getInstance()
+      {
+        static MTLBackend instance;
+        return instance;
+      }
+
+      MTLBackendBuffer *dequeueReusableBuffer(NS::UInteger length, MTL::Device *device);
+      MTL::RenderPipelineState *newRenderPipelineState(MTLBackendFramebufferDescriptor *descriptor,
+                                                       MTL::Device *device);
+
+     private:
+
+      MTLBackend();
+
+     public:
+
+      MTLBackend(MTLBackend const &) = delete;
+      void operator=(MTLBackend const &) = delete;
+
+      MTL::Device *device;
+      MTL::DepthStencilState *depthStencilState;
+
+      // framebuffer descriptor for current frame; transient
+      MTLBackendFramebufferDescriptor *framebufferDescriptor;
+      // pipeline cache; keyed on framebuffer descriptors
+      MTLRenderPipelineStateCache renderPipelineStateCache;
+      MTL::Texture *fontTexture;
+      MTLBackendBufferCache bufferCache;
+      double lastBufferCachePurge;
+    };
+
+    struct MTLContext
+    {
+      MTLContext();
+    };
+
+    MTLContext *CreateContext();
+
+    MTLContext *GetContext();
+
+    void DestroyContext();
+
+    static inline CFTimeInterval GetMachAbsoluteTimeInSeconds()
+    {
+      return static_cast<CFTimeInterval>(
+        static_cast<double>(clock_gettime_nsec_np(CLOCK_UPTIME_RAW)) / 1e9);
     }
 
-    MTLBackendBuffer *dequeueReusableBuffer(NS::UInteger length, MTL::Device *device);
-    MTL::RenderPipelineState *newRenderPipelineState(MTLBackendFramebufferDescriptor *descriptor,
-                                                     MTL::Device *device);
+    bool InitContext(MTL::Device *device);
 
-   private:
+    void FreeContext();
 
-    MTLBackend();
+    void NewFrame(MTL::RenderPassDescriptor *desc);
 
-   public:
+    void ViewUpdate(AnchorDrawData *drawData,
+                    MTL::CommandBuffer *commandBuffer,
+                    MTL::RenderCommandEncoder *commandEncoder,
+                    MTL::RenderPipelineState *renderPipelineState,
+                    MTLBackendBuffer *vertexBuffer,
+                    size_t vertexBufferOffset);
 
-    MTLBackend(MTLBackend const &) = delete;
-    void operator=(MTLBackend const &) = delete;
-
-    MTL::Device *device;
-    MTL::DepthStencilState *depthStencilState;
-
-    // framebuffer descriptor for current frame; transient
-    MTLBackendFramebufferDescriptor *framebufferDescriptor;
-    // pipeline cache; keyed on framebuffer descriptors
-    MTLRenderPipelineStateCache renderPipelineStateCache;
-    MTL::Texture *fontTexture;
-    MTLBackendBufferCache bufferCache;
-    double lastBufferCachePurge;
-  };
-
-  struct MTLContext
-  {
-    MTLContext();
-  };
-
-  MTLContext *CreateContext();
-
-  MTLContext *GetContext();
-
-  void DestroyContext();
-
-  static inline CFTimeInterval GetMachAbsoluteTimeInSeconds()
-  {
-    return static_cast<CFTimeInterval>(
-      static_cast<double>(clock_gettime_nsec_np(CLOCK_UPTIME_RAW)) / 1e9);
-  }
-
-  bool InitContext(MTL::Device *device);
-
-  void FreeContext();
-
-  void NewFrame(MTL::RenderPassDescriptor *desc);
-
-  void ViewUpdate(AnchorDrawData *drawData,
+    void ViewDraw(AnchorDrawData *drawData,
                   MTL::CommandBuffer *commandBuffer,
-                  MTL::RenderCommandEncoder *commandEncoder,
-                  MTL::RenderPipelineState *renderPipelineState,
-                  MTLBackendBuffer *vertexBuffer,
-                  size_t vertexBufferOffset);
+                  MTL::RenderCommandEncoder *commandEncoder);
 
-  void ViewDraw(AnchorDrawData *drawData,
-                MTL::CommandBuffer *commandBuffer,
-                MTL::RenderCommandEncoder *commandEncoder);
+    bool CreateFonts(MTL::Device *device);
 
-  bool CreateFonts(MTL::Device *device);
+    void DestroyFonts();
 
-  void DestroyFonts();
+    bool CreateResources(MTL::Device *device);
 
-  bool CreateResources(MTL::Device *device);
+    void DestroyResources();
+  }  // namespace gpu
 
-  void DestroyResources();
-}  // namespace gpu
-
-KRAKEN_NAMESPACE_END
+}  // namespace kraken

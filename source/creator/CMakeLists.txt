@@ -57,7 +57,6 @@ if(WITH_TBB)
 endif()
 
 list(APPEND LIB
-  kraken_kernel
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}
   ${ALL_IMAGING_LIBS}

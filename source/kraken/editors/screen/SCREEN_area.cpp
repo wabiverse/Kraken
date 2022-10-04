@@ -22,6 +22,8 @@
  * Tools for Artists.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "USD_wm_types.h"
 #include "USD_area.h"
 #include "USD_context.h"
@@ -33,6 +35,7 @@
 #include "USD_screen.h"
 #include "USD_space_types.h"
 #include "USD_userpref.h"
+#include "USD_userdef_types.h"
 #include "USD_window.h"
 #include "USD_workspace.h"
 
@@ -41,6 +44,7 @@
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
 
+#include "KLI_listbase.h"
 #include "KLI_assert.h"
 #include "KLI_math.h"
 
@@ -49,9 +53,6 @@
 
 #include "ED_defines.h"
 #include "ED_screen.h"
-
-KRAKEN_NAMESPACE_BEGIN
-
 
 struct RegionTypeAlignInfo
 {
@@ -108,14 +109,18 @@ void ED_region_tag_refresh_ui(ARegion *region)
 
 /** \} */
 
-void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const bool skip_region_exit)
+void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region_exit)
 {
   wmWindow *win = CTX_wm_window(C);
 
   TfToken spacetype = FormFactory(area->spacetype);
 
   if (spacetype != type) {
-    SpaceLink *slold = area->spacedata.at(0);
+    kSpaceLink *slold = MEM_new<kSpaceLink>("kSpaceLink");
+    slold->link_flag = area->spacedata.front()->link_flag;
+    // slold->regionbase = area->spacedata.front()->regionbase;
+    slold->spacetype = area->spacedata.front()->spacetype;
+
 
     // void *area_exit = area->type ? area->type->exit : NULL;
 
@@ -149,7 +154,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
      * (e.g. with properties editor) until space-data is properly created */
 
     /* check previously stored space */
-    SpaceLink *sl = POINTER_ZERO;
+    kSpaceLink *sl = POINTER_ZERO;
     UNIVERSE_FOR_ALL (sl_iter, area->spacedata) {
       if (sl_iter->spacetype == type.Hash()) {
         sl = sl_iter;
@@ -157,7 +162,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
       }
     }
 
-    if (sl && sl->regions.empty()) {
+    if (sl && KLI_listbase_is_empty(&sl->regions)) {
       st->free(sl);
       // area->spacedata.erase(sl);
       if (slold == sl) {
@@ -168,9 +173,9 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
 
     if (sl) {
       /* swap regions */
-      slold->regions = area->regions;
-      area->regions = sl->regions;
-      sl->regions.clear();
+      // slold->regions = area->regions;
+      // area->regions = sl->regions;
+      // sl->regions.clear();
       /* SPACE_FLAG_TYPE_WAS_ACTIVE is only used to go back to a previously active space that is
        * overlapped by temporary ones. It's now properly activated, so the flag should be cleared
        * at this point. */
@@ -184,16 +189,16 @@ void ED_area_newspace(kContext *C, ScrArea *area, const TfToken &type, const boo
       /* new space */
       if (st) {
         /* Don't get scene from context here which may depend on space-data. */
-        Scene *scene = CTX_data_scene(C);
-        sl = st->create(area, scene);
+        kScene *scene = CTX_data_scene(C);
+        // sl = st->create(area, scene);
         area->spacedata.insert(area->spacedata.begin(), sl);
 
         /* swap regions */
         if (slold) {
-          slold->regions = area->regions;
+          // slold->regions = area->regions;
         }
-        area->regions = sl->regions;
-        sl->regions.clear();
+        // area->regions = sl->regions;
+        // sl->regions.clear();
       }
     }
 
@@ -227,7 +232,7 @@ bool ED_area_is_global(const ScrArea *area)
 int ED_area_global_size_y(const ScrArea *area)
 {
   KLI_assert(ED_area_is_global(area));
-  return round_fl_to_int(area->global->cur_fixed_height * UI_DPI_FAC);
+  return round_fl_to_int(area->global->cur_fixed_height * U.dpi_fac);
 }
 
 void ED_area_tag_refresh(ScrArea *area)
@@ -281,5 +286,3 @@ void ED_area_do_msg_notify_tag_refresh(
   ScrArea *area = (ScrArea *)msg_val->user_data;
   ED_area_tag_refresh(area);
 }
-
-KRAKEN_NAMESPACE_END

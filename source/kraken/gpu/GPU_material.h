@@ -255,7 +255,7 @@ GPUMaterial *GPU_material_from_nodetree_find(struct ListBase *gpumaterials,
  * This is enforced since constructing other arguments to this function may be expensive
  * so only do this when they are needed.
  */
-GPUMaterial *GPU_material_from_nodetree(struct Scene *scene,
+GPUMaterial *GPU_material_from_nodetree(struct kScene *scene,
                                         struct Material *ma,
                                         struct kNodeTree *ntree,
                                         struct ListBase *gpumaterials,
@@ -275,7 +275,7 @@ void GPU_material_release(GPUMaterial *mat);
 
 void GPU_materials_free(struct Main *bmain);
 
-struct Scene *GPU_material_scene(GPUMaterial *material);
+struct kScene *GPU_material_scene(GPUMaterial *material);
 struct GPUPass *GPU_material_get_pass(GPUMaterial *material);
 struct GPUShader *GPU_material_get_shader(GPUMaterial *material);
 const char *GPU_material_get_name(GPUMaterial *material);

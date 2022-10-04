@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-/* Name of subfolder inside BLENDER_DATAFILES that contains font files. */
+/* Name of subfolder inside KRAKEN_DATAFILES that contains font files. */
 #define KRF_DATAFILES_FONTS_DIR "fonts"
 
 /* File name of the default variable-width font. */
@@ -76,8 +76,11 @@ void KRF_size(int fontid, float size, int dpi);
 void KRF_color4ubv(int fontid, const unsigned char rgba[4]);
 void KRF_color3ubv(int fontid, const unsigned char rgb[3]);
 void KRF_color3ubv_alpha(int fontid, const unsigned char rgb[3], unsigned char alpha);
-void KRF_color4ub(
-    int fontid, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha);
+void KRF_color4ub(int fontid,
+                  unsigned char r,
+                  unsigned char g,
+                  unsigned char b,
+                  unsigned char alpha);
 void KRF_color3ub(int fontid, unsigned char r, unsigned char g, unsigned char b);
 void KRF_color4f(int fontid, float r, float g, float b, float a);
 void KRF_color4fv(int fontid, const float rgba[4]);
@@ -112,7 +115,7 @@ void KRF_batch_draw_end(void);
  * Draw the string using the current font.
  */
 void KRF_draw_ex(int fontid, const char *str, size_t str_len, struct ResultKRF *r_info)
-    ATTR_NONNULL(2);
+  ATTR_NONNULL(2);
 void KRF_draw(int fontid, const char *str, size_t str_len) ATTR_NONNULL(2);
 int KRF_draw_mono(int fontid, const char *str, size_t str_len, int cwidth) ATTR_NONNULL(2);
 
@@ -147,13 +150,19 @@ void KRF_boundbox_foreach_glyph(int fontid,
 /**
  * Get the string byte offset that fits within a given width.
  */
-size_t KRF_width_to_strlen(
-    int fontid, const char *str, size_t str_len, float width, float *r_width) ATTR_NONNULL(2);
+size_t KRF_width_to_strlen(int fontid,
+                           const char *str,
+                           size_t str_len,
+                           float width,
+                           float *r_width) ATTR_NONNULL(2);
 /**
  * Same as KRF_width_to_strlen but search from the string end.
  */
-size_t KRF_width_to_rstrlen(
-    int fontid, const char *str, size_t str_len, float width, float *r_width) ATTR_NONNULL(2);
+size_t KRF_width_to_rstrlen(int fontid,
+                            const char *str,
+                            size_t str_len,
+                            float width,
+                            float *r_width) ATTR_NONNULL(2);
 
 /**
  * This function return the bounding box of the string
@@ -172,13 +181,13 @@ void KRF_boundbox(int fontid, const char *str, size_t str_len, struct rcti *box)
  * are multiplied by the aspect of the font.
  */
 float KRF_width_ex(int fontid, const char *str, size_t str_len, struct ResultKRF *r_info)
-    ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(2);
+  ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(2);
 float KRF_width(int fontid, const char *str, size_t str_len) ATTR_WARN_UNUSED_RESULT
-    ATTR_NONNULL();
+  ATTR_NONNULL();
 float KRF_height_ex(int fontid, const char *str, size_t str_len, struct ResultKRF *r_info)
-    ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(2);
+  ATTR_WARN_UNUSED_RESULT ATTR_NONNULL(2);
 float KRF_height(int fontid, const char *str, size_t str_len) ATTR_WARN_UNUSED_RESULT
-    ATTR_NONNULL();
+  ATTR_NONNULL();
 
 /**
  * Return dimensions of the font without any sample text.
@@ -192,8 +201,11 @@ int KRF_ascender(int fontid) ATTR_WARN_UNUSED_RESULT;
  * The following function return the width and height of the string, but
  * just in one call, so avoid extra freetype2 stuff.
  */
-void KRF_width_and_height(
-    int fontid, const char *str, size_t str_len, float *r_width, float *r_height) ATTR_NONNULL();
+void KRF_width_and_height(int fontid,
+                          const char *str,
+                          size_t str_len,
+                          float *r_width,
+                          float *r_height) ATTR_NONNULL();
 
 /**
  * For fixed width fonts only, returns the width of a
@@ -260,7 +272,7 @@ void KRF_buffer_col(int fontid, const float rgba[4]) ATTR_NONNULL(2);
  * float and unsigned char _BUT_ it's not necessary set both buffer, NULL is valid here.
  */
 void KRF_draw_buffer_ex(int fontid, const char *str, size_t str_len, struct ResultKRF *r_info)
-    ATTR_NONNULL(2);
+  ATTR_NONNULL(2);
 void KRF_draw_buffer(int fontid, const char *str, size_t str_len) ATTR_NONNULL(2);
 
 /**
@@ -330,7 +342,8 @@ void KRF_state_print(int fontid);
 #endif
 
 /** #FontKRF.flags. */
-enum {
+enum
+{
   KRF_ROTATION = 1 << 0,
   KRF_CLIPPING = 1 << 1,
   KRF_SHADOW = 1 << 2,
@@ -366,7 +379,8 @@ extern int krf_mono_font_render; /* don't mess drawing with render threads. */
 /**
  * Result of drawing/evaluating the string
  */
-struct ResultKRF {
+struct ResultKRF
+{
   /**
    * Number of lines drawn when #KRF_WORD_WRAP is enabled (both wrapped and `\n` newline).
    */

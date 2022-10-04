@@ -38,9 +38,13 @@
 #include "KKE_idprop.h"
 #include "KKE_lib_id.h"
 
+#include "USD_ID.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "KLI_strict_flags.h"
+
+#include <wabi/base/tf/token.h>
 
 /* IDPropertyTemplate is a union in USD_ID.h */
 
@@ -378,7 +382,7 @@ bool IDP_AddToGroup(IDProperty *group, IDProperty *prop)
 {
   KLI_assert(group->type == IDP_GROUP);
 
-  if (IDP_GetPropertyFromGroup(group, TfToken(prop->name)) == NULL) {
+  if (IDP_GetPropertyFromGroup(group, wabi::TfToken(prop->name)) == NULL) {
     group->len++;
     // group->data.group.push_back(prop);
     KLI_addtail(&group->data.group, prop);
@@ -473,7 +477,7 @@ bool IDP_EqualsProperties_ex(IDProperty *prop1, IDProperty *prop2, const bool is
 
       LISTBASE_FOREACH(IDProperty *, link1, &prop1->data.group)
       {
-        IDProperty *link2 = IDP_GetPropertyFromGroup(prop2, TfToken(link1->name));
+        IDProperty *link2 = IDP_GetPropertyFromGroup(prop2, wabi::TfToken(link1->name));
 
         if (!IDP_EqualsProperties_ex(link1, link2, is_strict)) {
           return false;
@@ -545,7 +549,7 @@ void IDP_ReplaceGroupInGroup(IDProperty *dest, const IDProperty *src)
 void IDP_ReplaceInGroup_ex(IDProperty *group, IDProperty *prop, IDProperty *prop_exist)
 {
   KLI_assert(group->type == IDP_GROUP);
-  KLI_assert(prop_exist == IDP_GetPropertyFromGroup(group, TfToken(prop->name)));
+  KLI_assert(prop_exist == IDP_GetPropertyFromGroup(group, wabi::TfToken(prop->name)));
 
   if (prop_exist != NULL) {
     int idx = KLI_findindex(&group->data.group, prop_exist);
@@ -564,7 +568,7 @@ void IDP_ReplaceInGroup_ex(IDProperty *group, IDProperty *prop, IDProperty *prop
 
 void IDP_ReplaceInGroup(IDProperty *group, IDProperty *prop)
 {
-  IDProperty *prop_exist = IDP_GetPropertyFromGroup(group, TfToken(prop->name));
+  IDProperty *prop_exist = IDP_GetPropertyFromGroup(group, wabi::TfToken(prop->name));
 
   IDP_ReplaceInGroup_ex(group, prop, prop_exist);
 }

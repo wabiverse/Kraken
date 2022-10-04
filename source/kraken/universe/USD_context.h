@@ -26,7 +26,7 @@
 
 #include "KKE_context.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /**
  * Pixar Stage IO
@@ -37,4 +37,3 @@ KRAKEN_NAMESPACE_BEGIN
 void USD_save_stage(kContext *C);
 
 
-KRAKEN_NAMESPACE_END

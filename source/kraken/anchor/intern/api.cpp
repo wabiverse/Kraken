@@ -3666,7 +3666,7 @@ wabi::HdDriver &ANCHOR::GetPixarDriver()
   return G_CTX->HydraDriver;
 }
 
-kraken::UsdImagingGLEngineSharedPtr ANCHOR::GetEngineGL()
+UsdImagingGLEngineSharedPtr ANCHOR::GetEngineGL()
 {
   return G_CTX->GLEngine;
 }

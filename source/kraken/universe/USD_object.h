@@ -40,9 +40,7 @@
 #include <wabi/usd/usd/typed.h>
 #include <wabi/usd/usd/collectionAPI.h>
 
-typedef struct IDProperty **(*IDPropertiesFunc)(struct kraken::KrakenPRIM *ptr);
-
-KRAKEN_NAMESPACE_BEGIN
+typedef struct IDProperty **(*IDPropertiesFunc)(struct KrakenPRIM *ptr);
 
 enum PropertyType
 {
@@ -280,7 +278,7 @@ typedef int (*ObjectValidateFunc)(const wabi::UsdPrim &ptr, void *data, int *hav
 typedef int (*ObjectCallbackFunc)(struct kContext *C,
                                   const wabi::UsdPrim &ptr,
                                   void *func,
-                                  UsdPropertyVector list);
+                                  ListBase list);
 typedef void (*ObjectFreeFunc)(void *data);
 typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
                                                  struct ReportList *reports,
@@ -432,5 +430,3 @@ struct KrakenPRIM : public wabi::UsdPrim
         ID_CV,                       \
         ID_PT,                       \
         ID_VO))
-
-KRAKEN_NAMESPACE_END

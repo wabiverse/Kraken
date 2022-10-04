@@ -25,197 +25,18 @@
 #pragma once
 
 #ifdef __cplusplus
-#include "wabi/base/arch/defines.h"
+#  include "wabi/base/arch/defines.h"
 
-#include "USD_scene.h"
+#  include "USD_scene.h"
 
-#include "KKE_api.h"
-#include "KKE_main.h"
-#include "KKE_robinhood.h"
+#  include "KKE_api.h"
+#  include "KKE_main.h"
+#  include "KKE_robinhood.h"
 
-#include <wabi/base/arch/systemInfo.h>
-#include <wabi/base/tf/stringUtils.h>
-#include <wabi/base/tf/token.h>
+#  include <wabi/base/arch/systemInfo.h>
+#  include <wabi/base/tf/stringUtils.h>
+#  include <wabi/base/tf/token.h>
 #endif /* __cplusplus */
-
-#define _RHASH_INTERNAL_ATTR
-#ifndef RHASH_INTERNAL_API
-#  ifdef __GNUC__
-#    undef _RHASH_INTERNAL_ATTR
-#    define _RHASH_INTERNAL_ATTR __attribute__((deprecated)) /* not deprecated, just private. */
-#  endif
-#endif
-
-KRAKEN_NAMESPACE_BEGIN
-
-/* -------------------------------------------------------------------- */
-/** \name RHash Types
- * \{ */
-
-typedef unsigned int (*RHashHashTFP)(const TfToken &key);
-typedef unsigned int (*RHashHashFP)(const void *key);
-/** returns false when equal */
-typedef bool (*RHashCmpTFP)(const TfToken &a, const TfToken &b);
-typedef bool (*RHashCmpFP)(const void *a, const void *b);
-typedef void (*RHashKeyFreeFP)(void *key);
-typedef void (*RHashValFreeFP)(void *val);
-typedef void *(*RHashKeyCopyFP)(const void *key);
-typedef void *(*RHashValCopyFP)(const void *val);
-
-struct RHash
-{
-  RHashHashTFP hashtfp;
-  RHashCmpTFP cmptfp;
-
-  RHashHashFP hashfp;
-  RHashCmpFP cmpfp;
-
-  struct Entry **buckets;
-  struct KKE_mempool *entrypool;
-  uint nbuckets;
-  uint limit_grow, limit_shrink;
-  uint cursize, size_min;
-
-  uint nentries;
-  uint flag;
-};
-
-struct RHashIterator
-{
-  RHash *rh;
-  struct Entry *curEntry;
-  unsigned int curBucket;
-};
-
-struct RHashIterState
-{
-  unsigned int curr_bucket _RHASH_INTERNAL_ATTR;
-};
-
-
-enum
-{
-  RHASH_FLAG_ALLOW_DUPES = (1 << 0),  /* Only checked for in debug mode */
-  RHASH_FLAG_ALLOW_SHRINK = (1 << 1), /* Allow to shrink buckets' size. */
-
-#ifdef RHASH_INTERNAL_API
-  /* Internal usage only */
-  /* Whether the RHash is actually used as RSet (no value storage). */
-  RHASH_FLAG_IS_RSET = (1 << 16),
-#endif
-};
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name RSet Types
- * A 'set' implementation (unordered collection of unique elements).
- *
- * Internally this is a 'RHash' without any keys,
- * which is why these API's are in the same header & source file.
- * \{ */
-
-typedef struct RSet RSet;
-
-typedef RHashHashFP RSetHashFP;
-typedef RHashCmpFP RSetCmpFP;
-typedef RHashKeyFreeFP RSetKeyFreeFP;
-typedef RHashKeyCopyFP RSetKeyCopyFP;
-
-typedef RHashIterState RSetIterState;
-
-RSet *KKE_rset_new_ex(RSetHashFP hashfp,
-                      RSetCmpFP cmpfp,
-                      const char *info,
-                      const uint nentries_reserve);
-
-/** \} */
-
-struct LockfreeLinkNode
-{
-  struct LockfreeLinkNode *next;
-  /* NOTE: "Subclass" this structure to add custom-defined data. */
-};
-
-struct LockfreeLinkList
-{
-  /* We keep a dummy node at the beginning of the list all the time.
-   * This allows us to make sure head and tail pointers are always
-   * valid, and saves from annoying exception cases in insert().
-   */
-  LockfreeLinkNode dummy_node;
-  /* NOTE: This fields might point to a dummy node. */
-  LockfreeLinkNode *head, *tail;
-};
-
-typedef void (*LockfreeeLinkNodeFreeFP)(void *link);
-
-
-void KKE_linklist_lockfree_init(LockfreeLinkList *list);
-
-
-/* -------------------------------------------------------------------- */
-/** \name RHash API
- *
- * Defined in `KKE_hash.cpp`
- * \{ */
-
-/**
- * Creates a new, empty RHash.
- *
- * @param hashfp: Hash callback.
- * @param cmpfp: Comparison callback.
- * @param info: Identifier string for the RHash.
- * @param nentries_reserve: Optionally reserve the number of members that the hash will hold.
- * Use this to avoid resizing buckets if the size is known or can be closely approximated.
- * \return  An empty RHash.
- */
-RHash *KKE_rhash_new_ex(RHashHashFP hashfp,
-                        RHashCmpFP cmpfp,
-                        const char *info,
-                        unsigned int nentries_reserve) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-/**
- * Wraps #KKE_rhash_new_ex with zero entries reserved.
- */
-RHash *KKE_rhash_new(RHashHashFP hashfp,
-                     RHashCmpFP cmpfp,
-                     const char *info) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-
-RHash *KKE_rhash_str_new_ex(const char *info,
-                            unsigned int nentries_reserve) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-
-RHash *KKE_rhash_str_new(const char *info) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-
-RHash *KKE_rhash_int_new_ex(const char *info,
-                            const uint nentries_reserve) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-
-RHash *KKE_rhash_int_new(const char *info) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-
-/**
- * Copy given RHash. Keys and values are also copied if relevant callback is provided,
- * else pointers remain the same.
- */
-RHash *KKE_rhash_copy(const RHash *gh,
-                      RHashKeyCopyFP keycopyfp,
-                      RHashValCopyFP valcopyfp) ATTR_MALLOC ATTR_WARN_UNUSED_RESULT;
-
-void *KKE_rhash_lookup(RHash *rh, const void *key);
-void *KKE_rhash_lookup(RHash *rh, const TfToken &key);
-void KKE_rhash_insert(RHash *rh, const TfToken &key, void *value);
-
-bool KKE_rhash_reinsert(RHash *gh,
-                        TfToken &key,
-                        void *val,
-                        RHashKeyFreeFP keyfreefp,
-                        RHashValFreeFP valfreefp);
-
-bool KKE_rhash_reinsert(RHash *gh,
-                        void *key,
-                        void *val,
-                        RHashKeyFreeFP keyfreefp,
-                        RHashValFreeFP valfreefp);
-
-uint KKE_rhashutil_ptrhash(const void *key);
 
 /** Aligned with #PropertyUnit and `kpyunits_ucategories_items` in `kpy_utils_units.cpp`. */
 enum
@@ -251,17 +72,5 @@ size_t KKE_unit_value_as_string(char *str,
                                 double value,
                                 int prec,
                                 int type,
-                                const struct UnitSettings *settings,
+                                const UnitSettings *settings,
                                 bool pad);
-
-/**
- * Set counterpart to #KKE_rhash_ensure_p_ex.
- * similar to KLI_rset_add, except it returns the key pointer.
- *
- * \warning Caller _must_ write to \a r_key when returning false.
- */
-
-bool KKE_rset_ensure_p_ex(RSet *rs, const void *key, void ***r_key);
-uint KKE_rhashutil_ptrhash(const void *key);
-
-KRAKEN_NAMESPACE_END

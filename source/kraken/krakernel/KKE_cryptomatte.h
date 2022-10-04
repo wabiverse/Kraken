@@ -256,7 +256,7 @@ typedef enum eViewLayerCryptomatteFlags
 struct CryptomatteSession *KKE_cryptomatte_init(void);
 struct CryptomatteSession *KKE_cryptomatte_init_from_render_result(
   const struct RenderResult *render_result);
-struct CryptomatteSession *KKE_cryptomatte_init_from_scene(const struct Scene *scene);
+struct CryptomatteSession *KKE_cryptomatte_init_from_scene(const struct kScene *scene);
 struct CryptomatteSession *KKE_cryptomatte_init_from_view_layer(
   const struct ViewLayer *view_layer);
 void KKE_cryptomatte_free(struct CryptomatteSession *session);

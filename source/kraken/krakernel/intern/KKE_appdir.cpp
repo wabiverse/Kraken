@@ -37,7 +37,7 @@
 #include "KLI_fileops.h"
 
 #include "KKE_api.h"
-#include "KKE_appdir.h" /* own include */
+#include "KKE_appdir.hh" /* own include */
 #include "KKE_main.h"
 
 #include "USD_api.h"
@@ -67,8 +67,6 @@ namespace fs = std::filesystem;
 
 static const char _str_null[] = "(null)";
 #define STR_OR_FALLBACK(a) ((a) ? (a) : _str_null)
-
-KRAKEN_NAMESPACE_BEGIN
 
 struct AppDir
 {
@@ -1193,5 +1191,3 @@ void KKE_tempdir_session_purge(void)
 
 /** \} */
 
-
-KRAKEN_NAMESPACE_END

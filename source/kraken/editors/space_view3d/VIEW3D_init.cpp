@@ -30,7 +30,7 @@
 
 #include "KKE_main.h"
 
-KRAKEN_NAMESPACE_BEGIN
+WABI_NAMESPACE_USING
 
 void ED_view3d_init_engine(const SdfPath &root, bool &reset)
 {
@@ -41,5 +41,3 @@ void ED_view3d_init_engine(const SdfPath &root, bool &reset)
     reset = false;
   }
 }
-
-KRAKEN_NAMESPACE_END

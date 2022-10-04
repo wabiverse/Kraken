@@ -24,16 +24,19 @@
  * Set the Stage.
  */
 
-#include "USD_context.h"
-#include "USD_screen.h"
-#include "USD_view2d.h"
+#include "KLI_rhash.h"
 
-#include "KKE_context.h"
-#include "KKE_screen.h"
+#ifdef __cplusplus
+#  include "USD_context.h"
+#  include "USD_screen.h"
+#  include "USD_view2d.h"
 
-#include <wabi/usd/usdUI/area.h>
+#  include "KKE_context.h"
+#  include "KKE_screen.h"
+#  include <wabi/usd/usdUI/area.h>
+#endif /* __cplusplus */
 
-KRAKEN_NAMESPACE_BEGIN
+struct RHash;
 
 enum eRegionType
 {
@@ -88,17 +91,18 @@ struct ARegion_Runtime
    * on top of the overlapping regions.
    *
    * Lazy initialize, zero'd when unset, relative to #ARegion.winrct x/y min. */
-  wabi::GfVec4i visible_rect;
+  // GfVec4i visible_rect;
 
   /* The offset needed to not overlap with window scroll-bars. Only used by HUD regions for now. */
   int offset_x, offset_y;
 
   /* Maps uiBlock->name to uiBlock for faster lookups. */
-  struct RHash *block_name_map;
+  RHash *block_name_map;
 };
 
 /** #ARegion.alignment */
-enum {
+enum
+{
   RGN_ALIGN_NONE = 0,
   RGN_ALIGN_TOP = 1,
   RGN_ALIGN_BOTTOM = 2,
@@ -114,10 +118,12 @@ enum {
   RGN_SPLIT_PREV = 32,
 };
 
+#ifdef __cplusplus
+
 struct ARegion : public wabi::UsdUIArea
 {
   struct ARegion *next, *prev;
-  
+
   wabi::SdfPath path;
 
   wabi::UsdAttribute name;
@@ -154,7 +160,7 @@ struct ARegion : public wabi::UsdUIArea
   wabi::GfVec4i drawrct;
 
   std::vector<struct uiBlock *> uiblocks;
-  std::vector<struct wmEventHandler *> handlers;
+  ListBase handlers;
 
   ARegion_Runtime runtime;
 
@@ -204,4 +210,4 @@ ARegion::ARegion(kContext *C, kScreen *prim, const wabi::SdfPath &stagepath)
     drawrct(0, 0, 0, 0)
 {}
 
-KRAKEN_NAMESPACE_END
+#endif /* __cplusplus */

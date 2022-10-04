@@ -29,7 +29,8 @@
 
 #include "KLI_threads.h"
 
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
+#include "KKE_global.h"
 
 #include "KPY_api.h"
 #include "KPY_extern_python.h"
@@ -57,7 +58,7 @@ static bool py_use_system_env = false;
 
 
 /* use for updating while a python script runs - in case of file load */
-void KPY_context_update(kraken::kContext *C)
+void KPY_context_update(kContext *C)
 {
   if (!KLI_thread_is_main()) {
     return;
@@ -67,7 +68,7 @@ void KPY_context_update(kraken::kContext *C)
   KPY_modules_update();
 }
 
-void kpy_context_set(kraken::kContext *C, PyGILState_STATE *gilstate)
+void kpy_context_set(kContext *C, PyGILState_STATE *gilstate)
 {
   py_call_level++;
 
@@ -80,7 +81,7 @@ void kpy_context_set(kraken::kContext *C, PyGILState_STATE *gilstate)
   }
 }
 
-void kpy_context_clear(kraken::kContext *UNUSED(C), const PyGILState_STATE *gilstate)
+void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
 {
   py_call_level--;
 
@@ -118,18 +119,18 @@ static void pystatus_exit_on_error(PyStatus status)
 }
 #endif
 
-void KPY_context_set(kraken::kContext *C)
+void KPY_context_set(kContext *C)
 {
   kpy_context_module->data = (void *)C;
 }
 
-kraken::kContext *KPY_context_get(void)
+kContext *KPY_context_get(void)
 {
-  return (kraken::kContext *)kpy_context_module->data;
+  return (kContext *)kpy_context_module->data;
 }
 
 /* call KPY_context_set first */
-void KPY_python_start(kraken::kContext *C, int argc, const char **argv)
+void KPY_python_start(kContext *C, int argc, const char **argv)
 {
 #ifndef WITH_PYTHON_MODULE
   /* #PyPreConfig (early-configuration). */
@@ -294,7 +295,7 @@ void KPY_python_start(kraken::kContext *C, int argc, const char **argv)
 #endif
 }
 
-static void kpy_context_end(kraken::kContext *C)
+static void kpy_context_end(kContext *C)
 {
   if (ARCH_UNLIKELY(C == NULL)) {
     return;
@@ -333,7 +334,7 @@ void KPY_python_end(void)
 #endif
 }
 
-int KPY_context_member_get(kraken::kContext *C, const char *member, kraken::kContextDataResult *result)
+int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *result)
 {
   PyGILState_STATE gilstate;
   const bool use_gil = !PyC_IsInterpreterActive();
@@ -416,7 +417,7 @@ int KPY_context_member_get(kraken::kContext *C, const char *member, kraken::kCon
   return done;
 }
 
-void KPY_python_reset(kraken::kContext *C)
+void KPY_python_reset(kContext *C)
 {
   /* unrelated security stuff */
   G.f &= ~(G_FLAG_SCRIPT_AUTOEXEC_FAIL | G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET);

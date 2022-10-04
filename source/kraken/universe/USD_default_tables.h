@@ -29,7 +29,7 @@
 
 #include "KKE_context.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void USD_default_table_main_window(kContext *C);
 void USD_default_table_user_prefs(kContext *C);
@@ -39,4 +39,3 @@ void USD_default_table_area_screen(kContext *C);
 void USD_default_table_area_workspace(kContext *C);
 void USD_default_table_scene_data(kContext *C);
 
-KRAKEN_NAMESPACE_END

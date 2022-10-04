@@ -33,12 +33,10 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/primRange.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct ReportList;
 struct kContext;
-
-#define MAX_NAME 64
 
 struct KrakenSTAGE : public wabi::UsdStageRefPtr
 {
@@ -47,4 +45,3 @@ struct KrakenSTAGE : public wabi::UsdStageRefPtr
   std::vector<struct KrakenPRIM *> structs;
 };
 
-KRAKEN_NAMESPACE_END

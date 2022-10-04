@@ -94,7 +94,7 @@ struct KPy_KrakenPROP
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  kraken::KrakenPRIM ptr;
+  KrakenPRIM ptr;
   // KrakenPROP *prop;
 };
 
@@ -104,8 +104,8 @@ struct KPy_KrakenFUNC
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  kraken::KrakenPRIM ptr;
-  kraken::KrakenFUNC *func;
+  KrakenPRIM ptr;
+  KrakenFUNC *func;
 };
 
 struct KPy_UsdPropertyVector
@@ -116,7 +116,7 @@ struct KPy_UsdPropertyVector
 #endif
 
   /* collection iterator specific parts */
-  kraken::UsdPropertyVector iter;
+  ListBase iter;
 };
 
 #ifdef __cplusplus
@@ -172,14 +172,14 @@ PyObject *KPY_stage_module(void);
 
 void KPY_update_stage_module(void);
 
-kraken::KrakenPRIM *pystage_struct_as_srna(PyObject *self,
+KrakenPRIM *pystage_struct_as_srna(PyObject *self,
                                          const bool parent,
                                          const char *error_prefix);
-PyObject *pystage_struct_CreatePyObject(kraken::KrakenPRIM *ptr);
+PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr);
 void pystage_alloc_types(void);
 
-PyObject *pystage_srna_PyBase(kraken::KrakenPRIM *srna);
-void pystage_subtype_set_rna(PyObject *newclass, kraken::KrakenPRIM *srna);
+PyObject *pystage_srna_PyBase(KrakenPRIM *srna);
+void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;

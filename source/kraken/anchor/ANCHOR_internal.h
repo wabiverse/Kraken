@@ -2601,7 +2601,7 @@ struct AnchorContext
    * of Hydra Engines -- all using the same
    * underlying & shared Graphics Resources. */
   wabi::HdDriver HydraDriver;
-  kraken::UsdImagingGLEngineSharedPtr GLEngine;
+  UsdImagingGLEngineSharedPtr GLEngine;
 
   AnchorIO IO;
   AnchorStyle Style;

@@ -26,12 +26,13 @@
 
 #include "KKE_context.h"
 
+#include "USD_api.h"
 #include "USD_types.h"
 
 #include <wabi/base/gf/vec2i.h>
 #include <wabi/usd/usdUI/screen.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 #define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->verts)
 
@@ -226,7 +227,7 @@ enum
 
 struct ScrVert
 {
-  GfVec2h vec;
+  wabi::GfVec2h vec;
   /* first one used internally, second one for tools */
   short flag, editflag;
 
@@ -299,7 +300,7 @@ struct wmRegionMessageSubscribeParams
   const kContext *context;
   wmMsgBus *message_bus;
   WorkSpace *workspace;
-  Scene *scene;
+  kScene *scene;
   kScreen *screen;
   ScrArea *area;
   ARegion *region;
@@ -316,4 +317,3 @@ struct wmRegionMessageSubscribeParams
 };
 
 
-KRAKEN_NAMESPACE_END

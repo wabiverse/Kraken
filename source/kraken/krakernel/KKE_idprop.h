@@ -28,6 +28,8 @@
 #include "KLI_compiler_attrs.h"
 #include "KLI_sys_types.h"
 
+#include <wabi/base/tf/token.h>
+
 struct UsdDataReader;
 struct UsdExpander;
 struct UsdLibReader;

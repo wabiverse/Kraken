@@ -49,10 +49,29 @@ struct ColorManagedDisplay;
 struct ColorSpace;
 
 /* -------------------------------------------------------------------- */
+/** @name Generic Functions
+ * @{ */
+
+void IMB_colormanagement_check_file_config(struct Main *kmain);
+
+const char *IMB_colormanagement_role_colorspace_name_get(int role);
+
+/** @} */
+
+/* -------------------------------------------------------------------- */
 /** @name Display Functions
  * @{ */
 
+int IMB_colormanagement_display_get_named_index(const char *name);
+const char *IMB_colormanagement_display_get_indexed_name(int index);
 const char *IMB_colormanagement_display_get_default_name(void);
+
+struct ColorManagedDisplay *IMB_colormanagement_display_get_named(const char *name);
+const char *IMB_colormanagement_display_get_none_name(void);
+const char *IMB_colormanagement_display_get_default_view_transform_name(
+  struct ColorManagedDisplay *display);
+
+/** @} */
 
 /**
  * @note Same as IMB_colormanagement_setup_glsl_draw,
@@ -71,12 +90,19 @@ const char *IMB_colormanagement_display_get_default_name(void);
  * only need to display given image buffer
  */
 bool IMB_colormanagement_setup_glsl_draw_from_space(
-    const struct ColorManagedViewSettings *view_settings,
-    const struct ColorManagedDisplaySettings *display_settings,
-    struct ColorSpace *colorspace,
-    float dither,
-    bool predivide,
-    bool do_overlay_merge);
+  const struct ColorManagedViewSettings *view_settings,
+  const struct ColorManagedDisplaySettings *display_settings,
+  struct ColorSpace *colorspace,
+  float dither,
+  bool predivide,
+  bool do_overlay_merge);
+
+/**
+ * Same as #IMB_colormanagement_scene_linear_to_display_v3,
+ * but converts color in opposite direction.
+ */
+void IMB_colormanagement_display_to_scene_linear_v3(float pixel[3],
+                                                    struct ColorManagedDisplay *display);
 
 /**
  * Finish GLSL-based display space conversion.
@@ -84,6 +110,24 @@ bool IMB_colormanagement_setup_glsl_draw_from_space(
 void IMB_colormanagement_finish_glsl_draw(void);
 
 /** @} */
+
+/* -------------------------------------------------------------------- */
+/** \name View Transform
+ * \{ */
+
+/* Roles */
+enum
+{
+  COLOR_ROLE_SCENE_LINEAR = 0,
+  COLOR_ROLE_COLOR_PICKING,
+  COLOR_ROLE_TEXTURE_PAINTING,
+  COLOR_ROLE_DEFAULT_SEQUENCER,
+  COLOR_ROLE_DEFAULT_BYTE,
+  COLOR_ROLE_DEFAULT_FLOAT,
+  COLOR_ROLE_DATA,
+};
+
+/** \} */
 
 #ifdef __cplusplus
 }

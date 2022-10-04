@@ -37,6 +37,9 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
+#include "KLI_listbase.h"
+#include "KLI_rect.h"
+
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
@@ -46,12 +49,10 @@
 
 #include "ED_screen.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 
 static kScreen *screen_fullscreen_find_associated_normal_screen(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL (screen_iter, kmain->screens) {
+  LISTBASE_FOREACH (kScreen *, screen_iter, &kmain->screens) {
     if ((screen_iter != screen)) {
       ScrArea *area = screen_iter->areas.at(0);
       if (area) {
@@ -74,7 +75,7 @@ WorkSpaceLayout *ED_workspace_screen_change_ensure_unused_layout(
   Main *kmain,
   WorkSpace *workspace,
   WorkSpaceLayout *layout_new,
-  const WorkSpaceLayout *layout_fallback_base,
+  WorkSpaceLayout *layout_fallback_base,
   wmWindow *win)
 {
   WorkSpaceLayout *layout_temp = layout_new;
@@ -107,14 +108,20 @@ WorkSpaceLayout *ED_workspace_layout_add(kContext *C,
                                          const char *name)
 {
   kScreen *screen;
-  GfRect2i screen_rect;
+  wabi::GfRect2i screen_rect;
 
   WM_window_screen_rect_calc(win, &screen_rect);
-  screen = screen_add(C, name, &screen_rect);
+
+  rcti from_gf;
+
+  from_gf.xmin = screen_rect.GetMinX();
+  from_gf.xmax = screen_rect.GetMaxX();
+  from_gf.ymin = screen_rect.GetMinY();
+  from_gf.ymax = screen_rect.GetMaxY();
+
+  screen = screen_add(C, name, &from_gf);
 
   Main *kmain = CTX_data_main(C);
 
   return KKE_workspace_layout_add(C, kmain, workspace, screen, name);
 }
-
-KRAKEN_NAMESPACE_END

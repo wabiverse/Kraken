@@ -32,7 +32,7 @@
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/relationship.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /**
  * The form factory. */
@@ -248,4 +248,3 @@ template<> inline FormFactory::operator GfVec4f()
 //   return attrs;
 // }
 
-KRAKEN_NAMESPACE_END

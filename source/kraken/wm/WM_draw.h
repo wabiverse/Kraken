@@ -28,9 +28,8 @@
 
 #include "KKE_context.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void WM_draw_update(kContext *C);
 void WM_draw_region_clear(wmWindow *win, ARegion *region);
 
-KRAKEN_NAMESPACE_END

@@ -7,8 +7,9 @@
 
 #pragma once
 
-// #include "GPU_texture.h"
-// #include "GPU_vertex_buffer.h"
+#include "GPU_texture.h"
+#include "GPU_vertex_buffer.h"
+#include "USD_listBase.h"
 
 #include FT_MULTIPLE_MASTERS_H /* Variable font support. */
 

@@ -51,8 +51,6 @@
 
 #ifdef USE_UIBUT_SPATIAL_ALIGN
 
-KRAKEN_NAMESPACE_BEGIN
-
 /**
  * This struct stores a (simplified) 2D representation of all buttons of a same align group,
  * with their immediate neighbors (if found),
@@ -372,7 +370,7 @@ static void ui_block_align_but_to_region(uiBut *but, const ARegion *region)
   const float but_width = KLI_rctf_size_x(GfVec4f(rect->xmin, rect->xmax, rect->ymin, rect->ymax));
   const float but_height = KLI_rctf_size_y(
     GfVec4f(rect->xmin, rect->xmax, rect->ymin, rect->ymax));
-  const float outline_px = UI_PIXEL_SIZE; /* This may have to be made more variable. */
+  const float outline_px = U.pixelsize; /* This may have to be made more variable. */
 
   GfVec2i size;
   region->size.Get(&size);
@@ -778,5 +776,3 @@ int ui_but_align_opposite_to_area_align_get(const ARegion *region)
 
   return 0;
 }
-
-KRAKEN_NAMESPACE_END

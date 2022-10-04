@@ -32,7 +32,7 @@
 
 struct IDProperty;
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct wmOperator
 {
@@ -62,4 +62,3 @@ struct wmOperator
   char _pad[6];
 };
 
-KRAKEN_NAMESPACE_END

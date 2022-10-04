@@ -277,3 +277,54 @@ endif()
 # within Visual Studio IDE - the IDE needs a default vsproj
 # to open by default.
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT kraken)
+
+if(CMAKE_C_COMPILER_ID MATCHES "Intel")
+
+  add_check_c_compiler_flag(C_WARNINGS C_WARN_ALL -Wall)
+  add_check_c_compiler_flag(C_WARNINGS C_WARN_POINTER_ARITH -Wpointer-arith)
+  add_check_c_compiler_flag(C_WARNINGS C_WARN_NO_UNKNOWN_PRAGMAS -Wno-unknown-pragmas)
+
+  add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_ALL -Wall)
+  add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_NO_INVALID_OFFSETOF -Wno-invalid-offsetof)
+  add_check_cxx_compiler_flag(CXX_WARNINGS CXX_WARN_NO_SIGN_COMPARE -Wno-sign-compare)
+
+  # disable numbered, false positives
+  string(APPEND C_WARNINGS " -wd188,186,144,913,556,858,597,177,1292,167,279,592,94,2722,3199")
+  string(APPEND CXX_WARNINGS " -wd188,186,144,913,556,858,597,177,1292,167,279,592,94,2722,3199")
+elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
+  # most msvc warnings are C & C++
+  set(_WARNINGS
+    # warning level:
+    "/W3"
+    "/w34062"  # switch statement contains 'default' but no 'case' labels
+    "/w34115"  # 'type' : named type definition in parentheses
+    "/w34189"  # local variable is initialized but not referenced
+    # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/c5038?view=vs-2017
+    "/w35038"  # order of initialization in c++ constructors
+    # disable:
+    "/wd4018"  # signed/unsigned mismatch
+    "/wd4146"  # unary minus operator applied to unsigned type, result still unsigned
+    "/wd4065"  # switch statement contains 'default' but no 'case' labels
+    "/wd4127"  # conditional expression is constant
+    "/wd4181"  # qualifier applied to reference type; ignored
+    "/wd4200"  # zero-sized array in struct/union
+    "/wd4244"  # conversion from 'type1' to 'type2', possible loss of data
+    "/wd4267"  # conversion from 'size_t' to 'type', possible loss of data
+    "/wd4305"  # truncation from 'type1' to 'type2'
+    "/wd4800"  # forcing value to bool 'true' or 'false'
+    "/wd4828"  # The file contains a character that is illegal
+    "/wd4996"  # identifier was declared deprecated
+    "/wd4661"  # no suitable definition provided for explicit template instantiation request
+    "/wd4848"  # 'no_unique_address' is a vendor extension in C++17
+    # errors:
+    "/we4013"  # 'function' undefined; assuming extern returning int
+    "/we4133"  # incompatible pointer types
+    "/we4431"  # missing type specifier - int assumed
+    "/we4033"  # 'function' must return a value
+  )
+
+  string(REPLACE ";" " " _WARNINGS "${_WARNINGS}")
+  set(C_WARNINGS "${_WARNINGS}")
+  set(CXX_WARNINGS "${_WARNINGS}")
+  unset(_WARNINGS)
+endif()

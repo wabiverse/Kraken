@@ -11,13 +11,19 @@ set(INC
   ../universe
   ../luxo
   ../editors/include
+  ../../../intern/guardedalloc
 )
 
 set(SRC
   intern/colormanagement.c
+  intern/filetype.c
+  intern/module.c
 
   IMB_colormanagement.h
+  IMB_imbuf.h
+  
   intern/IMB_colormanagement_intern.h
+  intern/IMB_filetype.h
 )
 
 add_definitions(-DWITH_OCIO)

@@ -26,7 +26,7 @@
 #include "LUXO_internal.h"
 #include "LUXO_access.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 static void luxo_preprocess(const KrakenSTAGE &kstage)
 {
@@ -39,4 +39,3 @@ void LUXO_main(const KrakenSTAGE &kstage)
   luxo_preprocess(kstage);
 }
 
-KRAKEN_NAMESPACE_END

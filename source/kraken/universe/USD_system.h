@@ -29,7 +29,7 @@
 #define MAX_SYSTEM_FILE_PATH 256
 #define MAX_SYSTEM_VERSION_INFO 64
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct SystemPaths
 {
@@ -77,4 +77,3 @@ struct System
   SystemTime time;
 };
 
-KRAKEN_NAMESPACE_END

@@ -28,17 +28,16 @@
 
 #include "KKE_context.h"
 
-KRAKEN_NAMESPACE_BEGIN
 
-void WM_drag_free(wmDrag *drag);
-void WM_drag_free_list(std::vector<wmDrag *> &drags);
 
-wmDrag *WM_event_start_drag(kContext *C,
+void WM_drag_free(struct wmDrag *drag);
+void WM_drag_free_list(struct ListBase *lb);
+
+wmDrag *WM_event_start_drag(struct kContext *C,
                             int icon,
                             int type,
                             void *poin,
                             double value,
                             unsigned int flags);
-void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent);
+void WM_drag_add_local_ID(struct wmDrag *drag, struct ID *id, struct ID *from_parent);
 
-KRAKEN_NAMESPACE_END

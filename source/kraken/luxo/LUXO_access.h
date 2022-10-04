@@ -43,11 +43,10 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
-KRAKEN_NAMESPACE_BEGIN
+struct Scene;
 
 struct Main;
 struct ReportList;
-struct Scene;
 struct kContext;
 struct KrakenPROP;
 
@@ -145,12 +144,9 @@ void LUXO_property_enum_items_ex(kContext *C,
                                  int *r_totitem,
                                  bool *r_free);
 
-short LUXO_type_to_ID_code(const kraken::KrakenPRIM *type);
+short LUXO_type_to_ID_code(const KrakenPRIM *type);
 
 void LUXO_property_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax);
 void LUXO_property_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax);
-
-
-KRAKEN_NAMESPACE_END
 
 #endif /* __LUXO_ACCESS_H__ */

@@ -53,8 +53,6 @@
 #include "interface_intern.h"
 #include "interface_regions_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 #define UI_TIP_PAD_FAC 1.3f
 #define UI_TIP_PADDING (int)(UI_TIP_PAD_FAC * UI_UNIT_Y)
 #define UI_TIP_MAXWIDTH 600
@@ -124,5 +122,3 @@ void UI_tooltip_free(kContext *C, kScreen *screen, ARegion *region)
 {
   ui_region_temp_remove(C, screen, region);
 }
-
-KRAKEN_NAMESPACE_END

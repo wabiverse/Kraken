@@ -42,6 +42,7 @@
 #include "KKE_workspace.h"
 
 #include "KLI_assert.h"
+#include "KLI_listbase.h"
 #include "KLI_math.h"
 
 #include "WM_window.h"
@@ -51,8 +52,6 @@
 
 #include <wabi/base/gf/rect2i.h>
 #include <wabi/usd/usdUI/tokens.h>
-
-KRAKEN_NAMESPACE_BEGIN
 
 
 bool ED_screen_change(kContext *C, kScreen *screen)
@@ -195,7 +194,7 @@ static int find_free_areaid(kContext *C)
    * Though of course, users should be allowed to
    * create any number of screen areas without them
    * noticing a performance impact. */
-  UNIVERSE_FOR_ALL (screen, kmain->screens) {
+  LISTBASE_FOREACH (kScreen *, screen, &kmain->screens) {
     UNIVERSE_FOR_ALL (area, screen->areas) {
       if (id <= area->areaid) {
         id = area->areaid + 1;
@@ -251,7 +250,7 @@ static ScrArea *screen_addarea(kContext *C,
 }
 
 
-kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect)
+kScreen *screen_add(kContext *C, const char *name, const rcti *rect)
 {
   int id = find_free_screenid(C);
   SdfPath path(make_screenpath(name, id));
@@ -262,10 +261,10 @@ kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect)
   screen->do_refresh = true;
   screen->redraws_flag = TIME_ALL_3D_WIN | TIME_ALL_ANIM_WIN;
 
-  ScrVert *sv1 = screen_geom_vertex_add(screen, rect->GetMinX(), rect->GetMinY());
-  ScrVert *sv2 = screen_geom_vertex_add(screen, rect->GetMinX(), rect->GetMaxY() - 1);
-  ScrVert *sv3 = screen_geom_vertex_add(screen, rect->GetMaxX() - 1, rect->GetMaxY() - 1);
-  ScrVert *sv4 = screen_geom_vertex_add(screen, rect->GetMaxX() - 1, rect->GetMinY());
+  ScrVert *sv1 = screen_geom_vertex_add(screen, rect->xmin, rect->ymin);
+  ScrVert *sv2 = screen_geom_vertex_add(screen, rect->xmin, rect->ymax - 1);
+  ScrVert *sv3 = screen_geom_vertex_add(screen, rect->xmax - 1, rect->ymax - 1);
+  ScrVert *sv4 = screen_geom_vertex_add(screen, rect->xmax - 1, rect->ymin);
 
   screen_geom_edge_add(screen, sv1, sv2);
   screen_geom_edge_add(screen, sv2, sv3);
@@ -276,6 +275,3 @@ kScreen *screen_add(kContext *C, const char *name, const GfRect2i *rect)
 
   return screen;
 }
-
-
-KRAKEN_NAMESPACE_END

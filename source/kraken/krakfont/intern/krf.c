@@ -30,15 +30,15 @@
 #include "IMB_colormanagement.h"
 
 #include "GPU_matrix.h"
-// #include "GPU_shader.h"
+#include "GPU_shader.h"
 
 #include "krf_internal.h"
 #include "krf_internal_types.h"
 
-#define KRF_RESULT_CHECK_INIT(r_info) \
-  if (r_info) { \
+#define KRF_RESULT_CHECK_INIT(r_info)     \
+  if (r_info) {                           \
     memset(r_info, 0, sizeof(*(r_info))); \
-  } \
+  }                                       \
   ((void)0)
 
 /* Font array. */
@@ -318,8 +318,7 @@ void KRF_position(int fontid, float x, float y, float z)
       xa = font->aspect[0];
       ya = font->aspect[1];
       za = font->aspect[2];
-    }
-    else {
+    } else {
       xa = 1.0f;
       ya = 1.0f;
       za = 1.0f;
@@ -329,8 +328,7 @@ void KRF_position(int fontid, float x, float y, float z)
     if (remainder > 0.4f && remainder < 0.6f) {
       if (remainder < 0.5f) {
         x -= 0.1f * xa;
-      }
-      else {
+      } else {
         x += 0.1f * xa;
       }
     }
@@ -339,8 +337,7 @@ void KRF_position(int fontid, float x, float y, float z)
     if (remainder > 0.4f && remainder < 0.6f) {
       if (remainder < 0.5f) {
         y -= 0.1f * ya;
-      }
-      else {
+      } else {
         y += 0.1f * ya;
       }
     }
@@ -349,8 +346,7 @@ void KRF_position(int fontid, float x, float y, float z)
     if (remainder > 0.4f && remainder < 0.6f) {
       if (remainder < 0.5f) {
         z -= 0.1f * za;
-      }
-      else {
+      } else {
         z += 0.1f * za;
       }
     }
@@ -410,8 +406,11 @@ void KRF_color3ubv(int fontid, const unsigned char rgb[3])
   KRF_color3ubv_alpha(fontid, rgb, 255);
 }
 
-void KRF_color4ub(
-    int fontid, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)
+void KRF_color4ub(int fontid,
+                  unsigned char r,
+                  unsigned char g,
+                  unsigned char b,
+                  unsigned char alpha)
 {
   FontKRF *font = krf_get(fontid);
 
@@ -529,8 +528,7 @@ void KRF_draw_ex(int fontid, const char *str, const size_t str_len, struct Resul
     krf_draw_gl__start(font);
     if (font->flags & KRF_WORD_WRAP) {
       krf_font_draw__wrap(font, str, str_len, r_info);
-    }
-    else {
+    } else {
       krf_font_draw(font, str, str_len, r_info);
     }
     krf_draw_gl__end(font);
@@ -581,21 +579,26 @@ void KRF_boundbox_foreach_glyph_ex(int fontid,
     if (font->flags & KRF_WORD_WRAP) {
       /* TODO: word-wrap support. */
       KLI_assert(0);
-    }
-    else {
+    } else {
       krf_font_boundbox_foreach_glyph(font, str, str_len, user_fn, user_data, r_info);
     }
   }
 }
 
-void KRF_boundbox_foreach_glyph(
-    int fontid, const char *str, const size_t str_len, KRF_GlyphBoundsFn user_fn, void *user_data)
+void KRF_boundbox_foreach_glyph(int fontid,
+                                const char *str,
+                                const size_t str_len,
+                                KRF_GlyphBoundsFn user_fn,
+                                void *user_data)
 {
   KRF_boundbox_foreach_glyph_ex(fontid, str, str_len, user_fn, user_data, NULL);
 }
 
-size_t KRF_width_to_strlen(
-    int fontid, const char *str, const size_t str_len, float width, float *r_width)
+size_t KRF_width_to_strlen(int fontid,
+                           const char *str,
+                           const size_t str_len,
+                           float width,
+                           float *r_width)
 {
   FontKRF *font = krf_get(fontid);
 
@@ -616,8 +619,11 @@ size_t KRF_width_to_strlen(
   return 0;
 }
 
-size_t KRF_width_to_rstrlen(
-    int fontid, const char *str, const size_t str_len, float width, float *r_width)
+size_t KRF_width_to_rstrlen(int fontid,
+                            const char *str,
+                            const size_t str_len,
+                            float width,
+                            float *r_width)
 {
   FontKRF *font = krf_get(fontid);
 
@@ -638,8 +644,11 @@ size_t KRF_width_to_rstrlen(
   return 0;
 }
 
-void KRF_boundbox_ex(
-    int fontid, const char *str, const size_t str_len, rcti *r_box, struct ResultKRF *r_info)
+void KRF_boundbox_ex(int fontid,
+                     const char *str,
+                     const size_t str_len,
+                     rcti *r_box,
+                     struct ResultKRF *r_info)
 {
   FontKRF *font = krf_get(fontid);
 
@@ -648,8 +657,7 @@ void KRF_boundbox_ex(
   if (font) {
     if (font->flags & KRF_WORD_WRAP) {
       krf_font_boundbox__wrap(font, str, str_len, r_box, r_info);
-    }
-    else {
+    } else {
       krf_font_boundbox(font, str, str_len, r_box, r_info);
     }
   }
@@ -660,15 +668,17 @@ void KRF_boundbox(int fontid, const char *str, const size_t str_len, rcti *r_box
   KRF_boundbox_ex(fontid, str, str_len, r_box, NULL);
 }
 
-void KRF_width_and_height(
-    int fontid, const char *str, const size_t str_len, float *r_width, float *r_height)
+void KRF_width_and_height(int fontid,
+                          const char *str,
+                          const size_t str_len,
+                          float *r_width,
+                          float *r_height)
 {
   FontKRF *font = krf_get(fontid);
 
   if (font) {
     krf_font_width_and_height(font, str, str_len, r_width, r_height, NULL);
-  }
-  else {
+  } else {
     *r_width = *r_height = 0.0f;
   }
 }
@@ -852,14 +862,11 @@ void krf_draw_buffer__start(FontKRF *font)
   if (buf_info->display) {
     copy_v4_v4(buf_info->col_float, buf_info->col_init);
     IMB_colormanagement_display_to_scene_linear_v3(buf_info->col_float, buf_info->display);
-  }
-  else {
+  } else {
     srgb_to_linearrgb_v4(buf_info->col_float, buf_info->col_init);
   }
 }
-void krf_draw_buffer__end(void)
-{
-}
+void krf_draw_buffer__end(void) {}
 
 void KRF_draw_buffer_ex(int fontid,
                         const char *str,
@@ -872,8 +879,7 @@ void KRF_draw_buffer_ex(int fontid,
     krf_draw_buffer__start(font);
     if (font->flags & KRF_WORD_WRAP) {
       krf_font_draw_buffer__wrap(font, str, str_len, r_info);
-    }
-    else {
+    } else {
       krf_font_draw_buffer(font, str, str_len, r_info);
     }
     krf_draw_buffer__end();
@@ -919,8 +925,7 @@ void KRF_state_print(int fontid)
            UNPACK3(font->aspect));
     printf("  angle:    (%d) %.6f\n", (font->flags & KRF_ASPECT) != 0, font->angle);
     printf("  flag:     %d\n", font->flags);
-  }
-  else {
+  } else {
     printf("fontid %d (NULL)\n", fontid);
   }
   fflush(stdout);

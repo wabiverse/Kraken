@@ -41,7 +41,7 @@ KRAKEN_NAMESPACE_USING
 static PyObject *kpy_atexit(PyObject *UNUSED(self), PyObject *UNUSED(args), PyObject *UNUSED(kw))
 {
   /* close down enough of blender at least not to crash */
-  struct kraken::kContext *C = KPY_context_get();
+  struct kContext *C = KPY_context_get();
 
   //   WM_exit_ex(C, false);
 

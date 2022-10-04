@@ -28,6 +28,7 @@
 #include <frameobject.h>
 
 #include "KLI_string.h"
+#include "KLI_listbase.h"
 
 #include "KKE_report.h"
 
@@ -555,7 +556,7 @@ bool PyC_IsInterpreterActive(void)
 
 /** \} */
 
-bool KPy_errors_to_report_ex(kraken::ReportList *reports,
+bool KPy_errors_to_report_ex(ReportList *reports,
                              const char *error_prefix,
                              const bool use_full,
                              const bool use_location)
@@ -621,7 +622,7 @@ bool KPy_errors_to_report_ex(kraken::ReportList *reports,
   return 1;
 }
 
-short KPy_reports_to_error(kraken::ReportList *reports, PyObject *exception, const bool clear)
+short KPy_reports_to_error(ReportList *reports, PyObject *exception, const bool clear)
 {
   char *report_str = nullptr;
 
@@ -639,18 +640,18 @@ short KPy_reports_to_error(kraken::ReportList *reports, PyObject *exception, con
   return (report_str == NULL) ? 0 : -1;
 }
 
-bool KPy_errors_to_report(kraken::ReportList *reports)
+bool KPy_errors_to_report(ReportList *reports)
 {
   return KPy_errors_to_report_ex(reports, NULL, true, true);
 }
 
-void KPy_reports_write_stdout(const kraken::ReportList *reports, const char *header)
+void KPy_reports_write_stdout(const ReportList *reports, const char *header)
 {
   if (header) {
     PySys_WriteStdout("%s\n", header);
   }
 
-  for (auto &report : reports->list) {
+  LISTBASE_FOREACH (const Report *, report, &reports->list) {
     PySys_WriteStdout("%s: %s\n", report->typestr, report->message);
   }
 }

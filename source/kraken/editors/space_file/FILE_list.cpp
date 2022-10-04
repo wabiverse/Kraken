@@ -27,6 +27,8 @@
 #include "ED_fileselect.h"
 
 #include "KLI_path_utils.h"
+#include "KLI_string.h"
+#include "KLI_fileops.hh"
 
 #include "USD_space_types.h"
 
@@ -36,8 +38,6 @@
 #include <boost/python/overloads.hpp>
 
 using namespace boost::python;
-
-KRAKEN_NAMESPACE_USING
 
 const char *imb_ext_image[] = {
   ".png",  ".tga",  ".bmp", ".jpg", ".jpeg", ".sgi", ".rgb", ".rgba",
@@ -145,7 +145,7 @@ static bool file_is_pixar_backup(const char *str)
 int ED_path_extension_type(const std::string &path)
 {
 
-  if (KLI_has_pixar_extension(path)) {
+  if (KLI_has_kfile_extension(path.c_str())) {
     return FILE_TYPE_PIXAR;
   }
 
@@ -156,7 +156,7 @@ int ED_path_extension_type(const std::string &path)
 
 
   if (KLI_path_extension_check(CHARALL(path), ".app")) {
-    return FILE_TYPE_APPLICATIONBUNDLE;
+    return FILE_TYPE_BUNDLE;
   }
 
 

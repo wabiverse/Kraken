@@ -45,7 +45,7 @@
 
 #include "UI_interface.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 static double g_tooltip_time_closed;
 double WM_tooltip_time_closed(void)
@@ -96,7 +96,7 @@ void WM_tooltip_init(kContext *C, wmWindow *win)
     CTX_wm_region_set(C, region_prev);
   }
 
-  copy_v2_v2_int(screen->tool_tip->event_xy, win->eventstate->mouse_pos.data());
+  copy_v2_v2_int(screen->tool_tip->event_xy, win->eventstate->mouse_pos);
   if (pass_prev != screen->tool_tip->pass) {
     /* The pass changed, add timer for next pass. */
     wmWindowManager *wm = CTX_wm_manager(C);
@@ -163,4 +163,3 @@ void WM_tooltip_timer_init(kContext *C,
   WM_tooltip_timer_init_ex(C, win, area, region, init, UI_TOOLTIP_DELAY);
 }
 
-KRAKEN_NAMESPACE_END

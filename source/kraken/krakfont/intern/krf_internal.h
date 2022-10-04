@@ -25,6 +25,13 @@ struct rcti;
 /* Maximum number of bytes to use for cached data nodes. 0 is default of 200,000. */
 #define KRF_CACHE_BYTES 400000
 
+/* We assume square pixels at a fixed DPI of 72, scaling only the size. Therefore
+ * font size = points = pixels, i.e. a size of 20 will result in a 20-pixel EM square.
+ * Although we could use the actual monitor DPI instead, we would then have to scale
+ * the size to cancel that out. Other libraries like Skia use this same fixed value.
+ */
+#define KRF_DPI 72
+
 extern struct FontKRF *global_font[KRF_MAX_FONT];
 
 void krf_batch_draw_begin(struct FontKRF *font);

@@ -27,6 +27,8 @@
 #include <float.h> /* FLT_MIN/MAX */
 #include <stddef.h>
 
+#include "KLI_rhash.h"
+#include "KLI_listbase.h"
 #include "KLI_utildefines.h"
 #include "KLI_string.h"
 
@@ -35,6 +37,7 @@
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
 #include "KKE_report.h"
+#include "KKE_global.h"
 
 #include "LUXO_access.h"
 #include "LUXO_runtime.h"
@@ -97,7 +100,7 @@ static int kpy_class_validate(const UsdPrim &type, void *py_data, int *have_func
   return 1;
 }
 
-static int kpy_class_call(kContext *C, const UsdPrim &type, void *func, UsdPropertyVector parms)
+static int kpy_class_call(kContext *C, const UsdPrim &type, void *func, ListBase parms)
 {
   return 1;
 }
@@ -977,7 +980,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
                  kpy_class_call,
                  kpy_class_free);
 
-  if (!reports.list.empty()) {
+  if (!KLI_listbase_is_empty(&reports.list)) {
     const bool has_error = KPy_reports_to_error(&reports, PyExc_RuntimeError, false);
     if (!has_error) {
       KPy_reports_write_stdout(&reports, error_prefix);
@@ -1065,7 +1068,7 @@ static RHash *id_weakref_pool_get(const SdfPath &id)
   RHash *weakinfo_hash = nullptr;
 
   if (id_weakref_pool) {
-    weakinfo_hash = (RHash *)KKE_rhash_lookup(id_weakref_pool, id.GetAsToken());
+    weakinfo_hash = (RHash *)KLI_rhash_lookup(id_weakref_pool, id.GetAsToken());
   } else {
     /* First time, allocate pool. */
     // id_weakref_pool = KLI_rhash_ptr_new("uni_global_pool");
@@ -1073,8 +1076,8 @@ static RHash *id_weakref_pool_get(const SdfPath &id)
   }
 
   if (weakinfo_hash == NULL) {
-    // weakinfo_hash = KKE_rhash_ptr_new("rna_id");
-    KKE_rhash_insert(id_weakref_pool, id.GetAsToken(), weakinfo_hash);
+    // weakinfo_hash = KLI_rhash_ptr_new("rna_id");
+    KLI_rhash_insert(id_weakref_pool, id.GetAsToken(), weakinfo_hash);
   }
 
   return weakinfo_hash;
@@ -1102,7 +1105,7 @@ static void id_weakref_pool_add(const SdfPath &id, KPy_DummyKrakenPRIM *pystage)
   /* Important to add at the end of the hash, since first removal looks at the end. */
 
   /* Using a hash table as a set, all 'id's are the same. */
-  KKE_rhash_insert(weakinfo_hash, id.GetAsToken(), weakref);
+  KLI_rhash_insert(weakinfo_hash, id.GetAsToken(), weakref);
   /* weakinfo_hash owns the weakref */
 }
 #endif /* USE_PYUSD_INVALIDATE_WEAKREF */

@@ -18,28 +18,25 @@
 
 /**
  * @file
- * KRAKEN Python.
- * It Bites.
+ * @ingroup IMBUF
+ * Image Manipulation.
  */
 
-#pragma once
+#include <stddef.h>
 
-#include "KPY_api.h"
+#include "KLI_utildefines.h"
 
-#include "KKE_robinhood.h"
-#include "KKE_main.h"
-#include "KKE_context.h"
+// #include "IMB_allocimbuf.h"
+#include "IMB_colormanagement_intern.h"
+#include "IMB_filetype.h"
+#include "IMB_imbuf.h"
 
-/**
- *  -----  The Kraken Python Module. ----- */
+void IMB_init(void)
+{
+  colormanagement_init();
+}
 
-
-/**
- *  -----  Python Init & Exit. ----- */
-
-
-void KPY_python_init(kraken::kContext *C);
-void KPY_python_exit(void);
-
-
-/* ------ */
+void IMB_exit(void)
+{
+  colormanagement_exit();
+}

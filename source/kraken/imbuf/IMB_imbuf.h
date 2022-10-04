@@ -20,33 +20,28 @@
 
 /**
  * @file
- * KRAKEN Kernel.
- * Purple Underground.
+ * @ingroup IMBUF
+ * Image Manipulation.
  */
 
-#include "KKE_api.h"
-#include "KKE_context.h"
-#include "KKE_robinhood.h"
+#include "../kraklib/KLI_sys_types.h"
+#include "../gpu/GPU_texture.h"
 
-#include "USD_object.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <wabi/usd/usd/prim.h>
-#include <wabi/usd/usd/stage.h>
-#include <wabi/usd/usd/typed.h>
+#define IM_MAX_SPACE 64
 
-#include <wabi/base/js/value.h>
-#include <wabi/base/plug/notice.h>
-#include <wabi/base/plug/plugin.h>
-#include <wabi/base/plug/registry.h>
-#include <wabi/base/tf/instantiateSingleton.h>
-#include <wabi/base/tf/singleton.h>
-#include <wabi/base/tf/weakBase.h>
+struct ImBuf;
+struct rctf;
+struct rcti;
 
-#include <memory>
-#include <tbb/queuing_rw_mutex.h>
-#include <unordered_map>
+struct ColorManagedDisplay;
 
-KRAKEN_NAMESPACE_BEGIN
+void IMB_init(void);
+void IMB_exit(void);
 
-
-KRAKEN_NAMESPACE_END
+#ifdef __cplusplus
+}
+#endif

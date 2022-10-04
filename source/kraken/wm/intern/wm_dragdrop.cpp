@@ -22,6 +22,8 @@
  * Set the Stage.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include <wabi/usd/sdf/path.h>
 #include <wabi/wabi.h>
 
@@ -29,6 +31,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "KLI_listbase.h"
 #include "KLI_string.h"
 
 #include "KKE_context.h"
@@ -36,30 +39,29 @@
 #include "USD_wm_types.h"
 #include "USD_window.h"
 
-KRAKEN_NAMESPACE_BEGIN
 
-void WM_drag_add_local_ID(wmDrag *drag, SdfPath id, SdfPath from_parent)
+void WM_drag_add_local_ID(wmDrag *drag, ID *id, ID *from_parent)
 {
   /* Don't drag the same ID twice. */
-  UNIVERSE_MUTABLE_FOR_ALL(drag_id, drag->ids)
+  LISTBASE_FOREACH(wmDragID *, drag_id, &drag->ids)
   {
     if (drag_id->id == id) {
-      if (drag_id->from_parent.IsEmpty()) {
+      if (drag_id->from_parent == nullptr) {
         drag_id->from_parent = from_parent;
       }
       return;
     }
-    if (drag_id->id.GetName() != id.GetName()) {
-      KLI_assert(!"All dragged IDs must have the same type");
+    if (GS(drag_id->id->name) != GS(id->name)) {
+      KLI_assert_msg(0, "All dragged IDs must have the same type");
       return;
     }
   }
 
   /* Add to list. */
-  wmDragID *drag_id = MEM_new<wmDragID>(__func__);
+  wmDragID *drag_id = MEM_cnew<wmDragID>(__func__);
   drag_id->id = id;
   drag_id->from_parent = from_parent;
-  drag->ids.push_back(drag_id);
+  KLI_addtail(&drag->ids, drag_id);
 }
 
 wmDrag *WM_event_start_drag(kContext *C,
@@ -87,7 +89,7 @@ wmDrag *WM_event_start_drag(kContext *C,
       break;
     case WM_DRAG_ID:
       if (poin) {
-        WM_drag_add_local_ID(drag, SdfPath((const char *)poin), SdfPath(""));
+        WM_drag_add_local_ID(drag, static_cast<ID *>(poin), nullptr);
       }
       break;
     case WM_DRAG_ASSET:
@@ -104,13 +106,15 @@ wmDrag *WM_event_start_drag(kContext *C,
   return drag;
 }
 
-void WM_drag_free_list(std::vector<wmDrag *> &drags)
+void WM_drag_free(wmDrag *drag)
 {
-  for (auto &drag : drags) {
-    free(drag);
-  }
-
-  drags.clear();
+  MEM_freeN(drag);
 }
 
-KRAKEN_NAMESPACE_END
+void WM_drag_free_list(ListBase *lb)
+{
+  wmDrag *drag;
+  while ((drag = static_cast<wmDrag *>(KLI_pophead(lb)))) {
+    WM_drag_free(drag);
+  }
+}

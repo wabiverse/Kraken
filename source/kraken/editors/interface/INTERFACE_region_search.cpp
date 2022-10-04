@@ -37,8 +37,6 @@
 
 #include "interface_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 struct uiSearchItems {
   int maxitem, totitem, maxstrlen;
 
@@ -57,5 +55,3 @@ struct uiSearchItems {
   struct AutoComplete *autocpl;
   void *active;
 };
-
-KRAKEN_NAMESPACE_END

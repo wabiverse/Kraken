@@ -3,13 +3,16 @@
 
 set(INC
   .
-  ../krakkernel
+  ../krakernel
   ../kraklib
   ../gpu
   ../imbuf
   ../universe
   ../luxo
-  ../python
+  ../../../. # Pixar USD
+  ../../../source
+  ../../../intern/atomic
+  ../../../intern/clog
   ../../../intern/guardedalloc
 )
 
@@ -45,5 +48,11 @@ if(WIN32)
   )
 endif()
 
+if(WITH_PYTHON)
+  add_definitions(-DWITH_PYTHON)
+  list(APPEND INC
+    ../python
+  )
+endif()
 
 kraken_add_lib(kraken_krakfont "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

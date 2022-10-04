@@ -88,7 +88,7 @@ static int view2d_scroll_mapped(int scroll)
   return scroll;
 }
 
-char UI_view2d_mouse_in_scrollers_ex(const kraken::ARegion *region,
+char UI_view2d_mouse_in_scrollers_ex(const ARegion *region,
                                      const View2D *v2d,
                                      const int xy[2],
                                      int *r_scroll)
@@ -96,7 +96,7 @@ char UI_view2d_mouse_in_scrollers_ex(const kraken::ARegion *region,
   const int scroll = view2d_scroll_mapped(v2d->scroll);
   *r_scroll = scroll;
 
-  GfVec4i coords = kraken::FormFactory(region->coords);
+  GfVec4i coords = FormFactory(region->coords);
 
   if (scroll) {
     /* Move to region-coordinates. */
@@ -119,7 +119,7 @@ char UI_view2d_mouse_in_scrollers_ex(const kraken::ARegion *region,
   return 0;
 }
 
-char UI_view2d_rect_in_scrollers_ex(const kraken::ARegion *region,
+char UI_view2d_rect_in_scrollers_ex(const ARegion *region,
                                     const View2D *v2d,
                                     const rcti *rect,
                                     int *r_scroll)
@@ -130,7 +130,7 @@ char UI_view2d_rect_in_scrollers_ex(const kraken::ARegion *region,
   if (scroll) {
     /* Move to region-coordinates. */
     rcti rect_region = *rect;
-    GfVec4i coords = kraken::FormFactory(region->coords);
+    GfVec4i coords = FormFactory(region->coords);
     KLI_rcti_translate(&rect_region, -coords[0], coords[2]);
     if (scroll & V2D_SCROLL_HORIZONTAL) {
       if (IN_2D_HORIZ_SCROLL_RECT(v2d, &rect_region)) {
@@ -147,13 +147,13 @@ char UI_view2d_rect_in_scrollers_ex(const kraken::ARegion *region,
   return 0;
 }
 
-char UI_view2d_mouse_in_scrollers(const kraken::ARegion *region, const View2D *v2d, const int xy[2])
+char UI_view2d_mouse_in_scrollers(const ARegion *region, const View2D *v2d, const int xy[2])
 {
   int scroll_dummy = 0;
   return UI_view2d_mouse_in_scrollers_ex(region, v2d, xy, &scroll_dummy);
 }
 
-char UI_view2d_rect_in_scrollers(const kraken::ARegion *region, const View2D *v2d, const rcti *rect)
+char UI_view2d_rect_in_scrollers(const ARegion *region, const View2D *v2d, const rcti *rect)
 {
   int scroll_dummy = 0;
   return UI_view2d_rect_in_scrollers_ex(region, v2d, rect, &scroll_dummy);

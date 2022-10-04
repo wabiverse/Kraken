@@ -26,7 +26,6 @@
 #include "USD_object.h"
 
 
-KRAKEN_NAMESPACE_BEGIN
 
 
-KRAKEN_NAMESPACE_END
+

@@ -26,12 +26,13 @@
 #include "ED_code.h"
 
 #include <wabi/base/tf/stringUtils.h>
+#include <wabi/base/gf/vec2f.h>
 
 #include "zep.h"
 #include <mutex>
 
+using namespace wabi;
 using namespace Zep;
-KRAKEN_NAMESPACE_BEGIN
 
 void ED_code_run(bool *show)
 {
@@ -77,5 +78,3 @@ void ED_code_run(bool *show)
 
   ANCHOR::End();
 }
-
-KRAKEN_NAMESPACE_END

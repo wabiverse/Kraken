@@ -39,7 +39,7 @@
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/prim.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 enum
 {
@@ -51,10 +51,8 @@ enum
   OPERATOR_INTERFACE = (1 << 5),
 };
 
-struct wmOperatorType
+typedef struct wmOperatorType
 {
-  wmOperatorType();
-
   /** Text for UI, undo. */
   const char *name;
   /** Unique identifier. */
@@ -79,7 +77,7 @@ struct wmOperatorType
   int (*invoke)(kContext *C, wmOperator *op, wmEvent *event) ATTR_WARN_UNUSED_RESULT;
 
   bool (*poll)(kContext *C) ATTR_WARN_UNUSED_RESULT;
-};
+} wmOperatorType;
 
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(kContext *C);
@@ -100,4 +98,3 @@ char *WM_operator_pystring_ex(kContext *C,
                               wmOperatorType *ot,
                               KrakenPRIM *opptr);
 
-KRAKEN_NAMESPACE_END

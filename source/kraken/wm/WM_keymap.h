@@ -32,9 +32,9 @@
 
 struct IDProperty;
 
-KRAKEN_NAMESPACE_BEGIN
 
-wmKeyMap *WM_keymap_list_find(std::vector<wmKeyMap *> keymaps, const wabi::TfToken &idname, int spaceid, int regionid);
+
+wmKeyMap *WM_keymap_list_find(ListBase *keymaps, const wabi::TfToken &idname, int spaceid, int regionid);
 
 wmKeyMap *WM_keymap_active(const wmWindowManager *wm, wmKeyMap *keymap);
 
@@ -64,4 +64,3 @@ int WM_keymap_item_to_string(const struct wmKeyMapItem *kmi,
 
 const char *WM_key_event_string(const short type, const bool compact);
 
-KRAKEN_NAMESPACE_END

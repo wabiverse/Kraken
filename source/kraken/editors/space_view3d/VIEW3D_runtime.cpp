@@ -34,7 +34,7 @@
 
 #include <wabi/base/arch/hints.h>
 
-KRAKEN_NAMESPACE_BEGIN
+WABI_NAMESPACE_USING
 
 void ED_view3d_run(bool *show)
 {
@@ -89,5 +89,3 @@ void ED_view3d_run(bool *show)
   ANCHOR::Text("I will be a viewport someday.");
   ANCHOR::End();
 }
-
-KRAKEN_NAMESPACE_END

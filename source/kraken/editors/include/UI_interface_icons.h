@@ -29,6 +29,8 @@
 
 struct Collection;
 struct ID;
+struct Scene;
+struct kScene;
 
 typedef struct IconFile {
   struct IconFile *next, *prev;
@@ -46,7 +48,6 @@ typedef struct IconFile {
 
 #define PREVIEW_DEFAULT_HEIGHT 128
 
-KRAKEN_NAMESPACE_BEGIN
 
 typedef enum eAlertIcon {
   ALERT_ICON_WARNING = 0,
@@ -61,7 +62,7 @@ typedef enum eAlertIcon {
 struct ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon);
 
 /**
- * Resizable Icons for Blender
+ * Resizable Icons for Kraken
  */
 void UI_icons_init(void);
 /**
@@ -83,7 +84,7 @@ bool UI_icon_get_theme_color(int icon_id, unsigned char color[4]);
  * Note that if an ID doesn't support jobs for preview creation, \a use_job will be ignored.
  */
 void UI_icon_render_id(const struct kContext *C,
-                       struct Scene *scene,
+                       struct kScene *scene,
                        struct ID *id,
                        enum eIconSizes size,
                        bool use_job);
@@ -92,7 +93,7 @@ void UI_icon_render_id(const struct kContext *C,
  * Render the data block into the provided #PreviewImage.
  */
 void UI_icon_render_id_ex(const struct kContext *C,
-                          struct Scene *scene,
+                          struct kScene *scene,
                           struct ID *id_to_render,
                           const enum eIconSizes size,
                           const bool use_job,
@@ -136,5 +137,4 @@ int UI_icon_from_library(const struct ID *id);
 int UI_icon_from_object_mode(int mode);
 int UI_icon_color_from_collection(const struct Collection *collection);
 
-KRAKEN_NAMESPACE_END
 

@@ -36,7 +36,7 @@
 
 #include <wabi/base/gf/rect2i.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 typedef void (*wmGenericUserDataFreeFn)(void *data);
 
@@ -117,7 +117,7 @@ void WM_cursor_position_to_anchor_screen_coords(wmWindow *win, int *x, int *y);
 void WM_cursor_position_to_anchor_client_coords(wmWindow *win, int *x, int *y);
 void WM_clipboard_text_set(const char *buf, bool selection);
 
-Scene *WM_window_get_active_scene(const wmWindow *win);
+kScene *WM_window_get_active_scene(const wmWindow *win);
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 kScreen *WM_window_get_active_screen(const wmWindow *win);
 WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win);
@@ -133,4 +133,3 @@ static void wmOrtho2_offset(const float x, const float y, const float ofs);
 void wmOrtho2_region_pixelspace(const ARegion *region);
 void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct);
 
-KRAKEN_NAMESPACE_END

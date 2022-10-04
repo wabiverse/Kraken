@@ -44,6 +44,7 @@
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
 #include "KKE_utils.h"
+#include "KKE_global.h"
 
 #include "LUXO_access.h"
 #include "LUXO_enum_types.h"
@@ -56,8 +57,6 @@
 #include "WM_tokens.h"
 #include "WM_window.h"
 #include "WM_keymap.h"
-
-KRAKEN_NAMESPACE_BEGIN
 
 struct wmKeyMapItemFind_Params
 {
@@ -258,12 +257,12 @@ int WM_keymap_item_raw_to_string(const short shift,
  * - Gets freed in wm.c
  * \{ */
 
-wmKeyMap *WM_keymap_list_find(std::vector<wmKeyMap *> keymaps,
+wmKeyMap *WM_keymap_list_find(ListBase *keymaps,
                               const wabi::TfToken &idname,
                               int spaceid,
                               int regionid)
 {
-  for (auto &km : keymaps) {
+  LISTBASE_FOREACH(wmKeyMap *, km, keymaps) {
     if (km->spaceid == spaceid && km->regionid == regionid) {
       if (km->idname == idname) {
         return km;
@@ -290,8 +289,8 @@ wmKeyMap *WM_keymap_active(const wmWindowManager *wm, wmKeyMap *keymap)
   }
 
   /* first user defined keymaps */
-  wmKeyMap *km = WM_keymap_list_find(wm->userconf->keymaps,
-                                     keymap->idname,
+  wmKeyMap *km = WM_keymap_list_find(&wm->userconf->keymaps,
+                                     wabi::TfToken(keymap->idname),
                                      keymap->spaceid,
                                      keymap->regionid);
 
@@ -307,14 +306,14 @@ wmKeyMap *WM_keymap_active(const wmWindowManager *wm, wmKeyMap *keymap)
 bool WM_keymap_poll(kContext *C, wmKeyMap *keymap)
 {
   /* If we're tagged, only use compatible. */
-  if (!keymap->owner_id.IsEmpty()) {
+  if (!keymap->owner_id) {
     const WorkSpace *workspace = CTX_wm_workspace(C);
-    if (KKE_workspace_owner_id_check(workspace, keymap->owner_id) == false) {
+    if (KKE_workspace_owner_id_check(workspace, wabi::TfToken(keymap->owner_id)) == false) {
       return false;
     }
   }
 
-  if (ARCH_UNLIKELY(keymap->items.empty())) {
+  if (ARCH_UNLIKELY(KLI_listbase_is_empty(&keymap->items))) {
     /* Empty key-maps may be missing more there may be a typo in the name.
      * Warn early to avoid losing time investigating each case.
      * When developing a customized Blender though you may want empty keymaps. */
@@ -340,7 +339,8 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
                                                    const bool is_strict,
                                                    const struct wmKeyMapItemFind_Params *params)
 {
-  for (auto &kmi : keymap->items) {
+  LISTBASE_FOREACH(wmKeyMapItem *, kmi, &keymap->items)
+  {
     /* skip disabled keymap items [T38447] */
     if (kmi->flag & KMI_INACTIVE) {
       continue;
@@ -386,7 +386,7 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
                   "%s: Some set values in menu entry match default op values, "
                   "this might not be desired!\n",
                   opname.GetText());
-                printf("\tkm: '%s', kmi: '%s'\n", keymap->idname.GetText(), kmi_str);
+                printf("\tkm: '%s', kmi: '%s'\n", keymap->idname, kmi_str);
 #ifndef NDEBUG
 #  ifdef WITH_PYTHON
                 printf("OPERATOR\n");
@@ -419,7 +419,7 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
 static wmKeyMapItem *wm_keymap_item_find_handlers(const kContext *C,
                                                   wmWindowManager *wm,
                                                   wmWindow *win,
-                                                  std::vector<wmEventHandler *> handlers,
+                                                  ListBase *handlers,
                                                   const TfToken &opname,
                                                   eWmOperatorContext UNUSED(opcontext),
                                                   IDProperty *properties,
@@ -428,7 +428,8 @@ static wmKeyMapItem *wm_keymap_item_find_handlers(const kContext *C,
                                                   wmKeyMap **r_keymap)
 {
   /* find keymap item in handlers */
-  for (auto &handler_base : handlers) {
+  LISTBASE_FOREACH(wmEventHandler *, handler_base, handlers)
+  {
     if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {
       wmEventHandler_Keymap *handler = (wmEventHandler_Keymap *)handler_base;
       wmEventHandler_KeymapResult km_result;
@@ -474,7 +475,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
     found = wm_keymap_item_find_handlers(C,
                                          wm,
                                          win,
-                                         win->modalhandlers,
+                                         &win->modalhandlers,
                                          opname,
                                          opcontext,
                                          properties,
@@ -485,7 +486,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
       found = wm_keymap_item_find_handlers(C,
                                            wm,
                                            win,
-                                           win->handlers,
+                                           &win->handlers,
                                            opname,
                                            opcontext,
                                            properties,
@@ -499,7 +500,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
     found = wm_keymap_item_find_handlers(C,
                                          wm,
                                          win,
-                                         area->handlers,
+                                         &area->handlers,
                                          opname,
                                          opcontext,
                                          properties,
@@ -519,7 +520,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
           found = wm_keymap_item_find_handlers(C,
                                                wm,
                                                win,
-                                               region->handlers,
+                                               &region->handlers,
                                                opname,
                                                opcontext,
                                                properties,
@@ -537,7 +538,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
         found = wm_keymap_item_find_handlers(C,
                                              wm,
                                              win,
-                                             region->handlers,
+                                             &region->handlers,
                                              opname,
                                              opcontext,
                                              properties,
@@ -554,7 +555,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
         found = wm_keymap_item_find_handlers(C,
                                              wm,
                                              win,
-                                             region->handlers,
+                                             &region->handlers,
                                              opname,
                                              opcontext,
                                              properties,
@@ -567,7 +568,7 @@ static wmKeyMapItem *wm_keymap_item_find_props(const kContext *C,
         found = wm_keymap_item_find_handlers(C,
                                              wm,
                                              win,
-                                             region->handlers,
+                                             &region->handlers,
                                              opname,
                                              opcontext,
                                              properties,
@@ -678,5 +679,3 @@ int WM_keymap_item_to_string(const wmKeyMapItem *kmi,
                                       result,
                                       result_len);
 }
-
-KRAKEN_NAMESPACE_END

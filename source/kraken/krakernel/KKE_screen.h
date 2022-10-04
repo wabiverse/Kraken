@@ -40,8 +40,6 @@
 #include "wabi/usd/usdUI/window.h"
 #include "wabi/usd/usd/prim.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 
 struct wmRegionListenerParams
 {
@@ -49,7 +47,7 @@ struct wmRegionListenerParams
   struct ScrArea *area;
   ARegion *region;
   wmNotifier *notifier;
-  const Scene *scene;
+  const kScene *scene;
 
   wmRegionListenerParams()
     : window(POINTER_ZERO),
@@ -119,9 +117,9 @@ struct SpaceType
   int spaceid;  /* unique space identifier */
   int iconid;   /* icon lookup for menus */
 
-  struct SpaceLink *(*create)(const struct ScrArea *area, const Scene *scene);
+  struct SpaceLink *(*create)(const struct ScrArea *area, const kScene *scene);
 
-  void (*free)(struct SpaceLink *sl);
+  void (*free)(struct kSpaceLink *sl);
 
 
   void (*init)(wmWindowManager *wm, struct ScrArea *area);
@@ -180,5 +178,3 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
 
 ARegionType *KKE_regiontype_from_id(const SpaceType *st, int regionid);
 void KKE_area_region_free(SpaceType *st, ARegion *region);
-
-KRAKEN_NAMESPACE_END

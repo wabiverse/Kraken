@@ -30,12 +30,10 @@
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usd/common.h>
 
-struct uiStyle;
-
-KRAKEN_NAMESPACE_BEGIN
-
 /* kraken fwd. */
-
+struct uiStyle;
+struct Scene;
+struct kScene;
 struct ARegion;
 struct kContext;
 struct kContextDataResult;
@@ -45,7 +43,6 @@ struct kScreen;
 struct ScrArea;
 struct Main;
 struct ReportList;
-struct Scene;
 struct uiBlock;
 struct kUserDef;
 struct wmMsgBus;
@@ -112,7 +109,7 @@ kScreen *CTX_wm_screen(const kContext *C);
 ScrArea *CTX_wm_area(const kContext *C);
 ARegion *CTX_wm_region(const kContext *C);
 ARegion *CTX_wm_menu(const kContext *C);
-Scene *CTX_data_scene(const kContext *C);
+kScene *CTX_data_scene(const kContext *C);
 KrakenSTAGE CTX_data_stage(const kContext *C);
 kUserDef *CTX_data_prefs(const kContext *C);
 ReportList *CTX_wm_reports(const kContext *C);
@@ -131,7 +128,7 @@ void CTX_wm_area_set(kContext *C, ScrArea *area);
 void CTX_wm_region_set(kContext *C, ARegion *region);
 void CTX_wm_menu_set(kContext *C, ARegion *menu);
 void CTX_wm_window_set(kContext *C, wmWindow *win);
-void CTX_data_scene_set(kContext *C, Scene *cscene);
+void CTX_data_scene_set(kContext *C, kScene *cscene);
 void CTX_data_prefs_set(kContext *C, kUserDef *uprefs);
 
 void CTX_wm_operator_poll_msg_clear(kContext *C);
@@ -160,4 +157,3 @@ struct kContextPollMsgParams
   void *user_data;
 };
 
-KRAKEN_NAMESPACE_END

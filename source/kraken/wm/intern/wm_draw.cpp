@@ -32,7 +32,7 @@
 #include "WM_draw.h"
 #include "WM_window.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void WM_draw_update(kContext *C)
 {
@@ -52,4 +52,3 @@ void wm_draw_region_clear(wmWindow *win, ARegion *UNUSED(region))
 }
 
 
-KRAKEN_NAMESPACE_END

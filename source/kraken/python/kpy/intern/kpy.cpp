@@ -29,7 +29,7 @@
 #include "KLI_utildefines.h"
 #include "KLI_string.h"
 
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_robinhood.h"
@@ -403,7 +403,7 @@ static PyObject *kpy_import_test(const char *modname)
 /******************************************************************************
  * Description: Creates the kpy module and adds it to sys.modules for importing
  ******************************************************************************/
-void KPy_init_modules(struct kraken::kContext *C)
+void KPy_init_modules(struct kContext *C)
 {
   KrakenPRIM ctx_ptr;
   PyObject *mod;

@@ -36,8 +36,6 @@
 
 #include "interface_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 void UI_popup_block_invoke(kContext *C, uiBlockCreateFunc func, void *arg, uiFreeArgFunc arg_free)
 {
   UI_popup_block_invoke_ex(C, func, arg, arg_free, true);
@@ -69,7 +67,7 @@ void UI_popup_block_ex(kContext *C,
   WM_event_add_mousemove(window);
 }
 
-bool UI_popup_block_name_exists(const kScreen *screen, const TfToken &name)
+bool UI_popup_block_name_exists(const kScreen *screen, const char *name)
 {
   for (const auto &region : screen->regions) {
     for (const auto &block : region->uiblocks) {
@@ -80,5 +78,3 @@ bool UI_popup_block_name_exists(const kScreen *screen, const TfToken &name)
   }
   return false;
 }
-
-KRAKEN_NAMESPACE_END

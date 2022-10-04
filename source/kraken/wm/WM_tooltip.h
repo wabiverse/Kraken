@@ -28,7 +28,7 @@
 
 #include "KKE_context.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void WM_tooltip_init(kContext *C, wmWindow *win);
 void WM_tooltip_immediate_init(kContext *C,
@@ -40,4 +40,3 @@ double WM_tooltip_time_closed(void);
 void WM_tooltip_clear(kContext *C, wmWindow *win);
 void WM_tooltip_timer_clear(kContext *C, wmWindow *win);
 
-KRAKEN_NAMESPACE_END

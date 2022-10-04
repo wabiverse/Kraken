@@ -30,8 +30,6 @@
 
 #include <wabi/base/gf/vec2i.h>
 
-KRAKEN_NAMESPACE_BEGIN
-
 enum eSpaceWindowType
 {
   SPACE_WINDOW_DEFAULT = 0,
@@ -92,9 +90,7 @@ struct SpaceWindow
   /** Icon identifier for this window. */
   int icon_id;
 
-  void (*init)(Scene *scene);
+  void (*init)(kScene *scene);
 };
 
 typedef int wmWindowFlags;
-
-KRAKEN_NAMESPACE_END

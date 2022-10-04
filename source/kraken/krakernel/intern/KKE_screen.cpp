@@ -36,11 +36,11 @@
 #include "USD_wm_types.h"
 #include "USD_workspace.h"
 
+#include "KLI_listbase.h"
+
 #include "KKE_screen.h"
 
 #include <wabi/usd/usd/tokens.h>
-
-KRAKEN_NAMESPACE_BEGIN
 
 
 /* keep global; this has to be accessible outside of windowmanager */
@@ -59,7 +59,7 @@ int find_free_screenid(kContext *C)
   int id = 1;
 
   Main *kmain = CTX_data_main(C);
-  UNIVERSE_FOR_ALL (screen, kmain->screens) {
+  LISTBASE_FOREACH(kScreen *, screen, &kmain->screens) {
     if (id <= screen->winid) {
       id = screen->winid + 1;
     }
@@ -189,7 +189,7 @@ void KKE_area_region_free(SpaceType *st, ARegion *region)
   // }
 
   // if (region->runtime.block_name_map != NULL) {
-  //   KKE_rhash_free(region->runtime.block_name_map, NULL, NULL);
+  //   KLI_rhash_free(region->runtime.block_name_map, NULL, NULL);
   //   region->runtime.block_name_map = NULL;
   // }
 
@@ -199,4 +199,3 @@ void KKE_area_region_free(SpaceType *st, ARegion *region)
   // KLI_freelistN(&region->panels_category_active);
 }
 
-KRAKEN_NAMESPACE_END

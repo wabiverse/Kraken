@@ -31,8 +31,6 @@
 
 #include <wabi/base/tf/token.h>
 
-KRAKEN_NAMESPACE_BEGIN
-
 struct KRAKEN_UI_TOKENS_TYPE
 {
   KRAKEN_UI_TOKENS_TYPE();
@@ -44,7 +42,5 @@ struct KRAKEN_UI_TOKENS_TYPE
 };
 
 extern TfStaticData<KRAKEN_UI_TOKENS_TYPE> KRAKEN_UI_TOKENS;
-
-KRAKEN_NAMESPACE_END
 
 #endif /* KRAKEN_EDITORS_UI_TOKENS_H */

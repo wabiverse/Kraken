@@ -31,8 +31,6 @@
 #include "WM_api.h"
 #include "WM_tokens.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 /* -------------------------------------------------------------------- */
 /** \name Button (#uiBut) State
  * \{ */
@@ -125,7 +123,7 @@ bool ui_but_is_popover_once_compat(const uiBut *but)
 
 bool ui_but_has_array_value(const uiBut *but)
 {
-  return (but->stagepoin.data && but->stageprop &&
+  return (but->stagepoin->data && but->stageprop &&
           ELEM(LUXO_property_subtype(but->stageprop),
                PROP_COLOR,
                PROP_TRANSLATION,
@@ -205,7 +203,7 @@ static bool ui_but_isect_pie_seg(const uiBlock *block, const uiBut *but)
     return false;
   }
 
-  ui_but_pie_dir(but->pie_dir, vec);
+  ui_but_pie_dir(static_cast<RadialDirection>(but->pie_dir), vec);
 
   if (saacos(dot_v2v2(vec, block->pie_data.pie_dir)) < angle_range) {
     return true;
@@ -322,7 +320,10 @@ uiBut *ui_but_find_mouse_over_ex(const ARegion *region,
     /* CLIP_EVENTS prevents the event from reaching other blocks */
     if (block->flag & UI_BLOCK_CLIP_EVENTS) {
       /* check if mouse is inside block */
-      if (KLI_rctf_isect_pt(GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax), mx, my)) {
+      if (KLI_rctf_isect_pt(
+            GfVec4f(block->rect.xmin, block->rect.xmax, block->rect.ymin, block->rect.ymax),
+            mx,
+            my)) {
         break;
       }
     }
@@ -334,7 +335,7 @@ uiBut *ui_but_find_mouse_over_ex(const ARegion *region,
 uiBut *ui_but_find_mouse_over(const ARegion *region, const wmEvent *event)
 {
   return ui_but_find_mouse_over_ex(region,
-                                   event->mouse_pos.data(),
+                                   event->mouse_pos,
                                    event->modifier & KM_CTRL,
                                    false,
                                    nullptr,
@@ -353,13 +354,11 @@ uiBut *ui_but_find_rect_over(const struct ARegion *region, const rcti *rect_px)
   KLI_rctf_rcti_copy(&rect_px_fl, rect_px);
   uiBut *butover = nullptr;
 
-  for(auto &block : region->uiblocks)
-  {
+  for (auto &block : region->uiblocks) {
     rctf rect_block;
     ui_window_to_block_rctf(region, block, &rect_block, &rect_px_fl);
 
-    for(auto &but : block->buttons)
-    {
+    for (auto &but : block->buttons) {
       if (ui_but_is_interactive(but, labeledit)) {
         /* No pie menu support. */
         KLI_assert(but->pie_dir == UI_RADIAL_NONE);
@@ -406,7 +405,7 @@ uiBut *ui_list_find_mouse_over(const ARegion *region, const wmEvent *event)
     /* If there is no info about the mouse, just act as if there is nothing underneath it. */
     return nullptr;
   }
-  return ui_list_find_mouse_over_ex(region, event->mouse_pos.data());
+  return ui_list_find_mouse_over_ex(region, event->mouse_pos);
 }
 
 uiList *UI_list_find_mouse_over(const ARegion *region, const wmEvent *event)
@@ -548,7 +547,7 @@ uiBut *ui_but_last(uiBlock *block)
 
 bool ui_but_is_cursor_warp(const uiBut *but)
 {
-  if (UI_FLAG & USER_CONTINUOUS_MOUSE) {
+  if (U.flag & USER_CONTINUOUS_MOUSE) {
     if (ELEM(but->type,
              UI_BTYPE_NUM,
              UI_BTYPE_NUM_SLIDER,
@@ -713,7 +712,7 @@ uiBlock *ui_block_find_mouse_over_ex(const ARegion *region, const int xy[2], boo
 
 uiBlock *ui_block_find_mouse_over(const ARegion *region, const wmEvent *event, bool only_clip)
 {
-  return ui_block_find_mouse_over_ex(region, event->mouse_pos.data(), only_clip);
+  return ui_block_find_mouse_over_ex(region, event->mouse_pos, only_clip);
 }
 
 /** \} */
@@ -810,8 +809,7 @@ bool ui_region_contains_rect_px(const ARegion *region, const rcti *rect_px)
 
 ARegion *ui_screen_region_find_mouse_over_ex(kScreen *screen, const int xy[2])
 {
-  for(auto &region : screen->regions)
-  {
+  for (auto &region : screen->regions) {
     rcti winrct;
 
     ui_region_winrct_get_no_margin(region, &winrct);
@@ -825,7 +823,7 @@ ARegion *ui_screen_region_find_mouse_over_ex(kScreen *screen, const int xy[2])
 
 ARegion *ui_screen_region_find_mouse_over(kScreen *screen, const wmEvent *event)
 {
-  return ui_screen_region_find_mouse_over_ex(screen, event->mouse_pos.data());
+  return ui_screen_region_find_mouse_over_ex(screen, event->mouse_pos);
 }
 
 /** \} */
@@ -838,7 +836,5 @@ void ui_interface_tag_script_reload_queries(void)
 {
   g_ot_tool_set_by_id = nullptr;
 }
-
-KRAKEN_NAMESPACE_END
 
 /** \} */

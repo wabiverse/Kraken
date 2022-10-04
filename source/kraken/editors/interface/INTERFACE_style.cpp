@@ -43,8 +43,6 @@
 
 #include "interface_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 /* style + theme + layout-engine = UI */
 
 /**
@@ -124,7 +122,7 @@ const uiStyle *UI_style_get(void)
   style = KLI_findstring(&U.uistyles, "Unifont Style", sizeof(style) * 2);
   return (style != nullptr) ? style : U.uistyles.first;
 #else
-  return static_cast<const uiStyle *>(UI_STYLES_LIST.back());
+  return static_cast<const uiStyle *>(U.uistyles.first);
 #endif
 }
 
@@ -152,5 +150,3 @@ const uiStyle *UI_style_get_dpi(void)
 
   return &_style;
 }
-
-KRAKEN_NAMESPACE_END

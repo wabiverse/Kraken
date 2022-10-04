@@ -15,6 +15,7 @@
 // #include "USD_node_types.h"
 // #include "USD_object_types.h"
 #include "USD_scene_types.h"
+#include "USD_scene.h"
 
 #include "KLI_compiler_attrs.h"
 #include "KLI_dynstr.h"
@@ -99,10 +100,10 @@ struct CryptomatteSession
   kraken::Vector<std::string> layer_names;
 
   CryptomatteSession() = default;
-  CryptomatteSession(const kraken::Main *kmain);
+  CryptomatteSession(const Main *kmain);
   CryptomatteSession(StampData *stamp_data);
   CryptomatteSession(const ViewLayer *view_layer);
-  CryptomatteSession(const Scene *scene);
+  CryptomatteSession(const kScene *scene);
   void init(const ViewLayer *view_layer);
 
   kraken::kke::cryptomatte::CryptomatteLayer &add_layer(std::string layer_name);
@@ -113,7 +114,7 @@ struct CryptomatteSession
 #endif
 };
 
-CryptomatteSession::CryptomatteSession(const kraken::Main *kmain)
+CryptomatteSession::CryptomatteSession(const Main *kmain)
 {
   if (!KLI_listbase_is_empty(&kmain->objects)) {
     kraken::kke::cryptomatte::CryptomatteLayer &objects = add_layer(
@@ -154,7 +155,7 @@ CryptomatteSession::CryptomatteSession(const ViewLayer *view_layer)
   init(view_layer);
 }
 
-CryptomatteSession::CryptomatteSession(const Scene *scene)
+CryptomatteSession::CryptomatteSession(const kScene *scene)
 {
   LISTBASE_FOREACH(const ViewLayer *, view_layer, &scene->view_layers)
   {
@@ -213,7 +214,7 @@ struct CryptomatteSession *KKE_cryptomatte_init_from_render_result(
   return session;
 }
 
-struct CryptomatteSession *KKE_cryptomatte_init_from_scene(const struct Scene *scene)
+struct CryptomatteSession *KKE_cryptomatte_init_from_scene(const struct kScene *scene)
 {
   CryptomatteSession *session = new CryptomatteSession(scene);
   return session;

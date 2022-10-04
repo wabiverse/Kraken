@@ -41,8 +41,6 @@
 #include "interface_intern.h"
 #include "interface_regions_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 void ui_region_temp_remove(kContext *C, kScreen *screen, ARegion *region)
 {
   wmWindow *win = CTX_wm_window(C);
@@ -63,5 +61,3 @@ void ui_region_temp_remove(kContext *C, kScreen *screen, ARegion *region)
                         screen->regions.end());
   delete region;
 }
-
-KRAKEN_NAMESPACE_END

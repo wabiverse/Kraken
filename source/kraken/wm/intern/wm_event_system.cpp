@@ -48,7 +48,9 @@
 #include "KKE_idtype.h"
 #include "KKE_idprop.h"
 #include "KKE_report.h"
+#include "KKE_global.h"
 
+#include "KLI_rhash.h"
 #include "KLI_assert.h"
 #include "KLI_dynstr.h"
 #include "KLI_kraklib.h"
@@ -60,7 +62,6 @@
 
 #include <wabi/base/tf/stringUtils.h>
 
-KRAKEN_NAMESPACE_BEGIN
 
 static bool wm_notifier_is_clear(const wmNotifier *note)
 {
@@ -77,7 +78,7 @@ static bool wm_notifier_is_clear(const wmNotifier *note)
 static uint note_hash_for_queue_fn(const void *ptr)
 {
   const wmNotifier *note = static_cast<const wmNotifier *>(ptr);
-  return (KKE_rhashutil_ptrhash(note->reference) ^
+  return (KLI_rhashutil_ptrhash(note->reference) ^
           (note->category | note->data | note->subtype | note->action));
 }
 
@@ -120,15 +121,15 @@ int WM_event_drag_threshold(const wmEvent *event)
   if (ISMOUSE(event->prevtype)) {
     KLI_assert(event->prevtype != MOUSEMOVE);
     if (WM_event_is_tablet(event)) {
-      drag_threshold = UI_DRAG_THRESHOLD_TABLET;
+      drag_threshold = U.drag_threshold_tablet;
     } else {
-      drag_threshold = UI_DRAG_THRESHOLD_MOUSE;
+      drag_threshold = U.drag_threshold_mouse;
     }
   } else {
     /* Typically keyboard, could be NDOF button or other less common types. */
-    drag_threshold = UI_DRAG_THRESHOLD;
+    drag_threshold = U.drag_threshold;
   }
-  return drag_threshold * UI_DPI_FAC;
+  return drag_threshold * U.dpi_fac;
 }
 
 bool WM_event_drag_test_with_delta(const wmEvent *event, const int drag_delta[2])
@@ -150,7 +151,7 @@ bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2])
 void WM_main_add_notifier(unsigned int type, void *reference)
 {
   Main *kmain = G.main;
-  wmWindowManager *wm = static_cast<wmWindowManager *>(kmain->wm.front());
+  wmWindowManager *wm = static_cast<wmWindowManager *>(kmain->wm.first);
 
   WM_event_add_notifier_ex(wm, nullptr, type, reference);
 }
@@ -181,14 +182,14 @@ void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, voi
   KLI_assert(!wm_notifier_is_clear(&note_test));
 
   if (wm->notifier_queue_set == nullptr) {
-    wm->notifier_queue_set = KKE_rset_new_ex(note_hash_for_queue_fn,
+    wm->notifier_queue_set = KLI_rset_new_ex(note_hash_for_queue_fn,
                                              note_cmp_for_queue_fn,
                                              __func__,
                                              1024);
   }
 
   void **note_p;
-  if (KKE_rset_ensure_p_ex(wm->notifier_queue_set, &note_test, &note_p)) {
+  if (KLI_rset_ensure_p_ex(wm->notifier_queue_set, &note_test, &note_p)) {
     return;
   }
   wmNotifier *note = MEM_new<wmNotifier>(__func__);
@@ -246,23 +247,27 @@ static wmEvent *wm_event_add_mousemove(wmWindow *win, wmEvent *event)
 {
   wmEvent *event_last = win->event_queue.back();
 
+  /* Some painting operators want accurate mouse events, they can
+   * handle in between mouse move moves, others can happily ignore
+   * them for better performance. */
   if (event_last && event_last->type == MOUSEMOVE) {
     event_last->type = INBETWEEN_MOUSEMOVE;
+    event_last->flag = 0;
   }
 
   wmEvent *event_new = wm_event_add(win, event);
-  if (event_last == NULL) {
+  if (event_last == nullptr) {
     event_last = win->eventstate;
   }
 
-  event_new->prev_mouse_pos = event_last->mouse_pos;
+  copy_v2_v2_int(event_new->prev_mouse_pos, event_last->mouse_pos);
   return event_new;
 }
 
 
 static wmWindow *wm_event_cursor_other_windows(wmWindowManager *wm, wmWindow *win, wmEvent *event)
 {
-  GfVec2i mval = event->mouse_pos;
+  GfVec2i mval = GfVec2i(event->mouse_pos[0], event->mouse_pos[1]);
 
   if (wm->windows.size() <= 1) {
     return nullptr;
@@ -275,7 +280,8 @@ static wmWindow *wm_event_cursor_other_windows(wmWindowManager *wm, wmWindow *wi
       mval[1] > WM_window_pixels_y(win) + 30) {
     wmWindow *win_other;
     if (WM_window_find_under_cursor(wm, win, win, mval, &win_other, &mval)) {
-      event->mouse_pos = mval;
+      event->mouse_pos[0] = mval[0];
+      event->mouse_pos[1] = mval[1];
       return win_other;
     }
   }
@@ -302,14 +308,14 @@ static wmEvent *wm_event_add_trackpad(wmWindow *win, const wmEvent *event, int d
 
 static float wm_pressure_curve(float pressure)
 {
-  if (UI_PRESSURE_THRESHOLD_MAX != 0.0f) {
-    pressure /= UI_PRESSURE_THRESHOLD_MAX;
+  if (U.pressure_threshold_max != 0.0f) {
+    pressure /= U.pressure_threshold_max;
   }
 
   CLAMP(pressure, 0.0f, 1.0f);
 
-  if (UI_PRESSURE_SOFTNESS != 0.0f) {
-    pressure = powf(pressure, powf(4.0f, -UI_PRESSURE_SOFTNESS));
+  if (U.pressure_softness != 0.0f) {
+    pressure = powf(pressure, powf(4.0f, -U.pressure_softness));
   }
 
   return pressure;
@@ -463,7 +469,7 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
   static int emulating_event = EVENT_NONE;
 
   /* Middle-mouse emulation. */
-  if (UI_FLAG & USER_TWOBUTTONMOUSE) {
+  if (U.flag & USER_TWOBUTTONMOUSE) {
 
     if (event->type == LEFTMOUSE) {
       short *mod = (
@@ -499,7 +505,7 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
   }
 
   /* Numpad emulation. */
-  if (UI_FLAG & USER_NONUMPAD) {
+  if (U.flag & USER_NONUMPAD) {
     switch (event->type) {
       case EVT_ZEROKEY:
         event->type = EVT_PAD0;
@@ -597,7 +603,7 @@ static bool wm_event_is_double_click(const wmEvent *event)
     if (ISMOUSE(event->type) && WM_event_drag_test(event, &event->prevclickx)) {
       /* Pass. */
     } else {
-      if ((PIL_check_seconds_timer() - event->prevclicktime) * 1000 < UI_DOUBLE_CLICK_TIME) {
+      if ((PIL_check_seconds_timer() - event->prevclicktime) * 1000 < U.dbl_click_time) {
         return true;
       }
     }
@@ -636,7 +642,7 @@ void WM_event_get_keymaps_from_handler(wmWindowManager *wm,
 /** \} */
 
 wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
-                                          std::vector<wmEventHandler *> handlers,
+                                          std::vector<wmEventHandlerUI *> handlers,
                                           wmUIHandlerFunc handle_fn,
                                           wmUIHandlerRemoveFunc remove_fn,
                                           void *user_data,
@@ -644,7 +650,6 @@ wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
 {
   wmEventHandlerUI *handler = MEM_cnew<wmEventHandlerUI>(__func__);
   handler->head.type = WM_HANDLER_TYPE_UI;
-  handler->type = WM_HANDLER_TYPE_UI;
   handler->handle_fn = handle_fn;
   handler->remove_fn = remove_fn;
   handler->user_data = user_data;
@@ -659,7 +664,7 @@ wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
   }
 
   KLI_assert((flag & WM_HANDLER_DO_FREE) == 0);
-  handler->flag = flag;
+  handler->head.flag = flag;
 
   handlers.insert(handlers.begin(), handler);
 
@@ -694,12 +699,14 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
   switch (type) {
     case AnchorEventTypeCursorMove: {
       AnchorEventCursorData *cd = (AnchorEventCursorData *)customdata;
-      event.mouse_pos = GfVec2i(cd->x, cd->y);
+      event.mouse_pos[0] = GfVec2i(cd->x, cd->y)[0];
+      event.mouse_pos[1] = GfVec2i(cd->x, cd->y)[1];
 
       event.type = MOUSEMOVE;
       {
         wmEvent *event_new = wm_event_add_mousemove(win, &event);
-        event_state->mouse_pos = event_new->mouse_pos;
+        event_state->mouse_pos[0] = event_new->mouse_pos[0];
+        event_state->mouse_pos[1] = event_new->mouse_pos[1];
       }
 
       wmWindow *win_other = wm_event_cursor_other_windows(wm, win, &event);
@@ -709,11 +716,13 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
         event_other.prevtype = event_other.type;
         event_other.prevval = event_other.val;
 
-        event_other.mouse_pos = event.mouse_pos;
+        event_other.mouse_pos[0] = event.mouse_pos[0];
+        event_other.mouse_pos[1] = event.mouse_pos[1];
         event_other.type = MOUSEMOVE;
         {
           wmEvent *event_new = wm_event_add_mousemove(win_other, &event_other);
-          win_other->eventstate->mouse_pos = event_new->mouse_pos;
+          win_other->eventstate->mouse_pos[0] = event_new->mouse_pos[0];
+          win_other->eventstate->mouse_pos[1] = event_new->mouse_pos[1];
           win_other->eventstate->tablet.is_motion_absolute = event_new->tablet.is_motion_absolute;
         }
       }
@@ -741,7 +750,8 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
           break;
       }
 
-      event.mouse_pos = event_state->mouse_pos = GfVec2i(pd->x, pd->y);
+      event.mouse_pos[0] = event_state->mouse_pos[0] = GfVec2i(pd->x, pd->y)[0];
+      event.mouse_pos[1] = event_state->mouse_pos[1] = GfVec2i(pd->x, pd->y)[1];
       event.val = KM_NOTHING;
 
       /* The direction is inverted from the device due to system preferences. */
@@ -802,7 +812,8 @@ void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void
         event_other.prevtype = event_other.type;
         event_other.prevval = event_other.val;
 
-        event_other.mouse_pos = event.mouse_pos;
+        event_other.mouse_pos[0] = event.mouse_pos[0];
+        event_other.mouse_pos[1] = event.mouse_pos[1];
 
         event_other.type = event.type;
         event_other.val = event.val;
@@ -999,12 +1010,13 @@ void wm_event_free_handler(wmEventHandler *handler)
   delete handler;
 }
 
-void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler *> handlers)
+void WM_event_remove_handlers(kContext *C, ListBase *handlers)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   std::vector<wmEventHandler *>::iterator iter;
 
-  for (iter = handlers.begin(); iter != handlers.end(); ++iter) {
+  wmEventHandler *handler_base;
+  while ((handler_base = static_cast<wmEventHandler *>(KLI_pophead(handlers)))) {
     KLI_assert((*iter)->type != 0);
     if ((*iter)->type == WM_HANDLER_TYPE_UI) {
       wmEventHandlerUI *handler = (wmEventHandlerUI *)(*iter);
@@ -1034,8 +1046,6 @@ void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler *> handler
 
     wm_event_free_handler((*iter));
   }
-
-  handlers.clear();
 }
 
 
@@ -1126,9 +1136,8 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
       // }
       // LUXO_STRUCT_END;
     } else {
-      for(auto &macro : ot->macro)
-      {
-        wmOperatorType *otm = WM_operatortype_find(macro->idname);
+      for (auto &macro : ot->macro) {
+        wmOperatorType *otm = WM_operatortype_find(TfToken(macro->idname));
         wmOperator *opm = wm_operator_create(wm, otm, macro->ptr, nullptr);
 
         motherop->macro.push_back(opm);
@@ -1425,7 +1434,7 @@ static int wm_operator_invoke(kContext *C,
           if (region && region->regiontype == RGN_TYPE_WINDOW &&
               isect_pt_v(
                 GfVec4i(GET_X(regionpos), GET_Y(regionpos), GET_X(regionsize), GET_Y(regionsize)),
-                event->mouse_pos)) {
+                GfVec2i(event->mouse_pos[0], event->mouse_pos[1]))) {
             winrect = new GfVec4i(GET_X(regionpos),
                                   GET_Y(regionpos),
                                   GET_X(regionsize),
@@ -1433,7 +1442,7 @@ static int wm_operator_invoke(kContext *C,
           } else if (area &&
                      isect_pt_v(
                        GfVec4i(GET_X(areapos), GET_Y(areapos), GET_X(areasize), GET_Y(areasize)),
-                       event->mouse_pos)) {
+                       GfVec2i(event->mouse_pos[0], event->mouse_pos[1]))) {
             winrect = new GfVec4i(GET_X(areapos),
                                   GET_Y(areapos),
                                   GET_X(areasize),
@@ -1652,13 +1661,11 @@ void WM_event_do_refresh_wm(kContext *C)
 static void wm_add_reports(ReportList *reports)
 {
   /* If the caller owns them, handle this. */
-  if (reports->list.front() && (reports->flag & RPT_OP_HOLD) == 0) {
-    wmWindowManager *wm = G.main->wm.front();
+  if (reports->list.first && (reports->flag & RPT_OP_HOLD) == 0) {
+    wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
 
     /* Add reports to the global list, otherwise they are not seen. */
-    for (auto &rep : reports->list) {
-      wm->reports.list.push_back(rep);
-    }
+    KLI_movelisttolist(&wm->reports.list, &reports->list);
 
     WM_report_banner_show();
   }
@@ -1693,7 +1700,7 @@ void WM_reportf(eReportType type, const char *format, ...)
 
 void WM_report_banner_show(void)
 {
-  wmWindowManager *wm = G.main->wm.front();
+  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
   ReportList *wm_reports = &wm->reports;
 
   /* After adding reports to the global list, reset the report timer. */
@@ -1711,7 +1718,7 @@ static void wm_event_free(wmEvent *event)
   if (event->customdata) {
     if (event->customdatafree) {
       if (event->custom == EVT_DATA_DRAGDROP) {
-        WM_drag_free_list((std::vector<wmDrag *> &)event->customdata);
+        WM_drag_free_list((ListBase *)event->customdata);
       } else {
         free(event->customdata);
       }
@@ -1760,7 +1767,7 @@ void WM_event_do_handlers(kContext *C)
     if (screen == NULL) {
       wm_event_free_all(VALUE(win));
     } else {
-      Scene *scene = WM_window_get_active_scene(VALUE(win));
+      kScene *scene = WM_window_get_active_scene(VALUE(win));
     }
 
     wmEvent *event;
@@ -1793,6 +1800,3 @@ bool WM_operator_poll_context(kContext *C, wmOperatorType *ot, short context)
 }
 
 static int wm_handler_fileselect() {}
-
-
-KRAKEN_NAMESPACE_END

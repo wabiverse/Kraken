@@ -24,6 +24,7 @@
 
 #include "KKE_api.h"
 #include "KKE_main.h"
+#include "KKE_global.h"
 
 #include "KLI_time.h"
 #include "KLI_string.h"
@@ -36,7 +37,7 @@
 #include <wabi/base/plug/info.h>
 #include <wabi/base/plug/registry.h>
 
-KRAKEN_NAMESPACE_BEGIN
+WABI_NAMESPACE_USING
 
 static char maelstrom_version_string[48] = "";
 
@@ -57,4 +58,3 @@ void KKE_kraken_plugins_init()
   printf("\n");
 }
 
-KRAKEN_NAMESPACE_END

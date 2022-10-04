@@ -39,7 +39,7 @@
 #include "LUXO_runtime.h"
 #include "LUXO_types.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct PropertyPRIMOrID {
   KrakenPRIM ptr;
@@ -110,4 +110,3 @@ struct EnumPropertyPRIM {
 void PRIM_def_info(const KrakenSTAGE &kstage);
 void PRIM_def_wm(const KrakenSTAGE &kstage);
 
-KRAKEN_NAMESPACE_END

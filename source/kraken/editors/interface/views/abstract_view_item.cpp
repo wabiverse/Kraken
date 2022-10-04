@@ -343,29 +343,29 @@ void UI_view_item_begin_rename(uiViewItemHandle *item_handle)
   item.begin_renaming();
 }
 
-void UI_view_item_context_menu_build(kraken::kContext *C,
+void UI_view_item_context_menu_build(kContext *C,
                                      const uiViewItemHandle *item_handle,
-                                     kraken::uiLayout *column)
+                                     uiLayout *column)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_handle);
   item.build_context_menu(*C, *column);
 }
 
-bool UI_view_item_drag_start(kraken::kContext *C, const uiViewItemHandle *item_)
+bool UI_view_item_drag_start(kContext *C, const uiViewItemHandle *item_)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
   return ViewItemAPIWrapper::drag_start(*C, item);
 }
 
 bool UI_view_item_can_drop(const uiViewItemHandle *item_,
-                           const kraken::wmDrag *drag,
+                           const wmDrag *drag,
                            const char **r_disabled_hint)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
   return ViewItemAPIWrapper::can_drop(item, *drag, r_disabled_hint);
 }
 
-char *UI_view_item_drop_tooltip(const uiViewItemHandle *item_, const kraken::wmDrag *drag)
+char *UI_view_item_drop_tooltip(const uiViewItemHandle *item_, const wmDrag *drag)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
 
@@ -373,7 +373,7 @@ char *UI_view_item_drop_tooltip(const uiViewItemHandle *item_, const kraken::wmD
   return tooltip.empty() ? nullptr : KLI_strdup(tooltip.c_str());
 }
 
-bool UI_view_item_drop_handle(kraken::kContext *C, const uiViewItemHandle *item_, const std::vector<kraken::wmDrag *> *drags)
+bool UI_view_item_drop_handle(kContext *C, const uiViewItemHandle *item_, const std::vector<wmDrag *> *drags)
 {
   const AbstractViewItem &item = reinterpret_cast<const AbstractViewItem &>(*item_);
   return ViewItemAPIWrapper::drop_handle(*C, item, *drags);

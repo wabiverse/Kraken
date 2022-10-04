@@ -3,6 +3,11 @@
 
 set(INC
   .
+  ../../../../../intern/guardedalloc
+  ../../kraklib
+  ../../gpu
+  ../../gpu/intern
+  ../../universe
 )
 
 set(INC_SYS
@@ -12,10 +17,10 @@ set(INC_SYS
 
 set(SRC
   ocio_capi.cc
-  ocio_impl.cc
 
   ocio_capi.h
   ocio_impl.h
+  ocio_shader_shared.hh
 )
 
 set(LIB
@@ -36,7 +41,36 @@ if(WIN32)
   )
 endif()
 
+set(GLSL_SRC
+  gpu_shader_display_transform_vert.glsl
+  gpu_shader_display_transform_frag.glsl
+
+  ocio_shader_shared.hh
+)
+
+set(GLSL_C)
+foreach(GLSL_FILE ${GLSL_SRC})
+  data_to_c_simple(${GLSL_FILE} GLSL_C)
+endforeach()
+
+kraken_add_lib(kraken_ocio_shaders "${GLSL_C}" "" "" "")
+
+list(APPEND LIB
+  kraken_ocio_shaders
+)
+
+set(GLSL_SOURCE_CONTENT "")
+foreach(GLSL_FILE ${GLSL_SRC})
+  get_filename_component(GLSL_FILE_NAME ${GLSL_FILE} NAME)
+  string(REPLACE "." "_" GLSL_FILE_NAME_UNDERSCORES ${GLSL_FILE_NAME})
+  string(APPEND GLSL_SOURCE_CONTENT "SHADER_SOURCE\(datatoc_${GLSL_FILE_NAME_UNDERSCORES}, \"${GLSL_FILE_NAME}\", \"${GLSL_FILE}\"\)\n")
+endforeach()
+
+set(glsl_source_list_file "${CMAKE_CURRENT_BINARY_DIR}/glsl_ocio_source_list.h")
+file(GENERATE OUTPUT ${glsl_source_list_file} CONTENT "${GLSL_SOURCE_CONTENT}")
+list(APPEND SRC ${glsl_source_list_file})
 list(APPEND INC ${CMAKE_CURRENT_BINARY_DIR})
 
+target_include_directories(kraken_ocio_shaders PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 kraken_add_lib(kraken_intern_opencolorio "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

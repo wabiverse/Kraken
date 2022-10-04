@@ -85,8 +85,6 @@ typedef SSIZE_T ssize_t;
 #  define S_ISDIR(x) (((x)&_S_IFDIR) == _S_IFDIR)
 #endif
 
-KRAKEN_NAMESPACE_BEGIN
-
 /* Directory reading compatibility with UNIX. */
 struct dirent
 {
@@ -109,5 +107,3 @@ void KLI_windows_get_default_root_dir(char *root_dir);
 int KLI_windows_get_executable_dir(char *str);
 
 int uaccess(const char *filename, int mode);
-
-KRAKEN_NAMESPACE_END

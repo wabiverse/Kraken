@@ -44,8 +44,7 @@ extern "C" {
 #include "glsl_draw_source_list.h"
 #include "glsl_gpu_source_list.h"
 #ifdef WITH_OCIO
-/* Todo add OCIO sources. */
-// #  include "glsl_ocio_source_list.h"
+#  include "glsl_ocio_source_list.h"
 #endif
 #undef SHADER_SOURCE
 }
@@ -866,8 +865,7 @@ void gpu_shader_dependency_init()
 #include "glsl_draw_source_list.h"
 #include "glsl_gpu_source_list.h"
 #ifdef WITH_OCIO
-/* Todo add OCIO sources. */
-// #  include "glsl_ocio_source_list.h"
+#  include "glsl_ocio_source_list.h"
 #endif
 #undef SHADER_SOURCE
 

@@ -462,7 +462,7 @@ typedef struct ImageFormatData
 #define R_IMF_FLAG_ZBUF (1 << 0)
 #define R_IMF_FLAG_PREVIEW_JPG (1 << 1)
 
-/* Return values from #BKE_imtype_valid_depths, note this is depths per channel. */
+/* Return values from #KKE_imtype_valid_depths, note this is depths per channel. */
 /** #ImageFormatData.depth */
 typedef enum eImageFormatDepth
 {
@@ -695,7 +695,7 @@ typedef struct RenderData
 
   /* path to render output */
   /** 1024 = FILE_MAX. */
-  /* NOTE: Excluded from `BKE_bpath_foreach_path_` / `scene_foreach_path` code. */
+  /* NOTE: Excluded from `KKE_bpath_foreach_path_` / `scene_foreach_path` code. */
   char pic[1024];
 
   /* stamps flags. */
@@ -965,7 +965,7 @@ typedef struct ParticleEditSettings
 
   int draw_step, fade_frames;
 
-  struct Scene *scene;
+  struct kScene *scene;
   struct Object *object;
   struct Object *shape_object;
 } ParticleEditSettings;
@@ -1772,7 +1772,7 @@ typedef struct Scene
   struct Object *camera;
   struct World *world;
 
-  struct Scene *set;
+  struct kScene *set;
 
   /** 3d cursor location. */
   int cursor;
@@ -1840,7 +1840,7 @@ typedef struct Scene
 
   void *_pad8;
   /* XXX. runtime flag for drawing, actually belongs in the window,
-   * only used by BKE_object_handle_update() */
+   * only used by KKE_object_handle_update() */
   int customdata_mask;
   /* XXX. same as above but for temp operator use (gl renders) */
   int customdata_mask_modal;
@@ -2042,7 +2042,7 @@ extern const char *RE_engine_id_CYCLES;
 #define MINAFRAME -1048574
 #define MINAFRAMEF -1048574.0f
 
-#define BASE_VISIBLE(v3d, base) BKE_base_is_visible(v3d, base)
+#define BASE_VISIBLE(v3d, base) KKE_base_is_visible(v3d, base)
 #define BASE_SELECTABLE(v3d, base)                                                                \
   (BASE_VISIBLE(v3d, base) &&                                                                     \
    ((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_select) == 0)) && \
@@ -2068,9 +2068,9 @@ extern const char *RE_engine_id_CYCLES;
 #define PRVRANGEON (scene->r.flag & SCER_PRV_RANGE)
 #define PSFRA ((PRVRANGEON) ? (scene->r.psfra) : (scene->r.sfra))
 #define PEFRA ((PRVRANGEON) ? (scene->r.pefra) : (scene->r.efra))
-#define FRA2TIME(a) ((((double)scene->r.frs_sec_base) * (double)(a)) / (double)scene->r.frs_sec)
-#define TIME2FRA(a) ((((double)scene->r.frs_sec) * (double)(a)) / (double)scene->r.frs_sec_base)
-#define FPS (((double)scene->r.frs_sec) / (double)scene->r.frs_sec_base)
+#define FRA2TIME(a) ((((double)scene->stage->GetTimeCodesPerSecond()) * (double)(a)) / (double)scene->stage->GetFramesPerSecond())
+#define TIME2FRA(a) ((((double)scene->stage->GetFramesPerSecond() * (double)(a)) / (double)scene->stage->GetTimeCodesPerSecond())
+#define FPS (((double)scene->stage->GetFramesPerSecond()) / (double)scene->stage->GetTimeCodesPerSecond())
 
 /* Base.flag is in USD_object_types.h */
 
@@ -2254,7 +2254,7 @@ typedef enum eVGroupSelect
 #define SCE_KEYS_NO_SELONLY (1 << 4)
 #define SCE_READFILE_LIBLINK_NEED_SETSCENE_CHECK (1 << 5)
 
-/* return flag BKE_scene_base_iter_next functions */
+/* return flag KKE_scene_base_iter_next functions */
 /* #define F_ERROR          -1 */ /* UNUSED */
 #define F_START 0
 #define F_SCENE 1

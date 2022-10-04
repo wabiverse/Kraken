@@ -30,6 +30,7 @@
 
 // #include "KKE_anim_data.h"
 // #include "KKE_armature.h"
+#include "KKE_global.h"
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_idtype.h"
@@ -49,8 +50,6 @@
 #include "interface_intern.h"
 
 #include <wabi/usd/usdSkel/skeleton.h>
-
-KRAKEN_NAMESPACE_BEGIN
 
 /* Show an icon button after each RNA button to use to quickly set keyframes,
  * this is a way to display animation/driven/override status, see T54951. */
@@ -826,7 +825,7 @@ static void ui_item_enum_expand_elem_exec(uiLayout *layout,
                                  -1,
                                  NULL);
   } else if (icon) {
-    const int w = (is_first) ? itemw : ceilf(itemw - UI_PIXEL_SIZE);
+    const int w = (is_first) ? itemw : ceilf(itemw - U.pixelsize);
     but = uiDefIconButR_prop(block,
                              but_type,
                              0,
@@ -1029,13 +1028,13 @@ static void ui_keymap_but_cb(kContext *UNUSED(C), void *but_v, void *UNUSED(key_
   KLI_assert(but->type == UI_BTYPE_HOTKEY_EVENT);
   const uiButHotkeyEvent *hotkey_but = (uiButHotkeyEvent *)but;
 
-  but->stagepoin.GetAttribute(TfToken("shift"))
+  but->stagepoin->GetAttribute(TfToken("shift"))
     .Set((hotkey_but->modifier_key & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING);
-  but->stagepoin.GetAttribute(TfToken("ctrl"))
+  but->stagepoin->GetAttribute(TfToken("ctrl"))
     .Set((hotkey_but->modifier_key & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING);
-  but->stagepoin.GetAttribute(TfToken("alt"))
+  but->stagepoin->GetAttribute(TfToken("alt"))
     .Set((hotkey_but->modifier_key & KM_ALT) ? KM_MOD_HELD : KM_NOTHING);
-  but->stagepoin.GetAttribute(TfToken("oskey"))
+  but->stagepoin->GetAttribute(TfToken("oskey"))
     .Set((hotkey_but->modifier_key & KM_OSKEY) ? KM_MOD_HELD : KM_NOTHING);
 }
 
@@ -1206,7 +1205,7 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
 
   for (auto &block : region->uiblocks) {
     for (auto &but : block->buttons) {
-      if (but && but->stagepoin.data) {
+      if (but && but->stagepoin->data) {
         if (LUXO_property_type(but->stageprop) == PROP_STRING) {
           prevbut = but;
         }
@@ -2563,7 +2562,7 @@ void uiItemFullR(uiLayout *layout,
 
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
-      KrakenPRIM *ptr_dec = use_blank_decorator ? NULL : &but_decorate->stagepoin;
+      KrakenPRIM *ptr_dec = use_blank_decorator ? NULL : but_decorate->stagepoin;
       KrakenPROP *prop_dec = use_blank_decorator ? NULL : but_decorate->stageprop;
 
       /* The icons are set in 'ui_but_anim_flag' */
@@ -2905,7 +2904,7 @@ uiBut *ui_but_add_search(uiBut *but,
     search_but = (uiButSearch *)but;
 
     if (searchptr) {
-      search_but->rnasearchpoin = *searchptr;
+      search_but->rnasearchpoin = searchptr;
       search_but->rnasearchprop = searchprop;
     }
 
@@ -2915,15 +2914,15 @@ uiBut *ui_but_add_search(uiBut *but,
     //   but->flag |= UI_BUT_VALUE_CLEAR;
     // }
 
-    coll_search->target_ptr = *ptr;
+    coll_search->target_ptr = ptr;
     coll_search->target_prop = prop;
 
     if (searchptr) {
-      coll_search->search_ptr = *searchptr;
+      coll_search->search_ptr = searchptr;
       coll_search->search_prop = searchprop;
     } else {
       /* Rely on `has_search_fn`. */
-      coll_search->search_ptr = KrakenPRIM();
+      coll_search->search_ptr = MEM_new<KrakenPRIM>(__func__);
       coll_search->search_prop = nullptr;
     }
 
@@ -3248,7 +3247,7 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
     UI_but_func_set(&decorator_but->but, ui_but_anim_decorate_cb, decorator_but, NULL);
     decorator_but->but.flag |= UI_BUT_UNDO | UI_BUT_DRAG_LOCK;
     /* Reusing RNA search members, setting actual RNA data has many side-effects. */
-    decorator_but->stagepoin = *ptr;
+    decorator_but->stagepoin = ptr;
     decorator_but->stageprop = prop;
     /* ui_def_but_rna() sets non-array buttons to have a RNA index of 0. */
     decorator_but->rnaindex = (!is_array || is_expand) ? i : index;
@@ -4106,7 +4105,7 @@ static void ui_litem_layout_radial(uiLayout *litem)
    * also the old code at http://developer.blender.org/T5103
    */
 
-  const int pie_radius = UI_PIE_MENU_RADIUS * UI_DPI_FAC;
+  const int pie_radius = U.pie_menu_radius * UI_DPI_FAC;
 
   const int x = litem->x;
   const int y = litem->y;
@@ -4189,7 +4188,7 @@ static void ui_litem_layout_root_radial(uiLayout *litem)
 
     ui_item_position(&item->item,
                      x - itemw / 2,
-                     y + UI_DPI_FAC * (UI_PIE_MENU_THRESHOLD + 9.0f),
+                     y + UI_DPI_FAC * (U.pie_menu_threshold + 9.0f),
                      itemw,
                      itemh);
   }
@@ -5108,7 +5107,7 @@ uiLayout *uiLayoutListBox(uiLayout *layout,
 
   but->custom_data = ui_list;
 
-  but->stagepoin = *actptr;
+  but->stagepoin = actptr;
   but->stageprop = actprop;
 
   /* only for the undo string */
@@ -5988,13 +5987,13 @@ void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but)
     uiLayoutSetContextPointer(layout, "button_operator", but->opptr);
   }
 
-  if (but->stagepoin.data && but->stageprop) {
+  if (but->stagepoin->data && but->stageprop) {
     /* TODO: index could be supported as well */
     KrakenPRIM ptr_prop;
     KrakenPRIM ptr_new;
     LUXO_pointer_create(NULL, &ptr_new, but->stageprop, &ptr_prop);
     uiLayoutSetContextPointer(layout, "button_prop", &ptr_prop);
-    uiLayoutSetContextPointer(layout, "button_pointer", &but->stagepoin);
+    uiLayoutSetContextPointer(layout, "button_pointer", but->stagepoin);
   }
 }
 
@@ -6179,7 +6178,7 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
   if (but->stageprop) {
     KLI_dynstr_appendf(ds,
                        "'prim':'%s.%s[%d]', ",
-                       LUXO_struct_identifier(but->stagepoin.type).GetText(),
+                       LUXO_struct_identifier(but->stagepoin->type).GetText(),
                        LUXO_property_identifier(but->stageprop).GetText(),
                        but->rnaindex);
   }
@@ -6298,5 +6297,3 @@ uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon)
 }
 
 /** \} */
-
-KRAKEN_NAMESPACE_END

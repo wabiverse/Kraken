@@ -41,7 +41,7 @@
  * file format defaults. */
 
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /* clang-format off */
 
@@ -143,4 +143,3 @@ void USD_default_table_scene_data(kContext *C)
 
 /* clang-format on */
 
-KRAKEN_NAMESPACE_END

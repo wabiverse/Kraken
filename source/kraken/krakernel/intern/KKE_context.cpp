@@ -60,8 +60,6 @@
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>
 
-KRAKEN_NAMESPACE_BEGIN
-
 struct kContext
 {
   kContext() = default;
@@ -88,7 +86,7 @@ struct kContext
   struct
   {
     Main *main;
-    Scene *scene;
+    kScene *scene;
     KrakenSTAGE stage;
     kUserDef *prefs;
 
@@ -354,7 +352,7 @@ ARegion *CTX_wm_menu(const kContext *C)
   return C->wm.menu;
 }
 
-Scene *CTX_data_scene(const kContext *C)
+kScene *CTX_data_scene(const kContext *C)
 {
   return C->data.scene;
 }
@@ -427,7 +425,7 @@ void CTX_wm_menu_set(kContext *C, ARegion *menu)
   C->wm.menu = menu;
 }
 
-void CTX_data_scene_set(kContext *C, Scene *cscene)
+void CTX_data_scene_set(kContext *C, kScene *cscene)
 {
   C->data.scene = cscene;
   // C->data.stage = cscene->stage;
@@ -460,5 +458,3 @@ void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg)
 
   C->wm.operator_poll_msg = msg;
 }
-
-KRAKEN_NAMESPACE_END

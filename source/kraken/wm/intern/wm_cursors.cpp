@@ -23,6 +23,7 @@
  */
 
 #include "KKE_context.h"
+#include "KKE_global.h"
 
 #include "WM_cursors_api.h"
 #include "WM_cursors.h"
@@ -36,7 +37,7 @@
 
 #include "ANCHOR_api.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /* Kraken custom cursor. */
 struct KCursor
@@ -450,4 +451,3 @@ void WM_cursor_grab_disable(wmWindow *win, const int mouse_ungrab_xy[2])
   }
 }
 
-KRAKEN_NAMESPACE_END

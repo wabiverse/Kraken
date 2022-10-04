@@ -26,7 +26,9 @@
 
 #include "USD_api.h"
 
-KRAKEN_NAMESPACE_BEGIN
+struct Scene;
+
+
 
 /**
  * In order of preferred
@@ -51,7 +53,7 @@ struct KrakenFileData
   char filename[FILE_MAX];
 
   struct kScreen *curscreen;
-  struct Scene *curscene;
+  kScene *curscene;
 
   eKrakenFileType type;
 };
@@ -111,4 +113,3 @@ FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *repo
  * @return A handle on success, or NULL on failure. */
 KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadReport *reports);
 
-KRAKEN_NAMESPACE_END

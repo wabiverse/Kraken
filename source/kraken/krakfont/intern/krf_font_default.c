@@ -12,9 +12,9 @@
 #include "KRF_api.h"
 
 #include "KLI_fileops.h"
-#include "KLI_path_util.h"
+#include "KLI_path_utils.h"
 
-#include "BKE_appdir.h"
+#include "KKE_appdir.hh"
 
 #ifdef WIN32
 #  include "KLI_winstuff.h"
@@ -22,7 +22,7 @@
 
 static int krf_load_font_default(const char *filename, const bool unique)
 {
-  const char *dir = BKE_appdir_folder_id(BLENDER_DATAFILES, KRF_DATAFILES_FONTS_DIR);
+  const char *dir = KKE_appdir_folder_id(KRAKEN_DATAFILES, KRF_DATAFILES_FONTS_DIR);
   if (dir == NULL) {
     fprintf(stderr,
             "%s: 'fonts' data path not found for '%s', will not be able to display text\n",
@@ -54,7 +54,7 @@ int KRF_load_mono_default(const bool unique)
 static void krf_load_datafiles_dir(void)
 {
   const char *datafiles_fonts_dir = KRF_DATAFILES_FONTS_DIR SEP_STR;
-  const char *path = BKE_appdir_folder_id(BLENDER_DATAFILES, datafiles_fonts_dir);
+  const char *path = KKE_appdir_folder_id(KRAKEN_DATAFILES, datafiles_fonts_dir);
   if (UNLIKELY(!path)) {
     fprintf(stderr, "Font data directory \"%s\" could not be detected!\n", datafiles_fonts_dir);
     return;

@@ -29,8 +29,6 @@
 
 #include "USD_wm_types.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 void KKE_reports_init(ReportList *reports, int flag);
 void KKE_reports_clear(ReportList *reports);
 
@@ -44,5 +42,3 @@ const char *KKE_report_type_str(eReportType type);
 
 void KKE_reports_print(ReportList *reports, eReportType level);
 bool KKE_reports_print_test(const ReportList *reports, eReportType type);
-
-KRAKEN_NAMESPACE_END

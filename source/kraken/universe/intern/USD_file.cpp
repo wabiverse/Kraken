@@ -24,6 +24,7 @@
 
 #include "KLI_string.h"
 #include "KLI_path_utils.h"
+#include "KLI_fileops.hh"
 
 #include "KKE_context.h"
 #include "KKE_main.h"
@@ -60,7 +61,7 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/stage.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 static void decode_kraken_header(FileData *fd)
 {
@@ -140,7 +141,7 @@ static FileData *kr_filedata_from_file_descriptor(const char *filepath,
     return NULL;
   }
 
-  if (!KLI_has_pixar_extension(file->GetFileExtension())) {
+  if (!KLI_has_kfile_extension(file->GetFileExtension().c_str())) {
     KKE_reportf(reports->reports, RPT_WARNING, "Unrecognized file format '%s'", filepath);
     return NULL;
   }
@@ -194,4 +195,3 @@ KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadRep
   return kh;
 }
 
-KRAKEN_NAMESPACE_END

@@ -508,7 +508,7 @@ typedef struct Library
    * This is only for convenience, `filepath` is the real path
    * used on file read but in some cases its useful to access the absolute one.
    *
-   * Use #BKE_library_filepath_set() rather than setting `filepath`
+   * Use #KKE_library_filepath_set() rather than setting `filepath`
    * directly and it will be kept in sync - campbell
    */
   char filepath_abs[1024];
@@ -605,19 +605,19 @@ typedef struct PreviewImage
   ((GS((id)->name) != ID_SCR) && (GS((id)->name) != ID_WM) && (GS((id)->name) != ID_WS))
 
 #define ID_BLEND_PATH(_bmain, _id) \
-  ((_id)->lib ? (_id)->lib->filepath_abs : BKE_main_blendfile_path((_bmain)))
+  ((_id)->lib ? (_id)->lib->filepath_abs : KKE_main_blendfile_path((_bmain)))
 #define ID_BLEND_PATH_FROM_GLOBAL(_id) \
-  ((_id)->lib ? (_id)->lib->filepath_abs : BKE_main_blendfile_path_from_global())
+  ((_id)->lib ? (_id)->lib->filepath_abs : KKE_main_blendfile_path_from_global())
 
 #define ID_MISSING(_id) ((((const ID *)(_id))->tag & LIB_TAG_MISSING) != 0)
 
 #define ID_IS_LINKED(_id) (((const ID *)(_id))->lib != NULL)
 
 /* Note that these are fairly high-level checks, should be used at user interaction level, not in
- * BKE_library_override typically (especially due to the check on LIB_TAG_EXTERN). */
+ * KKE_library_override typically (especially due to the check on LIB_TAG_EXTERN). */
 #define ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(_id)                                                \
   (ID_IS_LINKED(_id) && !ID_MISSING(_id) &&                                                     \
-   (BKE_idtype_get_info_from_id((const ID *)(_id))->flags & IDTYPE_FLAGS_NO_LIBLINKING) == 0 && \
+   (KKE_idtype_get_info_from_id((const ID *)(_id))->flags & IDTYPE_FLAGS_NO_LIBLINKING) == 0 && \
    !ELEM(GS(((ID *)(_id))->name), ID_SCE))
 #define ID_IS_OVERRIDABLE_LIBRARY(_id) \
   (ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY((_id)) && (((const ID *)(_id))->tag & LIB_TAG_EXTERN) != 0)
@@ -650,7 +650,7 @@ typedef struct PreviewImage
   (!ELEM(_id_type, ID_LI, ID_IP, ID_SCR, ID_VF, ID_BR, ID_WM, ID_PAL, ID_PC, ID_WS, ID_IM))
 
 /* Check whether data-block type requires copy-on-write from #ID_RECALC_PARAMETERS.
- * Keep in sync with #BKE_id_eval_properties_copy. */
+ * Keep in sync with #KKE_id_eval_properties_copy. */
 #define ID_TYPE_SUPPORTS_PARAMS_WITHOUT_COW(id_type) ELEM(id_type, ID_ME)
 
 #define ID_TYPE_IS_DEPRECATED(id_type) ELEM(id_type, ID_IP)
@@ -864,7 +864,7 @@ enum
    */
   LIB_TAG_NO_USER_REFCOUNT = 1 << 16,
   /**
-   * ID was not allocated by standard system (BKE_libblock_alloc), do not free its memory
+   * ID was not allocated by standard system (KKE_libblock_alloc), do not free its memory
    * (usual type-specific freeing is called though).
    *
    * RESET_NEVER
@@ -1121,7 +1121,7 @@ typedef enum IDRecalcFlag
  * relationships in a non-recursive pattern: in typical cases, a vast majority of those
  * relationships can be processed fine in the first pass, and only few additional passes are
  * required to address all remaining relationship cases.
- * See e.g. how #BKE_library_unused_linked_data_set_tag is doing this.
+ * See e.g. how #KKE_library_unused_linked_data_set_tag is doing this.
  */
 enum
 {

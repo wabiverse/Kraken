@@ -44,8 +44,6 @@
 #include "KLI_string.h"
 #include "KLI_string_utils.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 
 static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
                                                    const kScreen *screen)
@@ -122,7 +120,8 @@ static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relati
 
 static bool workspaces_is_screen_used(const Main *kmain, kScreen *screen)
 {
-  UNIVERSE_FOR_ALL (workspace, kmain->workspaces) {
+  LISTBASE_FOREACH(WorkSpace *, workspace, &kmain->workspaces)
+  {
     if (workspace_layout_find_exec(workspace, screen)) {
       return true;
     }
@@ -171,7 +170,8 @@ WorkSpaceLayout *KKE_workspace_layout_find_global(const Main *kmain,
     *r_workspace = nullptr;
   }
 
-  UNIVERSE_FOR_ALL (workspace, kmain->workspaces) {
+  LISTBASE_FOREACH(WorkSpace *, workspace, &kmain->workspaces)
+  {
     if ((layout = workspace_layout_find_exec(workspace, screen))) {
       if (r_workspace) {
         *r_workspace = workspace;
@@ -261,8 +261,9 @@ WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, con
   WorkSpaceInstanceHook *hook = new WorkSpaceInstanceHook();
 
   /* set an active screen-layout for each possible window/workspace combination */
-  UNIVERSE_FOR_ALL (workspace, kmain->workspaces) {
-    UNIVERSE_FOR_ALL (layout, workspace->layouts) {
+  LISTBASE_FOREACH(WorkSpace *, workspace, &kmain->workspaces)
+  {
+    for (auto &layout : workspace->layouts) {
       KKE_workspace_active_layout_set(hook, winid, workspace, layout);
     }
   }
@@ -300,8 +301,7 @@ bool KKE_workspace_owner_id_check(const WorkSpace *workspace, const TfToken &own
     return true;
   }
 
-  for (auto &wspaceid : workspace->owner_ids)
-  {
+  for (auto &wspaceid : workspace->owner_ids) {
     if (wspaceid == owner_id) {
       return true;
     }
@@ -309,5 +309,3 @@ bool KKE_workspace_owner_id_check(const WorkSpace *workspace, const TfToken &own
 
   return false;
 }
-
-KRAKEN_NAMESPACE_END

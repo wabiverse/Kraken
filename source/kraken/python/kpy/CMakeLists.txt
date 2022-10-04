@@ -18,7 +18,6 @@ set(SRC
   intern/kpy_capi_packarray.c
   intern/kpy_capi_utils.cpp
   intern/kpy_driver.cpp
-  intern/kpy_init_exit.cpp
   intern/kpy_interface_atexit.cpp
   intern/kpy_interface_run.cpp
   intern/kpy_interface.cpp
@@ -46,7 +45,6 @@ set(SRC
   KPY_api.h
   KPY_extern_python.h
   KPY_extern_run.h
-  KPY_init_exit.h
 )
 
 set(INC_SYS

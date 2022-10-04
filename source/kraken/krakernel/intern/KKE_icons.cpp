@@ -30,12 +30,11 @@
 #include "KKE_icons.h"
 #include "KKE_utils.h"
 
+#include "KLI_rhash.h"
 #include "KLI_threads.h"
 #include "KLI_assert.h"
 
 #include <wabi/base/tf/hash.h>
-
-KRAKEN_NAMESPACE_BEGIN
 
 /**
  * Only allow non-managed icons to be removed (by Python for eg).
@@ -61,7 +60,8 @@ static std::mutex gIconMutex;
 static RHash *gCachedPreviews = nullptr;
 
 /* Queue of icons for deferred deletion. */
-struct DeferredIconDeleteNode {
+struct DeferredIconDeleteNode
+{
   struct DeferredIconDeleteNode *next;
   int icon_id;
 };
@@ -117,7 +117,7 @@ static void icon_free_data(int icon_id, Icon *icon)
     case ICON_DATA_STUDIOLIGHT: {
       // StudioLight *sl = (StudioLight *)icon->obj;
       // if (sl != nullptr) {
-        // KKE_studiolight_unset_icon_id(sl, icon_id);
+      // KKE_studiolight_unset_icon_id(sl, icon_id);
       // }
       break;
     }
@@ -129,7 +129,7 @@ static void icon_free_data(int icon_id, Icon *icon)
 static Icon *icon_rhash_lookup(int icon_id)
 {
   std::scoped_lock lock(gIconMutex);
-  return (Icon *)KKE_rhash_lookup(gIcons, POINTER_FROM_INT(icon_id));
+  return (Icon *)KLI_rhash_lookup(gIcons, POINTER_FROM_INT(icon_id));
 }
 
 void KKE_icons_init(int first_dyn_id)
@@ -140,13 +140,15 @@ void KKE_icons_init(int first_dyn_id)
   gFirstIconId = first_dyn_id;
 
   if (!gIcons) {
-    gIcons = KKE_rhash_int_new(__func__);
-    KKE_linklist_lockfree_init(&g_icon_delete_queue);
+    gIcons = KLI_rhash_int_new(__func__);
+
+    /* lockfree initialized. */
+    LockfreeLinkList *queue = &g_icon_delete_queue;
+    queue->dummy_node.next = NULL;
+    queue->head = queue->tail = &queue->dummy_node;
   }
 
   if (!gCachedPreviews) {
-    gCachedPreviews = KKE_rhash_str_new(__func__);
+    gCachedPreviews = KLI_rhash_str_new(__func__);
   }
 }
-
-KRAKEN_NAMESPACE_END

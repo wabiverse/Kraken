@@ -48,11 +48,7 @@
 #include "ED_defines.h"
 #include "ED_screen.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 WorkSpace *ED_workspace_add(kContext *C, const char *name)
 {
   return KKE_workspace_add(C, name);
 }
-
-KRAKEN_NAMESPACE_END

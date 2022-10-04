@@ -63,6 +63,21 @@ struct Icon_Geom {
   const void *mem;
 };
 
+typedef struct LockfreeLinkNode {
+  struct LockfreeLinkNode *next;
+  /* NOTE: "Subclass" this structure to add custom-defined data. */
+} LockfreeLinkNode;
+
+typedef struct LockfreeLinkList {
+  /* We keep a dummy node at the beginning of the list all the time.
+   * This allows us to make sure head and tail pointers are always
+   * valid, and saves from annoying exception cases in insert().
+   */
+  LockfreeLinkNode dummy_node;
+  /* NOTE: This fields might point to a dummy node. */
+  LockfreeLinkNode *head, *tail;
+} LockfreeLinkList;
+
 typedef struct Icon Icon;
 
 struct KrakenDataReader;

@@ -24,6 +24,8 @@
 
 #include "kraken/kraken.h"
 
+#include "KKE_global.h"
+
 #include "LUXO_main.h"
 #include "LUXO_internal.h"
 #include "LUXO_access.h"
@@ -31,7 +33,7 @@
 #include <wabi/usd/usdGeom/tokens.h>
 #include <wabi/imaging/hdx/tokens.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /* not technically a prim, but meh. */
 static void prim_def_config(const KrakenSTAGE &kstage)
@@ -47,4 +49,4 @@ void PRIM_def_info(const KrakenSTAGE &kstage)
   prim_def_config(kstage);
 }
 
-KRAKEN_NAMESPACE_END
+

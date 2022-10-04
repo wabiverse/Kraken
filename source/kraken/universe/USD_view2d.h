@@ -30,7 +30,8 @@
 #include "USD_vec_types.h"
 
 /** Scroller flags for View2D (#View2D.scroll). */
-enum {
+enum
+{
   /* Left scroll-bar. */
   V2D_SCROLL_LEFT = (1 << 0),
   V2D_SCROLL_RIGHT = (1 << 1),
@@ -54,7 +55,8 @@ enum {
 };
 
 /** View 2D data - stored per region. */
-typedef struct View2D {
+typedef struct View2D
+{
   /** Tot - area that data can be drawn in; cur - region of tot that is visible in viewport. */
   rctf tot, cur;
   /** Vert - vertical scroll-bar region; hor - horizontal scroll-bar region. */
@@ -100,5 +102,5 @@ typedef struct View2D {
 
   /* animated smooth view */
   // struct SmoothView2DStore *sms;
-  kraken::wmTimer *smooth_timer;
+  wmTimer *smooth_timer;
 } View2D;

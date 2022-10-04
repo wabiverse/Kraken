@@ -7,6 +7,9 @@ set(INC
   ../krakernel
   ../kraklib
   ../wm
+  ../../../intern/atomic
+  ../../../intern/clog
+  ../../../intern/guardedalloc
 )
 
 set(INC_SYS
@@ -21,6 +24,7 @@ set(SRC
   intern/USD_file.cpp
   intern/USD_object.cpp
   intern/USD_pixar_utils.cpp
+  intern/USD_userdef_default_theme.c
 
   USD_api.h
   USD_area.h

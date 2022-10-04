@@ -28,6 +28,7 @@
 #include "USD_api.h"
 #include "USD_color_types.h"
 #include "USD_object.h"
+#include "USD_scene_types.h"
 
 #include <wabi/base/gf/vec2f.h>
 #include <wabi/base/gf/vec4d.h>
@@ -39,8 +40,6 @@
 #include <wabi/usd/usdGeom/metrics.h>
 #include <wabi/usd/usdLux/domeLight.h>
 #include <wabi/imaging/hdx/tokens.h>
-
-KRAKEN_NAMESPACE_BEGIN
 
 /**
  * ---------------------------------------------------------------------
@@ -58,26 +57,6 @@ KRAKEN_NAMESPACE_BEGIN
 /** #UnitSettings.flag */
 #define USER_UNIT_OPT_SPLIT 1
 #define USER_UNIT_ROT_RADIANS 2
-
-#define FRA2TIME(a) ((((double)scene->stage->GetTimeCodesPerSecond()) * (double)(a)) / (double)scene->stage->GetFramesPerSecond())
-#define TIME2FRA(a) ((((double)scene->stage->GetFramesPerSecond() * (double)(a)) / (double)scene->stage->GetTimeCodesPerSecond())
-#define FPS (((double)scene->stage->GetFramesPerSecond()) / (double)scene->stage->GetTimeCodesPerSecond())
-
-struct UnitSettings {
-  /* Display/Editing unit options for each scene */
-  /** Maybe have other unit conversions? */
-  float scale_length;
-  /** Imperial, metric etc. */
-  char system;
-  /** Not implemented as a proper unit system yet. */
-  char system_rotation;
-  short flag;
-
-  char length_unit;
-  char mass_unit;
-  char time_unit;
-  char temperature_unit;
-};
 
 enum eSceneDrawMode
 {
@@ -145,15 +124,15 @@ enum eSceneLoadSet
   SCENE_LOAD_NONE
 };
 
-struct Scene
+struct kScene : public Scene
 {
-  explicit Scene(const wabi::UsdStageWeakPtr &stage);
-  explicit Scene(const std::string &identifier, const wabi::UsdPrim &prim = wabi::UsdPrim());
-  explicit Scene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj);
-  virtual ~Scene();
+  explicit kScene(const wabi::UsdStageWeakPtr &stage);
+  explicit kScene(const std::string &identifier, const wabi::UsdPrim &prim = wabi::UsdPrim());
+  explicit kScene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj);
+  virtual ~kScene();
 
   /* Units */
-  struct UnitSettings unit;
+  UnitSettings unit;
 
   ColorManagedViewSettings view_settings;
   ColorManagedDisplaySettings display_settings;
@@ -162,5 +141,3 @@ struct Scene
   /** This scenes active stage. */
   wabi::UsdStageWeakPtr stage;
 };
-
-KRAKEN_NAMESPACE_END

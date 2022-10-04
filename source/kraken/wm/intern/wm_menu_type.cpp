@@ -51,6 +51,7 @@
 #include "KKE_report.h"
 #include "KKE_utils.h"
 
+#include "KLI_rhash.h"
 #include "KLI_assert.h"
 #include "KLI_kraklib.h"
 #include "KLI_time.h"
@@ -59,14 +60,14 @@
 
 #include "LUXO_access.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 static RHash *menutypes_hash = NULL;
 
 MenuType *WM_menutype_find(const TfToken &idname, bool quiet)
 {
   if (idname.data()) {
-    MenuType *mt = (MenuType *)KKE_rhash_lookup(menutypes_hash, idname);
+    MenuType *mt = (MenuType *)KLI_rhash_lookup(menutypes_hash, idname.data());
     if (mt) {
       return mt;
     }
@@ -79,4 +80,3 @@ MenuType *WM_menutype_find(const TfToken &idname, bool quiet)
   return NULL;
 }
 
-KRAKEN_NAMESPACE_END

@@ -28,6 +28,9 @@
 
 #include "KKE_context.h"
 #include "KKE_main.h"
+#include "KKE_global.h"
+
+#include "KLI_listbase.h"
 
 #include "WM_api.h"
 #include "WM_init_exit.h"
@@ -119,7 +122,7 @@ void CREATOR_setup_args(int argc, const char **argv)
 struct KrakenPyContextStore
 {
   wmWindowManager *wm;
-  Scene *scene;
+  kScene *scene;
   wmWindow *win;
   bool has_win;
 };
@@ -147,18 +150,13 @@ static void arg_py_context_restore(kContext *C, struct KrakenPyContextStore *c_p
 {
   /* script may load a file, check old data is valid before using */
   if (c_py->has_win) {
-
-    if (c_py->win == NULL) {
-      if ((c_py->win = G.main->wm.front()->windows.begin()->second)) {
-        CTX_wm_window_set(C, c_py->win);
-      }
+    if ((c_py->win == NULL) || ((KLI_findindex(&G_MAIN->wm, c_py->wm) != -1))) {
+      CTX_wm_window_set(C, c_py->win);
     }
   }
 
-  if (c_py->scene == NULL) {
-    if ((c_py->scene = G.main->scenes.front())) {
-      CTX_data_scene_set(C, c_py->scene);
-    }
+  if ((c_py->scene == NULL) || KLI_findindex(&G_MAIN->scenes, c_py->scene) != -1) {
+    CTX_data_scene_set(C, c_py->scene);
   }
 }
 
@@ -190,7 +188,7 @@ int CREATOR_parse_args(int argc, const char **argv, void *C)
   }
 
   if (load_stage.length() > 2) {
-    G.main->stage_id = load_stage;
+    KLI_strncpy(G.main->stage_id, load_stage.c_str(), FILE_MAX);
   }
 
   if (convert_stage.size() > 2) {

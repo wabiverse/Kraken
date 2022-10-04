@@ -7,7 +7,7 @@
  * Default API, that uses Blender's user preferences for the default size.
  */
 
-// #include "USD_userpref.h"
+#include "USD_userdef_types.h"
 
 #include "KLI_assert.h"
 

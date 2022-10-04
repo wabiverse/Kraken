@@ -25,25 +25,20 @@
 #ifndef KRAKEN_KERNEL_MAIN_H
 #define KRAKEN_KERNEL_MAIN_H
 
-#include <filesystem>
-
 #include "USD_listBase.h"
 
 #include "KLI_compiler_attrs.h"
 #include "KLI_sys_types.h"
 
-#include "KKE_api.h"
-#include "KKE_context.h"
-#include "KKE_robinhood.h"
+#define FILE_MAXDIR 768
+#define FILE_MAXFILE 256
+#define FILE_MAX 1024
 
-#include "USD_object.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-struct kTheme;
-struct uiStyle;
-
-KRAKEN_NAMESPACE_BEGIN
-
-struct KKE_mempool;
+struct KLI_mempool;
 struct KrakenThumbnail;
 struct RHash;
 struct RSet;
@@ -53,214 +48,58 @@ struct Library;
 struct MainLock;
 struct UniqueName_Map;
 
-struct Main
+typedef struct Main
 {
   uint64_t build_commit_timestamp;
-  std::string build_hash;
+  char build_hash[FILE_MAX];
 
-  std::string exe_path;
-  std::string fonts_path;
-  std::string temp_dir;
-  std::string icons_path;
-  std::string python_path;
-  std::string datafiles_path;
+  char exe_path[FILE_MAX];
+  char fonts_path[FILE_MAX];
+  char temp_dir[FILE_MAX];
+  char icons_path[FILE_MAX];
+  char python_path[FILE_MAX];
+  char datafiles_path[FILE_MAX];
 
-  std::filesystem::path stage_id;
-  std::filesystem::path ocio_cfg;
+  char stage_id[FILE_MAX];
+  char ocio_cfg[FILE_MAX];
 
-  std::string kraken_version_decimal;
+  char kraken_version_decimal[32];
 
-  char launch_time[USD_MAX_TIME];
+  char launch_time[80];
 
-  /* these are currently used for cryptomatte. */
-  ListBase objects;
-  ListBase materials;
+  ListBase materials; /* for shaders. */
+  ListBase objects;   /* for shaders. */
+  ListBase screens;
+  ListBase scenes;
+  ListBase wm;
+  ListBase workspaces;
+} Main;
 
-  std::vector<struct wmWindowManager *> wm;
-  std::vector<struct WorkSpace *> workspaces;
-  std::vector<struct kScreen *> screens;
-  std::vector<struct Scene *> scenes;
-};
+struct Main *KKE_main_new(void);
+const char *KKE_main_usdfile_path(const struct Main *kmain);
 
-Main *KKE_main_new(void);
-std::filesystem::path KKE_main_usdfile_path(const Main *kmain);
-
-/** #Global.debug */
-enum
-{
-  /* general debug flag, print more info in unexpected cases */
-  G_DEBUG = (1 << 0),
-  /* debug messages for ffmpeg */
-  G_DEBUG_FFMPEG = (1 << 1),
-  /* extra python info */
-  G_DEBUG_PYTHON = (1 << 2),
-  /* input/window/screen events */
-  G_DEBUG_EVENTS = (1 << 3),
-  /* events handling */
-  G_DEBUG_HANDLERS = (1 << 4),
-  /* operator, undo */
-  G_DEBUG_WM = (1 << 5),
-  /* jobs time profiling */
-  G_DEBUG_JOBS = (1 << 6),
-  /* freestyle messages */
-  G_DEBUG_FREESTYLE = (1 << 7),
-  /* UsdStage construction messages */
-  G_DEBUG_STAGE_BUILD = (1 << 8),
-  /* UsdStage evaluation messages */
-  G_DEBUG_STAGE_EVAL = (1 << 9),
-  /* UsdStage tagging messages */
-  G_DEBUG_STAGE_TAG = (1 << 10),
-  /* UsdStage timing statistics and messages */
-  G_DEBUG_STAGE_TIME = (1 << 11),
-  /* single threaded UsdStage */
-  G_DEBUG_STAGE_NO_THREADS = (1 << 12),
-  /* use pretty colors in UsdStage debug messages */
-  G_DEBUG_STAGE_PRETTY = (1 << 13),
-  /* UsdStage SdfPath and Asset Resolution messages */
-  G_DEBUG_STAGE_PATHS = (1 << 14),
-  G_DEBUG_STAGE = (G_DEBUG_STAGE_BUILD | G_DEBUG_STAGE_EVAL | G_DEBUG_STAGE_TAG |
-                   G_DEBUG_STAGE_TIME | G_DEBUG_STAGE_PATHS),
-  /* sim debug data display */
-  G_DEBUG_SIMDATA = (1 << 15),
-  /* gpu debug */
-  G_DEBUG_GPU = (1 << 16),
-  /* IO Debugging. */
-  G_DEBUG_IO = (1 << 17),
-  /* force gpu workarounds bypassing detections. */
-  G_DEBUG_GPU_FORCE_WORKAROUNDS = (1 << 18),
-  /* XR/OpenXR messages */
-  G_DEBUG_XR = (1 << 19),
-  /* XR/OpenXR timing messages */
-  G_DEBUG_XR_TIME = (1 << 20),
-  /* Debug ANCHOR module. */
-  G_DEBUG_ANCHOR = (1 << 21),
-};
-
-#define G_DEBUG_ALL                                                                         \
-  (G_DEBUG | G_DEBUG_FFMPEG | G_DEBUG_PYTHON | G_DEBUG_EVENTS | G_DEBUG_WM | G_DEBUG_JOBS | \
-   G_DEBUG_FREESTYLE | G_DEBUG_STAGE | G_DEBUG_IO | G_DEBUG_ANCHOR)
-
-enum eGlobalFileFlags
-{
-  G_FILE_AUTOPACK = (1 << 0),
-  G_FILE_COMPRESS = (1 << 1),
-  G_FILE_NO_UI = (1 << 2),
-  G_FILE_RECOVER_READ = (1 << 3),
-  G_FILE_RECOVER_WRITE = (1 << 4),
-};
-
-struct Global
-{
-  Main *main;
-
-  bool interactive_console;
-  bool background;
-  bool factory_startup;
-
-  /**
-   * Has escape been pressed or Ctrl+C pressed in background mode, used for render quit. */
-  bool is_break;
-
-  bool is_rendering;
-
-  short debug_value;
-
-  int f;
-
-  /**
-   *   Debug Flag
-   *
-   * - #G_DEBUG,
-   * - #G_DEBUG_PYTHON & friends,
-   * - set python or command line args */
-  int debug;
-
-  /** #eGlobalFileFlags */
-  int fileflags;
-
-  /** Message to use when auto execution fails. */
-  char autoexec_fail[200];
-
-  char filepath[1024];
-};
-
-enum eGlobalFlag
-{
-  G_FLAG_RENDER_VIEWPORT = (1 << 0),
-  G_FLAG_PICKSEL = (1 << 2),
-  /** Support simulating events (for testing). */
-  G_FLAG_EVENT_SIMULATE = (1 << 3),
-  G_FLAG_USERPREF_NO_SAVE_ON_EXIT = (1 << 4),
-
-  G_FLAG_SCRIPT_AUTOEXEC = (1 << 13),
-  /** When this flag is set ignore the prefs #USER_SCRIPT_AUTOEXEC_DISABLE. */
-  G_FLAG_SCRIPT_OVERRIDE_PREF = (1 << 14),
-  G_FLAG_SCRIPT_AUTOEXEC_FAIL = (1 << 15),
-  G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET = (1 << 16),
-};
-
-enum ckeStatusCode
+enum kkeStatusCode
 {
   KRAKEN_SUCCESS = 0,
   KRAKEN_ERROR,
 };
 
-enum ckeErrorType
-{
-  KRAKEN_ERROR_VERSION,
-  KRAKEN_ERROR_IO,
-  KRAKEN_ERROR_GL,
-  KRAKEN_ERROR_HYDRA
-};
-
-Main KKE_main_init(void);
-void KKE_main_free(Main *mainvar);
+struct Main KKE_main_init(void);
+void KKE_main_free(struct Main *mainvar);
 void KKE_kraken_free(void);
 
 void KKE_kraken_atexit(void);
 void KKE_kraken_atexit_register(void (*func)(void *user_data), void *user_data);
 void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *user_data);
 
-void KKE_kraken_main_init(struct kContext *C, int argc = 0, const char **argv = NULL);
-Global &KKE_kraken_globals_init();
+void KKE_kraken_main_init(struct kContext *C);
 void KKE_kraken_plugins_init(void);
-void KKE_kraken_python_init(struct kContext *C);
-ckeStatusCode KKE_main_runtime(int backend);
 void KKE_kraken_enable_debug_codes(void);
 
 const char *KKE_kraken_version_string(void);
 
-/* ------ */
-
-/* Setup in KKE_kraken. */
-extern Global G;
-
-/**
- * Setup in KKE_kraken.
- * TODO: Move these into
- * UserDef. */
-extern int UI_MOVE_THRESHOLD;
-extern int UI_MENU_THRESHOLD1;
-extern int UI_MENU_THRESHOLD2;
-extern bool UI_RUNTIME_IS_DIRTY;
-extern short UI_PIE_MENU_RADIUS;
-extern short UI_PIE_MENU_THRESHOLD;
-extern short UI_PIE_ANIMATION_TIMEOUT;
-extern int UI_PIXEL_SIZE;
-extern std::vector<kTheme *> UI_THEMES_LIST;
-extern std::vector<uiStyle *> UI_STYLES_LIST;
-extern short UI_WIDGET_UNIT;
-extern int UI_FACTOR_DISPLAY_TYPE;
-extern float UI_DPI_FAC;
-extern float UI_PRESSURE_SOFTNESS;
-extern float UI_PRESSURE_THRESHOLD_MAX;
-extern int UI_FLAG;
-extern bool UI_MOUSE_EMULATE_3BUTTON_MODIFIER;
-extern int UI_DRAG_THRESHOLD_MOUSE;
-extern int UI_DRAG_THRESHOLD_TABLET;
-extern int UI_DRAG_THRESHOLD;
-extern short UI_DOUBLE_CLICK_TIME;
-
-KRAKEN_NAMESPACE_END
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* KRAKEN_KERNEL_MAIN_H */

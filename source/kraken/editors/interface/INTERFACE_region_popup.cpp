@@ -38,8 +38,6 @@
 
 #include "interface_intern.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 uiPopupBlockHandle *ui_popup_block_create(kContext *C,
                                           ARegion *butregion,
                                           uiBut *but,
@@ -61,5 +59,3 @@ uiPopupBlockHandle *ui_popup_block_create(kContext *C,
   /* standard cursor by default */
   WM_cursor_set(window, WM_CURSOR_DEFAULT);
 }
-
-KRAKEN_NAMESPACE_END

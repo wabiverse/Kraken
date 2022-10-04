@@ -61,9 +61,6 @@
 #  include "KLI_winstuff.h"
 #endif /* WIN32 */
 
-
-KRAKEN_NAMESPACE_BEGIN
-
 struct BuildDirCtx
 {
   struct direntry *files; /* array[nrfiles] */
@@ -290,6 +287,3 @@ void KLI_filelist_free(struct direntry *filelist, const unsigned int nrentries)
     free(filelist);
   }
 }
-
-
-KRAKEN_NAMESPACE_END

@@ -35,8 +35,7 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void LUXO_main(const KrakenSTAGE &kstage);
 
-KRAKEN_NAMESPACE_END

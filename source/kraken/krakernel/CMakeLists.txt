@@ -13,6 +13,7 @@ set(INC
   ../gatekeeper
   ../python
   ../../../intern/atomic
+  ../../../intern/clog
   ../../../intern/guardedalloc
 )
 
@@ -20,14 +21,11 @@ set(SRC
   intern/KKE_appdir.cpp
   intern/KKE_context.cpp
   intern/KKE_kraken.cpp
-  intern/KKE_kraken_prim.cpp
   intern/KKE_diagnostics.cpp
-  intern/KKE_hash.cpp
   intern/KKE_icons.cpp
   intern/KKE_idprop.cpp
   intern/KKE_lib_id.cpp
   intern/KKE_plugins.cpp
-  intern/KKE_python.cpp
   intern/KKE_report.cpp
   intern/KKE_scene.cpp
   intern/KKE_screen.cpp
@@ -36,7 +34,7 @@ set(SRC
   intern/cryptomatte.cc
 
   KKE_api.h
-  KKE_appdir.h
+  KKE_appdir.hh
   KKE_colortools.h
   KKE_cryptomatte.h
   KKE_cryptomatte.hh
@@ -45,7 +43,6 @@ set(SRC
   KKE_icons.h
   KKE_idprop.h
   KKE_idtype.h
-  KKE_kraken_prim.h
   KKE_lib_id.h
   KKE_main.h
   KKE_report.h

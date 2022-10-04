@@ -37,8 +37,9 @@
 #include "KLI_dynstr.h"
 
 #include "KKE_utils.h"
-#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
 #include "KKE_idprop.h"
+#include "KKE_global.h"
 
 #include "USD_api.h"
 #include "USD_types.h"
@@ -56,7 +57,7 @@
 
 WABI_NAMESPACE_USING
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 KrakenPRIM LUXO_StageData;
 KrakenPRIM LUXO_KrakenPixar;
@@ -95,7 +96,7 @@ wabi::UsdStageWeakPtr LUXO_get_stage()
 
 void LUXO_set_stage_ctx(kContext *C)
 {
-  Scene *scene = new Scene(KRAKEN_STAGE);
+  kScene *scene = new kScene(KRAKEN_STAGE);
   CTX_data_scene_set(C, scene);
 }
 
@@ -806,4 +807,3 @@ void LUXO_property_enum_items(kContext *C,
   LUXO_property_enum_items_ex(C, ptr, prop, false, r_item, r_totitem, r_free);
 }
 
-KRAKEN_NAMESPACE_END

@@ -4,7 +4,6 @@ set(INC
   ../include/.
   ../../../../. # Pixar USD
   ../../../../source
-  ../../../../intern/guardedalloc
   ../../python/kpy
   ../../gpu
   ../../anchor
@@ -15,6 +14,9 @@ set(INC
   ../../luxo
   ../../universe
   ../../wm
+  ../../../../intern/atomic
+  ../../../../intern/clog
+  ../../../../intern/guardedalloc
 )
 
 set(INC_SYS
@@ -31,6 +33,7 @@ set(SRC
   INTERFACE_kraken.cpp
   INTERFACE_layout.cpp
   INTERFACE_query.cpp
+  INTERFACE_resources.c
   INTERFACE_region_menu_popup.cpp
   INTERFACE_region_popup.cpp
   INTERFACE_region_search.cpp

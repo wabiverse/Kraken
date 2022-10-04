@@ -27,14 +27,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "MEM_guardedalloc.h"
+
 #include "KLI_fileops.h"
+#include "KLI_listbase.h"
 #include "KLI_dynstr.h"
 #include "KLI_utildefines.h"
 
 #include "KKE_main.h"
 #include "KKE_report.h"
-
-KRAKEN_NAMESPACE_BEGIN
+#include "KKE_global.h"
 
 const char *KKE_report_type_str(eReportType type)
 {
@@ -77,16 +79,22 @@ void KKE_reports_init(ReportList *reports, int flag)
 
 void KKE_reports_clear(ReportList *reports)
 {
+  Report *report, *report_next;
+
   if (!reports) {
     return;
   }
 
-  for (auto &report : reports->list) {
-    delete report->message;
-    delete report;
+  report = (Report *)reports->list.first;
+
+  while (report) {
+    report_next = report->next;
+    MEM_freeN((void *)report->message);
+    MEM_freeN(report);
+    report = report_next;
   }
 
-  reports->list.clear();
+  KLI_listbase_clear(&reports->list);
 }
 
 void KKE_report(ReportList *reports, eReportType type, const char *_message)
@@ -102,17 +110,16 @@ void KKE_report(ReportList *reports, eReportType type, const char *_message)
 
   if (reports && (reports->flag & RPT_STORE) && (type >= reports->storelevel)) {
     char *message_alloc;
-    report = new Report();
+    report = (Report *)MEM_callocN(sizeof(Report), "Report");
     report->type = type;
     report->typestr = KKE_report_type_str(type);
 
     len = strlen(message);
-    message_alloc = new char[len + 1]();
+    message_alloc = (char *)MEM_mallocN(sizeof(char) * (len + 1), "ReportMessage");
     memcpy(message_alloc, message, sizeof(char) * (len + 1));
     report->message = message_alloc;
     report->len = len;
-
-    reports->list.push_back(report);
+    KLI_addtail(&reports->list, report);
   }
 }
 
@@ -133,7 +140,7 @@ void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...
   }
 
   if (reports && (reports->flag & RPT_STORE) && (type >= reports->storelevel)) {
-    report = new Report();
+    report = (Report *)MEM_callocN(sizeof(Report), "Report");
 
     ds = KLI_dynstr_new();
     va_start(args, _format);
@@ -147,12 +154,13 @@ void KKE_reportf(ReportList *reports, eReportType type, const char *_format, ...
     report->type = type;
     report->typestr = KKE_report_type_str(type);
 
-    reports->list.push_back(report);
+    KLI_addtail(&reports->list, report);
   }
 }
 
 void KKE_reports_prepend(ReportList *reports, const char *_prepend)
 {
+  Report *report;
   DynStr *ds;
   const char *prepend = TIP_(_prepend);
 
@@ -160,12 +168,12 @@ void KKE_reports_prepend(ReportList *reports, const char *_prepend)
     return;
   }
 
-  for (auto &report : reports->list) {
+  for (report = (Report *)reports->list.first; report; report = report->next) {
     ds = KLI_dynstr_new();
 
     KLI_dynstr_append(ds, prepend);
     KLI_dynstr_append(ds, report->message);
-    free((void *)report->message);
+    MEM_freeN((void *)report->message);
 
     report->message = KLI_dynstr_get_cstring(ds);
     report->len = KLI_dynstr_get_len(ds);
@@ -185,14 +193,14 @@ void KKE_reports_prependf(ReportList *reports, const char *_prepend, ...)
     return;
   }
 
-  for (auto &report : reports->list) {
+  for (report = (Report *)reports->list.first; report; report = report->next) {
     ds = KLI_dynstr_new();
     va_start(args, _prepend);
     KLI_dynstr_vappendf(ds, prepend, args);
     va_end(args);
 
     KLI_dynstr_append(ds, report->message);
-    free((void *)report->message);
+    MEM_freeN((void *)report->message);
 
     report->message = KLI_dynstr_get_cstring(ds);
     report->len = KLI_dynstr_get_len(ds);
@@ -207,7 +215,7 @@ eReportType KKE_report_print_level(ReportList *reports)
     return RPT_ERROR;
   }
 
-  return reports->printlevel;
+  return static_cast<eReportType>(reports->printlevel);
 }
 
 void KKE_report_print_level_set(ReportList *reports, eReportType level)
@@ -225,7 +233,7 @@ eReportType KKE_report_store_level(ReportList *reports)
     return RPT_ERROR;
   }
 
-  return reports->storelevel;
+  return static_cast<eReportType>(reports->storelevel);
 }
 
 void KKE_report_store_level_set(ReportList *reports, eReportType level)
@@ -239,15 +247,16 @@ void KKE_report_store_level_set(ReportList *reports, eReportType level)
 
 char *KKE_reports_string(ReportList *reports, eReportType level)
 {
+  Report *report;
   DynStr *ds;
   char *cstring;
 
-  if (!reports || reports->list.empty()) {
+  if (!reports || !reports->list.first) {
     return NULL;
   }
 
   ds = KLI_dynstr_new();
-  for (auto &report : reports->list) {
+  for (report = (Report *)reports->list.first; report; report = report->next) {
     if (report->type >= level) {
       KLI_dynstr_appendf(ds, "%s: %s\n", report->typestr, report->message);
     }
@@ -255,8 +264,7 @@ char *KKE_reports_string(ReportList *reports, eReportType level)
 
   if (KLI_dynstr_get_len(ds)) {
     cstring = KLI_dynstr_get_cstring(ds);
-  }
-  else {
+  } else {
     cstring = NULL;
   }
 
@@ -292,14 +300,14 @@ void KKE_reports_print(ReportList *reports, eReportType level)
 
   puts(cstring);
   fflush(stdout);
-  free(cstring);
+  MEM_freeN(cstring);
 }
 
 Report *KKE_reports_last_displayable(ReportList *reports)
 {
   Report *report;
 
-  for (auto &report : reports->list) {
+  for (report = (Report *)reports->list.last; report; report = report->prev) {
     if (ELEM(report->type, RPT_ERROR, RPT_WARNING, RPT_INFO)) {
       return report;
     }
@@ -312,7 +320,7 @@ bool KKE_reports_contain(ReportList *reports, eReportType level)
 {
   Report *report;
   if (reports != NULL) {
-    for (auto &report : reports->list) {
+    for (report = (Report *)reports->list.first; report; report = report->next) {
       if (report->type >= level) {
         return true;
       }
@@ -329,7 +337,7 @@ bool KKE_report_write_file_fp(FILE *fp, ReportList *reports, const char *header)
     fputs(header, fp);
   }
 
-  for (auto &report : reports->list) {
+  for (report = (Report *)reports->list.first; report; report = report->next) {
     fprintf((FILE *)fp, "%s  # %s\n", report->message, report->typestr);
   }
 
@@ -356,5 +364,3 @@ bool KKE_report_write_file(const char *filepath, ReportList *reports, const char
 
   return true;
 }
-
-KRAKEN_NAMESPACE_END

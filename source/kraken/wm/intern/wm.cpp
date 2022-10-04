@@ -34,6 +34,7 @@
 #include "USD_screen.h"
 #include "USD_space_types.h"
 #include "USD_userpref.h"
+#include "USD_userdef_types.h"
 #include "USD_window.h"
 #include "USD_workspace.h"
 
@@ -49,7 +50,7 @@
 
 #include "ED_screen.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 void WM_main(kContext *C)
 {
@@ -156,7 +157,7 @@ void wm_add_default(Main *kmain, kContext *C)
    * Save DPI factor, which ANCHOR properly
    * sets up from the system backend, back
    * to the Pixar Stage. */
-  FormFactory(uprefs->dpifac, UI_DPI_FAC);
+  FormFactory(uprefs->dpifac, U.dpi_fac);
 
   /**
    * Add window's workspace relationship, by adding
@@ -216,4 +217,3 @@ void WM_check(kContext *C)
 /* wait until every job ended */
 void WM_jobs_kill_all(wmWindowManager *wm) {}
 
-KRAKEN_NAMESPACE_END

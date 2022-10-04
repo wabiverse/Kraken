@@ -54,6 +54,7 @@
 #include "KKE_report.h"
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
+#include "KKE_global.h"
 
 #include "KLI_math.h"
 #include "KLI_string.h"
@@ -72,7 +73,7 @@
 #include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 
 /* handle to anchor system. */
@@ -195,7 +196,7 @@ void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
   }
 }
 
-Scene *WM_window_get_active_scene(const wmWindow *win)
+kScene *WM_window_get_active_scene(const wmWindow *win)
 {
   return win->scene;
 }
@@ -384,7 +385,8 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
         wmEvent event;
         WM_event_init_from_window(win, &event);
         event.type = MOUSEMOVE;
-        event.prev_mouse_pos = event.mouse_pos;
+        event.prev_mouse_pos[0] = event.mouse_pos[0];
+        event.prev_mouse_pos[1] = event.mouse_pos[1];
         event.is_repeat = false;
         wm_event_add(win, &event);
         break;
@@ -470,7 +472,8 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         /* activate region */
         event.type = MOUSEMOVE;
-        event.prev_mouse_pos = event.mouse_pos;
+        event.prev_mouse_pos[0] = event.mouse_pos[0];
+        event.prev_mouse_pos[1] = event.mouse_pos[1];
         event.is_repeat = false;
 
         /* No context change! C->wm->windrawable is drawable, or for area queues. */
@@ -761,7 +764,7 @@ static void wm_get_screensize(int *r_width, int *r_height)
 }
 
 
-void WM_window_rect_calc(const wmWindow *win, GfRect2i *r_rect)
+void WM_window_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect)
 {
   r_rect->SetMinX(0);
   r_rect->SetMinY(0);
@@ -770,9 +773,9 @@ void WM_window_rect_calc(const wmWindow *win, GfRect2i *r_rect)
 }
 
 
-void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect)
+void WM_window_screen_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect)
 {
-  GfRect2i window_rect, screen_rect;
+  wabi::GfRect2i window_rect, screen_rect;
 
   WM_window_rect_calc(win, &window_rect);
   screen_rect = window_rect;
@@ -886,7 +889,7 @@ wmWindow *WM_window_open(kContext *C,
   Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win_prev = CTX_wm_window(C);
-  Scene *scene = CTX_data_scene(C);
+  kScene *scene = CTX_data_scene(C);
   GfVec4i rect;
 
   GfVec2f pos = FormFactory(win_prev->pos);
@@ -1029,7 +1032,12 @@ void WM_exit_schedule_delayed(const kContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
 
-  WM_event_add_ui_handler(C, win->modalhandlers, wm_exit_handler, nullptr, nullptr, 0);
+  std::vector<wmEventHandlerUI *> handlers;
+  LISTBASE_FOREACH(wmEventHandlerUI *, handler, &win->modalhandlers) {
+    handlers.push_back(handler);
+  }
+
+  WM_event_add_ui_handler(C, handlers, wm_exit_handler, nullptr, nullptr, 0);
   WM_event_add_mousemove(win);
 }
 
@@ -1451,7 +1459,7 @@ wmTimer *WM_event_add_timer(wmWindowManager *wm, wmWindow *win, int event_type, 
 
   wt->event_type = event_type;
   wt->ltime = PIL_check_seconds_timer();
-  wt->ntime = wt->ltime.GetValue() + timestep;
+  wt->ntime = wt->ltime + timestep;
   wt->stime = wt->ltime;
   wt->timestep = timestep;
   wt->win = win;
@@ -1688,4 +1696,3 @@ void WM_window_operators_register()
   /* ------ */
 }
 
-KRAKEN_NAMESPACE_END

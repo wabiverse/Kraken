@@ -54,7 +54,7 @@
 
 #define KRAKEN_DECLARE_STATIC_TOKEN(x) const TfToken x
 #define KRAKEN_DEFINE_STATIC_TOKEN(y) y(STRINGIFY_APPEND("", y), TfToken::Immortal)
-#define UI_ID(r) KRAKEN_UI_TOKENS->r
+#define UI_ID(r) (KRAKEN_UI_TOKENS->r).data()
 #define WM_ID_(z) KRAKEN_WM_TOKENS->z
 
 /* Switch Get() to Define() for production. */
@@ -94,7 +94,7 @@
 #define DEFAULT_VEC4I(v1i, v2i, v3i, v4i) VtValue(GfVec4i(v1i, v2i, v3i, v4i))
 #define DEFAULT_VEC2F(v1f, v2f) VtValue(GfVec2f(v1f, v2f))
 
-#define KRAKEN_FILE_VERSION_HEADER                                    \
+#define KRAKEN_FILE_VERSION_HEADER                                          \
   (std::string("Kraken v" + wabi::TfStringify(KRAKEN_VERSION_MAJOR) + "." + \
                wabi::TfStringify(KRAKEN_VERSION_MINOR)))
 

@@ -30,8 +30,6 @@
 
 #include <wabi/base/tf/token.h>
 
-KRAKEN_NAMESPACE_BEGIN
-
 kContextStoreEntry *KLI_rfindtoken(const kContextStore *store, const wabi::TfToken &id)
 {
   // auto it = store->entries.rbegin();
@@ -53,5 +51,3 @@ void KLI_freelistN(kContextStore *store)
   // }    
   store->entries.clear();
 }
-
-KRAKEN_NAMESPACE_END

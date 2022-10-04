@@ -39,8 +39,4 @@
 #include "USD_window.h"
 #include "USD_workspace.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value, const wabi::UsdStageWeakPtr &stage);
-
-KRAKEN_NAMESPACE_END

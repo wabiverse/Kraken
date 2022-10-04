@@ -34,6 +34,8 @@
 
 #include "WM_operators.h"
 
+#include "KLI_rhash.h"
+
 #include "KKE_context.h"
 #include "KKE_robinhood.h"
 
@@ -43,7 +45,7 @@
 
 #include <deque>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 typedef std::deque<wmEvent *> wmEventQueue;
 
@@ -81,7 +83,7 @@ struct wmWindow : public wabi::UsdUIWindow
   wabi::UsdRelationship workspace_rel;
 
   /** Active scene for this window. */
-  Scene *scene;
+  kScene *scene;
 
   /** Anchor system backend pointer. */
   void *anchorwin;
@@ -104,8 +106,8 @@ struct wmWindow : public wabi::UsdUIWindow
   /** Storage for event system. */
   wmEvent *eventstate;
   wmEventQueue event_queue;
-  std::vector<wmEventHandler *> modalhandlers;
-  std::vector<wmEventHandler *> handlers;
+  ListBase modalhandlers;
+  ListBase handlers;
 // uiPopupBlockHandle
   /** Runtime Window State. */
   char windowstate;
@@ -194,7 +196,7 @@ struct wmSpaceTypeListenerParams
   wmWindow *window;
   struct ScrArea *area;
   wmNotifier *notifier;
-  const Scene *scene;
+  const kScene *scene;
 
   wmSpaceTypeListenerParams()
     : window(POINTER_ZERO),
@@ -240,7 +242,7 @@ struct wmWindowManager : public wabi::UsdPrim
 
   bool file_saved;
 
-  struct RSet *notifier_queue_set;
+  RSet *notifier_queue_set;
 
   inline wmWindowManager();
 };
@@ -256,4 +258,3 @@ wmWindowManager::wmWindowManager()
     file_saved(VALUE_ZERO)
 {}
 
-KRAKEN_NAMESPACE_END

@@ -24,8 +24,6 @@
 #include "KLI_fileops.h"
 #include "KLI_path_utils.h"
 
-KRAKEN_NAMESPACE_BEGIN
-
 const char *KLI_expand_tilde(const char *path_with_tilde)
 {
   static char path_expanded[FILE_MAX];
@@ -42,5 +40,3 @@ const char *KLI_expand_tilde(const char *path_with_tilde)
   }
   return path_expanded;
 }
-
-KRAKEN_NAMESPACE_END

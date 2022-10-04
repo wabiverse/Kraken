@@ -24,7 +24,7 @@
 #include "LUXO_internal.h"
 
 
-short LUXO_type_to_ID_code(const kraken::KrakenPRIM *type)
+short LUXO_type_to_ID_code(const KrakenPRIM *type)
 {
   const TfToken base_type = type->GetTypeName();
   if (UNLIKELY(base_type.IsEmpty())) {

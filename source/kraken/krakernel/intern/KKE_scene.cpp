@@ -28,12 +28,8 @@
 #include "KKE_main.h"
 #include "KKE_scene.h"
 
-#include "KKE_kraken_prim.h"
-
 #include "wabi/base/tf/registryManager.h"
 #include "wabi/usd/usdGeom/metrics.h"
-
-KRAKEN_NAMESPACE_BEGIN
 
 // TF_REGISTRY_FUNCTION(TfType)
 // {
@@ -41,7 +37,10 @@ KRAKEN_NAMESPACE_BEGIN
 //   TfType::AddAlias<UsdSchemaBase, Scene>("Scene");
 // }
 
-double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value, const wabi::UsdStageWeakPtr &stage)
+double KKE_scene_unit_scale(const UnitSettings *unit,
+                            const int unit_type,
+                            double value,
+                            const wabi::UsdStageWeakPtr &stage)
 {
   if (unit->system == USER_UNIT_NONE) {
     /* Never apply scale_length when not using a unit setting! */
@@ -82,18 +81,16 @@ double KKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, doubl
   }
 }
 
-Scene::Scene(const wabi::UsdStageWeakPtr &stage)
+kScene::kScene(const wabi::UsdStageWeakPtr &stage) 
   : stage(stage)
 {}
 
-Scene::Scene(const std::string &identifier, const wabi::UsdPrim &prim)
+kScene::kScene(const std::string &identifier, const wabi::UsdPrim &prim)
   : stage(wabi::UsdStage::CreateNew(identifier))
 {}
 
-Scene::Scene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj)
+kScene::kScene(const std::string &identifier, const wabi::UsdSchemaBase &schemaObj)
   : stage(wabi::UsdStage::CreateNew(identifier))
 {}
 
-Scene::~Scene() {}
-
-KRAKEN_NAMESPACE_END
+kScene::~kScene() {}

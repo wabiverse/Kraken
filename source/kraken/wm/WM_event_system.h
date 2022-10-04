@@ -36,7 +36,7 @@
 #include "WM_operators.h"
 #include "WM_keymap.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct wmEvent;
 
@@ -80,9 +80,9 @@ struct wmEvent;
    (ISKEYMODIFIER(event_type) == false))
 
 void wm_event_free_handler(wmEventHandler *handler);
-void WM_event_remove_handlers(kContext *C, std::vector<wmEventHandler *> handlers);
+void WM_event_remove_handlers(kContext *C, ListBase *handlers);
 wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
-                                          std::vector<wmEventHandler *> handlers,
+                                          std::vector<wmEventHandlerUI *> handlers,
                                           wmUIHandlerFunc handle_fn,
                                           wmUIHandlerRemoveFunc remove_fn,
                                           void *user_data,
@@ -125,4 +125,3 @@ void WM_reportf(eReportType type, const char *format, ...);
 void WM_report(eReportType type, const char *message);
 void WM_report_banner_show(void);
 
-KRAKEN_NAMESPACE_END

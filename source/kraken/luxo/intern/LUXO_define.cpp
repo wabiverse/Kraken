@@ -56,7 +56,7 @@ using std::string;
 
 WABI_NAMESPACE_USING
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
                                 const wabi::SdfPath &identifier,
@@ -186,4 +186,3 @@ void PRIM_def_asset(KrakenPRIM *prim,
   }
 }
 
-KRAKEN_NAMESPACE_END

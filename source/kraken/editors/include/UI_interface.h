@@ -30,38 +30,85 @@
 #include "KLI_utildefines.h"
 #include "KLI_rect.h"
 
+#include "USD_listBase.h"
+#include "USD_wm_types.h"
+
 #include "UI_interface_icons.h"
 
-#include "USD_wm_types.h"
-#include "USD_listBase.h"
-#include "USD_object.h"
-#include "USD_area.h"
-#include "USD_screen.h"
-#include "USD_region.h"
 
-#include <wabi/usd/usd/prim.h>
+#ifdef __cplusplus
+#  include "USD_wm_types.h"
+#  include "USD_object.h"
+#  include "USD_area.h"
+#  include "USD_region.h"
+#  include "USD_screen.h"
+#  include <wabi/usd/usd/prim.h>
+#endif /* __cplusplus */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Struct Declarations */
 
-struct rctf;
-struct rcti;
-struct ListBase;
+struct ARegion;
+struct AssetFilterSettings;
+struct AssetHandle;
+struct AssetMetaData;
+struct AutoComplete;
+struct EnumPropertyItem;
+struct FileDirEntry;
+struct FileSelectParams;
 struct ID;
 struct IDProperty;
-struct EnumPropertyItem;
+struct ImBuf;
+struct Image;
+struct ImageUser;
+struct ListBase;
+struct MTex;
+struct Panel;
+struct PanelType;
+struct KrakenPROP;
+struct ReportList;
+struct ResultKRF;
+struct kContext;
+struct kContextStore;
+struct kNode;
+struct kNodeSocket;
+struct kNodeTree;
+struct kScreen;
+struct rctf;
+struct rcti;
+struct uiBlockInteraction_Handle;
+struct uiButSearch;
+struct uiFontStyle;
+struct uiList;
+struct uiStyle;
+struct uiWidgetColors;
+struct wmDrag;
+struct wmDropBox;
+struct wmEvent;
+struct wmGizmo;
+struct wmKeyConfig;
+struct wmKeyMap;
+struct wmKeyMapItem;
+struct wmMsgBus;
+struct wmOperator;
+struct wmOperatorType;
+struct wmRegionListenerParams;
+struct wmWindow;
 
-/* C handle for C++ #ui::AbstractView type. */
-typedef struct uiViewHandle uiViewHandle;
-/* C handle for C++ #ui::AbstractViewItem type. */
-typedef struct uiViewItemHandle uiViewItemHandle;
-
-KRAKEN_NAMESPACE_BEGIN
+typedef struct KrakenPRIM KrakenPRIM;
 
 typedef struct uiBlock uiBlock;
 typedef struct uiBut uiBut;
 typedef struct uiButExtraOpIcon uiButExtraOpIcon;
 typedef struct uiLayout uiLayout;
 typedef struct uiPopupBlockHandle uiPopupBlockHandle;
+/* C handle for C++ #ui::AbstractView type. */
+typedef struct uiViewHandle uiViewHandle;
+/* C handle for C++ #ui::AbstractViewItem type. */
+typedef struct uiViewItemHandle uiViewItemHandle;
 
 /* Defines */
 
@@ -294,9 +341,9 @@ enum
 
 /* scale fixed button widths by this to account for DPI */
 
-#define UI_DPI_FAC (UI_DPI_FAC)
+#define UI_DPI_FAC (U.dpi_fac)
 /* 16 to copy ICON_DEFAULT_HEIGHT */
-#define UI_DPI_ICON_SIZE ((float)16 * UI_DPI_FAC)
+#define UI_DPI_ICON_SIZE ((float)16 * U.dpi_fac)
 
 /**
  * Button types, bits stored in 1 value... and a short even!
@@ -504,7 +551,7 @@ typedef struct uiSearchItems uiSearchItems;
 typedef void (*uiButHandleFunc)(struct kContext *C, void *arg1, void *arg2);
 typedef void (*uiButHandleRenameFunc)(struct kContext *C, void *arg, char *origstr);
 typedef void (*uiButHandleNFunc)(struct kContext *C, void *argN, void *arg2);
-typedef void (*uiButHandleHoldFunc)(struct kContext *C, ARegion *butregion, uiBut *but);
+typedef void (*uiButHandleHoldFunc)(struct kContext *C, struct ARegion *butregion, uiBut *but);
 typedef int (*uiButCompleteFunc)(struct kContext *C, char *str, void *arg);
 
 /** Function to compare the identity of two buttons over redraws, to check if they represent the
@@ -512,9 +559,9 @@ typedef int (*uiButCompleteFunc)(struct kContext *C, char *str, void *arg);
 typedef bool (*uiButIdentityCompareFunc)(const uiBut *a, const uiBut *b);
 
 /* Search types. */
-typedef ARegion *(*uiButSearchCreateFn)(struct kContext *C,
-                                        ARegion *butregion,
-                                        struct uiButSearch *search_but);
+typedef struct ARegion *(*uiButSearchCreateFn)(struct kContext *C,
+                                               struct ARegion *butregion,
+                                               struct uiButSearch *search_but);
 /**
  * `is_first` is typically used to ignore search filtering when the menu is first opened in order
  * to display the full list of options. The value will be false after the button's text is edited
@@ -529,11 +576,11 @@ typedef bool (*uiButSearchContextMenuFn)(struct kContext *C,
                                          void *arg,
                                          void *active,
                                          const struct wmEvent *event);
-typedef ARegion *(*uiButSearchTooltipFn)(struct kContext *C,
-                                         ARegion *region,
-                                         const struct rcti *item_rect,
-                                         void *arg,
-                                         void *active);
+typedef struct ARegion *(*uiButSearchTooltipFn)(struct kContext *C,
+                                                struct ARegion *region,
+                                                const struct rcti *item_rect,
+                                                void *arg,
+                                                void *active);
 typedef void (*uiButSearchListenFn)(const struct wmRegionListenerParams *params, void *arg);
 
 /* Must return allocated string. */
@@ -619,7 +666,7 @@ bool UI_block_is_empty_ex(const uiBlock *block, bool skip_title);
 bool UI_block_is_empty(const uiBlock *block);
 bool UI_block_can_add_separator(const uiBlock *block);
 
-struct uiList *UI_list_find_mouse_over(const ARegion *region, const struct wmEvent *event);
+struct uiList *UI_list_find_mouse_over(const struct ARegion *region, const struct wmEvent *event);
 
 /* interface_region_menu_popup.c */
 
@@ -661,7 +708,7 @@ void UI_popup_menu_retval_set(const uiBlock *block, int retval, bool enable);
 /**
  * Setting the button makes the popup open from the button instead of the cursor.
  */
-void UI_popup_menu_but_set(uiPopupMenu *pup, ARegion *butregion, uiBut *but);
+void UI_popup_menu_but_set(uiPopupMenu *pup, struct ARegion *butregion, uiBut *but);
 
 /* interface_region_popover.c */
 
@@ -716,7 +763,7 @@ struct uiLayout *UI_pie_menu_layout(struct uiPieMenu *pie);
  *
  * Functions used to create popup blocks. These are like popup menus
  * but allow using all button types and creating an own layout. */
-typedef uiBlock *(*uiBlockCreateFunc)(struct kContext *C, ARegion *region, void *arg1);
+typedef uiBlock *(*uiBlockCreateFunc)(struct kContext *C, struct ARegion *region, void *arg1);
 typedef void (*uiBlockCancelFunc)(struct kContext *C, void *arg1);
 
 void UI_popup_block_invoke(struct kContext *C,
@@ -738,12 +785,12 @@ void UI_popup_block_ex(struct kContext *C,
 void uiPupBlockOperator(struct kContext *C,
                         uiBlockCreateFunc func,
                         struct wmOperator *op,
-                        kraken::eWmOperatorContext opcontext);
+                        short opcontext);
 #endif
 
 void UI_popup_block_close(struct kContext *C, struct wmWindow *win, uiBlock *block);
 
-bool UI_popup_block_name_exists(const struct kScreen *screen, const wabi::TfToken &name);
+bool UI_popup_block_name_exists(const struct kScreen *screen, const char *name);
 
 /* Blocks
  *
@@ -756,8 +803,8 @@ bool UI_popup_block_name_exists(const struct kScreen *screen, const wabi::TfToke
  */
 
 uiBlock *UI_block_begin(const struct kContext *C,
-                        ARegion *region,
-                        const wabi::TfToken &name,
+                        struct ARegion *region,
+                        const char *name,
                         eUIEmbossType emboss);
 void UI_block_end_ex(const struct kContext *C, uiBlock *block, const int xy[2], int r_xy[2]);
 void UI_block_end(const struct kContext *C, uiBlock *block);
@@ -792,16 +839,16 @@ void UI_block_free(const struct kContext *C, uiBlock *block);
 /**
  * Can be called with C==NULL.
  */
-void UI_blocklist_free(const struct kContext *C, ARegion *region);
-void UI_blocklist_free_inactive(const struct kContext *C, ARegion *region);
+void UI_blocklist_free(const struct kContext *C, struct ARegion *region);
+void UI_blocklist_free_inactive(const struct kContext *C, struct ARegion *region);
 
 /**
  * Is called by notifier.
  */
 void UI_screen_free_active_but_highlight(const struct kContext *C, struct kScreen *screen);
-void UI_region_free_active_but_all(struct kContext *context, ARegion *region);
+void UI_region_free_active_but_all(struct kContext *context, struct ARegion *region);
 
-void UI_block_region_set(uiBlock *block, ARegion *region);
+void UI_block_region_set(uiBlock *block, struct ARegion *region);
 
 void UI_block_lock_set(uiBlock *block, bool val, const char *lockstr);
 void UI_block_lock_clear(uiBlock *block);
@@ -886,23 +933,26 @@ void UI_but_type_set_menu_from_pulldown(uiBut *but);
  * \return false when button removed.
  */
 bool UI_but_active_only_ex(const struct kContext *C,
-                           ARegion *region,
+                           struct ARegion *region,
                            uiBlock *block,
                            uiBut *but,
                            bool remove_on_failure);
-bool UI_but_active_only(const struct kContext *C, ARegion *region, uiBlock *block, uiBut *but);
+bool UI_but_active_only(const struct kContext *C,
+                        struct ARegion *region,
+                        uiBlock *block,
+                        uiBut *but);
 /**
  * \warning This must run after other handlers have been added,
  * otherwise the handler won't be removed, see: T71112.
  */
 bool UI_block_active_only_flagged_buttons(const struct kContext *C,
-                                          ARegion *region,
+                                          struct ARegion *region,
                                           struct uiBlock *block);
 
 /**
  * Simulate button click.
  */
-void UI_but_execute(const struct kContext *C, ARegion *region, uiBut *but);
+void UI_but_execute(const struct kContext *C, struct ARegion *region, uiBut *but);
 
 bool UI_but_online_manual_id(const uiBut *but,
                              char *r_str,
@@ -1045,7 +1095,7 @@ uiBut *uiDefButR(uiBlock *block,
                  int y,
                  short width,
                  short height,
-                 struct kraken::KrakenPRIM *ptr,
+                 struct KrakenPRIM *ptr,
                  const char *propname,
                  int index,
                  float min,
@@ -1061,8 +1111,8 @@ uiBut *uiDefButR_prop(uiBlock *block,
                       int y,
                       short width,
                       short height,
-                      struct kraken::KrakenPRIM *ptr,
-                      struct kraken::KrakenPROP *prop,
+                      struct KrakenPRIM *ptr,
+                      struct KrakenPROP *prop,
                       int index,
                       float min,
                       float max,
@@ -1072,7 +1122,7 @@ uiBut *uiDefButR_prop(uiBlock *block,
 uiBut *uiDefButO(uiBlock *block,
                  int type,
                  const char *opname,
-                 kraken::eWmOperatorContext opcontext,
+                 short opcontext,
                  const char *str,
                  int x,
                  int y,
@@ -1082,7 +1132,7 @@ uiBut *uiDefButO(uiBlock *block,
 uiBut *uiDefButO_ptr(uiBlock *block,
                      int type,
                      struct wmOperatorType *ot,
-                     kraken::eWmOperatorContext opcontext,
+                     short opcontext,
                      const char *str,
                      int x,
                      int y,
@@ -1188,7 +1238,7 @@ uiBut *uiDefIconButR(uiBlock *block,
                      int y,
                      short width,
                      short height,
-                     struct kraken::KrakenPRIM *ptr,
+                     struct KrakenPRIM *ptr,
                      const char *propname,
                      int index,
                      float min,
@@ -1204,8 +1254,8 @@ uiBut *uiDefIconButR_prop(uiBlock *block,
                           int y,
                           short width,
                           short height,
-                          struct kraken::KrakenPRIM *ptr,
-                          struct kraken::KrakenPROP *prop,
+                          struct KrakenPRIM *ptr,
+                          struct KrakenPROP *prop,
                           int index,
                           float min,
                           float max,
@@ -1215,7 +1265,7 @@ uiBut *uiDefIconButR_prop(uiBlock *block,
 uiBut *uiDefIconButO(uiBlock *block,
                      int type,
                      const char *opname,
-                     kraken::eWmOperatorContext opcontext,
+                     short opcontext,
                      int icon,
                      int x,
                      int y,
@@ -1225,7 +1275,7 @@ uiBut *uiDefIconButO(uiBlock *block,
 uiBut *uiDefIconButO_ptr(uiBlock *block,
                          int type,
                          struct wmOperatorType *ot,
-                         kraken::eWmOperatorContext opcontext,
+                         short opcontext,
                          int icon,
                          int x,
                          int y,
@@ -1295,7 +1345,7 @@ uiBut *uiDefIconTextButR(uiBlock *block,
                          int y,
                          short width,
                          short height,
-                         struct kraken::KrakenPRIM *ptr,
+                         struct KrakenPRIM *ptr,
                          const char *propname,
                          int index,
                          float min,
@@ -1312,8 +1362,8 @@ uiBut *uiDefIconTextButR_prop(uiBlock *block,
                               int y,
                               short width,
                               short height,
-                              struct kraken::KrakenPRIM *ptr,
-                              struct kraken::KrakenPROP *prop,
+                              struct KrakenPRIM *ptr,
+                              struct KrakenPROP *prop,
                               int index,
                               float min,
                               float max,
@@ -1323,7 +1373,7 @@ uiBut *uiDefIconTextButR_prop(uiBlock *block,
 uiBut *uiDefIconTextButO(uiBlock *block,
                          int type,
                          const char *opname,
-                         kraken::eWmOperatorContext opcontext,
+                         short opcontext,
                          int icon,
                          const char *str,
                          int x,
@@ -1334,7 +1384,7 @@ uiBut *uiDefIconTextButO(uiBlock *block,
 uiBut *uiDefIconTextButO_ptr(uiBlock *block,
                              int type,
                              struct wmOperatorType *ot,
-                             kraken::eWmOperatorContext opcontext,
+                             short opcontext,
                              int icon,
                              const char *str,
                              int x,
@@ -1344,16 +1394,15 @@ uiBut *uiDefIconTextButO_ptr(uiBlock *block,
                              const char *tip);
 
 /* for passing inputs to ButO buttons */
-struct kraken::KrakenPRIM *UI_but_operator_ptr_get(uiBut *but);
+struct KrakenPRIM *UI_but_operator_ptr_get(uiBut *but);
 
 void UI_but_context_ptr_set(uiBlock *block,
                             uiBut *but,
                             const char *name,
-                            const struct kraken::KrakenPRIM *ptr);
-const struct kraken::KrakenPRIM *UI_but_context_ptr_get(const uiBut *but,
-                                                        const char *name,
-                                                        const kraken::KrakenPRIM *type
-                                                          CPP_ARG_DEFAULT(nullptr));
+                            const struct KrakenPRIM *ptr);
+const struct KrakenPRIM *UI_but_context_ptr_get(const uiBut *but,
+                                                const char *name,
+                                                const KrakenPRIM *type CPP_ARG_DEFAULT(nullptr));
 struct kContextStore *UI_but_context_get(const uiBut *but);
 
 void UI_but_unit_type_set(uiBut *but, int unit_type);
@@ -1377,7 +1426,7 @@ enum uiStringInfoType
 
 typedef struct uiStringInfo
 {
-  uiStringInfoType type;
+  short type;
   char *strinfo;
 } uiStringInfo;
 
@@ -1434,7 +1483,7 @@ enum
 /***************************** ID Utilities *******************************/
 
 int UI_icon_from_id(const struct ID *id);
-/** See: #BKE_report_type_str */
+/** See: #KKE_report_type_str */
 int UI_icon_from_report_type(int type);
 int UI_icon_colorid_from_report_type(int type);
 int UI_text_colorid_from_report_type(int type);
@@ -1584,8 +1633,8 @@ typedef enum eAutoPropButsReturn
 ENUM_OPERATORS(eAutoPropButsReturn, UI_PROP_BUTS_ANY_FAILED_CHECK);
 
 uiBut *uiDefAutoButR(uiBlock *block,
-                     struct kraken::KrakenPRIM *ptr,
-                     struct kraken::KrakenPROP *prop,
+                     struct KrakenPRIM *ptr,
+                     struct KrakenPROP *prop,
                      int index,
                      const char *name,
                      int icon,
@@ -1594,8 +1643,8 @@ uiBut *uiDefAutoButR(uiBlock *block,
                      int width,
                      int height);
 void uiDefAutoButsArrayR(uiBlock *block,
-                         kraken::KrakenPRIM *ptr,
-                         kraken::KrakenPROP *prop,
+                         struct KrakenPRIM *ptr,
+                         struct KrakenPROP *prop,
                          const int icon,
                          const int x,
                          const int y,
@@ -1608,12 +1657,12 @@ void uiDefAutoButsArrayR(uiBlock *block,
  * @param prop_activate_init: Property to activate on initial popup (#UI_BUT_ACTIVATE_ON_INIT).
  */
 eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
-                                     struct kraken::KrakenPRIM *ptr,
-                                     bool (*check_prop)(struct kraken::KrakenPRIM *ptr,
-                                                        struct kraken::KrakenPROP *prop,
+                                     struct KrakenPRIM *ptr,
+                                     bool (*check_prop)(struct KrakenPRIM *ptr,
+                                                        struct KrakenPROP *prop,
                                                         void *user_data),
                                      void *user_data,
-                                     struct kraken::KrakenPROP *prop_activate_init,
+                                     struct KrakenPROP *prop_activate_init,
                                      eButLabelAlign label_align,
                                      bool compact);
 
@@ -1734,7 +1783,7 @@ void UI_but_tooltip_refresh(struct kContext *C, uiBut *but);
 void UI_but_tooltip_timer_remove(struct kContext *C, uiBut *but);
 
 bool UI_textbutton_activate_rna(const struct kContext *C,
-                                ARegion *region,
+                                struct ARegion *region,
                                 const void *rna_poin_data,
                                 const char *rna_prop_id);
 bool UI_textbutton_activate_but(const struct kContext *C, uiBut *but);
@@ -1749,13 +1798,12 @@ void UI_but_func_hold_set(uiBut *but, uiButHandleHoldFunc func, void *argN);
 
 void UI_but_func_pushed_state_set(uiBut *but, uiButPushedStateFunc func, const void *arg);
 
-struct kraken::KrakenPRIM *UI_but_extra_operator_icon_add(uiBut *but,
-                                                          const wabi::TfToken &opname,
-                                                          kraken::eWmOperatorContext opcontext,
-                                                          int icon);
+struct KrakenPRIM *UI_but_extra_operator_icon_add(uiBut *but,
+                                                  char opname[MAX_NAME],
+                                                  short opcontext,
+                                                  int icon);
 struct wmOperatorType *UI_but_extra_operator_icon_optype_get(struct uiButExtraOpIcon *extra_icon);
-struct kraken::KrakenPRIM *UI_but_extra_operator_icon_opptr_get(
-  struct uiButExtraOpIcon *extra_icon);
+struct KrakenPRIM *UI_but_extra_operator_icon_opptr_get(struct uiButExtraOpIcon *extra_icon);
 
 /**
  * A decent size for a button (typically #UI_BTYPE_PREVIEW_TILE) to display a nicely readable
@@ -1803,7 +1851,7 @@ void UI_but_drag_set_asset(uiBut *but,
                            int icon,
                            struct ImBuf *imb,
                            float scale);
-void UI_but_drag_set_rna(uiBut *but, struct kraken::KrakenPRIM *ptr);
+void UI_but_drag_set_rna(uiBut *but, struct KrakenPRIM *ptr);
 void UI_but_drag_set_path(uiBut *but, const char *path, bool use_free);
 void UI_but_drag_set_name(uiBut *but, const char *name);
 /**
@@ -1823,18 +1871,18 @@ void UI_but_drag_set_image(uiBut *but,
  * could use a good cleanup, though how they will function in 2.5 is
  * not clear yet so we postpone that. */
 
-void UI_panels_begin(const struct kContext *C, ARegion *region);
-void UI_panels_end(const struct kContext *C, ARegion *region, int *r_x, int *r_y);
+void UI_panels_begin(const struct kContext *C, struct ARegion *region);
+void UI_panels_end(const struct kContext *C, struct ARegion *region, int *r_x, int *r_y);
 /**
  * Draw panels, selected (panels currently being dragged) on top.
  */
-void UI_panels_draw(const struct kContext *C, ARegion *region);
+void UI_panels_draw(const struct kContext *C, struct ARegion *region);
 
 struct Panel *UI_panel_find_by_type(struct ListBase *lb, const struct PanelType *pt);
 /**
  * @note \a panel should be return value from #UI_panel_find_by_type and can be NULL.
  */
-struct Panel *UI_panel_begin(ARegion *region,
+struct Panel *UI_panel_begin(struct ARegion *region,
                              struct ListBase *lb,
                              uiBlock *block,
                              struct PanelType *pt,
@@ -1857,9 +1905,7 @@ void UI_panel_end(struct Panel *panel, int width, int height);
  * callbacks that are called outside of regular drawing might require context. Currently it affects
  * the #PanelType.reorder callback only.
  */
-void UI_panel_context_pointer_set(struct Panel *panel,
-                                  const char *name,
-                                  struct kraken::KrakenPRIM *ptr);
+void UI_panel_context_pointer_set(struct Panel *panel, const char *name, struct KrakenPRIM *ptr);
 
 /**
  * Get the panel's expansion state, taking into account
@@ -1871,7 +1917,8 @@ bool UI_panel_is_active(const struct Panel *panel);
  * For button layout next to label.
  */
 void UI_panel_label_offset(const struct uiBlock *block, int *r_x, int *r_y);
-bool UI_panel_should_show_background(const ARegion *region, const struct PanelType *panel_type);
+bool UI_panel_should_show_background(const struct ARegion *region,
+                                     const struct PanelType *panel_type);
 int UI_panel_size_y(const struct Panel *panel);
 bool UI_panel_is_dragging(const struct Panel *panel);
 /**
@@ -1881,24 +1928,25 @@ bool UI_panel_is_dragging(const struct Panel *panel);
 bool UI_panel_matches_search_filter(const struct Panel *panel);
 bool UI_panel_can_be_pinned(const struct Panel *panel);
 
-bool UI_panel_category_is_visible(const ARegion *region);
-void UI_panel_category_add(ARegion *region, const char *name);
-struct PanelCategoryDyn *UI_panel_category_find(const ARegion *region, const char *idname);
-struct PanelCategoryStack *UI_panel_category_active_find(ARegion *region, const char *idname);
-const char *UI_panel_category_active_get(ARegion *region, bool set_fallback);
-void UI_panel_category_active_set(ARegion *region, const char *idname);
-void UI_panel_category_active_set_default(ARegion *region, const char *idname);
-void UI_panel_category_clear_all(ARegion *region);
+bool UI_panel_category_is_visible(const struct ARegion *region);
+void UI_panel_category_add(struct ARegion *region, const char *name);
+struct PanelCategoryDyn *UI_panel_category_find(const struct ARegion *region, const char *idname);
+struct PanelCategoryStack *UI_panel_category_active_find(struct ARegion *region,
+                                                         const char *idname);
+const char *UI_panel_category_active_get(struct ARegion *region, bool set_fallback);
+void UI_panel_category_active_set(struct ARegion *region, const char *idname);
+void UI_panel_category_active_set_default(struct ARegion *region, const char *idname);
+void UI_panel_category_clear_all(struct ARegion *region);
 /**
  * Draw vertical tabs on the left side of the region, one tab per category.
  */
-void UI_panel_category_draw_all(ARegion *region, const char *category_id_active);
+void UI_panel_category_draw_all(struct ARegion *region, const char *category_id_active);
 
 /* Panel custom data. */
-struct kraken::KrakenPRIM *UI_panel_custom_data_get(const struct Panel *panel);
-struct kraken::KrakenPRIM *UI_region_panel_custom_data_under_cursor(const struct kContext *C,
-                                                                    const struct wmEvent *event);
-void UI_panel_custom_data_set(struct Panel *panel, struct kraken::KrakenPRIM *custom_data);
+struct KrakenPRIM *UI_panel_custom_data_get(const struct Panel *panel);
+struct KrakenPRIM *UI_region_panel_custom_data_under_cursor(const struct kContext *C,
+                                                            const struct wmEvent *event);
+void UI_panel_custom_data_set(struct Panel *panel, struct KrakenPRIM *custom_data);
 
 /* Poly-instantiated panels for representing a list of data. */
 /**
@@ -1906,17 +1954,17 @@ void UI_panel_custom_data_set(struct Panel *panel, struct kraken::KrakenPRIM *cu
  * having only one panel corresponding to each #PanelType.
  */
 struct Panel *UI_panel_add_instanced(const struct kContext *C,
-                                     ARegion *region,
+                                     struct ARegion *region,
                                      struct ListBase *panels,
                                      const char *panel_idname,
-                                     struct kraken::KrakenPRIM *custom_data);
+                                     struct KrakenPRIM *custom_data);
 /**
  * Remove instanced panels from the region's panel list.
  *
  * @note Can be called with NULL \a C, but it should be avoided because
  * handlers might not be removed.
  */
-void UI_panels_free_instanced(const struct kContext *C, ARegion *region);
+void UI_panels_free_instanced(const struct kContext *C, struct ARegion *region);
 
 #define INSTANCED_PANEL_UNIQUE_STR_LEN 16
 /**
@@ -1935,7 +1983,7 @@ typedef void (*uiListPanelIDFromDataFunc)(void *data_link, char *r_idname);
  * @param panel_idname_func: Function to find the #PanelType.idname for each item in the data list.
  * For a readability and generality, this lookup happens separately for each type of panel list.
  */
-bool UI_panel_list_matches_data(ARegion *region,
+bool UI_panel_list_matches_data(struct ARegion *region,
                                 struct ListBase *data,
                                 uiListPanelIDFromDataFunc panel_idname_func);
 
@@ -1945,9 +1993,9 @@ bool UI_panel_list_matches_data(ARegion *region,
  * handling WM events. Mostly this is done automatic by modules such
  * as screen/ if ED_KEYMAP_UI is set, or internally in popup functions. */
 
-void UI_region_handlers_add(std::vector<struct wmEventHandler *> handlers);
+void UI_region_handlers_add(ListBase handlers);
 void UI_popup_handlers_add(struct kContext *C,
-                           std::vector<struct wmEventHandler *> handlers,
+                           ListBase handlers,
                            uiPopupBlockHandle *popup,
                            char flag);
 void UI_popup_handlers_remove(struct ListBase *handlers, uiPopupBlockHandle *popup);
@@ -1991,8 +2039,8 @@ enum
   UI_LAYOUT_VERT_BAR = 5,
 };
 
-#define UI_UNIT_X ((void)0, UI_WIDGET_UNIT)
-#define UI_UNIT_Y ((void)0, UI_WIDGET_UNIT)
+#define UI_UNIT_X ((void)0, U.widget_unit)
+#define UI_UNIT_Y ((void)0, U.widget_unit)
 
 enum
 {
@@ -2096,12 +2144,12 @@ void UI_block_layout_free(uiBlock *block);
  */
 bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter);
 
-void UI_region_message_subscribe(ARegion *region, struct wmMsgBus *mbus);
+void UI_region_message_subscribe(struct ARegion *region, struct wmMsgBus *mbus);
 
 uiBlock *uiLayoutGetBlock(uiLayout *layout);
 
 void uiLayoutSetFunc(uiLayout *layout, uiMenuHandleFunc handlefunc, void *argv);
-void uiLayoutSetContextPointer(uiLayout *layout, const char *name, struct kraken::KrakenPRIM *ptr);
+void uiLayoutSetContextPointer(uiLayout *layout, const char *name, struct KrakenPRIM *ptr);
 struct kContextStore *uiLayoutGetContextStore(uiLayout *layout);
 void uiLayoutContextCopy(uiLayout *layout, struct kContextStore *context);
 
@@ -2126,7 +2174,7 @@ void uiLayoutSetTooltipFunc(uiLayout *layout,
  * This is a bit of a hack but best keep it in one place at least.
  */
 struct wmOperatorType *UI_but_operatortype_get_from_enum_menu(struct uiBut *but,
-                                                              struct kraken::KrakenPROP **r_prop);
+                                                              struct KrakenPROP **r_prop);
 /**
  * This is a bit of a hack but best keep it in one place at least.
  */
@@ -2144,7 +2192,7 @@ void UI_paneltype_draw(struct kContext *C, struct PanelType *pt, struct uiLayout
 /* Only for convenience. */
 void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but);
 
-void uiLayoutSetOperatorContext(uiLayout *layout, kraken::eWmOperatorContext opcontext);
+void uiLayoutSetOperatorContext(uiLayout *layout, short opcontext);
 void uiLayoutSetActive(uiLayout *layout, bool active);
 void uiLayoutSetActiveDefault(uiLayout *layout, bool active_default);
 void uiLayoutSetActivateInit(uiLayout *layout, bool activate_init);
@@ -2205,8 +2253,8 @@ uiLayout *uiLayoutGridFlow(uiLayout *layout,
 uiLayout *uiLayoutBox(uiLayout *layout);
 uiLayout *uiLayoutListBox(uiLayout *layout,
                           struct uiList *ui_list,
-                          struct kraken::KrakenPRIM *actptr,
-                          struct kraken::KrakenPROP *actprop);
+                          struct KrakenPRIM *actptr,
+                          struct KrakenPROP *actprop);
 uiLayout *uiLayoutAbsolute(uiLayout *layout, bool align);
 uiLayout *uiLayoutSplit(uiLayout *layout, float percentage, bool align);
 uiLayout *uiLayoutOverlap(uiLayout *layout);
@@ -2217,7 +2265,7 @@ uiLayout *uiLayoutRadial(uiLayout *layout);
 void uiTemplateHeader(uiLayout *layout, struct kContext *C);
 void uiTemplateID(uiLayout *layout,
                   const struct kContext *C,
-                  struct kraken::KrakenPRIM *ptr,
+                  struct KrakenPRIM *ptr,
                   const char *propname,
                   const char *newop,
                   const char *openop,
@@ -2227,7 +2275,7 @@ void uiTemplateID(uiLayout *layout,
                   const char *text);
 void uiTemplateIDBrowse(uiLayout *layout,
                         struct kContext *C,
-                        struct kraken::KrakenPRIM *ptr,
+                        struct KrakenPRIM *ptr,
                         const char *propname,
                         const char *newop,
                         const char *openop,
@@ -2236,7 +2284,7 @@ void uiTemplateIDBrowse(uiLayout *layout,
                         const char *text);
 void uiTemplateIDPreview(uiLayout *layout,
                          struct kContext *C,
-                         struct kraken::KrakenPRIM *ptr,
+                         struct KrakenPRIM *ptr,
                          const char *propname,
                          const char *newop,
                          const char *openop,
@@ -2250,7 +2298,7 @@ void uiTemplateIDPreview(uiLayout *layout,
  */
 void uiTemplateIDTabs(uiLayout *layout,
                       struct kContext *C,
-                      struct kraken::KrakenPRIM *ptr,
+                      struct KrakenPRIM *ptr,
                       const char *propname,
                       const char *newop,
                       const char *menu,
@@ -2264,7 +2312,7 @@ void uiTemplateIDTabs(uiLayout *layout,
  * used to determine the type of ID-pointer that can be used.
  */
 void uiTemplateAnyID(uiLayout *layout,
-                     struct kraken::KrakenPRIM *ptr,
+                     struct KrakenPRIM *ptr,
                      const char *propname,
                      const char *proptypename,
                      const char *text);
@@ -2274,17 +2322,17 @@ void uiTemplateAnyID(uiLayout *layout,
  */
 void uiTemplateSearch(uiLayout *layout,
                       struct kContext *C,
-                      struct kraken::KrakenPRIM *ptr,
+                      struct KrakenPRIM *ptr,
                       const char *propname,
-                      struct kraken::KrakenPRIM *searchptr,
+                      struct KrakenPRIM *searchptr,
                       const char *searchpropname,
                       const char *newop,
                       const char *unlinkop);
 void uiTemplateSearchPreview(uiLayout *layout,
                              struct kContext *C,
-                             struct kraken::KrakenPRIM *ptr,
+                             struct KrakenPRIM *ptr,
                              const char *propname,
-                             struct kraken::KrakenPRIM *searchptr,
+                             struct KrakenPRIM *searchptr,
                              const char *searchpropname,
                              const char *newop,
                              const char *unlinkop,
@@ -2298,9 +2346,9 @@ void uiTemplateSearchPreview(uiLayout *layout,
  * - root_ptr: struct that path gets built from
  */
 void uiTemplatePathBuilder(uiLayout *layout,
-                           struct kraken::KrakenPRIM *ptr,
+                           struct KrakenPRIM *ptr,
                            const char *propname,
-                           struct kraken::KrakenPRIM *root_ptr,
+                           struct KrakenPRIM *root_ptr,
                            const char *text);
 void uiTemplateModifiers(uiLayout *layout, struct kContext *C);
 void uiTemplateGpencilModifiers(uiLayout *layout, struct kContext *C);
@@ -2313,12 +2361,10 @@ void uiTemplateShaderFx(uiLayout *layout, struct kContext *C);
  */
 void uiTemplateConstraints(uiLayout *layout, struct kContext *C, bool use_bone_constraints);
 
-uiLayout *uiTemplateGpencilModifier(uiLayout *layout,
-                                    struct kContext *C,
-                                    struct kraken::KrakenPRIM *ptr);
+uiLayout *uiTemplateGpencilModifier(uiLayout *layout, struct kContext *C, struct KrakenPRIM *ptr);
 void uiTemplateGpencilColorPreview(uiLayout *layout,
                                    struct kContext *C,
-                                   struct kraken::KrakenPRIM *ptr,
+                                   struct KrakenPRIM *ptr,
                                    const char *propname,
                                    int rows,
                                    int cols,
@@ -2327,7 +2373,7 @@ void uiTemplateGpencilColorPreview(uiLayout *layout,
 
 void uiTemplateOperatorRedoProperties(uiLayout *layout, const struct kContext *C);
 
-void uiTemplateConstraintHeader(uiLayout *layout, struct kraken::KrakenPRIM *ptr);
+void uiTemplateConstraintHeader(uiLayout *layout, struct KrakenPRIM *ptr);
 void uiTemplatePreview(uiLayout *layout,
                        struct kContext *C,
                        struct ID *id,
@@ -2336,7 +2382,7 @@ void uiTemplatePreview(uiLayout *layout,
                        struct MTex *slot,
                        const char *preview_id);
 void uiTemplateColorRamp(uiLayout *layout,
-                         struct kraken::KrakenPRIM *ptr,
+                         struct KrakenPRIM *ptr,
                          const char *propname,
                          bool expand);
 /**
@@ -2347,16 +2393,16 @@ void uiTemplateIcon(uiLayout *layout, int icon_value, float icon_scale);
  * @param icon_scale: Scale of the icon, 1x == button height.
  */
 void uiTemplateIconView(uiLayout *layout,
-                        struct kraken::KrakenPRIM *ptr,
+                        struct KrakenPRIM *ptr,
                         const char *propname,
                         bool show_labels,
                         float icon_scale,
                         float icon_scale_popup);
-void uiTemplateHistogram(uiLayout *layout, struct kraken::KrakenPRIM *ptr, const char *propname);
-void uiTemplateWaveform(uiLayout *layout, struct kraken::KrakenPRIM *ptr, const char *propname);
-void uiTemplateVectorscope(uiLayout *layout, struct kraken::KrakenPRIM *ptr, const char *propname);
+void uiTemplateHistogram(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname);
+void uiTemplateWaveform(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname);
+void uiTemplateVectorscope(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname);
 void uiTemplateCurveMapping(uiLayout *layout,
-                            struct kraken::KrakenPRIM *ptr,
+                            struct KrakenPRIM *ptr,
                             const char *propname,
                             int type,
                             bool levels,
@@ -2367,25 +2413,23 @@ void uiTemplateCurveMapping(uiLayout *layout,
  * Template for a path creation widget intended for custom bevel profiles.
  * This section is quite similar to #uiTemplateCurveMapping, but with reduced complexity.
  */
-void uiTemplateCurveProfile(uiLayout *layout,
-                            struct kraken::KrakenPRIM *ptr,
-                            const char *propname);
+void uiTemplateCurveProfile(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname);
 /**
  * This template now follows User Preference for type - name is not correct anymore.
  */
 void uiTemplateColorPicker(uiLayout *layout,
-                           struct kraken::KrakenPRIM *ptr,
+                           struct KrakenPRIM *ptr,
                            const char *propname,
                            bool value_slider,
                            bool lock,
                            bool lock_luminosity,
                            bool cubic);
 void uiTemplatePalette(uiLayout *layout,
-                       struct kraken::KrakenPRIM *ptr,
+                       struct KrakenPRIM *ptr,
                        const char *propname,
                        bool colors);
 void uiTemplateCryptoPicker(uiLayout *layout,
-                            struct kraken::KrakenPRIM *ptr,
+                            struct KrakenPRIM *ptr,
                             const char *propname,
                             int icon);
 /**
@@ -2393,26 +2437,24 @@ void uiTemplateCryptoPicker(uiLayout *layout,
  * the array of layer bitflags
  */
 void uiTemplateLayers(uiLayout *layout,
-                      struct kraken::KrakenPRIM *ptr,
+                      struct KrakenPRIM *ptr,
                       const char *propname,
-                      struct kraken::KrakenPRIM *used_ptr,
+                      struct KrakenPRIM *used_ptr,
                       const char *used_propname,
                       int active_layer);
 void uiTemplateImage(uiLayout *layout,
                      struct kContext *C,
-                     struct kraken::KrakenPRIM *ptr,
+                     struct KrakenPRIM *ptr,
                      const char *propname,
-                     struct kraken::KrakenPRIM *userptr,
+                     struct KrakenPRIM *userptr,
                      bool compact,
                      bool multiview);
-void uiTemplateImageSettings(uiLayout *layout,
-                             struct kraken::KrakenPRIM *imfptr,
-                             bool color_management);
-void uiTemplateImageStereo3d(uiLayout *layout, struct kraken::KrakenPRIM *stereo3d_format_ptr);
-void uiTemplateImageViews(uiLayout *layout, struct kraken::KrakenPRIM *imaptr);
+void uiTemplateImageSettings(uiLayout *layout, struct KrakenPRIM *imfptr, bool color_management);
+void uiTemplateImageStereo3d(uiLayout *layout, struct KrakenPRIM *stereo3d_format_ptr);
+void uiTemplateImageViews(uiLayout *layout, struct KrakenPRIM *imaptr);
 void uiTemplateImageFormatViews(uiLayout *layout,
-                                struct kraken::KrakenPRIM *imfptr,
-                                struct kraken::KrakenPRIM *ptr);
+                                struct KrakenPRIM *imfptr,
+                                struct KrakenPRIM *ptr);
 void uiTemplateImageLayers(uiLayout *layout, struct kContext *C, void *ima, void *iuser);
 void uiTemplateImageInfo(uiLayout *layout, struct kContext *C, void *ima, void *iuser);
 void uiTemplateRunningJobs(uiLayout *layout, struct kContext *C);
@@ -2436,7 +2478,7 @@ void uiTemplateHeader3D_mode(uiLayout *layout, struct kContext *C);
 void uiTemplateEditModeSelection(uiLayout *layout, struct kContext *C);
 void uiTemplateReportsBanner(uiLayout *layout, struct kContext *C);
 void uiTemplateInputStatus(uiLayout *layout, struct kContext *C);
-void uiTemplateKeymapItemProperties(uiLayout *layout, struct kraken::KrakenPRIM *ptr);
+void uiTemplateKeymapItemProperties(uiLayout *layout, struct KrakenPRIM *ptr);
 
 bool uiTemplateEventFromKeymapItem(struct uiLayout *layout,
                                    const char *text,
@@ -2444,7 +2486,7 @@ bool uiTemplateEventFromKeymapItem(struct uiLayout *layout,
                                    bool text_fallback);
 
 void uiTemplateComponentMenu(uiLayout *layout,
-                             struct kraken::KrakenPRIM *ptr,
+                             struct KrakenPRIM *ptr,
                              const char *propname,
                              const char *name);
 void uiTemplateNodeSocket(uiLayout *layout, struct kContext *C, float color[4]);
@@ -2455,41 +2497,41 @@ void uiTemplateNodeSocket(uiLayout *layout, struct kContext *C, float color[4]);
  */
 void uiTemplateCacheFile(uiLayout *layout,
                          const struct kContext *C,
-                         struct kraken::KrakenPRIM *ptr,
+                         struct KrakenPRIM *ptr,
                          const char *propname);
 
 /**
- * Lookup the CacheFile kraken::KrakenPRIM of the given pointer and return it in the output
+ * Lookup the CacheFile KrakenPRIM of the given pointer and return it in the output
  * parameter. Returns true if `ptr` has a RNACacheFile, false otherwise. If false, the output
  * parameter is not initialized.
  */
-bool uiTemplateCacheFilePointer(struct kraken::KrakenPRIM *ptr,
+bool uiTemplateCacheFilePointer(struct KrakenPRIM *ptr,
                                 const char *propname,
-                                struct kraken::KrakenPRIM *r_file_ptr);
+                                struct KrakenPRIM *r_file_ptr);
 
 /**
  * Draw the velocity related properties of the CacheFile.
  */
-void uiTemplateCacheFileVelocity(uiLayout *layout, struct kraken::KrakenPRIM *fileptr);
+void uiTemplateCacheFileVelocity(uiLayout *layout, struct KrakenPRIM *fileptr);
 
 /**
  * Draw the render procedural related properties of the CacheFile.
  */
 void uiTemplateCacheFileProcedural(uiLayout *layout,
                                    const struct kContext *C,
-                                   struct kraken::KrakenPRIM *fileptr);
+                                   struct KrakenPRIM *fileptr);
 
 /**
  * Draw the time related properties of the CacheFile.
  */
-void uiTemplateCacheFileTimeSettings(uiLayout *layout, struct kraken::KrakenPRIM *fileptr);
+void uiTemplateCacheFileTimeSettings(uiLayout *layout, struct KrakenPRIM *fileptr);
 
 /**
  * Draw the override layers related properties of the CacheFile.
  */
 void uiTemplateCacheFileLayers(uiLayout *layout,
                                const struct kContext *C,
-                               struct kraken::KrakenPRIM *fileptr);
+                               struct KrakenPRIM *fileptr);
 
 /* Default UIList class name, keep in sync with its declaration in bl_ui/__init__.py */
 #define UI_UL_DEFAULT_CLASS_NAME "UI_UL_list"
@@ -2514,9 +2556,9 @@ void uiTemplateList(uiLayout *layout,
                     const struct kContext *C,
                     const char *listtype_name,
                     const char *list_id,
-                    struct kraken::KrakenPRIM *dataptr,
+                    struct KrakenPRIM *dataptr,
                     const char *propname,
-                    struct kraken::KrakenPRIM *active_dataptr,
+                    struct KrakenPRIM *active_dataptr,
                     const char *active_propname,
                     const char *item_dyntip_propname,
                     int rows,
@@ -2528,9 +2570,9 @@ struct uiList *uiTemplateList_ex(uiLayout *layout,
                                  const struct kContext *C,
                                  const char *listtype_name,
                                  const char *list_id,
-                                 struct kraken::KrakenPRIM *dataptr,
+                                 struct KrakenPRIM *dataptr,
                                  const char *propname,
-                                 struct kraken::KrakenPRIM *active_dataptr,
+                                 struct KrakenPRIM *active_dataptr,
                                  const char *active_propname,
                                  const char *item_dyntip_propname,
                                  int rows,
@@ -2543,12 +2585,12 @@ struct uiList *uiTemplateList_ex(uiLayout *layout,
 void uiTemplateNodeLink(uiLayout *layout,
                         struct kContext *C,
                         struct kNodeTree *ntree,
-                        struct bNode *node,
+                        struct kNode *node,
                         struct kNodeSocket *input);
 void uiTemplateNodeView(uiLayout *layout,
                         struct kContext *C,
                         struct kNodeTree *ntree,
-                        struct bNode *node,
+                        struct kNode *node,
                         struct kNodeSocket *input);
 void uiTemplateTextureUser(uiLayout *layout, struct kContext *C);
 /**
@@ -2556,34 +2598,32 @@ void uiTemplateTextureUser(uiLayout *layout, struct kContext *C);
  */
 void uiTemplateTextureShow(uiLayout *layout,
                            const struct kContext *C,
-                           struct kraken::KrakenPRIM *ptr,
-                           struct kraken::KrakenPROP *prop);
+                           struct KrakenPRIM *ptr,
+                           struct KrakenPROP *prop);
 
 void uiTemplateMovieClip(struct uiLayout *layout,
                          struct kContext *C,
-                         struct kraken::KrakenPRIM *ptr,
+                         struct KrakenPRIM *ptr,
                          const char *propname,
                          bool compact);
-void uiTemplateTrack(struct uiLayout *layout,
-                     struct kraken::KrakenPRIM *ptr,
-                     const char *propname);
+void uiTemplateTrack(struct uiLayout *layout, struct KrakenPRIM *ptr, const char *propname);
 void uiTemplateMarker(struct uiLayout *layout,
-                      struct kraken::KrakenPRIM *ptr,
+                      struct KrakenPRIM *ptr,
                       const char *propname,
-                      struct kraken::KrakenPRIM *userptr,
-                      struct kraken::KrakenPRIM *trackptr,
+                      struct KrakenPRIM *userptr,
+                      struct KrakenPRIM *trackptr,
                       bool compact);
 void uiTemplateMovieclipInformation(struct uiLayout *layout,
-                                    struct kraken::KrakenPRIM *ptr,
+                                    struct KrakenPRIM *ptr,
                                     const char *propname,
-                                    struct kraken::KrakenPRIM *userptr);
+                                    struct KrakenPRIM *userptr);
 
 void uiTemplateColorspaceSettings(struct uiLayout *layout,
-                                  struct kraken::KrakenPRIM *ptr,
+                                  struct KrakenPRIM *ptr,
                                   const char *propname);
 void uiTemplateColormanagedViewSettings(struct uiLayout *layout,
                                         struct kContext *C,
-                                        struct kraken::KrakenPRIM *ptr,
+                                        struct KrakenPRIM *ptr,
                                         const char *propname);
 
 int uiTemplateRecentFiles(struct uiLayout *layout, int rows);
@@ -2600,31 +2640,31 @@ enum
 void uiTemplateAssetView(struct uiLayout *layout,
                          const struct kContext *C,
                          const char *list_id,
-                         struct kraken::KrakenPRIM *asset_library_dataptr,
+                         struct KrakenPRIM *asset_library_dataptr,
                          const char *asset_library_propname,
-                         struct kraken::KrakenPRIM *assets_dataptr,
+                         struct KrakenPRIM *assets_dataptr,
                          const char *assets_propname,
-                         struct kraken::KrakenPRIM *active_dataptr,
+                         struct KrakenPRIM *active_dataptr,
                          const char *active_propname,
                          const struct AssetFilterSettings *filter_settings,
                          int display_flags,
                          const char *activate_opname,
-                         struct kraken::KrakenPRIM *r_activate_op_properties,
+                         struct KrakenPRIM *r_activate_op_properties,
                          const char *drag_opname,
-                         struct kraken::KrakenPRIM *r_drag_op_properties);
+                         struct KrakenPRIM *r_drag_op_properties);
 
 /**
  * \return: A RNA pointer for the operator properties.
  */
-struct kraken::KrakenPRIM *UI_list_custom_activate_operator_set(struct uiList *ui_list,
-                                                                const char *opname,
-                                                                bool create_properties);
+struct KrakenPRIM *UI_list_custom_activate_operator_set(struct uiList *ui_list,
+                                                        const char *opname,
+                                                        bool create_properties);
 /**
  * \return: A RNA pointer for the operator properties.
  */
-struct kraken::KrakenPRIM *UI_list_custom_drag_operator_set(struct uiList *ui_list,
-                                                            const char *opname,
-                                                            bool create_properties);
+struct KrakenPRIM *UI_list_custom_drag_operator_set(struct uiList *ui_list,
+                                                    const char *opname,
+                                                    bool create_properties);
 
 /* items */
 void uiItemO(uiLayout *layout, const char *name, int icon, const char *opname);
@@ -2686,36 +2726,36 @@ void uiItemFullO_ptr(uiLayout *layout,
                      const char *name,
                      int icon,
                      IDProperty *properties,
-                     kraken::eWmOperatorContext context,
+                     short context,
                      int flag,
-                     struct kraken::KrakenPRIM *r_opptr);
+                     struct KrakenPRIM *r_opptr);
 void uiItemFullO(uiLayout *layout,
                  const char *opname,
                  const char *name,
                  int icon,
                  IDProperty *properties,
-                 kraken::eWmOperatorContext context,
+                 short context,
                  int flag,
-                 struct kraken::KrakenPRIM *r_opptr);
+                 struct KrakenPRIM *r_opptr);
 void uiItemFullOMenuHold_ptr(uiLayout *layout,
                              struct wmOperatorType *ot,
                              const char *name,
                              int icon,
                              IDProperty *properties,
-                             kraken::eWmOperatorContext context,
+                             short context,
                              int flag,
                              const char *menu_id, /* extra menu arg. */
-                             struct kraken::KrakenPRIM *r_opptr);
+                             struct KrakenPRIM *r_opptr);
 
 void uiItemR(uiLayout *layout,
-             struct kraken::KrakenPRIM *ptr,
+             struct KrakenPRIM *ptr,
              const char *propname,
              int flag,
              const char *name,
              int icon);
 void uiItemFullR(uiLayout *layout,
-                 struct kraken::KrakenPRIM *ptr,
-                 struct kraken::KrakenPROP *prop,
+                 struct KrakenPRIM *ptr,
+                 struct KrakenPROP *prop,
                  int index,
                  int value,
                  int flag,
@@ -2725,8 +2765,8 @@ void uiItemFullR(uiLayout *layout,
  * Use a wrapper function since re-implementing all the logic in this function would be messy.
  */
 void uiItemFullR_with_popover(uiLayout *layout,
-                              struct kraken::KrakenPRIM *ptr,
-                              struct kraken::KrakenPROP *prop,
+                              struct KrakenPRIM *ptr,
+                              struct KrakenPROP *prop,
                               int index,
                               int value,
                               int flag,
@@ -2734,8 +2774,8 @@ void uiItemFullR_with_popover(uiLayout *layout,
                               int icon,
                               const char *panel_type);
 void uiItemFullR_with_menu(uiLayout *layout,
-                           struct kraken::KrakenPRIM *ptr,
-                           struct kraken::KrakenPROP *prop,
+                           struct KrakenPRIM *ptr,
+                           struct KrakenPROP *prop,
                            int index,
                            int value,
                            int flag,
@@ -2745,40 +2785,40 @@ void uiItemFullR_with_menu(uiLayout *layout,
 void uiItemEnumR_prop(uiLayout *layout,
                       const char *name,
                       int icon,
-                      struct kraken::KrakenPRIM *ptr,
-                      struct kraken::KrakenPROP *prop,
+                      struct KrakenPRIM *ptr,
+                      struct KrakenPROP *prop,
                       int value);
 void uiItemEnumR(uiLayout *layout,
                  const char *name,
                  int icon,
-                 struct kraken::KrakenPRIM *ptr,
+                 struct KrakenPRIM *ptr,
                  const char *propname,
                  int value);
 void uiItemEnumR_string_prop(uiLayout *layout,
-                             struct kraken::KrakenPRIM *ptr,
-                             struct kraken::KrakenPROP *prop,
+                             struct KrakenPRIM *ptr,
+                             struct KrakenPROP *prop,
                              const char *value,
                              const char *name,
                              int icon);
 void uiItemEnumR_string(uiLayout *layout,
-                        struct kraken::KrakenPRIM *ptr,
+                        struct KrakenPRIM *ptr,
                         const char *propname,
                         const char *value,
                         const char *name,
                         int icon);
-void uiItemsEnumR(uiLayout *layout, struct kraken::KrakenPRIM *ptr, const char *propname);
+void uiItemsEnumR(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname);
 void uiItemPointerR_prop(uiLayout *layout,
-                         struct kraken::KrakenPRIM *ptr,
-                         struct kraken::KrakenPROP *prop,
-                         struct kraken::KrakenPRIM *searchptr,
-                         struct kraken::KrakenPROP *searchprop,
+                         struct KrakenPRIM *ptr,
+                         struct KrakenPROP *prop,
+                         struct KrakenPRIM *searchptr,
+                         struct KrakenPROP *searchprop,
                          const char *name,
                          int icon,
                          bool results_are_suggestions);
 void uiItemPointerR(uiLayout *layout,
-                    struct kraken::KrakenPRIM *ptr,
+                    struct KrakenPRIM *ptr,
                     const char *propname,
-                    struct kraken::KrakenPRIM *searchptr,
+                    struct KrakenPRIM *searchptr,
                     const char *searchpropname,
                     const char *name,
                     int icon);
@@ -2786,7 +2826,7 @@ void uiItemsFullEnumO(uiLayout *layout,
                       const char *opname,
                       const char *propname,
                       IDProperty *properties,
-                      kraken::eWmOperatorContext context,
+                      short context,
                       int flag);
 /**
  * Create UI items for enum items in \a item_array.
@@ -2795,10 +2835,10 @@ void uiItemsFullEnumO(uiLayout *layout,
  */
 void uiItemsFullEnumO_items(uiLayout *layout,
                             struct wmOperatorType *ot,
-                            struct kraken::KrakenPRIM ptr,
-                            struct kraken::KrakenPROP *prop,
+                            struct KrakenPRIM ptr,
+                            struct KrakenPROP *prop,
                             IDProperty *properties,
-                            kraken::eWmOperatorContext context,
+                            short context,
                             int flag,
                             const struct EnumPropertyItem *item_array,
                             int totitem);
@@ -2826,7 +2866,7 @@ uiLayout *uiItemL_respect_property_split(uiLayout *layout, const char *text, int
 /**
  * Label icon for dragging.
  */
-void uiItemLDrag(uiLayout *layout, struct kraken::KrakenPRIM *ptr, const char *name, int icon);
+void uiItemLDrag(uiLayout *layout, struct KrakenPRIM *ptr, const char *name, int icon);
 /**
  * Menu.
  */
@@ -2844,17 +2884,14 @@ void uiItemMContents(uiLayout *layout, const char *menuname);
  * To force inserting a blank dummy element, NULL can be passed for \a ptr and \a prop.
  */
 void uiItemDecoratorR_prop(uiLayout *layout,
-                           struct kraken::KrakenPRIM *ptr,
-                           struct kraken::KrakenPROP *prop,
+                           struct KrakenPRIM *ptr,
+                           struct KrakenPROP *prop,
                            int index);
 /**
  * Insert a decorator item for a button with the same property as \a prop.
  * To force inserting a blank dummy element, NULL can be passed for \a ptr and \a propname.
  */
-void uiItemDecoratorR(uiLayout *layout,
-                      struct kraken::KrakenPRIM *ptr,
-                      const char *propname,
-                      int index);
+void uiItemDecoratorR(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname, int index);
 /** Value item */
 void uiItemV(uiLayout *layout, const char *name, int icon, int argval);
 /** Separator item */
@@ -2896,14 +2933,14 @@ void uiItemMenuEnumFullO_ptr(uiLayout *layout,
                              const char *propname,
                              const char *name,
                              int icon,
-                             struct kraken::KrakenPRIM *r_opptr);
+                             struct KrakenPRIM *r_opptr);
 void uiItemMenuEnumFullO(uiLayout *layout,
                          struct kContext *C,
                          const char *opname,
                          const char *propname,
                          const char *name,
                          int icon,
-                         struct kraken::KrakenPRIM *r_opptr);
+                         struct KrakenPRIM *r_opptr);
 void uiItemMenuEnumO(uiLayout *layout,
                      struct kContext *C,
                      const char *opname,
@@ -2911,21 +2948,21 @@ void uiItemMenuEnumO(uiLayout *layout,
                      const char *name,
                      int icon);
 void uiItemMenuEnumR_prop(uiLayout *layout,
-                          struct kraken::KrakenPRIM *ptr,
-                          struct kraken::KrakenPROP *prop,
+                          struct KrakenPRIM *ptr,
+                          struct KrakenPROP *prop,
                           const char *name,
                           int icon);
 void uiItemMenuEnumR(uiLayout *layout,
-                     struct kraken::KrakenPRIM *ptr,
+                     struct KrakenPRIM *ptr,
                      const char *propname,
                      const char *name,
                      int icon);
 void uiItemTabsEnumR_prop(uiLayout *layout,
                           struct kContext *C,
-                          struct kraken::KrakenPRIM *ptr,
-                          struct kraken::KrakenPROP *prop,
-                          struct kraken::KrakenPRIM *ptr_highlight,
-                          struct kraken::KrakenPROP *prop_highlight,
+                          struct KrakenPRIM *ptr,
+                          struct KrakenPROP *prop,
+                          struct KrakenPRIM *ptr_highlight,
+                          struct KrakenPROP *prop_highlight,
                           bool icon_only);
 
 /* Only for testing, inspecting layouts. */
@@ -2959,18 +2996,18 @@ void UI_drop_color_copy(struct kContext *C, struct wmDrag *drag, struct wmDropBo
 bool UI_drop_color_poll(struct kContext *C, struct wmDrag *drag, const struct wmEvent *event);
 
 bool UI_context_copy_to_selected_list(struct kContext *C,
-                                      struct kraken::KrakenPRIM *ptr,
-                                      struct kraken::KrakenPROP *prop,
+                                      struct KrakenPRIM *ptr,
+                                      struct KrakenPROP *prop,
                                       struct ListBase *r_lb,
                                       bool *r_use_path_from_id,
                                       char **r_path);
-bool UI_context_copy_to_selected_check(struct kraken::KrakenPRIM *ptr,
-                                       struct kraken::KrakenPRIM *ptr_link,
-                                       struct kraken::KrakenPROP *prop,
+bool UI_context_copy_to_selected_check(struct KrakenPRIM *ptr,
+                                       struct KrakenPRIM *ptr_link,
+                                       struct KrakenPROP *prop,
                                        const char *path,
                                        bool use_path_from_id,
-                                       struct kraken::KrakenPRIM *r_ptr,
-                                       struct kraken::KrakenPROP **r_prop);
+                                       struct KrakenPRIM *r_ptr,
+                                       struct KrakenPROP **r_prop);
 
 /* Helpers for Operators */
 uiBut *UI_context_active_but_get(const struct kContext *C);
@@ -2987,11 +3024,11 @@ uiBut *UI_context_active_but_get_respect_menu(const struct kContext *C);
  * \return active button, NULL if none found or if it doesn't contain valid RNA data.
  */
 uiBut *UI_context_active_but_prop_get(const struct kContext *C,
-                                      struct kraken::KrakenPRIM *r_ptr,
-                                      struct kraken::KrakenPROP **r_prop,
+                                      struct KrakenPRIM *r_ptr,
+                                      struct KrakenPROP **r_prop,
                                       int *r_index);
 void UI_context_active_but_prop_handle(struct kContext *C, bool handle_undo);
-void UI_context_active_but_clear(struct kContext *C, struct wmWindow *win, ARegion *region);
+void UI_context_active_but_clear(struct kContext *C, struct wmWindow *win, struct ARegion *region);
 
 struct wmOperator *UI_context_active_operator_get(const struct kContext *C);
 /**
@@ -2999,25 +3036,27 @@ struct wmOperator *UI_context_active_operator_get(const struct kContext *C);
  */
 void UI_context_update_anim_flag(const struct kContext *C);
 void UI_context_active_but_prop_get_filebrowser(const struct kContext *C,
-                                                struct kraken::KrakenPRIM *r_ptr,
-                                                struct kraken::KrakenPROP **r_prop,
+                                                struct KrakenPRIM *r_ptr,
+                                                struct KrakenPROP **r_prop,
                                                 bool *r_is_undo,
                                                 bool *r_is_userdef);
 /**
  * For new/open operators.
  */
 void UI_context_active_but_prop_get_templateID(struct kContext *C,
-                                               struct kraken::KrakenPRIM *r_ptr,
-                                               struct kraken::KrakenPROP **r_prop);
+                                               struct KrakenPRIM *r_ptr,
+                                               struct KrakenPROP **r_prop);
 struct ID *UI_context_active_but_get_tab_ID(struct kContext *C);
 
-uiBut *UI_region_active_but_get(const ARegion *region);
-uiBut *UI_region_but_find_rect_over(const ARegion *region, const struct rcti *rect_px);
-uiBlock *UI_region_block_find_mouse_over(const ARegion *region, const int xy[2], bool only_clip);
+uiBut *UI_region_active_but_get(const struct ARegion *region);
+uiBut *UI_region_but_find_rect_over(const struct ARegion *region, const struct rcti *rect_px);
+uiBlock *UI_region_block_find_mouse_over(const struct ARegion *region,
+                                         const int xy[2],
+                                         bool only_clip);
 /**
  * Try to find a search-box region opened from a button in \a button_region.
  */
-ARegion *UI_region_searchbox_region_get(const ARegion *button_region);
+struct ARegion *UI_region_searchbox_region_get(const struct ARegion *button_region);
 
 /** #uiFontStyle.align */
 typedef enum eFontStyle_Align
@@ -3129,7 +3168,7 @@ void UI_editsource_but_replace(const uiBut *old_but, uiBut *new_but);
  * @param region: The region the button is placed in. Make sure this is actually the one the button
  *                is placed in, not just the context region.
  */
-void UI_but_ensure_in_view(const struct kContext *C, ARegion *region, const uiBut *but);
+void UI_but_ensure_in_view(const struct kContext *C, struct ARegion *region, const uiBut *but);
 
 /* UI_butstore_ helpers */
 typedef struct uiButStore uiButStore;
@@ -3163,17 +3202,17 @@ void UI_butstore_unregister(uiButStore *bs_handle, uiBut **but_p);
  * @param is_label: When true, show a small tip that only shows the name, otherwise show the full
  *                  tooltip.
  */
-ARegion *UI_tooltip_create_from_button(struct kContext *C,
-                                       ARegion *butregion,
-                                       uiBut *but,
-                                       bool is_label);
-ARegion *UI_tooltip_create_from_button_or_extra_icon(struct kContext *C,
-                                                     ARegion *butregion,
-                                                     uiBut *but,
-                                                     uiButExtraOpIcon *extra_icon,
-                                                     bool is_label);
-ARegion *UI_tooltip_create_from_gizmo(struct kContext *C, struct wmGizmo *gz);
-void UI_tooltip_free(struct kContext *C, struct kScreen *screen, ARegion *region);
+struct ARegion *UI_tooltip_create_from_button(struct kContext *C,
+                                              struct ARegion *butregion,
+                                              uiBut *but,
+                                              bool is_label);
+struct ARegion *UI_tooltip_create_from_button_or_extra_icon(struct kContext *C,
+                                                            struct ARegion *butregion,
+                                                            uiBut *but,
+                                                            uiButExtraOpIcon *extra_icon,
+                                                            bool is_label);
+struct ARegion *UI_tooltip_create_from_gizmo(struct kContext *C, struct wmGizmo *gz);
+void UI_tooltip_free(struct kContext *C, struct kScreen *screen, struct ARegion *region);
 
 typedef struct
 {
@@ -3192,9 +3231,9 @@ typedef struct
  * @param item_rect: Rectangle of the search item in search region space (#ui_searchbox_butrect())
  *                   which is passed to the tooltip callback.
  */
-ARegion *UI_tooltip_create_from_search_item_generic(
+struct ARegion *UI_tooltip_create_from_search_item_generic(
   struct kContext *C,
-  const ARegion *searchbox_region,
+  const struct ARegion *searchbox_region,
   const struct rcti *item_rect,
   const uiSearchItemTooltipData *item_tooltip_data);
 
@@ -3272,13 +3311,15 @@ char *UI_view_item_drop_tooltip(const uiViewItemHandle *item, const struct wmDra
  */
 bool UI_view_item_drop_handle(struct kContext *C,
                               const uiViewItemHandle *item_,
-                              const std::vector<wmDrag *> *drags);
+                              const struct wmDrag *drags);
 
 /**
  * @param xy: Coordinate to find a view item at, in window space.
  */
-uiViewItemHandle *UI_region_views_find_item_at(const ARegion *region, const int xy[2])
+uiViewItemHandle *UI_region_views_find_item_at(const struct ARegion *region, const int xy[2])
   ATTR_NONNULL();
-uiViewItemHandle *UI_region_views_find_active_item(const ARegion *region);
+uiViewItemHandle *UI_region_views_find_active_item(const struct ARegion *region);
 
-KRAKEN_NAMESPACE_END
+#ifdef __cplusplus
+}
+#endif

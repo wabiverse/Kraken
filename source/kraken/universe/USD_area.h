@@ -31,12 +31,13 @@
 
 #include <wabi/usd/usdUI/area.h>
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 struct ARegion;
 struct kScreen;
 struct ScrVert;
 struct SpaceLink;
+struct kSpaceLink;
 struct SpaceType;
 struct wmEventHandler;
 
@@ -75,7 +76,7 @@ struct ScrArea : public UsdUIArea
 
   ScrVert *v1, *v2, *v3, *v4;
 
-  std::vector<SpaceLink *> spacedata;
+  std::vector<kSpaceLink *> spacedata;
 
   UsdAttribute name;
   UsdAttribute spacetype;
@@ -96,7 +97,7 @@ struct ScrArea : public UsdUIArea
   short region_active_win;
 
   std::vector<ARegion *> regions;
-  std::vector<wmEventHandler *> handlers;
+  ListBase handlers;
 
   inline ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath);
 };
@@ -122,4 +123,3 @@ ScrArea::ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath)
     regions(EMPTY)
 {}
 
-KRAKEN_NAMESPACE_END

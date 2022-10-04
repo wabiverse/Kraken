@@ -9,13 +9,14 @@ set(INC
   ../editors/include
   ../../../extern/wcwidth
   ../../../intern/atomic
+  ../../../intern/clog
   ../../../intern/guardedalloc
 )
 
 set(SRC
   intern/KLI_assert.c
+  intern/KLI_dynstr.c
   intern/KLI_filelist.cpp
-  intern/KLI_fileops.cpp
   intern/KLI_listbase.cpp
   intern/KLI_math_base_inline.c
   intern/KLI_math_base_safe_inline.c
@@ -28,9 +29,10 @@ set(SRC
   intern/KLI_math_solvers.c
   intern/KLI_math_vector.c
   intern/KLI_math_vector_inline.c
+  intern/KLI_memarena.c
   intern/KLI_mempool.c
   intern/KLI_numaapi.cpp
-  intern/KLI_path_utils.cpp
+  intern/path_util.c
   intern/KLI_rect.cpp
   intern/KLI_rhash.c
   intern/KLI_storage.cpp
@@ -41,14 +43,20 @@ set(SRC
   intern/KLI_threads.cpp
   intern/KLI_time.cpp
   intern/KLI_winstuff.cpp
+  intern/fileops.c
+  intern/fileops.cc
+  intern/fnmatch.c
   intern/gsqueue.c
   intern/hash_mm2a.c
   intern/hash_mm3.c
   intern/lazy_threading.cc
+  intern/listbase.c
   intern/task_scheduler.cc
 
   intern/KLI_mempool_private.h
+  intern/list_sort_impl.h
 
+  KLI_asan.h
   KLI_allocator.hh
   KLI_api.h
   KLI_array.h
@@ -60,7 +68,10 @@ set(SRC
   KLI_dynstr.h
   KLI_easing.h
   KLI_fileops.h
+  KLI_fileops.hh
+  KLI_fileops_types.h
   KLI_float4x4.hh
+  KLI_fnmatch.h
   KLI_function_ref.hh
   KLI_gsqueue.h
   KLI_hash.h
@@ -90,6 +101,7 @@ set(SRC
   KLI_math_vec_types.hh
   KLI_math_vector.h
   KLI_math_vector.hh
+  KLI_memarena.h
   KLI_memory_utils.hh
   KLI_mempool.h
   KLI_numaapi.h

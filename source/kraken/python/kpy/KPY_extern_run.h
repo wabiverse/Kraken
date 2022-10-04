@@ -36,7 +36,7 @@ struct KPy_RunErrInfo {
   bool use_single_line_error;
 
   /** Report with optional prefix (when non-NULL). */
-  struct kraken::ReportList *reports;
+  struct ReportList *reports;
   const char *report_prefix;
 
   /** Allocated exception text (assign when non-NULL). */
@@ -53,10 +53,10 @@ struct KPy_RunErrInfo {
  * @param r_value: The resulting value.
  * @return Success.
  */
-bool KPY_run_string_as_number(kraken::kContext *C,
+bool KPY_run_string_as_number(kContext *C,
                               const char *imports[],
                               const char *expr,
                               struct KPy_RunErrInfo *err_info,
                               double *r_value) ATTR_NONNULL(1, 3, 5);
-bool KPY_run_string_exec(struct kraken::kContext *C, const char *imports[], const char *expr);
-bool KPY_run_string_eval(struct kraken::kContext *C, const char *imports[], const char *expr);
+bool KPY_run_string_exec(struct kContext *C, const char *imports[], const char *expr);
+bool KPY_run_string_eval(struct kContext *C, const char *imports[], const char *expr);

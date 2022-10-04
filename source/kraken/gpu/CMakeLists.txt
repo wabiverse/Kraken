@@ -26,12 +26,16 @@ set(INC_SYS
 
 # Shared & Agnostic GPU API.
 set(SRC
+  intern/gpu_capabilities.cc
   intern/gpu_context.cc
   intern/gpu_codegen.cc
   intern/gpu_debug.cc
   intern/gpu_index_buffer.cc
+  intern/gpu_immediate.cc
+  intern/gpu_immediate_util.c
   intern/gpu_init_exit.c
   intern/gpu_matrix.cc
+  intern/gpu_platform.cc
   intern/gpu_shader.cc
   intern/gpu_shader_create_info.cc
   intern/gpu_shader_dependency.cc
@@ -71,6 +75,7 @@ set(SRC
 
   intern/gpu_backend.hh
   intern/gpu_batch_private.hh
+  intern/gpu_capabilities_private.hh
   intern/gpu_codegen.h
   intern/gpu_context_private.hh
   intern/gpu_debug_private.hh
@@ -80,6 +85,7 @@ set(SRC
   intern/gpu_material_library.h
   intern/gpu_matrix_private.h
   intern/gpu_node_graph.h
+  intern/gpu_platform_private.hh
   intern/gpu_private.h
   intern/gpu_shader_create_info.hh
   intern/gpu_shader_create_info_private.hh
@@ -292,9 +298,9 @@ target_link_libraries(kraken_gpu PUBLIC
   kraken_gpu_shaders
 )
 
-# if(WITH_OPENCOLORIO)
-# target_link_libraries(kraken_gpu PUBLIC kraken_ocio_shaders)
-# endif()
+if(WITH_OPENCOLORIO)
+  target_link_libraries(kraken_gpu PUBLIC kraken_ocio_shaders)
+endif()
 
 if(CXX_WARN_NO_SUGGEST_OVERRIDE)
   target_compile_options(kraken_gpu PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wsuggest-override>)
@@ -353,5 +359,5 @@ if(WITH_GPU_BUILDTIME_SHADER_BUILDER)
     shaders/infos/gpu_interface_info.hh
   )
 
-  kraken_add_lib(bf_gpu_shader_infos "${GPU_SHADER_INFO_SRC}" "" "" "")
+  kraken_add_lib(kraken_gpu_shader_infos "${GPU_SHADER_INFO_SRC}" "" "" "")
 endif()

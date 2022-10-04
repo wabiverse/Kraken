@@ -26,7 +26,7 @@
 
 #include "USD_api.h"
 
-KRAKEN_NAMESPACE_BEGIN
+
 
 /**
  * Each control point that makes up the profile.
@@ -94,4 +94,3 @@ enum eCurveProfilePresets {
   PROF_PRESET_STEPS = 4,    /* Dynamic number of steps defined by segments_len. */
 };
 
-KRAKEN_NAMESPACE_END
