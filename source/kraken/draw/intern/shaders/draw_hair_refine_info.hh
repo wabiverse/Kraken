@@ -30,7 +30,7 @@ GPU_SHADER_INTERFACE_INFO(draw_hair_refine_transform_feedback_workaround_iface, 
 
 GPU_SHADER_CREATE_INFO(draw_hair_refine_transform_feedback_workaround)
     .define("srgbTarget", "false")
-    .define("blender_srgb_to_framebuffer_space(a)", "a")
+    .define("kraken_srgb_to_framebuffer_space(a)", "a")
     .define("HAIR_PHASE_SUBDIV")
     .define("TF_WORKAROUND")
 

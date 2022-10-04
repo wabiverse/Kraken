@@ -17,7 +17,7 @@ GPU_SHADER_INTERFACE_INFO(overlay_edit_nopersp_color_iface, "")
  * \{ */
 
 GPU_SHADER_CREATE_INFO(overlay_edit_mesh_common)
-    .define("blender_srgb_to_framebuffer_space(a)", "a")
+    .define("kraken_srgb_to_framebuffer_space(a)", "a")
     .sampler(0, ImageType::DEPTH_2D, "depthTex")
     .fragment_out(0, Type::VEC4, "fragColor")
     .push_constant(Type::BOOL, "selectFaces")
@@ -28,7 +28,7 @@ GPU_SHADER_CREATE_INFO(overlay_edit_mesh_common)
     .additional_info("draw_modelmat", "draw_globals");
 
 GPU_SHADER_CREATE_INFO(overlay_edit_mesh_common_no_geom)
-    .define("blender_srgb_to_framebuffer_space(a)", "a")
+    .define("kraken_srgb_to_framebuffer_space(a)", "a")
     .sampler(0, ImageType::DEPTH_2D, "depthTex")
     .fragment_out(0, Type::VEC4, "fragColor")
     .push_constant(Type::BOOL, "selectFaces")

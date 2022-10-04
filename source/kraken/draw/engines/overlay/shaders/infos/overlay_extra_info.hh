@@ -148,7 +148,7 @@ GPU_SHADER_INTERFACE_INFO(overlay_extra_point_iface, "")
 GPU_SHADER_CREATE_INFO(overlay_extra_point)
     .do_static_compilation(true)
     /* TODO(fclem): Move the vertex shader to Overlay engine and remove this bypass. */
-    .define("blender_srgb_to_framebuffer_space(a)", "a")
+    .define("kraken_srgb_to_framebuffer_space(a)", "a")
     .vertex_in(0, Type::VEC3, "pos")
     .push_constant(Type::VEC4, "ucolor")
     .vertex_out(overlay_extra_point_iface)

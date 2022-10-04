@@ -40,6 +40,7 @@ set(SRC
   intern/gpu_matrix.cc
   intern/gpu_platform.cc
   intern/gpu_shader.cc
+  intern/gpu_shader_builtin.c
   intern/gpu_shader_create_info.cc
   intern/gpu_shader_dependency.cc
   intern/gpu_shader_log.cc
