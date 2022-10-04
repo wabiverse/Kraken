@@ -1,50 +1,50 @@
 set(INC
-  .
-  ./intern/.
+  ..
   ../../../../. # Pixar USD
   ../../../../source
-  ../editors/include
+  ../../editors/include
   ../../luxo
   ../../krakernel
   ../../kraklib
   ../../universe
   ../../wm
+  ../../../../intern/clog
+  ../../../../intern/guardedalloc
+  ${CMAKE_BINARY_DIR}/source/kraken/luxo
 )
 
-# set(KPY_INSTALL_PATH "release/scripts/modules/kpy")
-
 set(SRC
-  intern/kpy_app.cpp
-  intern/kpy_capi_packarray.c
-  intern/kpy_capi_utils.cpp
-  intern/kpy_driver.cpp
-  intern/kpy_interface_atexit.cpp
-  intern/kpy_interface_run.cpp
-  intern/kpy_interface.cpp
-  intern/kpy_intern_string.cpp
-  intern/kpy_library_load.cpp
-  intern/kpy_path.cpp
-  intern/kpy_pixar_data.cpp
-  intern/kpy_stage.cpp
-  intern/kpy.cpp
+  kpy_app.cpp
+  kpy_capi_packarray.c
+  kpy_capi_utils.cpp
+  kpy_driver.cpp
+  kpy_interface_atexit.cpp
+  kpy_interface_run.cpp
+  kpy_interface.cpp
+  kpy_intern_string.cpp
+  kpy_library_load.cpp
+  kpy_path.cpp
+  kpy_pixar_data.cpp
+  kpy_stage.cpp
+  kpy.cpp
 
-  intern/kpy_app.h
-  intern/kpy_capi_packarray.h
-  intern/kpy_capi_utils.h
-  intern/kpy_driver.h
-  intern/kpy_interface.h
-  intern/kpy_intern_string.h
-  intern/kpy_library.h
-  intern/kpy_path.h
-  intern/kpy_stage.h
-  intern/kpy_utildefines.h
-  intern/kpy.h
+  kpy_app.h
+  kpy_capi_packarray.h
+  kpy_capi_utils.h
+  kpy_driver.h
+  kpy_interface.h
+  kpy_intern_string.h
+  kpy_library.h
+  kpy_path.h
+  kpy_stage.h
+  kpy_utildefines.h
+  kpy.h
 
-  intern/wabi_python.h
+  wabi_python.h
 
-  KPY_api.h
-  KPY_extern_python.h
-  KPY_extern_run.h
+  ../KPY_api.h
+  ../KPY_extern_python.h
+  ../KPY_extern_run.h
 )
 
 set(INC_SYS
@@ -57,6 +57,8 @@ set(INC_SYS
 set(LIB
   maelstrom
   maelstrom_static
+  kraken_editor_interface
+  kraken_python_gpu
   _tf
   _gf
   _trace
@@ -101,8 +103,6 @@ set(LIB
 if(WITH_BUILDINFO)
   add_definitions(-DBUILD_DATE)
 endif()
-
-# configure_file(module/__init__.py.in ${CMAKE_SOURCE_DIR}/${KPY_INSTALL_PATH}/__init__.py)
 
 add_definitions(-DKRAKEN_PYTHON_EXPORTS)
 

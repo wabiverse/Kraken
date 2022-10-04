@@ -4,7 +4,7 @@ set(INC
   ../include/.
   ../../../../. # Pixar USD
   ../../../../source
-  ../../python/kpy
+  ../../python
   ../../gpu
   ../../anchor
   ../../imbuf

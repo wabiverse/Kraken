@@ -104,7 +104,7 @@ kraken_import_nuget_packages("source/kraken/editors/space_view3d/kraken_editor_s
 kraken_import_nuget_packages("source/kraken/krakernel/kraken_kernel")
 kraken_import_nuget_packages("source/kraken/kraklib/kraken_lib")
 kraken_import_nuget_packages("source/kraken/luxo/kraken_luxo")
-kraken_import_nuget_packages("source/kraken/python/kpy/kraken_python")
+kraken_import_nuget_packages("source/kraken/python/intern/kraken_python")
 kraken_import_nuget_packages("source/kraken/server/kraken_server")
 kraken_import_nuget_packages("source/kraken/universe/kraken_universe")
 kraken_import_nuget_packages("source/kraken/wm/kraken_wm")

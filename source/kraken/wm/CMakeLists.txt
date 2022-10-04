@@ -11,7 +11,7 @@ set(INC
   ../krakfont
   ../gpu
   ../universe
-  ../python/kpy
+  ../python
   ../../../intern/atomic
   ../../../intern/guardedalloc
 )

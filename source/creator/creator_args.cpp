@@ -42,7 +42,7 @@
 #include "creator.h"
 
 /* KRAKEN PYTHON */
-#include <kpy/KPY_extern_run.h>
+#include "KPY_extern_run.h"
 
 /* PIXAR */
 #include <wabi/usd/usd/stage.h>

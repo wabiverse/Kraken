@@ -55,7 +55,7 @@
 
 #include "WM_operators.h"
 
-#include "kpy/KPY_extern_python.h"
+#include "KPY_extern_python.h"
 
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>

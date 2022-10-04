@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -25,10 +25,7 @@
  * @file
  * GPU.
  * Pixel Magic.
- *
- * Intermediate node graph for generating GLSL shaders.
  */
-
 #include "gpu_context_private.hh"
 #include "gpu_matrix_private.h"
 
