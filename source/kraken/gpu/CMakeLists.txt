@@ -32,6 +32,7 @@ set(SRC
   intern/gpu_context.cc
   intern/gpu_codegen.cc
   intern/gpu_debug.cc
+  intern/gpu_framebuffer.cc
   intern/gpu_index_buffer.cc
   intern/gpu_immediate.cc
   intern/gpu_immediate_util.c

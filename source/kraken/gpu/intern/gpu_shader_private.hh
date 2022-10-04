@@ -97,7 +97,7 @@ namespace kraken
       virtual std::string geometry_layout_declare(const shader::ShaderCreateInfo &info) const = 0;
       virtual std::string compute_layout_declare(const shader::ShaderCreateInfo &info) const = 0;
 
-      /* DEPRECATED: Kept only because of BGL API. */
+      /* DEPRECATED: Kept only because of KGL API. @TODO: Remove */
       virtual int program_handle_get() const = 0;
 
       inline const char *const name_get() const

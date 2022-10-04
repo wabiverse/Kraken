@@ -134,7 +134,7 @@ const char *GPU_shader_get_name(GPUShader *shader);
 bool GPU_shader_transform_feedback_enable(GPUShader *shader, struct GPUVertBuf *vertbuf);
 void GPU_shader_transform_feedback_disable(GPUShader *shader);
 
-/** DEPRECATED: Kept only because of BGL API. */
+/** DEPRECATED: Kept only because of KGL API. @TODO: Remove */
 int GPU_shader_get_program(GPUShader *shader);
 
 typedef enum

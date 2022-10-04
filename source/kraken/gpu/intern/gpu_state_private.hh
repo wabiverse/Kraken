@@ -168,7 +168,7 @@ namespace kraken
 
       GPUState state;
       GPUStateMutable mutable_state;
-      bool use_bgl = false;
+      bool use_kgl = false; /* @TODO: Remove */
 
      public:
 
