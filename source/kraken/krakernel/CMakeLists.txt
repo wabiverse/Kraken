@@ -68,14 +68,16 @@ set(INC_SYS
 set(LIB
   maelstrom
   maelstrom_static
-  kraken_lib
+  kraken_anchor
+  kraken_draw
   kraken_gpu
   kraken_imbuf
-  kraken_anchor
-  kraken_intern_guardedalloc
+  kraken_krakfont
+  kraken_lib
   kraken_luxo
   kraken_python
   kraken_intern_clog
+  kraken_intern_guardedalloc
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

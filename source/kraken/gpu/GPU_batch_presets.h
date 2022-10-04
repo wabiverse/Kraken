@@ -28,34 +28,38 @@
  * @ingroup GPU.
  * Pixel Magic.
  *
- * Generate shader code from the intermediate node graph.
+ * Batched geometry rendering is powered by the GPU library.
+ * This file originally specific to Blender, with additions
+ * or modifications specific to Kraken.
  */
 
-#include "GPU_material.h"
-#include "GPU_shader.h"
+#include "KLI_compiler_attrs.h"
+#include "KLI_sys_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct GPUNodeGraph;
+/* gpu_batch_presets.c */
 
-typedef struct GPUPass GPUPass;
+/* Replacement for #gluSphere */
 
-/* Pass */
+struct GPUBatch *GPU_batch_preset_sphere(int lod) ATTR_WARN_UNUSED_RESULT;
+struct GPUBatch *GPU_batch_preset_sphere_wire(int lod) ATTR_WARN_UNUSED_RESULT;
+struct GPUBatch *GPU_batch_preset_panel_drag_widget(float pixelsize,
+                                                    const float col_high[4],
+                                                    const float col_dark[4],
+                                                    float width) ATTR_WARN_UNUSED_RESULT;
 
-GPUPass *GPU_generate_pass(GPUMaterial *material,
-                           struct GPUNodeGraph *graph,
-                           GPUCodegenCallbackFn finalize_source_cb,
-                           void *thunk);
-GPUShader *GPU_pass_shader_get(GPUPass *pass);
-bool GPU_pass_compile(GPUPass *pass, const char *shname);
-void GPU_pass_release(GPUPass *pass);
+/**
+ * To be used with procedural placement inside shader.
+ */
+struct GPUBatch *GPU_batch_preset_quad(void);
 
-/* Module */
-
-void gpu_codegen_init(void);
-void gpu_codegen_exit(void);
+void gpu_batch_presets_init(void);
+void gpu_batch_presets_register(struct GPUBatch *preset_batch);
+bool gpu_batch_presets_unregister(struct GPUBatch *preset_batch);
+void gpu_batch_presets_exit(void);
 
 #ifdef __cplusplus
 }

@@ -53,10 +53,6 @@
 #include "KKE_appdir.h"
 #include "KKE_colortools.h"
 #include "KKE_main.h"
-// #include "KKE_context.h"
-// #include "KKE_image.h"
-// #include "KKE_image_format.h"
-// #include "KKE_main.h"
 
 // #include "LUXO_define.h"
 

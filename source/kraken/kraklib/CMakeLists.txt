@@ -21,6 +21,7 @@ set(SRC
   intern/KLI_math_base_inline.c
   intern/KLI_math_base_safe_inline.c
   intern/KLI_math_bits_inline.c
+  intern/KLI_math_color.c
   intern/KLI_math_color_inline.c
   intern/KLI_math_geom.c
   intern/KLI_math_geom_inline.c
@@ -35,6 +36,7 @@ set(SRC
   intern/path_util.c
   intern/KLI_rect.cpp
   intern/KLI_rhash.c
+  intern/KLI_rhash_utils.c
   intern/KLI_storage.cpp
   intern/KLI_string.c
   intern/KLI_string_utf8.c

@@ -26,6 +26,8 @@ set(INC_SYS
 
 # Shared & Agnostic GPU API.
 set(SRC
+  intern/gpu_batch_presets.c
+  intern/gpu_batch.cc
   intern/gpu_capabilities.cc
   intern/gpu_context.cc
   intern/gpu_codegen.cc
@@ -48,6 +50,7 @@ set(SRC
   intern/gpu_vertex_format.cc
   intern/gpu_viewport.c
 
+  GPU_batch_presets.h
   GPU_batch.h
   GPU_capabilities.h
   GPU_common.h
