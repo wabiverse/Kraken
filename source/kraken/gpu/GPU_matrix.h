@@ -31,6 +31,10 @@
 
 #include "KLI_sys_types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct GPUShader;
 
 /**
@@ -187,6 +191,10 @@ int GPU_matrix_stack_level_get_projection(void);
 /* static assert ensures this doesn't change! */
 #  define GPU_PY_MATRIX_STACK_LEN 31
 #endif /* USE_GPU_PY_MATRIX_API */
+
+#ifdef __cplusplus
+}
+#endif
 
 #ifndef SUPPRESS_GENERIC_MATRIX_API
 
