@@ -29,6 +29,7 @@
 
 #include "KLI_threads.h"
 
+#include "KKE_appdir.h"
 #include "KKE_appdir.hh"
 #include "KKE_global.h"
 

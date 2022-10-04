@@ -43,6 +43,7 @@
 #include "KLI_threads.h"
 
 #include "KKE_appdir.hh"
+#include "KKE_appdir.h"
 #include "KKE_context.h"
 #include "KKE_icons.h"
 #include "KKE_main.h"

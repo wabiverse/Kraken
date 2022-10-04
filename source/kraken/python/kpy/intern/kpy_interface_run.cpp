@@ -22,6 +22,7 @@
  * It Bites.
  */
 
+#include "KKE_appdir.h"
 #include "KKE_appdir.hh"
 #include "KKE_context.h"
 #include "KKE_report.h"

@@ -42,6 +42,7 @@
 
 #include "KKE_context.h"
 #include "KKE_utils.h"
+#include "KKE_appdir.h"
 #include "KKE_appdir.hh"
 #include "KKE_report.h"
 #include "KKE_global.h"

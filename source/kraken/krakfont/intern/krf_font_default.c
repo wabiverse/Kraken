@@ -14,7 +14,7 @@
 #include "KLI_fileops.h"
 #include "KLI_path_utils.h"
 
-#include "KKE_appdir.hh"
+#include "KKE_appdir.h"
 
 #ifdef WIN32
 #  include "KLI_winstuff.h"

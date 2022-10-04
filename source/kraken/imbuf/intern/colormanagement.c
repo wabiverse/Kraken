@@ -50,7 +50,7 @@
 #include "KLI_string.h"
 #include "KLI_threads.h"
 
-#include "KKE_appdir.hh"
+#include "KKE_appdir.h"
 #include "KKE_colortools.h"
 #include "KKE_main.h"
 // #include "KKE_context.h"

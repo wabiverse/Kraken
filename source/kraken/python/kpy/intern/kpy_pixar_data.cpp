@@ -29,6 +29,7 @@
 #include "KLI_utildefines.h"
 #include "KLI_string.h"
 
+#include "KKE_appdir.h"
 #include "KKE_appdir.hh"
 #include "KKE_context.h"
 #include "KKE_main.h"

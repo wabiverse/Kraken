@@ -38,6 +38,7 @@
 
 #include "KLI_utildefines.h"
 
+#include "ANCHOR_path-api.h"
 #include "ANCHOR_system_paths.h"
 
 #include <wabi/base/arch/systemInfo.h>

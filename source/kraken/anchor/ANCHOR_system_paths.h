@@ -25,6 +25,7 @@
  */
 
 #include "ANCHOR_api.h"
+#include "ANCHOR_path-api.h"
 
 #ifdef __APPLE__
 #  include <Foundation/Foundation.hpp>
@@ -291,39 +292,3 @@ class AnchorSystemPathsCocoa : public AnchorSystemPaths
 };
 #endif
 
-ANCHOR_DECLARE_HANDLE(AnchorSystemPathsHandle);
-
-/**
- * Creates the one and only instance of the system path access.
- * @return An indication of success. */
-eAnchorStatus ANCHOR_CreateSystemPaths(void);
-
-/**
- * Disposes the one and only system.
- * @return An indication of success. */
-eAnchorStatus ANCHOR_DisposeSystemPaths(void);
-
-/**
- * Determine the base dir in which shared resources are located. It will first try to use
- * "unpack and run" path, then look for properly installed path, including versioning.
- * @return Unsigned char string pointing to system dir (eg /usr/share/kraken/). */
-const char *ANCHOR_getSystemDir(int version, const char *versionstr);
-
-/**
- * Determine the base dir in which user configuration is stored, including versioning.
- * @return Unsigned char string pointing to user dir (eg ~). */
-const char *ANCHOR_getUserDir(int version, const char *versionstr);
-
-/**
- * Determine a special ("well known") and easy to reach user directory.
- * @return Unsigned char string pointing to user dir (eg `~/Documents/`). */
-const char *ANCHOR_getUserSpecialDir(eAnchorUserSpecialDirTypes type);
-
-/**
- * Determine the dir in which the binary file is found.
- * @return Unsigned char string pointing to binary dir (eg ~/usr/local/bin/). */
-const char *ANCHOR_getBinaryDir(void);
-
-/**
- * Add the file to the operating system most recently used files */
-void ANCHOR_addToSystemRecentFiles(const char *filename);

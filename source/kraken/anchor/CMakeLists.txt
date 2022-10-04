@@ -100,6 +100,7 @@ set(SRC
   ANCHOR_graph_editor.h
   ANCHOR_internal.h
   ANCHOR_modifier_keys.h
+  ANCHOR_path-api.h
   ANCHOR_rectpack.h
   ANCHOR_sequencer.h
   ANCHOR_rect.h
@@ -107,6 +108,7 @@ set(SRC
   ANCHOR_system.h
   ANCHOR_textedit.h
   ANCHOR_truetype.h
+  ANCHOR_types.h
   ANCHOR_version.h
   ANCHOR_window_manager.h
   ANCHOR_window.h

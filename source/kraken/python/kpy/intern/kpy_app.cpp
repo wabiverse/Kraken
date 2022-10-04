@@ -37,6 +37,7 @@
 #include "kpy_path.h"
 #include "kpy_stage.h"
 
+#include "KKE_appdir.h"
 #include "KKE_appdir.hh"
 #include "KKE_main.h"
 #include "KKE_global.h"

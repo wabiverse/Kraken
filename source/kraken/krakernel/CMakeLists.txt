@@ -31,9 +31,11 @@ set(SRC
   intern/KKE_screen.cpp
   intern/KKE_utils.cpp
   intern/KKE_workspace.cpp
+  intern/appdir.c
   intern/cryptomatte.cc
 
   KKE_api.h
+  KKE_appdir.h
   KKE_appdir.hh
   KKE_colortools.h
   KKE_cryptomatte.h
