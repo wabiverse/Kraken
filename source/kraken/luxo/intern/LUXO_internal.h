@@ -39,7 +39,7 @@
 #include "LUXO_runtime.h"
 #include "LUXO_types.h"
 
-
+#include "UI_resources.h"
 
 struct PropertyPRIMOrID {
   KrakenPRIM ptr;

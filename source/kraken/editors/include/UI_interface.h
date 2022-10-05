@@ -1610,7 +1610,7 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
                            float a2,
                            const char *tip);
 
-/* For uiDefAutoButsRNA */
+/* For uiDefAutoButsPRIM */
 typedef enum
 {
   /* Keep current layout for aligning label with property button. */
@@ -1621,7 +1621,7 @@ typedef enum
   UI_BUT_LABEL_ALIGN_SPLIT_COLUMN,
 } eButLabelAlign;
 
-/* Return info for uiDefAutoButsRNA */
+/* Return info for uiDefAutoButsPRIM */
 typedef enum eAutoPropButsReturn
 {
   /* Returns when no buttons were added */
@@ -1656,7 +1656,7 @@ void uiDefAutoButsArrayR(uiBlock *block,
  *
  * @param prop_activate_init: Property to activate on initial popup (#UI_BUT_ACTIVATE_ON_INIT).
  */
-eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
+eAutoPropButsReturn uiDefAutoButsPRIM(uiLayout *layout,
                                      struct KrakenPRIM *ptr,
                                      bool (*check_prop)(struct KrakenPRIM *ptr,
                                                         struct KrakenPROP *prop,

@@ -4529,4 +4529,23 @@ bool UI_but_is_editing(const uiBut *but)
   return (data && ELEM(data->state, BUTTON_STATE_TEXT_EDITING, BUTTON_STATE_NUM_EDITING));
 }
 
+static bool ui_prim_is_userdef(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  if (!prop) {
+    return false;
+  }
+  if (prop->flag & PROP_NO_DEG_UPDATE) {
+    return false;
+  }
+
+  const bool is_a_userdef = ptr->GetPrim().IsA<wabi::UsdUIUserPref>();
+
+  return is_a_userdef;
+}
+
+bool UI_but_is_userdef(const uiBut *but)
+{
+  return ui_prim_is_userdef(but->stagepoin, but->stageprop);
+}
+
 /** \} */

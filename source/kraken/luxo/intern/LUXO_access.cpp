@@ -58,8 +58,6 @@
 
 WABI_NAMESPACE_USING
 
-
-
 KrakenPRIM LUXO_StageData;
 KrakenPRIM LUXO_KrakenPixar;
 KrakenPRIM LUXO_Context;
@@ -74,7 +72,7 @@ KrakenSTAGE KRAKEN_STAGE = {};
 
 static void LUXO_struct_init(void)
 {
-  UsdPrim intern = KRAKEN_STAGE->DefinePrim(wabi::SdfPath("/WabiAnimationStudios"));
+  UsdPrim intern = KRAKEN_STAGE->DefinePrim(K_FOUNDATION);
 
   UsdCollectionAPI capi = UsdCollectionAPI::Apply(intern, TfToken("structs"));
   capi.CreateIncludesRel().AddTarget(intern.GetPath().AppendPath(SdfPath("Structs")));
@@ -543,6 +541,14 @@ void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
 std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna)
 {
   return srna->functions;
+}
+
+int LUXO_prim_ui_icon(const KrakenPRIM *type)
+{
+  if (type) {
+    return type->icon;
+  }
+  return ICON_DOT;
 }
 
 int LUXO_function_flag(KrakenFUNC *func)

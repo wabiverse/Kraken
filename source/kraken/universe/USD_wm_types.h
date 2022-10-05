@@ -739,6 +739,14 @@ enum eReportType
   RPT_ERROR_OUT_OF_MEMORY = (1 << 8),
 };
 
+#define RPT_DEBUG_ALL (RPT_DEBUG)
+#define RPT_INFO_ALL (RPT_INFO)
+#define RPT_OPERATOR_ALL (RPT_OPERATOR)
+#define RPT_PROPERTY_ALL (RPT_PROPERTY)
+#define RPT_WARNING_ALL (RPT_WARNING)
+#define RPT_ERROR_ALL \
+  (RPT_ERROR | RPT_ERROR_INVALID_INPUT | RPT_ERROR_INVALID_CONTEXT | RPT_ERROR_OUT_OF_MEMORY)
+
 struct wmTimer
 {
   /** Window this timer is attached to (optional). */

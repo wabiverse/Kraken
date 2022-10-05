@@ -42,6 +42,7 @@ set(SRC
   INTERFACE_regions.cpp
   INTERFACE_style.cpp
   INTERFACE_tokens.cpp
+  INTERFACE_utils.cpp
   INTERFACE_view2d.cpp
 
   views/abstract_view_item.cpp

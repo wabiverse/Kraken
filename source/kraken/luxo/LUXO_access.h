@@ -104,6 +104,8 @@ bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna);
 std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna);
 const char *LUXO_function_identifier(KrakenFUNC *func);
 
+int LUXO_prim_ui_icon(const KrakenPRIM *type);
+
 int LUXO_function_flag(KrakenFUNC *func);
 
 KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr);
