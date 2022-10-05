@@ -36,6 +36,7 @@ set(SRC
   INTERFACE_kraken.cpp
   INTERFACE_layout.cpp
   INTERFACE_ops.cpp
+  INTERFACE_panel.cpp
   INTERFACE_query.cpp
   INTERFACE_resources.c
   INTERFACE_region_menu_popup.cpp
@@ -46,6 +47,7 @@ set(SRC
   INTERFACE_style.cpp
   INTERFACE_tokens.cpp
   INTERFACE_utils.cpp
+  INTERFACE_templates.cpp
   INTERFACE_view2d.cpp
 
   views/abstract_view_item.cpp
@@ -59,6 +61,7 @@ set(LIB
   maelstrom_static
   kraken_kernel
   kraken_lib
+  kraken_editor_datafiles
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

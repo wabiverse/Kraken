@@ -158,22 +158,22 @@ const char *WM_key_event_string(const short type, const bool compact)
     }
   }
 
-  const EnumPropertyItem *it;
-  const int i = LUXO_enum_from_value(luxo_enum_event_type_items, (int)type);
+  // const EnumPropertyItem *it;
+  // const int i = LUXO_enum_from_value(luxo_enum_event_type_items, (int)type);
 
-  if (i == -1) {
-    return "";
-  }
-  it = &luxo_enum_event_type_items[i];
+  // if (i == -1) {
+  return "";
+  // }
+  // it = &luxo_enum_event_type_items[i];
 
   /* We first try enum items' description (abused as shortname here),
    * and fall back to usual name if empty. */
-  if (compact && it->description[0]) {
+  // if (compact && it->description[0]) {
     /* XXX No context for enum descriptions... In practice shall not be an issue though. */
-    return IFACE_(it->description);
-  }
+    // return IFACE_(it->description);
+  // }
 
-  return CTX_IFACE_(it->name);
+  // return CTX_IFACE_(it->name);
 }
 
 

@@ -62,8 +62,6 @@
 
 #include <wabi/base/tf/token.h>
 
-
-
 const EnumPropertyItem luxo_enum_event_type_items[] = {
   /* - Note we abuse 'tooltip' message here to store a 'compact' form of some (too) long names.
   * - Intentionally excluded: #CAPSLOCKKEY, #UNKNOWNKEY.
@@ -285,7 +283,9 @@ static void prim_def_operator(KrakenPRIM *wm)
   KrakenPRIM *op;
 
   op = PRIM_def_struct(wm, SdfPath("Operator"));
-  PRIM_def_struct_ui_text(op, "Operator", "Storage of an operator being executed, or registered after execution");
+  PRIM_def_struct_ui_text(op,
+                          "Operator",
+                          "Storage of an operator being executed, or registered after execution");
   // PRIM_def_struct_refine_func(kstage, "rna_Operator_refine");
   // PRIM_def_struct_flag(kstage, STRUCT_PUBLIC_NAMESPACE_INHERIT);
 }
@@ -295,11 +295,10 @@ void PRIM_def_wm(const KrakenSTAGE &kstage)
   KrakenPRIM *wm;
 
   wm = PRIM_def_struct_ptr(kstage, SdfPath("WindowManager"));
-  
+
   /* all types that make up wm... */
-  
+
   prim_def_operator(wm);
 
   /* ... */
 }
-

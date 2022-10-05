@@ -4,10 +4,10 @@
 set(INC
   .
   ../../../../../intern/guardedalloc
-  ../../kraklib
-  ../../gpu
-  ../../gpu/intern
-  ../../universe
+  ../../../kraklib
+  ../../../gpu
+  ../../../gpu/intern
+  ../../../universe
 )
 
 set(INC_SYS
@@ -17,6 +17,8 @@ set(INC_SYS
 
 set(SRC
   ocio_capi.cc
+  ocio_impl.cc
+  ocio_impl_glsl.cc
 
   ocio_capi.h
   ocio_impl.h

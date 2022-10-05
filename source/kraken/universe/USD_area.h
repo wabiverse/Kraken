@@ -27,11 +27,10 @@
 #include "KKE_context.h"
 
 #include "USD_screen.h"
+#include "USD_space_types.h"
 #include "USD_types.h"
 
 #include <wabi/usd/usdUI/area.h>
-
-
 
 struct ARegion;
 struct kScreen;
@@ -76,7 +75,7 @@ struct ScrArea : public UsdUIArea
 
   ScrVert *v1, *v2, *v3, *v4;
 
-  std::vector<kSpaceLink *> spacedata;
+  std::vector<SpaceProperties *> spacedata;
 
   UsdAttribute name;
   UsdAttribute spacetype;

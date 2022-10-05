@@ -121,7 +121,7 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
 static void wm_block_file_close_cancel(kContext *C, void *arg_block, void *UNUSED(arg_data))
 {
   wmWindow *win = CTX_wm_window(C);
-  UI_popup_block_close(C, win, (uiBlock *)arg_block);
+  // UI_popup_block_close(C, win, (uiBlock *)arg_block);
 }
 
 static void wm_block_file_close_discard(kContext *C, void *arg_block, void *arg_data)
@@ -132,7 +132,7 @@ static void wm_block_file_close_discard(kContext *C, void *arg_block, void *arg_
    * the popup might be closed by the callback, which will lead
    * to a crash. */
   wmWindow *win = CTX_wm_window(C);
-  UI_popup_block_close(C, win, (uiBlock *)arg_block);
+  // UI_popup_block_close(C, win, (uiBlock *)arg_block);
 
   callback->exec(C, callback->user_data);
   WM_generic_callback_free(callback);
@@ -145,7 +145,7 @@ static void wm_block_file_close_save(kContext *C, void *arg_block, void *arg_dat
   bool execute_callback = true;
 
   wmWindow *win = CTX_wm_window(C);
-  UI_popup_block_close(C, win, (uiBlock *)arg_block);
+  // UI_popup_block_close(C, win, (uiBlock *)arg_block);
 
   // int modified_images_count = ED_image_save_all_modified_info(CTX_data_main(C), NULL);
   // if (modified_images_count > 0 && save_images_when_file_is_closed) {

@@ -61,12 +61,12 @@ class AbstractView {
   void register_item(AbstractViewItem &item);
 
   /** Only one item can be renamed at a time. */
-  bool is_renaming() const;
+  bool is_renaming() const { return false; }
   /** \return If renaming was started successfully. */
-  bool begin_renaming();
-  void end_renaming();
-  Span<char> get_rename_buffer() const;
-  MutableSpan<char> get_rename_buffer();
+  bool begin_renaming() { return false; }
+  void end_renaming() {}
+  Span<char> get_rename_buffer() const {}
+  MutableSpan<char> get_rename_buffer() {}
 
  protected:
   AbstractView() = default;

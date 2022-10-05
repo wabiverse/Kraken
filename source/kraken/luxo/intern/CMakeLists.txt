@@ -156,7 +156,7 @@ set(LIB
   kraken_editor_spacefile
   kraken_editor_screen
   kraken_editor_spaceview3d
-
+  luxo
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}

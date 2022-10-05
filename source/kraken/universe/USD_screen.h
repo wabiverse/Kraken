@@ -108,7 +108,7 @@ struct PanelType
 
   /* sub panels */
   struct PanelType *parent;
-  std::vector<struct PanelType *> children;
+  ListBase children;
 };
 
 enum
@@ -148,6 +148,7 @@ struct Panel_Runtime
 
 struct Panel
 {
+  struct Panel *next;
   /** Runtime. */
   struct PanelType *type;
   /** Runtime for drawing. */
@@ -170,7 +171,7 @@ struct Panel
   /** Runtime for panel manipulation. */
   void *activedata;
   /** Sub panels. */
-  std::vector<struct Panel *> children;
+  ListBase children;
 
   Panel_Runtime runtime;
 };

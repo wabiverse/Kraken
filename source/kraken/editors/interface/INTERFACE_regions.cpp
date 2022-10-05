@@ -49,7 +49,7 @@ void ui_region_temp_remove(kContext *C, kScreen *screen, ARegion *region)
   KLI_assert(std::find(screen->regions.begin(), screen->regions.end(), region) !=
              screen->regions.end());
   if (win) {
-    WM_draw_region_clear(win, region);
+    // WM_draw_region_clear(win, region);
   }
 
   ED_region_exit(C, region);

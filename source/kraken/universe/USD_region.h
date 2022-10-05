@@ -100,6 +100,9 @@ struct ARegion : public wabi::UsdUIArea
   /** Runtime for partial redraw, same or smaller than coords. */
   wabi::GfVec4i drawrct;
 
+  ListBase panels;
+  ListBase panels_category;
+
   std::vector<struct uiBlock *> uiblocks;
   ListBase handlers;
 

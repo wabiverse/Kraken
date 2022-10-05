@@ -1,30 +1,16 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
- */
+/* SPDX-License-Identifier: GPL-2.0-or-later */
 
-/**
- * @file
- * KRAKEN Kernel.
- * Purple Underground.
+/** \file
+ * \ingroup bke
+ *
+ * Access to application level directories.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "kraken/kraken.h"
 
 #include "KLI_fileops.h"
 #include "KLI_fileops_types.h"
@@ -36,9 +22,8 @@
 #include "KLI_utildefines.h"
 
 #include "KKE_appdir.h" /* own include */
-#include "kraken/kraken.h"
 
-#include "ANCHOR_path-api.h"
+#include "ANCHOR_Path-api.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -81,13 +66,17 @@ static struct
   char program_dirname[FILE_MAX];
   /** Persistent temporary directory (defined by the preferences or OS). */
   char temp_dirname_base[FILE_MAX];
-  /** Volatile temporary directory (owned by Blender, removed on exit). */
+  /** Volatile temporary directory (owned by Kraken, removed on exit). */
   char temp_dirname_session[FILE_MAX];
 } g_app = {
   .temp_dirname_session = "",
 };
 
 /** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Initialization
+ * \{ */
 
 #ifndef NDEBUG
 static bool is_appdir_init = false;
@@ -112,6 +101,7 @@ void KKE_appdir_exit(void)
 #endif
 }
 
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Internal Utilities
@@ -127,15 +117,13 @@ static char *kraken_version_decimal(const int version)
   KLI_snprintf(version_str, sizeof(version_str), "%d.%d", version / 100, version % 100);
   return version_str;
 }
+
+/** \} */
+
 /* -------------------------------------------------------------------- */
+/** \name Default Directories
+ * \{ */
 
-
-/**
- * Get the folder that's the "natural" starting point for browsing files on an OS. On Unix that is
- * $HOME, on Windows it is %userprofile%/Documents.
- *
- * @note On Windows `Users/{MyUserName}/Documents` is used as it's the default location to save
- *       documents. */
 const char *KKE_appdir_folder_default(void)
 {
 #ifndef WIN32
@@ -171,8 +159,6 @@ const char *KKE_appdir_folder_default_or_root(void)
   return path;
 }
 
-/**
- * Get the user's home directory, i.e. $HOME on UNIX, %userprofile% on Windows. */
 const char *KKE_appdir_folder_home(void)
 {
 #ifdef WIN32
@@ -184,19 +170,13 @@ const char *KKE_appdir_folder_home(void)
 #endif
 }
 
-/**
- * Get the user's document directory, i.e. $HOME/Documents on Linux, %userprofile%/Documents
- * on Windows. If this can't be found using OS queries (via Anchor), try manually finding it.
- *
- * @returns True if the path is valid and points to an existing directory. */
 bool KKE_appdir_folder_documents(char *dir)
 {
   dir[0] = '\0';
 
-  const char *documents_path = (const char *)ANCHOR_getUserSpecialDir(
-    ANCHOR_UserSpecialDirDocuments);
+  const char *documents_path = ANCHOR_getUserSpecialDir(ANCHOR_UserSpecialDirDocuments);
 
-  /* Usual case: Anchor gave us the documents path. We're done here. */
+  /* Usual case: Ghost gave us the documents path. We're done here. */
   if (documents_path && KLI_is_dir(documents_path)) {
     KLI_strncpy(dir, documents_path, FILE_MAXDIR);
     return true;
@@ -250,8 +230,6 @@ bool KKE_appdir_folder_caches(char *r_path, const size_t path_len)
   return true;
 }
 
-/**
- * Gets a good default directory for fonts. */
 bool KKE_appdir_font_folder_default(char *dir)
 {
   char test_dir[FILE_MAXDIR];
@@ -277,161 +255,27 @@ bool KKE_appdir_font_folder_default(char *dir)
   return false;
 }
 
-char *KLI_current_working_dir(char *dir, const size_t maxncpy)
-{
-#if defined(WIN32)
-  wchar_t path[MAX_PATH];
-  if (_wgetcwd(path, MAX_PATH)) {
-    if (KLI_strncpy_wchar_as_utf8(dir, path, maxncpy) != maxncpy) {
-      return dir;
-    }
-  }
-  return NULL;
-#else
-  const char *pwd = KLI_getenv("PWD");
-  if (pwd) {
-    size_t srclen = KLI_strnlen(pwd, maxncpy);
-    if (srclen != maxncpy) {
-      memcpy(dir, pwd, srclen + 1);
-      return dir;
-    }
-    return NULL;
-  }
-  return getcwd(dir, maxncpy);
-#endif
-}
+/** \} */
 
-bool KLI_path_is_abs_from_cwd(const char *path)
-{
-  bool is_abs = false;
-  const int path_len_clamp = KLI_strnlen(path, 3);
-
-#ifdef WIN32
-  if ((path_len_clamp >= 3 && KLI_path_is_abs(path)) || KLI_path_is_unc(path)) {
-    is_abs = true;
-  }
-#else
-  if (path_len_clamp >= 2 && path[0] == '/') {
-    is_abs = true;
-  }
-#endif
-  return is_abs;
-}
-
-bool KLI_path_abs_from_cwd(char *path, const size_t maxlen)
-{
-#ifdef DEBUG_STRSIZE
-  memset(path, 0xff, sizeof(*path) * maxlen);
-#endif
-
-  if (!KLI_path_is_abs_from_cwd(path)) {
-    char cwd[FILE_MAX];
-    /* in case the full path to the blend isn't used */
-    if (KLI_current_working_dir(cwd, sizeof(cwd))) {
-      char origpath[FILE_MAX];
-      KLI_strncpy(origpath, path, FILE_MAX);
-      KLI_join_dirfile(path, maxlen, cwd, origpath);
-    } else {
-      printf("Could not get the current working directory - $PWD for an unknown reason.\n");
-    }
-    return true;
-  }
-
-  return false;
-}
-
-static void where_am_i(char *fullname, const size_t maxlen, const char *name)
-{
-#ifdef WITH_BINRELOC
-  /* Linux uses `binreloc` since `argv[0]` is not reliable, call `br_init(NULL)` first. */
-  {
-    const char *path = NULL;
-    path = br_find_exe(NULL);
-    if (path) {
-      KLI_strncpy(fullname, path, maxlen);
-      free((void *)path);
-      return;
-    }
-  }
-#endif
-
-#ifdef _WIN32
-  {
-    wchar_t *fullname_16 = MEM_mallocN(maxlen * sizeof(wchar_t));
-    if (GetModuleFileNameW(0, fullname_16, maxlen)) {
-      conv_utf_16_to_8(fullname_16, fullname, maxlen);
-      if (!KLI_exists(fullname)) {
-        CLOG_ERROR(&LOG, "path can't be found: \"%.*s\"", (int)maxlen, fullname);
-        MessageBox(NULL,
-                   "path contains invalid characters or is too long (see console)",
-                   "Error",
-                   MB_OK);
-      }
-      free(fullname_16);
-      return;
-    }
-
-    free(fullname_16);
-  }
-#endif
-
-  /* Unix and non Linux. */
-  if (name && name[0]) {
-
-    KLI_strncpy(fullname, name, maxlen);
-    if (name[0] == '.') {
-      KLI_path_abs_from_cwd(fullname, maxlen);
-#ifdef _WIN32
-      KLI_path_program_extensions_add_win32(fullname, maxlen);
-#endif
-    } else if (KLI_path_slash_rfind(name)) {
-      /* Full path. */
-      KLI_strncpy(fullname, name, maxlen);
-#ifdef _WIN32
-      KLI_path_program_extensions_add_win32(fullname, maxlen);
-#endif
-    } else {
-      KLI_path_program_search(fullname, maxlen, name);
-    }
-    /* Remove "/./" and "/../" so string comparisons can be used on the path. */
-    KLI_path_normalize(NULL, fullname);
-
-#if defined(DEBUG)
-    if (!STREQ(name, fullname)) {
-      CLOG_WARN(&LOG, "guessing '%s' == '%s'", name, fullname);
-    }
-#endif
-  }
-}
-
-void KKE_appdir_program_path_init(const char *argv0)
-{
-  where_am_i(g_app.program_filepath, sizeof(g_app.program_filepath), argv0);
-  KLI_split_dir_part(g_app.program_filepath, g_app.program_dirname, sizeof(g_app.program_dirname));
-}
+/* -------------------------------------------------------------------- */
+/** \name Path Presets (Internal Helpers)
+ * \{ */
 
 /**
- * Path to executable */
-const char *KKE_appdir_program_path(void)
-{
-  KLI_assert(g_app.program_filepath[0]);
-  return g_app.program_filepath;
-}
-
-/**
- * Concatenates paths into @a targetpath,
+ * Concatenates paths into \a targetpath,
  * returning true if result points to a directory.
  *
- * @param path_base: Path base, never NULL.
- * @param folder_name: First sub-directory (optional).
- * @param subfolder_name: Second sub-directory (optional).
- * @param check_is_dir: When false, return true even if the path doesn't exist.
+ * \param path_base: Path base, never NULL.
+ * \param folder_name: First sub-directory (optional).
+ * \param subfolder_name: Second sub-directory (optional).
+ * \param check_is_dir: When false, return true even if the path doesn't exist.
  *
- * @note The names for optional paths only follow other usage in this file,
+ * \note The names for optional paths only follow other usage in this file,
  * the names don't matter for this function.
  *
- * @note If it's useful we could take an arbitrary number of paths.
- * For now usage is limited and we don't need this. */
+ * \note If it's useful we could take an arbitrary number of paths.
+ * For now usage is limited and we don't need this.
+ */
 static bool test_path(char *targetpath,
                       size_t targetpath_len,
                       const bool check_is_dir,
@@ -445,7 +289,7 @@ static bool test_path(char *targetpath,
   KLI_assert(!(folder_name == NULL && (subfolder_name != NULL)));
   KLI_path_join(targetpath, targetpath_len, path_base, folder_name, subfolder_name, NULL);
   if (check_is_dir == false) {
-    CLOG_WARN(&LOG, "using without test: '%s'", targetpath);
+    CLOG_INFO(&LOG, 3, "using without test: '%s'", targetpath);
     return true;
   }
 
@@ -465,10 +309,11 @@ static bool test_path(char *targetpath,
 /**
  * Puts the value of the specified environment variable into \a path if it exists.
  *
- * @param check_is_dir: When true, checks if it points at a directory.
+ * \param check_is_dir: When true, checks if it points at a directory.
  *
- * @returns true when the value of the environment variable is stored
- * at the address \a path points to. */
+ * \returns true when the value of the environment variable is stored
+ * at the address \a path points to.
+ */
 static bool test_env_path(char *path, const char *envvar, const bool check_is_dir)
 {
   ASSERT_IS_INIT();
@@ -499,47 +344,17 @@ static bool test_env_path(char *path, const char *envvar, const bool check_is_di
 }
 
 /**
- * Returns the path of a folder from environment variables.
- *
- * @param targetpath: String to return path.
- * @param subfolder_name: optional name of sub-folder within folder.
- * @param envvar: name of environment variable to check folder_name.
- * @param check_is_dir: When false, return true even if the path doesn't exist.
- * @return true if it was able to construct such a path and the path exists. */
-static bool get_path_environment_ex(char *targetpath,
-                                    size_t targetpath_len,
-                                    const char *subfolder_name,
-                                    const char *envvar,
-                                    const bool check_is_dir)
-{
-  char user_path[FILE_MAX];
-
-  if (test_env_path(user_path, envvar, check_is_dir)) {
-    /* Note that `subfolder_name` may be NULL, in this case we use `user_path` as-is. */
-    return test_path(targetpath, targetpath_len, check_is_dir, user_path, subfolder_name, NULL);
-  }
-  return false;
-}
-static bool get_path_environment(char *targetpath,
-                                 size_t targetpath_len,
-                                 const char *subfolder_name,
-                                 const char *envvar)
-{
-  const bool check_is_dir = true;
-  return get_path_environment_ex(targetpath, targetpath_len, subfolder_name, envvar, check_is_dir);
-}
-
-/**
- * Constructs in @a targetpath the name of a directory relative to a version-specific
+ * Constructs in \a targetpath the name of a directory relative to a version-specific
  * sub-directory in the parent directory of the Kraken executable.
  *
- * @param targetpath: String to return path.
- * @param folder_name: Optional folder name within version-specific directory.
- * @param subfolder_name: Optional sub-folder name within folder_name.
+ * \param targetpath: String to return path.
+ * \param folder_name: Optional folder name within version-specific directory.
+ * \param subfolder_name: Optional sub-folder name within folder_name.
  *
- * @param version: To construct name of version-specific directory within #g_app.program_dirname.
- * @param check_is_dir: When false, return true even if the path doesn't exist.
- * @return true if such a directory exists. */
+ * \param version: To construct name of version-specific directory within #g_app.program_dirname.
+ * \param check_is_dir: When false, return true even if the path doesn't exist.
+ * \return true if such a directory exists.
+ */
 static bool get_path_local_ex(char *targetpath,
                               size_t targetpath_len,
                               const char *folder_name,
@@ -561,12 +376,13 @@ static bool get_path_local_ex(char *targetpath,
     relfolder[0] = '\0';
   }
 
-  /* Try `{g_app.program_dirname}/2.xx/{folder_name}` the default directory
+  /* Try `{g_app.program_dirname}/3.xx/{folder_name}` the default directory
    * for a portable distribution. See `WITH_INSTALL_PORTABLE` build-option. */
   const char *path_base = g_app.program_dirname;
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(WITH_PYTHON_MODULE)
   /* Due new code-sign situation in OSX > 10.9.5
-   * we must move the kraken_version dir with contents to Resources. */
+   * we must move the kraken_version dir with contents to Resources.
+   * Add 4 + 9 for the temporary `/../` path & `Resources`. */
   char osx_resourses[FILE_MAX + 4 + 9];
   KLI_path_join(osx_resourses,
                 sizeof(osx_resourses),
@@ -600,10 +416,6 @@ static bool get_path_local(char *targetpath,
                            check_is_dir);
 }
 
-/**
- * Check if this is an install with user files kept together
- * with the Kraken executable and its installation files.
- */
 bool KKE_appdir_app_is_portable_install(void)
 {
   /* Detect portable install by the existence of `config` folder. */
@@ -612,14 +424,47 @@ bool KKE_appdir_app_is_portable_install(void)
 }
 
 /**
+ * Returns the path of a folder from environment variables.
+ *
+ * \param targetpath: String to return path.
+ * \param subfolder_name: optional name of sub-folder within folder.
+ * \param envvar: name of environment variable to check folder_name.
+ * \param check_is_dir: When false, return true even if the path doesn't exist.
+ * \return true if it was able to construct such a path and the path exists.
+ */
+static bool get_path_environment_ex(char *targetpath,
+                                    size_t targetpath_len,
+                                    const char *subfolder_name,
+                                    const char *envvar,
+                                    const bool check_is_dir)
+{
+  char user_path[FILE_MAX];
+
+  if (test_env_path(user_path, envvar, check_is_dir)) {
+    /* Note that `subfolder_name` may be NULL, in this case we use `user_path` as-is. */
+    return test_path(targetpath, targetpath_len, check_is_dir, user_path, subfolder_name, NULL);
+  }
+  return false;
+}
+static bool get_path_environment(char *targetpath,
+                                 size_t targetpath_len,
+                                 const char *subfolder_name,
+                                 const char *envvar)
+{
+  const bool check_is_dir = true;
+  return get_path_environment_ex(targetpath, targetpath_len, subfolder_name, envvar, check_is_dir);
+}
+
+/**
  * Returns the path of a folder within the user-files area.
  *
- * @param targetpath: String to return path.
- * @param folder_name: default name of folder within user area.
- * @param subfolder_name: optional name of sub-folder within folder.
- * @param version: Kraken version, used to construct a sub-directory name.
- * @param check_is_dir: When false, return true even if the path doesn't exist.
- * @return true if it was able to construct such a path. */
+ * \param targetpath: String to return path.
+ * \param folder_name: default name of folder within user area.
+ * \param subfolder_name: optional name of sub-folder within folder.
+ * \param version: Kraken version, used to construct a sub-directory name.
+ * \param check_is_dir: When false, return true even if the path doesn't exist.
+ * \return true if it was able to construct such a path.
+ */
 static bool get_path_user_ex(char *targetpath,
                              size_t targetpath_len,
                              const char *folder_name,
@@ -628,22 +473,25 @@ static bool get_path_user_ex(char *targetpath,
                              const bool check_is_dir)
 {
   char user_path[FILE_MAX];
-  const char *user_base_path;
 
-  /* for portable install, user path is always local */
-  if (KKE_appdir_app_is_portable_install()) {
-    return get_path_local_ex(targetpath,
-                             targetpath_len,
-                             folder_name,
-                             subfolder_name,
-                             version,
-                             check_is_dir);
-  }
-  user_path[0] = '\0';
+  if (test_env_path(user_path, "KRAKEN_USER_RESOURCES", check_is_dir)) {
+    /* Pass. */
+  } else {
+    /* for portable install, user path is always local */
+    if (KKE_appdir_app_is_portable_install()) {
+      return get_path_local_ex(targetpath,
+                               targetpath_len,
+                               folder_name,
+                               subfolder_name,
+                               version,
+                               check_is_dir);
+    }
+    user_path[0] = '\0';
 
-  user_base_path = (const char *)ANCHOR_getUserDir(version, kraken_version_decimal(version));
-  if (user_base_path) {
-    KLI_strncpy(user_path, user_base_path, FILE_MAX);
+    const char *user_base_path = ANCHOR_getUserDir(version, kraken_version_decimal(version));
+    if (user_base_path) {
+      KLI_strncpy(user_path, user_base_path, FILE_MAX);
+    }
   }
 
   if (!user_path[0]) {
@@ -683,12 +531,13 @@ static bool get_path_user(char *targetpath,
 /**
  * Returns the path of a folder within the Kraken installation directory.
  *
- * @param targetpath: String to return path.
- * @param folder_name: default name of folder within installation area.
- * @param subfolder_name: optional name of sub-folder within folder.
- * @param version: Kraken version, used to construct a sub-directory name.
- * @param check_is_dir: When false, return true even if the path doesn't exist.
- * @return true if it was able to construct such a path. */
+ * \param targetpath: String to return path.
+ * \param folder_name: default name of folder within installation area.
+ * \param subfolder_name: optional name of sub-folder within folder.
+ * \param version: Kraken version, used to construct a sub-directory name.
+ * \param check_is_dir: When false, return true even if the path doesn't exist.
+ * \return true if it was able to construct such a path.
+ */
 static bool get_path_system_ex(char *targetpath,
                                size_t targetpath_len,
                                const char *folder_name,
@@ -697,7 +546,6 @@ static bool get_path_system_ex(char *targetpath,
                                const bool check_is_dir)
 {
   char system_path[FILE_MAX];
-  const char *system_base_path;
   char relfolder[FILE_MAX];
 
   if (folder_name) { /* `subfolder_name` may be NULL. */
@@ -706,10 +554,14 @@ static bool get_path_system_ex(char *targetpath,
     relfolder[0] = '\0';
   }
 
-  system_path[0] = '\0';
-  system_base_path = (const char *)ANCHOR_getSystemDir(version, kraken_version_decimal(version));
-  if (system_base_path) {
-    KLI_strncpy(system_path, system_base_path, FILE_MAX);
+  if (test_env_path(system_path, "KRAKEN_SYSTEM_RESOURCES", check_is_dir)) {
+    /* Pass. */
+  } else {
+    system_path[0] = '\0';
+    const char *system_base_path = ANCHOR_getSystemDir(version, kraken_version_decimal(version));
+    if (system_base_path) {
+      KLI_strncpy(system_path, system_base_path, FILE_MAX);
+    }
   }
 
   if (!system_path[0]) {
@@ -747,81 +599,11 @@ static bool get_path_system(char *targetpath,
                             check_is_dir);
 }
 
-/**
- * Path to directory of executable */
-const char *KKE_appdir_program_dir(void)
-{
-  KLI_assert(g_app.program_dirname[0]);
-  return g_app.program_dirname;
-}
+/** \} */
 
-bool KKE_appdir_program_python_search(char *fullpath,
-                                      const size_t fullpath_len,
-                                      const int version_major,
-                                      const int version_minor)
-{
-  ASSERT_IS_INIT();
-
-#ifdef PYTHON_EXECUTABLE_NAME
-  /* Passed in from the build-systems 'PYTHON_EXECUTABLE'. */
-  const char *python_build_def = STRINGIFY(PYTHON_EXECUTABLE_NAME);
-#endif
-  const char *basename = "python";
-#if defined(WIN32) && !defined(NDEBUG)
-  const char *basename_debug = "python_d";
-#endif
-  char python_version[16];
-  /* Check both possible names. */
-  const char *python_names[] = {
-#ifdef PYTHON_EXECUTABLE_NAME
-    python_build_def,
-#endif
-#if defined(WIN32) && !defined(NDEBUG)
-    basename_debug,
-#endif
-    python_version,
-    basename,
-  };
-  bool is_found = false;
-
-  SNPRINTF(python_version, "%s%d.%d", basename, version_major, version_minor);
-
-  {
-    const char *python_bin_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_PYTHON, "bin");
-    if (python_bin_dir) {
-
-      for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
-        KLI_join_dirfile(fullpath, fullpath_len, python_bin_dir, python_names[i]);
-
-        if (
-#ifdef _WIN32
-          KLI_path_program_extensions_add_win32(fullpath, fullpath_len)
-#else
-          KLI_exists(fullpath)
-#endif
-        ) {
-          is_found = true;
-          break;
-        }
-      }
-    }
-  }
-
-  if (is_found == false) {
-    for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
-      if (KLI_path_program_search(fullpath, fullpath_len, python_names[i])) {
-        is_found = true;
-        break;
-      }
-    }
-  }
-
-  if (is_found == false) {
-    *fullpath = '\0';
-  }
-
-  return is_found;
-}
+/* -------------------------------------------------------------------- */
+/** \name Path Presets API
+ * \{ */
 
 bool KKE_appdir_folder_id_ex(const int folder_id,
                              const char *subfolder,
@@ -936,8 +718,6 @@ const char *KKE_appdir_folder_id(const int folder_id, const char *subfolder)
   return NULL;
 }
 
-/**
- * Returns the path to a folder in the user area without checking that it actually exists first. */
 const char *KKE_appdir_folder_id_user_notest(const int folder_id, const char *subfolder)
 {
   const int version = KRAKEN_VERSION;
@@ -1006,6 +786,7 @@ const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfold
             KRAKEN_USER_CONFIG,
             KRAKEN_USER_SCRIPTS,
             KRAKEN_USER_AUTOSAVE)) {
+    KLI_assert_unreachable();
     return NULL;
   }
 
@@ -1021,9 +802,9 @@ const char *KKE_appdir_folder_id_create(const int folder_id, const char *subfold
   return path;
 }
 
-const char *KKE_appdir_folder_id_version(const int folder_id,
-                                         const int version,
-                                         const bool check_is_dir)
+const char *KKE_appdir_resource_path_id_with_version(const int folder_id,
+                                                     const bool check_is_dir,
+                                                     const int version)
 {
   static char path[FILE_MAX] = "";
   bool ok;
@@ -1040,12 +821,305 @@ const char *KKE_appdir_folder_id_version(const int folder_id,
     default:
       path[0] = '\0'; /* in case check_is_dir is false */
       ok = false;
-      KLI_assert(!"incorrect ID");
+      KLI_assert_msg(0, "incorrect ID");
       break;
   }
   return ok ? path : NULL;
 }
 
+const char *KKE_appdir_resource_path_id(const int folder_id, const bool check_is_dir)
+{
+  return KKE_appdir_resource_path_id_with_version(folder_id, check_is_dir, KRAKEN_VERSION);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Program Path Queries
+ *
+ * Access locations of Kraken & Python.
+ * \{ */
+
+#ifndef WITH_PYTHON_MODULE
+/**
+ * Checks if name is a fully qualified filename to an executable.
+ * If not it searches `$PATH` for the file. On Windows it also
+ * adds the correct extension (`.com` `.exe` etc) from
+ * `$PATHEXT` if necessary. Also on Windows it translates
+ * the name to its 8.3 version to prevent problems with
+ * spaces and stuff. Final result is returned in \a fullname.
+ *
+ * \param fullname: The full path and full name of the executable
+ * (must be #FILE_MAX minimum)
+ * \param name: The name of the executable (usually `argv[0]`) to be checked
+ */
+static void where_am_i(char *fullname, const size_t maxlen, const char *name)
+{
+#  ifdef WITH_BINRELOC
+  /* Linux uses `binreloc` since `argv[0]` is not reliable, call `br_init(NULL)` first. */
+  {
+    const char *path = NULL;
+    path = br_find_exe(NULL);
+    if (path) {
+      KLI_strncpy(fullname, path, maxlen);
+      free((void *)path);
+      return;
+    }
+  }
+#  endif
+
+#  ifdef _WIN32
+  {
+    wchar_t *fullname_16 = MEM_mallocN(maxlen * sizeof(wchar_t), "ProgramPath");
+    if (GetModuleFileNameW(0, fullname_16, maxlen)) {
+      conv_utf_16_to_8(fullname_16, fullname, maxlen);
+      if (!KLI_exists(fullname)) {
+        CLOG_ERROR(&LOG, "path can't be found: \"%.*s\"", (int)maxlen, fullname);
+        MessageBox(NULL,
+                   "path contains invalid characters or is too long (see console)",
+                   "Error",
+                   MB_OK);
+      }
+      MEM_freeN(fullname_16);
+      return;
+    }
+
+    MEM_freeN(fullname_16);
+  }
+#  endif
+
+  /* Unix and non Linux. */
+  if (name && name[0]) {
+
+    KLI_strncpy(fullname, name, maxlen);
+    if (name[0] == '.') {
+      KLI_path_abs_from_cwd(fullname, maxlen);
+#  ifdef _WIN32
+      KLI_path_program_extensions_add_win32(fullname, maxlen);
+#  endif
+    } else if (KLI_path_slash_rfind(name)) {
+      /* Full path. */
+      KLI_strncpy(fullname, name, maxlen);
+#  ifdef _WIN32
+      KLI_path_program_extensions_add_win32(fullname, maxlen);
+#  endif
+    } else {
+      KLI_path_program_search(fullname, maxlen, name);
+    }
+    /* Remove "/./" and "/../" so string comparisons can be used on the path. */
+    KLI_path_normalize(NULL, fullname);
+
+#  if defined(DEBUG)
+    if (!STREQ(name, fullname)) {
+      CLOG_INFO(&LOG, 2, "guessing '%s' == '%s'", name, fullname);
+    }
+#  endif
+  }
+}
+#endif /* WITH_PYTHON_MODULE */
+
+void KKE_appdir_program_path_init(const char *argv0)
+{
+#ifdef WITH_PYTHON_MODULE
+  /* NOTE(@campbellbarton): Always use `argv[0]` as is, when building as a Python module.
+   * Otherwise other methods of detecting the binary that override this argument
+   * which must point to the Python module for data-files to be detected. */
+  STRNCPY(g_app.program_filepath, argv0);
+  KLI_path_abs_from_cwd(g_app.program_filepath, sizeof(g_app.program_filepath));
+  KLI_path_normalize(NULL, g_app.program_filepath);
+
+  if (g_app.program_dirname[0] == '\0') {
+    /* First time initializing, the file binary path isn't valid from a Python module.
+     * Calling again must set the `filepath` and leave the directory as-is. */
+    KLI_split_dir_part(g_app.program_filepath,
+                       g_app.program_dirname,
+                       sizeof(g_app.program_dirname));
+    g_app.program_filepath[0] = '\0';
+  }
+#else
+  where_am_i(g_app.program_filepath, sizeof(g_app.program_filepath), argv0);
+  KLI_split_dir_part(g_app.program_filepath, g_app.program_dirname, sizeof(g_app.program_dirname));
+#endif
+}
+
+const char *KKE_appdir_program_path(void)
+{
+#ifndef WITH_PYTHON_MODULE /* Default's to empty when building as a Python module. */
+  KLI_assert(g_app.program_filepath[0]);
+#endif
+  return g_app.program_filepath;
+}
+
+const char *KKE_appdir_program_dir(void)
+{
+  KLI_assert(g_app.program_dirname[0]);
+  return g_app.program_dirname;
+}
+
+bool KKE_appdir_program_python_search(char *fullpath,
+                                      const size_t fullpath_len,
+                                      const int version_major,
+                                      const int version_minor)
+{
+  ASSERT_IS_INIT();
+
+#ifdef PYTHON_EXECUTABLE_NAME
+  /* Passed in from the build-systems 'PYTHON_EXECUTABLE'. */
+  const char *python_build_def = STRINGIFY(PYTHON_EXECUTABLE_NAME);
+#endif
+  const char *basename = "python";
+#if defined(WIN32) && !defined(NDEBUG)
+  const char *basename_debug = "python_d";
+#endif
+  char python_version[16];
+  /* Check both possible names. */
+  const char *python_names[] = {
+#ifdef PYTHON_EXECUTABLE_NAME
+    python_build_def,
+#endif
+#if defined(WIN32) && !defined(NDEBUG)
+    basename_debug,
+#endif
+    python_version,
+    basename,
+  };
+  bool is_found = false;
+
+  SNPRINTF(python_version, "%s%d.%d", basename, version_major, version_minor);
+
+  {
+    const char *python_bin_dir = KKE_appdir_folder_id(KRAKEN_SYSTEM_PYTHON, "bin");
+    if (python_bin_dir) {
+
+      for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
+        KLI_join_dirfile(fullpath, fullpath_len, python_bin_dir, python_names[i]);
+
+        if (
+#ifdef _WIN32
+          KLI_path_program_extensions_add_win32(fullpath, fullpath_len)
+#else
+          KLI_exists(fullpath)
+#endif
+        ) {
+          is_found = true;
+          break;
+        }
+      }
+    }
+  }
+
+  if (is_found == false) {
+    for (int i = 0; i < ARRAY_SIZE(python_names); i++) {
+      if (KLI_path_program_search(fullpath, fullpath_len, python_names[i])) {
+        is_found = true;
+        break;
+      }
+    }
+  }
+
+  if (is_found == false) {
+    *fullpath = '\0';
+  }
+
+  return is_found;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Application Templates
+ * \{ */
+
+/** Keep in sync with `bpy.utils.app_template_paths()` */
+static const char *app_template_directory_search[2] = {
+  "startup" SEP_STR "bl_app_templates_user",
+  "startup" SEP_STR "bl_app_templates_system",
+};
+
+static const int app_template_directory_id[2] = {
+  /* Only 'USER' */
+  KRAKEN_USER_SCRIPTS,
+  /* Covers 'LOCAL' & 'SYSTEM'. */
+  KRAKEN_SYSTEM_SCRIPTS,
+};
+
+bool KKE_appdir_app_template_any(void)
+{
+  char temp_dir[FILE_MAX];
+  for (int i = 0; i < ARRAY_SIZE(app_template_directory_id); i++) {
+    if (KKE_appdir_folder_id_ex(app_template_directory_id[i],
+                                app_template_directory_search[i],
+                                temp_dir,
+                                sizeof(temp_dir))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool KKE_appdir_app_template_id_search(const char *app_template, char *path, size_t path_len)
+{
+  for (int i = 0; i < ARRAY_SIZE(app_template_directory_id); i++) {
+    char subdir[FILE_MAX];
+    KLI_join_dirfile(subdir, sizeof(subdir), app_template_directory_search[i], app_template);
+    if (KKE_appdir_folder_id_ex(app_template_directory_id[i], subdir, path, path_len)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool KKE_appdir_app_template_has_userpref(const char *app_template)
+{
+  /* Test if app template provides a `userpref.usda`.
+   * If not, we will share user preferences with the rest of Kraken. */
+  if (app_template[0] == '\0') {
+    return false;
+  }
+
+  char app_template_path[FILE_MAX];
+  if (!KKE_appdir_app_template_id_search(app_template,
+                                         app_template_path,
+                                         sizeof(app_template_path))) {
+    return false;
+  }
+
+  char userpref_path[FILE_MAX];
+  KLI_path_join(userpref_path,
+                sizeof(userpref_path),
+                app_template_path,
+                KRAKEN_USERPREF_FILE,
+                NULL);
+  return KLI_exists(userpref_path);
+}
+
+void KKE_appdir_app_templates(ListBase *templates)
+{
+  KLI_listbase_clear(templates);
+
+  for (int i = 0; i < ARRAY_SIZE(app_template_directory_id); i++) {
+    char subdir[FILE_MAX];
+    if (!KKE_appdir_folder_id_ex(app_template_directory_id[i],
+                                 app_template_directory_search[i],
+                                 subdir,
+                                 sizeof(subdir))) {
+      continue;
+    }
+
+    struct direntry *dirs;
+    const uint dir_num = KLI_filelist_dir_contents(subdir, &dirs);
+    for (int f = 0; f < dir_num; f++) {
+      if (!FILENAME_IS_CURRPAR(dirs[f].relname) && S_ISDIR(dirs[f].type)) {
+        char *template = KLI_strdup(dirs[f].relname);
+        KLI_addtail(templates, KLI_genericNodeN(template));
+      }
+    }
+
+    KLI_filelist_free(dirs, dir_num);
+  }
+}
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Temporary Directories
@@ -1057,10 +1131,11 @@ const char *KKE_appdir_folder_id_version(const int folder_id,
  *
  * Also make sure the temp dir has a trailing slash
  *
- * @param tempdir: The full path to the temporary temp directory.
- * @param tempdir_len: The size of the @a tempdir buffer.
- * @param userdir: Directory specified in user preferences (may be NULL).
- * note that by default this is an empty string, only use when non-empty. */
+ * \param tempdir: The full path to the temporary temp directory.
+ * \param tempdir_len: The size of the \a tempdir buffer.
+ * \param userdir: Directory specified in user preferences (may be NULL).
+ * note that by default this is an empty string, only use when non-empty.
+ */
 static void where_is_temp(char *tempdir, const size_t tempdir_len, const char *userdir)
 {
 
@@ -1115,7 +1190,7 @@ static void tempdir_session_create(char *tempdir_session,
 
   if (tempdir_session_len_required <= tempdir_session_len) {
     /* No need to use path joining utility as we know the last character of #tempdir is a slash. */
-    // KLI_string_join(tempdir_session, tempdir_session_len, tempdir, session_name);
+    KLI_string_join(tempdir_session, tempdir_session_len, tempdir, session_name);
 #ifdef WIN32
     const bool needs_create = (_mktemp_s(tempdir_session, tempdir_session_len_required) == 0);
 #else
@@ -1138,14 +1213,13 @@ static void tempdir_session_create(char *tempdir_session,
   KLI_strncpy(tempdir_session, tempdir, tempdir_session_len);
 }
 
-/**
- * Sets #g_app.temp_dirname_base to \a userdir if specified and is a valid directory,
- * otherwise chooses a suitable OS-specific temporary directory.
- * Sets #g_app.temp_dirname_session to a #mkdtemp
- * generated sub-dir of #g_app.temp_dirname_base.
- */
 void KKE_tempdir_init(const char *userdir)
 {
+  /* Sets #g_app.temp_dirname_base to \a userdir if specified and is a valid directory,
+   * otherwise chooses a suitable OS-specific temporary directory.
+   * Sets #g_app.temp_dirname_session to a #mkdtemp
+   * generated sub-dir of #g_app.temp_dirname_base. */
+
   where_is_temp(g_app.temp_dirname_base, sizeof(g_app.temp_dirname_base), userdir);
 
   /* Clear existing temp dir, if needed. */
@@ -1156,25 +1230,16 @@ void KKE_tempdir_init(const char *userdir)
                          g_app.temp_dirname_base);
 }
 
-/**
- * Path to temporary directory (with trailing slash)
- */
 const char *KKE_tempdir_session(void)
 {
   return g_app.temp_dirname_session[0] ? g_app.temp_dirname_session : KKE_tempdir_base();
 }
 
-/**
- * Path to persistent temporary directory (with trailing slash)
- */
 const char *KKE_tempdir_base(void)
 {
   return g_app.temp_dirname_base;
 }
 
-/**
- * Delete content of this instance's temp dir.
- */
 void KKE_tempdir_session_purge(void)
 {
   if (g_app.temp_dirname_session[0] && KLI_is_dir(g_app.temp_dirname_session)) {

@@ -40,6 +40,8 @@
 #include "KKE_context.h"
 #include "KKE_main.h"
 
+#include "ED_datafiles.h"
+
 #include "USD_pixar_utils.h"
 
 #include "WM_api.h"

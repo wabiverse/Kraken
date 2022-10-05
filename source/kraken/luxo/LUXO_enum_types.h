@@ -27,6 +27,10 @@
 
 #include "LUXO_types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct ID;
 struct kNodeSocketType;
 struct kNodeTreeType;
@@ -35,5 +39,9 @@ struct kNodeType;
 /* Types */
 #define DEF_ENUM(id) extern const EnumPropertyItem id[];
 #include "LUXO_enum_items.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __LUXO_ENUM_TYPES_H__ */

@@ -1289,7 +1289,7 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
   }
 
   UI_block_layout_set_current(block, layout);
-  ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
+  // ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
 
   const int w = ui_text_icon_width(layout, name, icon, 0);
 
@@ -1361,43 +1361,43 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
 
 static void ui_item_menu_hold(struct kContext *C, ARegion *butregion, uiBut *but)
 {
-  uiPopupMenu *pup = UI_popup_menu_begin(C, "", ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
-  uiBlock *block = layout->root->block;
-  UI_popup_menu_but_set(pup, butregion, but);
+  // uiPopupMenu *pup = UI_popup_menu_begin(C, "", ICON_NONE);
+  // uiLayout *layout = UI_popup_menu_layout(pup);
+  // uiBlock *block = layout->root->block;
+  // UI_popup_menu_but_set(pup, butregion, but);
 
-  block->flag |= UI_BLOCK_POPUP_HOLD;
-  block->flag |= UI_BLOCK_IS_FLIP;
+  // block->flag |= UI_BLOCK_POPUP_HOLD;
+  // block->flag |= UI_BLOCK_IS_FLIP;
 
-  char direction = UI_DIR_DOWN;
-  if (!but->drawstr[0]) {
-    switch (RGN_ALIGN_ENUM_FROM_MASK(butregion->alignment)) {
-      case RGN_ALIGN_LEFT:
-        direction = UI_DIR_RIGHT;
-        break;
-      case RGN_ALIGN_RIGHT:
-        direction = UI_DIR_LEFT;
-        break;
-      case RGN_ALIGN_BOTTOM:
-        direction = UI_DIR_UP;
-        break;
-      default:
-        direction = UI_DIR_DOWN;
-        break;
-    }
-  }
-  UI_block_direction_set(block, direction);
+  // char direction = UI_DIR_DOWN;
+  // if (!but->drawstr[0]) {
+  //   switch (RGN_ALIGN_ENUM_FROM_MASK(butregion->alignment)) {
+  //     case RGN_ALIGN_LEFT:
+  //       direction = UI_DIR_RIGHT;
+  //       break;
+  //     case RGN_ALIGN_RIGHT:
+  //       direction = UI_DIR_LEFT;
+  //       break;
+  //     case RGN_ALIGN_BOTTOM:
+  //       direction = UI_DIR_UP;
+  //       break;
+  //     default:
+  //       direction = UI_DIR_DOWN;
+  //       break;
+  //   }
+  // }
+  // UI_block_direction_set(block, direction);
 
-  const char *menu_id = (const char *)but->hold_argN;
-  MenuType *mt = WM_menutype_find(TfToken(menu_id), true);
-  if (mt) {
-    uiLayoutSetContextFromBut(layout, but);
-    UI_menutype_draw(C, mt, layout);
-  } else {
-    uiItemL(layout, TIP_("Menu Missing:"), ICON_NONE);
-    uiItemL(layout, menu_id, ICON_NONE);
-  }
-  UI_popup_menu_end(C, pup);
+  // const char *menu_id = (const char *)but->hold_argN;
+  // MenuType *mt = WM_menutype_find(TfToken(menu_id), true);
+  // if (mt) {
+  //   uiLayoutSetContextFromBut(layout, but);
+  //   UI_menutype_draw(C, mt, layout);
+  // } else {
+  //   uiItemL(layout, TIP_("Menu Missing:"), ICON_NONE);
+  //   uiItemL(layout, menu_id, ICON_NONE);
+  // }
+  // UI_popup_menu_end(C, pup);
 }
 
 void uiItemFullO_ptr(uiLayout *layout,
@@ -1590,14 +1590,14 @@ void uiItemsFullEnumO_items(uiLayout *layout,
         }
 
         if (tmp->identifier.data()) { /* only true if loop above found item and did early-exit */
-          ui_pie_menu_level_create(block,
-                                   ot,
-                                   propname.GetText(),
-                                   properties,
-                                   item_array,
-                                   totitem,
-                                   context,
-                                   static_cast<eWmOperatorContext>(flag));
+          // ui_pie_menu_level_create(block,
+          //                          ot,
+          //                          propname.GetText(),
+          //                          properties,
+          //                          item_array,
+          //                          totitem,
+          //                          context,
+          //                          static_cast<eWmOperatorContext>(flag));
           /* break since rest of items is handled in new pie level */
           break;
         }
@@ -2161,7 +2161,7 @@ void uiItemFullR(uiLayout *layout,
 #endif /* UI_PROP_DECORATE */
 
   UI_block_layout_set_current(block, layout);
-  ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
+  // ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
 
   /* retrieve info */
   const PropertyType type = LUXO_property_type(prop);
@@ -2878,84 +2878,84 @@ uiBut *ui_but_add_search(uiBut *but,
                          KrakenPROP *searchprop,
                          const bool results_are_suggestions)
 {
-  /* for ID's we do automatic lookup */
-  bool has_search_fn = false;
+  // /* for ID's we do automatic lookup */
+  // bool has_search_fn = false;
 
-  KrakenPRIM sptr;
-  if (!searchprop) {
-    if (LUXO_property_type(prop) == PROP_STRING) {
-      has_search_fn = (prop->flag != 0);
-    }
-    if (LUXO_property_type(prop) == PROP_POINTER) {
-      // KrakenPRIM *ptype = LUXO_property_pointer_type(ptr, prop);
-      // search_id_collection(ptype, &sptr, &searchprop);
-      // searchptr = &sptr;
-    }
-  }
+  // KrakenPRIM sptr;
+  // if (!searchprop) {
+  //   if (LUXO_property_type(prop) == PROP_STRING) {
+  //     has_search_fn = (prop->flag != 0);
+  //   }
+  //   if (LUXO_property_type(prop) == PROP_POINTER) {
+  //     // KrakenPRIM *ptype = LUXO_property_pointer_type(ptr, prop);
+  //     // search_id_collection(ptype, &sptr, &searchprop);
+  //     // searchptr = &sptr;
+  //   }
+  // }
 
-  /* turn button into search button */
-  if (has_search_fn || searchprop) {
-    uiLUXOCollectionSearch *coll_search = (uiLUXOCollectionSearch *)MEM_mallocN(
-      sizeof(*coll_search),
-      __func__);
-    uiButSearch *search_but;
+  // /* turn button into search button */
+  // if (has_search_fn || searchprop) {
+  //   uiLUXOCollectionSearch *coll_search = (uiLUXOCollectionSearch *)MEM_mallocN(
+  //     sizeof(*coll_search),
+  //     __func__);
+  //   uiButSearch *search_but;
 
-    but = ui_but_change_type(but, UI_BTYPE_SEARCH_MENU);
-    search_but = (uiButSearch *)but;
+  //   but = ui_but_change_type(but, UI_BTYPE_SEARCH_MENU);
+  //   search_but = (uiButSearch *)but;
 
-    if (searchptr) {
-      search_but->rnasearchpoin = searchptr;
-      search_but->rnasearchprop = searchprop;
-    }
+  //   if (searchptr) {
+  //     search_but->rnasearchpoin = searchptr;
+  //     search_but->rnasearchprop = searchprop;
+  //   }
 
-    but->hardmax = MAX2(but->hardmax, 256.0f);
-    but->drawflag |= UI_BUT_ICON_LEFT | UI_BUT_TEXT_LEFT;
-    // if (LUXO_property_is_unlink(prop)) {
-    //   but->flag |= UI_BUT_VALUE_CLEAR;
-    // }
+  //   but->hardmax = MAX2(but->hardmax, 256.0f);
+  //   but->drawflag |= UI_BUT_ICON_LEFT | UI_BUT_TEXT_LEFT;
+  //   // if (LUXO_property_is_unlink(prop)) {
+  //   //   but->flag |= UI_BUT_VALUE_CLEAR;
+  //   // }
 
-    coll_search->target_ptr = ptr;
-    coll_search->target_prop = prop;
+  //   coll_search->target_ptr = ptr;
+  //   coll_search->target_prop = prop;
 
-    if (searchptr) {
-      coll_search->search_ptr = searchptr;
-      coll_search->search_prop = searchprop;
-    } else {
-      /* Rely on `has_search_fn`. */
-      coll_search->search_ptr = MEM_new<KrakenPRIM>(__func__);
-      coll_search->search_prop = nullptr;
-    }
+  //   if (searchptr) {
+  //     coll_search->search_ptr = searchptr;
+  //     coll_search->search_prop = searchprop;
+  //   } else {
+  //     /* Rely on `has_search_fn`. */
+  //     coll_search->search_ptr = MEM_new<KrakenPRIM>(__func__);
+  //     coll_search->search_prop = nullptr;
+  //   }
 
-    coll_search->search_but = but;
-    coll_search->butstore_block = but->block;
-    coll_search->butstore = UI_butstore_create(coll_search->butstore_block);
-    UI_butstore_register(coll_search->butstore, &coll_search->search_but);
+  //   coll_search->search_but = but;
+  //   coll_search->butstore_block = but->block;
+  //   coll_search->butstore = UI_butstore_create(coll_search->butstore_block);
+  //   UI_butstore_register(coll_search->butstore, &coll_search->search_but);
 
-    if (LUXO_property_type(prop) == PROP_ENUM) {
-      /* XXX, this will have a menu string,
-       * but in this case we just want the text */
-      but->str[0] = 0;
-    }
+  //   if (LUXO_property_type(prop) == PROP_ENUM) {
+  //     /* XXX, this will have a menu string,
+  //      * but in this case we just want the text */
+  //     but->str[0] = 0;
+  //   }
 
-    UI_but_func_search_set_results_are_suggestions(but, results_are_suggestions);
+  //   UI_but_func_search_set_results_are_suggestions(but, results_are_suggestions);
 
-    UI_but_func_search_set(but,
-                           ui_searchbox_create_generic,
-                           ui_luxo_collection_search_update_fn,
-                           coll_search,
-                           false,
-                           ui_luxo_collection_search_arg_free_fn,
-                           NULL,
-                           NULL);
-    /* If this is called multiple times for the same button, an earlier call may have taken the
-     * else branch below so the button was disabled. Now we have a searchprop, so it can be enabled
-     * again. */
-    but->flag &= ~UI_BUT_DISABLED;
-  } else if (but->type == UI_BTYPE_SEARCH_MENU) {
-    /* In case we fail to find proper searchprop,
-     * so other code might have already set but->type to search menu... */
-    but->flag |= UI_BUT_DISABLED;
-  }
+  //   UI_but_func_search_set(but,
+  //                          ui_searchbox_create_generic,
+  //                          ui_luxo_collection_search_update_fn,
+  //                          coll_search,
+  //                          false,
+  //                          ui_luxo_collection_search_arg_free_fn,
+  //                          NULL,
+  //                          NULL);
+  //   /* If this is called multiple times for the same button, an earlier call may have taken the
+  //    * else branch below so the button was disabled. Now we have a searchprop, so it can be enabled
+  //    * again. */
+  //   but->flag &= ~UI_BUT_DISABLED;
+  // } else if (but->type == UI_BTYPE_SEARCH_MENU) {
+  //   /* In case we fail to find proper searchprop,
+  //    * so other code might have already set but->type to search menu... */
+  //   but->flag |= UI_BUT_DISABLED;
+  // }
 
   return but;
 }
@@ -2971,7 +2971,7 @@ void uiItemPointerR_prop(uiLayout *layout,
 {
   const bool use_prop_sep = ((layout->item.flag & UI_ITEM_PROP_SEP) != 0);
 
-  ui_block_new_button_group(uiLayoutGetBlock(layout), UI_BUTTON_GROUP_UNSET);
+  // ui_block_new_button_group(uiLayoutGetBlock(layout), UI_BUTTON_GROUP_UNSET);
 
   const PropertyType type = LUXO_property_type(prop);
   if (!ELEM(type, PROP_POINTER, PROP_STRING, PROP_ENUM)) {
@@ -3075,7 +3075,7 @@ static uiBut *ui_item_menu(uiLayout *layout,
   uiLayout *heading_layout = ui_layout_heading_find(layout);
 
   UI_block_layout_set_current(block, layout);
-  ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
+  // ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
 
   if (!name) {
     name = "";
@@ -3244,13 +3244,13 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
                                                                    0.0,
                                                                    TIP_("Animate property"));
 
-    UI_but_func_set(&decorator_but->but, ui_but_anim_decorate_cb, decorator_but, NULL);
-    decorator_but->but.flag |= UI_BUT_UNDO | UI_BUT_DRAG_LOCK;
+    // UI_but_func_set(&decorator_but->but, ui_but_anim_decorate_cb, decorator_but, NULL);
+    // decorator_but->but.flag |= UI_BUT_UNDO | UI_BUT_DRAG_LOCK;
     /* Reusing RNA search members, setting actual RNA data has many side-effects. */
-    decorator_but->stagepoin = ptr;
-    decorator_but->stageprop = prop;
+    // decorator_but->stagepoin = ptr;
+    // decorator_but->stageprop = prop;
     /* ui_def_but_rna() sets non-array buttons to have a RNA index of 0. */
-    decorator_but->rnaindex = (!is_array || is_expand) ? i : index;
+    // decorator_but->rnaindex = (!is_array || is_expand) ? i : index;
   }
 }
 
@@ -3336,7 +3336,8 @@ void uiItemPopoverPanelFromGroup(uiLayout *layout,
     return;
   }
 
-  for (auto &pt : art->paneltypes) {
+  LISTBASE_FOREACH(PanelType *, pt, &art->paneltypes)
+  {
     /* Causes too many panels, check context. */
     if (pt->parent_id[0] == '\0') {
       if (/* (*context == '\0') || */ STREQ(pt->context, context)) {
@@ -3356,7 +3357,7 @@ static uiBut *uiItemL_(uiLayout *layout, const char *name, int icon)
   uiBlock *block = layout->root->block;
 
   UI_block_layout_set_current(block, layout);
-  ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
+  // ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
 
   if (!name) {
     name = "";
@@ -5816,7 +5817,7 @@ void ui_layout_add_but(uiLayout *layout, uiBut *but)
     but->emboss = layout->emboss;
   }
 
-  ui_button_group_add_but(uiLayoutGetBlock(layout), but);
+  // ui_button_group_add_but(uiLayoutGetBlock(layout), but);
 }
 
 static uiButtonItem *ui_layout_find_button_item(const uiLayout *layout, const uiBut *but)
@@ -6102,7 +6103,8 @@ static void ui_paneltype_draw_impl(kContext *C, PanelType *pt, uiLayout *layout,
   MEM_freeN(panel);
 
   /* Draw child panels. */
-  for (auto &child_pt : pt->children) {
+  LISTBASE_FOREACH(PanelType *, child_pt, &pt->children)
+  {
     if (child_pt->poll == NULL || child_pt->poll(C, child_pt)) {
       /* Add space if something was added to the layout. */
       if (last_item != layout->items.back()) {

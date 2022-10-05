@@ -271,7 +271,7 @@ IDProperty *IDP_CopyProperty(const IDProperty *prop)
   return IDP_CopyProperty_ex(prop, 0);
 }
 
-IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const char *name)
+IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const wabi::TfToken &name)
 {
   IDProperty *prop = NULL;
 
@@ -358,8 +358,8 @@ IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const char *
 
   prop->type = type;
 
-  int stlen = (int)strlen(name) + 1;
-  KLI_strncpy(prop->name, name, (size_t)stlen);
+  int stlen = (int)strlen(name.data()) + 1;
+  KLI_strncpy(prop->name, name.data(), (size_t)stlen);
 
   return prop;
 }

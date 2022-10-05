@@ -45,9 +45,9 @@
 #  include <wabi/usd/usd/prim.h>
 #endif /* __cplusplus */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
 
 /* Struct Declarations */
 
@@ -281,12 +281,12 @@ enum
 #define UI_NAVIGATION_REGION_WIDTH UI_COMPACT_PANEL_WIDTH
 #define UI_NARROW_NAVIGATION_REGION_WIDTH 100
 
-#define UI_PANEL_CATEGORY_MARGIN_WIDTH (UI_WIDGET_UNIT * 1.0f)
+#define UI_PANEL_CATEGORY_MARGIN_WIDTH (U.widget_unit * 1.0f)
 
 /* Both these margins should be ignored if the panel doesn't show a background (check
  * #UI_panel_should_show_background()). */
-#define UI_PANEL_MARGIN_X (UI_WIDGET_UNIT * 0.4f)
-#define UI_PANEL_MARGIN_Y (UI_WIDGET_UNIT * 0.1f)
+#define UI_PANEL_MARGIN_X (U.widget_unit * 0.4f)
+#define UI_PANEL_MARGIN_Y (U.widget_unit * 0.1f)
 
 /* but->drawflag - these flags should only affect how the button is drawn. */
 /* NOTE: currently, these flags *are not passed* to the widget's state() or draw() functions
@@ -785,7 +785,7 @@ void UI_popup_block_ex(struct kContext *C,
 void uiPupBlockOperator(struct kContext *C,
                         uiBlockCreateFunc func,
                         struct wmOperator *op,
-                        short opcontext);
+                        eWmOperatorContext opcontext);
 #endif
 
 void UI_popup_block_close(struct kContext *C, struct wmWindow *win, uiBlock *block);
@@ -1122,7 +1122,7 @@ uiBut *uiDefButR_prop(uiBlock *block,
 uiBut *uiDefButO(uiBlock *block,
                  int type,
                  const char *opname,
-                 short opcontext,
+                 eWmOperatorContext opcontext,
                  const char *str,
                  int x,
                  int y,
@@ -1132,7 +1132,7 @@ uiBut *uiDefButO(uiBlock *block,
 uiBut *uiDefButO_ptr(uiBlock *block,
                      int type,
                      struct wmOperatorType *ot,
-                     short opcontext,
+                     eWmOperatorContext opcontext,
                      const char *str,
                      int x,
                      int y,
@@ -1265,7 +1265,7 @@ uiBut *uiDefIconButR_prop(uiBlock *block,
 uiBut *uiDefIconButO(uiBlock *block,
                      int type,
                      const char *opname,
-                     short opcontext,
+                     eWmOperatorContext opcontext,
                      int icon,
                      int x,
                      int y,
@@ -1275,7 +1275,7 @@ uiBut *uiDefIconButO(uiBlock *block,
 uiBut *uiDefIconButO_ptr(uiBlock *block,
                          int type,
                          struct wmOperatorType *ot,
-                         short opcontext,
+                         eWmOperatorContext opcontext,
                          int icon,
                          int x,
                          int y,
@@ -1373,7 +1373,7 @@ uiBut *uiDefIconTextButR_prop(uiBlock *block,
 uiBut *uiDefIconTextButO(uiBlock *block,
                          int type,
                          const char *opname,
-                         short opcontext,
+                         eWmOperatorContext opcontext,
                          int icon,
                          const char *str,
                          int x,
@@ -1384,7 +1384,7 @@ uiBut *uiDefIconTextButO(uiBlock *block,
 uiBut *uiDefIconTextButO_ptr(uiBlock *block,
                              int type,
                              struct wmOperatorType *ot,
-                             short opcontext,
+                             eWmOperatorContext opcontext,
                              int icon,
                              const char *str,
                              int x,
@@ -1800,7 +1800,7 @@ void UI_but_func_pushed_state_set(uiBut *but, uiButPushedStateFunc func, const v
 
 struct KrakenPRIM *UI_but_extra_operator_icon_add(uiBut *but,
                                                   char opname[MAX_NAME],
-                                                  short opcontext,
+                                                  eWmOperatorContext opcontext,
                                                   int icon);
 struct wmOperatorType *UI_but_extra_operator_icon_optype_get(struct uiButExtraOpIcon *extra_icon);
 struct KrakenPRIM *UI_but_extra_operator_icon_opptr_get(struct uiButExtraOpIcon *extra_icon);
@@ -2192,7 +2192,7 @@ void UI_paneltype_draw(struct kContext *C, struct PanelType *pt, struct uiLayout
 /* Only for convenience. */
 void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but);
 
-void uiLayoutSetOperatorContext(uiLayout *layout, short opcontext);
+void uiLayoutSetOperatorContext(uiLayout *layout, eWmOperatorContext opcontext);
 void uiLayoutSetActive(uiLayout *layout, bool active);
 void uiLayoutSetActiveDefault(uiLayout *layout, bool active_default);
 void uiLayoutSetActivateInit(uiLayout *layout, bool activate_init);
@@ -3320,6 +3320,6 @@ uiViewItemHandle *UI_region_views_find_item_at(const struct ARegion *region, con
   ATTR_NONNULL();
 uiViewItemHandle *UI_region_views_find_active_item(const struct ARegion *region);
 
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif

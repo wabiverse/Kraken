@@ -38,7 +38,7 @@
 
 void UI_popup_block_invoke(kContext *C, uiBlockCreateFunc func, void *arg, uiFreeArgFunc arg_free)
 {
-  UI_popup_block_invoke_ex(C, func, arg, arg_free, true);
+  // UI_popup_block_invoke_ex(C, func, arg, arg_free, true);
 }
 
 void UI_popup_block_ex(kContext *C,

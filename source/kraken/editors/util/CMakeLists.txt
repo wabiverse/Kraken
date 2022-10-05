@@ -26,6 +26,7 @@ set(SRC
 
   # general includes
   ../include/ED_code.h
+  ../include/ED_datafiles.h
   ../include/ED_debug_codes.h
   ../include/ED_defines.h
   ../include/ED_fileselect.h

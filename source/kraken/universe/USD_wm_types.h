@@ -321,14 +321,14 @@ enum eWmMiscKmTypes
 #define WM_EVENT_CURSOR_MOTION_THRESHOLD ((float)U.move_threshold * U.dpi_fac)
 
 /** Timer flags. */
-enum eWmTimerFlags
+typedef enum eWmTimerFlags
 {
   /** Do not attempt to free customdata pointer even if non-NULL. */
   WM_TIMER_NO_FREE_CUSTOM_DATA = 1 << 0,
-};
+} eWmTimerFlags;
 
 
-enum eReportListFlags
+typedef enum eReportListFlags
 {
   RPT_PRINT = (1 << 0),
   RPT_STORE = (1 << 1),
@@ -336,19 +336,19 @@ enum eReportListFlags
   RPT_OP_HOLD = (1 << 3), /* don't move them into the operator global list (caller will use) */
   /** Don't print (the owner of the #ReportList will handle printing to the `stdout`). */
   RPT_PRINT_HANDLED_BY_OWNER = (1 << 4),
-};
+} eReportListFlags;
 
 
-enum eWmCursorWrapType
+typedef enum eWmCursorWrapType
 {
   WM_CURSOR_WRAP_NONE = 0,
   WM_CURSOR_WRAP_X,
   WM_CURSOR_WRAP_Y,
   WM_CURSOR_WRAP_XY,
-};
+} eWmCursorWrapType;
 
 
-enum eWmOperatorContext
+typedef enum eWmOperatorContext
 {
   /* if there's invoke, call it, otherwise exec */
   WM_OP_INVOKE_DEFAULT,
@@ -364,28 +364,28 @@ enum eWmOperatorContext
   WM_OP_EXEC_REGION_PREVIEW,
   WM_OP_EXEC_AREA,
   WM_OP_EXEC_SCREEN,
-};
+} eWmOperatorContext;
 
 
-enum eWmOperatorFlag
+typedef enum eWmOperatorFlag
 {
   OP_IS_INVOKE = (1 << 0),
   OP_IS_REPEAT = (1 << 1),
   OP_IS_REPEAT_LAST = (1 << 1),
   OP_IS_MODAL_GRAB_CURSOR = (1 << 2),
   OP_IS_MODAL_CURSOR_REGION = (1 << 3),
-};
+} eWmOperatorFlag;
 
 
-enum eWmCustomEventType
+typedef enum eWmCustomEventType
 {
   EVT_DATA_TIMER = 2,
   EVT_DATA_DRAGDROP = 3,
   EVT_DATA_NDOF_MOTION = 4,
-};
+} eWmCustomEventType;
 
 
-enum eWmEventType
+typedef enum eWmEventType
 {
   EVENT_NONE = 0x0000,
 
@@ -698,16 +698,16 @@ enum eWmEventType
   /* XR events: 0x503x */
   EVT_XR_ACTION = 0x5030, /* 20528 */
   /* ********** End of Kraken internal events. ********** */
-};
+} eWmEventType;
 
-enum eWmTabletEventType
+typedef enum eWmTabletEventType
 {
   EVT_TABLET_NONE = 0,
   EVT_TABLET_STYLUS = 1,
   EVT_TABLET_ERASER = 2,
-};
+} eWmTabletEventType;
 
-enum eWmOperatorType
+typedef enum eWmOperatorType
 {
   OPTYPE_REGISTER = (1 << 0),
   OPTYPE_UNDO = (1 << 1),
@@ -724,9 +724,9 @@ enum eWmOperatorType
 
   OPTYPE_LOCK_BYPASS = (1 << 9),
   OPTYPE_UNDO_GROUPED = (1 << 10),
-};
+} eWmOperatorType;
 
-enum eReportType
+typedef enum eReportType
 {
   RPT_DEBUG = (1 << 0),
   RPT_INFO = (1 << 1),
@@ -737,7 +737,7 @@ enum eReportType
   RPT_ERROR_INVALID_INPUT = (1 << 6),
   RPT_ERROR_INVALID_CONTEXT = (1 << 7),
   RPT_ERROR_OUT_OF_MEMORY = (1 << 8),
-};
+} eReportType;
 
 #define RPT_DEBUG_ALL (RPT_DEBUG)
 #define RPT_INFO_ALL (RPT_INFO)
@@ -747,7 +747,7 @@ enum eReportType
 #define RPT_ERROR_ALL \
   (RPT_ERROR | RPT_ERROR_INVALID_INPUT | RPT_ERROR_INVALID_CONTEXT | RPT_ERROR_OUT_OF_MEMORY)
 
-struct wmTimer
+typedef struct wmTimer
 {
   /** Window this timer is attached to (optional). */
   struct wmWindow *win;
@@ -774,7 +774,7 @@ struct wmTimer
   double stime;
   /** Internal, put timers to sleep when needed. */
   bool sleep;
-};
+} wmTimer;
 
 typedef struct Report
 {

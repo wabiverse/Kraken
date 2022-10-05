@@ -154,7 +154,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
      * (e.g. with properties editor) until space-data is properly created */
 
     /* check previously stored space */
-    kSpaceLink *sl = POINTER_ZERO;
+    SpaceProperties *sl = POINTER_ZERO;
     UNIVERSE_FOR_ALL (sl_iter, area->spacedata) {
       if (sl_iter->spacetype == type.Hash()) {
         sl = sl_iter;
@@ -162,12 +162,12 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
       }
     }
 
-    if (sl && KLI_listbase_is_empty(&sl->regions)) {
-      st->free(sl);
+    if (sl && KLI_listbase_is_empty(&sl->regionbase)) {
+      // st->free(sl);
       // area->spacedata.erase(sl);
-      if (slold == sl) {
-        slold = NULL;
-      }
+      // if (slold == sl) {
+        // slold = NULL;
+      // }
       sl = NULL;
     }
 

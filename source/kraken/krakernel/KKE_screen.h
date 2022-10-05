@@ -86,7 +86,7 @@ struct ARegionType
 
   void (*on_view2d_changed)(const kContext *C, ARegion *region);
 
-  std::vector<struct PanelType *> paneltypes;
+  ListBase paneltypes;
 
   int minsizex, minsizey;
   int prefsizex, prefsizey;
@@ -119,7 +119,7 @@ struct SpaceType
 
   struct SpaceLink *(*create)(const struct ScrArea *area, const kScene *scene);
 
-  void (*free)(struct kSpaceLink *sl);
+  void (*free)(struct SpaceLink *sl);
 
 
   void (*init)(wmWindowManager *wm, struct ScrArea *area);

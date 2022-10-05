@@ -29,6 +29,7 @@ set(LIB
   maelstrom
   maelstrom_static
   kraken_kernel
+  kraken_editor_datafiles
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

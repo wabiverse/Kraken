@@ -1057,7 +1057,7 @@ void UI_style_init_default(void)
 {
   KLI_freelistN(&U.uistyles);
   /* gets automatically re-allocated */
-  uiStyleInit();
+  // uiStyleInit();
 }
 
 void UI_SetTheme(int spacetype, int regionid)

@@ -234,14 +234,14 @@ struct uiSelectContextStore
   bool is_copy;
 };
 
-static bool ui_selectcontext_begin(kContext *C, uiBut *but, uiSelectContextStore *selctx_data);
-static void ui_selectcontext_end(uiBut *but, uiSelectContextStore *selctx_data);
-static void ui_selectcontext_apply(kContext *C,
-                                   uiBut *but,
-                                   uiSelectContextStore *selctx_data,
-                                   const double value,
-                                   const double value_orig);
-
+static bool ui_selectcontext_begin(kContext *C, uiBut *but, uiSelectContextStore *selctx_data) {}
+static void ui_selectcontext_end(uiBut *but, uiSelectContextStore *selctx_data) {}
+void ui_selectcontext_apply(kContext *C,
+                            uiBut *but,
+                            uiSelectContextStore *selctx_data,
+                            const double value,
+                            const double value_orig)
+{}
 #  define IS_ALLSELECT_EVENT(event) (((event)->modifier & KM_ALT) != 0)
 
 /** just show a tinted color so users know its activated */
@@ -721,7 +721,7 @@ static void ui_multibut_states_apply(kContext *C, uiHandleButtonData *data, uiBl
     }
 
     void *active_back;
-    ui_but_execute_begin(C, region, but, &active_back);
+    // ui_but_execute_begin(C, region, but, &active_back);
 
 #  ifdef USE_ALLSELECT
     if (data->select_others.is_enabled) {
@@ -760,7 +760,7 @@ static void ui_multibut_states_apply(kContext *C, uiHandleButtonData *data, uiBl
       CLAMP(value, (double)but->softmin, (double)but->softmax);
     }
 
-    ui_but_execute_end(C, region, but, active_back);
+    // ui_but_execute_end(C, region, but, active_back);
   }
 }
 
@@ -1778,7 +1778,7 @@ static int ui_do_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data, cons
 
         /* Convert pan to scroll-wheel. */
         if (type == MOUSEPAN) {
-          ui_pan_to_scroll(event, &type, &val);
+          // ui_pan_to_scroll(event, &type, &val);
 
           if (type == MOUSEPAN) {
             return WM_UI_HANDLER_BREAK;
@@ -1786,30 +1786,30 @@ static int ui_do_but_TOG(kContext *C, uiBut *but, uiHandleButtonData *data, cons
         }
 
         const int direction = (type == WHEELDOWNMOUSE) ? -1 : 1;
-        uiBut *but_select = ui_but_find_select_in_enum(but, direction);
-        if (but_select) {
-          uiBut *but_other = (direction == -1) ? but_select->next : but_select->prev;
-          if (but_other /*&& ui_but_find_select_in_enum__cmp(but, but_other)*/) {
-            ARegion *region = data->region;
+        // uiBut *but_select = ui_but_find_select_in_enum(but, direction);
+        // if (but_select) {
+        //   uiBut *but_other = (direction == -1) ? but_select->next : but_select->prev;
+        //   if (but_other /*&& ui_but_find_select_in_enum__cmp(but, but_other)*/) {
+        //     ARegion *region = data->region;
 
-            data->cancel = true;
-            button_activate_exit(C, but, data, false, false);
+        //     data->cancel = true;
+        //     button_activate_exit(C, but, data, false, false);
 
-            /* Activate the text button. */
-            button_activate_init(C, region, but_other, BUTTON_ACTIVATE_OVER);
-            data = but_other->active;
-            if (data) {
-              ui_apply_but(C, but->block, but_other, but_other->active, true);
-              button_activate_exit(C, but_other, data, false, false);
+        //     /* Activate the text button. */
+        //     button_activate_init(C, region, but_other, BUTTON_ACTIVATE_OVER);
+        //     data = but_other->active;
+        //     if (data) {
+        //       ui_apply_but(C, but->block, but_other, but_other->active, true);
+        //       button_activate_exit(C, but_other, data, false, false);
 
-              /* restore active button */
-              button_activate_init(C, region, but, BUTTON_ACTIVATE_OVER);
-            } else {
-              /* shouldn't happen */
-              KLI_assert(0);
-            }
-          }
-        }
+        //       /* restore active button */
+        //       button_activate_init(C, region, but, BUTTON_ACTIVATE_OVER);
+        //     } else {
+        //       /* shouldn't happen */
+        //       KLI_assert(0);
+        //     }
+        //   }
+        // }
         return WM_UI_HANDLER_BREAK;
       }
     }
@@ -2004,7 +2004,7 @@ static int ui_do_but_BLOCK(kContext *C, uiBut *but, uiHandleButtonData *data, co
 
         /* Convert pan to scroll-wheel. */
         if (type == MOUSEPAN) {
-          ui_pan_to_scroll(event, &type, &val);
+          // ui_pan_to_scroll(event, &type, &val);
 
           if (type == MOUSEPAN) {
             return WM_UI_HANDLER_BREAK;
@@ -2013,7 +2013,7 @@ static int ui_do_but_BLOCK(kContext *C, uiBut *but, uiHandleButtonData *data, co
 
         const int direction = (type == WHEELDOWNMOUSE) ? 1 : -1;
 
-        data->value.Set(ui_but_menu_step(but, direction));
+        // data->value.Set(ui_but_menu_step(but, direction));
 
         button_activate_state(C, but, BUTTON_STATE_EXIT);
         ui_apply_but(C, but->block, but, data, true);
@@ -2398,10 +2398,10 @@ static void ui_textedit_begin(kContext *C, uiBut *but, uiHandleButtonData *data)
     data->str = ui_but_string_get_dynamic(but, &data->maxlen);
   }
 
-  if (ui_but_is_float(but) && !ui_but_is_unit(but) && !ui_but_anim_expression_get(but, NULL, 0) &&
-      !no_zero_strip) {
-    KLI_str_rstrip_float_zero(data->str, '\0');
-  }
+  // if (ui_but_is_float(but) && !ui_but_is_unit(but) && !ui_but_anim_expression_get(but, NULL, 0) &&
+  //     !no_zero_strip) {
+  //   KLI_str_rstrip_float_zero(data->str, '\0');
+  // }
 
   if (is_num_but) {
     KLI_assert(data->is_str_dynamic == false);
@@ -2423,15 +2423,15 @@ static void ui_textedit_begin(kContext *C, uiBut *but, uiHandleButtonData *data)
   but->selend = len;
 
   /* Initialize undo history tracking. */
-  data->undo_stack_text = ui_textedit_undo_stack_create();
-  ui_textedit_undo_push(data->undo_stack_text, but->editstr, but->pos);
+  // data->undo_stack_text = ui_textedit_undo_stack_create();
+  // ui_textedit_undo_push(data->undo_stack_text, but->editstr, but->pos);
 
   /* optional searchbox */
   if (but->type == UI_BTYPE_SEARCH_MENU) {
     uiButSearch *search_but = (uiButSearch *)but;
 
     data->searchbox = search_but->popup_create_fn(C, data->region, search_but);
-    ui_searchbox_update(C, data->searchbox, but, true); /* true = reset */
+    // ui_searchbox_update(C, data->searchbox, but, true); /* true = reset */
   }
 
   /* reset alert flag (avoid confusion, will refresh on exit) */
@@ -2455,7 +2455,7 @@ static void ui_textedit_begin(kContext *C, uiBut *but, uiHandleButtonData *data)
 
 #ifdef WITH_INPUT_IME
   if (!is_num_but) {
-    ui_textedit_ime_begin(win, but);
+    // ui_textedit_ime_begin(win, but);
   }
 #endif
 }
@@ -2479,26 +2479,26 @@ static void ui_textedit_end(kContext *C, uiBut *but, uiHandleButtonData *data)
         KLI_assert(but->type == UI_BTYPE_SEARCH_MENU);
         uiButSearch *but_search = (uiButSearch *)but;
 
-        if ((ui_searchbox_apply(but, data->searchbox) == false) &&
-            (ui_searchbox_find_index(data->searchbox, but->editstr) == -1) &&
-            !but_search->results_are_suggestions) {
+        // if ((ui_searchbox_apply(but, data->searchbox) == false) &&
+        //     (ui_searchbox_find_index(data->searchbox, but->editstr) == -1) &&
+        //     !but_search->results_are_suggestions) {
 
-          if (but->flag & UI_BUT_VALUE_CLEAR) {
-            /* It is valid for _VALUE_CLEAR flavor to have no active element
-             * (it's a valid way to unlink). */
-            but->editstr[0] = '\0';
-          }
-          data->cancel = true;
+        //   if (but->flag & UI_BUT_VALUE_CLEAR) {
+        //     /* It is valid for _VALUE_CLEAR flavor to have no active element
+        //      * (it's a valid way to unlink). */
+        //     but->editstr[0] = '\0';
+        //   }
+        //   data->cancel = true;
 
-          /* ensure menu (popup) too is closed! */
-          data->escapecancel = true;
+        //   /* ensure menu (popup) too is closed! */
+        //   data->escapecancel = true;
 
-          WM_reportf(RPT_ERROR, "Failed to find '%s'", but->editstr);
-          WM_report_banner_show();
-        }
+        //   WM_reportf(RPT_ERROR, "Failed to find '%s'", but->editstr);
+        //   WM_report_banner_show();
+        // }
       }
 
-      ui_searchbox_free(C, data->searchbox);
+      // ui_searchbox_free(C, data->searchbox);
       data->searchbox = NULL;
     }
 
@@ -2509,7 +2509,7 @@ static void ui_textedit_end(kContext *C, uiBut *but, uiHandleButtonData *data)
   WM_cursor_modal_restore(win);
 
   /* Free text undo history text blocks. */
-  ui_textedit_undo_stack_destroy(data->undo_stack_text);
+  // ui_textedit_undo_stack_destroy(data->undo_stack_text);
   data->undo_stack_text = NULL;
 
 #ifdef WITH_INPUT_IME
@@ -2560,7 +2560,7 @@ static void ui_block_open_begin(kContext *C, uiBut *but, uiHandleButtonData *dat
       if (ui_but_menu_draw_as_popover(but)) {
         popoverfunc = but->menu_create_func;
       } else {
-        handlefunc = ui_block_func_COLOR;
+        // handlefunc = ui_block_func_COLOR;
       }
       arg = but;
       break;
@@ -2576,12 +2576,12 @@ static void ui_block_open_begin(kContext *C, uiBut *but, uiHandleButtonData *dat
       data->menu->popup = but->block->handle->popup;
     }
   } else if (menufunc) {
-    data->menu = ui_popup_menu_create(C, data->region, but, menufunc, arg);
+    // data->menu = ui_popup_menu_create(C, data->region, but, menufunc, arg);
     if (but->block->handle) {
       data->menu->popup = but->block->handle->popup;
     }
   } else if (popoverfunc) {
-    data->menu = ui_popover_panel_create(C, data->region, but, popoverfunc, arg);
+    // data->menu = ui_popover_panel_create(C, data->region, but, popoverfunc, arg);
     if (but->block->handle) {
       data->menu->popup = but->block->handle->popup;
     }
@@ -2611,7 +2611,7 @@ static void ui_block_open_end(kContext *C, uiBut *but, uiHandleButtonData *data)
   }
 
   if (data->menu) {
-    ui_popup_block_free(C, data->menu);
+    // ui_popup_block_free(C, data->menu);
     data->menu = NULL;
   }
 }
@@ -3362,9 +3362,9 @@ static int ui_do_button(kContext *C, uiBlock *block, uiBut *but, const wmEvent *
       }
 
       /* RMB has two options now */
-      if (ui_popup_context_menu_for_button(C, but, event)) {
-        return WM_UI_HANDLER_BREAK;
-      }
+      // if (ui_popup_context_menu_for_button(C, but, event)) {
+      //   return WM_UI_HANDLER_BREAK;
+      // }
     }
 
     if (is_disabled) {
@@ -4009,11 +4009,6 @@ static void ui_def_but_rna__panel_type(kContext *C, uiLayout *layout, void *but_
   }
 }
 
-bool ui_but_menu_draw_as_popover(const uiBut *but)
-{
-  return (but->menu_create_func == ui_def_but_rna__panel_type);
-}
-
 static void button_activate_exit(kContext *C,
                                  uiBut *but,
                                  uiHandleButtonData *data,
@@ -4086,7 +4081,7 @@ static void button_activate_exit(kContext *C,
 
     /* popup menu memory */
     if (block->flag & UI_BLOCK_POPUP_MEMORY) {
-      ui_popup_menu_memory_set(block, but);
+      // ui_popup_menu_memory_set(block, but);
     }
 
     if (U.runtime.is_dirty == false) {
@@ -4445,8 +4440,8 @@ static int ui_popup_handler(kContext *C, const wmEvent *event, void *userdata)
       reset_pie = true;
     }
 
-    ui_popup_block_free(C, menu);
-    UI_popup_handlers_remove(&win->modalhandlers, menu);
+    // ui_popup_block_free(C, menu);
+    // UI_popup_handlers_remove(&win->modalhandlers, menu);
     CTX_wm_menu_set(C, NULL);
 
 #ifdef USE_DRAG_TOGGLE
@@ -4505,18 +4500,21 @@ static void ui_popup_handler_remove(kContext *C, void *userdata)
   }
 
   /* free menu block if window is closed for some reason */
-  ui_popup_block_free(C, menu);
+  // ui_popup_block_free(C, menu);
 
   /* delayed apply callbacks */
   ui_apply_but_funcs_after(C);
 }
 
-void UI_popup_handlers_add(kContext *C,
-                           std::vector<wmEventHandlerUI *> handlers,
-                           uiPopupBlockHandle *popup,
-                           char flag)
+void UI_popup_handlers_add(kContext *C, ListBase handlers, uiPopupBlockHandle *popup, char flag)
 {
-  WM_event_add_ui_handler(C, handlers, ui_popup_handler, ui_popup_handler_remove, popup, flag);
+  std::vector<wmEventHandlerUI *> handles;
+  LISTBASE_FOREACH(wmEventHandlerUI *, h, &handlers)
+  {
+    handles.push_back(h);
+  }
+
+  WM_event_add_ui_handler(C, handles, ui_popup_handler, ui_popup_handler_remove, popup, flag);
 }
 
 /* -------------------------------------------------------------------- */

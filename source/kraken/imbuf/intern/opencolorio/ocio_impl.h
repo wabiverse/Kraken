@@ -109,7 +109,10 @@ class IOCIOImpl
                                     const float /*exponent*/,
                                     const float /*dither*/,
                                     const bool /*use_predivide*/,
-                                    const bool /*use_overlay*/);
+                                    const bool /*use_overlay*/)
+  {
+    return false;
+  }
 
   virtual void gpuDisplayShaderUnbind(void) {}
   virtual void gpuCacheFree(void) {}

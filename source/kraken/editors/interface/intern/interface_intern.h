@@ -34,7 +34,6 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 
-
 struct ID;
 struct IDProperty;
 struct CurveMapping;
@@ -1356,8 +1355,16 @@ void icon_draw_rect_input(float x,
 
 /* resources.c */
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 void ui_resources_init(void);
 void ui_resources_free(void);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 /* interface_layout.c */
 
@@ -1631,4 +1638,3 @@ struct ID *ui_template_id_liboverride_hierarchy_make(struct kContext *C,
                                                      struct ID *id,
                                                      const char **r_undo_push_label);
 
-void UI_region_message_subscribe(struct ARegion *region, struct wmMsgBus *mbus);

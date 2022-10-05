@@ -926,7 +926,7 @@ static void icon_draw_cache_flush_ex(bool only_full_caches)
 
   if (should_draw) {
     /* We need to flush widget base first to ensure correct ordering. */
-    UI_widgetbase_draw_cache_flush();
+    // UI_widgetbase_draw_cache_flush();
 
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
 
@@ -1224,7 +1224,7 @@ static void icon_draw_texture(float x,
   }
 
   /* We need to flush widget base first to ensure correct ordering. */
-  UI_widgetbase_draw_cache_flush();
+  // UI_widgetbase_draw_cache_flush();
 
   GPU_blend(GPU_BLEND_ALPHA_PREMULT);
 
@@ -1305,7 +1305,7 @@ static void icon_draw_size(float x,
   DrawInfo *di = icon_ensure_drawinfo(icon);
 
   /* We need to flush widget base first to ensure correct ordering. */
-  UI_widgetbase_draw_cache_flush();
+  // UI_widgetbase_draw_cache_flush();
 
   if (di->type == ICON_TYPE_IMBUF) {
     ImBuf *ibuf = icon->obj;
@@ -1354,7 +1354,7 @@ static void icon_draw_size(float x,
   } else if (di->type == ICON_TYPE_EVENT) {
     const short event_type = di->data.input.event_type;
     const short event_value = di->data.input.event_value;
-    icon_draw_rect_input(x, y, w, h, alpha, event_type, event_value);
+    // icon_draw_rect_input(x, y, w, h, alpha, event_type, event_value);
   } else if (di->type == ICON_TYPE_COLOR_TEXTURE) {
     /* texture image use premul alpha for correct scaling */
     icon_draw_texture(x,

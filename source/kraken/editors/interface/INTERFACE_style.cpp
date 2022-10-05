@@ -235,7 +235,7 @@ void uiStyleInit(void)
     style = ui_style_new(&U.uistyles, "Default Style", UIFONT_DEFAULT);
   }
 
-  KRF_cache_flush_set_fn(UI_widgetbase_draw_cache_flush);
+  // KRF_cache_flush_set_fn(UI_widgetbase_draw_cache_flush);
 
   KRF_default_size(style->widgetlabel.points);
 

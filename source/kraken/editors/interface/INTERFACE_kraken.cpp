@@ -1010,7 +1010,7 @@ static bool ui_but_update_from_old_block(const kContext *C,
       block->buttons.insert(block->buttons.begin(), oldbut);
     }
     /* Add the old button to the button groups in the new block. */
-    ui_button_group_replace_but_ptr(block, but, oldbut);
+    // ui_button_group_replace_but_ptr(block, but, oldbut);
     oldbut->block = block;
     *but_p = oldbut;
 
@@ -1072,10 +1072,10 @@ bool UI_but_active_only_ex(const kContext *C,
     /* There might still be another active button. */
     uiBut *old_active = ui_region_find_active_but(region);
     if (old_active) {
-      ui_but_active_free(C, old_active);
+      // ui_but_active_free(C, old_active);
     }
 
-    ui_but_activate_event((kContext *)C, region, but);
+    // ui_but_activate_event((kContext *)C, region, but);
   } else if ((found == true) && (isactive == false)) {
     if (remove_on_failure) {
       block->buttons.erase(std::remove(block->buttons.begin(), block->buttons.end(), but),
@@ -1129,9 +1129,9 @@ bool UI_block_active_only_flagged_buttons(const kContext *C, ARegion *region, ui
 void UI_but_execute(const kContext *C, ARegion *region, uiBut *but)
 {
   void *active_back;
-  ui_but_execute_begin((kContext *)C, region, but, &active_back);
+  // ui_but_execute_begin((kContext *)C, region, but, &active_back);
   /* Value is applied in begin. No further action required. */
-  ui_but_execute_end((kContext *)C, region, but, active_back);
+  // ui_but_execute_end((kContext *)C, region, but, active_back);
 }
 
 /* use to check if we need to disable undo, but don't make any changes
@@ -1951,7 +1951,8 @@ bool ui_but_context_poll_operator_ex(kContext *C,
 
 bool ui_but_context_poll_operator(kContext *C, wmOperatorType *ot, const uiBut *but)
 {
-  const eWmOperatorContext opcontext = but ? static_cast<eWmOperatorContext>(but->opcontext) : WM_OP_INVOKE_DEFAULT;
+  const eWmOperatorContext opcontext = but ? static_cast<eWmOperatorContext>(but->opcontext) :
+                                             WM_OP_INVOKE_DEFAULT;
   wmOperatorCallParams params = {};
   params.optype = ot;
   params.opcontext = opcontext;
@@ -2147,11 +2148,11 @@ void UI_block_draw(const kContext *C, uiBlock *block)
 
   /* back */
   if (block->flag & UI_BLOCK_RADIAL) {
-    ui_draw_pie_center(block);
+    // ui_draw_pie_center(block);
   } else if (block->flag & UI_BLOCK_POPOVER) {
-    ui_draw_popover_back(region, &style, block, &rect);
+    // ui_draw_popover_back(region, &style, block, &rect);
   } else if (block->flag & UI_BLOCK_LOOP) {
-    ui_draw_menu_back(&style, block, &rect);
+    // ui_draw_menu_back(&style, block, &rect);
   } else if (block->panel) {
     ui_draw_aligned_panel(&style,
                           block,
@@ -2163,7 +2164,7 @@ void UI_block_draw(const kContext *C, uiBlock *block)
 
   KRF_batch_draw_begin();
   UI_icon_draw_cache_begin();
-  UI_widgetbase_draw_cache_begin();
+  // UI_widgetbase_draw_cache_begin();
 
   /* widgets */
   for (auto &but : block->buttons) {
@@ -2180,11 +2181,11 @@ void UI_block_draw(const kContext *C, uiBlock *block)
     /* XXX: figure out why invalid coordinates happen when closing render window */
     /* and material preview is redrawn in main window (temp fix for bug T23848) */
     if (rect.xmin < rect.xmax && rect.ymin < rect.ymax) {
-      ui_draw_but(C, region, &style, but, &rect);
+      // ui_draw_but(C, region, &style, but, &rect);
     }
   }
 
-  UI_widgetbase_draw_cache_end();
+  // UI_widgetbase_draw_cache_end();
   UI_icon_draw_cache_end();
   KRF_batch_draw_end();
 
@@ -2552,7 +2553,7 @@ bool ui_but_is_luxo_valid(uiBut *but)
 bool ui_but_supports_cycling(const uiBut *but)
 {
   return (ELEM(but->type, UI_BTYPE_ROW, UI_BTYPE_NUM, UI_BTYPE_NUM_SLIDER, UI_BTYPE_LISTBOX) ||
-          (but->type == UI_BTYPE_MENU && ui_but_menu_step_poll(but)) ||
+          (but->type == UI_BTYPE_MENU /*&& ui_but_menu_step_poll(but)*/) ||
           (but->type == UI_BTYPE_COLOR && ((uiButColor *)but)->is_pallete_color) ||
           (but->menu_step_func != nullptr));
 }
@@ -2885,7 +2886,7 @@ void ui_but_string_get_ex(uiBut *but,
     /* string */
     KLI_strncpy(str, but->poin, maxlen);
     return;
-  } else if (ui_but_anim_expression_get(but, str, maxlen)) {
+    // } else if (ui_but_anim_expression_get(but, str, maxlen)) {
     /* driver expression */
   } else {
     /* number editing */
@@ -3215,12 +3216,12 @@ bool ui_but_string_set(kContext *C, uiBut *but, const char *str)
     /* string */
     KLI_strncpy(but->poin, str, but->hardmax);
     return true;
-  } else if (ui_but_anim_expression_set(but, str)) {
+    // } else if (ui_but_anim_expression_set(but, str)) {
     /* driver expression */
-    return true;
+    // return true;
   } else if (str[0] == '#') {
     /* Shortcut to create new driver expression (versus immediate Python-execution). */
-    return ui_but_anim_expression_create(but, str + 1);
+    // return ui_but_anim_expression_create(but, str + 1);
   } else {
     /* number editing */
     double value;
@@ -3444,7 +3445,7 @@ static void ui_but_free(const kContext *C, uiBut *but)
      * however they may have open tooltips or popup windows, which need to
      * be closed using a context pointer */
     if (C) {
-      ui_but_active_free(C, but);
+      // ui_but_active_free(C, but);
     } else {
       if (but->active) {
         MEM_freeN(but->active);
@@ -3490,8 +3491,8 @@ void UI_block_free(const kContext *C, uiBlock *block)
   KLI_freelistN(&block->saferct);
   KLI_freelistN(&block->color_pickers.list);
 
-  ui_block_free_button_groups(block);
-  ui_block_free_views(block);
+  // ui_block_free_button_groups(block);
+  // ui_block_free_views(block);
 
   MEM_freeN(block);
 }
@@ -3514,7 +3515,7 @@ void UI_blocklist_update_view_for_buttons(const kContext *C, const ListBase *lb)
   LISTBASE_FOREACH(uiBlock *, block, lb)
   {
     if (block->active) {
-      ui_but_update_view_for_active(C, block);
+      // ui_but_update_view_for_active(C, block);
     }
   }
 }
@@ -3595,10 +3596,7 @@ void UI_block_region_set(uiBlock *block, ARegion *region)
   block->oldblock = oldblock;
 }
 
-uiBlock *UI_block_begin(const kContext *C,
-                        ARegion *region,
-                        const char *name,
-                        eUIEmbossType emboss)
+uiBlock *UI_block_begin(const kContext *C, ARegion *region, const char *name, eUIEmbossType emboss)
 {
   wmWindow *window = CTX_wm_window(C);
   kScene *scene = CTX_data_scene(C);
@@ -3741,11 +3739,11 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
   ui_but_update_select_flag(but, &value);
 
   /* only update soft range while not editing */
-  if (!ui_but_is_editing(but)) {
-    if ((but->stageprop != nullptr) || (but->poin && (but->pointype & UI_BUT_POIN_TYPES))) {
-      ui_but_range_set_soft(but);
-    }
-  }
+  // if (!ui_but_is_editing(but)) {
+  //   if ((but->stageprop != nullptr) || (but->poin && (but->pointype & UI_BUT_POIN_TYPES))) {
+  //     ui_but_range_set_soft(but);
+  //   }
+  // }
 
   /* test for min and max, icon sliders, etc */
   switch (but->type) {
@@ -4085,7 +4083,7 @@ uiBut *ui_but_change_type(uiBut *but, eButType new_type)
       const bool found_layout = ui_layout_replace_but_ptr(but->layout, old_but_ptr, but);
       KLI_assert(found_layout);
       UNUSED_VARS_NDEBUG(found_layout);
-      ui_button_group_replace_but_ptr(uiLayoutGetBlock(but->layout), old_but_ptr, but);
+      // ui_button_group_replace_but_ptr(uiLayoutGetBlock(but->layout), old_but_ptr, but);
     }
 #ifdef WITH_PYTHON
     if (UI_editsource_enable_check()) {
@@ -4266,9 +4264,9 @@ static uiBut *ui_def_but(uiBlock *block,
 void ui_def_but_icon(uiBut *but, const int icon, const int flag)
 {
   if (icon) {
-    ui_icon_ensure_deferred(static_cast<const kContext *>(but->block->evil_C),
-                            icon,
-                            (flag & UI_BUT_ICON_PREVIEW) != 0);
+    // ui_icon_ensure_deferred(static_cast<const kContext *>(but->block->evil_C),
+    //                         icon,
+    //                         (flag & UI_BUT_ICON_PREVIEW) != 0);
   }
   but->icon = (KIFIconID)icon;
   but->flag |= flag;
@@ -4887,11 +4885,6 @@ uiBut *uiDefButImage(uiBlock *block,
   }
   ui_but_update(but);
   return but;
-}
-
-kTheme *UI_GetTheme(void)
-{
-  return (kTheme *)U.themes.first;
 }
 
 uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
@@ -6450,7 +6443,7 @@ void UI_but_func_search_set(uiBut *but,
                             uiButSearchCreateFn search_create_fn,
                             uiButSearchUpdateFn search_update_fn,
                             void *arg,
-                            const bool free_arg,
+                            bool free_arg,
                             uiFreeArgFunc search_arg_free_fn,
                             uiButHandleFunc search_exec_fn,
                             void *active)
@@ -6462,7 +6455,7 @@ void UI_but_func_search_set(uiBut *but,
   /* needed since callers don't have access to internal functions
    * (as an alternative we could expose it) */
   if (search_create_fn == nullptr) {
-    search_create_fn = ui_searchbox_create_generic;
+    // search_create_fn = ui_searchbox_create_generic;
   }
 
   if (search_but->arg_free_fn != nullptr) {
@@ -6498,7 +6491,7 @@ void UI_but_func_search_set(uiBut *but,
   if (0 == (but->block->flag & UI_BLOCK_LOOP) && !search_but->results_are_suggestions) {
     /* skip empty buttons, not all buttons need input, we only show invalid */
     if (but->drawstr[0]) {
-      ui_but_search_refresh(search_but);
+      // ui_but_search_refresh(search_but);
     }
   }
 }
@@ -6633,14 +6626,14 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
                            const char *tip)
 {
   uiBut *but = uiDefSearchBut(block, arg, retval, icon, maxlen, x, y, width, height, a1, a2, tip);
-  UI_but_func_search_set(but,
-                         ui_searchbox_create_generic,
-                         operator_enum_search_update_fn,
-                         but,
-                         false,
-                         nullptr,
-                         operator_enum_search_exec_fn,
-                         nullptr);
+  // UI_but_func_search_set(but,
+  //                        ui_searchbox_create_generic,
+  //                        operator_enum_search_update_fn,
+  //                        but,
+  //                        false,
+  //                        nullptr,
+  //                        operator_enum_search_exec_fn,
+  //                        nullptr);
 
   but->optype = ot;
   but->opcontext = WM_OP_EXEC_DEFAULT;
@@ -6979,7 +6972,7 @@ void UI_reinit_font(void)
 void UI_exit(void)
 {
   ui_resources_free();
-  ui_but_clipboard_free();
+  // ui_but_clipboard_free();
 }
 
 void UI_interface_tag_script_reload(void)

@@ -159,7 +159,76 @@ set(MSL_SRC
 
 set(GLSL_SRC 
   GPU_shader_shared.h
-  # .glsl shaders go here
+
+  shaders/gpu_shader_depth_only_frag.glsl
+  shaders/gpu_shader_uniform_color_frag.glsl
+  shaders/gpu_shader_checker_frag.glsl
+  shaders/gpu_shader_diag_stripes_frag.glsl
+  shaders/gpu_shader_simple_lighting_frag.glsl
+  shaders/gpu_shader_flat_color_frag.glsl
+  shaders/gpu_shader_flat_color_alpha_test_0_frag.glsl
+  shaders/gpu_shader_flat_id_frag.glsl
+  shaders/gpu_shader_2D_vert.glsl
+  shaders/gpu_shader_2D_area_borders_vert.glsl
+  shaders/gpu_shader_2D_area_borders_frag.glsl
+  shaders/gpu_shader_2D_widget_base_vert.glsl
+  shaders/gpu_shader_2D_widget_base_frag.glsl
+  shaders/gpu_shader_2D_widget_shadow_vert.glsl
+  shaders/gpu_shader_2D_widget_shadow_frag.glsl
+  shaders/gpu_shader_2D_nodelink_frag.glsl
+  shaders/gpu_shader_2D_nodelink_vert.glsl
+  shaders/gpu_shader_2D_line_dashed_frag.glsl
+  shaders/gpu_shader_2D_image_vert.glsl
+  shaders/gpu_shader_2D_image_rect_vert.glsl
+  shaders/gpu_shader_2D_image_multi_rect_vert.glsl
+  shaders/gpu_shader_image_frag.glsl
+  shaders/gpu_shader_image_desaturate_frag.glsl
+  shaders/gpu_shader_image_overlays_merge_frag.glsl
+  shaders/gpu_shader_image_overlays_stereo_merge_frag.glsl
+  shaders/gpu_shader_image_shuffle_color_frag.glsl
+  shaders/gpu_shader_image_color_frag.glsl
+  shaders/gpu_shader_image_varying_color_frag.glsl
+  shaders/gpu_shader_3D_image_vert.glsl
+  shaders/gpu_shader_3D_vert.glsl
+  shaders/gpu_shader_3D_normal_vert.glsl
+  shaders/gpu_shader_3D_flat_color_vert.glsl
+  shaders/gpu_shader_3D_line_dashed_uniform_color_vert.glsl
+  shaders/gpu_shader_3D_polyline_frag.glsl
+  shaders/gpu_shader_3D_polyline_geom.glsl
+  shaders/gpu_shader_3D_polyline_vert.glsl
+  shaders/gpu_shader_3D_polyline_vert_no_geom.glsl
+  shaders/gpu_shader_3D_smooth_color_vert.glsl
+  shaders/gpu_shader_3D_smooth_color_frag.glsl
+  shaders/gpu_shader_3D_passthrough_vert.glsl
+  shaders/gpu_shader_3D_clipped_uniform_color_vert.glsl
+
+  shaders/gpu_shader_instance_variying_size_variying_color_vert.glsl
+
+  shaders/gpu_shader_point_uniform_color_aa_frag.glsl
+  shaders/gpu_shader_point_uniform_color_outline_aa_frag.glsl
+  shaders/gpu_shader_point_varying_color_varying_outline_aa_frag.glsl
+  shaders/gpu_shader_point_varying_color_frag.glsl
+  shaders/gpu_shader_3D_point_fixed_size_varying_color_vert.glsl
+  shaders/gpu_shader_3D_point_varying_size_varying_color_vert.glsl
+  shaders/gpu_shader_3D_point_uniform_size_aa_vert.glsl
+  shaders/gpu_shader_2D_point_varying_size_varying_color_vert.glsl
+  shaders/gpu_shader_2D_point_uniform_size_aa_vert.glsl
+  shaders/gpu_shader_2D_point_uniform_size_outline_aa_vert.glsl
+
+  shaders/gpu_shader_text_vert.glsl
+  shaders/gpu_shader_text_frag.glsl
+  shaders/gpu_shader_keyframe_shape_vert.glsl
+  shaders/gpu_shader_keyframe_shape_frag.glsl
+
+  shaders/gpu_shader_codegen_lib.glsl
+
+  shaders/gpu_shader_gpencil_stroke_vert.glsl
+  shaders/gpu_shader_gpencil_stroke_frag.glsl
+  shaders/gpu_shader_gpencil_stroke_geom.glsl
+
+  shaders/gpu_shader_cfg_world_clip_lib.glsl
+  shaders/gpu_shader_colorspace_lib.glsl
+
   GPU_shader_shared_utils.h
 )
 
