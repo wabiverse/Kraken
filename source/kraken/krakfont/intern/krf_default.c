@@ -20,14 +20,8 @@
 
 /* Default size and dpi, for KRF_draw_default. */
 static int global_font_default = -1;
-static int global_font_dpi = 72;
 /* Keep in sync with `UI_DEFAULT_TEXT_POINTS` */
 static float global_font_size = 11.0f;
-
-void KRF_default_dpi(int dpi)
-{
-  global_font_dpi = dpi;
-}
 
 void KRF_default_size(float size)
 {
@@ -51,7 +45,7 @@ int KRF_set_default(void)
 {
   ASSERT_DEFAULT_SET;
 
-  KRF_size(global_font_default, global_font_size, global_font_dpi);
+  KRF_size(global_font_default, global_font_size * U.dpi_fac);
 
   return global_font_default;
 }
@@ -59,7 +53,7 @@ int KRF_set_default(void)
 void KRF_draw_default(float x, float y, float z, const char *str, const size_t str_len)
 {
   ASSERT_DEFAULT_SET;
-  KRF_size(global_font_default, global_font_size, global_font_dpi);
+  KRF_size(global_font_default, global_font_size * U.dpi_fac);
   KRF_position(global_font_default, x, y, z);
   KRF_draw(global_font_default, str, str_len);
 }

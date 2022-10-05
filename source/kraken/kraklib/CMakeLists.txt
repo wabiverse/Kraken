@@ -54,6 +54,7 @@ set(SRC
   intern/hash_mm3.c
   intern/lazy_threading.cc
   intern/listbase.c
+  intern/string_cursor_utf8.c
   intern/task_scheduler.cc
 
   intern/KLI_mempool_private.h
@@ -117,6 +118,7 @@ set(SRC
   KLI_simd.h
   KLI_span.hh
   KLI_strict_flags.h
+  KLI_string_cursor_utf8.h
   KLI_string.h
   KLI_string_ref.hh
   KLI_string_utf8.h

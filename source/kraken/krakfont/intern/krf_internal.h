@@ -77,7 +77,7 @@ void krf_font_attach_from_mem(struct FontKRF *font, const unsigned char *mem, si
 /**
  * Change font's output size. Returns true if successful in changing the size.
  */
-bool krf_font_size(struct FontKRF *font, float size, unsigned int dpi);
+bool krf_font_size(struct FontKRF *font, float size);
 
 void krf_font_draw(struct FontKRF *font,
                    const char *str,
@@ -100,10 +100,16 @@ void krf_font_draw_buffer__wrap(struct FontKRF *font,
                                 const char *str,
                                 size_t str_len,
                                 struct ResultKRF *r_info);
-size_t krf_font_width_to_strlen(
-    struct FontKRF *font, const char *str, size_t str_len, int width, int *r_width);
-size_t krf_font_width_to_rstrlen(
-    struct FontKRF *font, const char *str, size_t str_len, int width, int *r_width);
+size_t krf_font_width_to_strlen(struct FontKRF *font,
+                                const char *str,
+                                size_t str_len,
+                                int width,
+                                int *r_width);
+size_t krf_font_width_to_rstrlen(struct FontKRF *font,
+                                 const char *str,
+                                 size_t str_len,
+                                 int width,
+                                 int *r_width);
 void krf_font_boundbox(struct FontKRF *font,
                        const char *str,
                        size_t str_len,
@@ -141,18 +147,19 @@ void krf_font_boundbox_foreach_glyph(struct FontKRF *font,
                                      size_t str_len,
                                      bool (*user_fn)(const char *str,
                                                      size_t str_step_ofs,
-                                                     const struct rcti *glyph_step_bounds,
-                                                     int glyph_advance_x,
-                                                     const struct rcti *glyph_bounds,
-                                                     const int glyph_bearing[2],
+                                                     const struct rcti *bounds,
                                                      void *user_data),
-                                     void *user_data,
-                                     struct ResultKRF *r_info);
+                                     void *user_data);
 
-int krf_font_count_missing_chars(struct FontKRF *font,
-                                 const char *str,
-                                 size_t str_len,
-                                 int *r_tot_chars);
+size_t krf_str_offset_from_cursor_position(struct FontKRF *font,
+                                           const char *str,
+                                           size_t str_len,
+                                           int location_x);
+
+void krf_str_offset_to_glyph_bounds(struct FontKRF *font,
+                                    const char *str,
+                                    size_t str_offset,
+                                    struct rcti *glyph_bounds);
 
 void krf_font_free(struct FontKRF *font);
 
@@ -166,8 +173,11 @@ void krf_glyph_cache_clear(struct FontKRF *font);
 struct GlyphKRF *krf_glyph_ensure(struct FontKRF *font, struct GlyphCacheKRF *gc, uint charcode);
 
 void krf_glyph_free(struct GlyphKRF *g);
-void krf_glyph_draw(
-    struct FontKRF *font, struct GlyphCacheKRF *gc, struct GlyphKRF *g, int x, int y);
+void krf_glyph_draw(struct FontKRF *font,
+                    struct GlyphCacheKRF *gc,
+                    struct GlyphKRF *g,
+                    int x,
+                    int y);
 
 #ifdef WIN32
 /* krf_font_win32_compat.c */

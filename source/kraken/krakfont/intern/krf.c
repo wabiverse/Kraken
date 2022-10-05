@@ -63,8 +63,6 @@ int KRF_init(void)
     global_font[i] = NULL;
   }
 
-  KRF_default_dpi(72);
-
   return krf_font_init();
 }
 
@@ -357,12 +355,12 @@ void KRF_position(int fontid, float x, float y, float z)
   }
 }
 
-void KRF_size(int fontid, float size, int dpi)
+void KRF_size(int fontid, float size)
 {
   FontKRF *font = krf_get(fontid);
 
   if (font) {
-    krf_font_size(font, size, dpi);
+    krf_font_size(font, size);
   }
 }
 
@@ -564,34 +562,47 @@ int KRF_draw_mono(int fontid, const char *str, const size_t str_len, int cwidth)
   return columns;
 }
 
-void KRF_boundbox_foreach_glyph_ex(int fontid,
-                                   const char *str,
-                                   size_t str_len,
-                                   KRF_GlyphBoundsFn user_fn,
-                                   void *user_data,
-                                   struct ResultKRF *r_info)
-{
-  FontKRF *font = krf_get(fontid);
-
-  KRF_RESULT_CHECK_INIT(r_info);
-
-  if (font) {
-    if (font->flags & KRF_WORD_WRAP) {
-      /* TODO: word-wrap support. */
-      KLI_assert(0);
-    } else {
-      krf_font_boundbox_foreach_glyph(font, str, str_len, user_fn, user_data, r_info);
-    }
-  }
-}
-
 void KRF_boundbox_foreach_glyph(int fontid,
                                 const char *str,
                                 const size_t str_len,
                                 KRF_GlyphBoundsFn user_fn,
                                 void *user_data)
 {
-  KRF_boundbox_foreach_glyph_ex(fontid, str, str_len, user_fn, user_data, NULL);
+  FontKRF *font = krf_get(fontid);
+
+  if (font) {
+    if (font->flags & KRF_WORD_WRAP) {
+      /* TODO: word-wrap support. */
+      KLI_assert(0);
+    } else {
+      krf_font_boundbox_foreach_glyph(font, str, str_len, user_fn, user_data);
+    }
+  }
+}
+
+size_t KRF_str_offset_from_cursor_position(int fontid,
+                                           const char *str,
+                                           size_t str_len,
+                                           int location_x)
+{
+  FontKRF *font = krf_get(fontid);
+  if (font) {
+    return krf_str_offset_from_cursor_position(font, str, str_len, location_x);
+  }
+  return 0;
+}
+
+bool BLF_str_offset_to_glyph_bounds(int fontid,
+                                    const char *str,
+                                    size_t str_offset,
+                                    rcti *glyph_bounds)
+{
+  FontKRF *font = krf_get(fontid);
+  if (font) {
+    krf_str_offset_to_glyph_bounds(font, str, str_offset, glyph_bounds);
+    return true;
+  }
+  return false;
 }
 
 size_t KRF_width_to_strlen(int fontid,
@@ -918,7 +929,6 @@ void KRF_state_print(int fontid)
     printf("fontid %d %p\n", fontid, (void *)font);
     printf("  name:    '%s'\n", font->name);
     printf("  size:     %f\n", font->size);
-    printf("  dpi:      %u\n", font->dpi);
     printf("  pos:      %d %d %d\n", UNPACK3(font->pos));
     printf("  aspect:   (%d) %.6f %.6f %.6f\n",
            (font->flags & KRF_ROTATION) != 0,

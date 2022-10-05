@@ -69,7 +69,7 @@ void KRF_metrics_attach(int fontid, unsigned char *mem, int mem_size);
 
 void KRF_aspect(int fontid, float x, float y, float z);
 void KRF_position(int fontid, float x, float y, float z);
-void KRF_size(int fontid, float size, int dpi);
+void KRF_size(int fontid, float size);
 
 /* Goal: small but useful color API. */
 
@@ -121,31 +121,38 @@ int KRF_draw_mono(int fontid, const char *str, size_t str_len, int cwidth) ATTR_
 
 typedef bool (*KRF_GlyphBoundsFn)(const char *str,
                                   size_t str_step_ofs,
-                                  const struct rcti *glyph_step_bounds,
-                                  int glyph_advance_x,
-                                  const struct rcti *glyph_bounds,
-                                  const int glyph_bearing[2],
+                                  const struct rcti *bounds,
                                   void *user_data);
 
 /**
- * Run \a user_fn for each character, with the bound-box that would be used for drawing.
+ * Run @a user_fn for each character, with the bound-box that would be used for drawing.
  *
  * @param user_fn: Callback that runs on each glyph, returning false early exits.
- * @param user_data: User argument passed to \a user_fn.
+ * @param user_data: User argument passed to @a user_fn.
  *
  * @note The font position, clipping, matrix and rotation are not applied.
  */
-void KRF_boundbox_foreach_glyph_ex(int fontid,
-                                   const char *str,
-                                   size_t str_len,
-                                   KRF_GlyphBoundsFn user_fn,
-                                   void *user_data,
-                                   struct ResultKRF *r_info) ATTR_NONNULL(2);
 void KRF_boundbox_foreach_glyph(int fontid,
                                 const char *str,
                                 size_t str_len,
                                 KRF_GlyphBoundsFn user_fn,
                                 void *user_data) ATTR_NONNULL(2);
+
+/**
+ * Get the byte offset within a string, selected by mouse at a horizontal location.
+ */
+size_t KRF_str_offset_from_cursor_position(int fontid,
+                                           const char *str,
+                                           size_t str_len,
+                                           int location_x);
+
+/**
+ * Return bounds of the glyph rect at the string offset.
+ */
+bool KRF_str_offset_to_glyph_bounds(int fontid,
+                                    const char *str,
+                                    size_t str_offset,
+                                    struct rcti *glyph_bounds);
 
 /**
  * Get the string byte offset that fits within a given width.
@@ -302,20 +309,11 @@ void KRF_dir_free(char **dirs, int count) ATTR_NONNULL();
  *
  * @note called from a thread, so it bypasses the normal KRF_* api (which isn't thread-safe).
  */
-void KRF_thumb_preview(const char *filepath,
-                       const char **draw_str,
-                       const char **i18n_draw_str,
-                       unsigned char draw_str_lines,
-                       const float font_color[4],
-                       int font_size,
-                       unsigned char *buf,
-                       int w,
-                       int h,
-                       int channels) ATTR_NONNULL();
+bool KRF_thumb_preview(const char *filename, unsigned char *buf, int w, int h, int channels)
+  ATTR_NONNULL();
 
 /* krf_default.c */
 
-void KRF_default_dpi(int dpi);
 void KRF_default_size(float size);
 void KRF_default_set(int fontid);
 /**

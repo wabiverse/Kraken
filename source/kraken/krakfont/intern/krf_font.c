@@ -33,6 +33,7 @@
 #include "KLI_path_utils.h"
 #include "KLI_rect.h"
 #include "KLI_string.h"
+#include "KLI_string_cursor_utf8.h"
 #include "KLI_string_utf8.h"
 #include "KLI_threads.h"
 
@@ -99,8 +100,7 @@ static FT_Error krf_cache_face_requester(FTC_FaceID faceID,
   KLI_mutex_lock(&ft_lib_mutex);
   if (font->filepath) {
     err = FT_New_Face(lib, font->filepath, 0, face);
-  }
-  else if (font->mem) {
+  } else if (font->mem) {
     err = FT_New_Memory_Face(lib, font->mem, (FT_Long)font->mem_size, 0, face);
   }
   KLI_mutex_unlock(&ft_lib_mutex);
@@ -109,8 +109,7 @@ static FT_Error krf_cache_face_requester(FTC_FaceID faceID,
     font->face = *face;
     font->face->generic.data = font;
     font->face->generic.finalizer = krf_face_finalizer;
-  }
-  else {
+  } else {
     /* Clear this on error to avoid exception in FTC_Manager_LookupFace. */
     *face = NULL;
   }
@@ -176,11 +175,11 @@ static void krf_batch_draw_init(void)
 {
   GPUVertFormat format = {0};
   g_batch.pos_loc = GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
-  g_batch.col_loc = GPU_vertformat_attr_add(
-      &format, "col", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
+  g_batch.col_loc =
+    GPU_vertformat_attr_add(&format, "col", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
   g_batch.offset_loc = GPU_vertformat_attr_add(&format, "offset", GPU_COMP_I32, 1, GPU_FETCH_INT);
-  g_batch.glyph_size_loc = GPU_vertformat_attr_add(
-      &format, "glyph_size", GPU_COMP_I32, 2, GPU_FETCH_INT);
+  g_batch.glyph_size_loc =
+    GPU_vertformat_attr_add(&format, "glyph_size", GPU_COMP_I32, 2, GPU_FETCH_INT);
 
   g_batch.verts = GPU_vertbuf_create_with_format_ex(&format, GPU_USAGE_STREAM);
   GPU_vertbuf_data_alloc(g_batch.verts, KRF_BATCH_DRAW_LEN_MAX);
@@ -221,8 +220,7 @@ void krf_batch_draw_begin(FontKRF *font)
     /* Offset is applied to each glyph. */
     g_batch.ofs[0] = font->pos[0];
     g_batch.ofs[1] = font->pos[1];
-  }
-  else {
+  } else {
     /* Offset is baked in model-view matrix. */
     zero_v2_int(g_batch.ofs);
   }
@@ -245,8 +243,7 @@ void krf_batch_draw_begin(FontKRF *font)
       krf_batch_draw();
       g_batch.simple_shader = simple_shader;
       g_batch.font = font;
-    }
-    else {
+    } else {
       /* Nothing changed continue batching. */
       return;
     }
@@ -256,8 +253,7 @@ void krf_batch_draw_begin(FontKRF *font)
       /* Save for next `memcmp`. */
       memcpy(g_batch.mat, gpumat, sizeof(g_batch.mat));
     }
-  }
-  else {
+  } else {
     /* flush cache */
     krf_batch_draw();
     g_batch.font = font;
@@ -356,8 +352,11 @@ static void krf_batch_draw_end(void)
  * characters.
  */
 
-KLI_INLINE GlyphKRF *krf_glyph_from_utf8_and_step(
-    FontKRF *font, GlyphCacheKRF *gc, const char *str, size_t str_len, size_t *i_p)
+KLI_INLINE GlyphKRF *krf_glyph_from_utf8_and_step(FontKRF *font,
+                                                  GlyphCacheKRF *gc,
+                                                  const char *str,
+                                                  size_t str_len,
+                                                  size_t *i_p)
 {
   uint charcode = KLI_str_utf8_as_unicode_step(str, str_len, i_p);
   /* Invalid unicode sequences return the byte value, stepping forward one.
@@ -512,8 +511,7 @@ MINLINE void blend_color_mix_byte(uchar dst[4], const uchar src1[4], const uchar
     dst[1] = (uchar)divide_round_i(tmp[1], tmp[3]);
     dst[2] = (uchar)divide_round_i(tmp[2], tmp[3]);
     dst[3] = (uchar)divide_round_i(tmp[3], 255);
-  }
-  else {
+  } else {
     /* no op */
     copy_v4_v4_uchar(dst, src1);
   }
@@ -530,8 +528,7 @@ MINLINE void blend_color_mix_float(float dst[4], const float src1[4], const floa
     dst[1] = mt * src1[1] + src2[1];
     dst[2] = mt * src1[2] + src2[2];
     dst[3] = mt * src1[3] + t;
-  }
-  else {
+  } else {
     /* no op */
     copy_v4_v4(dst, src1);
   }
@@ -577,8 +574,7 @@ static void krf_font_draw_buffer_ex(FontKRF *font,
 
     if (g->pitch < 0) {
       pen_y = pen_y_basis + ft_pix_from_int(g->dims[1] - g->pos[1]);
-    }
-    else {
+    } else {
       pen_y = pen_y_basis - ft_pix_from_int(g->dims[1] - g->pos[1]);
     }
 
@@ -629,8 +625,7 @@ static void krf_font_draw_buffer_ex(FontKRF *font,
 
           if (g->pitch < 0) {
             yb++;
-          }
-          else {
+          } else {
             yb--;
           }
         }
@@ -660,8 +655,7 @@ static void krf_font_draw_buffer_ex(FontKRF *font,
 
           if (g->pitch < 0) {
             yb++;
-          }
-          else {
+          } else {
             yb--;
           }
         }
@@ -698,8 +692,11 @@ void krf_font_draw_buffer(FontKRF *font,
  * - #KRF_width_to_rstrlen
  * \{ */
 
-static bool krf_font_width_to_strlen_glyph_process(
-    FontKRF *font, GlyphKRF *g_prev, GlyphKRF *g, ft_pix *pen_x, const int width_i)
+static bool krf_font_width_to_strlen_glyph_process(FontKRF *font,
+                                                   GlyphKRF *g_prev,
+                                                   GlyphKRF *g,
+                                                   ft_pix *pen_x,
+                                                   const int width_i)
 {
   if (UNLIKELY(g == NULL)) {
     return false; /* continue the calling loop. */
@@ -711,8 +708,11 @@ static bool krf_font_width_to_strlen_glyph_process(
   return (ft_pix_to_int(*pen_x) >= width_i);
 }
 
-size_t krf_font_width_to_strlen(
-    FontKRF *font, const char *str, const size_t str_len, int width, int *r_width)
+size_t krf_font_width_to_strlen(FontKRF *font,
+                                const char *str,
+                                const size_t str_len,
+                                int width,
+                                int *r_width)
 {
   GlyphKRF *g, *g_prev;
   ft_pix pen_x;
@@ -739,8 +739,11 @@ size_t krf_font_width_to_strlen(
   return i_prev;
 }
 
-size_t krf_font_width_to_rstrlen(
-    FontKRF *font, const char *str, const size_t str_len, int width, int *r_width)
+size_t krf_font_width_to_rstrlen(FontKRF *font,
+                                 const char *str,
+                                 const size_t str_len,
+                                 int width,
+                                 int *r_width)
 {
   GlyphKRF *g, *g_prev;
   ft_pix pen_x, width_new;
@@ -853,8 +856,11 @@ static void krf_font_boundbox_ex(FontKRF *font,
     r_info->width = ft_pix_to_int(pen_x);
   }
 }
-void krf_font_boundbox(
-    FontKRF *font, const char *str, const size_t str_len, rcti *r_box, struct ResultKRF *r_info)
+void krf_font_boundbox(FontKRF *font,
+                       const char *str,
+                       const size_t str_len,
+                       rcti *r_box,
+                       struct ResultKRF *r_info)
 {
   GlyphCacheKRF *gc = krf_glyph_cache_acquire(font);
   krf_font_boundbox_ex(font, gc, str, str_len, r_box, r_info, 0);
@@ -874,16 +880,14 @@ void krf_font_width_and_height(FontKRF *font,
   if (font->flags & KRF_ASPECT) {
     xa = font->aspect[0];
     ya = font->aspect[1];
-  }
-  else {
+  } else {
     xa = 1.0f;
     ya = 1.0f;
   }
 
   if (font->flags & KRF_WORD_WRAP) {
     krf_font_boundbox__wrap(font, str, str_len, &box, r_info);
-  }
-  else {
+  } else {
     krf_font_boundbox(font, str, str_len, &box, r_info);
   }
   *r_width = ((float)KLI_rcti_size_x(&box) * xa);
@@ -900,15 +904,13 @@ float krf_font_width(FontKRF *font,
 
   if (font->flags & KRF_ASPECT) {
     xa = font->aspect[0];
-  }
-  else {
+  } else {
     xa = 1.0f;
   }
 
   if (font->flags & KRF_WORD_WRAP) {
     krf_font_boundbox__wrap(font, str, str_len, &box, r_info);
-  }
-  else {
+  } else {
     krf_font_boundbox(font, str, str_len, &box, r_info);
   }
   return (float)KLI_rcti_size_x(&box) * xa;
@@ -924,15 +926,13 @@ float krf_font_height(FontKRF *font,
 
   if (font->flags & KRF_ASPECT) {
     ya = font->aspect[1];
-  }
-  else {
+  } else {
     ya = 1.0f;
   }
 
   if (font->flags & KRF_WORD_WRAP) {
     krf_font_boundbox__wrap(font, str, str_len, &box, r_info);
-  }
-  else {
+  } else {
     krf_font_boundbox(font, str, str_len, &box, r_info);
   }
   return (float)KLI_rcti_size_y(&box) * ya;
@@ -946,24 +946,22 @@ float krf_font_fixed_width(FontKRF *font)
   return width;
 }
 
-static void krf_font_boundbox_foreach_glyph_ex(FontKRF *font,
-                                               GlyphCacheKRF *gc,
-                                               const char *str,
-                                               const size_t str_len,
-                                               KRF_GlyphBoundsFn user_fn,
-                                               void *user_data,
-                                               struct ResultKRF *r_info,
-                                               ft_pix pen_y)
+void krf_font_boundbox_foreach_glyph(FontKRF *font,
+                                     const char *str,
+                                     const size_t str_len,
+                                     KRF_GlyphBoundsFn user_fn,
+                                     void *user_data)
 {
   GlyphKRF *g, *g_prev = NULL;
   ft_pix pen_x = 0;
   size_t i = 0, i_curr;
-  rcti gbox_px;
 
   if (str_len == 0 || str[0] == 0) {
     /* early output. */
     return;
   }
+
+  GlyphCacheKRF *gc = krf_glyph_cache_acquire(font);
 
   while ((i < str_len) && str[i]) {
     i_curr = i;
@@ -973,44 +971,96 @@ static void krf_font_boundbox_foreach_glyph_ex(FontKRF *font,
       continue;
     }
     pen_x += krf_kerning(font, g_prev, g);
-    const ft_pix pen_x_next = ft_pix_round_advance(pen_x, g->advance_x);
 
-    gbox_px.xmin = ft_pix_to_int_floor(pen_x);
-    gbox_px.xmax = ft_pix_to_int_ceil(pen_x_next);
-    gbox_px.ymin = ft_pix_to_int_floor(pen_y);
-    gbox_px.ymax = gbox_px.ymin - g->dims[1];
-    const int advance_x_px = gbox_px.xmax - gbox_px.xmin;
+    rcti bounds;
+    bounds.xmin = ft_pix_to_int_floor(pen_x) + ft_pix_to_int_floor(g->box_xmin);
+    bounds.xmax = ft_pix_to_int_floor(pen_x) + ft_pix_to_int_ceil(g->box_xmax);
+    bounds.ymin = ft_pix_to_int_floor(g->box_ymin);
+    bounds.ymax = ft_pix_to_int_ceil(g->box_ymax);
 
-    pen_x = pen_x_next;
-
-    rcti box_px;
-    box_px.xmin = ft_pix_to_int_floor(g->box_xmin);
-    box_px.xmax = ft_pix_to_int_ceil(g->box_xmax);
-    box_px.ymin = ft_pix_to_int_floor(g->box_ymin);
-    box_px.ymax = ft_pix_to_int_ceil(g->box_ymax);
-
-    if (user_fn(str, i_curr, &gbox_px, advance_x_px, &box_px, g->pos, user_data) == false) {
+    if (user_fn(str, i_curr, &bounds, user_data) == false) {
       break;
     }
-
+    pen_x = ft_pix_round_advance(pen_x, g->advance_x);
     g_prev = g;
   }
 
-  if (r_info) {
-    r_info->lines = 1;
-    r_info->width = ft_pix_to_int(pen_x);
-  }
-}
-void krf_font_boundbox_foreach_glyph(FontKRF *font,
-                                     const char *str,
-                                     const size_t str_len,
-                                     KRF_GlyphBoundsFn user_fn,
-                                     void *user_data,
-                                     struct ResultKRF *r_info)
-{
-  GlyphCacheKRF *gc = krf_glyph_cache_acquire(font);
-  krf_font_boundbox_foreach_glyph_ex(font, gc, str, str_len, user_fn, user_data, r_info, 0);
   krf_glyph_cache_release(font);
+}
+
+typedef struct CursorPositionForeachGlyph_Data
+{
+  /** Horizontal position to test. */
+  int location_x;
+  /** Write the character offset here. */
+  size_t r_offset;
+} CursorPositionForeachGlyph_Data;
+
+static bool krf_cursor_position_foreach_glyph(const char *UNUSED(str),
+                                              const size_t str_step_ofs,
+                                              const rcti *bounds,
+                                              void *user_data)
+{
+  CursorPositionForeachGlyph_Data *data = user_data;
+  if (data->location_x < (bounds->xmin + bounds->xmax) / 2) {
+    data->r_offset = str_step_ofs;
+    return false;
+  }
+  return true;
+}
+
+size_t krf_str_offset_from_cursor_position(struct FontKRF *font,
+                                           const char *str,
+                                           size_t str_len,
+                                           int location_x)
+{
+  CursorPositionForeachGlyph_Data data = {
+    .location_x = location_x,
+    .r_offset = (size_t)-1,
+  };
+  krf_font_boundbox_foreach_glyph(font, str, str_len, krf_cursor_position_foreach_glyph, &data);
+
+  if (data.r_offset == (size_t)-1) {
+    /* We are to the right of the string, so return position of null terminator. */
+    data.r_offset = KLI_strnlen(str, str_len);
+  } else if (KLI_str_utf8_char_width(&str[data.r_offset]) < 1) {
+    /* This is a combining character (or invalid), so move to previous visible valid char. */
+    KLI_str_cursor_step_prev_utf8(str, str_len, (int *)&data.r_offset);
+  }
+
+  return data.r_offset;
+}
+
+typedef struct StrOffsetToGlyphBounds_Data
+{
+  size_t str_offset;
+  rcti bounds;
+} StrOffsetToGlyphBounds_Data;
+
+static bool krf_str_offset_foreach_glyph(const char *UNUSED(str),
+                                         const size_t str_step_ofs,
+                                         const rcti *bounds,
+                                         void *user_data)
+{
+  StrOffsetToGlyphBounds_Data *data = user_data;
+  if (data->str_offset == str_step_ofs) {
+    data->bounds = *bounds;
+    return false;
+  }
+  return true;
+}
+
+void krf_str_offset_to_glyph_bounds(struct FontKRF *font,
+                                    const char *str,
+                                    size_t str_offset,
+                                    rcti *glyph_bounds)
+{
+  StrOffsetToGlyphBounds_Data data = {
+    .str_offset = str_offset,
+    .bounds = {0},
+  };
+  krf_font_boundbox_foreach_glyph(font, str, str_offset + 1, krf_str_offset_foreach_glyph, &data);
+  *glyph_bounds = data.bounds;
 }
 
 /** \} */
@@ -1051,10 +1101,15 @@ static void krf_font_wrap_apply(FontKRF *font,
 
   GlyphCacheKRF *gc = krf_glyph_cache_acquire(font);
 
-  struct WordWrapVars {
+  struct WordWrapVars
+  {
     ft_pix wrap_width;
     size_t start, last[2];
-  } wrap = {font->wrap_width != -1 ? ft_pix_from_int(font->wrap_width) : INT_MAX, 0, {0, 0}};
+  } wrap = {
+    font->wrap_width != -1 ? ft_pix_from_int(font->wrap_width) : INT_MAX,
+    0,
+    {0, 0}
+  };
 
   // printf("%s wrapping (%d, %d) `%s`:\n", __func__, str_len, strlen(str), str);
   while ((i < str_len) && str[i]) {
@@ -1081,19 +1136,16 @@ static void krf_font_wrap_apply(FontKRF *font,
     pen_x_next = ft_pix_round_advance(pen_x, g->advance_x);
     if (UNLIKELY((pen_x_next >= wrap.wrap_width) && (wrap.start != wrap.last[0]))) {
       do_draw = true;
-    }
-    else if (UNLIKELY(((i < str_len) && str[i]) == 0)) {
+    } else if (UNLIKELY(((i < str_len) && str[i]) == 0)) {
       /* need check here for trailing newline, else we draw it */
       wrap.last[0] = i + ((g->c != '\n') ? 1 : 0);
       wrap.last[1] = i;
       do_draw = true;
-    }
-    else if (UNLIKELY(g->c == '\n')) {
+    } else if (UNLIKELY(g->c == '\n')) {
       wrap.last[0] = i_curr + 1;
       wrap.last[1] = i;
       do_draw = true;
-    }
-    else if (UNLIKELY(g->c != ' ' && (g_prev ? g_prev->c == ' ' : false))) {
+    } else if (UNLIKELY(g->c != ' ' && (g_prev ? g_prev->c == ' ' : false))) {
       wrap.last[0] = i_curr;
       wrap.last[1] = i_curr;
     }
@@ -1159,8 +1211,11 @@ static void krf_font_boundbox_wrap_cb(FontKRF *font,
   krf_font_boundbox_ex(font, gc, str, str_len, &box_single, NULL, pen_y);
   KLI_rcti_union(box, &box_single);
 }
-void krf_font_boundbox__wrap(
-    FontKRF *font, const char *str, const size_t str_len, rcti *box, struct ResultKRF *r_info)
+void krf_font_boundbox__wrap(FontKRF *font,
+                             const char *str,
+                             const size_t str_len,
+                             rcti *box,
+                             struct ResultKRF *r_info)
 {
   box->xmin = 32000;
   box->xmax = -32000;
@@ -1186,38 +1241,6 @@ void krf_font_draw_buffer__wrap(FontKRF *font,
                                 struct ResultKRF *r_info)
 {
   krf_font_wrap_apply(font, str, str_len, r_info, krf_font_draw_buffer__wrap_cb, NULL);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Text Evaluation: Count Missing Characters
- * \{ */
-
-int krf_font_count_missing_chars(FontKRF *font,
-                                 const char *str,
-                                 const size_t str_len,
-                                 int *r_tot_chars)
-{
-  int missing = 0;
-  size_t i = 0;
-
-  *r_tot_chars = 0;
-  while (i < str_len) {
-    uint c;
-
-    if ((c = str[i]) < GLYPH_ASCII_TABLE_SIZE) {
-      i++;
-    }
-    else {
-      c = KLI_str_utf8_as_unicode_step(str, str_len, &i);
-      if (krf_get_char_index(font, c) == 0) {
-        missing++;
-      }
-    }
-    (*r_tot_chars)++;
-  }
-  return missing;
 }
 
 /** \} */
@@ -1345,7 +1368,6 @@ static void krf_font_fill(FontKRF *font)
   font->clip_rec.ymin = 0;
   font->clip_rec.ymax = 0;
   font->flags = 0;
-  font->dpi = 0;
   font->size = 0;
   KLI_listbase_clear(&font->cache);
   font->kerning_cache = NULL;
@@ -1382,8 +1404,7 @@ bool krf_ensure_face(FontKRF *font)
 
   if (font->flags & KRF_CACHED) {
     err = FTC_Manager_LookupFace(ftc_manager, font, &font->face);
-  }
-  else {
+  } else {
     KLI_mutex_lock(&ft_lib_mutex);
     if (font->filepath) {
       err = FT_New_Face(font->ft_lib, font->filepath, 0, &font->face);
@@ -1400,8 +1421,7 @@ bool krf_ensure_face(FontKRF *font)
   if (err) {
     if (ELEM(err, FT_Err_Unknown_File_Format, FT_Err_Unimplemented_Feature)) {
       printf("Format of this font file is not supported\n");
-    }
-    else {
+    } else {
       printf("Error encountered while opening font file\n");
     }
     font->flags |= KRF_BAD_FONT;
@@ -1477,7 +1497,8 @@ bool krf_ensure_face(FontKRF *font)
   return true;
 }
 
-struct FaceDetails {
+struct FaceDetails
+{
   char name[50];
   uint coverage1;
   uint coverage2;
@@ -1487,32 +1508,30 @@ struct FaceDetails {
 
 /* Details about the fallback fonts we ship, so that we can load only when needed. */
 static const struct FaceDetails static_face_details[] = {
-    {"lastresort.woff2", UINT32_MAX, UINT32_MAX, UINT32_MAX, UINT32_MAX},
-    {"Noto Sans CJK Regular.woff2", 0x30000083L, 0x2BDF3C10L, 0x16L, 0},
-    {"NotoEmoji-VariableFont_wght.woff2", 0x80000003L, 0x241E4ACL, 0x14000000L, 0x4000000L},
-    {"NotoSansArabic-VariableFont_wdth,wght.woff2",
-     TT_UCR_ARABIC,
-     (uint)TT_UCR_ARABIC_PRESENTATION_FORMS_A,
-     TT_UCR_ARABIC_PRESENTATION_FORMS_B,
-     0},
-    {"NotoSansArmenian-VariableFont_wdth,wght.woff2", TT_UCR_ARMENIAN, 0, 0, 0},
-    {"NotoSansBengali-VariableFont_wdth,wght.woff2", TT_UCR_BENGALI, 0, 0, 0},
-    {"NotoSansDevanagari-Regular.woff2", TT_UCR_DEVANAGARI, 0, 0, 0},
-    {"NotoSansEthiopic-Regular.woff2", 0, 0, TT_UCR_ETHIOPIC, 0},
-    {"NotoSansGeorgian-VariableFont_wdth,wght.woff2", TT_UCR_GEORGIAN, 0, 0, 0},
-    {"NotoSansGujarati-Regular.woff2", TT_UCR_GUJARATI, 0, 0, 0},
-    {"NotoSansGurmukhi-VariableFont_wdth,wght.woff2", TT_UCR_GURMUKHI, 0, 0, 0},
-    {"NotoSansHebrew-Regular.woff2", TT_UCR_HEBREW, 0, 0, 0},
-    {"NotoSansJavanese-Regular.woff2", 0x80000003L, 0x2000L, 0, 0},
-    {"NotoSansKannada-VariableFont_wdth,wght.woff2", TT_UCR_KANNADA, 0, 0, 0},
-    {"NotoSansMalayalam-VariableFont_wdth,wght.woff2", TT_UCR_MALAYALAM, 0, 0, 0},
-    {"NotoSansMath-Regular.woff2", 0, TT_UCR_MATHEMATICAL_OPERATORS, 0, 0},
-    {"NotoSansMyanmar-Regular.woff2", 0, 0, TT_UCR_MYANMAR, 0},
-    {"NotoSansSymbols-VariableFont_wght.woff2", 0x3L, 0x200E4B4L, 0, 0},
-    {"NotoSansSymbols2-Regular.woff2", 0x80000003L, 0x200E3E4L, 0x40020L, 0x580A048L},
-    {"NotoSansTamil-VariableFont_wdth,wght.woff2", TT_UCR_TAMIL, 0, 0, 0},
-    {"NotoSansTelugu-VariableFont_wdth,wght.woff2", TT_UCR_TELUGU, 0, 0, 0},
-    {"NotoSansThai-VariableFont_wdth,wght.woff2", TT_UCR_THAI, 0, 0, 0},
+  {"lastresort.woff2",                               UINT32_MAX,        UINT32_MAX,                               UINT32_MAX,      UINT32_MAX},
+  {"Noto Sans CJK Regular.woff2",                    0x30000083L,       0x2BDF3C10L,                              0x16L,           0         },
+  {"NotoEmoji-VariableFont_wght.woff2",              0x80000003L,       0x241E4ACL,                               0x14000000L,     0x4000000L},
+  {"NotoSansArabic-VariableFont_wdth,wght.woff2",
+   TT_UCR_ARABIC,                                                       (uint)TT_UCR_ARABIC_PRESENTATION_FORMS_A,
+   TT_UCR_ARABIC_PRESENTATION_FORMS_B,                                                                                             0         },
+  {"NotoSansArmenian-VariableFont_wdth,wght.woff2",  TT_UCR_ARMENIAN,   0,                                        0,               0         },
+  {"NotoSansBengali-VariableFont_wdth,wght.woff2",   TT_UCR_BENGALI,    0,                                        0,               0         },
+  {"NotoSansDevanagari-Regular.woff2",               TT_UCR_DEVANAGARI, 0,                                        0,               0         },
+  {"NotoSansEthiopic-Regular.woff2",                 0,                 0,                                        TT_UCR_ETHIOPIC, 0         },
+  {"NotoSansGeorgian-VariableFont_wdth,wght.woff2",  TT_UCR_GEORGIAN,   0,                                        0,               0         },
+  {"NotoSansGujarati-Regular.woff2",                 TT_UCR_GUJARATI,   0,                                        0,               0         },
+  {"NotoSansGurmukhi-VariableFont_wdth,wght.woff2",  TT_UCR_GURMUKHI,   0,                                        0,               0         },
+  {"NotoSansHebrew-Regular.woff2",                   TT_UCR_HEBREW,     0,                                        0,               0         },
+  {"NotoSansJavanese-Regular.woff2",                 0x80000003L,       0x2000L,                                  0,               0         },
+  {"NotoSansKannada-VariableFont_wdth,wght.woff2",   TT_UCR_KANNADA,    0,                                        0,               0         },
+  {"NotoSansMalayalam-VariableFont_wdth,wght.woff2", TT_UCR_MALAYALAM,  0,                                        0,               0         },
+  {"NotoSansMath-Regular.woff2",                     0,                 TT_UCR_MATHEMATICAL_OPERATORS,            0,               0         },
+  {"NotoSansMyanmar-Regular.woff2",                  0,                 0,                                        TT_UCR_MYANMAR,  0         },
+  {"NotoSansSymbols-VariableFont_wght.woff2",        0x3L,              0x200E4B4L,                               0,               0         },
+  {"NotoSansSymbols2-Regular.woff2",                 0x80000003L,       0x200E3E4L,                               0x40020L,        0x580A048L},
+  {"NotoSansTamil-VariableFont_wdth,wght.woff2",     TT_UCR_TAMIL,      0,                                        0,               0         },
+  {"NotoSansTelugu-VariableFont_wdth,wght.woff2",    TT_UCR_TELUGU,     0,                                        0,               0         },
+  {"NotoSansThai-VariableFont_wdth,wght.woff2",      TT_UCR_THAI,       0,                                        0,               0         },
 };
 
 /**
@@ -1538,8 +1557,7 @@ FontKRF *krf_font_new_ex(const char *name,
 
   if (ft_library && ((FT_Library)ft_library != ft_lib)) {
     font->ft_lib = (FT_Library)ft_library;
-  }
-  else {
+  } else {
     font->ft_lib = ft_lib;
     font->flags |= KRF_CACHED;
   }
@@ -1622,8 +1640,7 @@ void krf_font_free(FontKRF *font)
     KLI_mutex_lock(&ft_lib_mutex);
     if (font->flags & KRF_CACHED) {
       FTC_Manager_RemoveFaceID(ftc_manager, font);
-    }
-    else {
+    } else {
       FT_Done_Face(font->face);
     }
     KLI_mutex_unlock(&ft_lib_mutex);
@@ -1658,8 +1675,8 @@ void krf_ensure_size(FontKRF *font)
   scaler.width = 0;
   scaler.height = round_fl_to_uint(font->size * 64.0f);
   scaler.pixel = 0;
-  scaler.x_res = font->dpi;
-  scaler.y_res = font->dpi;
+  scaler.x_res = KRF_DPI;
+  scaler.y_res = KRF_DPI;
   if (FTC_Manager_LookupSize(ftc_manager, &scaler, &font->ft_size) == FT_Err_Ok) {
     font->ft_size->generic.data = (void *)font;
     font->ft_size->generic.finalizer = krf_size_finalizer;
@@ -1669,7 +1686,7 @@ void krf_ensure_size(FontKRF *font)
   KLI_assert_unreachable();
 }
 
-bool krf_font_size(FontKRF *font, float size, uint dpi)
+bool krf_font_size(FontKRF *font, float size)
 {
   if (!krf_ensure_face(font)) {
     return false;
@@ -1680,23 +1697,22 @@ bool krf_font_size(FontKRF *font, float size, uint dpi)
   /* Adjust our new size to be on even 64ths. */
   size = (float)ft_size / 64.0f;
 
-  if (font->size != size || font->dpi != dpi) {
+  if (font->size != size) {
     if (font->flags & KRF_CACHED) {
       FTC_ScalerRec scaler = {0};
       scaler.face_id = font;
       scaler.width = 0;
       scaler.height = ft_size;
       scaler.pixel = 0;
-      scaler.x_res = dpi;
-      scaler.y_res = dpi;
+      scaler.x_res = KRF_DPI;
+      scaler.y_res = KRF_DPI;
       if (FTC_Manager_LookupSize(ftc_manager, &scaler, &font->ft_size) != FT_Err_Ok) {
         return false;
       }
       font->ft_size->generic.data = (void *)font;
       font->ft_size->generic.finalizer = krf_size_finalizer;
-    }
-    else {
-      if (FT_Set_Char_Size(font->face, 0, ft_size, dpi, dpi) != FT_Err_Ok) {
+    } else {
+      if (FT_Set_Char_Size(font->face, 0, ft_size, KRF_DPI, KRF_DPI) != FT_Err_Ok) {
         return false;
       }
       font->ft_size = font->face->size;
@@ -1704,7 +1720,6 @@ bool krf_font_size(FontKRF *font, float size, uint dpi)
   }
 
   font->size = size;
-  font->dpi = dpi;
   return true;
 }
 

@@ -129,6 +129,18 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   return style;
 }
 
+static uiFont *uifont_to_krfont(int id)
+{
+  uiFont *font = static_cast<uiFont *>(U.uifonts.first);
+
+  for (; font; font = font->next) {
+    if (font->uifont_id == id) {
+      return font;
+    }
+  }
+  return static_cast<uiFont *>(U.uifonts.first);
+}
+
 const uiStyle *UI_style_get(void)
 {
 #if 0
@@ -284,4 +296,11 @@ void uiStyleInit(void)
 
   /* Load the fallback fonts last. */
   KRF_load_font_stack();
+}
+
+void UI_fontstyle_set(const uiFontStyle *fs)
+{
+  uiFont *font = uifont_to_krfont(fs->uifont_id);
+
+  KRF_size(font->blf_id, fs->points * U.dpi_fac);
 }

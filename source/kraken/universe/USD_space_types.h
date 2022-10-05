@@ -262,10 +262,10 @@ typedef struct SpaceOutliner
   /* treestore is an ordered list of TreeStoreElem's from outliner tree;
    * Note that treestore may contain duplicate elements if element
    * is used multiple times in outliner tree (e. g. linked objects)
-   * Also note that BLI_mempool can not be read/written in USD directly,
+   * Also note that KLI_mempool can not be read/written in USD directly,
    * therefore `readfile.c/writefile.c` linearize treestore into TreeStore structure
    */
-  struct BLI_mempool *treestore;
+  struct KLI_mempool *treestore;
 
   char search_string[64];
 
@@ -1184,7 +1184,7 @@ typedef struct FileDirEntry
   int preview_icon_id;
 
   short flags;
-  /* eFileAttributes defined in BLI_fileops.h */
+  /* eFileAttributes defined in KLI_fileops.h */
   int attributes;
 } FileDirEntry;
 
