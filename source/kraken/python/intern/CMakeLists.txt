@@ -37,7 +37,6 @@ set(SRC
   kpy_library.h
   kpy_path.h
   kpy_stage.h
-  kpy_utildefines.h
   kpy.h
 
   wabi_python.h
@@ -58,6 +57,7 @@ set(LIB
   maelstrom
   maelstrom_static
   kraken_editor_interface
+  kraken_python_ext
   kraken_python_gpu
   _tf
   _gf

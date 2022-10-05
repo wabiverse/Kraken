@@ -38,11 +38,13 @@
 #include "USD_file.h"
 #include "USD_space_types.h"
 
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
+
 #include "kpy_capi_utils.h"
 #include "kpy_interface.h"
 #include "kpy_library.h"
 #include "kpy_stage.h"
-#include "kpy_utildefines.h"
 
 #include <wabi/usd/sdf/layer.h>
 #include <wabi/usd/ar/resolver.h>

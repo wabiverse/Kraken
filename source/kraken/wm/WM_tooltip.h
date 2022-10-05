@@ -31,6 +31,7 @@
 
 
 void WM_tooltip_init(kContext *C, wmWindow *win);
+void WM_tooltip_refresh(kContext *C, wmWindow *win);
 void WM_tooltip_immediate_init(kContext *C,
                                wmWindow *win,
                                ScrArea *area,

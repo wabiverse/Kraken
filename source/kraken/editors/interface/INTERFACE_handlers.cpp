@@ -2920,6 +2920,17 @@ static void ui_blocks_set_tooltips(ARegion *region, const bool enable)
   }
 }
 
+void UI_but_tooltip_refresh(kContext *C, uiBut *but)
+{
+  uiHandleButtonData *data = but->active;
+  if (data) {
+    kScreen *screen = WM_window_get_active_screen(data->window);
+    if (screen->tool_tip && screen->tool_tip->region) {
+      WM_tooltip_refresh(C, data->window);
+    }
+  }
+}
+
 static void ui_but_extra_operator_icon_apply(kContext *C, uiBut *but, uiButExtraOpIcon *op_icon)
 {
   but->active->apply_through_extra_icon = true;

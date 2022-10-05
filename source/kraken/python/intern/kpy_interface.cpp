@@ -33,6 +33,9 @@
 #include "KKE_appdir.hh"
 #include "KKE_global.h"
 
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
+
 #include "KPY_api.h"
 #include "KPY_extern_python.h"
 

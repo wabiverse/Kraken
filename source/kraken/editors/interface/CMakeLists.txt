@@ -1,7 +1,7 @@
 set(INC
   .
   ./intern
-  ../include/.
+  ../include
   ../../../../. # Pixar USD
   ../../../../source
   ../../python
@@ -17,6 +17,7 @@ set(INC
   ../../../../intern/atomic
   ../../../../intern/clog
   ../../../../intern/guardedalloc
+  ${CMAKE_BINARY_DIR}/source/kraken/luxo
 )
 
 set(INC_SYS
@@ -33,6 +34,7 @@ set(SRC
   INTERFACE_handlers.cpp
   INTERFACE_kraken.cpp
   INTERFACE_layout.cpp
+  INTERFACE_ops.cpp
   INTERFACE_query.cpp
   INTERFACE_resources.c
   INTERFACE_region_menu_popup.cpp
@@ -54,6 +56,8 @@ set(SRC
 set(LIB
   maelstrom
   maelstrom_static
+  kraken_kernel
+  kraken_lib
   ${TBB_LIBRARIES}
   ${BOOST_LIBRARIES}
   ${PYTHON_LIBRARIES}

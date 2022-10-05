@@ -163,3 +163,15 @@ void WM_tooltip_timer_init(kContext *C,
   WM_tooltip_timer_init_ex(C, win, area, region, init, UI_TOOLTIP_DELAY);
 }
 
+void WM_tooltip_refresh(kContext *C, wmWindow *win)
+{
+  WM_tooltip_timer_clear(C, win);
+  kScreen *screen = WM_window_get_active_screen(win);
+  if (screen->tool_tip != NULL) {
+    if (screen->tool_tip->region) {
+      UI_tooltip_free(C, screen, screen->tool_tip->region);
+      screen->tool_tip->region = NULL;
+    }
+    WM_tooltip_init(C, win);
+  }
+}

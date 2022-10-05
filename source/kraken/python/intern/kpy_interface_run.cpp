@@ -27,6 +27,9 @@
 #include "KKE_context.h"
 #include "KKE_report.h"
 
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
+
 #include "KPY_api.h"
 #include "KPY_extern_run.h"
 

@@ -23,6 +23,13 @@
  */
 
 #include <vector>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#include "MEM_guardedalloc.h"
 
 #include "USD_wm_types.h"
 #include "USD_operator.h"
@@ -30,6 +37,14 @@
 #include "USD_region.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
+#include "USD_userdef_types.h"
+
+#include "KLI_listbase.h"
+#include "KLI_rect.h"
+#include "KLI_string.h"
+#include "KLI_utildefines.h"
+
+#include "KRF_api.h"
 
 #include "WM_draw.h"
 
@@ -40,6 +55,7 @@
 #include "KKE_context.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
+#include "KKE_global.h"
 
 #include "interface_intern.h"
 
@@ -62,12 +78,11 @@
 
 /* ********************************************** */
 
-static uiStyle *ui_style_new(std::vector<uiStyle *> styles, const char *name, short uifont_id)
+static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id)
 {
-  uiStyle *style = new uiStyle();
+  uiStyle *style = MEM_cnew<uiStyle>(__func__);
 
-  styles.push_back(style);
-
+  KLI_addtail(styles, style);
   KLI_strncpy(style->name, name, MAX_STYLE_NAME);
 
   style->panelzoom = 1.0; /* unused */
@@ -149,4 +164,124 @@ const uiStyle *UI_style_get_dpi(void)
   _style.panelouter = (short)(UI_DPI_FAC * _style.panelouter);
 
   return &_style;
+}
+
+/* ************** init exit ************************ */
+
+void uiStyleInit(void)
+{
+  const uiStyle *style = static_cast<uiStyle *>(U.uistyles.first);
+
+  /* Recover from uninitialized DPI. */
+  if (U.dpi == 0) {
+    U.dpi = 72;
+  }
+  CLAMP(U.dpi, 48, 144);
+
+  /* Needed so that custom fonts are always first. */
+  KRF_unload_all();
+
+  uiFont *font_first = static_cast<uiFont *>(U.uifonts.first);
+
+  /* default builtin */
+  if (font_first == nullptr) {
+    font_first = MEM_cnew<uiFont>(__func__);
+    KLI_addtail(&U.uifonts, font_first);
+  }
+
+  if (U.font_path_ui[0]) {
+    KLI_strncpy(font_first->filepath, U.font_path_ui, sizeof(font_first->filepath));
+    font_first->uifont_id = UIFONT_CUSTOM1;
+  } else {
+    KLI_strncpy(font_first->filepath, "default", sizeof(font_first->filepath));
+    font_first->uifont_id = UIFONT_DEFAULT;
+  }
+
+  LISTBASE_FOREACH(uiFont *, font, &U.uifonts)
+  {
+    const bool unique = false;
+
+    if (font->uifont_id == UIFONT_DEFAULT) {
+      font->blf_id = KRF_load_default(unique);
+    } else {
+      font->blf_id = KRF_load(font->filepath);
+      if (font->blf_id == -1) {
+        font->blf_id = KRF_load_default(unique);
+      }
+    }
+
+    KRF_default_set(font->blf_id);
+
+    if (font->blf_id == -1) {
+      if (G.debug & G_DEBUG) {
+        printf("%s: error, no fonts available\n", __func__);
+      }
+    }
+  }
+
+  if (style == nullptr) {
+    style = ui_style_new(&U.uistyles, "Default Style", UIFONT_DEFAULT);
+  }
+
+  KRF_cache_flush_set_fn(UI_widgetbase_draw_cache_flush);
+
+  KRF_default_size(style->widgetlabel.points);
+
+  /* XXX, this should be moved into a style,
+   * but for now best only load the monospaced font once. */
+  KLI_assert(krf_mono_font == -1);
+  /* Use unique font loading to avoid thread safety issues with mono font
+   * used for render metadata stamp in threads. */
+  if (U.font_path_ui_mono[0]) {
+    krf_mono_font = KRF_load_unique(U.font_path_ui_mono);
+  }
+  if (krf_mono_font == -1) {
+    const bool unique = true;
+    krf_mono_font = KRF_load_mono_default(unique);
+  }
+
+  /* Set default flags based on UI preferences (not render fonts) */
+  {
+    const int flag_disable = (KRF_MONOCHROME | KRF_HINTING_NONE | KRF_HINTING_SLIGHT |
+                              KRF_HINTING_FULL);
+    int flag_enable = 0;
+
+    if (U.text_render & USER_TEXT_HINTING_NONE) {
+      flag_enable |= KRF_HINTING_NONE;
+    } else if (U.text_render & USER_TEXT_HINTING_SLIGHT) {
+      flag_enable |= KRF_HINTING_SLIGHT;
+    } else if (U.text_render & USER_TEXT_HINTING_FULL) {
+      flag_enable |= KRF_HINTING_FULL;
+    }
+
+    if (U.text_render & USER_TEXT_DISABLE_AA) {
+      flag_enable |= KRF_MONOCHROME;
+    }
+
+    LISTBASE_FOREACH(uiFont *, font, &U.uifonts)
+    {
+      if (font->blf_id != -1) {
+        KRF_disable(font->blf_id, flag_disable);
+        KRF_enable(font->blf_id, flag_enable);
+      }
+    }
+    if (krf_mono_font != -1) {
+      KRF_disable(krf_mono_font, flag_disable);
+      KRF_enable(krf_mono_font, flag_enable);
+    }
+  }
+
+  /**
+   * Second for rendering else we get threading problems,
+   *
+   * @note This isn't good that the render font depends on the preferences,
+   * keep for now though, since without this there is no way to display many unicode chars.
+   */
+  if (krf_mono_font_render == -1) {
+    const bool unique = true;
+    krf_mono_font_render = KRF_load_mono_default(unique);
+  }
+
+  /* Load the fallback fonts last. */
+  KRF_load_font_stack();
 }

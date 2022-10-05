@@ -46,7 +46,9 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
-#include "kpy_utildefines.h"
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
+
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_stage.h"

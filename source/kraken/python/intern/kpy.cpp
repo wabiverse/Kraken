@@ -22,6 +22,8 @@
  * It Bites.
  */
 
+#define PY_SSIZE_T_CLEAN
+
 #include <Python.h>
 
 #include "kraken/kraken.h"
@@ -42,6 +44,9 @@
 #include "USD_factory.h"
 #include "USD_types.h"
 #include "USD_wm_types.h"
+
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
 
 #include "kpy.h"
 #include "kpy_app.h"

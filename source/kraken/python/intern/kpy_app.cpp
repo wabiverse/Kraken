@@ -44,9 +44,11 @@
 
 #include "WM_event_system.h"
 
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
+
 #include "kpy_capi_utils.h"
 #include "kpy_driver.h"
-#include "kpy_utildefines.h"
 
 #include <wabi/base/tf/iterator.h>
 
