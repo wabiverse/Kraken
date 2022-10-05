@@ -1851,7 +1851,7 @@ void UI_but_drag_set_asset(uiBut *but,
                            int icon,
                            struct ImBuf *imb,
                            float scale);
-void UI_but_drag_set_rna(uiBut *but, struct KrakenPRIM *ptr);
+void UI_but_drag_set_prim(uiBut *but, struct KrakenPRIM *ptr);
 void UI_but_drag_set_path(uiBut *but, const char *path, bool use_free);
 void UI_but_drag_set_name(uiBut *but, const char *name);
 /**

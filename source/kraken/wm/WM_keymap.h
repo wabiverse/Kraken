@@ -32,8 +32,6 @@
 
 struct IDProperty;
 
-
-
 wmKeyMap *WM_keymap_list_find(ListBase *keymaps, const wabi::TfToken &idname, int spaceid, int regionid);
 
 wmKeyMap *WM_keymap_active(const wmWindowManager *wm, wmKeyMap *keymap);
@@ -50,7 +48,7 @@ int WM_keymap_item_raw_to_string(const short shift,
                                  const int result_len);
 
 char *WM_key_event_operator_string(const struct kContext *C,
-                                   const TfToken &opname,
+                                   const wabi::TfToken &opname,
                                    eWmOperatorContext opcontext,
                                    IDProperty *properties,
                                    bool is_strict,

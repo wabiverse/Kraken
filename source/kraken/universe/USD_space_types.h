@@ -197,27 +197,27 @@ typedef struct SpaceProperties
 /** #SpaceProperties.mainb new */
 typedef enum eSpaceButtons_Context
 {
-  BCONTEXT_RENDER = 0,
-  BCONTEXT_SCENE = 1,
-  BCONTEXT_WORLD = 2,
-  BCONTEXT_OBJECT = 3,
-  BCONTEXT_DATA = 4,
-  BCONTEXT_MATERIAL = 5,
-  BCONTEXT_TEXTURE = 6,
-  BCONTEXT_PARTICLE = 7,
-  BCONTEXT_PHYSICS = 8,
-  BCONTEXT_BONE = 9,
-  BCONTEXT_MODIFIER = 10,
-  BCONTEXT_CONSTRAINT = 11,
-  BCONTEXT_BONE_CONSTRAINT = 12,
-  BCONTEXT_VIEW_LAYER = 13,
-  BCONTEXT_TOOL = 14,
-  BCONTEXT_SHADERFX = 15,
-  BCONTEXT_OUTPUT = 16,
-  BCONTEXT_COLLECTION = 17,
+  KCONTEXT_RENDER = 0,
+  KCONTEXT_SCENE = 1,
+  KCONTEXT_WORLD = 2,
+  KCONTEXT_OBJECT = 3,
+  KCONTEXT_DATA = 4,
+  KCONTEXT_MATERIAL = 5,
+  KCONTEXT_TEXTURE = 6,
+  KCONTEXT_PARTICLE = 7,
+  KCONTEXT_PHYSICS = 8,
+  KCONTEXT_BONE = 9,
+  KCONTEXT_MODIFIER = 10,
+  KCONTEXT_CONSTRAINT = 11,
+  KCONTEXT_BONE_CONSTRAINT = 12,
+  KCONTEXT_VIEW_LAYER = 13,
+  KCONTEXT_TOOL = 14,
+  KCONTEXT_SHADERFX = 15,
+  KCONTEXT_OUTPUT = 16,
+  KCONTEXT_COLLECTION = 17,
 
   /* Keep last. */
-  BCONTEXT_TOT,
+  KCONTEXT_TOT,
 } eSpaceButtons_Context;
 
 /** #SpaceProperties.flag */
@@ -1165,7 +1165,7 @@ typedef struct FileDirEntry
   /** #eFileSel_File_Types. */
   int typeflag;
   /** ID type, in case typeflag has FILE_TYPE_KRAKENLIB set. */
-  int blentype;
+  int usdtype;
 
   /* Path to item that is relative to current folder root. */
   char *relpath;
@@ -2118,14 +2118,14 @@ typedef enum eSpreadsheetColumnValueType
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Space Defines (eSpace_Type)
+/** \name Space Defines (eSpaceType)
  * \{ */
 
 /**
  * Space types: #SpaceLink.spacetype & #ScrArea.spacetype.
  * \note Do NOT change order, append on end. types are hardcoded needed.
  */
-typedef enum eSpace_Type
+typedef enum eSpaceType
 {
   SPACE_EMPTY = 0,
   SPACE_VIEW3D = 1,
@@ -2149,7 +2149,7 @@ typedef enum eSpace_Type
   SPACE_SPREADSHEET = 23
 
 #define SPACE_TYPE_NUM (SPACE_SPREADSHEET + 1)
-} eSpace_Type;
+} eSpaceType;
 
 /* use for function args */
 #define SPACE_TYPE_ANY -1

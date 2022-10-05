@@ -60,7 +60,7 @@ struct RegionTypeAlignInfo
   {
     short alignment;
     bool hidden;
-  } by_type[RGN_TYPE_LEN];
+  } by_type[RGN_TYPE_NUM];
 };
 
 void ED_area_do_refresh(kContext *C, ScrArea *area)
@@ -73,14 +73,14 @@ void ED_area_do_refresh(kContext *C, ScrArea *area)
 
 static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_align_info)
 {
-  for (int index = 0; index < RGN_TYPE_LEN; index++) {
+  for (int index = 0; index < RGN_TYPE_NUM; index++) {
     r_align_info->by_type[index].alignment = -1;
     r_align_info->by_type[index].hidden = true;
   }
 
   UNIVERSE_FOR_ALL (region, area->regions) {
     const int index = region->regiontype;
-    if ((uint)index < RGN_TYPE_LEN) {
+    if ((uint)index < RGN_TYPE_NUM) {
       r_align_info->by_type[index].alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
       r_align_info->by_type[index].hidden = (region->flag & RGN_FLAG_HIDDEN) != 0;
     }
@@ -125,7 +125,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
     // void *area_exit = area->type ? area->type->exit : NULL;
 
     bool sync_header_alignment = false;
-    RegionTypeAlignInfo region_align_info[RGN_TYPE_LEN];
+    RegionTypeAlignInfo region_align_info[RGN_TYPE_NUM];
     if ((slold != NULL) && (slold->link_flag & SPACE_FLAG_TYPE_TEMPORARY) == 0) {
       region_align_info_from_area(area, region_align_info);
       sync_header_alignment = true;

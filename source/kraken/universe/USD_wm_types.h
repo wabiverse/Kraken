@@ -25,6 +25,7 @@
  */
 
 #include "USD_listBase.h"
+#include "USD_space_types.h"
 
 #include "KLI_utildefines.h"
 #include "KLI_compiler_attrs.h"
@@ -767,7 +768,8 @@ struct wmTimer
   bool sleep;
 };
 
-typedef struct Report {
+typedef struct Report
+{
   struct Report *next, *prev;
   /** eReportType. */
   short type;
@@ -778,7 +780,8 @@ typedef struct Report {
   const char *message;
 } Report;
 
-typedef struct ReportList {
+typedef struct ReportList
+{
   ListBase list;
   /** eReportType. */
   int printlevel;
@@ -789,7 +792,8 @@ typedef struct ReportList {
   struct wmTimer *reporttimer;
 } ReportList;
 
-typedef struct wmTabletData {
+typedef struct wmTabletData
+{
   /** 0=EVT_TABLET_NONE, 1=EVT_TABLET_STYLUS, 2=EVT_TABLET_ERASER. */
   int active;
   /** range 0.0 (not touching) to 1.0 (full pressure). */
@@ -806,14 +810,14 @@ typedef struct wmTabletData {
  * Wrapper to reference a #wmOperatorType together with some set properties and other relevant
  * information to invoke the operator in a customizable way.
  */
-struct wmOperatorCallParams
+typedef struct wmOperatorCallParams
 {
   struct wmOperatorType *optype;
   struct KrakenPRIM *opptr;
   short opcontext;
-};
+} wmOperatorCallParams;
 
-struct wmEvent
+typedef struct wmEvent
 {
   /** Event code itself. */
   int type;
@@ -880,16 +884,16 @@ struct wmEvent
   char modifier;
 
   short flag;
-};
+} wmEvent;
 
-enum eWmEventHandlerType
+typedef enum eWmEventHandlerType
 {
   WM_HANDLER_TYPE_GIZMO = 1,
   WM_HANDLER_TYPE_UI,
   WM_HANDLER_TYPE_OP,
   WM_HANDLER_TYPE_DROPBOX,
   WM_HANDLER_TYPE_KEYMAP,
-};
+} eWmEventHandlerType;
 
 enum
 {
@@ -903,28 +907,30 @@ enum
 
 typedef bool (*EventHandlerPoll)(const struct ARegion *region, const struct wmEvent *event);
 
-struct wmEventHandler
+typedef struct wmEventHandler
 {
   short type;
   char flag;
 
   EventHandlerPoll poll;
-};
+} wmEventHandler;
 
-struct wmEventHandler_KeymapResult
+typedef struct wmEventHandler_KeymapResult
 {
   struct wmKeyMap *keymaps[3];
   int keymaps_len;
-};
+} wmEventHandler_KeymapResult;
 
-typedef void(wmEventHandler_PostFn)(struct wmKeyMap *keymap, struct wmKeyMapItem *kmi, void *user_data);
+typedef void(wmEventHandler_PostFn)(struct wmKeyMap *keymap,
+                                    struct wmKeyMapItem *kmi,
+                                    void *user_data);
 
 /** Run after the keymap item runs. */
-struct wmEventHandler_KeymapPost
+typedef struct wmEventHandler_KeymapPost
 {
   wmEventHandler_PostFn *post_fun;
   void *user_data;
-};
+} wmEventHandler_KeymapPost;
 
 typedef void(wmEventHandler_KeymapDynamicFn)(struct wmWindowManager *wm,
                                              struct wmWindow *win,
@@ -932,14 +938,14 @@ typedef void(wmEventHandler_KeymapDynamicFn)(struct wmWindowManager *wm,
                                              struct wmEventHandler_KeymapResult *km_result);
 
 /** Support for a getter function that looks up the keymap each access. */
-struct wmEventHandler_KeymapDynamic
+typedef struct wmEventHandler_KeymapDynamic
 {
   wmEventHandler_KeymapDynamicFn *keymap_fn;
   void *user_data;
-};
+} wmEventHandler_KeymapDynamic;
 
 /** #WM_HANDLER_TYPE_KEYMAP */
-struct wmEventHandler_Keymap
+typedef struct wmEventHandler_Keymap
 {
   struct wmEventHandler head;
 
@@ -950,12 +956,12 @@ struct wmEventHandler_Keymap
   struct wmEventHandler_KeymapDynamic dynamic;
 
   struct bToolRef *keymap_tool;
-};
+} wmEventHandler_Keymap;
 
 typedef int (*wmUIHandlerFunc)(struct kContext *C, const struct wmEvent *event, void *userdata);
 typedef void (*wmUIHandlerRemoveFunc)(struct kContext *C, void *userdata);
 
-struct wmEventHandlerUI
+typedef struct wmEventHandlerUI
 {
   struct wmEventHandler head;
   wmUIHandlerFunc handle_fn;
@@ -970,7 +976,7 @@ struct wmEventHandlerUI
     struct ARegion *region;
     struct ARegion *menu;
   } context;
-};
+} wmEventHandlerUI;
 
 enum
 {
@@ -980,15 +986,14 @@ enum
 #define WM_MSG_TYPE_NUM 2
 
 
-struct wmMsgBus
+typedef struct wmMsgBus
 {
   RSet *messages_rset[WM_MSG_TYPE_NUM];
   /** Messages in order of being added. */
   ListBase messages;
   /** Avoid checking messages when no tags exist. */
   uint messages_tag_count;
-};
-
+} wmMsgBus;
 
 #define WM_DRAG_ID 0
 #define WM_DRAG_ASSET 1
@@ -1012,24 +1017,97 @@ typedef enum eWmDragFlags
 ENUM_OPERATORS(eWmDragFlags, WM_DRAG_FREE_DATA)
 
 
-typedef struct wmDragID {
+typedef struct wmDragID
+{
   struct wmDragID *next, *prev;
   struct ID *id;
   struct ID *from_parent;
 } wmDragID;
 
+typedef void (*PreSaveFn)(void *asset_ptr, struct AssetMetaData *asset_data);
 
-struct wmDragAsset
+typedef struct AssetTypeInfo
+{
+  /**
+   * For local assets (assets in the current .usd file), a callback to execute before the file is
+   * saved.
+   */
+  PreSaveFn pre_save_fn;
+} AssetTypeInfo;
+
+typedef struct AssetHandle
+{
+  const struct FileDirEntry *file_data;
+} AssetHandle;
+
+typedef struct AssetMetaData
+{
+  /** Runtime type, to reference event callbacks. Only valid for local assets. */
+  struct AssetTypeInfo *local_type_info;
+
+  /** Custom asset meta-data. Cannot store pointers to IDs (#STRUCT_NO_DATABLOCK_IDPROPERTIES)! */
+  struct IDProperty *properties;
+
+  /**
+   * Asset Catalog identifier. Should not contain spaces.
+   * Mapped to a path in the asset catalog hierarchy by an #AssetCatalogService.
+   * Use #BKE_asset_metadata_catalog_id_set() to ensure a valid ID is set.
+   */
+  struct kUUID catalog_id;
+  /**
+   * Short name of the asset's catalog. This is for debugging purposes only, to allow (partial)
+   * reconstruction of asset catalogs in the unfortunate case that the mapping from catalog UUID to
+   * catalog path is lost. The catalog's simple name is copied to #catalog_simple_name whenever
+   * #catalog_id is updated. */
+  char catalog_simple_name[64]; /* MAX_NAME */
+
+  /** Optional name of the author for display in the UI. Dynamic length. */
+  char *author;
+
+  /** Optional description of this asset for display in the UI. Dynamic length. */
+  char *description;
+
+  /** User defined tags for this asset. The asset manager uses these for filtering, but how they
+   * function exactly (e.g. how they are registered to provide a list of searchable available tags)
+   * is up to the asset-engine. */
+  ListBase tags; /* AssetTag */
+  short active_tag;
+  /** Store the number of tags to avoid continuous counting. Could be turned into runtime data, we
+   * can always reliably reconstruct it from the list. */
+  short tot_tags;
+
+  char _pad[4];
+} AssetMetaData;
+
+typedef struct wmDragAsset
 {
   char name[64]; /* MAX_NAME */
   /* Always freed. */
   const char *path;
   int id_type;
+  struct AssetMetaData *metadata;
   int import_type; /* eFileAssetImportType */
-};
+  struct kContext *evil_C;
+} wmDragAsset;
 
 
-typedef struct wmDrag {
+typedef char *(*WMDropboxTooltipFunc)(struct kContext *,
+                                      struct wmDrag *,
+                                      const int xy[2],
+                                      struct wmDropBox *drop);
+
+typedef struct wmDragActiveDropState {
+  struct wmDropBox *active_dropbox;
+  struct ScrArea *area_from;
+  struct ARegion *region_from;
+  struct kContextStore *ui_context;
+
+  const char *disabled_info;
+  bool free_disabled_info;
+} wmDragActiveDropState;
+
+typedef struct wmDrag
+{
   struct wmDrag *next, *prev;
 
   int icon;
@@ -1043,7 +1121,7 @@ typedef struct wmDrag {
   struct ImBuf *imb;
   float imbuf_scale;
 
-  // wmDragActiveDropState drop_state;
+  wmDragActiveDropState drop_state;
 
   short flags;
 
@@ -1053,6 +1131,31 @@ typedef struct wmDrag {
   ListBase asset_items;
 } wmDrag;
 
+typedef struct wmDropBox
+{
+  struct wmDropBox *next, *prev;
+
+  /** Test if the dropbox is active. */
+  bool (*poll)(struct kContext *C, struct wmDrag *drag, const wmEvent *event);
+  void (*on_drag_start)(struct kContext *C, struct wmDrag *drag);
+  void (*copy)(struct kContext *C, struct wmDrag *drag, struct wmDropBox *drop);
+  void (*cancel)(struct Main *bmain, struct wmDrag *drag, struct wmDropBox *drop);
+  void (*draw_droptip)(struct kContext *C,
+                       struct wmWindow *win,
+                       struct wmDrag *drag,
+                       const int xy[2]);
+  void (*draw_in_view)(struct kContext *C,
+                       struct wmWindow *win,
+                       struct wmDrag *drag,
+                       const int xy[2]);
+  void (*draw_activate)(struct wmDropBox *drop, struct wmDrag *drag);
+  void (*draw_deactivate)(struct wmDropBox *drop, struct wmDrag *drag);
+  void *draw_data;
+  WMDropboxTooltipFunc tooltip;
+  struct wmOperatorType *ot;
+  struct IDProperty *properties;
+  struct KrakenPRIM *ptr;
+} wmDropBox;
 
 /**
  * This is similar to addon-preferences,

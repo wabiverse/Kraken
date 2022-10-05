@@ -869,7 +869,7 @@ bool WM_window_is_temp_screen(const wmWindow *win)
 
 
 /**
- * @param space_type: SPACE_VIEW3D, SPACE_INFO, ... (eSpace_Type)
+ * @param space_type: SPACE_VIEW3D, SPACE_INFO, ... (eSpaceType)
  * @param dialog: whether this should be made as a dialog-style window
  * @param temp: whether this is considered a short-lived window
  * @param alignment: how this window is positioned relative to its parent

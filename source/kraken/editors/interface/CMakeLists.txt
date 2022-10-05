@@ -29,6 +29,7 @@ set(INC_SYS
 set(SRC
   INTERFACE_align.cpp
   INTERFACE_button_group.cpp
+  INTERFACE_drag.cpp
   INTERFACE_handlers.cpp
   INTERFACE_kraken.cpp
   INTERFACE_layout.cpp

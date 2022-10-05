@@ -24,14 +24,22 @@
  * Making GUI Fly.
  */
 
+#include "KLI_compiler_attrs.h"
+#include "KLI_sys_types.h"
+
 #include "USD_wm_types.h"
+#include "USD_space_types.h"
 
-#include "KKE_context.h"
+#include "WM_keymap.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-
-void WM_drag_free(struct wmDrag *drag);
-void WM_drag_free_list(struct ListBase *lb);
+struct AssetHandle;
+struct ID;
+struct kContext;
+struct wmDrag;
 
 wmDrag *WM_event_start_drag(struct kContext *C,
                             int icon,
@@ -39,5 +47,20 @@ wmDrag *WM_event_start_drag(struct kContext *C,
                             void *poin,
                             double value,
                             unsigned int flags);
+void WM_event_start_prepared_drag(struct kContext *C, struct wmDrag *drag);
+
+wmDrag *WM_drag_data_create(struct kContext *C, int icon, int type, void *poin, double value, uint flags);
+wmDragAsset *WM_drag_create_asset_data(const struct AssetHandle *asset,
+                                       struct AssetMetaData *metadata,
+                                       const char *path,
+                                       int import_type);
+
+void WM_drag_data_free(int dragtype, void *poin);
+void WM_drag_free(struct wmDrag *drag);
+void WM_drag_free_list(struct ListBase *lb);
+
 void WM_drag_add_local_ID(struct wmDrag *drag, struct ID *id, struct ID *from_parent);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */

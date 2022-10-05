@@ -24,7 +24,9 @@
  * Making GUI Fly.
  */
 
-#include "WM_api.h"
+#include "KLI_compiler_compat.h"
+
+#include "USD_space_types.h"
 
 #include <wabi/usd/usdUI/tokens.h>
 
@@ -33,45 +35,84 @@
  * out of the way of the main WindowManager
  * logic. */
 
-
-
-inline TfToken wm_verify_spacetype(const TfToken &query)
+KLI_INLINE wabi::TfToken wm_verify_spacetype(const wabi::TfToken &query)
 {
-  if (query == UsdUITokens->spaceView3D) {
-    return UsdUITokens->spaceView3D;
-  } else if (query == UsdUITokens->spaceGraph) {
-    return UsdUITokens->spaceGraph;
-  } else if (query == UsdUITokens->spaceOutliner) {
-    return UsdUITokens->spaceOutliner;
-  } else if (query == UsdUITokens->spaceProperties) {
-    return UsdUITokens->spaceProperties;
-  } else if (query == UsdUITokens->spaceFile) {
-    return UsdUITokens->spaceFile;
-  } else if (query == UsdUITokens->spaceImage) {
-    return UsdUITokens->spaceImage;
-  } else if (query == UsdUITokens->spaceInfo) {
-    return UsdUITokens->spaceInfo;
-  } else if (query == UsdUITokens->spaceSequence) {
-    return UsdUITokens->spaceSequence;
-  } else if (query == UsdUITokens->spaceText) {
-    return UsdUITokens->spaceText;
-  } else if (query == UsdUITokens->spaceNode) {
-    return UsdUITokens->spaceNode;
-  } else if (query == UsdUITokens->spaceConsole) {
-    return UsdUITokens->spaceConsole;
-  } else if (query == UsdUITokens->spacePref) {
-    return UsdUITokens->spacePref;
-  } else if (query == UsdUITokens->spaceClip) {
-    return UsdUITokens->spaceClip;
-  } else if (query == UsdUITokens->spaceTopbar) {
-    return UsdUITokens->spaceTopbar;
-  } else if (query == UsdUITokens->spaceStatusbar) {
-    return UsdUITokens->spaceStatusbar;
-  } else if (query == UsdUITokens->spaceSpreadsheet) {
-    return UsdUITokens->spaceSpreadsheet;
+  if (query == wabi::UsdUITokens->spaceView3D) {
+    return wabi::UsdUITokens->spaceView3D;
+  } else if (query == wabi::UsdUITokens->spaceGraph) {
+    return wabi::UsdUITokens->spaceGraph;
+  } else if (query == wabi::UsdUITokens->spaceOutliner) {
+    return wabi::UsdUITokens->spaceOutliner;
+  } else if (query == wabi::UsdUITokens->spaceProperties) {
+    return wabi::UsdUITokens->spaceProperties;
+  } else if (query == wabi::UsdUITokens->spaceFile) {
+    return wabi::UsdUITokens->spaceFile;
+  } else if (query == wabi::UsdUITokens->spaceImage) {
+    return wabi::UsdUITokens->spaceImage;
+  } else if (query == wabi::UsdUITokens->spaceInfo) {
+    return wabi::UsdUITokens->spaceInfo;
+  } else if (query == wabi::UsdUITokens->spaceSequence) {
+    return wabi::UsdUITokens->spaceSequence;
+  } else if (query == wabi::UsdUITokens->spaceText) {
+    return wabi::UsdUITokens->spaceText;
+  } else if (query == wabi::UsdUITokens->spaceNode) {
+    return wabi::UsdUITokens->spaceNode;
+  } else if (query == wabi::UsdUITokens->spaceConsole) {
+    return wabi::UsdUITokens->spaceConsole;
+  } else if (query == wabi::UsdUITokens->spacePref) {
+    return wabi::UsdUITokens->spacePref;
+  } else if (query == wabi::UsdUITokens->spaceClip) {
+    return wabi::UsdUITokens->spaceClip;
+  } else if (query == wabi::UsdUITokens->spaceTopbar) {
+    return wabi::UsdUITokens->spaceTopbar;
+  } else if (query == wabi::UsdUITokens->spaceStatusbar) {
+    return wabi::UsdUITokens->spaceStatusbar;
+  } else if (query == wabi::UsdUITokens->spaceSpreadsheet) {
+    return wabi::UsdUITokens->spaceSpreadsheet;
   } else {
-    return UsdUITokens->spaceEmpty;
+    return wabi::UsdUITokens->spaceEmpty;
   }
 }
 
+KLI_INLINE eSpaceType wm_spacetype_enum_from_token(const wabi::TfToken &query)
+{
+  if (query.IsEmpty()) {
+    return SPACE_EMPTY;
+  }
 
+  if (query == wabi::UsdUITokens->spaceView3D) {
+    return SPACE_VIEW3D;
+  } else if (query == wabi::UsdUITokens->spaceGraph) {
+    return SPACE_GRAPH;
+  } else if (query == wabi::UsdUITokens->spaceOutliner) {
+    return SPACE_OUTLINER;
+  } else if (query == wabi::UsdUITokens->spaceProperties) {
+    return SPACE_PROPERTIES;
+  } else if (query == wabi::UsdUITokens->spaceFile) {
+    return SPACE_FILE;
+  } else if (query == wabi::UsdUITokens->spaceImage) {
+    return SPACE_IMAGE;
+  } else if (query == wabi::UsdUITokens->spaceInfo) {
+    return SPACE_INFO;
+  } else if (query == wabi::UsdUITokens->spaceSequence) {
+    return SPACE_SEQ;
+  } else if (query == wabi::UsdUITokens->spaceText) {
+    return SPACE_TEXT;
+  } else if (query == wabi::UsdUITokens->spaceNode) {
+    return SPACE_NODE;
+  } else if (query == wabi::UsdUITokens->spaceConsole) {
+    return SPACE_CONSOLE;
+  } else if (query == wabi::UsdUITokens->spacePref) {
+    return SPACE_USERPREF;
+  } else if (query == wabi::UsdUITokens->spaceClip) {
+    return SPACE_CLIP;
+  } else if (query == wabi::UsdUITokens->spaceTopbar) {
+    return SPACE_TOPBAR;
+  } else if (query == wabi::UsdUITokens->spaceStatusbar) {
+    return SPACE_STATUSBAR;
+  } else if (query == wabi::UsdUITokens->spaceSpreadsheet) {
+    return SPACE_SPREADSHEET;
+  } else {
+    return SPACE_EMPTY;
+  }
+}
