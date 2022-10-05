@@ -27,6 +27,10 @@
  * Tools for Artists.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct Collection;
 struct ID;
 struct Scene;
@@ -137,4 +141,6 @@ int UI_icon_from_library(const struct ID *id);
 int UI_icon_from_object_mode(int mode);
 int UI_icon_color_from_collection(const struct Collection *collection);
 
-
+#ifdef __cplusplus
+}
+#endif

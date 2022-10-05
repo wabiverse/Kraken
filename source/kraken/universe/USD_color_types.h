@@ -41,86 +41,11 @@ extern "C" {
 #define GPU_SKY_WIDTH 512
 #define GPU_SKY_HEIGHT 128
 
-#define IMB_MIPMAP_LEVELS 20
-#define IMB_FILENAME_SIZE 1024
-
-typedef struct ImbFormatOptions
+typedef struct KrakenFileReadReport
 {
-  short flag;
-  /** Quality serves dual purpose as quality number for JPEG or compression amount for PNG. */
-  char quality;
-} ImbFormatOptions;
-
-typedef struct DDSData
-{
-  /** DDS fourcc info */
-  unsigned int fourcc;
-  /** The number of mipmaps in the dds file */
-  unsigned int nummipmaps;
-  /** The compressed image data */
-  unsigned char *data;
-  /** The size of the compressed data */
-  unsigned int size;
-} DDSData;
-
-enum eImbFileType {
-  IMB_FTYPE_PNG = 1,
-  IMB_FTYPE_TGA = 2,
-  IMB_FTYPE_JPG = 3,
-  IMB_FTYPE_BMP = 4,
-  IMB_FTYPE_OPENEXR = 5,
-  IMB_FTYPE_IMAGIC = 6,
-  IMB_FTYPE_PSD = 7,
-  IMB_FTYPE_JP2 = 8,
-  IMB_FTYPE_RADHDR = 9,
-  IMB_FTYPE_TIF = 10,
-  IMB_FTYPE_CINEON = 11,
-  IMB_FTYPE_DPX = 12,
-  IMB_FTYPE_DDS = 13,
-  IMB_FTYPE_WEBP = 14,
-};
-
-typedef struct ImBuf
-{
-  int x, y;
-  unsigned char planes;
-  int channels;
-  int flags;
-  int mall;
-  unsigned int *rect;
-  float *rect_float;
-  double ppm[2];
-  int tilex, tiley;
-  int xtiles, ytiles;
-  unsigned int **tiles;
-  int *zbuf;
-  float *zbuf_float;
-  float dither;
-  struct ImBuf *mipmap[IMB_MIPMAP_LEVELS];
-  int miptot, miplevel;
-  int index;
-  int userflags;
-  struct IDProperty *metadata;
-  void *userdata;
-  enum eImbFileType ftype;
-  ImbFormatOptions foptions;
-  char name[IMB_FILENAME_SIZE];
-  char cachename[IMB_FILENAME_SIZE];
-  struct MEM_CacheLimiterHandle_s *c_handle;
-  int refcounter;
-  unsigned char *encodedbuffer;
-  unsigned int encodedsize;
-  unsigned int encodedbuffersize;
-  struct ColorSpace *rect_colorspace;
-  struct ColorSpace *float_colorspace;
-  unsigned int *display_buffer_flags;
-  struct ColormanageCache *colormanage_cache;
-  int colormanage_flag;
-  rcti invalid_rect;
-
-  /* information for compressed textures */
-  struct DDSData dds_data;
-} ImBuf;
+  /* General reports handling. */
+  struct ReportList *reports;
+} KrakenFileReadReport;
 
 typedef struct SequencerScopes
 {

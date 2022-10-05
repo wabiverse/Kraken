@@ -21,38 +21,25 @@
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
- * @ingroup KRAKEN Library.
- * Gadget Vault.
+ * Kraken Loader.
+ * USD & co.
  */
 
-#include "MEM_guardedalloc.h"
-
 #include "KLI_listbase.h"
+#include "KLI_sys_types.h"
 
-#include "KKE_context.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <wabi/base/tf/token.h>
+struct KrakenThumbnail;
 
-kContextStoreEntry *KLI_rfindtoken(const kContextStore *store, const wabi::TfToken &id)
-{
-  // auto it = store->entries.rbegin();
-  // while (it != store->entries.rend()) {
-  //   if (id == (*it)->name) {
-  //     return *it;
-  //   }
-  //   it++;
-  // }
+struct KrakenThumbnail *KLO_thumbnail_from_file(const char *filepath);
 
-  return store->entries[0];
+#ifdef __cplusplus
 }
-
-void KLI_freelistN(kContextStore *store)
-{
-  // for (size_t i = 0; i < store->entries.size(); i++) 
-  // {       
-  //   delete store->entries[i];    
-  // }    
-  store->entries.clear();
-}
+#endif

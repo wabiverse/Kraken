@@ -29,7 +29,7 @@
 
 #include "KLI_listbase.h"
 #include "KLI_math.h"
-// #include "KLI_math_color_blend.h"
+#include "KLI_math_color_blend.h"
 #include "KLI_path_utils.h"
 #include "KLI_rect.h"
 #include "KLI_string.h"
@@ -491,49 +491,6 @@ int krf_font_draw_mono(FontKRF *font, const char *str, const size_t str_len, int
 }
 
 /** \} */
-
-/* this is fine for now, until we have a color blend lib in kraklib. */
-
-MINLINE void blend_color_mix_byte(uchar dst[4], const uchar src1[4], const uchar src2[4])
-{
-  if (src2[3] != 0) {
-    /* straight over operation */
-    const int t = src2[3];
-    const int mt = 255 - t;
-    int tmp[4];
-
-    tmp[0] = (mt * src1[3] * src1[0]) + (t * 255 * src2[0]);
-    tmp[1] = (mt * src1[3] * src1[1]) + (t * 255 * src2[1]);
-    tmp[2] = (mt * src1[3] * src1[2]) + (t * 255 * src2[2]);
-    tmp[3] = (mt * src1[3]) + (t * 255);
-
-    dst[0] = (uchar)divide_round_i(tmp[0], tmp[3]);
-    dst[1] = (uchar)divide_round_i(tmp[1], tmp[3]);
-    dst[2] = (uchar)divide_round_i(tmp[2], tmp[3]);
-    dst[3] = (uchar)divide_round_i(tmp[3], 255);
-  } else {
-    /* no op */
-    copy_v4_v4_uchar(dst, src1);
-  }
-}
-
-MINLINE void blend_color_mix_float(float dst[4], const float src1[4], const float src2[4])
-{
-  if (src2[3] != 0.0f) {
-    /* premul over operation */
-    const float t = src2[3];
-    const float mt = 1.0f - t;
-
-    dst[0] = mt * src1[0] + src2[0];
-    dst[1] = mt * src1[1] + src2[1];
-    dst[2] = mt * src1[2] + src2[2];
-    dst[3] = mt * src1[3] + t;
-  } else {
-    /* no op */
-    copy_v4_v4(dst, src1);
-  }
-}
-
 
 /* -------------------------------------------------------------------- */
 /** \name Text Drawing: Buffer

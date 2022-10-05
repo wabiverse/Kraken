@@ -69,7 +69,7 @@
 #include "KLI_math_base.h"
 #include "KLI_math_color.h"
 #include "KLI_math_geom.h"
-// #include "KLI_math_interp.h"
+#include "KLI_math_interp.h"
 #include "KLI_math_matrix.h"
 #include "KLI_math_rotation.h"
 #include "KLI_math_solvers.h"

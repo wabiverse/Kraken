@@ -7,6 +7,11 @@ set(INC
   ../anchor/backend
   ../editors/include
   ../kraklib
+  ../krakfont
+  ../krakloader
+  ../imbuf
+  ../draw
+  ../gpu
   ../wm
   ../luxo
   ../universe
@@ -74,6 +79,7 @@ set(LIB
   kraken_imbuf
   kraken_krakfont
   kraken_lib
+  kraken_loader
   kraken_luxo
   kraken_python
   kraken_intern_clog

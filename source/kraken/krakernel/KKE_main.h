@@ -48,6 +48,13 @@ struct Library;
 struct MainLock;
 struct UniqueName_Map;
 
+/* Kraken thumbnail, as written on file (width, height, and data as char RGBA). */
+/* We pack pixel data after that struct. */
+typedef struct KrakenThumbnail {
+  int width, height;
+  char rect[0];
+} KrakenThumbnail;
+
 typedef struct Main
 {
   uint64_t build_commit_timestamp;

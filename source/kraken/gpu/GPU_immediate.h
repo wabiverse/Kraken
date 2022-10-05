@@ -32,7 +32,7 @@
  */
 
 #include "GPU_batch.h"
-// #include "GPU_immediate_util.h"
+#include "GPU_immediate_util.h"
 #include "GPU_primitive.h"
 #include "GPU_shader.h"
 #include "GPU_texture.h"

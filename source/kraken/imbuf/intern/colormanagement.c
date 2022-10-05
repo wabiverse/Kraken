@@ -1220,6 +1220,57 @@ void IMB_colormanagement_display_to_scene_linear_v3(float pixel[3], ColorManaged
   // }
 }
 
+void IMB_colormanagement_colorspace_to_scene_linear_v4(float pixel[4],
+                                                       bool predivide,
+                                                       ColorSpace *colorspace)
+{
+  // OCIO_ConstCPUProcessorRcPtr *processor;
+
+  // if (!colorspace) {
+  //   /* should never happen */
+  //   printf("%s: perform conversion from unknown color space\n", __func__);
+  //   return;
+  // }
+
+  // processor = colorspace_to_scene_linear_cpu_processor(colorspace);
+
+  // if (processor != NULL) {
+  //   if (predivide) {
+  //     OCIO_cpuProcessorApplyRGBA_predivide(processor, pixel);
+  //   }
+  //   else {
+  //     OCIO_cpuProcessorApplyRGBA(processor, pixel);
+  //   }
+  // }
+}
+
+void colormanage_imbuf_make_linear(ImBuf *ibuf, const char *from_colorspace)
+{
+  ColorSpace *colorspace = colormanage_colorspace_get_named(from_colorspace);
+
+  if (colorspace && colorspace->is_data) {
+    ibuf->colormanage_flag |= IMB_COLORMANAGE_IS_DATA;
+    return;
+  }
+
+  // if (ibuf->rect_float) {
+  //   const char *to_colorspace = global_role_scene_linear;
+  //   const bool predivide = IMB_alpha_affects_rgb(ibuf);
+
+  //   if (ibuf->rect) {
+  //     imb_freerectImBuf(ibuf);
+  //   }
+
+  //   IMB_colormanagement_transform(ibuf->rect_float,
+  //                                 ibuf->x,
+  //                                 ibuf->y,
+  //                                 ibuf->channels,
+  //                                 from_colorspace,
+  //                                 to_colorspace,
+  //                                 predivide);
+  // }
+}
+
 void IMB_colormanagement_finish_glsl_draw(void)
 {
   if (global_gpu_state.gpu_shader_bound) {

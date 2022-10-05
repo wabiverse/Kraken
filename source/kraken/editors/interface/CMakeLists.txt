@@ -32,6 +32,7 @@ set(SRC
   INTERFACE_button_group.cpp
   INTERFACE_drag.cpp
   INTERFACE_handlers.cpp
+  INTERFACE_icons.c
   INTERFACE_kraken.cpp
   INTERFACE_layout.cpp
   INTERFACE_ops.cpp

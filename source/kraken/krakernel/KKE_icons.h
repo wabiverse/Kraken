@@ -1,6 +1,6 @@
 #pragma once
 
-/** 
+/**
  * @file
  * @ingroup KKE
  *
@@ -16,9 +16,14 @@
 
 #include "USD_ID_enums.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*DrawInfoFreeFP)(void *drawinfo);
 
-enum {
+enum
+{
   /** ID preview: obj is #ID. */
   ICON_DATA_ID = 0,
   /** Arbitrary Image buffer: obj is #ImBuf */
@@ -36,7 +41,8 @@ enum {
 /**
  * @note See comment at the top regarding thread safety.
  */
-struct Icon {
+typedef struct Icon
+{
   void *drawinfo;
   /**
    * Data defined by #obj_type
@@ -50,10 +56,11 @@ struct Icon {
   /** #ID_Type or 0 when not used for ID preview. */
   short id_type;
   DrawInfoFreeFP drawinfo_free;
-};
+} Icon;
 
 /** Used for #ICON_DATA_GEOM, assigned to #Icon.obj. */
-struct Icon_Geom {
+typedef struct Icon_Geom
+{
   int icon_id;
   int coords_len;
   int coords_range[2];
@@ -61,14 +68,16 @@ struct Icon_Geom {
   unsigned char (*colors)[4];
   /* when not NULL, the memory of coords and colors is a sub-region of this pointer. */
   const void *mem;
-};
+} Icon_Geom;
 
-typedef struct LockfreeLinkNode {
+typedef struct LockfreeLinkNode
+{
   struct LockfreeLinkNode *next;
   /* NOTE: "Subclass" this structure to add custom-defined data. */
 } LockfreeLinkNode;
 
-typedef struct LockfreeLinkList {
+typedef struct LockfreeLinkList
+{
   /* We keep a dummy node at the beginning of the list all the time.
    * This allows us to make sure head and tail pointers are always
    * valid, and saves from annoying exception cases in insert().
@@ -91,9 +100,28 @@ struct kGPDlayer;
 void KKE_icons_init(int first_dyn_id);
 
 /**
+ * Free the preview image for use in list.
+ */
+void KKE_previewimg_freefunc(void *link);
+
+/**
+ * Free all icons.
+ */
+void KKE_icons_free(void);
+
+/**
  * Retrieve icon for id.
  */
 struct Icon *KKE_icon_get(int icon_id);
 
+/**
+ * Set icon for id if not already defined.
+ * Used for inserting the internal icons.
+ */
+void KKE_icon_set(const int icon_id, struct Icon *icon);
+
 #define ICON_RENDER_DEFAULT_HEIGHT 32
 
+#ifdef __cplusplus
+}
+#endif

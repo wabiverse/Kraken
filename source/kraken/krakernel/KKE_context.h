@@ -16,19 +16,18 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * KRAKEN Kernel.
  * Purple Underground.
  */
 
-#pragma once
+#include "KLI_utildefines.h"
 
-#include <kraken/kraken.h>
-#include "KKE_api.h"
-
-#include <wabi/usd/usd/stage.h>
-#include <wabi/usd/usd/common.h>
+#include "USD_defs.h"
+#include "USD_listBase.h"
 
 /* kraken fwd. */
 struct uiStyle;
@@ -64,35 +63,35 @@ enum
  *  - Creation.
  *  - Destruction. */
 
-kContext *CTX_create(void);
-void CTX_free(kContext *C);
+struct kContext *CTX_create(void);
+void CTX_free(struct kContext *C);
 
 
 /* store */
 
-struct kContextStore *CTX_store_add(std::vector<struct kContextStore *> contexts,
+struct kContextStore *CTX_store_add(ListBase *contexts,
                                     const char *name,
-                                    const KrakenPRIM *ptr);
-struct kContextStore *CTX_store_add_all(std::vector<struct kContextStore *> contexts,
+                                    const struct KrakenPRIM *ptr);
+struct kContextStore *CTX_store_add_all(ListBase * contexts,
                                         struct kContextStore *context);
-struct kContextStore *CTX_store_get(kContext *C);
-void CTX_store_set(kContext *C, struct kContextStore *store);
-const KrakenPRIM *CTX_store_ptr_lookup(const struct kContextStore *store,
-                                              const char *name,
-                                              const KrakenPRIM *type);
+struct kContextStore *CTX_store_get(struct kContext *C);
+void CTX_store_set(struct kContext *C, struct kContextStore *store);
+const struct KrakenPRIM *CTX_store_ptr_lookup(const struct kContextStore *store,
+                                       const char *name,
+                                       const struct KrakenPRIM *type);
 struct kContextStore *CTX_store_copy(struct kContextStore *store);
 void CTX_store_free(struct kContextStore *store);
-void CTX_store_free_list(const std::vector<kContextStore*> &contexts);
+void CTX_store_free_list(ListBase *contexts);
 
 /**
  * need to store if python
  * is initialized or not */
-bool CTX_py_init_get(kContext *C);
-void CTX_py_init_set(kContext *C, bool value);
-void *CTX_py_dict_get(const kContext *C);
-void CTX_data_pointer_set_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
-void CTX_data_type_set(kContextDataResult *result, short type);
-void CTX_data_list_add_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
+bool CTX_py_init_get(struct kContext *C);
+void CTX_py_init_set(struct kContext *C, bool value);
+void *CTX_py_dict_get(const struct kContext *C);
+void CTX_data_pointer_set_ptr(struct kContextDataResult *result, const struct KrakenPRIM *ptr);
+void CTX_data_type_set(struct kContextDataResult *result, short type);
+void CTX_data_list_add_ptr(struct kContextDataResult *result, const struct KrakenPRIM *ptr);
 
 /**
  * Kraken Context Getters:
@@ -101,18 +100,18 @@ void CTX_data_list_add_ptr(kContextDataResult *result, const KrakenPRIM *ptr);
  *  - Scene data.
  *  - KrakenSTAGE data. */
 
-Main *CTX_data_main(const kContext *C);
-wmWindowManager *CTX_wm_manager(const kContext *C);
-wmWindow *CTX_wm_window(const kContext *C);
-WorkSpace *CTX_wm_workspace(const kContext *C);
-kScreen *CTX_wm_screen(const kContext *C);
-ScrArea *CTX_wm_area(const kContext *C);
-ARegion *CTX_wm_region(const kContext *C);
-ARegion *CTX_wm_menu(const kContext *C);
-kScene *CTX_data_scene(const kContext *C);
-KrakenSTAGE CTX_data_stage(const kContext *C);
-kUserDef *CTX_data_prefs(const kContext *C);
-ReportList *CTX_wm_reports(const kContext *C);
+struct Main *CTX_data_main(const struct kContext *C);
+struct wmWindowManager *CTX_wm_manager(const struct kContext *C);
+struct wmWindow *CTX_wm_window(const struct kContext *C);
+struct WorkSpace *CTX_wm_workspace(const struct kContext *C);
+struct kScreen *CTX_wm_screen(const struct kContext *C);
+struct ScrArea *CTX_wm_area(const struct kContext *C);
+struct ARegion *CTX_wm_region(const struct kContext *C);
+struct ARegion *CTX_wm_menu(const struct kContext *C);
+struct kScene *CTX_data_scene(const struct kContext *C);
+struct KrakenSTAGE CTX_data_stage(const struct kContext *C);
+struct kUserDef *CTX_data_prefs(const struct kContext *C);
+struct ReportList *CTX_wm_reports(const struct kContext *C);
 
 /**
  * Kraken Context Setters:
@@ -121,39 +120,38 @@ ReportList *CTX_wm_reports(const kContext *C);
  *  - Scene data.
  *  - KrakenSTAGE data. */
 
-void CTX_data_main_set(kContext *C, Main *kmain);
-void CTX_wm_manager_set(kContext *C, wmWindowManager *wm);
-void CTX_wm_screen_set(kContext *C, kScreen *screen);
-void CTX_wm_area_set(kContext *C, ScrArea *area);
-void CTX_wm_region_set(kContext *C, ARegion *region);
-void CTX_wm_menu_set(kContext *C, ARegion *menu);
-void CTX_wm_window_set(kContext *C, wmWindow *win);
-void CTX_data_scene_set(kContext *C, kScene *cscene);
-void CTX_data_prefs_set(kContext *C, kUserDef *uprefs);
+void CTX_data_main_set(struct kContext *C, struct Main *kmain);
+void CTX_wm_manager_set(struct kContext *C, struct wmWindowManager *wm);
+void CTX_wm_screen_set(struct kContext *C, struct kScreen *screen);
+void CTX_wm_area_set(struct kContext *C, struct ScrArea *area);
+void CTX_wm_region_set(struct kContext *C, struct ARegion *region);
+void CTX_wm_menu_set(struct kContext *C, struct ARegion *menu);
+void CTX_wm_window_set(struct kContext *C, struct wmWindow *win);
+void CTX_data_scene_set(struct kContext *C, struct kScene *cscene);
+void CTX_data_prefs_set(struct kContext *C, struct kUserDef *uprefs);
 
-void CTX_wm_operator_poll_msg_clear(kContext *C);
-void CTX_wm_operator_poll_msg_set(kContext *C, const char *msg);
+void CTX_wm_operator_poll_msg_clear(struct kContext *C);
+void CTX_wm_operator_poll_msg_set(struct kContext *C, const char *msg);
 
 struct kContextStoreEntry
 {
-  wabi::TfToken name;
-  KrakenPRIM *ptr;
+  char name[MAX_NAME];
+  struct KrakenPRIM *ptr;
 };
 
 struct kContextStore
 {
-  std::vector<struct kContextStoreEntry *> entries;
+  ListBase entries;
   bool used;
 };
 
-typedef int (*kContextDataCallback)(const kContext *C,
+typedef int (*kContextDataCallback)(const struct kContext *C,
                                     const char *member,
-                                    kContextDataResult *result);
+                                    struct kContextDataResult *result);
 
 struct kContextPollMsgParams
 {
-  char *(*get_fn)(kContext *C, void *user_data);
-  void (*free_fn)(kContext *C, void *user_data);
+  char *(*get_fn)(struct kContext *C, void *user_data);
+  void (*free_fn)(struct kContext *C, void *user_data);
   void *user_data;
 };
-

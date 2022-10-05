@@ -131,6 +131,8 @@ struct ColorManagedLook *colormanage_look_add(const char *name,
 struct ColorManagedLook *colormanage_look_get_named(const char *name);
 struct ColorManagedLook *colormanage_look_get_indexed(int index);
 
+void colormanage_imbuf_make_linear(struct ImBuf *ibuf, const char *from_colorspace);
+
 
 /* -------------------------------------------------------------------- */
 /** @name Imbuf Color Management Flag
@@ -142,32 +144,6 @@ enum
 {
   IMB_COLORMANAGE_IS_DATA = (1 << 0),
 };
-
-typedef enum eImBufFlags
-{
-  IB_rect = 1 << 0,
-  IB_test = 1 << 1,
-  IB_zbuf = 1 << 3,
-  IB_mem = 1 << 4,
-  IB_rectfloat = 1 << 5,
-  IB_zbuffloat = 1 << 6,
-  IB_multilayer = 1 << 7,
-  IB_metadata = 1 << 8,
-  IB_animdeinterlace = 1 << 9,
-  IB_tiles = 1 << 10,
-  IB_tilecache = 1 << 11,
-  /** indicates whether image on disk have premul alpha */
-  IB_alphamode_premul = 1 << 12,
-  /** if this flag is set, alpha mode would be guessed from file */
-  IB_alphamode_detect = 1 << 13,
-  /* alpha channel is unrelated to RGB and should not affect it */
-  IB_alphamode_channel_packed = 1 << 14,
-  /** ignore alpha on load and substitute it with 1.0f */
-  IB_alphamode_ignore = 1 << 15,
-  IB_thumbnail = 1 << 16,
-  IB_multiview = 1 << 17,
-  IB_halffloat = 1 << 18,
-} eImBufFlags;
 
 /** @} */
 

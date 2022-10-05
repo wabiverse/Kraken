@@ -103,7 +103,9 @@ bool IMB_colormanagement_setup_glsl_draw_from_space(
  */
 void IMB_colormanagement_display_to_scene_linear_v3(float pixel[3],
                                                     struct ColorManagedDisplay *display);
-
+void IMB_colormanagement_colorspace_to_scene_linear_v4(float pixel[4],
+                                                       bool predivide,
+                                                       struct ColorSpace *colorspace);
 /**
  * Finish GLSL-based display space conversion.
  */

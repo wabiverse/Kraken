@@ -1172,13 +1172,13 @@ typedef struct wmDropBox
  * #wmKeyConfigPref is written to USD,
  * #wmKeyConfigPrefType_Runtime has the RNA type.
  */
-struct wmKeyConfigPref
+typedef struct wmKeyConfigPref
 {
   /** Unique name. */
   char idname[64];
-};
+} wmKeyConfigPref;
 
-struct wmKeyMapItem
+typedef struct wmKeyMapItem
 {
   /* operator */
   /** Used to retrieve operator type pointer. */
@@ -1209,14 +1209,14 @@ struct wmKeyMapItem
   short maptype;
   short id;
   struct KrakenPRIM *ptr;
-};
+} wmKeyMapItem;
 
 /** Used instead of wmKeyMapItem for diff keymaps. */
-struct wmKeyMapDiffItem
+typedef struct wmKeyMapDiffItem
 {
   struct wmKeyMapItem *remove_item;
   struct wmKeyMapItem *add_item;
-};
+} wmKeyMapDiffItem;
 
 /** #wmKeyMapItem.flag */
 enum
@@ -1280,7 +1280,7 @@ typedef struct wmKeyMap
 /* These two Lines with # tell makesdna this struct can be excluded. */
 /* should be something like DNA_EXCLUDE
  * but the preprocessor first removes all comments, spaces etc */
-struct wmOperatorTypeMacro
+typedef struct wmOperatorTypeMacro
 {
   /* operator id */
   char idname[MAX_NAME];
@@ -1288,10 +1288,10 @@ struct wmOperatorTypeMacro
   /** Operator properties, assigned to ptr->data and can be written to a file. */
   IDProperty *properties;
   struct KrakenPRIM *ptr;
-};
+} wmOperatorTypeMacro;
 
 
-struct wmKeyConfig
+typedef struct wmKeyConfig
 {
   /** Unique name. */
   char idname[MAX_NAME];
@@ -1300,14 +1300,14 @@ struct wmKeyConfig
   ListBase keymaps;
   int actkeymap;
   short flag;
-};
+} wmKeyConfig;
 
 
 /**
  * Struct to store tool-tip timer and possible creation if the time is reached.
  * Allows UI code to call #WM_tooltip_timer_init without each user having to handle the timer.
  */
-struct wmTooltipState
+typedef struct wmTooltipState
 {
   /** Create tooltip on this event. */
   struct wmTimer *timer;
@@ -1329,12 +1329,12 @@ struct wmTooltipState
   int event_xy[2];
   /** Pass, use when we want multiple tips, count down to zero. */
   int pass;
-};
+} wmTooltipState;
 
 
 /* timer customdata to control reports display */
-struct ReportTimerInfo
+typedef struct ReportTimerInfo
 {
   float col[4];
   float widthfac;
-};
+} ReportTimerInfo;

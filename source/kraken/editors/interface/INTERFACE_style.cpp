@@ -298,6 +298,33 @@ void uiStyleInit(void)
   KRF_load_font_stack();
 }
 
+int UI_fontstyle_string_width(const uiFontStyle *fs, const char *str)
+{
+  UI_fontstyle_set(fs);
+  return int(KRF_width(fs->uifont_id, str, KRF_DRAW_STR_DUMMY_MAX));
+}
+
+int UI_fontstyle_string_width_with_block_aspect(const uiFontStyle *fs,
+                                                const char *str,
+                                                const float aspect)
+{
+  uiFontStyle fs_buf;
+  if (aspect != 1.0f) {
+    fs_buf = *fs;
+    ui_fontscale(&fs_buf.points, aspect);
+    fs = &fs_buf;
+  }
+
+  int width = UI_fontstyle_string_width(fs, str);
+
+  if (aspect != 1.0f) {
+    /* While in most cases rounding up isn't important, it can make a difference
+     * with small fonts (3px or less), zooming out in the node-editor for e.g. */
+    width = int(ceilf(width * aspect));
+  }
+  return width;
+}
+
 void UI_fontstyle_set(const uiFontStyle *fs)
 {
   uiFont *font = uifont_to_krfont(fs->uifont_id);

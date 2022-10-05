@@ -85,6 +85,9 @@ typedef struct ImFileType
   int default_save_role;
 } ImFileType;
 
+extern const ImFileType IMB_FILE_TYPES[];
+extern const ImFileType *IMB_FILE_TYPES_LAST;
+
 const ImFileType *IMB_file_type_from_ftype(int ftype);
 const ImFileType *IMB_file_type_from_ibuf(const ImBuf *ibuf);
 

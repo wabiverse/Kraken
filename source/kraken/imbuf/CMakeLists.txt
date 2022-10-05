@@ -7,6 +7,7 @@ set(INC
   ../../../source
   ../krakernel
   ../kraklib
+  ../krakloader
   ../gpu
   ../universe
   ../luxo
@@ -17,10 +18,15 @@ set(INC
 set(SRC
   intern/colormanagement.c
   intern/filetype.c
+  intern/imageprocess.c
   intern/module.c
+  intern/readimage.c
+  intern/rectop.c
+  intern/thumbs_usd.c
 
   IMB_colormanagement.h
   IMB_imbuf.h
+  IMB_thumbs.h
   
   intern/IMB_colormanagement_intern.h
   intern/IMB_filetype.h
@@ -49,6 +55,7 @@ list(APPEND LIB
   maelstrom_static
   kraken_kernel
   kraken_lib
+  kraken_loader
   kraken_intern_guardedalloc
   kraken_intern_opencolorio
   ${BOOST_LIBRARIES}

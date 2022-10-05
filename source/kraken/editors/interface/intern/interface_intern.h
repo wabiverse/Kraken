@@ -537,8 +537,9 @@ struct uiBlock
 #ifdef __cplusplus
   std::vector<uiButtonGroup *> button_groups; /* #uiButtonGroup. */
   std::vector<uiLayout *> layouts;
-  std::vector<kContextStore *> contexts;
 #endif /* __cplusplus */
+
+  ListBase contexts;
 
   struct uiLayout *curlayout;
 

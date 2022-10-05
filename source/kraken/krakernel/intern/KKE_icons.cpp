@@ -27,14 +27,38 @@
 #include <cstring>
 #include <mutex>
 
-#include "KKE_icons.h"
-#include "KKE_utils.h"
+#include "CLG_log.h"
 
+#include "MEM_guardedalloc.h"
+
+#include "USD_scene_types.h"
+#include "USD_space_types.h"
+#include "USD_wm_types.h"
+#include "USD_texture_types.h"
+
+#include "KLI_fileops.h"
 #include "KLI_rhash.h"
+// #include "KLI_linklist_lockfree.h"
+#include "KLI_string.h"
 #include "KLI_threads.h"
-#include "KLI_assert.h"
+#include "KLI_utildefines.h"
+#include "KLI_vector.hh"
+
+#include "KKE_global.h" /* only for G.background test */
+#include "KKE_icons.h"
+// #include "KKE_studiolight.h"
 
 #include <wabi/base/tf/hash.h>
+
+#include "KLI_sys_types.h" /* for intptr_t support */
+
+#include "GPU_texture.h"
+
+#include "IMB_imbuf.h"
+// #include "IMB_imbuf_types.h"
+// #include "IMB_thumbs.h"
+
+#include "atomic_ops.h"
 
 /**
  * Only allow non-managed icons to be removed (by Python for eg).
@@ -44,6 +68,10 @@ enum
 {
   ICON_FLAG_MANAGED = (1 << 0),
 };
+
+/* GLOBALS */
+
+static CLG_LogRef LOG = {"kke.icons"};
 
 /* Protected by gIconMutex. */
 static RHash *gIcons = nullptr;
@@ -130,6 +158,76 @@ static Icon *icon_rhash_lookup(int icon_id)
 {
   std::scoped_lock lock(gIconMutex);
   return (Icon *)KLI_rhash_lookup(gIcons, POINTER_FROM_INT(icon_id));
+}
+
+void KKE_previewimg_freefunc(void *link)
+{
+  PreviewImage *prv = (PreviewImage *)link;
+  if (prv) {
+    for (int i = 0; i < NUM_ICON_SIZES; i++) {
+      if (prv->rect[i]) {
+        MEM_freeN(prv->rect[i]);
+      }
+      if (prv->gputexture[i]) {
+        GPU_texture_free(prv->gputexture[i]);
+      }
+    }
+
+    MEM_freeN(prv);
+  }
+}
+
+Icon *KKE_icon_get(const int icon_id)
+{
+  KLI_assert(KLI_thread_is_main());
+
+  Icon *icon = nullptr;
+
+  icon = icon_rhash_lookup(icon_id);
+
+  if (!icon) {
+    CLOG_ERROR(&LOG, "no icon for icon ID: %d", icon_id);
+    return nullptr;
+  }
+
+  return icon;
+}
+
+void KKE_icon_set(const int icon_id, struct Icon *icon)
+{
+  void **val_p;
+
+  std::scoped_lock lock(gIconMutex);
+  if (KLI_rhash_ensure_p(gIcons, POINTER_FROM_INT(icon_id), &val_p)) {
+    CLOG_ERROR(&LOG, "icon already set: %d", icon_id);
+    return;
+  }
+
+  *val_p = icon;
+}
+
+void KKE_icons_free()
+{
+  KLI_assert(KLI_thread_is_main());
+
+  if (gIcons) {
+    KLI_rhash_free(gIcons, nullptr, icon_free);
+    gIcons = nullptr;
+  }
+
+  if (gCachedPreviews) {
+    KLI_rhash_free(gCachedPreviews, MEM_freeN, KKE_previewimg_freefunc);
+    gCachedPreviews = nullptr;
+  }
+
+  // KLI_linklist_lockfree_free(&g_icon_delete_queue, MEM_freeN);
+  /* NOTE: We start from a first user-added node. */
+  LockfreeLinkNode *node = (&g_icon_delete_queue)->head->next;
+  while (node != NULL) {
+    LockfreeLinkNode *node_next = node->next;
+    MEM_freeN(node);
+    node = node_next;
+  }
 }
 
 void KKE_icons_init(int first_dyn_id)

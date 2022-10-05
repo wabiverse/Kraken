@@ -5935,7 +5935,7 @@ bool UI_block_layout_needs_resolving(const uiBlock *block)
 void uiLayoutSetContextPointer(uiLayout *layout, const char *name, KrakenPRIM *ptr)
 {
   uiBlock *block = layout->root->block;
-  layout->context = CTX_store_add(block->contexts, name, ptr);
+  layout->context = CTX_store_add(&block->contexts, name, ptr);
 }
 
 kContextStore *uiLayoutGetContextStore(uiLayout *layout)
@@ -5946,7 +5946,7 @@ kContextStore *uiLayoutGetContextStore(uiLayout *layout)
 void uiLayoutContextCopy(uiLayout *layout, kContextStore *context)
 {
   uiBlock *block = layout->root->block;
-  layout->context = CTX_store_add_all(block->contexts, context);
+  layout->context = CTX_store_add_all(&block->contexts, context);
 }
 
 void uiLayoutSetTooltipFunc(uiLayout *layout,

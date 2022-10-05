@@ -61,8 +61,6 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/stage.h>
 
-
-
 static void decode_kraken_header(FileData *fd)
 {
   char header[SIZEOFKRAKENHEADER], num[4];
@@ -95,7 +93,7 @@ static FileData *kr_decode_and_check(FileData *fd, ReportList *reports)
                   fd->relabase,
                   error_message);
       delete fd;
-      fd = NULL;
+      fd = nullptr;
     }
   } else {
     KKE_reportf(reports,
@@ -103,7 +101,7 @@ static FileData *kr_decode_and_check(FileData *fd, ReportList *reports)
                 "Failed to read project file '%s', not a supported kraken file",
                 fd->relabase);
     delete fd;
-    fd = NULL;
+    fd = nullptr;
   }
 
   return fd;
@@ -111,11 +109,11 @@ static FileData *kr_decode_and_check(FileData *fd, ReportList *reports)
 
 static FileData *filedata_new(KrakenFileReadReport *reports)
 {
-  KLI_assert(reports != NULL);
+  KLI_assert(reports != nullptr);
 
   FileData *fd = new FileData();
 
-  fd->filedes = std::string();
+  fd->filedes = KLI_strdup("");
   fd->reports = reports;
 
   return fd;
@@ -138,17 +136,17 @@ static FileData *kr_filedata_from_file_descriptor(const char *filepath,
                 "Unable to read '%s': %s",
                 filepath,
                 errno ? strerror(errno) : TIP_("insufficient content"));
-    return NULL;
+    return nullptr;
   }
 
   if (!KLI_has_kfile_extension(file->GetFileExtension().c_str())) {
     KKE_reportf(reports->reports, RPT_WARNING, "Unrecognized file format '%s'", filepath);
-    return NULL;
+    return nullptr;
   }
 
   FileData *fd = filedata_new(reports);
 
-  fd->filedes = file->GetIdentifier();
+  fd->filedes = KLI_strdup(file->GetIdentifier().c_str());
   fd->sdf_handle = SdfLayer::CreateNew(filepath);
 
   return fd;
@@ -165,25 +163,21 @@ static FileData *kr_filedata_from_file_open(const char *filepath, KrakenFileRead
                 "Unable to open '%s': %s",
                 filepath,
                 errno ? strerror(errno) : TIP_("unknown error reading file"));
-    return NULL;
+    return nullptr;
   }
-  FileData *fd = kr_filedata_from_file_descriptor(filepath, reports, file);
-  if ((fd == NULL) || (fd->filedes.empty())) {
-    file->Clear();
-  }
-  return fd;
+  return kr_filedata_from_file_descriptor(filepath, reports, file);
 }
 
 FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *reports)
 {
   FileData *fd = kr_filedata_from_file_open(filepath, reports);
-  if (fd != NULL) {
+  if (fd != nullptr) {
     /* needed for library_append and read_libraries */
     KLI_strncpy(fd->relabase, filepath, sizeof(fd->relabase));
 
     return kr_decode_and_check(fd, reports->reports);
   }
-  return NULL;
+  return nullptr;
 }
 
 KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadReport *reports)
@@ -194,4 +188,3 @@ KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadRep
 
   return kh;
 }
-

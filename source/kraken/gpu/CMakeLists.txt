@@ -61,6 +61,7 @@ set(SRC
   GPU_debug.h
   GPU_framebuffer.h
   GPU_immediate.h
+  GPU_immediate_util.h
   GPU_index_buffer.h
   GPU_init_exit.h
   GPU_material.h

@@ -35,6 +35,25 @@ enum eIconSizes {
   NUM_ICON_SIZES,
 };
 
+/* does not belong here... */
+/** #Object.mode */
+typedef enum eObjectMode {
+  OB_MODE_OBJECT = 0,
+  OB_MODE_EDIT = 1 << 0,
+  OB_MODE_SCULPT = 1 << 1,
+  OB_MODE_VERTEX_PAINT = 1 << 2,
+  OB_MODE_WEIGHT_PAINT = 1 << 3,
+  OB_MODE_TEXTURE_PAINT = 1 << 4,
+  OB_MODE_PARTICLE_EDIT = 1 << 5,
+  OB_MODE_POSE = 1 << 6,
+  OB_MODE_EDIT_GPENCIL = 1 << 7,
+  OB_MODE_PAINT_GPENCIL = 1 << 8,
+  OB_MODE_SCULPT_GPENCIL = 1 << 9,
+  OB_MODE_WEIGHT_GPENCIL = 1 << 10,
+  OB_MODE_VERTEX_GPENCIL = 1 << 11,
+  OB_MODE_SCULPT_CURVES = 1 << 12,
+} eObjectMode;
+
 /**
  * Defines for working with IDs.
  *

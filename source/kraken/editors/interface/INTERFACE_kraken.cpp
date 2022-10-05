@@ -3485,7 +3485,7 @@ void UI_block_free(const kContext *C, uiBlock *block)
     MEM_freeN(block->func_argN);
   }
 
-  CTX_store_free_list(block->contexts);
+  CTX_store_free_list(&block->contexts);
 
   KLI_freelistN(&block->saferct);
   KLI_freelistN(&block->color_pickers.list);
@@ -4724,7 +4724,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
      * access it. */
     const KrakenPRIM pptr = ptr->GetPrim();
     if (pptr.data) {
-      but->context = CTX_store_add(block->contexts, "id", &pptr);
+      but->context = CTX_store_add(&block->contexts, "id", &pptr);
     }
   }
 
@@ -6050,7 +6050,7 @@ KrakenPRIM *UI_but_operator_ptr_get(uiBut *but)
 
 void UI_but_context_ptr_set(uiBlock *block, uiBut *but, const char *name, const KrakenPRIM *ptr)
 {
-  but->context = CTX_store_add(block->contexts, name, ptr);
+  but->context = CTX_store_add(&block->contexts, name, ptr);
   but->context->used = true;
 }
 

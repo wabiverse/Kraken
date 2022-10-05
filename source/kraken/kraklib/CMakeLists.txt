@@ -17,14 +17,16 @@ set(SRC
   intern/KLI_assert.c
   intern/KLI_dynstr.c
   intern/KLI_filelist.cpp
-  intern/KLI_listbase.cpp
+  intern/KLI_linklist.c
   intern/KLI_math_base_inline.c
   intern/KLI_math_base_safe_inline.c
   intern/KLI_math_bits_inline.c
   intern/KLI_math_color.c
   intern/KLI_math_color_inline.c
+  intern/KLI_math_color_blend_inline.c
   intern/KLI_math_geom.c
   intern/KLI_math_geom_inline.c
+  intern/KLI_math_interp.c
   intern/KLI_math_matrix.c
   intern/KLI_math_rotation.c
   intern/KLI_math_solvers.c
@@ -32,6 +34,7 @@ set(SRC
   intern/KLI_math_vector_inline.c
   intern/KLI_memarena.c
   intern/KLI_mempool.c
+  intern/KLI_mmap.c
   intern/KLI_numaapi.cpp
   intern/path_util.c
   intern/KLI_rect.c
@@ -55,6 +58,9 @@ set(SRC
   intern/lazy_threading.cc
   intern/listbase.c
   intern/string_cursor_utf8.c
+  intern/storage.c
+  intern/task_pool.cc
+  intern/task_range.cc
   intern/task_scheduler.cc
 
   intern/KLI_mempool_private.h
@@ -87,6 +93,7 @@ set(SRC
   KLI_kraklib.h
   KLI_lazy_threading.hh
   KLI_link_utils.h
+  KLI_linklist.h
   KLI_listbase.h
   KLI_listbase_wrapper.hh
   KLI_map.hh
@@ -96,9 +103,11 @@ set(SRC
   KLI_math_base.hh
   KLI_math_base_safe.h
   KLI_math_bits.h
+  KLI_math_color_blend.h
   KLI_math_color.h
   KLI_math_geom.h
   KLI_math_inline.h
+  KLI_math_interp.h
   KLI_math_matrix.h
   KLI_math_rotation.h
   KLI_math_solvers.h
@@ -108,6 +117,7 @@ set(SRC
   KLI_memarena.h
   KLI_memory_utils.hh
   KLI_mempool.h
+  KLI_mmap.h
   KLI_numaapi.h
   KLI_path_utils.h
   KLI_probing_strategies.hh

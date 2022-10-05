@@ -26,6 +26,8 @@
 
 #include "KLI_rhash.h"
 
+#include "USD_space_types.h"
+
 #ifdef __cplusplus
 #  include "USD_context.h"
 #  include "USD_screen.h"
@@ -37,56 +39,6 @@
 #endif /* __cplusplus */
 
 struct RHash;
-
-typedef enum eRegionType
-{
-  RGN_TYPE_WINDOW = 0,
-  RGN_TYPE_HEADER = 1,
-  RGN_TYPE_CHANNELS = 2,
-  RGN_TYPE_TEMPORARY = 3,
-  RGN_TYPE_UI = 4,
-  RGN_TYPE_TOOLS = 5,
-  RGN_TYPE_TOOL_PROPS = 6,
-  RGN_TYPE_PREVIEW = 7,
-  RGN_TYPE_HUD = 8,
-  /* Region to navigate the main region from (RGN_TYPE_WINDOW). */
-  RGN_TYPE_NAV_BAR = 9,
-  /* A place for buttons to trigger execution of something that was set up in other regions. */
-  RGN_TYPE_EXECUTE = 10,
-  RGN_TYPE_FOOTER = 11,
-  RGN_TYPE_TOOL_HEADER = 12,
-  RGN_TYPE_XR = 13,
-
-#define RGN_TYPE_NUM (RGN_TYPE_XR + 1)
-} eRegionType;
-
-#define RGN_TYPE_ANY -1
-
-/* Region supports panel tabs (categories). */
-#define RGN_TYPE_HAS_CATEGORY_MASK (1 << RGN_TYPE_UI)
-
-/* Check for any kind of header region. */
-#define RGN_TYPE_IS_HEADER_ANY(regiontype) \
-  (((1 << (regiontype)) &                  \
-    ((1 << RGN_TYPE_HEADER) | 1 << (RGN_TYPE_TOOL_HEADER) | (1 << RGN_TYPE_FOOTER))) != 0)
-
-
-#define RGN_ALIGN_ENUM_FROM_MASK(align) ((align) & ((1 << 4) - 1))
-#define RGN_ALIGN_FLAG_FROM_MASK(align) ((align) & ~((1 << 4) - 1))
-
-enum
-{
-  RGN_FLAG_HIDDEN = (1 << 0),
-  RGN_FLAG_TOO_SMALL = (1 << 1),
-  RGN_FLAG_DYNAMIC_SIZE = (1 << 2),
-  RGN_FLAG_TEMP_REGIONDATA = (1 << 3),
-  RGN_FLAG_PREFSIZE_OR_HIDDEN = (1 << 4),
-  RGN_FLAG_SIZE_CLAMP_X = (1 << 5),
-  RGN_FLAG_SIZE_CLAMP_Y = (1 << 6),
-  RGN_FLAG_HIDDEN_BY_USER = (1 << 7),
-  RGN_FLAG_SEARCH_FILTER_ACTIVE = (1 << 8),
-  RGN_FLAG_SEARCH_FILTER_UPDATE = (1 << 9),
-};
 
 struct ARegion_Runtime
 {
@@ -105,24 +57,6 @@ struct ARegion_Runtime
 
   /* Maps uiBlock->name to uiBlock for faster lookups. */
   RHash *block_name_map;
-};
-
-/** #ARegion.alignment */
-enum
-{
-  RGN_ALIGN_NONE = 0,
-  RGN_ALIGN_TOP = 1,
-  RGN_ALIGN_BOTTOM = 2,
-  RGN_ALIGN_LEFT = 3,
-  RGN_ALIGN_RIGHT = 4,
-  RGN_ALIGN_HSPLIT = 5,
-  RGN_ALIGN_VSPLIT = 6,
-  RGN_ALIGN_FLOAT = 7,
-  RGN_ALIGN_QSPLIT = 8,
-  /* Maximum 15. */
-
-  /* Flags start here. */
-  RGN_SPLIT_PREV = 32,
 };
 
 #ifdef __cplusplus

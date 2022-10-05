@@ -59,6 +59,8 @@
 
 #include <wabi/base/tf/mallocTag.h>
 #include <wabi/usd/usd/attribute.h>
+#include <wabi/usd/usd/stage.h>
+#include <wabi/usd/usd/common.h>
 
 struct kContext
 {
@@ -175,7 +177,7 @@ void CTX_free(kContext *C)
 
 /* store */
 
-kContextStore *CTX_store_add(std::vector<kContextStore *> contexts, const TfToken &name, const KrakenPRIM *ptr)
+kContextStore *CTX_store_add(ListBase *contexts, const char *name, const KrakenPRIM *ptr)
 {
   /* ensure we have a context to put the entry in, if it was already used
    * we have to copy the context to ensure */
@@ -203,7 +205,7 @@ kContextStore *CTX_store_add(std::vector<kContextStore *> contexts, const TfToke
   return nullptr;
 }
 
-kContextStore *CTX_store_add_all(std::vector<kContextStore *> contexts, kContextStore *context)
+kContextStore *CTX_store_add_all(ListBase *contexts, kContextStore *context)
 {
   /* ensure we have a context to put the entries in, if it was already used
    * we have to copy the context to ensure */
@@ -242,7 +244,7 @@ void CTX_store_set(kContext *C, kContextStore *store)
   C->wm.store = store;
 }
 
-static kContextStoreEntry *CTX_lookup_loop(const kContextStore *store, const TfToken &name)
+static kContextStoreEntry *CTX_lookup_loop(const kContextStore *store, const char *name)
 {
   // for (auto &needle : store->entries) {
   //   if (needle->name == name) {
@@ -254,7 +256,7 @@ static kContextStoreEntry *CTX_lookup_loop(const kContextStore *store, const TfT
 }
 
 const KrakenPRIM *CTX_store_ptr_lookup(const kContextStore *store,
-                                       const TfToken &name,
+                                       const char *name,
                                        const KrakenPRIM *type)
 {
   kContextStoreEntry *entry = CTX_lookup_loop(store, name);
@@ -278,11 +280,11 @@ kContextStore *CTX_store_copy(kContextStore *store)
 
 void CTX_store_free(kContextStore *store)
 {
-  store->entries.clear();
+  KLI_listbase_clear(&store->entries);
   MEM_freeN(store);
 }
 
-void CTX_store_free_list(const std::vector<kContextStore*> &contexts)
+void CTX_store_free_list(ListBase *contexts)
 {
   // kContextStore *ctx = contexts.front();
   // while (ctx = contexts.front()) {

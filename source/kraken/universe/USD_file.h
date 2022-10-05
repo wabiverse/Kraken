@@ -25,10 +25,9 @@
  */
 
 #include "USD_api.h"
+#include "USD_color_types.h"
 
 struct Scene;
-
-
 
 /**
  * In order of preferred
@@ -53,7 +52,7 @@ struct KrakenFileData
   char filename[FILE_MAX];
 
   struct kScreen *curscreen;
-  kScene *curscene;
+  struct kScene *curscene;
 
   eKrakenFileType type;
 };
@@ -73,12 +72,6 @@ struct KrakenFileReadParams
   eUndoStepDir undo_direction;
 };
 
-struct KrakenFileReadReport
-{
-  /* General reports handling. */
-  struct ReportList *reports;
-};
-
 #define SIZEOFKRAKENHEADER 12
 
 enum eFileDataFlag
@@ -95,7 +88,7 @@ struct FileData
 
   char relabase[FILE_MAX];
 
-  SdfLayerRefPtr sdf_handle;
+  wabi::SdfLayerRefPtr sdf_handle;
   KrakenFileReadReport *reports;
 
   std::string filedes;

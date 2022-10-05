@@ -16,13 +16,13 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * Editors.
  * Tools for Artists.
  */
-
-#pragma once
 
 #include <wabi/base/tf/debug.h>
 #include <wabi/wabi.h>
