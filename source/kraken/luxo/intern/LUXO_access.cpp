@@ -34,6 +34,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "KLI_kraklib.h"
+#include "KLI_time.h"
 #include "KLI_dynstr.h"
 
 #include "KKE_utils.h"
@@ -54,6 +55,7 @@
 
 #include "LUXO_internal.h"
 
+#include <wabi/base/tf/stackTrace.h>
 #include <wabi/usd/ar/resolver.h>
 
 WABI_NAMESPACE_USING
@@ -705,18 +707,27 @@ KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr)
   return ptr->type;
 }
 
-/* remove this once we go back to UsdStage::CreateInMemory */
 void LUXO_save_usd(void)
 {
-  KRAKEN_STAGE->GetRootLayer()->Save();
+  const char *uprefdir;
+  char upreffile[FILE_MAX];
+  char render_oclock[80];
+
+  uprefdir = KKE_appdir_folder_id(KRAKEN_USER_CONFIG, NULL);
+
+  if (uprefdir) {
+    KLI_join_dirfile(upreffile, sizeof(upreffile), uprefdir, KRAKEN_USERPREF_FILE);
+  } else {
+    return;
+  }
+
+  KLI_pretty_time(std::time(0), render_oclock);
+  KRAKEN_STAGE->GetRootLayer()->Export(upreffile,
+                                       TfStringPrintf("File last modified: %s", render_oclock));
 }
 
-/**
- * Use UsdStage::CreateInMemory when we get out of an alpha state
- * for now, this makes it easier to debug scene description - it
- * is located in ~/Library/Application Support/Kraken/1.50/config/userpref.usda */
 KrakenSTAGE::KrakenSTAGE()
-  : UsdStageRefPtr(UsdStage::CreateNew(G.main->stage_id)),
+  : UsdStageRefPtr(UsdStage::CreateInMemory()),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 {}
 

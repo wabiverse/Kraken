@@ -52,6 +52,7 @@
 /* KRAKEN LIBRARY */
 #include "KLI_listbase.h"
 #include "KLI_string.h"
+#include "KLI_threads.h"
 
 /* KRAKEN KERNEL */
 #include "KKE_context.h"
@@ -117,7 +118,10 @@ const char *KKE_kraken_version_string(void)
 
 Main *KKE_main_new(void)
 {
-  Main *kmain = new Main();
+  Main *kmain = static_cast<Main *>(MEM_callocN(sizeof(Main), "new main"));
+  kmain->lock = static_cast<MainLock *>(MEM_mallocN(sizeof(SpinLock), "main lock"));
+  KLI_spin_init((SpinLock *)kmain->lock);
+  kmain->is_global_main = false;
   return kmain;
 }
 

@@ -1,6 +1,7 @@
 #usda 1.0
 (
-    colorConfiguration = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/colormanagement/config.ocio@
+    "File last modified: Thursday, October 13, 2022 09:39:34 AM"
+    colorConfiguration = @/Users/furby/Library/Application Support/Kraken/1.50/datafiles/colormanagement/config.ocio@
     colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
     upAxis = "Z"
@@ -14,115 +15,15 @@ def "WabiAnimationStudios" (
 
     def "Structs"
     {
-        def "Operator"
+        def "WindowManager"
         {
-            def Operator "WM_OT_window_close" (
-                doc = "Close the current window"
+            def "Operator" (
+                doc = "Storage of an operator being executed, or registered after execution"
             )
             {
-                custom uniform token ui:operator:name = "Close Window"
+                custom uniform token ui:name = "Operator"
             }
-
-            def Operator "WM_OT_window_new" (
-                doc = "Create a new window"
-            )
-            {
-                custom uniform token ui:operator:name = "New Window"
-            }
-
-            def Operator "WM_OT_window_new_main" (
-                doc = "Create a new main window with its own workspace and scene selection"
-            )
-            {
-                custom uniform token ui:operator:name = "New Main Window"
-            }
-
-            def Operator "WM_OT_window_fullscreen_toggle" (
-                doc = "Toggle the current window fullscreen"
-            )
-            {
-                custom uniform token ui:operator:name = "Toggle Window Fullscreen"
-            }
-
-            def Operator "WM_OT_quit_kraken" (
-                doc = "Quit Kraken"
-            )
-            {
-                custom uniform token ui:operator:name = "Quit Kraken"
-            }
-
-            def Operator "WM_OT_files_create_appdata" (
-                doc = "Install user directories at OS appdata"
-            )
-            {
-                custom uniform token ui:operator:name = "Create User AppData Directory"
-            }
-
-            def Operator "WM_OT_open_mainfile" (
-                doc = "Open a Kraken file"
-            )
-            {
-                custom bool display_file_selector = 1 (
-                    displayName = "Display File Selector"
-                )
-                custom asset filepath = @/Users/furby/Library/Application Support/Kraken/1.50/config/userpref.usda@ (
-                    displayName = "File Path"
-                    doc = "The path to a .usd file path to open"
-                )
-                custom bool load_ui = 1 (
-                    displayName = "Load UI"
-                    doc = "Load user interface setup in the .usd file"
-                )
-                custom uniform token ui:operator:name = "Open"
-            }
-        }
-
-        def Window "MainWindow1"
-        {
-            uniform token ui:window:alignment = "alignAbsolute"
-            uniform token ui:window:cursor = "default"
-            uniform float ui:window:dpi = 36
-            uniform asset ui:window:icon = @/Users/furby/dev/build_darwin_release/bin/Release/Kraken.app/Contents/Resources/1.50/datafiles/icons/kraken-desktop.png@
-            uniform float ui:window:linewidth = 1
-            uniform float ui:window:pixelsz = 2
-            uniform float2 ui:window:pos = (0, 0)
-            uniform float ui:window:scale = 1
-            uniform float2 ui:window:size = (0, 0)
-            uniform token ui:window:state = "normal"
-            uniform token ui:window:title = "Kraken"
-            uniform token ui:window:type = "normal"
-            uniform float ui:window:widgetunit = 12.5
-            prepend rel ui:window:workspace = </WabiAnimationStudios/Structs/Workspaces/Layout>
-        }
-
-        def "Workspaces"
-        {
-            def Workspace "Layout"
-            {
-                uniform token ui:workspace:name = "Workspace"
-                prepend rel ui:workspace:screen = </WabiAnimationStudios/Structs/Workspaces/Layout/Screen>
-
-                def Screen "Screen"
-                {
-                    uniform token ui:screen:alignment = "none"
-                    rel ui:screen:areas
-                }
-            }
-        }
-
-        def UserPref "UserDef"
-        {
-            uniform float ui:userpref:dpifac = 1
-            uniform bool ui:userpref:showSavePrompt = 1
         }
     }
-}
-
-def Cube "Cube"
-{
-    float3 xformOp:rotateXYZ = (0, 0, 0)
-    float3 xformOp:scale = (1, 1, 1)
-    double3 xformOp:translate = (0, 0, 0)
-    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
 }
 

@@ -285,15 +285,6 @@ enum
   G_TRANSFORM_CURSOR = (1 << 5),
 };
 
-/** Defined in KKE_kraken.cpp */
-extern Global G;
-
-/**
- * Stupid macro to hide the few *valid* usages of `G.main` (from startup/exit code e.g.),
- * helps with cleanup task.
- */
-#define G_MAIN (G).main
-
 #ifdef __cplusplus
 }
 #endif
@@ -352,3 +343,12 @@ void KKE_callback_exec(struct Main *bmain,
                        struct KrakenPRIM **pointers,
                        const int num_pointers,
                        eCbEvent evt);
+
+/** Defined in KKE_kraken.cpp */
+extern Global G;
+
+/**
+ * Stupid macro to hide the few *valid* usages of `G.main` (from startup/exit code e.g.),
+ * helps with cleanup task.
+ */
+#define G_MAIN (G).main

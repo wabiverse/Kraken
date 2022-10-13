@@ -87,6 +87,8 @@ typedef struct Main
   ListBase scenes;
   ListBase wm;
   ListBase workspaces;
+
+  struct MainLock *lock;
 } Main;
 
 struct Main *KKE_main_new(void);
