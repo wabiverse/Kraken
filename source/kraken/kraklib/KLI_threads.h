@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 /** For tables, button in UI, etc. */
-#define BLENDER_MAX_THREADS 1024
+#define KRAKEN_MAX_THREADS 1024
 
 struct ListBase;
 

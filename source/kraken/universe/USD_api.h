@@ -80,6 +80,7 @@
 #define UNIVERSE_INSERT_WINDOW(m, h, v) m->windows.insert(std::make_pair(h, v))
 #define HASH(x) x.first
 #define VALUE(y) y.second
+#define VALUE_PTR(y) y->second
 #define UNIVERSE_FOR_ALL(iter, c) for (const auto &iter : c)
 #define UNIVERSE_MUTABLE_FOR_ALL(iter, c) for (auto &iter : c)
 

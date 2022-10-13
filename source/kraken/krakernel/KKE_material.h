@@ -31,8 +31,10 @@ extern "C" {
 #endif
 
 struct ID;
+struct Main;
 struct Material;
 struct Object;
+struct Scene;
 struct kNode;
 
 /* -------------------------------------------------------------------- */
@@ -136,10 +138,10 @@ bool KKE_object_material_slot_used(struct Object *object, short actcol);
 struct Material *KKE_gpencil_material(struct Object *ob, short act);
 struct MaterialGPencilStyle *KKE_gpencil_material_settings(struct Object *ob, short act);
 
-void KKE_texpaint_slot_refresh_cache(struct kScene *scene,
+void KKE_texpaint_slot_refresh_cache(struct Scene *scene,
                                      struct Material *ma,
                                      const struct Object *ob);
-void KKE_texpaint_slots_refresh_object(struct kScene *scene, struct Object *ob);
+void KKE_texpaint_slots_refresh_object(struct Scene *scene, struct Object *ob);
 struct kNode *KKE_texpaint_slot_material_find_node(struct Material *ma, short texpaint_slot);
 
 /** \} */

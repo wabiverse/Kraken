@@ -24,9 +24,73 @@
  * Image Manipulation.
  */
 
+#include "../kraklib/KLI_compiler_compat.h"
 #include "../kraklib/KLI_sys_types.h"
 #include "../kraklib/KLI_rect.h"
 #include "../gpu/GPU_texture.h"
+
+#ifdef __cplusplus
+#  include <wabi/base/tf/token.h>
+
+/**
+ * @DEFAULT: "Out of the box" supported file types for quick lookups. 
+ */
+struct ImbFileTypeToken
+{
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_PNG = wabi::TfToken("PNG");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_TGA = wabi::TfToken("TGA");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_RAWTGA = wabi::TfToken("RAWTGA");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_JPG = wabi::TfToken("JPG");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_JPEG = wabi::TfToken("JPEG");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_OPEN_EXR = wabi::TfToken("OPEN_EXR");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_OPEN_EXR_MULTILAYER = wabi::TfToken("OPEN_EXR_MULTILAYER");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_IMAGIC = wabi::TfToken("OPEN_EXR_IMAGIC");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_BMP = wabi::TfToken("BMP");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_IRIS = wabi::TfToken("IRIS");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_IRIZ = wabi::TfToken("IRIZ");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_AVIRAW = wabi::TfToken("AVIRAW");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_AVIJPEG = wabi::TfToken("AVIJPEG");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_PSD = wabi::TfToken("PSD");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_JP2 = wabi::TfToken("JP2");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_HDR = wabi::TfToken("HDR");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_RADHDR = wabi::TfToken("RADHDR");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_TIFF = wabi::TfToken("TIFF");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_TIF = wabi::TfToken("TIF");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_CINEON = wabi::TfToken("CINEON");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_DPX = wabi::TfToken("DPX");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_DDS = wabi::TfToken("DDS");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_MPEG = wabi::TfToken("MPEG");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_TOKEN_WEBP = wabi::TfToken("WEBP");
+};
+
+struct ImbFileTypeDotExtToken
+{
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_PNG = wabi::TfToken(".png");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_TGA = wabi::TfToken(".tga");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_RAWTGA = wabi::TfToken(".tga");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_JPG = wabi::TfToken(".jpg");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_JPEG = wabi::TfToken(".jpeg");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_OPEN_EXR = wabi::TfToken(".exr");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_OPEN_EXR_MULTILAYER = wabi::TfToken(".exr");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_IMAGIC = wabi::TfToken(".exr");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_BMP = wabi::TfToken(".bmp");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_IRIS = wabi::TfToken(".iris");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_IRIZ = wabi::TfToken(".iriz");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_AVIRAW = wabi::TfToken(".avi");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_AVIJPEG = wabi::TfToken(".avi");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_PSD = wabi::TfToken(".psd");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_JP2 = wabi::TfToken(".jp2");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_HDR = wabi::TfToken(".hdr");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_RADHDR = wabi::TfToken(".hdr");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_TIFF = wabi::TfToken(".tiff");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_TIF = wabi::TfToken(".tif");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_CINEON = wabi::TfToken(".cin");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_DPX = wabi::TfToken(".dpx");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_DDS = wabi::TfToken(".dds");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_MPEG = wabi::TfToken(".mpeg");
+  KLI_INLINE wabi::TfToken R_IMF_IMTYPE_DOT_EXT_TOKEN_WEBP = wabi::TfToken(".webp");
+};
+#endif /* __cplusplus */
 
 #ifdef __cplusplus
 extern "C" {

@@ -14,10 +14,21 @@ AnchorSystemPathsCocoa::~AnchorSystemPathsCocoa() {}
 #pragma mark Base directories retrieval
 
 const char *AnchorSystemPathsCocoa::GetApplicationSupportDir(const char *versionstr,
-                                                             const NSUInteger mask,
+                                                             const int shim_mask,
                                                              char *tempPath,
                                                              const std::size_t len_tempPath)
 {
+  NSSearchPathDomainMask mask;
+  switch(shim_mask)
+  {
+    case 1:
+      mask = NSUserDomainMask;
+      break;
+    default:
+      mask = NSLocalDomainMask;
+      break;
+  }
+
   @autoreleasepool {
     const NSArray *const paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,
                                                                      mask,
@@ -40,13 +51,13 @@ const char *AnchorSystemPathsCocoa::GetApplicationSupportDir(const char *version
 const char *AnchorSystemPathsCocoa::getSystemDir(int, const char *versionstr) const
 {
   static char tempPath[512] = "";
-  return GetApplicationSupportDir(versionstr, NSLocalDomainMask, tempPath, sizeof(tempPath));
+  return GetApplicationSupportDir(versionstr, 0/*NSLocalDomainMask*/, tempPath, sizeof(tempPath));
 }
 
 const char *AnchorSystemPathsCocoa::getUserDir(int, const char *versionstr) const
 {
   static char tempPath[512] = "";
-  return GetApplicationSupportDir(versionstr, NSUserDomainMask, tempPath, sizeof(tempPath));
+  return GetApplicationSupportDir(versionstr, 1/*NSUserDomainMask*/, tempPath, sizeof(tempPath));
 }
 
 const char *AnchorSystemPathsCocoa::getUserSpecialDir(eAnchorUserSpecialDirTypes type) const

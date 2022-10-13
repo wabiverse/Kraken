@@ -39,8 +39,6 @@
 #include <wabi/usd/usd/attribute.h>
 #include <wabi/usd/usd/prim.h>
 
-
-
 enum
 {
   OPERATOR_RUNNING_MODAL = (1 << 0),
@@ -81,6 +79,7 @@ typedef struct wmOperatorType
 
 void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(kContext *C);
+void WM_operators_free(void);
 void WM_operators_register(kContext *C);
 
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot);

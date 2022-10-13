@@ -46,6 +46,13 @@ typedef enum
   ANCHOR_SUCCESS,
 } eAnchorStatus;
 
+typedef enum {
+  ANCHOR_ConsoleWindowStateHide = 0,
+  ANCHOR_ConsoleWindowStateShow,
+  ANCHOR_ConsoleWindowStateToggle,
+  ANCHOR_ConsoleWindowStateHideForNonConsoleLaunch
+} eAnchorConsoleWindowState;
+
 typedef enum
 {
   ANCHOR_BUTTON_MASK_NONE,

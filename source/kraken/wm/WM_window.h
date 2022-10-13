@@ -122,6 +122,13 @@ WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 kScreen *WM_window_get_active_screen(const wmWindow *win);
 WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win);
 
+void WM_init_state_size_set(int stax, int stay, int sizx, int sizy);
+void WM_init_state_fullscreen_set(void);
+void WM_init_state_normal_set(void);
+void WM_init_state_maximized_set(void);
+void WM_init_window_focus_set(bool do_it);
+void WM_init_native_pixels(bool do_it);
+
 void WM_window_set_active_layout(wmWindow *win, WorkSpace *workspace, WorkSpaceLayout *layout);
 
 /** Cleanup. */

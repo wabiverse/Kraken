@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -30,7 +30,7 @@
  */
 
 #include "USD_customdata_types.h" /* for eCustomDataType */
-// #include "USD_image_types.h"
+#include "USD_color_types.h"
 #include "USD_listBase.h"
 
 #include "KLI_sys_types.h" /* for bool */
@@ -260,7 +260,7 @@ GPUMaterial *GPU_material_from_nodetree_find(struct ListBase *gpumaterials,
  * This is enforced since constructing other arguments to this function may be expensive
  * so only do this when they are needed.
  */
-GPUMaterial *GPU_material_from_nodetree(struct kScene *scene,
+GPUMaterial *GPU_material_from_nodetree(struct Scene *scene,
                                         struct Material *ma,
                                         struct kNodeTree *ntree,
                                         struct ListBase *gpumaterials,
@@ -280,7 +280,7 @@ void GPU_material_release(GPUMaterial *mat);
 
 void GPU_materials_free(struct Main *bmain);
 
-struct kScene *GPU_material_scene(GPUMaterial *material);
+struct Scene *GPU_material_scene(GPUMaterial *material);
 struct GPUPass *GPU_material_get_pass(GPUMaterial *material);
 struct GPUShader *GPU_material_get_shader(GPUMaterial *material);
 const char *GPU_material_get_name(GPUMaterial *material);
@@ -348,7 +348,7 @@ typedef struct GPUMaterialTexture
 {
   struct GPUMaterialTexture *next, *prev;
   struct Image *ima;
-  int iuser;
+  struct ImageUser iuser;
   bool iuser_available;
   struct GPUTexture **colorband;
   struct GPUTexture **sky;
@@ -389,6 +389,21 @@ const GPUUniformAttrList *GPU_material_uniform_attributes(const GPUMaterial *mat
 struct RHash *GPU_uniform_attr_list_hash_new(const char *info);
 void GPU_uniform_attr_list_copy(GPUUniformAttrList *dest, const GPUUniformAttrList *src);
 void GPU_uniform_attr_list_free(GPUUniformAttrList *set);
+
+typedef struct GPULayerAttr
+{
+  struct GPULayerAttr *next, *prev;
+
+  /* Meaningful part of the attribute set key. */
+  char name[64]; /* MAX_CUSTOMDATA_LAYER_NAME */
+  /** Hash of name[64]. */
+  uint32_t hash_code;
+
+  /* Helper fields used by code generation. */
+  int users;
+} GPULayerAttr;
+
+const ListBase *GPU_material_layer_attributes(const GPUMaterial *material);
 
 /* A callback passed to GPU_material_from_callbacks to construct the material graph by adding and
  * linking the necessary GPU material nodes. */

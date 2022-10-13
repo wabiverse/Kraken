@@ -86,6 +86,7 @@ set(INC
   ../../../../. # Pixar USD
   ../../../../source
   ../../../../intern/atomic
+  ../../../../intern/clog
   ../../../../intern/guardedalloc
   ../../../../extern/wcwidth
 

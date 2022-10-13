@@ -42,7 +42,7 @@
  *  -----  The Kraken WindowManager. ----- */
 
 
-
+void WM_msgbus_types_init(void);
 
 
 /* ------ */

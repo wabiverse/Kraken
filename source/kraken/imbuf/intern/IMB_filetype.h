@@ -88,6 +88,17 @@ typedef struct ImFileType
 extern const ImFileType IMB_FILE_TYPES[];
 extern const ImFileType *IMB_FILE_TYPES_LAST;
 
+#ifdef __cplusplus
+/**
+ * @UTILITY: "Out of the box" supported file types for quick lookups.
+ * Quickly flip a token into a #ImageFormatData.imtype.
+ */
+int IMF_imtype_from_token(const wabi::TfToken &ftype);
+const wabi::TfToken IMF_imtype_dotext_from_token(const wabi::TfToken &ftype);
+
+#endif /* __cplusplus */
+
+
 const ImFileType *IMB_file_type_from_ftype(int ftype);
 const ImFileType *IMB_file_type_from_ibuf(const ImBuf *ibuf);
 

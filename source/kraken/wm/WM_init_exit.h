@@ -32,6 +32,10 @@ void WM_init(kContext *C, int argc = 0, const char **argv = NULL);
 void WM_exit(kContext *C);
 void WM_exit_ex(kContext *C, const bool do_python);
 
+void WM_init_state_start_with_console_set(bool value);
+
+void WM_init_opengl(void);
+
 void WM_init_manager(kContext *C);
 
 void WM_init_default_styles();

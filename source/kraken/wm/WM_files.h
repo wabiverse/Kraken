@@ -31,10 +31,11 @@
 
 #include "KKE_context.h"
 
-
-
 void WM_close_file_dialog(kContext *C, struct wmGenericCallback *post_action);
 
-void WM_file_operators_register(void);
-void WM_files_init(kContext *C);
+void WM_init_state_app_template_set(const char *app_template);
 
+void WM_file_operators_register(void);
+
+void WM_files_init(kContext *C);
+void WM_file_autoexec_init(const char *filepath);

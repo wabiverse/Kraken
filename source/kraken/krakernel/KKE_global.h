@@ -298,4 +298,6 @@ extern Global G;
 }
 #endif
 
-struct Global KKE_kraken_globals_init();
+void KKE_kraken_globals_clear(void)
+void KKE_kraken_globals_main_replace(Main *kmain)
+void KKE_kraken_globals_init(void);

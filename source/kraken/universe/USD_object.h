@@ -261,8 +261,8 @@ enum PropertySubType
 
 struct KrakenPROP : public wabi::UsdAttribute
 {
-  KrakenPROP(const wabi::UsdAttribute &prop = wabi::UsdAttribute()) 
-    : wabi::UsdAttribute(prop) 
+  KrakenPROP(const wabi::UsdAttribute &prop = wabi::UsdAttribute())
+    : wabi::UsdAttribute(prop)
   {}
 
   wabi::TfToken name;
@@ -377,13 +377,9 @@ struct KrakenFUNC
 
 struct KrakenPRIM : public wabi::UsdPrim
 {
-  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) 
-    : wabi::UsdPrim(prim) 
-  {}
+  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) : wabi::UsdPrim(prim) {}
 
-  KrakenPRIM(const KrakenPRIM *prim) 
-    : wabi::UsdPrim(prim->GetPrim()) 
-  {}
+  KrakenPRIM(const KrakenPRIM *prim) : wabi::UsdPrim(prim->GetPrim()) {}
 
   struct ID *owner_id;
   wabi::TfToken identifier;

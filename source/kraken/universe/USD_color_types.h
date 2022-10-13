@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "USD_ID.h"
 #include "USD_defs.h"
 #include "USD_vec_types.h"
 
@@ -254,6 +255,189 @@ enum
 {
   COLORMANAGE_VIEW_USE_CURVES = (1 << 0),
 };
+
+/* ImageUser is in Texture, in Nodes, Background Image, Image Window, .... */
+/* should be used in conjunction with an ID * to Image. */
+typedef struct ImageUser
+{
+  /** To retrieve render result. */
+  struct Scene *scene;
+
+  /** Movies, sequences: current to display. */
+  int framenr;
+  /** Total amount of frames to use. */
+  int frames;
+  /** Offset within movie, start frame in global time. */
+  int offset, sfra;
+  /** Cyclic flag. */
+  char cycl;
+
+  /** Multiview current eye - for internal use of drawing routines. */
+  char multiview_eye;
+  short pass;
+
+  int tile;
+
+  /** Listbase indices, for menu browsing or retrieve buffer. */
+  short multi_index, view, layer;
+  short flag;
+} ImageUser;
+
+typedef struct ImageAnim
+{
+  struct ImageAnim *next, *prev;
+  struct anim *anim;
+} ImageAnim;
+
+typedef struct ImageView
+{
+  struct ImageView *next, *prev;
+  /** MAX_NAME. */
+  char name[64];
+  /** 1024 = FILE_MAX. */
+  char filepath[1024];
+} ImageView;
+
+typedef struct ImagePackedFile
+{
+  struct ImagePackedFile *next, *prev;
+  struct PackedFile *packedfile;
+
+  /* Which view and tile this ImagePackedFile represents. Normal images will use 0 and 1001
+   * respectively when creating their ImagePackedFile. Must be provided for each packed image. */
+  int view;
+  int tile_number;
+  /** 1024 = FILE_MAX. */
+  char filepath[1024];
+} ImagePackedFile;
+
+typedef struct RenderSlot
+{
+  struct RenderSlot *next, *prev;
+  /** 64 = MAX_NAME. */
+  char name[64];
+  struct RenderResult *render;
+} RenderSlot;
+
+typedef struct ImageTile_Runtime
+{
+  int tilearray_layer;
+  int _pad;
+  int tilearray_offset[2];
+  int tilearray_size[2];
+} ImageTile_Runtime;
+
+typedef struct ImageTile
+{
+  struct ImageTile *next, *prev;
+
+  struct ImageTile_Runtime runtime;
+
+  int tile_number;
+
+  /* for generated images */
+  int gen_x, gen_y;
+  char gen_type, gen_flag;
+  short gen_depth;
+  float gen_color[4];
+
+  char label[64];
+} ImageTile;
+
+/* iuser->flag */
+#define IMA_ANIM_ALWAYS (1 << 0)
+/* #define IMA_UNUSED_1         (1 << 1) */
+/* #define IMA_UNUSED_2         (1 << 2) */
+#define IMA_NEED_FRAME_RECALC (1 << 3)
+#define IMA_SHOW_STEREO (1 << 4)
+/* #define IMA_UNUSED_5         (1 << 5) */
+
+typedef enum eGPUTextureTarget
+{
+  TEXTARGET_2D = 0,
+  TEXTARGET_2D_ARRAY,
+  TEXTARGET_TILE_MAPPING,
+  TEXTARGET_COUNT,
+} eGPUTextureTarget;
+
+/* Defined in BKE_image.h. */
+struct PartialUpdateRegister;
+struct PartialUpdateUser;
+
+typedef struct Image_Runtime
+{
+  /* Mutex used to guarantee thread-safe access to the cached ImBuf of the corresponding image ID.
+   */
+  void *cache_mutex;
+
+  /** \brief Register containing partial updates. */
+  struct PartialUpdateRegister *partial_update_register;
+  /** \brief Partial update user for GPUTextures stored inside the Image. */
+  struct PartialUpdateUser *partial_update_user;
+
+} Image_Runtime;
+
+typedef struct Image
+{
+  ID id;
+
+  /** File path, 1024 = FILE_MAX. */
+  char filepath[1024];
+
+  /** Not written in file. */
+  struct MovieCache *cache;
+  /** Not written in file 3 = TEXTARGET_COUNT, 2 = stereo eyes. */
+  struct GPUTexture *gputexture[3][2];
+
+  /* sources from: */
+  ListBase anims;
+  struct RenderResult *rr;
+
+  ListBase renderslots;
+  short render_slot, last_render_slot;
+
+  int flag;
+  short source, type;
+  int lastframe;
+
+  /* GPU texture flag. */
+  int gpuframenr;
+  short gpuflag;
+  short gpu_pass;
+  short gpu_layer;
+  short gpu_view;
+  char _pad2[4];
+
+  /** Deprecated. */
+  struct ListBase packedfiles;
+  struct PreviewImage *preview;
+
+  int lastused;
+
+  /* display aspect - for UV editing images resized for faster openGL display */
+  float aspx, aspy;
+
+  /* color management */
+  ColorManagedColorspaceSettings colorspace_settings;
+  char alpha_mode;
+
+  char _pad;
+
+  /* Multiview */
+  /** For viewer node stereoscopy. */
+  char eye;
+  char views_format;
+
+  /* ImageTile list for UDIMs. */
+  int active_tile_index;
+  ListBase tiles;
+
+  /** ImageView. */
+  ListBase views;
+  struct Stereo3dFormat *stereo3d_format;
+
+  Image_Runtime runtime;
+} Image;
 
 #ifdef __cplusplus
 }

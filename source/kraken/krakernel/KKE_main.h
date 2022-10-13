@@ -38,6 +38,7 @@
 extern "C" {
 #endif
 
+struct kContext;
 struct KLI_mempool;
 struct KrakenThumbnail;
 struct RHash;
@@ -57,20 +58,26 @@ typedef struct KrakenThumbnail {
 
 typedef struct Main
 {
+  char stage_id[1024];
+  short versionfile, subversionfile;
+  short minversionfile, minsubversionfile;
+
   uint64_t build_commit_timestamp;
-  char build_hash[FILE_MAX];
+  char build_hash[16];
 
-  char exe_path[FILE_MAX];
-  char fonts_path[FILE_MAX];
-  char temp_dir[FILE_MAX];
-  char icons_path[FILE_MAX];
-  char python_path[FILE_MAX];
-  char datafiles_path[FILE_MAX];
+  bool recovered;
+  bool is_memfile_undo_written;
+  bool is_memfile_undo_flush_needed;
+  bool use_memfile_full_barrier;
+  bool is_locked_for_linking;
 
-  char stage_id[FILE_MAX];
-  char ocio_cfg[FILE_MAX];
-
-  char kraken_version_decimal[32];
+  /**
+   * True if this main is the 'GMAIN' of current Kraken.
+   *
+   * @note There should always be only one global main, all others generated temporarily for
+   * various data management process must have this property set to false..
+   */
+  bool is_global_main;
 
   char launch_time[80];
 
@@ -85,6 +92,8 @@ typedef struct Main
 struct Main *KKE_main_new(void);
 const char *KKE_main_usdfile_path(const struct Main *kmain);
 
+/* because it ends cool. */
+#define KRAKEN_GODSPEED 0
 enum kkeStatusCode
 {
   KRAKEN_SUCCESS = 0,
@@ -99,7 +108,6 @@ void KKE_kraken_atexit(void);
 void KKE_kraken_atexit_register(void (*func)(void *user_data), void *user_data);
 void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *user_data);
 
-void KKE_kraken_main_init(struct kContext *C);
 void KKE_kraken_plugins_init(void);
 void KKE_kraken_enable_debug_codes(void);
 

@@ -123,7 +123,7 @@ static uint thread_levels = 0; /* threads can be invoked inside threads */
 static int threads_override_num = 0;
 
 /* just a max for security reasons */
-#define RE_MAX_THREAD BLENDER_MAX_THREADS
+#define RE_MAX_THREAD KRAKEN_MAX_THREADS
 
 struct ThreadSlot
 {

@@ -172,9 +172,9 @@ int KLI_task_parallel_thread_id(const TaskParallelTLS * /*tls*/)
   int &thread_id = tbb_thread_id.local();
   if (thread_id == -1) {
     thread_id = atomic_fetch_and_add_int32(&tbb_thread_id_counter, 1);
-    if (thread_id >= BLENDER_MAX_THREADS) {
+    if (thread_id >= KRAKEN_MAX_THREADS) {
       KLI_assert_msg(0, "Maximum number of threads exceeded for sculpting");
-      thread_id = thread_id % BLENDER_MAX_THREADS;
+      thread_id = thread_id % KRAKEN_MAX_THREADS;
     }
   }
   return thread_id;

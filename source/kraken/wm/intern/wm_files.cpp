@@ -40,6 +40,9 @@
 #include "LUXO_access.h"
 #include "LUXO_define.h"
 
+#include "KLI_path_utils.h"
+
+#include "KKE_autoexec.h"
 #include "KKE_context.h"
 #include "KKE_utils.h"
 #include "KKE_appdir.h"
@@ -274,7 +277,8 @@ static uiBlock *block_create__close_file_dialog(struct kContext *C,
   KKE_reports_init(&reports, RPT_STORE);
   // uint modified_images_count = ED_image_save_all_modified_info(kmain, &reports);
 
-  LISTBASE_FOREACH (const Report *, report, &reports.list) {
+  LISTBASE_FOREACH(const Report *, report, &reports.list)
+  {
     uiLayout *row = uiLayoutColumn(layout, false);
     uiLayoutSetScaleY(row, 0.6f);
     uiItemS(row);
@@ -445,4 +449,40 @@ void WM_files_init(kContext *C)
 
   WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
   WM_operator_properties_free(&props_ptr);
+}
+
+static struct
+{
+  char app_template[64];
+  bool override;
+} wm_init_state_app_template = {{0}};
+
+void WM_init_state_app_template_set(const char *app_template)
+{
+  if (app_template) {
+    STRNCPY(wm_init_state_app_template.app_template, app_template);
+    wm_init_state_app_template.override = true;
+  } else {
+    wm_init_state_app_template.app_template[0] = '\0';
+    wm_init_state_app_template.override = false;
+  }
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Read USD-File Shared Utilities
+ * \{ */
+
+void WM_file_autoexec_init(const char *filepath)
+{
+  if (G.f & G_FLAG_SCRIPT_OVERRIDE_PREF) {
+    return;
+  }
+
+  if (G.f & G_FLAG_SCRIPT_AUTOEXEC) {
+    char path[FILE_MAX];
+    KLI_split_dir_part(filepath, path, sizeof(path));
+    if (KKE_autoexec_match(path)) {
+      G.f &= ~G_FLAG_SCRIPT_AUTOEXEC;
+    }
+  }
 }

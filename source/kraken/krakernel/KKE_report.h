@@ -40,5 +40,6 @@ char *KKE_reports_string(ReportList *reports, eReportType level);
 
 const char *KKE_report_type_str(eReportType type);
 
+bool KKE_report_write_file_fp(FILE *fp, ReportList *reports, const char *header);
 void KKE_reports_print(ReportList *reports, eReportType level);
 bool KKE_reports_print_test(const ReportList *reports, eReportType type);

@@ -28,11 +28,602 @@
 
 #include "USD_ID.h"
 
+#include "USD_listBase.h"
+#include "USD_scene_types.h"
 #include "USD_color_types.h" /* for Histogram */
 #include "USD_defs.h"
-#include "USD_listBase.h"
 #include "USD_vec_types.h"
 // #include "USD_view2d.h"
+
+/** Workaround to forward-declare C++ type in C header. */
+#ifdef __cplusplus
+namespace kraken
+{
+  template<typename T> class Span;
+  class StringRef;
+  class StringRefNull;
+}  // namespace kraken
+namespace kraken::nodes
+{
+  class NodeDeclaration;
+  class SocketDeclaration;
+}  // namespace kraken::nodes
+namespace kraken::kke
+{
+  class kNodeTreeRuntime;
+  class kNodeRuntime;
+  class kNodeSocketRuntime;
+}  // namespace kraken::kke
+using NodeDeclarationHandle = kraken::nodes::NodeDeclaration;
+using SocketDeclarationHandle = kraken::nodes::SocketDeclaration;
+using kNodeTreeRuntimeHandle = kraken::kke::kNodeTreeRuntime;
+using kNodeRuntimeHandle = kraken::kke::kNodeRuntime;
+using kNodeSocketRuntimeHandle = kraken::kke::kNodeSocketRuntime;
+#else
+typedef struct NodeDeclarationHandle NodeDeclarationHandle;
+typedef struct SocketDeclarationHandle SocketDeclarationHandle;
+typedef struct kNodeTreeRuntimeHandle kNodeTreeRuntimeHandle;
+typedef struct kNodeRuntimeHandle kNodeRuntimeHandle;
+typedef struct kNodeSocketRuntimeHandle kNodeSocketRuntimeHandle;
+#endif
+
+struct AnimData;
+struct Collection;
+struct ID;
+struct Image;
+struct ListBase;
+struct Material;
+struct PreviewImage;
+struct Tex;
+struct kGPdata;
+struct kNodeInstanceHash;
+struct kNodeLink;
+struct kNodePreview;
+struct kNodeTreeExec;
+struct kNodeType;
+struct kNode;
+struct uiBlock;
+
+#define NODE_MAXSTR 64
+
+/* ns->datatype, shadetree only */
+#define NS_OSA_VECTORS 1
+#define NS_OSA_VALUES 2
+
+/* node socket/node socket type -b conversion rules */
+#define NS_CR_CENTER 0
+#define NS_CR_NONE 1
+#define NS_CR_FIT_WIDTH 2
+#define NS_CR_FIT_HEIGHT 3
+#define NS_CR_FIT 4
+#define NS_CR_STRETCH 5
+
+typedef struct kNodeSocket
+{
+  struct kNodeSocket *next, *prev;
+
+  /** User-defined properties. */
+  IDProperty *prop;
+
+  /** Unique identifier for mapping. */
+  char identifier[64];
+
+  /** MAX_NAME. */
+  char name[64];
+
+  /** Only used for the Image and OutputFile nodes, should be removed at some point. */
+  void *storage;
+
+  /**
+   * The socket's data type. #eNodeSocketDatatype.
+   */
+  short type;
+  /** #eNodeSocketFlag */
+  short flag;
+  /**
+   * Maximum number of links that can connect to the socket. Read via #nodeSocketLinkLimit, because
+   * the limit might be defined on the socket type, in which case this value does not have any
+   * effect. It is necessary to store this in the socket because it is exposed as an RNA property
+   * for custom nodes.
+   */
+  short limit;
+  /** Input/output type. */
+  short in_out;
+  /** Runtime type information. */
+  struct kNodeSocketType *typeinfo;
+  /** Runtime type identifier. */
+  char idname[64];
+
+  /**
+   * The location of the sockets, in the view-space of the node editor.
+   * \note These are runtime data-- only calculated when drawing, and could be removed from DNA.
+   */
+  float locx, locy;
+
+  /** Default input value used for unlinked sockets. */
+  void *default_value;
+
+  /** Local stack index for "node_exec". */
+  short stack_index;
+  char display_shape;
+
+  /* #eAttrDomain used when the geometry nodes modifier creates an attribute for a group
+   * output. */
+  char attribute_domain;
+
+  char _pad[2];
+
+  /* Runtime-only cache of the number of input links, for multi-input sockets. */
+  short total_inputs;
+
+  /** Custom dynamic defined label, MAX_NAME. */
+  char label[64];
+  char description[64];
+
+  /**
+   * The default attribute name to use for geometry nodes modifier output attribute sockets.
+   * \note Storing this pointer in every single socket exposes the bad design of using sockets
+   * to describe group inputs and outputs. In the future, it should be stored in socket
+   * declarations.
+   */
+  char *default_attribute_name;
+
+  /** Cached data from execution. */
+  void *cache;
+
+  /** A link pointer, set in #BKE_ntree_update_main. */
+  struct kNodeLink *link;
+
+  kNodeSocketRuntimeHandle *runtime;
+
+#ifdef __cplusplus
+  bool is_available() const;
+  bool is_multi_input() const;
+  bool is_input() const;
+  bool is_output() const;
+
+  /** Utility to access the value of the socket. */
+  template<typename T> const T *default_value_typed() const;
+
+  /* The following methods are only available when #kNodeTree.ensure_topology_cache has been
+   * called. */
+
+  /** Zero based index for every input and output socket. */
+  int index() const;
+  /** Socket index in the entire node tree. Inputs and outputs share the same index space. */
+  int index_in_tree() const;
+  /** Node this socket belongs to. */
+  kNode &owner_node();
+  const kNode &owner_node() const;
+  /** Node tree this socket belongs to. */
+  const kNodeTree &owner_tree() const;
+
+  /** Links which are incident to this socket. */
+  kraken::Span<kNodeLink *> directly_linked_links();
+  kraken::Span<const kNodeLink *> directly_linked_links() const;
+  /** Sockets which are connected to this socket with a link. */
+  kraken::Span<kNodeSocket *> directly_linked_sockets();
+  kraken::Span<const kNodeSocket *> directly_linked_sockets() const;
+  bool is_directly_linked() const;
+  /**
+   * Sockets which are connected to this socket when reroutes and muted nodes are taken into
+   * account.
+   */
+  kraken::Span<const kNodeSocket *> logically_linked_sockets() const;
+  bool is_logically_linked() const;
+
+  /**
+   * For output sockets, this is the corresponding input socket the value of which should be
+   * forwarded when the node is muted.
+   */
+  const kNodeSocket *internal_link_input() const;
+
+#endif
+} kNodeSocket;
+
+/** #kNodeSocket.type & #kNodeSocketType.type */
+typedef enum eNodeSocketDatatype
+{
+  SOCK_CUSTOM = -1, /* socket has no integer type */
+  SOCK_FLOAT = 0,
+  SOCK_VECTOR = 1,
+  SOCK_RGBA = 2,
+  SOCK_SHADER = 3,
+  SOCK_BOOLEAN = 4,
+  __SOCK_MESH = 5, /* deprecated */
+  SOCK_INT = 6,
+  SOCK_STRING = 7,
+  SOCK_OBJECT = 8,
+  SOCK_IMAGE = 9,
+  SOCK_GEOMETRY = 10,
+  SOCK_COLLECTION = 11,
+  SOCK_TEXTURE = 12,
+  SOCK_MATERIAL = 13,
+} eNodeSocketDatatype;
+
+/** Socket shape. */
+typedef enum eNodeSocketDisplayShape
+{
+  SOCK_DISPLAY_SHAPE_CIRCLE = 0,
+  SOCK_DISPLAY_SHAPE_SQUARE = 1,
+  SOCK_DISPLAY_SHAPE_DIAMOND = 2,
+  SOCK_DISPLAY_SHAPE_CIRCLE_DOT = 3,
+  SOCK_DISPLAY_SHAPE_SQUARE_DOT = 4,
+  SOCK_DISPLAY_SHAPE_DIAMOND_DOT = 5,
+} eNodeSocketDisplayShape;
+
+/** Socket side (input/output). */
+typedef enum eNodeSocketInOut
+{
+  SOCK_IN = 1 << 0,
+  SOCK_OUT = 1 << 1,
+} eNodeSocketInOut;
+
+/** #kNodeSocket.flag, first bit is selection. */
+typedef enum eNodeSocketFlag
+{
+  /** Hidden is user defined, to hide unused sockets. */
+  SOCK_HIDDEN = (1 << 1),
+  /** For quick check if socket is linked. */
+  SOCK_IN_USE = (1 << 2),
+  /** Unavailable is for dynamic sockets. */
+  SOCK_UNAVAIL = (1 << 3),
+  // /** DEPRECATED  dynamic socket (can be modified by user) */
+  // SOCK_DYNAMIC = (1 << 4),
+  // /** DEPRECATED  group socket should not be exposed */
+  // SOCK_INTERNAL = (1 << 5),
+  /** Socket collapsed in UI. */
+  SOCK_COLLAPSED = (1 << 6),
+  /** Hide socket value, if it gets auto default. */
+  SOCK_HIDE_VALUE = (1 << 7),
+  /** Socket hidden automatically, to distinguish from manually hidden. */
+  SOCK_AUTO_HIDDEN__DEPRECATED = (1 << 8),
+  SOCK_NO_INTERNAL_LINK = (1 << 9),
+  /** Draw socket in a more compact form. */
+  SOCK_COMPACT = (1 << 10),
+  /** Make the input socket accept multiple incoming links in the UI. */
+  SOCK_MULTI_INPUT = (1 << 11),
+  /**
+   * Don't show the socket's label in the interface, for situations where the
+   * type is obvious and the name takes up too much space.
+   */
+  SOCK_HIDE_LABEL = (1 << 12),
+} eNodeSocketFlag;
+
+/** TODO: Limit data in #kNode to what we want to see saved. */
+typedef struct kNode
+{
+  struct kNode *next, *prev;
+
+  /** User-defined properties. */
+  IDProperty *prop;
+
+  /** Runtime type information. */
+  struct kNodeType *typeinfo;
+  /** Runtime type identifier. */
+  char idname[64];
+
+  /** MAX_NAME. */
+  char name[64];
+  int flag;
+  short type;
+  /** Both for dependency and sorting. */
+  short done, level;
+
+  /** Used as a boolean for execution. */
+  uint8_t need_exec;
+  char _pad2[1];
+
+  /** Custom user-defined color. */
+  float color[3];
+
+  ListBase inputs, outputs;
+  /** Parent node. */
+  struct kNode *parent;
+  /** Optional link to libdata. */
+  struct ID *id;
+  /** Custom data, must be struct, for storage in file. */
+  void *storage;
+  /** The original node in the tree (for localized tree). */
+  struct kNode *original;
+  /** List of cached internal links (input to output), for muted nodes and operators. */
+  ListBase internal_links;
+
+  /** Root offset for drawing (parent space). */
+  float locx, locy;
+  /** Node custom width and height. */
+  float width, height;
+  /** Node width if hidden. */
+  float miniwidth;
+  /** Additional offset from loc. */
+  float offsetx, offsety;
+  /** Initial locx for insert offset animation. */
+  float anim_init_locx;
+  /** Offset that will be added to locx for insert offset animation. */
+  float anim_ofsx;
+
+  /** Update flags. */
+  int update;
+
+  /** Custom user-defined label, MAX_NAME. */
+  char label[64];
+  /** To be abused for buttons. */
+  short custom1, custom2;
+  float custom3, custom4;
+
+  char _pad1[4];
+
+  /** Entire bound-box (world-space). */
+  rctf totr;
+  /** Optional preview area. */
+  rctf prvr;
+  /**
+   * XXX TODO
+   * Node totr size depends on the prvr size, which in turn is determined from preview size.
+   * In earlier versions kNodePreview was stored directly in nodes, but since now there can be
+   * multiple instances using different preview images it is possible that required node size
+   * varies between instances. preview_xsize, preview_ysize defines a common reserved size for
+   * preview rect for now, could be replaced by more accurate node instance drawing,
+   * but that requires removing totr from DNA and replacing all uses with per-instance data.
+   */
+  /** Reserved size of the preview rect. */
+  short preview_xsize, preview_ysize;
+  /** Used at runtime when going through the tree. Initialize before use. */
+  short tmp_flag;
+
+  char _pad0;
+  /** Used at runtime when iterating over node branches. */
+  char iter_flag;
+
+  kNodeRuntimeHandle *runtime;
+
+#ifdef __cplusplus
+  kraken::StringRefNull label_or_name() const;
+  bool is_muted() const;
+  bool is_reroute() const;
+  bool is_frame() const;
+  bool is_group() const;
+  bool is_group_input() const;
+  bool is_group_output() const;
+  const kraken::nodes::NodeDeclaration *declaration() const;
+
+  /* The following methods are only available when #kNodeTree.ensure_topology_cache has been
+   * called. */
+
+  /** A span containing all input sockets of the node (including unavailable sockets). */
+  kraken::Span<kNodeSocket *> input_sockets();
+  kraken::Span<const kNodeSocket *> input_sockets() const;
+  /** A span containing all output sockets of the node (including unavailable sockets). */
+  kraken::Span<kNodeSocket *> output_sockets();
+  kraken::Span<const kNodeSocket *> output_sockets() const;
+  /** Utility to get an input socket by its index. */
+  kNodeSocket &input_socket(int index);
+  const kNodeSocket &input_socket(int index) const;
+  /** Utility to get an output socket by its index. */
+  kNodeSocket &output_socket(int index);
+  const kNodeSocket &output_socket(int index) const;
+  /** A span containing all internal links when the node is muted. */
+  kraken::Span<const kNodeLink *> internal_links_span() const;
+  /** Lookup socket of this node by its identifier. */
+  const kNodeSocket &input_by_identifier(kraken::StringRef identifier) const;
+  const kNodeSocket &output_by_identifier(kraken::StringRef identifier) const;
+  /** Node tree this node belongs to. */
+  const kNodeTree &owner_tree() const;
+#endif
+} kNode;
+
+/* node->flag */
+#define NODE_SELECT 1
+#define NODE_OPTIONS 2
+#define NODE_PREVIEW 4
+#define NODE_HIDDEN 8
+#define NODE_ACTIVE 16
+// #define NODE_ACTIVE_ID 32 /* deprecated */
+/* Used to indicate which group output node is used and which viewer node is active. */
+#define NODE_DO_OUTPUT 64
+#define __NODE_GROUP_EDIT 128 /* DEPRECATED */
+/* free test flag, undefined */
+#define NODE_TEST 256
+/* node is disabled */
+#define NODE_MUTED 512
+// #define NODE_CUSTOM_NAME 1024    /* deprecated! */
+// #define NODE_CONST_OUTPUT (1 << 11) /* deprecated */
+/* node is always behind others */
+#define NODE_BACKGROUND (1 << 12)
+/* automatic flag for nodes included in transforms */
+#define NODE_TRANSFORM (1 << 13)
+/* node is active texture */
+
+/* NOTE: take care with this flag since its possible it gets
+ * `stuck` inside/outside the active group - which makes buttons
+ * window texture not update, we try to avoid it by clearing the
+ * flag when toggling group editing - Campbell */
+#define NODE_ACTIVE_TEXTURE (1 << 14)
+/* use a custom color for the node */
+#define NODE_CUSTOM_COLOR (1 << 15)
+/* Node has been initialized
+ * This flag indicates the node->typeinfo->init function has been called.
+ * In case of undefined type at creation time this can be delayed until
+ * until the node type is registered.
+ */
+#define NODE_INIT (1 << 16)
+
+/* do recalc of output, used to skip recalculation of unwanted
+ * composite out nodes when editing tree
+ */
+#define NODE_DO_OUTPUT_RECALC (1 << 17)
+/* A preview for the data in this node can be displayed in the spreadsheet editor. */
+#define __NODE_ACTIVE_PREVIEW (1 << 18) /* deprecated */
+/* Active node that is used to paint on. */
+#define NODE_ACTIVE_PAINT_CANVAS (1 << 19)
+
+/* node->update */
+#define NODE_UPDATE_ID 1       /* associated id data block has changed */
+#define NODE_UPDATE_OPERATOR 2 /* node update triggered from update operator */
+
+/* Unique hash key for identifying node instances
+ * Defined as a struct because DNA does not support other typedefs.
+ */
+typedef struct kNodeInstanceKey
+{
+  unsigned int value;
+} kNodeInstanceKey;
+
+/* the basis for a Node tree, all links and nodes reside internal here */
+/* only re-usable node trees are in the library though,
+ * materials and textures allocate own tree struct */
+typedef struct kNodeTree
+{
+  ID id;
+  /** Animation data (must be immediately after id for utilities to use it). */
+  struct AnimData *adt;
+
+  /** The ID owning this node tree, in case it is an embedded one. */
+  ID *owner_id;
+
+  /** Runtime type information. */
+  struct kNodeTreeType *typeinfo;
+  /** Runtime type identifier. */
+  char idname[64];
+
+  /** Runtime RNA type of the group interface. */
+  struct StructRNA *interface_type;
+
+  /** Grease pencil data. */
+  struct bGPdata *gpd;
+  /** Node tree stores own offset for consistent editor view. */
+  float view_center[2];
+
+  ListBase nodes, links;
+
+  int type;
+
+  /**
+   * Sockets in groups have unique identifiers, adding new sockets always
+   * will increase this counter.
+   */
+  int cur_index;
+  int flag;
+  /** Flag to prevent re-entrant update calls. */
+  short is_updating;
+  /** Generic temporary flag for recursion check (DFS/BFS). */
+  short done;
+
+  /** Quality setting when editing. */
+  short edit_quality;
+  /** Quality setting when rendering. */
+  short render_quality;
+  /** Tile size for compositor engine. */
+  int chunksize;
+  /** Execution mode to use for compositor engine. */
+  int execution_mode;
+
+  rctf viewer_border;
+
+  /* Lists of kNodeSocket to hold default values and own_index.
+   * Warning! Don't make links to these sockets, input/output nodes are used for that.
+   * These sockets are used only for generating external interfaces.
+   */
+  ListBase inputs, outputs;
+
+  /* Node preview hash table
+   * Only available in base node trees (e.g. scene->node_tree)
+   */
+  struct kNodeInstanceHash *previews;
+  /* Defines the node tree instance to use for the "active" context,
+   * in case multiple different editors are used and make context ambiguous.
+   */
+  kNodeInstanceKey active_viewer_key;
+
+  char _pad[4];
+
+  /** Execution data.
+   *
+   * XXX It would be preferable to completely move this data out of the underlying node tree,
+   * so node tree execution could finally run independent of the tree itself.
+   * This would allow node trees to be merely linked by other data (materials, textures, etc.),
+   * as ID data is supposed to.
+   * Execution data is generated from the tree once at execution start and can then be used
+   * as long as necessary, even while the tree is being modified.
+   */
+  struct kNodeTreeExec *execdata;
+
+  /* Callbacks. */
+  void (*progress)(void *, float progress);
+  /** \warning may be called by different threads */
+  void (*stats_draw)(void *, const char *str);
+  int (*test_break)(void *);
+  void (*update_draw)(void *);
+  void *tbh, *prh, *sdh, *udh;
+
+  /** Image representing what the node group does. */
+  struct PreviewImage *preview;
+
+  kNodeTreeRuntimeHandle *runtime;
+
+#ifdef __cplusplus
+  /**
+   * Update a run-time cache for the node tree based on it's current state. This makes many methods
+   * available which allow efficient lookup for topology information (like neighboring sockets).
+   */
+  void ensure_topology_cache() const;
+
+  /* The following methods are only available when #kNodeTree.ensure_topology_cache has been
+   * called. */
+
+  /** A span containing all nodes in the node tree. */
+  kraken::Span<kNode *> all_nodes();
+  kraken::Span<const kNode *> all_nodes() const;
+  /** A span containing all group nodes in the node tree. */
+  kraken::Span<kNode *> group_nodes();
+  kraken::Span<const kNode *> group_nodes() const;
+  /** A span containing all input sockets in the node tree. */
+  kraken::Span<kNodeSocket *> all_input_sockets();
+  kraken::Span<const kNodeSocket *> all_input_sockets() const;
+  /** A span containing all output sockets in the node tree. */
+  kraken::Span<kNodeSocket *> all_output_sockets();
+  kraken::Span<const kNodeSocket *> all_output_sockets() const;
+  /** A span containing all sockets in the node tree. */
+  kraken::Span<kNodeSocket *> all_sockets();
+  kraken::Span<const kNodeSocket *> all_sockets() const;
+  /** Efficient lookup of all nodes with a specific type. */
+  kraken::Span<kNode *> nodes_by_type(kraken::StringRefNull type_idname);
+  kraken::Span<const kNode *> nodes_by_type(kraken::StringRefNull type_idname) const;
+  /**
+   * Cached toposort of all nodes. If there are cycles, the returned array is not actually a
+   * toposort. However, if a connected component does not contain a cycle, this component is sorted
+   * correctly. Use #has_available_link_cycle to check for cycles.
+   */
+  kraken::Span<const kNode *> toposort_left_to_right() const;
+  kraken::Span<const kNode *> toposort_right_to_left() const;
+  /** True when there are any cycles in the node tree. */
+  bool has_available_link_cycle() const;
+  /**
+   * True when there are nodes or sockets in the node tree that don't use a known type. This can
+   * happen when nodes don't exist in the current kraken version that existed in the version where
+   * this node tree was saved.
+   */
+  bool has_undefined_nodes_or_sockets() const;
+  /** Get the active group output node. */
+  const kNode *group_output_node() const;
+#endif
+} kNodeTree;
+
+typedef struct kNodeTreePath
+{
+  struct kNodeTreePath *next, *prev;
+
+  struct kNodeTree *nodetree;
+  /** Base key for nodes in this tree instance. */
+  // kNodeInstanceKey parent_key;
+  char _pad[4];
+  /** V2d center point, so node trees can have different offsets in editors. */
+  float view_center[2];
+
+  /** MAX_NAME. */
+  char node_name[64];
+  char display_name[64];
+} kNodeTreePath;
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,7 +677,8 @@ typedef struct SpaceFile_Runtime SpaceFile_Runtime;
 typedef struct SpaceSpreadsheet_Runtime SpaceSpreadsheet_Runtime;
 
 /** #Sequence.color_tag. */
-typedef enum SequenceColorTag {
+typedef enum SequenceColorTag
+{
   SEQUENCE_COLOR_NONE = -1,
   SEQUENCE_COLOR_01,
   SEQUENCE_COLOR_02,
@@ -102,7 +694,8 @@ typedef enum SequenceColorTag {
 } SequenceColorTag;
 
 /* Collection->color_tag. */
-typedef enum CollectionColorTag {
+typedef enum CollectionColorTag
+{
   COLLECTION_COLOR_NONE = -1,
   COLLECTION_COLOR_01,
   COLLECTION_COLOR_02,
@@ -410,7 +1003,7 @@ typedef enum eSpaceOutliner_Filter
   SO_FILTER_NO_CHILDREN = (1 << 4),
 
   SO_FILTER_UNUSED_5 = (1 << 5), /* cleared */
-  /** Show overrides that are defined/controlled by Blender. */
+  /** Show overrides that are defined/controlled by kraken. */
   SO_FILTER_SHOW_SYSTEM_OVERRIDES = SO_FILTER_UNUSED_5, /* re-use */
   SO_FILTER_NO_OB_MESH = (1 << 6),
   SO_FILTER_NO_OB_ARMATURE = (1 << 7),
@@ -503,7 +1096,7 @@ typedef enum eSpaceOutliner_StoreFlag
   SO_TREESTORE_CLEANUP = (1 << 0),
   SO_TREESTORE_UNUSED_1 = (1 << 1), /* cleared */
   /** Rebuild the tree, similar to cleanup, but defer a call to
-   * bke::outliner::treehash::rebuild_from_treestore instead. */
+   * kke::outliner::treehash::rebuild_from_treestore instead. */
   SO_TREESTORE_REBUILD = (1 << 2),
 } eSpaceOutliner_StoreFlag;
 
@@ -563,7 +1156,7 @@ typedef struct SpaceGraph
   int around;
   char _pad[4];
 
-  SpaceGraph_Runtime runtime;
+  struct SpaceGraph_Runtime runtime;
 } SpaceGraph;
 
 /** #SpaceGraph.flag (Graph Editor Settings) */
@@ -607,7 +1200,7 @@ typedef enum eGraphEdit_Flag
 /** #SpaceGraph.mode (Graph Editor Mode) */
 typedef enum eGraphEdit_Mode
 {
-  /* all animation curves (from all over Blender) */
+  /* all animation curves (from all over kraken) */
   SIPO_MODE_ANIMATION = 0,
   /* drivers only */
   SIPO_MODE_DRIVERS = 1,
@@ -1063,7 +1656,7 @@ typedef struct SpaceFile
 /** #SpaceFile.browse_mode (File Space Browsing Mode). */
 typedef enum eFileBrowse_Mode
 {
-  /* Regular Blender File Browser */
+  /* Regular kraken File Browser */
   FILE_BROWSE_MODE_FILES = 0,
   /* Asset Browser */
   FILE_BROWSE_MODE_ASSETS = 1,
@@ -1331,32 +1924,6 @@ typedef struct SpaceImageOverlay
   int flag;
   char _pad[4];
 } SpaceImageOverlay;
-
-/* ImageUser is in Texture, in Nodes, Background Image, Image Window, .... */
-/* should be used in conjunction with an ID * to Image. */
-typedef struct ImageUser {
-  /** To retrieve render result. */
-  struct kScene *scene;
-
-  /** Movies, sequences: current to display. */
-  int framenr;
-  /** Total amount of frames to use. */
-  int frames;
-  /** Offset within movie, start frame in global time. */
-  int offset, sfra;
-  /** Cyclic flag. */
-  char cycl;
-
-  /** Multiview current eye - for internal use of drawing routines. */
-  char multiview_eye;
-  short pass;
-
-  int tile;
-
-  /** Listbase indices, for menu browsing or retrieve buffer. */
-  short multi_index, view, layer;
-  short flag;
-} ImageUser;
 
 typedef struct SpaceImage
 {
@@ -1689,22 +2256,6 @@ typedef enum eSpaceText_Flags
 /* -------------------------------------------------------------------- */
 /** \name Nodes Editor
  * \{ */
-
-typedef struct kNodeTreePath
-{
-  struct kNodeTreePath *next, *prev;
-
-  struct kNodeTree *nodetree;
-  /** Base key for nodes in this tree instance. */
-  // kNodeInstanceKey parent_key;
-  char _pad[4];
-  /** V2d center point, so node trees can have different offsets in editors. */
-  float view_center[2];
-
-  /** MAX_NAME. */
-  char node_name[64];
-  char display_name[64];
-} kNodeTreePath;
 
 typedef struct SpaceNodeOverlay
 {

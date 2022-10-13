@@ -86,21 +86,30 @@ static char kraken_version_string[48] = "";
 
 static void kraken_version_init()
 {
-  printf("\n");
+  const char *version_cycle = "";
+  if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha")) {
+    version_cycle = " Alpha";
+  }
+  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "beta")) {
+    version_cycle = " Beta";
+  }
+  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "rc")) {
+    version_cycle = " Release Candidate";
+  }
+  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "release")) {
+    version_cycle = "";
+  }
+  else {
+    KLI_assert_msg(0, "Invalid Kraken version cycle");
+  }
+
   KLI_snprintf(kraken_version_string,
                ARRAY_SIZE(kraken_version_string),
                "%d.%01d.%d%s",
                KRAKEN_VERSION / 100,
                KRAKEN_VERSION % 100,
                KRAKEN_VERSION_PATCH,
-               STRINGIFY(KRAKEN_VERSION_CYCLE));
-  TF_WARN("Kraken v%s", CHARALL(kraken_version_string));
-  printf("\n");
-}
-
-static std::string kraken_get_version_decimal()
-{
-  return TfStringPrintf("%d.%02d", KRAKEN_VERSION / 100, KRAKEN_VERSION % 100);
+               version_cycle);
 }
 
 const char *KKE_kraken_version_string(void)
@@ -119,44 +128,44 @@ const char *KKE_main_usdfile_path(const Main *kmain)
   return kmain->stage_id;
 }
 
-Global KKE_kraken_globals_init()
+void KKE_kraken_globals_init(void)
 {
   kraken_version_init();
 
   memset(&G, 0, sizeof(Global));
 
-  G.main = KKE_main_new();
+  U.savetime = 1;
 
-  KLI_strncpy(G.main->exe_path, kraken_exe_path_init().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->temp_dir, kraken_system_tempdir_path().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->kraken_version_decimal, kraken_get_version_decimal().c_str(), 32);
-  KLI_strncpy(G.main->datafiles_path, kraken_datafiles_path_init().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->fonts_path, kraken_fonts_path_init().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->python_path, kraken_python_path_init().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->icons_path, kraken_icon_path_init().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->stage_id, kraken_startup_file_init().c_str(), FILE_MAX);
-  KLI_strncpy(G.main->ocio_cfg, kraken_ocio_file_init().c_str(), FILE_MAX);
+  KKE_kraken_globals_main_replace(KKE_main_new());
 
-  return G;
+  strcpy(G.ima, "//");
+
+#ifndef WITH_PYTHON_SECURITY /* default */
+  G.f |= G_FLAG_SCRIPT_AUTOEXEC;
+#else
+  G.f &= ~G_FLAG_SCRIPT_AUTOEXEC;
+#endif
+
+  G.log.level = 1;
 }
 
-void KKE_kraken_main_init(kContext *C)
+void KKE_kraken_globals_clear(void)
 {
-  /* Determine stage to load (from user or factory default). */
-  if (!std::filesystem::exists(G.main->stage_id) ||
-      std::string(G.main->stage_id).find("userpref.usda") != std::string::npos) {
-    G.factory_startup = true;
+  if (G_MAIN == NULL) {
+    return;
   }
+  KLI_assert(G_MAIN->is_global_main);
+  KKE_main_free(G_MAIN);
 
-  CTX_data_main_set(C, G.main);
+  G_MAIN = NULL;
+}
 
-  if (G.factory_startup) {
-    /**
-     * Create default Pixar stage. */
-  } else {
-    /**
-     * Open user's stage. */
-  }
+void KKE_kraken_globals_main_replace(Main *kmain)
+{
+  KLI_assert(!kmain->is_global_main);
+  KKE_kraken_globals_clear();
+  kmain->is_global_main = true;
+  G_MAIN = kmain;
 }
 
 void KKE_main_free(Main *mainvar)

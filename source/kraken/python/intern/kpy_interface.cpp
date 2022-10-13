@@ -307,6 +307,33 @@ static void kpy_context_end(kContext *C)
   CTX_wm_operator_poll_msg_clear(C);
 }
 
+void KPY_python_use_system_env(void)
+{
+  KLI_assert(!Py_IsInitialized());
+  py_use_system_env = true;
+}
+
+void KPY_python_backtrace(FILE *fp)
+{
+  fputs("\n# Python backtrace\n", fp);
+
+  /* Can happen in rare cases. */
+  if (!_PyThreadState_UncheckedGet()) {
+    return;
+  }
+  PyFrameObject *frame;
+  if (!(frame = PyEval_GetFrame())) {
+    return;
+  }
+  do {
+    PyCodeObject *code = PyFrame_GetCode(frame);
+    const int line = PyFrame_GetLineNumber(frame);
+    const char *filepath = PyUnicode_AsUTF8(code->co_filename);
+    const char *funcname = PyUnicode_AsUTF8(code->co_name);
+    fprintf(fp, "  File \"%s\", line %d in %s\n", filepath, line, funcname);
+  } while ((frame = PyFrame_GetBack(frame)));
+}
+
 void KPY_python_end(void)
 {
   PyGILState_STATE gilstate;

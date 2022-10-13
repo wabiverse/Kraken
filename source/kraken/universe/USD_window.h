@@ -87,6 +87,8 @@ struct wmWindow : public wabi::UsdUIWindow
 
   /** Anchor system backend pointer. */
   void *anchorwin;
+  /** GPU context pointer. */
+  void *gpuctx;
 
   /** Set to one for an active window. */
   bool active;
@@ -142,6 +144,7 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
     type(CreateTypeAttr()),
     workspace_rel(CreateUiWindowWorkspaceRel()),
     anchorwin(nullptr),
+    gpuctx(nullptr),
     active(true),
     lastcursor(0),
     modalcursor(0),

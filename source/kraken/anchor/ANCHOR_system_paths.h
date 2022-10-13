@@ -255,7 +255,7 @@ class AnchorSystemPathsCocoa : public AnchorSystemPaths
   ~AnchorSystemPathsCocoa();
 
   static const char *GetApplicationSupportDir(const char *versionstr,
-                                              const NS::UInteger mask,
+                                              const int shim_mask,
                                               char *tempPath,
                                               const std::size_t len_tempPath);
 

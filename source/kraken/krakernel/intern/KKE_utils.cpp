@@ -105,6 +105,14 @@ std::string kraken_icon_path_init()
 #endif
 }
 
+static char *kraken_version_decimal(const int version)
+{
+  static char version_str[5];
+  KLI_assert(version < 1000);
+  KLI_snprintf(version_str, sizeof(version_str), "%d.%d", version / 100, version % 100);
+  return version_str;
+}
+
 std::string kraken_startup_file_init()
 {
 #if defined(ARCH_OS_WINDOWS)
@@ -113,11 +121,12 @@ std::string kraken_startup_file_init()
 #elif defined(ARCH_OS_DARWIN)
   /* The 1 is for NSUserDomainMask */
   static char tempPath[512] = "";
-  return STRCAT(AnchorSystemPathsCocoa::GetApplicationSupportDir(G.main->kraken_version_decimal,
+  const int version = KRAKEN_VERSION;
+  return STRCAT(AnchorSystemPathsCocoa::GetApplicationSupportDir(kraken_version_decimal(version),
                                                                  1,
                                                                  tempPath,
                                                                  sizeof(tempPath)),
-                "config/userpref.usda");
+                                                                 "config/userpref.usda");
 #else
   return STRCAT(G.main->exe_path, "../datafiles/startup.usda");
 #endif

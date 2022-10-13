@@ -20,27 +20,20 @@
 
 /**
  * @file
- * KRAKEN Python.
- * It Bites.
+ * KRAKEN Kernel.
+ * Purple Underground.
  */
 
-#include "KPY_api.h"
-#include "KKE_context.h"
-
-/* For 'FILE'. */
-#include <stdio.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
- * Functionality relating to Python setup & teardown. */
+ * @param path: The path to check against.
+ * @return Success
+ */
+bool KKE_autoexec_match(const char *path);
 
-void KPY_modules_update(void);
-
-/* wpy_interface.cpp */
-void KPY_python_start(kContext *C, int argc, const char **argv);
-void KPY_python_end(void);
-void KPY_python_use_system_env(void);
-void KPY_python_backtrace(FILE *fp);
-
-void KPY_python_reset(kContext *C);
-
-int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *result);
+#ifdef __cplusplus
+}
+#endif

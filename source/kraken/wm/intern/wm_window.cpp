@@ -59,8 +59,9 @@
 #include "KLI_math.h"
 #include "KLI_string.h"
 #include "KLI_time.h"
-#include "KLI_threads.h"
 
+#include "GPU_context.h"
+#include "GPU_init_exit.h"
 #include "GPU_matrix.h"
 #include "GPU_viewport.h"
 
@@ -70,15 +71,48 @@
 #include "UI_resources.h"
 #include "UI_tokens.h"
 
+/* for assert */
+#ifndef NDEBUG
+#  include "KLI_threads.h"
+#endif
+
 #include <wabi/base/arch/defines.h>
 #include <wabi/base/gf/vec2f.h>
 
-
-
-
-/* handle to anchor system. */
+/* global handle to talk to anchor. */
 static AnchorSystemHandle anchor_system = NULL;
+#if !(defined(ARCH_OS_WINDOWS) || defined(ARCH_OS_APPLE))
+static const char *g_system_backend_id = NULL;
+#endif
 
+typedef enum eWinOverrideFlag
+{
+  WIN_OVERRIDE_GEOM = (1 << 0),
+  WIN_OVERRIDE_WINSTATE = (1 << 1),
+} eWinOverrideFlag;
+
+#define ANCHOR_WINDOW_STATE_DEFAULT AnchorWindowStateMaximized
+
+/**
+ * Override defaults or startup file when #eWinOverrideFlag is set.
+ * These values are typically set by command line arguments.
+ */
+static struct WMInitStruct
+{
+  /* window geometry */
+  int size_x, size_y;
+  int start_x, start_y;
+
+  int windowstate;
+  eWinOverrideFlag override_flag;
+
+  bool window_focus;
+  bool native_pixels;
+} wm_init_state = {
+  .windowstate = ANCHOR_WINDOW_STATE_DEFAULT,
+  .window_focus = true,
+  .native_pixels = true,
+};
 
 enum eModifierKeyType
 {
@@ -87,7 +121,6 @@ enum eModifierKeyType
   ALT = 'a',
   OS = 'C',
 };
-
 
 static int query_qual(eModifierKeyType qual)
 {
@@ -614,10 +647,12 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     ANCHOR_DrawingContextTypeOpenGL,
 #endif /* ARCH_OS_WIN32 */
     0);
-  if (anchorwin) {
-    // win->gpuctx = GPU_context_create(anchorwin);
 
-    // GPU_init();
+  if (anchorwin) {
+    win->gpuctx = GPU_context_create(anchorwin, nullptr);
+    GPU_render_begin();
+
+    GPU_init();
 
     /**
      * Set window as drawable upon creation. Note this has
@@ -641,11 +676,25 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     }
     ANCHOR::DisposeRectangle(bounds);
 
+#ifndef ARCH_OS_APPLE
+    /* set the state here, so minimized state comes up correct on windows */
+    if (wm_init_state.window_focus) {
+      ANCHOR::SetWindowState(anchorwin, (eAnchorWindowState)win->windowstate);
+    }
+#endif
+
     /* until screens get drawn, make it nice gray */
-    // GPU_clear_color(0.55f, 0.55f, 0.55f, 1.0f);
+    GPU_clear_color(0.55f, 0.55f, 0.55f, 1.0f);
 
     /* needed here, because it's used before it reads userdef */
     wm_window_set_dpi(win);
+
+    WM_window_swap_buffers(win);
+
+    /* Clear double buffer to avoids flickering of new windows on certain drivers. (See T97600) */
+    GPU_clear_color(0.55f, 0.55f, 0.55f, 1.0f);
+
+    GPU_render_end();
   }
 
   else {
@@ -661,13 +710,13 @@ static void wm_window_title(wmWindowManager *wm, wmWindow *win)
      * because #WM_window_open always sets window title. */
   } else if (win->anchorwin) {
     /* this is set to 1 if you don't have startup.usd open */
-    // if (G.save_over && KKE_main_pixarfile_path_from_global()[0]) {
+    // if (G.save_over && KKE_main_usdfile_path(G_MAIN)[0]) {
     //   char str[sizeof(((Main *)NULL)->name) + 24];
     //   KLI_snprintf(str,
     //                sizeof(str),
     //                "Kraken%s [%s%s]",
     //                wm->file_saved ? "" : "*",
-    //                KKE_main_pixarfile_path_from_global(),
+    //                KKE_main_usdfile_path(G_MAIN),
     //                G_MAIN->recovered ? " (Recovered)" : "");
     //   ANCHOR::SetTitle((AnchorSystemWindowHandle)win->anchorwin, str);
     // }
@@ -1033,7 +1082,8 @@ void WM_exit_schedule_delayed(const kContext *C)
   wmWindow *win = CTX_wm_window(C);
 
   std::vector<wmEventHandlerUI *> handlers;
-  LISTBASE_FOREACH(wmEventHandlerUI *, handler, &win->modalhandlers) {
+  LISTBASE_FOREACH(wmEventHandlerUI *, handler, &win->modalhandlers)
+  {
     handlers.push_back(handler);
   }
 
@@ -1469,6 +1519,52 @@ wmTimer *WM_event_add_timer(wmWindowManager *wm, wmWindow *win, int event_type, 
   return wt;
 }
 
+/* -------------------------------------------------------------------- */
+/** \name Initial Window State API
+ * \{ */
+
+void WM_init_state_size_set(int stax, int stay, int sizx, int sizy)
+{
+  wm_init_state.start_x = stax; /* left hand pos */
+  wm_init_state.start_y = stay; /* bottom pos */
+  wm_init_state.size_x = sizx < 640 ? 640 : sizx;
+  wm_init_state.size_y = sizy < 480 ? 480 : sizy;
+  wm_init_state.override_flag |= WIN_OVERRIDE_GEOM;
+}
+
+void WM_init_state_fullscreen_set(void)
+{
+  wm_init_state.windowstate = AnchorWindowStateFullScreen;
+  wm_init_state.override_flag = static_cast<eWinOverrideFlag>(wm_init_state.override_flag |
+                                                              WIN_OVERRIDE_WINSTATE);
+}
+
+void WM_init_state_normal_set(void)
+{
+  wm_init_state.windowstate = AnchorWindowStateNormal;
+  wm_init_state.override_flag = static_cast<eWinOverrideFlag>(wm_init_state.override_flag |
+                                                              WIN_OVERRIDE_WINSTATE);
+}
+
+void WM_init_state_maximized_set(void)
+{
+  wm_init_state.windowstate = AnchorWindowStateMaximized;
+  wm_init_state.override_flag = static_cast<eWinOverrideFlag>(wm_init_state.override_flag |
+                                                              WIN_OVERRIDE_WINSTATE);
+}
+
+void WM_init_window_focus_set(bool do_it)
+{
+  wm_init_state.window_focus = do_it;
+}
+
+void WM_init_native_pixels(bool do_it)
+{
+  wm_init_state.native_pixels = do_it;
+}
+
+/** \} */
+
 void WM_event_remove_timer(wmWindowManager *wm, wmWindow *UNUSED(win), wmTimer *timer)
 {
   /* extra security check */
@@ -1695,4 +1791,3 @@ void WM_window_operators_register()
 
   /* ------ */
 }
-

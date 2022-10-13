@@ -18,6 +18,7 @@ set(INC
 set(SRC
   intern/colormanagement.c
   intern/filetype.c
+  intern/filetype.cc
   intern/imageprocess.c
   intern/module.c
   intern/readimage.c

@@ -13,6 +13,7 @@ set(INC
   ../universe
   ../python
   ../../../intern/atomic
+  ../../../intern/clog
   ../../../intern/guardedalloc
 )
 

@@ -52,10 +52,13 @@
 
 #include <wabi/base/tf/token.h>
 
+#include "CLG_log.h"
+
+static CLG_LogRef LOG = {"luxo.define"};
+
 using std::string;
 
 WABI_NAMESPACE_USING
-
 
 
 KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
@@ -63,9 +66,9 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
                                 KrakenPRIM *primfrom)
 {
   KrakenPRIM *kprim;
-  KrakenPROP *prop;
+  // KrakenPROP *prop;
 
-  *kprim = kstage->GetPrimAtPath(K_BEDROCK);
+  kprim = MEM_new<KrakenPRIM>(K_BEDROCK.GetText(), kstage->GetPrimAtPath(K_BEDROCK));
 
   if (primfrom && primfrom->IsValid()) {
     const TfToken type = primfrom->GetName();
@@ -75,13 +78,14 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
     const SdfPath path_ctx = path.AppendPath(SdfPath(type_ctx)).AppendPath(identifier);
 
     /* Get or create prim at ctx. */
-    *kprim = kstage->DefinePrim(path_ctx, type);
+    kprim = MEM_new<KrakenPRIM>(path_ctx.GetText(), kstage->DefinePrim(path_ctx, type));
     kprim->py_type = NULL;
     kprim->base = primfrom;
   } else {
     const SdfPath path_ctx = SdfPath(identifier.GetString());
 
-    *kprim = kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx));
+    kprim = MEM_new<KrakenPRIM>(K_BEDROCK.AppendPath(path_ctx).GetText(),
+                                kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx)));
     kprim->py_type = NULL;
     kprim->base = kprim;
   }
@@ -102,18 +106,26 @@ KrakenPRIM *PRIM_def_struct(KrakenPRIM *kprim,
                             const wabi::TfToken &from)
 {
   KrakenPRIM *prim;
+  UsdStageWeakPtr stage;
   SdfPath path_ctx;
 
   /**
    * -- *** Pixar Style *** --
-   * find struct to derive from (optional) */
-  auto stage = kprim->GetStage();
+   * find prim to derive from (optional) */
+  stage = kprim->GetStage();
   path_ctx = kprim->GetPath().AppendPath(identifier);
-  
-  *prim = stage->DefinePrim(path_ctx, from);
 
-  if (!prim->IsValid()) {
-    wabi::TF_WARN("prim %s could not be created.", identifier.GetText());
+  prim = MEM_new<KrakenPRIM>(path_ctx.GetText(), stage->DefinePrim(path_ctx, from));
+
+  if (prim == nullptr || !prim->IsValid()) {
+    if (from.IsEmpty()) {
+      CLOG_ERROR(&LOG, "prim %s could not be created.", identifier.GetText());
+    } else {
+      CLOG_ERROR(&LOG, "prim %s not found to define %s.", from.GetText(), identifier.GetText());
+    }
+
+    /* construct invalid prim on error. */
+    prim = MEM_new<KrakenPRIM>(identifier.GetText(), UsdPrim());
   }
 
   return prim;
@@ -185,4 +197,3 @@ void PRIM_def_asset(KrakenPRIM *prim,
     attr.SetDocumentation(ui_description);
   }
 }
-

@@ -44,7 +44,7 @@
 #include "KLI_time.h"
 
 #include "KKE_cryptomatte.hh"
-// #include "KKE_material.h"
+#include "KKE_material.h"
 
 #include "GPU_capabilities.h"
 #include "GPU_material.h"
@@ -898,31 +898,6 @@ void GPU_pass_cache_free(void)
 /* -------------------------------------------------------------------- */
 /** \name Module
  * \{ */
-
-/* TODO: Put this in a materials file on it's own. */
-static Material default_material_empty;
-static Material default_material_holdout;
-static Material default_material_surface;
-static Material default_material_volume;
-static Material default_material_gpencil;
-
-static Material *default_materials[] = {&default_material_empty,
-                                        &default_material_holdout,
-                                        &default_material_surface,
-                                        &default_material_volume,
-                                        &default_material_gpencil,
-                                        NULL};
-
-static void KKE_material_defaults_free_gpu(void)
-{
-  for (int i = 0; default_materials[i]; i++) {
-    Material *ma = default_materials[i];
-    if (ma->gpumaterial.first) {
-      GPU_material_free(&ma->gpumaterial);
-    }
-  }
-}
-
 
 void gpu_codegen_init(void) {}
 

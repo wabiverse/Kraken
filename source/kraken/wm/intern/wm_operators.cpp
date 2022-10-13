@@ -247,10 +247,40 @@ bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update)
   return changed;
 }
 
+static void operatortype_rhash_free_cb(wmOperatorType *ot)
+{
+  // if (ot->last_properties) {
+  //   IDP_FreeProperty(ot->last_properties);
+  // }
+
+  if (!ot->macro.empty()) {
+    for (auto &otmacro : ot->macro) {
+      if (otmacro->ptr && otmacro->ptr->IsValid()) {
+        WM_operator_properties_free(otmacro->ptr);
+        MEM_delete(otmacro->ptr);
+      }
+    }
+    ot->macro.clear();
+  }
+
+  // if (ot->prim_ext.prim) {
+  /* python operator, allocs own string */
+  // MEM_freeN((void *)ot->idname);
+  // }
+
+  MEM_delete(ot);
+}
+
+void WM_operators_free(void)
+{
+  KLI_rhash_free(global_ops_hash, NULL, (RHashValFreeFP)operatortype_rhash_free_cb);
+  global_ops_hash = NULL;
+}
+
 void WM_operators_init(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  global_ops_hash = KLI_rhash_str_new_ex("wm_operatortype_init rh", 2048);
+  global_ops_hash = KLI_rhash_str_new_ex("WM_operators_init rh", 2048);
 }
 
 void WM_operators_register(kContext *C)
@@ -258,4 +288,3 @@ void WM_operators_register(kContext *C)
   WM_window_operators_register();
   WM_file_operators_register();
 }
-
