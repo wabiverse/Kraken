@@ -46,6 +46,7 @@
 #include "USD_screen.h"
 #include "USD_space_types.h"
 #include "USD_userpref.h"
+#include "USD_userdef_types.h"
 #include "USD_window.h"
 #include "USD_workspace.h"
 

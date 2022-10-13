@@ -996,11 +996,6 @@ typedef struct UserDef
   UserDef_Runtime runtime;
 } UserDef;
 
-/** From krakernel `KKE_kraken.cpp`. */
-extern UserDef U;
-
-extern const kTheme U_theme_default;
-
 /* ***************** USERDEF ****************** */
 
 //#define WITH_USERDEF_WORKSPACES
@@ -1480,8 +1475,14 @@ enum
   ULANGUAGE_ENGLISH = 1,
 };
 
+/* C LINKAGE defined in USD_userdef_default_theme.c */
+extern const kTheme U_theme_default;
+
 #ifdef __cplusplus
 }
 #endif
+
+/** CXX LINKAGE From krakernel `KKE_kraken.cpp`. */
+extern UserDef U;
 
 #endif /* __USD_USERDEF_TYPES_H__ */
