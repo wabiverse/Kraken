@@ -57,15 +57,15 @@ enum
   K_UNIT_TYPE_TOT = 13,
 };
 
-std::string kraken_exe_path_init(void);
-std::string kraken_system_tempdir_path(void);
+// std::string kraken_exe_path_init(void);
+// std::string kraken_system_tempdir_path(void);
 
-std::string kraken_datafiles_path_init(void);
-std::string kraken_fonts_path_init(void);
-std::string kraken_python_path_init(void);
-std::string kraken_icon_path_init(void);
-std::string kraken_startup_file_init(void);
-std::string kraken_ocio_file_init(void);
+// std::string kraken_datafiles_path_init(void);
+// std::string kraken_fonts_path_init(void);
+// std::string kraken_python_path_init(void);
+// std::string kraken_icon_path_init(void);
+// std::string kraken_startup_file_init(void);
+// std::string kraken_ocio_file_init(void);
 
 size_t KKE_unit_value_as_string(char *str,
                                 int len_max,

@@ -222,7 +222,7 @@ enum
   G_DEBUG_XR = (1 << 20),                     /* XR/OpenXR messages */
   G_DEBUG_XR_TIME = (1 << 21),                /* XR/OpenXR timing messages */
 
-  G_DEBUG_ANCHOR = (1 << 22),  /* Debug ANCHOR module. */
+  G_DEBUG_ANCHOR = (1 << 22), /* Debug ANCHOR module. */
   G_DEBUG_WINTAB = (1 << 23), /* Debug Wintab. */
 };
 
@@ -298,6 +298,57 @@ extern Global G;
 }
 #endif
 
-void KKE_kraken_globals_clear(void)
-void KKE_kraken_globals_main_replace(Main *kmain)
+typedef enum
+{
+  KKE_CB_EVT_FRAME_CHANGE_PRE,
+  KKE_CB_EVT_FRAME_CHANGE_POST,
+  KKE_CB_EVT_RENDER_PRE,
+  KKE_CB_EVT_RENDER_POST,
+  KKE_CB_EVT_RENDER_WRITE,
+  KKE_CB_EVT_RENDER_STATS,
+  KKE_CB_EVT_RENDER_INIT,
+  KKE_CB_EVT_RENDER_COMPLETE,
+  KKE_CB_EVT_RENDER_CANCEL,
+  KKE_CB_EVT_LOAD_PRE,
+  KKE_CB_EVT_LOAD_POST,
+  KKE_CB_EVT_SAVE_PRE,
+  KKE_CB_EVT_SAVE_POST,
+  KKE_CB_EVT_UNDO_PRE,
+  KKE_CB_EVT_UNDO_POST,
+  KKE_CB_EVT_REDO_PRE,
+  KKE_CB_EVT_REDO_POST,
+  KKE_CB_EVT_DEPSGRAPH_UPDATE_PRE,
+  KKE_CB_EVT_DEPSGRAPH_UPDATE_POST,
+  KKE_CB_EVT_VERSION_UPDATE,
+  KKE_CB_EVT_LOAD_FACTORY_USERDEF_POST,
+  KKE_CB_EVT_LOAD_FACTORY_STARTUP_POST,
+  KKE_CB_EVT_XR_SESSION_START_PRE,
+  KKE_CB_EVT_ANNOTATION_PRE,
+  KKE_CB_EVT_ANNOTATION_POST,
+  KKE_CB_EVT_OBJECT_BAKE_PRE,
+  KKE_CB_EVT_OBJECT_BAKE_COMPLETE,
+  KKE_CB_EVT_OBJECT_BAKE_CANCEL,
+  KKE_CB_EVT_COMPOSITE_PRE,
+  KKE_CB_EVT_COMPOSITE_POST,
+  KKE_CB_EVT_COMPOSITE_CANCEL,
+  KKE_CB_EVT_TOT,
+} eCbEvent;
+
+typedef struct kCallbackFuncStore
+{
+  struct kCallbackFuncStore *next, *prev;
+  void (*func)(struct Main *, struct KrakenPRIM **, int num_pointers, void *arg);
+  void *arg;
+  short alloc;
+} kCallbackFuncStore;
+
+void KKE_kraken_globals_clear(void);
+void KKE_kraken_globals_main_replace(struct Main *kmain);
 void KKE_kraken_globals_init(void);
+void KKE_callback_global_init(void);
+void KKE_callback_global_finalize(void);
+void KKE_callback_remove(struct kCallbackFuncStore *funcstore, eCbEvent evt);
+void KKE_callback_exec(struct Main *bmain,
+                       struct KrakenPRIM **pointers,
+                       const int num_pointers,
+                       eCbEvent evt);

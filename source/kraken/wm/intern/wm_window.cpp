@@ -1529,7 +1529,8 @@ void WM_init_state_size_set(int stax, int stay, int sizx, int sizy)
   wm_init_state.start_y = stay; /* bottom pos */
   wm_init_state.size_x = sizx < 640 ? 640 : sizx;
   wm_init_state.size_y = sizy < 480 ? 480 : sizy;
-  wm_init_state.override_flag |= WIN_OVERRIDE_GEOM;
+  wm_init_state.override_flag = static_cast<eWinOverrideFlag>(wm_init_state.override_flag |
+                                                              WIN_OVERRIDE_GEOM);
 }
 
 void WM_init_state_fullscreen_set(void)

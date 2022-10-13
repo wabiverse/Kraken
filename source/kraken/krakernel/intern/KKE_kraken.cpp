@@ -64,6 +64,8 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_debug_codes.h"
 
+#include "IMB_imbuf.h"
+
 /* WINDOW MANAGER */
 #include "WM_init_exit.h"
 
@@ -87,19 +89,15 @@ static char kraken_version_string[48] = "";
 static void kraken_version_init()
 {
   const char *version_cycle = "";
-  if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha")) {
+  if (STREQ(STRINGIFY(KRAKEN_VERSION_CYCLE), "alpha")) {
     version_cycle = " Alpha";
-  }
-  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "beta")) {
+  } else if (STREQ(STRINGIFY(KRAKEN_VERSION_CYCLE), "beta")) {
     version_cycle = " Beta";
-  }
-  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "rc")) {
+  } else if (STREQ(STRINGIFY(KRAKEN_VERSION_CYCLE), "rc")) {
     version_cycle = " Release Candidate";
-  }
-  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "release")) {
+  } else if (STREQ(STRINGIFY(KRAKEN_VERSION_CYCLE), "release")) {
     version_cycle = "";
-  }
-  else {
+  } else {
     KLI_assert_msg(0, "Invalid Kraken version cycle");
   }
 
@@ -195,16 +193,15 @@ void KKE_kraken_free(void)
 {
   // KKE_studiolight_free();
 
-  KKE_main_free(G.main);
-  G.main = nullptr;
+  KKE_kraken_globals_clear();
 
-  // if (G.log.file != NULL) {
-  //   fclose(G.log.file);
-  // }
+  if (G.log.file != NULL) {
+    fclose(static_cast<FILE *>(G.log.file));
+  }
 
   // KKE_spacetypes_free();
 
-  // IMB_exit();
+  IMB_exit();
   // KKE_cachefiles_exit();
   // KKE_images_exit();
   // DEG_free_node_types();
@@ -212,7 +209,7 @@ void KKE_kraken_free(void)
   // KKE_brush_system_exit();
   // RE_texture_rng_exit();
 
-  // KKE_callback_global_finalize();
+  KKE_callback_global_finalize();
 
   // IMB_moviecache_destruct();
 
@@ -251,6 +248,74 @@ void KKE_kraken_atexit_unregister(void (*func)(void *user_data), const void *use
     ae_p = &ae->next;
     ae = ae->next;
   }
+}
+
+static ListBase callback_slots[KKE_CB_EVT_TOT] = {{NULL}};
+
+static bool callbacks_initialized = false;
+
+#define ASSERT_CALLBACKS_INITIALIZED()                                                           \
+  KLI_assert_msg(callbacks_initialized,                                                          \
+                 "Callbacks should be initialized with KKE_callback_global_init() before using " \
+                 "the callback system.")
+
+void KKE_callback_exec(struct Main *bmain,
+                       struct KrakenPRIM **pointers,
+                       const int num_pointers,
+                       eCbEvent evt)
+{
+  ASSERT_CALLBACKS_INITIALIZED();
+
+  /* Use mutable iteration so handlers are able to remove themselves. */
+  ListBase *lb = &callback_slots[evt];
+  LISTBASE_FOREACH_MUTABLE(kCallbackFuncStore *, funcstore, lb)
+  {
+    funcstore->func(bmain, pointers, num_pointers, funcstore->arg);
+  }
+}
+
+void KKE_callback_remove(kCallbackFuncStore *funcstore, eCbEvent evt)
+{
+  /* The callback may have already been removed by KKE_callback_global_finalize(), for
+   * example when removing callbacks in response to a KKE_blender_atexit_register callback
+   * function. `KKE_blender_atexit()` runs after `KKE_callback_global_finalize()`. */
+  if (!callbacks_initialized) {
+    return;
+  }
+
+  ListBase *lb = &callback_slots[evt];
+
+  /* Be noisy about potential programming errors. */
+  KLI_assert_msg(KLI_findindex(lb, funcstore) != -1, "To-be-removed callback not found");
+
+  KLI_remlink(lb, funcstore);
+
+  if (funcstore->alloc) {
+    MEM_freeN(funcstore);
+  }
+}
+
+void KKE_callback_global_init(void)
+{
+  callbacks_initialized = true;
+}
+
+void KKE_callback_global_finalize(void)
+{
+  eCbEvent evt;
+  for (evt = static_cast<eCbEvent>(0); evt < KKE_CB_EVT_TOT;
+       evt = static_cast<eCbEvent>(static_cast<int>(evt) + 1)) {
+    ListBase *lb = &callback_slots[evt];
+    kCallbackFuncStore *funcstore;
+    kCallbackFuncStore *funcstore_next;
+    for (funcstore = static_cast<kCallbackFuncStore *>(lb->first); funcstore;
+         funcstore = funcstore_next) {
+      funcstore_next = funcstore->next;
+      KKE_callback_remove(funcstore, evt);
+    }
+  }
+
+  callbacks_initialized = false;
 }
 
 void KKE_kraken_atexit(void)

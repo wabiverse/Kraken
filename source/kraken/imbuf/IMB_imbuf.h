@@ -452,3 +452,14 @@ void IMB_processor_apply_threaded_scanlines(int total_scanlines,
 #ifdef __cplusplus
 }
 #endif
+
+
+#ifdef __cplusplus
+/**
+ * @UTILITY: "Out of the box" supported file types for quick lookups.
+ * Quickly flip a token into a #ImageFormatData.imtype.
+ */
+int IMF_imtype_from_token(const wabi::TfToken &ftype);
+const wabi::TfToken IMF_imtype_dotext_from_token(const wabi::TfToken &ftype);
+
+#endif /* __cplusplus */

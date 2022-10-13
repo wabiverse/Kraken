@@ -241,8 +241,3 @@ const wabi::TfToken IMF_imtype_dotext_from_token(const wabi::TfToken &ftype)
    */
   return TfToken();
 }
-
-const ImFileType *IMB_file_type_from_ibuf(const ImBuf *ibuf)
-{
-  return IMB_file_type_from_ftype(ibuf->ftype);
-}

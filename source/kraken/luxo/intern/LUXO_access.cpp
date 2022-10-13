@@ -710,16 +710,13 @@ void LUXO_save_usd(void)
 {
   KRAKEN_STAGE->GetRootLayer()->Save();
 }
-// KrakenPRIM ctx = but->stagepoin;
-// KrakenSTAGE stage = but->stagepoin.GetStage();
-// UsdEditTarget trg = stage->GetEditTarget();
-// SdfPrimSpecHandle ptr = trg.GetPrimSpecForScenePath(ctx.GetPath());
+
 /**
  * Use UsdStage::CreateInMemory when we get out of an alpha state
  * for now, this makes it easier to debug scene description - it
  * is located in ~/Library/Application Support/Kraken/1.50/config/userpref.usda */
 KrakenSTAGE::KrakenSTAGE()
-  : UsdStageRefPtr(UsdStage::CreateNew(KKE_kraken_globals_init().main->stage_id)),
+  : UsdStageRefPtr(UsdStage::CreateNew(G.main->stage_id)),
     structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
 {}
 
@@ -813,4 +810,3 @@ void LUXO_property_enum_items(kContext *C,
 {
   LUXO_property_enum_items_ex(C, ptr, prop, false, r_item, r_totitem, r_free);
 }
-

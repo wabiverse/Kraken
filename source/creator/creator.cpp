@@ -416,6 +416,8 @@ int CREATOR_kraken_main(int argc,
   /* Initialize Globals (paths, sys). */
   KKE_kraken_globals_init();
 
+  KKE_callback_global_init();
+
   /* First test for background-mode (#Global.background) */
 #ifndef WITH_PYTHON_MODULE
   /* ------------ skip binary path ------------------ */
@@ -553,7 +555,7 @@ int CREATOR_kraken_main(int argc,
 #ifdef WITH_PYTHON_MODULE
 void main_python_exit(void)
 {
-  WM_exit_ex((bContext *)evil_C, true);
+  WM_exit_ex((kContext *)evil_C, true);
   evil_C = NULL;
 }
 #endif

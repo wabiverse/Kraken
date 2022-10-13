@@ -86,7 +86,6 @@
 #include "KPY_extern_python.h"
 
 #include "IMB_imbuf.h"
-#include "IMB_filetype.h"
 
 #include "DRW_engine.h"
 
@@ -108,6 +107,47 @@
 #include <filesystem>
 
 KRAKEN_NAMESPACE_USING
+
+struct KrakenPyContextStore
+{
+  wmWindowManager *wm;
+  kScene *scene;
+  wmWindow *win;
+  bool has_win;
+};
+
+static void arg_py_context_backup(kContext *C,
+                                  struct KrakenPyContextStore *c_py,
+                                  const char *script_id)
+{
+  c_py->wm = CTX_wm_manager(C);
+  c_py->scene = CTX_data_scene(C);
+  c_py->has_win = (VALUE_PTR(c_py->wm->windows.begin()) != nullptr);
+  if (c_py->has_win) {
+    c_py->win = CTX_wm_window(C);
+    CTX_wm_window_set(C, VALUE_PTR(c_py->wm->windows.begin()));
+  } else {
+    c_py->win = NULL;
+    fprintf(stderr,
+            "Python script \"%s\" "
+            "running with missing context data.\n",
+            script_id);
+  }
+}
+
+static void arg_py_context_restore(kContext *C, struct KrakenPyContextStore *c_py)
+{
+  /* script may load a file, check old data is valid before using */
+  if (c_py->has_win) {
+    if ((c_py->win == NULL) || ((KLI_findindex(&G_MAIN->wm, c_py->wm) != -1))) {
+      CTX_wm_window_set(C, c_py->win);
+    }
+  }
+
+  if ((c_py->scene == NULL) || KLI_findindex(&G_MAIN->scenes, c_py->scene) != -1) {
+    CTX_data_scene_set(C, c_py->scene);
+  }
+}
 
 /* macro for context setup/reset */
 #define KPY_CTX_SETUP(_cmd)                   \
@@ -2233,6 +2273,14 @@ void CREATOR_args_add(struct kArgs *ka,
   CREATOR_args_add_case(ka, short_arg, 0, long_arg, 0, doc, cb, data);
 }
 
+void CREATOR_args_destroy(struct kArgs *ka)
+{
+  KLI_rhash_free(ka->items, MEM_freeN, MEM_freeN);
+  MEM_freeN(ka->passes);
+  KLI_freelistN(&ka->docs);
+  MEM_freeN(ka);
+}
+
 void CREATOR_args_print(struct kArgs *ka)
 {
   int i;
@@ -2329,48 +2377,6 @@ void CREATOR_args_parse(struct kArgs *ka, int pass, KA_ArgCallback default_cb, v
         }
       }
     }
-  }
-}
-
-
-struct KrakenPyContextStore
-{
-  wmWindowManager *wm;
-  kScene *scene;
-  wmWindow *win;
-  bool has_win;
-};
-
-static void arg_py_context_backup(kContext *C,
-                                  struct KrakenPyContextStore *c_py,
-                                  const char *script_id)
-{
-  c_py->wm = CTX_wm_manager(C);
-  c_py->scene = CTX_data_scene(C);
-  c_py->has_win = (c_py->wm->windows.begin()->second != nullptr);
-  if (c_py->has_win) {
-    c_py->win = CTX_wm_window(C);
-    CTX_wm_window_set(C, c_py->wm->windows.begin()->second);
-  } else {
-    c_py->win = NULL;
-    fprintf(stderr,
-            "Python script \"%s\" "
-            "running with missing context data.\n",
-            script_id);
-  }
-}
-
-static void arg_py_context_restore(kContext *C, struct KrakenPyContextStore *c_py)
-{
-  /* script may load a file, check old data is valid before using */
-  if (c_py->has_win) {
-    if ((c_py->win == NULL) || ((KLI_findindex(&G_MAIN->wm, c_py->wm) != -1))) {
-      CTX_wm_window_set(C, c_py->win);
-    }
-  }
-
-  if ((c_py->scene == NULL) || KLI_findindex(&G_MAIN->scenes, c_py->scene) != -1) {
-    CTX_data_scene_set(C, c_py->scene);
   }
 }
 

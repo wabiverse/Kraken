@@ -19,13 +19,19 @@ kraken_include_dirs(
   ../../source/.
   ../../source/kraken/.
   ../kraken/anchor
+  ../kraken/draw
   ../kraken/editors/include
+  ../kraken/gpu
+  ../kraken/imbuf
   ../kraken/kraklib
   ../kraken/krakernel
   ../kraken/wm
   ../kraken/luxo
   ../kraken/universe
   ../kraken/python
+  ../../intern/atomic
+  ../../intern/clog
+  ../../intern/guardedalloc
 )
 
 set(LIB

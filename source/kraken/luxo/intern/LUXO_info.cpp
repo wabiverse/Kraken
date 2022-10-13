@@ -24,7 +24,13 @@
 
 #include "kraken/kraken.h"
 
+#include "KLI_path_utils.h"
+
 #include "KKE_global.h"
+#include "KKE_appdir.h"
+
+#include "IMB_imbuf.h"
+#include "IMB_colormanagement.h"
 
 #include "LUXO_main.h"
 #include "LUXO_internal.h"
@@ -34,12 +40,36 @@
 #include <wabi/imaging/hdx/tokens.h>
 
 
-
 /* not technically a prim, but meh. */
 static void prim_def_config(const KrakenSTAGE &kstage)
 {
+  const char *configdir;
+  char configfile[FILE_MAX];
+
+#if 0
+  const char *ocio_env;
+
+  /**
+   * @TODO: Support ocio from env var, to set on the pixar stage. */
+
+  ocio_env = KLI_getenv("OCIO");
+
+  if (ocio_env && ocio_env[0] != '\0') {
+    config = OCIO_configCreateFromEnv();
+    if (config != NULL) {
+      printf("Color management: Using %s as a configuration file\n", ocio_env);
+    }
+  }
+#endif
+
+  configdir = KKE_appdir_folder_id(KRAKEN_DATAFILES, "colormanagement");
+
+  if (configdir) {
+    KLI_join_dirfile(configfile, sizeof(configfile), configdir, KCM_CONFIG_FILE);
+  }
+
   kstage->GetRootLayer()->SetDocumentation(KRAKEN_FILE_VERSION_HEADER);
-  kstage->SetColorConfiguration(wabi::SdfAssetPath(G.main->ocio_cfg));
+  kstage->SetColorConfiguration(wabi::SdfAssetPath(configfile));
   kstage->SetColorManagementSystem(wabi::HdxColorCorrectionTokens->openColorIO);
   kstage->SetMetadata(wabi::UsdGeomTokens->upAxis, wabi::UsdGeomTokens->z);
 }
@@ -48,5 +78,3 @@ void PRIM_def_info(const KrakenSTAGE &kstage)
 {
   prim_def_config(kstage);
 }
-
-

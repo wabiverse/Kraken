@@ -109,7 +109,6 @@ typedef int (*KA_ArgCallback)(int argc, const char **argv, void *data);
 
 struct kArgs *CREATOR_args_create(int argc, const char **argv);
 void CREATOR_args_destroy(struct kArgs *ka);
-void CREATOR_args_print_arg_doc(struct kArgs *ka, const char *arg);
 void CREATOR_args_print(struct kArgs *ka);
 void CREATOR_args_add(struct kArgs *ka,
                       const char *short_arg,
@@ -128,12 +127,17 @@ void CREATOR_args_add_case(struct kArgs *ka,
 void CREATOR_args_setup(struct kContext *C, struct kArgs *ka);
 void CREATOR_args_setup_post(struct kContext *C, struct kArgs *ka);
 
-/* --------- cxx only here. -------- */
-
-#ifdef __cplusplus
-int CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
 void CREATOR_main_signal_setup(void);
 void CREATOR_main_signal_setup_background(void);
 void CREATOR_main_signal_setup_fpe(void);
 void CREATOR_args_parse(struct kArgs *ka, int pass, KA_ArgCallback default_cb, void *default_data);
+void CREATOR_args_print_arg_doc(struct kArgs *ka, const char *arg);
+void CREATOR_args_print_other_doc(struct kArgs *ka);
+bool CREATOR_args_has_other_doc(const struct kArgs *ka);
+void CREATOR_args_pass_set(struct kArgs *ka, int current_pass);
+
+/* --------- cxx only here. -------- */
+
+#ifdef __cplusplus
+int CREATOR_kraken_main(int argc = 0, const char **argv = NULL);
 #endif /* __cplusplus */

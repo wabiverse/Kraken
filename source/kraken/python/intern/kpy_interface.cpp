@@ -23,6 +23,7 @@
  */
 
 #include <Python.h>
+#include <frameobject.h>
 
 #include <float.h>
 #include <stddef.h>
