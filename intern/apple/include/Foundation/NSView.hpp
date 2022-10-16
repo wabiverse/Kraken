@@ -37,7 +37,6 @@ namespace NS
 
     static View *alloc();
     View *init();
-    View *init(const class String *pString);
   };
 }  // namespace NS
 
