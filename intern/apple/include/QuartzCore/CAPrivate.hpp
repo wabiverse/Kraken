@@ -35,98 +35,96 @@
 
 #if defined(CA_PRIVATE_IMPLEMENTATION)
 
-#ifdef METALCPP_SYMBOL_VISIBILITY_HIDDEN
-#define _CA_PRIVATE_VISIBILITY __attribute__((visibility("hidden")))
-#else
-#define _CA_PRIVATE_VISIBILITY __attribute__((visibility("default")))
-#endif // METALCPP_SYMBOL_VISIBILITY_HIDDEN
+#  ifdef METALCPP_SYMBOL_VISIBILITY_HIDDEN
+#    define _CA_PRIVATE_VISIBILITY __attribute__((visibility("hidden")))
+#  else
+#    define _CA_PRIVATE_VISIBILITY __attribute__((visibility("default")))
+#  endif  // METALCPP_SYMBOL_VISIBILITY_HIDDEN
 
-#define _CA_PRIVATE_IMPORT __attribute__((weak_import))
+#  define _CA_PRIVATE_IMPORT __attribute__((weak_import))
 
-#ifdef __OBJC__
-#define _CA_PRIVATE_OBJC_LOOKUP_CLASS(symbol) ((__bridge void*)objc_lookUpClass(#symbol))
-#define _CA_PRIVATE_OBJC_GET_PROTOCOL(symbol) ((__bridge void*)objc_getProtocol(#symbol))
-#else
-#define _CA_PRIVATE_OBJC_LOOKUP_CLASS(symbol) objc_lookUpClass(#symbol)
-#define _CA_PRIVATE_OBJC_GET_PROTOCOL(symbol) objc_getProtocol(#symbol)
-#endif // __OBJC__
+#  ifdef __OBJC__
+#    define _CA_PRIVATE_OBJC_LOOKUP_CLASS(symbol) ((__bridge void *)objc_lookUpClass(#    symbol))
+#    define _CA_PRIVATE_OBJC_GET_PROTOCOL(symbol) ((__bridge void *)objc_getProtocol(#    symbol))
+#  else
+#    define _CA_PRIVATE_OBJC_LOOKUP_CLASS(symbol) objc_lookUpClass(#    symbol)
+#    define _CA_PRIVATE_OBJC_GET_PROTOCOL(symbol) objc_getProtocol(#    symbol)
+#  endif  // __OBJC__
 
-#define _CA_PRIVATE_DEF_CLS(symbol) void* s_k##symbol _CA_PRIVATE_VISIBILITY = _CA_PRIVATE_OBJC_LOOKUP_CLASS(symbol)
-#define _CA_PRIVATE_DEF_PRO(symbol) void* s_k##symbol _CA_PRIVATE_VISIBILITY = _CA_PRIVATE_OBJC_GET_PROTOCOL(symbol)
-#define _CA_PRIVATE_DEF_SEL(accessor, symbol) SEL s_k##accessor _CA_PRIVATE_VISIBILITY = sel_registerName(symbol)
-#define _CA_PRIVATE_DEF_STR(type, symbol)                \
+#  define _CA_PRIVATE_DEF_CLS(symbol) \
+    void *s_k##symbol _CA_PRIVATE_VISIBILITY = _CA_PRIVATE_OBJC_LOOKUP_CLASS(symbol)
+#  define _CA_PRIVATE_DEF_PRO(symbol) \
+    void *s_k##symbol _CA_PRIVATE_VISIBILITY = _CA_PRIVATE_OBJC_GET_PROTOCOL(symbol)
+#  define _CA_PRIVATE_DEF_SEL(accessor, symbol) \
+    SEL s_k##accessor _CA_PRIVATE_VISIBILITY = sel_registerName(symbol)
+#  define _CA_PRIVATE_DEF_STR(type, symbol)              \
     _CA_EXTERN type const CA##symbol _CA_PRIVATE_IMPORT; \
-    type const                       CA::symbol = (nullptr != &CA##symbol) ? CA##symbol : nullptr
+    type const CA::symbol = (nullptr != &CA##symbol) ? CA##symbol : nullptr
 
 #else
 
-#define _CA_PRIVATE_DEF_CLS(symbol) extern void* s_k##symbol
-#define _CA_PRIVATE_DEF_PRO(symbol) extern void* s_k##symbol
-#define _CA_PRIVATE_DEF_SEL(accessor, symbol) extern SEL s_k##accessor
-#define _CA_PRIVATE_DEF_STR(type, symbol) extern type const CA::symbol
+#  define _CA_PRIVATE_DEF_CLS(symbol) extern void *s_k##symbol
+#  define _CA_PRIVATE_DEF_PRO(symbol) extern void *s_k##symbol
+#  define _CA_PRIVATE_DEF_SEL(accessor, symbol) extern SEL s_k##accessor
+#  define _CA_PRIVATE_DEF_STR(type, symbol) extern type const CA::symbol
 
-#endif // CA_PRIVATE_IMPLEMENTATION
+#endif  // CA_PRIVATE_IMPLEMENTATION
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace CA
 {
-namespace Private
-{
+  namespace Private
+  {
     namespace Class
     {
-        _CA_PRIVATE_DEF_CLS(CAMetalLayer);
-    } // Class
-} // Private
-} // CA
+      _CA_PRIVATE_DEF_CLS(CAMetalLayer);
+    }  // namespace Class
+  }    // namespace Private
+}  // namespace CA
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace CA
 {
-namespace Private
-{
+  namespace Private
+  {
     namespace Protocol
     {
 
-        _CA_PRIVATE_DEF_PRO(CAMetalDrawable);
+      _CA_PRIVATE_DEF_PRO(CAMetalDrawable);
 
-    } // Protocol
-} // Private
-} // CA
+    }  // namespace Protocol
+  }    // namespace Private
+}  // namespace CA
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace CA
 {
-namespace Private
-{
+  namespace Private
+  {
     namespace Selector
     {
-        _CA_PRIVATE_DEF_SEL(device,
-            "device");
-        _CA_PRIVATE_DEF_SEL(drawableSize,
-            "drawableSize");
-        _CA_PRIVATE_DEF_SEL(framebufferOnly,
-            "framebufferOnly");
-        _CA_PRIVATE_DEF_SEL(layer,
-            "layer");
-        _CA_PRIVATE_DEF_SEL(nextDrawable,
-            "nextDrawable");
-        _CA_PRIVATE_DEF_SEL(pixelFormat,
-            "pixelFormat");
-        _CA_PRIVATE_DEF_SEL(setDevice_,
-            "setDevice:");
-        _CA_PRIVATE_DEF_SEL(setDrawableSize_,
-            "setDrawableSize:");
-        _CA_PRIVATE_DEF_SEL(setFramebufferOnly_,
-            "setFramebufferOnly:");
-        _CA_PRIVATE_DEF_SEL(setPixelFormat_,
-            "setPixelFormat:");
-        _CA_PRIVATE_DEF_SEL(texture,
-            "texture");
-    } // Class
-} // Private
-} // CA
+      _CA_PRIVATE_DEF_SEL(allowsNextDrawableTimeout_, "allowsNextDrawableTimeout:");
+      _CA_PRIVATE_DEF_SEL(device, "device");
+      _CA_PRIVATE_DEF_SEL(drawableSize, "drawableSize");
+      _CA_PRIVATE_DEF_SEL(framebufferOnly, "framebufferOnly");
+      _CA_PRIVATE_DEF_SEL(layer, "layer");
+      _CA_PRIVATE_DEF_SEL(nextDrawable, "nextDrawable");
+      _CA_PRIVATE_DEF_SEL(pixelFormat, "pixelFormat");
+      _CA_PRIVATE_DEF_SEL(removeAllAnimations, "removeAllAnimations");
+      _CA_PRIVATE_DEF_SEL(setDevice_, "setDevice:");
+      _CA_PRIVATE_DEF_SEL(setDrawableSize_, "setDrawableSize:");
+      _CA_PRIVATE_DEF_SEL(setEdgeAntialiasingMask_, "setEdgeAntialiasingMask:");
+      _CA_PRIVATE_DEF_SEL(setFramebufferOnly_, "setFramebufferOnly:");
+      _CA_PRIVATE_DEF_SEL(setMasksToBounds_, "setMasksToBounds:");
+      _CA_PRIVATE_DEF_SEL(setOpaque_, "setOpaque:");
+      _CA_PRIVATE_DEF_SEL(setPixelFormat_, "setPixelFormat:");
+      _CA_PRIVATE_DEF_SEL(setPresentsWithTransaction_, "setPresentsWithTransaction:");
+      _CA_PRIVATE_DEF_SEL(texture, "texture");
+    }  // namespace Selector
+  }    // namespace Private
+}  // namespace CA
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------

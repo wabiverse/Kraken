@@ -35,97 +35,152 @@
 namespace CA
 {
 
-class MetalLayer : public NS::Referencing<MetalLayer>
-{
-public:
-    static class MetalLayer* layer();
+  class MetalLayer : public NS::Referencing<MetalLayer>
+  {
+   public:
 
-    MTL::Device*             device() const;
-    void                     setDevice(MTL::Device* device);
+    static class MetalLayer *layer();
 
-    MTL::PixelFormat         pixelFormat() const;
-    void                     setPixelFormat(MTL::PixelFormat pixelFormat);
+    MTL::Device *device() const;
+    void setDevice(MTL::Device *device);
 
-    bool                     framebufferOnly() const;
-    void                     setFramebufferOnly(bool framebufferOnly);
+    MTL::PixelFormat pixelFormat() const;
+    void setPixelFormat(MTL::PixelFormat pixelFormat);
 
-    CGSize                   drawableSize() const;
-    void                     setDrawableSize(CGSize drawableSize);
+    bool framebufferOnly() const;
+    void setFramebufferOnly(bool framebufferOnly);
 
-    class MetalDrawable*     nextDrawable();
-};
-} // namespace CA
+    CGSize drawableSize() const;
+    void setDrawableSize(CGSize drawableSize);
+
+    class MetalDrawable *nextDrawable();
+
+    void setEdgeAntialiasingMask(NS::UInteger mask);
+
+    void setMasksToBounds(bool masksToBounds);
+
+    void setOpaque(bool opaque);
+
+    void setPresentsWithTransaction(bool presentsWithTransaction);
+
+    void removeAllAnimations();
+
+    void allowsNextDrawableTimeout(bool nextDrawableTimeout);
+  };
+}  // namespace CA
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
-_CA_INLINE CA::MetalLayer* CA::MetalLayer::layer()
+_CA_INLINE CA::MetalLayer *CA::MetalLayer::layer()
 {
-    return Object::sendMessage<CA::MetalLayer*>(_CA_PRIVATE_CLS(CAMetalLayer), _CA_PRIVATE_SEL(layer));
+  return Object::sendMessage<CA::MetalLayer *>(_CA_PRIVATE_CLS(CAMetalLayer),
+                                               _CA_PRIVATE_SEL(layer));
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_CA_INLINE MTL::Device* CA::MetalLayer::device() const
+_CA_INLINE MTL::Device *CA::MetalLayer::device() const
 {
-    return Object::sendMessage<MTL::Device*>(this, _CA_PRIVATE_SEL(device));
+  return Object::sendMessage<MTL::Device *>(this, _CA_PRIVATE_SEL(device));
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_CA_INLINE void CA::MetalLayer::setDevice(MTL::Device* device)
+_CA_INLINE void CA::MetalLayer::setDevice(MTL::Device *device)
 {
-    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setDevice_), device);
+  return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setDevice_), device);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _CA_INLINE MTL::PixelFormat CA::MetalLayer::pixelFormat() const
 {
-    return Object::sendMessage<MTL::PixelFormat>(this,
-        _CA_PRIVATE_SEL(pixelFormat));
+  return Object::sendMessage<MTL::PixelFormat>(this, _CA_PRIVATE_SEL(pixelFormat));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _CA_INLINE void CA::MetalLayer::setPixelFormat(MTL::PixelFormat pixelFormat)
 {
-    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setPixelFormat_),
-        pixelFormat);
+  return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setPixelFormat_), pixelFormat);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _CA_INLINE bool CA::MetalLayer::framebufferOnly() const
 {
-    return Object::sendMessage<bool>(this, _CA_PRIVATE_SEL(framebufferOnly));
+  return Object::sendMessage<bool>(this, _CA_PRIVATE_SEL(framebufferOnly));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _CA_INLINE void CA::MetalLayer::setFramebufferOnly(bool framebufferOnly)
 {
-    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setFramebufferOnly_),
-        framebufferOnly);
+  return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setFramebufferOnly_), framebufferOnly);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _CA_INLINE CGSize CA::MetalLayer::drawableSize() const
 {
-    return Object::sendMessage<CGSize>(this, _CA_PRIVATE_SEL(drawableSize));
+  return Object::sendMessage<CGSize>(this, _CA_PRIVATE_SEL(drawableSize));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _CA_INLINE void CA::MetalLayer::setDrawableSize(CGSize drawableSize)
 {
-    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setDrawableSize_),
-        drawableSize);
+  return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setDrawableSize_), drawableSize);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_CA_INLINE CA::MetalDrawable* CA::MetalLayer::nextDrawable()
+_CA_INLINE CA::MetalDrawable *CA::MetalLayer::nextDrawable()
 {
-    return Object::sendMessage<MetalDrawable*>(this,
-        _CA_PRIVATE_SEL(nextDrawable));
+  return Object::sendMessage<MetalDrawable *>(this, _CA_PRIVATE_SEL(nextDrawable));
 }
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE void CA::MetalLayer::setEdgeAntialiasingMask(NS::UInteger mask)
+{
+  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setEdgeAntialiasingMask_), mask);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE void CA::MetalLayer::setMasksToBounds(bool masksToBounds)
+{
+  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setMasksToBounds_), masksToBounds);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE void CA::MetalLayer::setOpaque(bool opaque)
+{
+  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setOpaque_), opaque);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE void CA::MetalLayer::setPresentsWithTransaction(bool presentsWithTransaction)
+{
+  Object::sendMessage<void>(this,
+                            _CA_PRIVATE_SEL(setPresentsWithTransaction_),
+                            presentsWithTransaction);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE void CA::MetalLayer::removeAllAnimations()
+{
+  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(removeAllAnimations));
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE void CA::MetalLayer::allowsNextDrawableTimeout(bool nextDrawableTimeout)
+{
+  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(allowsNextDrawableTimeout_), nextDrawableTimeout);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------

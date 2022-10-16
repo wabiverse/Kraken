@@ -84,14 +84,14 @@ AnchorContextMetal::AnchorContextMetal(bool stereoVisual,
     m_ownsMetalDevice = true;
     if (metalDevice) {
       m_metalLayer = CA::MetalLayer::layer();
-      // m_metalLayer->setEdgeAntialiasingMask(0); TODO.
-      // m_metalLayer->setMasksToBounds(NO); TODO.
-      // m_metalLayer->setOpaque(YES); TODO.
+      m_metalLayer->setEdgeAntialiasingMask(0);
+      m_metalLayer->setMasksToBounds(NO);
+      m_metalLayer->setOpaque(YES);
       m_metalLayer->setFramebufferOnly(YES);
-      // m_metalLayer->setPresentsWithTransaction(NO); TODO.
-      // m_metalLayer->removeAllAnimations(); TODO.
+      m_metalLayer->setPresentsWithTransaction(NO);
+      m_metalLayer->removeAllAnimations();
       m_metalLayer->setDevice(metalDevice);
-      // m_metalLayer->allowsNextDrawableTimeout(NO); TODO.
+      m_metalLayer->allowsNextDrawableTimeout(NO);
       MetalInit();
     } else {
       anchor_fatal_error_dialog(
@@ -120,18 +120,20 @@ static const MTL::PixelFormat METAL_FRAMEBUFFERPIXEL_FORMAT = MTL::PixelFormatBG
 void AnchorContextMetal::MetalInit()
 {
   NS::AutoreleasePool *pool;
+  MTL::Device *device;
+  NS::String *source;
 
   /** ----------------- @ AUTORELEASEPOOL: Begin ------ */
   pool = NS::AutoreleasePool::alloc()->init();
 
-  MTL::Device *device = m_metalLayer->device();
+  device = m_metalLayer->device();
 
   /* Create a command queue for blit/present operation. */
   m_queue = device->newCommandQueue();
   m_queue->retain();
 
   /* Create shaders for blit operation. */
-  NS::String *source = NS_STRING_(
+  source = NS_STRING_(
     "using namespace metal;\n"
     "\n"
     "struct Vertex {\n"
@@ -236,4 +238,12 @@ MTL::Device *AnchorContextMetal::GetMetalDevice()
 {
   MTL::Device *device = m_metalLayer->device();
   return device;
+}
+
+void AnchorContextMetal::RegisterMetalPresentCallback(void (*callback)(MTL::RenderPassDescriptor *,
+                                                                       MTL::RenderPipelineState *,
+                                                                       MTL::Texture *,
+                                                                       CA::MetalDrawable *))
+{
+  m_contextPresentCallback = callback;
 }

@@ -59,6 +59,14 @@ class AnchorContextMetal : public AnchorContext
    */
   MTL::Device *GetMetalDevice();
 
+  /**
+   * Register present callback
+   */
+  void RegisterMetalPresentCallback(void (*callback)(MTL::RenderPassDescriptor *,
+                                                     MTL::RenderPipelineState *,
+                                                     MTL::Texture *,
+                                                     CA::MetalDrawable *));
+
  private:
 
   /* ----- Metal Graphics Resources & State. ----- */
@@ -82,4 +90,15 @@ class AnchorContextMetal : public AnchorContext
   unsigned int m_current_swapchain_index = 0;
   int m_swap_interval;
   bool m_debug;
+
+  /**
+   * Present callback.
+   * We use this such that presentation can be controlled from within the Metal
+   * Context. This is required for optimal performance and clean control flow.
+   * Also helps ensure flickering does not occur by present being dependent
+   * on existing submissions. */
+  void (*m_contextPresentCallback)(MTL::RenderPassDescriptor *,
+                                   MTL::RenderPipelineState *,
+                                   MTL::Texture *,
+                                   CA::MetalDrawable *);
 };
