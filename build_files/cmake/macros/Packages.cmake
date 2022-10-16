@@ -238,7 +238,7 @@ endif()
 # Apple Native CXX Headers, to kill Objective-C.
 
 if(APPLE)
-  set(APPLE_CXX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/apple/include)
+  set(APPLE_CXX_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/intern/apple/include)
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
