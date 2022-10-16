@@ -89,6 +89,7 @@ namespace Private
         _NS_PRIVATE_DEF_CLS(NSString);
         _NS_PRIVATE_DEF_CLS(NSURL);
         _NS_PRIVATE_DEF_CLS(NSValue);
+        _NS_PRIVATE_DEF_CLS(NSView);
 
     } // Class
 } // Private

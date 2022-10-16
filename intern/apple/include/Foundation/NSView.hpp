@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-// Foundation/Foundation.hpp
+// Foundation/NSView.hpp
 //
 // Copyright 2020-2022 Apple Inc.
 //
@@ -22,27 +22,37 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "NSArray.hpp"
-#include "NSAutoreleasePool.hpp"
-#include "NSBundle.hpp"
-#include "NSData.hpp"
-#include "NSDate.hpp"
 #include "NSDefines.hpp"
-#include "NSDictionary.hpp"
-#include "NSEnumerator.hpp"
-#include "NSError.hpp"
-#include "NSLock.hpp"
-#include "NSNotification.hpp"
-#include "NSNumber.hpp"
 #include "NSObject.hpp"
 #include "NSPrivate.hpp"
-#include "NSProcessInfo.hpp"
-#include "NSRange.hpp"
-#include "NSSet.hpp"
-#include "NSSharedPtr.hpp"
-#include "NSString.hpp"
 #include "NSTypes.hpp"
-#include "NSURL.hpp"
-#include "NSView.hpp"
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+namespace NS
+{
+  class View : public Copying<View>
+  {
+   public:
+
+    static View *alloc();
+    View *init();
+    View *init(const class String *pString);
+  };
+}  // namespace NS
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE NS::View *NS::View::alloc()
+{
+  return Object::alloc<View>(_NS_PRIVATE_CLS(NSView));
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE NS::View *NS::View::init()
+{
+  return Object::init<View>();
+}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
