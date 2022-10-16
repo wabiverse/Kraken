@@ -27,7 +27,7 @@
 #include "ANCHOR_BACKEND_cocoa.h"
 #include "ANCHOR_BACKEND_metal.h"
 
-#include "mtl_context.h"
+#include "mtl_context.hh"
 
 #include <simd/simd.h>
 #include <Foundation/Foundation.hpp>

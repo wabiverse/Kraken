@@ -38,8 +38,10 @@ if (APPLE)
   list(APPEND SRC_PLATFORM_BACKENDS
     intern/system_paths.mm
     backend/backend_cocoa.cpp
+    backend/context_metal.cpp
     backend/ANCHOR_BACKEND_cocoa.h
     backend/ANCHOR_BACKEND_metal.h
+    backend/ANCHOR_CONTEXT_metal.h
   )
 endif()
 
