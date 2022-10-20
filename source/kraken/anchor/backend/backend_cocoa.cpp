@@ -27,8 +27,6 @@
 #include "ANCHOR_BACKEND_cocoa.h"
 #include "ANCHOR_BACKEND_metal.h"
 
-#include "mtl_context.hh"
-
 #include <simd/simd.h>
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
@@ -584,7 +582,7 @@ void AnchorAppleMetal::SetupMetal()
 
   ANCHOR::StyleColorsDefault();
 
-  kraken::gpu::InitContext(m_device);
+  // kraken::gpu::InitContext(m_device);
 }
 
 static void SetFont()
@@ -664,7 +662,7 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
     return ANCHOR_FAILURE;
   }
 
-  kraken::gpu::NewFrame(renderPassDescriptor);
+  // kraken::gpu::NewFrame(renderPassDescriptor);
 
   ANCHOR::NewFrame();
 
@@ -687,7 +685,7 @@ eAnchorStatus AnchorAppleMetal::swapBuffers()
     renderPassDescriptor);
   renderEncoder->pushDebugGroup(
     NS::String::string("Anchor is Rendering...", NS::UTF8StringEncoding));
-  kraken::gpu::ViewDraw(drawData, commandBuffer, renderEncoder);
+  // kraken::gpu::ViewDraw(drawData, commandBuffer, renderEncoder);
   renderEncoder->popDebugGroup();
   renderEncoder->endEncoding();
 

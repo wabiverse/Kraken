@@ -57,6 +57,7 @@ set(LIB
   maelstrom
   maelstrom_static
   kraken_editor_interface
+  kraken_editor_space_api
   kraken_python_ext
   kraken_python_gpu
   _tf

@@ -52,10 +52,10 @@ namespace kraken::gpu {
 FrameBuffer::FrameBuffer(const char *name)
 {
   if (name) {
-    KLI_strncpy(name_, name, sizeof(name_));
+    KLI_strncpy(m_name, name, sizeof(m_name));
   }
   else {
-    name_[0] = '\0';
+    m_name[0] = '\0';
   }
   /* Force config on first use. */
   dirty_attachments_ = true;

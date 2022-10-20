@@ -220,6 +220,11 @@ if(APPLE)
   foreach(subdir ${subdir_list})
     set(ZLIB_ROOT "/opt/homebrew/Cellar/zlib/${subdir}")
   endforeach()
+  set(ZLIB_INCLUDE_DIR ${ZLIB_ROOT}/include)
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(ZLIB_LIBRARY ${ZLIB_ROOT}/lib/libz.a)
+    set(ZLIB_LIBRARY_RELEASE ${ZLIB_ROOT}/lib/libz.a)
+  endif()
 endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
@@ -560,6 +565,7 @@ if(WIN32)
     )    
   endif()
   set(TBB_INCLUDE_DIRS ${TBB_ROOT}/include)
+  add_definitions(-DWITH_TBB=1)
 elseif(UNIX)
   # Enable TBBs Ability to wait for the completion
   # of worker threads.
@@ -574,6 +580,7 @@ elseif(UNIX)
   list(APPEND TBB_INCLUDE_DIRS
     ${TBB_PREFIX}/include
   )
+  add_definitions(-DWITH_TBB=1)
 endif()
 
 # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx math xxxxx

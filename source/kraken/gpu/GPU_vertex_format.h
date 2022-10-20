@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -32,6 +32,7 @@
 #include "KLI_assert.h"
 #include "KLI_compiler_compat.h"
 #include "KLI_math_geom.h"
+
 #include "GPU_common.h"
 
 #ifdef __cplusplus

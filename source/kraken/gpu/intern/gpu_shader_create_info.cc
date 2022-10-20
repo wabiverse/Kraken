@@ -99,13 +99,13 @@ namespace kraken::gpu::shader
 
       auto assert_no_overlap = [&](const bool test, const StringRefNull error) {
         if (!test) {
-          std::cout << name_ << ": Validation failed while merging " << info.name_ << " : ";
+          std::cout << m_name << ": Validation failed while merging " << info.m_name << " : ";
           std::cout << error << std::endl;
           KLI_assert(0);
         }
       };
 
-      if (!deps_merged.add(info.name_)) {
+      if (!deps_merged.add(info.m_name)) {
         assert_no_overlap(false, "additional info already merged via another info");
       }
 
@@ -169,20 +169,20 @@ namespace kraken::gpu::shader
     /* At least a vertex shader and a fragment shader are required, or only a compute shader. */
     if (this->compute_source_.is_empty()) {
       if (this->vertex_source_.is_empty()) {
-        error += "Missing vertex shader in " + this->name_ + ".\n";
+        error += "Missing vertex shader in " + this->m_name + ".\n";
       }
       if (this->fragment_source_.is_empty()) {
-        error += "Missing fragment shader in " + this->name_ + ".\n";
+        error += "Missing fragment shader in " + this->m_name + ".\n";
       }
     } else {
       if (!this->vertex_source_.is_empty()) {
-        error += "Compute shader has vertex_source_ shader attached in " + this->name_ + ".\n";
+        error += "Compute shader has vertex_source_ shader attached in " + this->m_name + ".\n";
       }
       if (!this->geometry_source_.is_empty()) {
-        error += "Compute shader has geometry_source_ shader attached in " + this->name_ + ".\n";
+        error += "Compute shader has geometry_source_ shader attached in " + this->m_name + ".\n";
       }
       if (!this->fragment_source_.is_empty()) {
-        error += "Compute shader has fragment_source_ shader attached in " + this->name_ + ".\n";
+        error += "Compute shader has fragment_source_ shader attached in " + this->m_name + ".\n";
       }
     }
 
@@ -211,7 +211,7 @@ namespace kraken::gpu::shader
       };
 
       auto print_error_msg = [&](const Resource &res) {
-        std::cout << name_ << ": Validation failed : Overlapping ";
+        std::cout << m_name << ": Validation failed : Overlapping ";
 
         switch (res.bind_type) {
           case Resource::BindType::UNIFORM_BUFFER:
@@ -230,7 +230,7 @@ namespace kraken::gpu::shader
             std::cout << "Unknown Type";
             break;
         }
-        std::cout << " (" << res.slot << ") while merging " << other_info.name_ << std::endl;
+        std::cout << " (" << res.slot << ") while merging " << other_info.m_name << std::endl;
       };
 
       for (auto &res : batch_resources_) {
@@ -252,12 +252,12 @@ namespace kraken::gpu::shader
     uint32_t attr_bits = 0;
     for (auto &attr : vertex_inputs_) {
       if (attr.index >= 16 || attr.index < 0) {
-        std::cout << name_ << ": \"" << attr.name
+        std::cout << m_name << ": \"" << attr.name
                   << "\" : Type::MAT3 unsupported as vertex attribute." << std::endl;
         KLI_assert(0);
       }
       if (attr.index >= 16 || attr.index < 0) {
-        std::cout << name_ << ": Invalid index for attribute \"" << attr.name << "\"" << std::endl;
+        std::cout << m_name << ": Invalid index for attribute \"" << attr.name << "\"" << std::endl;
         KLI_assert(0);
       }
       uint32_t attr_new = 0;
@@ -270,11 +270,11 @@ namespace kraken::gpu::shader
       }
 
       if ((attr_bits & attr_new) != 0) {
-        std::cout << name_ << ": Attribute \"" << attr.name
+        std::cout << m_name << ": Attribute \"" << attr.name
                   << "\" overlap one or more index from another attribute."
                      " Note that mat4 takes up 4 indices.";
         if (other_info) {
-          std::cout << " While merging " << other_info->name_ << std::endl;
+          std::cout << " While merging " << other_info->m_name << std::endl;
         }
         std::cout << std::endl;
         KLI_assert(0);
@@ -404,7 +404,7 @@ bool gpu_shader_create_info_compile_all()
       GPUShader *shader = GPU_shader_create_from_info(
         reinterpret_cast<const GPUShaderCreateInfo *>(info));
       if (shader == nullptr) {
-        printf("Compilation %s Failed\n", info->name_.c_str());
+        printf("Compilation %s Failed\n", info->m_name.c_str());
       } else {
         success++;
 
@@ -441,11 +441,11 @@ bool gpu_shader_create_info_compile_all()
           }
 
           if (input == nullptr) {
-            std::cout << "Error: " << info->name_;
+            std::cout << "Error: " << info->m_name;
             std::cout << ": Resource « " << name << " » not found in the shader interface\n";
           }
           else if (input->location == -1) {
-            std::cout << "Warning: " << info->name_;
+            std::cout << "Warning: " << info->m_name;
             std::cout << ": Resource « " << name << " » is optimized out\n";
           }
         }

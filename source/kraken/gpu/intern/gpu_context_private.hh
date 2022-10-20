@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -32,6 +32,8 @@
  */
 
 #include "MEM_guardedalloc.h"
+
+#include "ANCHOR_api.h"
 
 #include "GPU_context.h"
 
@@ -84,10 +86,10 @@ namespace kraken::gpu
    protected:
 
     /** Thread on which this context is active. */
-    pthread_t thread_;
-    bool is_active_;
+    pthread_t m_thread;
+    bool m_is_active;
     /** Avoid including GHOST headers. Can be nullptr for off-screen contexts. */
-    void *ghost_window_;
+    void *m_anchor_window;
 
    public:
 

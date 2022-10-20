@@ -45,11 +45,11 @@
 
 #include "WM_draw.h"
 #include "WM_event_system.h"
+#include "WM_init_exit.h"
 #include "WM_tokens.h"
 #include "WM_window.h"
 
 #include "ED_screen.h"
-
 
 
 void WM_main(kContext *C)
@@ -66,7 +66,7 @@ void WM_main(kContext *C)
 
     /**
      * Per window, all events to the window, screen, area and region handlers. */
-    // wm_event_do_handlers(C);
+    WM_event_do_handlers(C);
 
     /**
      *  Events have left notes about changes, we handle and cache it. */
@@ -216,4 +216,3 @@ void WM_check(kContext *C)
 
 /* wait until every job ended */
 void WM_jobs_kill_all(wmWindowManager *wm) {}
-

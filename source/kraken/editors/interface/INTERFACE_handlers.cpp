@@ -43,9 +43,10 @@
 
 #include "WM_cursors.h"
 #include "WM_cursors_api.h"
-#include "WM_window.h"
 #include "WM_event_system.h"
+#include "WM_keymap.h"
 #include "WM_tooltip.h"
+#include "WM_window.h"
 
 #include "ED_screen.h"
 
@@ -865,7 +866,7 @@ static std::vector<uiAfterFunc *> UIAfterFuncs = {};
 
 static uiAfterFunc *ui_afterfunc_new(void)
 {
-  uiAfterFunc *after = new uiAfterFunc();
+  uiAfterFunc *after = MEM_new<uiAfterFunc>(__func__);
 
   UIAfterFuncs.push_back(after);
 
@@ -2398,7 +2399,8 @@ static void ui_textedit_begin(kContext *C, uiBut *but, uiHandleButtonData *data)
     data->str = ui_but_string_get_dynamic(but, &data->maxlen);
   }
 
-  // if (ui_but_is_float(but) && !ui_but_is_unit(but) && !ui_but_anim_expression_get(but, NULL, 0) &&
+  // if (ui_but_is_float(but) && !ui_but_is_unit(but) && !ui_but_anim_expression_get(but, NULL, 0)
+  // &&
   //     !no_zero_strip) {
   //   KLI_str_rstrip_float_zero(data->str, '\0');
   // }

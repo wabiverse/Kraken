@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -46,7 +46,7 @@
 #include "gpu_matrix_private.h"
 #include "gpu_private.h"
 
-#ifdef WITH_METAL_BACKEND
+#ifdef WITH_METAL
 #  include "mtl_backend.hh"
 #endif
 
@@ -73,8 +73,8 @@ namespace kraken::gpu
   int Context::context_counter = 0;
   Context::Context()
   {
-    thread_ = pthread_self();
-    is_active_ = false;
+    m_thread = pthread_self();
+    m_is_active = false;
     matrix_state = GPU_matrix_state_create();
 
     context_id = Context::context_counter;
@@ -94,7 +94,7 @@ namespace kraken::gpu
 
   bool Context::is_active_on_thread()
   {
-    return (this == active_ctx) && pthread_equal(pthread_self(), thread_);
+    return (this == active_ctx) && pthread_equal(pthread_self(), m_thread);
   }
 
   Context *Context::get()
@@ -244,7 +244,7 @@ bool GPU_backend_supported(void)
 {
   switch (g_backend_type) {
     case GPU_BACKEND_METAL:
-#ifdef WITH_METAL_BACKEND
+#ifdef WITH_METAL
       return MTLBackend::metal_is_supported();
 #else
       return false;
@@ -261,7 +261,7 @@ static void gpu_backend_create()
   KLI_assert(GPU_backend_supported());
 
   switch (g_backend_type) {
-#ifdef WITH_METAL_BACKEND
+#ifdef WITH_METAL
     case GPU_BACKEND_METAL:
       g_backend = new MTLBackend;
       break;
@@ -288,7 +288,7 @@ void gpu_backend_discard()
 eGPUBackendType GPU_backend_get_type()
 {
 
-#ifdef WITH_METAL_BACKEND
+#ifdef WITH_METAL
   if (g_backend && dynamic_cast<MTLBackend *>(g_backend) != nullptr) {
     return GPU_BACKEND_METAL;
   }

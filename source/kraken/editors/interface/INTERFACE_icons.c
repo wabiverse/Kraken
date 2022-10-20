@@ -676,81 +676,83 @@ static ImBuf *create_mono_icon_with_border(ImBuf *buf,
                                            int resolution_divider,
                                            float border_intensity)
 {
-  // ImBuf *result = IMB_dupImBuf(buf);
-  // const float border_sharpness = 16.0 / (resolution_divider * resolution_divider);
+  ImBuf *result = MEM_callocN(sizeof(buf), __func__);
+  const float border_sharpness = 16.0 / (resolution_divider * resolution_divider);
 
-  // float blurred_alpha_buffer[(ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) *
-  //                            (ICON_GRID_H + 2 * ICON_MONO_BORDER_OUTSET)];
-  // const int icon_width = (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) / resolution_divider;
-  // const int icon_height = (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) / resolution_divider;
+  float blurred_alpha_buffer[(ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) *
+                             (ICON_GRID_H + 2 * ICON_MONO_BORDER_OUTSET)];
+  const int icon_width = (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) / resolution_divider;
+  const int icon_height = (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) / resolution_divider;
 
-  // for (int y = 0; y < ICON_GRID_ROWS; y++) {
-  //   for (int x = 0; x < ICON_GRID_COLS; x++) {
-  //     const IconType icontype = icontypes[y * ICON_GRID_COLS + x];
-  //     if (icontype.type != ICON_TYPE_MONO_TEXTURE) {
-  //       continue;
-  //     }
+  for (int y = 0; y < ICON_GRID_ROWS; y++) {
+    for (int x = 0; x < ICON_GRID_COLS; x++) {
+      const IconType icontype = icontypes[y * ICON_GRID_COLS + x];
+      if (icontype.type != ICON_TYPE_MONO_TEXTURE) {
+        continue;
+      }
 
-  //     int sx = x * (ICON_GRID_W + ICON_GRID_MARGIN) + ICON_GRID_MARGIN -
-  //     ICON_MONO_BORDER_OUTSET; int sy = y * (ICON_GRID_H + ICON_GRID_MARGIN) + ICON_GRID_MARGIN
-  //     - ICON_MONO_BORDER_OUTSET; sx = sx / resolution_divider; sy = sy / resolution_divider;
+      int sx = x * (ICON_GRID_W + ICON_GRID_MARGIN) + ICON_GRID_MARGIN - ICON_MONO_BORDER_OUTSET;
+      int sy = y * (ICON_GRID_H + ICON_GRID_MARGIN) + ICON_GRID_MARGIN - ICON_MONO_BORDER_OUTSET;
+      sx = sx / resolution_divider;
+      sy = sy / resolution_divider;
 
-  //     /* blur the alpha channel and store it in blurred_alpha_buffer */
-  //     const int blur_size = 2 / resolution_divider;
-  //     for (int bx = 0; bx < icon_width; bx++) {
-  //       const int asx = MAX2(bx - blur_size, 0);
-  //       const int aex = MIN2(bx + blur_size + 1, icon_width);
-  //       for (int by = 0; by < icon_height; by++) {
-  //         const int asy = MAX2(by - blur_size, 0);
-  //         const int aey = MIN2(by + blur_size + 1, icon_height);
+      /* blur the alpha channel and store it in blurred_alpha_buffer */
+      const int blur_size = 2 / resolution_divider;
+      for (int bx = 0; bx < icon_width; bx++) {
+        const int asx = MAX2(bx - blur_size, 0);
+        const int aex = MIN2(bx + blur_size + 1, icon_width);
+        for (int by = 0; by < icon_height; by++) {
+          const int asy = MAX2(by - blur_size, 0);
+          const int aey = MIN2(by + blur_size + 1, icon_height);
 
-  //         /* blur alpha channel */
-  //         const int write_offset = by * (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) + bx;
-  //         float alpha_accum = 0.0;
-  //         uint alpha_samples = 0;
-  //         for (int ax = asx; ax < aex; ax++) {
-  //           for (int ay = asy; ay < aey; ay++) {
-  //             const int offset_read = (sy + ay) * buf->x + (sx + ax);
-  //             const uint color_read = buf->rect[offset_read];
-  //             const float alpha_read = ((color_read & 0xff000000) >> 24) / 255.0;
-  //             alpha_accum += alpha_read;
-  //             alpha_samples += 1;
-  //           }
-  //         }
-  //         blurred_alpha_buffer[write_offset] = alpha_accum / alpha_samples;
-  //       }
-  //     }
+          /* blur alpha channel */
+          const int write_offset = by * (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) + bx;
+          float alpha_accum = 0.0;
+          uint alpha_samples = 0;
+          for (int ax = asx; ax < aex; ax++) {
+            for (int ay = asy; ay < aey; ay++) {
+              const int offset_read = (sy + ay) * buf->x + (sx + ax);
+              const uint color_read = buf->rect[offset_read];
+              const float alpha_read = ((color_read & 0xff000000) >> 24) / 255.0;
+              alpha_accum += alpha_read;
+              alpha_samples += 1;
+            }
+          }
+          blurred_alpha_buffer[write_offset] = alpha_accum / alpha_samples;
+        }
+      }
 
-  //     /* apply blurred alpha */
-  //     for (int bx = 0; bx < icon_width; bx++) {
-  //       for (int by = 0; by < icon_height; by++) {
-  //         const int blurred_alpha_offset = by * (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) +
-  //         bx; const int offset_write = (sy + by) * buf->x + (sx + bx); const float blurred_alpha
-  //         = blurred_alpha_buffer[blurred_alpha_offset]; const float border_srgb[4] =
-  //           {0, 0, 0, MIN2(1.0, blurred_alpha * border_sharpness) * border_intensity};
+      /* apply blurred alpha */
+      for (int bx = 0; bx < icon_width; bx++) {
+        for (int by = 0; by < icon_height; by++) {
+          const int blurred_alpha_offset = by * (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) + bx;
+          const int offset_write = (sy + by) * buf->x + (sx + bx);
+          const float blurred_alpha = blurred_alpha_buffer[blurred_alpha_offset];
+          const float border_srgb[4] =
+            {0, 0, 0, MIN2(1.0, blurred_alpha * border_sharpness) * border_intensity};
 
-  //         const uint color_read = buf->rect[offset_write];
-  //         const uchar *orig_color = (uchar *)&color_read;
+          const uint color_read = buf->rect[offset_write];
+          const uchar *orig_color = (uchar *)&color_read;
 
-  //         float border_rgba[4];
-  //         float orig_rgba[4];
-  //         float dest_rgba[4];
-  //         float dest_srgb[4];
+          float border_rgba[4];
+          float orig_rgba[4];
+          float dest_rgba[4];
+          float dest_srgb[4];
 
-  //         srgb_to_linearrgb_v4(border_rgba, border_srgb);
-  //         srgb_to_linearrgb_uchar4(orig_rgba, orig_color);
-  //         blend_color_interpolate_float(dest_rgba, orig_rgba, border_rgba, 1.0 - orig_rgba[3]);
-  //         linearrgb_to_srgb_v4(dest_srgb, dest_rgba);
+          srgb_to_linearrgb_v4(border_rgba, border_srgb);
+          srgb_to_linearrgb_uchar4(orig_rgba, orig_color);
+          blend_color_interpolate_float(dest_rgba, orig_rgba, border_rgba, 1.0 - orig_rgba[3]);
+          linearrgb_to_srgb_v4(dest_srgb, dest_rgba);
 
-  //         const uint alpha_mask = ((uint)(dest_srgb[3] * 255)) << 24;
-  //         const uint cpack = rgb_to_cpack(dest_srgb[0], dest_srgb[1], dest_srgb[2]) |
-  //         alpha_mask; result->rect[offset_write] = cpack;
-  //       }
-  //     }
-  //   }
-  // }
-  // return result;
-  return NULL;
+          const uint alpha_mask = ((uint)(dest_srgb[3] * 255)) << 24;
+          const uint cpack = rgb_to_cpack(dest_srgb[0], dest_srgb[1], dest_srgb[2]) | alpha_mask;
+          result->rect[offset_write] = cpack;
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 static void free_icons_textures(void)
@@ -1559,7 +1561,7 @@ ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon)
 void UI_icons_init()
 {
   init_iconfile_list(&iconfilelist);
-  UI_icons_reload_internal_textures();
+  // UI_icons_reload_internal_textures();
   init_internal_icons();
   // init_brush_icons();
   init_event_icons();

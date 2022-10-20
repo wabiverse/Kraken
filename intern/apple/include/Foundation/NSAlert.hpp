@@ -24,9 +24,8 @@
 
 #include "NSDefines.hpp"
 #include "NSObject.hpp"
-#include "NSPrivate.hpp"
-#include "NSTypes.hpp"
 #include "NSString.hpp"
+#include "NSTypes.hpp"
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 

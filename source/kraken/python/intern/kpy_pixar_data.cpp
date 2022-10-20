@@ -211,7 +211,7 @@ static PyObject *kpy_pixar_data_temp_data(PyObject *UNUSED(self), PyObject *args
 
   ret = PyObject_GC_New(KPy_DataContext, &kpy_pixar_data_context_Type);
 
-  STRNCPY(ret->filepath, filepath ? filepath : G_MAIN->stage_id);
+  STRNCPY(ret->filepath, filepath ? filepath : G.main->stage_id);
 
   return (PyObject *)ret;
 }

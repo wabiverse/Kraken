@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -368,7 +368,7 @@ namespace kraken::gpu::shader
   struct ShaderCreateInfo
   {
     /** Shader name for debugging. */
-    StringRefNull name_;
+    StringRefNull m_name;
     /** True if the shader is static and can be pre-compiled at compile time. */
     bool do_static_compilation_ = false;
     /** If true, all additionally linked create info will be merged into this one. */
@@ -599,7 +599,7 @@ namespace kraken::gpu::shader
 
    public:
 
-    ShaderCreateInfo(const char *name) : name_(name){};
+    ShaderCreateInfo(const char *name) : m_name(name){};
     ~ShaderCreateInfo(){};
 
     using Self = ShaderCreateInfo;

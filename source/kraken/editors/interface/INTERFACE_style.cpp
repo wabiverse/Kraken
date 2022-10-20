@@ -214,17 +214,17 @@ void uiStyleInit(void)
     const bool unique = false;
 
     if (font->uifont_id == UIFONT_DEFAULT) {
-      font->blf_id = KRF_load_default(unique);
+      font->krf_id = KRF_load_default(unique);
     } else {
-      font->blf_id = KRF_load(font->filepath);
-      if (font->blf_id == -1) {
-        font->blf_id = KRF_load_default(unique);
+      font->krf_id = KRF_load(font->filepath);
+      if (font->krf_id == -1) {
+        font->krf_id = KRF_load_default(unique);
       }
     }
 
-    KRF_default_set(font->blf_id);
+    KRF_default_set(font->krf_id);
 
-    if (font->blf_id == -1) {
+    if (font->krf_id == -1) {
       if (G.debug & G_DEBUG) {
         printf("%s: error, no fonts available\n", __func__);
       }
@@ -272,9 +272,9 @@ void uiStyleInit(void)
 
     LISTBASE_FOREACH(uiFont *, font, &U.uifonts)
     {
-      if (font->blf_id != -1) {
-        KRF_disable(font->blf_id, flag_disable);
-        KRF_enable(font->blf_id, flag_enable);
+      if (font->krf_id != -1) {
+        KRF_disable(font->krf_id, flag_disable);
+        KRF_enable(font->krf_id, flag_enable);
       }
     }
     if (krf_mono_font != -1) {
@@ -329,5 +329,5 @@ void UI_fontstyle_set(const uiFontStyle *fs)
 {
   uiFont *font = uifont_to_krfont(fs->uifont_id);
 
-  KRF_size(font->blf_id, fs->points * U.dpi_fac);
+  KRF_size(font->krf_id, fs->points * U.dpi_fac);
 }

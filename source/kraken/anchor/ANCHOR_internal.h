@@ -77,6 +77,10 @@
 #endif
 
 /**
+ * Main ANCHOR context */
+class AnchorContext;
+
+/**
  * Store 1-bit per value */
 struct AnchorBitVector;
 /**
@@ -91,9 +95,6 @@ struct AnchorDrawListSharedData;
 /**
  * Stacked color modifier, backup of modified data so we can restore it */
 struct AnchorColorMod;
-/**
- * Main ANCHOR context */
-struct AnchorContext;
 /**
  * Hook for extensions like ANCHORTestEngine */
 struct AnchorContextHook;
@@ -2588,8 +2589,40 @@ struct AnchorContextHook
 // [SECTION] AnchorContext (main ANCHOR context)
 //-----------------------------------------------------------------------------
 
-struct AnchorContext
+class AnchorIContext
 {
+ public:
+
+  /**
+   * Destructor.
+   */
+  virtual ~AnchorIContext() {}
+
+  /**
+   * Activates the drawing context.
+   * \return A boolean success indicator.
+   */
+  virtual eAnchorStatus ActivateDrawingContext() = 0;
+
+  /**
+   * Release the drawing context of the calling thread.
+   * \return A boolean success indicator.
+   */
+  virtual eAnchorStatus ReleaseDrawingContext() = 0;
+
+  virtual unsigned int GetDefaultFramebuffer() = 0;
+
+  virtual eAnchorStatus SwapBuffers() = 0;
+
+#ifdef WITH_CXX_GUARDEDALLOC
+  MEM_CXX_CLASS_ALLOC_FUNCS("ANCHOR:AnchorIContext")
+#endif
+};
+
+class AnchorContext : public AnchorIContext
+{
+ public:
+
   bool Initialized;
   bool FontAtlasOwnedByContext;  // IO.Fonts-> is owned by the AnchorContext and will be
                                  // destructed along with it.
@@ -2935,7 +2968,7 @@ struct AnchorContext
   int WantTextInputNextFrame;
   char TempBuffer[1024 * 3 + 1];  // Temporary text buffer
 
-  AnchorContext(AnchorFontAtlas *shared_font_atlas)
+  AnchorContext(AnchorFontAtlas *shared_font_atlas = nullptr)
   {
     Initialized = false;
     FontAtlasOwnedByContext = shared_font_atlas ? false : true;
@@ -3085,6 +3118,43 @@ struct AnchorContext
     FramerateSecPerFrameAccum = 0.0f;
     WantCaptureMouseNextFrame = WantCaptureKeyboardNextFrame = WantTextInputNextFrame = -1;
     memset(TempBuffer, 0, sizeof(TempBuffer));
+  }
+
+  /**
+   * Destructor.
+   */
+  virtual ~AnchorContext() {}
+
+  /**
+   * Activates the drawing context.
+   * @return A boolean success indicator.
+   */
+  virtual eAnchorStatus ActivateDrawingContext() override
+  {
+    return ANCHOR_SUCCESS;
+  }
+
+  /**
+   * Release the drawing context of the calling thread.
+   * @return A boolean success indicator.
+   */
+  virtual eAnchorStatus ReleaseDrawingContext() override
+  {
+    return ANCHOR_SUCCESS;
+  }
+
+  virtual unsigned int GetDefaultFramebuffer() override
+  {
+    return 0;
+  }
+
+  /**
+   * Swaps front and back buffers of a window.
+   * @return A boolean success indicator.
+   */
+  virtual eAnchorStatus SwapBuffers() override
+  {
+    return ANCHOR_SUCCESS;
   }
 };
 

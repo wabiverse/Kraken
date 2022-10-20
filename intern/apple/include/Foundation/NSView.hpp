@@ -37,6 +37,10 @@ namespace NS
 
     static View *alloc();
     View *init();
+
+    CGRect bounds();
+
+    CGSize convertSizeToBacking(CGSize size);
   };
 }  // namespace NS
 
@@ -52,6 +56,20 @@ _NS_INLINE NS::View *NS::View::alloc()
 _NS_INLINE NS::View *NS::View::init()
 {
   return Object::init<View>();
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE CGRect NS::View::bounds()
+{
+  return Object::sendMessage<CGRect>(this, _NS_PRIVATE_SEL(bounds));
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE CGSize NS::View::convertSizeToBacking(CGSize size)
+{
+  return Object::sendMessage<CGSize>(this, _NS_PRIVATE_SEL(convertSizeToBacking_), size);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------

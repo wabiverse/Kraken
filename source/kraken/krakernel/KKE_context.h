@@ -136,7 +136,7 @@ void CTX_wm_operator_poll_msg_set(struct kContext *C, const char *msg);
 struct kContextStoreEntry
 {
   char name[MAX_NAME];
-  struct KrakenPRIM *ptr;
+  const struct KrakenPRIM *ptr;
 };
 
 struct kContextStore

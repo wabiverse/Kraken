@@ -85,7 +85,7 @@ function RunAndDebugKraken
     #
     # command alias run-no-shell process launch -X 0 --
     #
-    & lldb -o run-no-shell $KrakenGlobalView/../build_darwin_release/bin/Release/Kraken.app/Contents/MacOS/Kraken
+    & lldb -o run-no-shell $KrakenGlobalView/../build_darwin_release/bin/Release/Kraken.app/Contents/MacOS/Kraken -- $args
   }
 }
 
@@ -284,7 +284,7 @@ function RunDevelopmentReleaseKraken {
     & "$env:USERPROFILE\dev\build_KRAKEN_Release\bin\Release\kraken.exe" $args
   }
   if($IsMacOS) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
+    & "~/dev/build_darwin_release/bin/Release/Kraken.app/Contents/MacOS/Kraken" $args
   }
   if($IsLinux) {
     Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
@@ -696,7 +696,7 @@ Set-Alias dbgkrkn RunAndDebugKraken
 Set-Alias genicons CreateKrakenAppIcons
 
 # Run Kraken
-Set-Alias kraken_r RunDevelopmentReleaseKraken
+Set-Alias kraken RunDevelopmentReleaseKraken
 Set-Alias kraken_d RunDevelopmentDebugKraken
 
 Set-Alias python RunKrakenPythonOfficialRelease

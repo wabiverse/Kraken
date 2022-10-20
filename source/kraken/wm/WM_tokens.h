@@ -30,8 +30,6 @@
 
 #include <wabi/base/tf/token.h>
 
-
-
 struct KRAKEN_WM_TOKENS_TYPE
 {
   KRAKEN_WM_TOKENS_TYPE();

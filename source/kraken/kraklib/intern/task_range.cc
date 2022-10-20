@@ -134,7 +134,7 @@ void KLI_task_parallel_range(const int start,
     const size_t grainsize = MAX2(settings->min_iter_per_thread, 1);
     const tbb::blocked_range<int> range(start, stop, grainsize);
 
-    blender::lazy_threading::send_hint();
+    kraken::lazy_threading::send_hint();
 
     if (settings->func_reduce) {
       parallel_reduce(range, task);

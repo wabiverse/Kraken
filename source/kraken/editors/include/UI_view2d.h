@@ -27,6 +27,10 @@
 #include "KLI_compiler_attrs.h"
 #include "KLI_rect.h"
 
+struct ARegion;
+struct kContext;
+struct View2D;
+
 /* ------------------------------------------ */
 /* Macros:                                    */
 
@@ -85,9 +89,11 @@ char UI_view2d_mouse_in_scrollers(const struct ARegion *region,
                                   const struct View2D *v2d,
                                   const int xy[2]) ATTR_NONNULL(1, 2, 3);
 
-char UI_view2d_rect_in_scrollers(const ARegion *region, const View2D *v2d, const rcti *rect);
-char UI_view2d_rect_in_scrollers_ex(const ARegion *region,
-                                    const View2D *v2d,
+char UI_view2d_rect_in_scrollers(const struct ARegion *region,
+                                 const struct View2D *v2d,
+                                 const rcti *rect);
+char UI_view2d_rect_in_scrollers_ex(const struct ARegion *region,
+                                    const struct View2D *v2d,
                                     const rcti *rect,
                                     int *r_scroll);
 

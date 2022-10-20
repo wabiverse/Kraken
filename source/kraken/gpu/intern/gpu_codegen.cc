@@ -805,7 +805,7 @@ bool GPU_pass_compile(GPUPass *pass, const char *shname)
     GPUShaderCreateInfo *info = reinterpret_cast<GPUShaderCreateInfo *>(
       static_cast<ShaderCreateInfo *>(pass->create_info));
 
-    pass->create_info->name_ = shname;
+    pass->create_info->m_name = shname;
 
     GPUShader *shader = GPU_shader_create_from_info(info);
 

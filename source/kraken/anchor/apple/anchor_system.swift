@@ -19,9 +19,6 @@ import MetalKit
 import AppKit
 import IOKit
 
-/* Pixar USD. */
-import Pixar
-
 /* Kraken Anchor. */
 import Anchor
 

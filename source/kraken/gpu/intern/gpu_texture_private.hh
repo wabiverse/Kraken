@@ -104,27 +104,27 @@ namespace kraken
 
       /* ---- Texture format (immutable after init). ---- */
       /** Width & Height & Depth. For cube-map arrays, d is number of face-layers. */
-      int w_, h_, d_;
+      int m_w, m_h, m_d;
       /** Internal data format. */
-      eGPUTextureFormat format_;
+      eGPUTextureFormat m_format;
       /** Format characteristics. */
-      eGPUTextureFormatFlag format_flag_;
+      eGPUTextureFormatFlag m_format_flag;
       /** Texture type. */
-      eGPUTextureType type_;
+      eGPUTextureType m_type;
 
       /** Number of mipmaps this texture has (Max miplvl). */
       /* TODO(fclem): Should become immutable and the need for mipmaps should be specified upfront.
        */
-      int mipmaps_ = -1;
+      int m_mipmaps = -1;
       /** For error checking */
-      int mip_min_ = 0, mip_max_ = 0;
+      int m_mip_min = 0, m_mip_max = 0;
 
       /** For debugging */
-      char name_[DEBUG_NAME_LEN];
+      char m_name[DEBUG_NAME_LEN];
 
       /** Frame-buffer references to update on deletion. */
-      GPUAttachmentType fb_attachment_[GPU_TEX_MAX_FBO_ATTACHED];
-      FrameBuffer *fb_[GPU_TEX_MAX_FBO_ATTACHED];
+      GPUAttachmentType m_fb_attachment[GPU_TEX_MAX_FBO_ATTACHED];
+      FrameBuffer *m_fb[GPU_TEX_MAX_FBO_ATTACHED];
 
      public:
 
@@ -167,54 +167,54 @@ namespace kraken
       virtual uint gl_bindcode_get() const = 0;
       int width_get() const
       {
-        return w_;
+        return m_w;
       }
       int height_get() const
       {
-        return h_;
+        return m_h;
       }
       int depth_get() const
       {
-        return d_;
+        return m_d;
       }
 
       void mip_size_get(int mip, int r_size[3]) const
       {
         /* TODO: assert if lvl is below the limit of 1px in each dimension. */
         int div = 1 << mip;
-        r_size[0] = max_ii(1, w_ / div);
+        r_size[0] = max_ii(1, m_w / div);
 
-        if (type_ == GPU_TEXTURE_1D_ARRAY) {
-          r_size[1] = h_;
-        } else if (h_ > 0) {
-          r_size[1] = max_ii(1, h_ / div);
+        if (m_type == GPU_TEXTURE_1D_ARRAY) {
+          r_size[1] = m_h;
+        } else if (m_h > 0) {
+          r_size[1] = max_ii(1, m_h / div);
         }
 
-        if (type_ & (GPU_TEXTURE_ARRAY | GPU_TEXTURE_CUBE)) {
-          r_size[2] = d_;
-        } else if (d_ > 0) {
-          r_size[2] = max_ii(1, d_ / div);
+        if (m_type & (GPU_TEXTURE_ARRAY | GPU_TEXTURE_CUBE)) {
+          r_size[2] = m_d;
+        } else if (m_d > 0) {
+          r_size[2] = max_ii(1, m_d / div);
         }
       }
 
       int mip_width_get(int mip) const
       {
-        return max_ii(1, w_ / (1 << mip));
+        return max_ii(1, m_w / (1 << mip));
       }
       int mip_height_get(int mip) const
       {
-        return (type_ == GPU_TEXTURE_1D_ARRAY) ? h_ : max_ii(1, h_ / (1 << mip));
+        return (m_type == GPU_TEXTURE_1D_ARRAY) ? m_h : max_ii(1, m_h / (1 << mip));
       }
       int mip_depth_get(int mip) const
       {
-        return (type_ & (GPU_TEXTURE_ARRAY | GPU_TEXTURE_CUBE)) ? d_ : max_ii(1, d_ / (1 << mip));
+        return (m_type & (GPU_TEXTURE_ARRAY | GPU_TEXTURE_CUBE)) ? m_d : max_ii(1, m_d / (1 << mip));
       }
 
       /* Return number of dimension taking the array type into account. */
       int dimensions_count() const
       {
-        const int array = (type_ & GPU_TEXTURE_ARRAY) ? 1 : 0;
-        switch (type_ & ~GPU_TEXTURE_ARRAY) {
+        const int array = (m_type & GPU_TEXTURE_ARRAY) ? 1 : 0;
+        switch (m_type & ~GPU_TEXTURE_ARRAY) {
           case GPU_TEXTURE_BUFFER:
             return 1;
           case GPU_TEXTURE_1D:
@@ -230,12 +230,12 @@ namespace kraken
       /* Return number of array layer (or face layer) for texture array or 1 for the others. */
       int layer_count() const
       {
-        switch (type_) {
+        switch (m_type) {
           case GPU_TEXTURE_1D_ARRAY:
-            return h_;
+            return m_h;
           case GPU_TEXTURE_2D_ARRAY:
           case GPU_TEXTURE_CUBE_ARRAY:
-            return d_;
+            return m_d;
           default:
             return 1;
         }
@@ -243,24 +243,24 @@ namespace kraken
 
       int mip_count() const
       {
-        return mipmaps_;
+        return m_mipmaps;
       }
 
       eGPUTextureFormat format_get() const
       {
-        return format_;
+        return m_format;
       }
       eGPUTextureFormatFlag format_flag_get() const
       {
-        return format_flag_;
+        return m_format_flag;
       }
       eGPUTextureType type_get() const
       {
-        return type_;
+        return m_type;
       }
       GPUAttachmentType attachment_type(int slot) const
       {
-        switch (format_) {
+        switch (m_format) {
           case GPU_DEPTH_COMPONENT32F:
           case GPU_DEPTH_COMPONENT24:
           case GPU_DEPTH_COMPONENT16:

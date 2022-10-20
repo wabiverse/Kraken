@@ -24,6 +24,7 @@
  * Bare Metal.
  */
 
+#include "ANCHOR_api.h"
 #include "ANCHOR_internal.h"
 
 #include <Foundation/Foundation.hpp>
@@ -32,12 +33,34 @@
 
 class AnchorContextMetal : public AnchorContext
 {
+ public:
+
   AnchorContextMetal(bool stereoVisual, NS::View *metalView, CA::MetalLayer *metalLayer);
 
   /**
    * Destructor.
    */
   ~AnchorContextMetal();
+
+  /**
+   * Activates the drawing context.
+   * @return A boolean success indicator.
+   */
+  eAnchorStatus ActivateDrawingContext();
+
+  /**
+   * Release the drawing context of the calling thread.
+   * @return A boolean success indicator.
+   */
+  eAnchorStatus ReleaseDrawingContext();
+
+  unsigned int GetDefaultFramebuffer();
+
+  /**
+   * Swaps front and back buffers of a window.
+   * @return A boolean success indicator.
+   */
+  eAnchorStatus SwapBuffers();
 
   /**
    * Initialize metal, create GPU resources.
@@ -67,10 +90,26 @@ class AnchorContextMetal : public AnchorContext
                                                      MTL::Texture *,
                                                      CA::MetalDrawable *));
 
+  /**
+   * Returns a texture that Metal code can use as a render target. The current
+   * contents of this texture will be composited on top of the frame-buffer
+   * each time `swapBuffers` is called.
+   */
+  MTL::Texture *GetMetalOverlayTexture();
+
+  /**
+   * Swaps front and back buffers of a window. */
+  void MetalSwapChain();
+
+  eAnchorStatus UpdateDrawingContext();
+
+  void UpdateMetalFramebuffer();
+
  private:
 
   /* ----- Metal Graphics Resources & State. ----- */
 
+  AnchorContext *m_ctx;
   NS::View *m_view;
   CA::MetalLayer *m_metalLayer;
   MTL::CommandQueue *m_queue;

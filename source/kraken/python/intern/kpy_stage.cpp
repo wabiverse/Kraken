@@ -1314,7 +1314,7 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
   pystage->reference = NULL;
 #endif
 
-  // PyC_ObSpit("NewKrakenSTAGE: ", (PyObject *)pystage);
+  PyC_ObSpit("NewKrakenSTAGE: ", (PyObject *)pystage);
 
 #ifdef USE_PYRNA_INVALIDATE_WEAKREF
   if (ptr->owner_id) {

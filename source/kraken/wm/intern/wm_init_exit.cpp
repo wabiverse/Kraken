@@ -65,6 +65,7 @@
 
 #include "ED_debug_codes.h"
 #include "ED_screen.h"
+#include "ED_space_api.h"
 
 #include "GPU_capabilities.h"
 #include "GPU_context.h"
@@ -155,7 +156,7 @@ void WM_init(kContext *C, int argc, const char **argv)
   WM_init_manager(C);
   WM_files_init(C);
 
-  // ED_spacetypes_init();
+  ED_spacetypes_init();
 
   KRF_init();
 
@@ -169,7 +170,7 @@ void WM_init(kContext *C, int argc, const char **argv)
 
   /* NOTE: leave `G.main->filepath` set to an empty string since this
    * matches behavior after loading a new file. */
-  KLI_assert(G.main->stage_id == '\0');
+  KLI_assert(G_MAIN->stage_id[0] == '\0');
 
   if (!G.background) {
     GPU_render_begin();

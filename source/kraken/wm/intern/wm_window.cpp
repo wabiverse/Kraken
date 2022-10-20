@@ -31,6 +31,7 @@
 #include "WM_draw.h"
 #include "WM_event_system.h"
 #include "WM_files.h"
+#include "WM_init_exit.h"
 #include "WM_inline_tools.h"
 #include "WM_operators.h"
 #include "WM_tokens.h"
@@ -459,8 +460,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
 #if defined(__APPLE__) || defined(WIN32)
             /* OSX and Win32 don't return to the mainloop while resize */
             // WM_window_timer(C);
-            // WM_event_do_handlers(C);
-            // WM_event_do_notifiers(C);
+            WM_event_do_handlers(C);  // WM_event_do_notifiers(C);
             WM_draw_update(C);
 #endif
           }

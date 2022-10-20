@@ -45,9 +45,9 @@
 #  include <wabi/usd/usd/prim.h>
 #endif /* __cplusplus */
 
-// #ifdef __cplusplus
-// extern "C" {
-// #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Struct Declarations */
 
@@ -3320,6 +3320,6 @@ uiViewItemHandle *UI_region_views_find_item_at(const struct ARegion *region, con
   ATTR_NONNULL();
 uiViewItemHandle *UI_region_views_find_active_item(const struct ARegion *region);
 
-// #ifdef __cplusplus
-// }
-// #endif
+#ifdef __cplusplus
+}
+#endif

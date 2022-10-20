@@ -37,6 +37,8 @@
 
 namespace MTL
 {
+  class Library;
+
 _MTL_ENUM(NS::Integer, IOCompressionMethod) {
     IOCompressionMethodZlib = 0,
     IOCompressionMethodLZFSE = 1,

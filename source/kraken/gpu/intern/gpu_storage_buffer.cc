@@ -56,7 +56,7 @@ namespace kraken::gpu
 
     size_in_bytes_ = size;
 
-    KLI_strncpy(name_, name, sizeof(name_));
+    KLI_strncpy(m_name, name, sizeof(m_name));
   }
 
   StorageBuf::~StorageBuf()

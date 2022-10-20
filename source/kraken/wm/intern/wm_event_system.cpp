@@ -208,18 +208,19 @@ wmEvent *wm_event_add_ex(wmWindow *win,
                          const wmEvent *event_to_add,
                          const wmEvent *event_to_add_after)
 {
-  wmEvent *event = new wmEvent();
+  wmEvent *event = MEM_new<wmEvent>(__func__);
 
   *event = *event_to_add;
 
-  if (event_to_add_after == NULL) {
+  if (event_to_add_after == nullptr) {
     win->event_queue.push_back(event);
   } else {
-    wmEventQueue::iterator it;
-    for (it = win->event_queue.begin(); it != win->event_queue.end(); ++it) {
+    /* NOTE: strictly speaking this breaks const-correctness,
+     * however we're only changing 'next' member. */
+    wmEventQueue::const_iterator it = win->event_queue.begin();
+    for (; it != win->event_queue.end(); ++it) {
       if ((*it) == event_to_add_after) {
-        it++;
-        win->event_queue.insert(it, event);
+        win->event_queue.insert(it + 1, event);
       }
     }
   }

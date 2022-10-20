@@ -104,7 +104,7 @@ namespace kraken
       /** Size of attachment textures. */
       int width_ = 0, height_ = 0;
       /** Debug name. */
-      char name_[DEBUG_NAME_LEN];
+      char m_name[DEBUG_NAME_LEN];
       /** Frame-buffer state. */
       int viewport_[4] = {0};
       int scissor_[4] = {0};

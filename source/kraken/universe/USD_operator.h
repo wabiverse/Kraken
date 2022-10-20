@@ -25,20 +25,26 @@
  */
 
 #include "USD_context.h"
-#include "USD_object.h"
+#include "USD_listBase.h"
 #include "USD_ID.h"
 
-#include <wabi/usd/usd/attribute.h>
+#ifdef __cplusplus
+#  include <wabi/base/tf/token.h>
+#endif /* __cplusplus */
 
 struct IDProperty;
-
-
+struct KrakenPRIM;
+struct ListBase;
+struct wmOperator;
+struct wmOperatorType;
+struct ReportList;
+struct uiLayout;
 
 struct wmOperator
 {
   /* saved */
   /** Used to retrieve type pointer. */
-  TfToken idname;
+  wabi::TfToken idname;
   /** Saved, user-settable properties. */
   IDProperty *properties;
   KrakenPRIM *ptr;
@@ -61,4 +67,3 @@ struct wmOperator
   short flag;
   char _pad[6];
 };
-

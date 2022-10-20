@@ -153,10 +153,13 @@ set(SRC
 
 set(LIB
   kraken_universe
+  kraken_editor_space_api
+
   kraken_editor_interface
   kraken_editor_spacefile
   kraken_editor_screen
-  kraken_editor_spaceview3d
+  kraken_editor_space_view3d
+  kraken_editor_space_userpref
   luxo
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}

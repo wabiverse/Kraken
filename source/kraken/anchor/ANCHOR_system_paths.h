@@ -27,10 +27,6 @@
 #include "ANCHOR_api.h"
 #include "ANCHOR_path-api.h"
 
-#ifdef __APPLE__
-#  include <Foundation/Foundation.hpp>
-#endif /* __APPLE__ */
-
 class AnchorISystemPaths
 {
  public:

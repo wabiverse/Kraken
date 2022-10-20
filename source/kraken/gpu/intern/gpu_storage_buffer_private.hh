@@ -57,7 +57,7 @@ namespace kraken
       /** Continuous memory block to copy to GPU. This data is owned by the StorageBuf. */
       void *data_ = nullptr;
       /** Debugging name */
-      char name_[DEBUG_NAME_LEN];
+      char m_name[DEBUG_NAME_LEN];
 
      public:
 

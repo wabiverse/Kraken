@@ -16,29 +16,25 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file USD_object.h
  * @ingroup UNI
  * The @a central foundation for @a all data access.
  */
 
-#pragma once
-
-#include "USD_api.h"
 #include "USD_wm_types.h"
 #include "USD_ID.h"
 
 #include "KLI_string.h"
 
-#include <wabi/base/tf/hashmap.h>
-#include <wabi/base/tf/notice.h>
-#include <wabi/base/tf/singleton.h>
-#include <wabi/base/tf/token.h>
-#include <wabi/base/tf/weakBase.h>
-
-#include <wabi/usd/usd/prim.h>
-#include <wabi/usd/usd/typed.h>
-#include <wabi/usd/usd/collectionAPI.h>
+#ifdef __cplusplus
+#  include <wabi/usd/usd/attribute.h>
+#  include <wabi/usd/usd/property.h>
+#  include <wabi/usd/usd/collectionAPI.h>
+#  include <wabi/usd/usd/prim.h>
+#endif /* __cplusplus */
 
 typedef struct IDProperty **(*IDPropertiesFunc)(struct KrakenPRIM *ptr);
 
@@ -261,8 +257,21 @@ enum PropertySubType
 
 struct KrakenPROP : public wabi::UsdAttribute
 {
-  KrakenPROP(const wabi::UsdAttribute &prop = wabi::UsdAttribute())
-    : wabi::UsdAttribute(prop)
+  KrakenPROP(const wabi::UsdAttribute &attr = wabi::UsdAttribute())
+    : wabi::UsdAttribute(attr)
+  {}
+
+  /**
+   * Create a KrakenPROP from a UsdProperty.
+   * 
+   * @NOTE:
+   * Not actually a valid Kraken "PROP" as it is just a relational
+   * property. So it has no specified type and is just used for the
+   * purposes of relational schematics.
+   */
+  KrakenPROP(const wabi::UsdProperty &prop)
+    : wabi::UsdAttribute(wabi::UsdAttribute()),
+      intern_prop(prop)
   {}
 
   wabi::TfToken name;
@@ -270,6 +279,8 @@ struct KrakenPROP : public wabi::UsdAttribute
   PropertyFlag flag;
   PropertySubType subtype;
   int icon;
+  
+  wabi::UsdProperty intern_prop;
 };
 
 typedef std::vector<KrakenPROP *> PropertyVectorLUXO;
@@ -357,7 +368,7 @@ typedef struct KrakenPRIM *(*StructRefineFunc)(struct KrakenPRIM *ptr);
 typedef void (*CallFunc)(struct kContext *C,
                          struct ReportList *reports,
                          struct KrakenPRIM *ptr,
-                         ParameterList *parms);
+                         struct ParameterList *parms);
 
 
 struct KrakenFUNC

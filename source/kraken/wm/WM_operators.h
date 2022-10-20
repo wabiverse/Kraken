@@ -16,28 +16,23 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * Window Manager.
  * Making GUI Fly.
  */
 
-#pragma once
-
-#include "WM_api.h"
-
-#include "WM_init_exit.h"
-
-#include "KKE_robinhood.h"
-
-#include "USD_wm_types.h"
-#include "USD_object.h"
+#include "USD_listBase.h"
 #include "USD_operator.h"
-#include "USD_path_defaults.h"
+#include "USD_wm_types.h"
 
-#include <wabi/base/tf/hash.h>
-#include <wabi/usd/usd/attribute.h>
-#include <wabi/usd/usd/prim.h>
+#ifdef __cplusplus
+#  include <wabi/base/tf/token.h>
+#endif /* __cplusplus */
+
+struct wmOperatorTypeMacro;
 
 enum
 {
@@ -54,7 +49,7 @@ typedef struct wmOperatorType
   /** Text for UI, undo. */
   const char *name;
   /** Unique identifier. */
-  TfToken idname;
+  wabi::TfToken idname;
   /** Use for tool-tips and Python docs. */
   const char *description;
 
@@ -85,7 +80,7 @@ void WM_operators_register(kContext *C);
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot);
 void WM_operator_properties_free(KrakenPRIM *ptr);
 
-wmOperatorType *WM_operatortype_find(const TfToken &idname);
+wmOperatorType *WM_operatortype_find(const wabi::TfToken &idname);
 bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update);
 const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties);
 
@@ -96,4 +91,3 @@ char *WM_operator_pystring_ex(kContext *C,
                               const bool macro_args,
                               wmOperatorType *ot,
                               KrakenPRIM *opptr);
-

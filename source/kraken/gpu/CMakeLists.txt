@@ -121,9 +121,27 @@ set(DX3D_SRC
 
 # Metal Implementation.
 set(METAL_SRC
-  metal/mtl_context.cpp
+  metal/mtl_backend.cc
+  metal/mtl_context.cc
+  metal/mtl_texture.cc
+  metal/mtl_texture_util.cc
 
-  metal/mtl_context.h
+  metal/mtl_backend.hh
+  metal/mtl_capabilities.hh
+  metal/mtl_common.hh
+  metal/mtl_context.hh
+  metal/mtl_debug.hh
+  metal/mtl_framebuffer.hh
+  metal/mtl_immediate.hh
+  metal/mtl_memory.hh
+  metal/mtl_pso_descriptor_state.hh
+  metal/mtl_shader.hh
+  metal/mtl_shader_interface.hh
+  metal/mtl_shader_interface_type.hh
+  metal/mtl_shader_shared.h
+  metal/mtl_state.hh
+  metal/mtl_texture.hh
+  metal/mtl_vertex_buffer.hh
 )
 
 if(WITH_DIRECTX)

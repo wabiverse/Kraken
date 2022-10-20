@@ -1330,13 +1330,6 @@ void ui_draw_preview_item_stateless(const struct uiFontStyle *fstyle,
 #define UI_PIXEL_AA_JITTER 8
 extern const float ui_pixel_jitter[UI_PIXEL_AA_JITTER][2];
 
-/* interface_style.c */
-
-/**
- * Called on each startup.blend read,
- * reading without #uiFont will create one.
- */
-void uiStyleInit(void);
 
 /* interface_icons.c */
 
@@ -1361,6 +1354,9 @@ extern "C" {
 
 void ui_resources_init(void);
 void ui_resources_free(void);
+
+/* interface_style.cpp */
+void uiStyleInit(void);
 
 #ifdef __cplusplus
 }
@@ -1637,4 +1633,3 @@ struct ID *ui_template_id_liboverride_hierarchy_make(struct kContext *C,
                                                      struct ID *owner_id,
                                                      struct ID *id,
                                                      const char **r_undo_push_label);
-

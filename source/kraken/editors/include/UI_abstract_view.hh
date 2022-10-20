@@ -96,9 +96,9 @@ class AbstractViewItem {
    * The view this item is a part of, and was registered for using #AbstractView::register_item().
    * If this wasn't done, the behavior of items is undefined.
    */
-  AbstractView *view_ = nullptr;
-  bool is_active_ = false;
-  bool is_renaming_ = false;
+  AbstractView *m_view = nullptr;
+  bool m_is_active = false;
+  bool m_is_renaming = false;
 
  public:
   virtual ~AbstractViewItem() = default;
@@ -202,7 +202,7 @@ template<typename ToType> ToType *AbstractViewItem::from_item_handle(uiViewItemH
  */
 class AbstractViewItemDragController {
  protected:
-  AbstractView &view_;
+  AbstractView &m_view;
 
  public:
   AbstractViewItemDragController(AbstractView &view);
@@ -224,7 +224,7 @@ class AbstractViewItemDragController {
  */
 class AbstractViewItemDropController {
  protected:
-  AbstractView &view_;
+  AbstractView &m_view;
 
  public:
   AbstractViewItemDropController(AbstractView &view);
@@ -261,14 +261,14 @@ template<class ViewType> ViewType &AbstractViewItemDragController::get_view() co
 {
   static_assert(std::is_base_of<AbstractView, ViewType>::value,
                 "Type must derive from and implement the ui::AbstractView interface");
-  return dynamic_cast<ViewType &>(view_);
+  return dynamic_cast<ViewType &>(m_view);
 }
 
 template<class ViewType> ViewType &AbstractViewItemDropController::get_view() const
 {
   static_assert(std::is_base_of<AbstractView, ViewType>::value,
                 "Type must derive from and implement the ui::AbstractView interface");
-  return dynamic_cast<ViewType &>(view_);
+  return dynamic_cast<ViewType &>(m_view);
 }
 
 /** \} */

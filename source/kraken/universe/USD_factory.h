@@ -33,7 +33,6 @@
 #include <wabi/usd/usd/relationship.h>
 
 
-
 /**
  * The form factory. */
 
@@ -93,22 +92,31 @@ namespace CreationFactory
     {
       UsdAttribute attr;
 
-      switch (value->type)
-      {
+      switch (value->type) {
         case PROP_BOOLEAN:
-          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Bool, SdfVariability::SdfVariabilityUniform);
+          attr = ptr->CreateAttribute(name,
+                                      SdfValueTypeNames->Bool,
+                                      SdfVariability::SdfVariabilityUniform);
           break;
         case PROP_INT:
-          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Int, SdfVariability::SdfVariabilityUniform);
+          attr = ptr->CreateAttribute(name,
+                                      SdfValueTypeNames->Int,
+                                      SdfVariability::SdfVariabilityUniform);
           break;
         case PROP_FLOAT:
-          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Float, SdfVariability::SdfVariabilityUniform);
+          attr = ptr->CreateAttribute(name,
+                                      SdfValueTypeNames->Float,
+                                      SdfVariability::SdfVariabilityUniform);
           break;
         case PROP_STRING:
-          attr = ptr->CreateAttribute(name, SdfValueTypeNames->String, SdfVariability::SdfVariabilityUniform);
+          attr = ptr->CreateAttribute(name,
+                                      SdfValueTypeNames->String,
+                                      SdfVariability::SdfVariabilityUniform);
           break;
         case PROP_ENUM:
-          attr = ptr->CreateAttribute(name, SdfValueTypeNames->Token, SdfVariability::SdfVariabilityUniform);
+          attr = ptr->CreateAttribute(name,
+                                      SdfValueTypeNames->Token,
+                                      SdfVariability::SdfVariabilityUniform);
           break;
       }
 
@@ -125,6 +133,24 @@ namespace CreationFactory
   }  // namespace STR
   namespace INT
   {
+    inline void Def(KrakenPRIM *ptr,
+                    const std::string &name,
+                    const int &value,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
+    {
+      UsdAttribute attr = ptr->CreateAttribute(TfToken(name), SdfValueTypeNames->Int);
+      attr.Set(value);
+
+      if (!ui_name.empty()) {
+        attr.SetDisplayName(ui_name);
+      }
+      
+      if (!ui_description.empty()) {
+        attr.SetDocumentation(ui_description);
+      }
+    }
+
     inline void Set(KrakenPRIM *ptr, const std::string &name, const int &value)
     {
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
@@ -154,7 +180,7 @@ namespace CreationFactory
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
       attr.Set(SdfAssetPath(value));
     }
-  }  // namespace STR
+  }  // namespace ASSET
   namespace BOOL
   {
     inline void Set(KrakenPRIM *ptr, const std::string &name, const bool &value)
@@ -247,4 +273,3 @@ template<> inline FormFactory::operator GfVec4f()
 //   }
 //   return attrs;
 // }
-

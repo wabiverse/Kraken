@@ -67,7 +67,7 @@ typedef struct uiFont
   /** 1024 = FILE_MAX. */
   char filepath[1024];
   /** From blfont lib. */
-  short blf_id;
+  short krf_id;
   /** Own id (eUIFont_ID). */
   short uifont_id;
 } uiFont;
@@ -1475,14 +1475,11 @@ enum
   ULANGUAGE_ENGLISH = 1,
 };
 
-/* C LINKAGE defined in USD_userdef_default_theme.c */
+extern UserDef U;
 extern const kTheme U_theme_default;
 
 #ifdef __cplusplus
 }
 #endif
-
-/** CXX LINKAGE From krakernel `KKE_kraken.cpp`. */
-extern UserDef U;
 
 #endif /* __USD_USERDEF_TYPES_H__ */

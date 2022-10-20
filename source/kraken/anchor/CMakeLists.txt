@@ -10,7 +10,8 @@ set(INC
   ../krakernel
   ../kraklib
   ../universe
-  ../gpu/metal
+
+  ../../../intern/guardedalloc
   # ${CMAKE_SOURCE_DIR}/source/kraken/anchor
 )
 

@@ -58,7 +58,7 @@ static void anchor_fatal_error_dialog(const char *msg)
 AnchorContextMetal::AnchorContextMetal(bool stereoVisual,
                                        NS::View *metalView,
                                        CA::MetalLayer *metalLayer)
-  : AnchorContext(NULL),
+  : m_ctx(ANCHOR::CreateContext()),
     m_view(metalView),
     m_metalLayer(metalLayer),
     m_queue(nil),
@@ -74,7 +74,7 @@ AnchorContextMetal::AnchorContextMetal(bool stereoVisual,
     m_ownsMetalDevice = false;
     MetalInit();
   } else {
-    /* Prepare offscreen GHOST Context Metal device. */
+    /* Prepare offscreen Anchor Context Metal device. */
     MTL::Device *metalDevice = MTL::CreateSystemDefaultDevice();
 
     if (m_debug) {
@@ -95,7 +95,7 @@ AnchorContextMetal::AnchorContextMetal(bool stereoVisual,
       MetalInit();
     } else {
       anchor_fatal_error_dialog(
-        "[ERROR] Failed to create Metal device for offscreen ANCHOR Context.\n");
+        "[ERROR] Failed to create Metal device for offscreen Anchor Context.\n");
     }
   }
 
@@ -246,4 +246,137 @@ void AnchorContextMetal::RegisterMetalPresentCallback(void (*callback)(MTL::Rend
                                                                        CA::MetalDrawable *))
 {
   m_contextPresentCallback = callback;
+}
+
+MTL::Texture *AnchorContextMetal::GetMetalOverlayTexture()
+{
+  /* Increment Swap-chain - Only needed if context is requesting a new texture */
+  m_current_swapchain_index = (m_current_swapchain_index + 1) % METAL_SWAPCHAIN_SIZE;
+
+  /* Ensure backing texture is ready for current swapchain index */
+  UpdateDrawingContext();
+
+  /* Return texture. */
+  return m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture;
+}
+
+void AnchorContextMetal::UpdateMetalFramebuffer()
+{
+  CGRect bounds = m_view->bounds();
+  CGSize backingSize = m_view->convertSizeToBacking(bounds.size);
+  size_t width = (size_t)backingSize.width;
+  size_t height = (size_t)backingSize.height;
+
+  /* NOTE(Metal): Metal API Path. */
+  if (m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture &&
+      m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture->width() == width &&
+      m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture->height() == height) {
+    return;
+  }
+
+  /* Free old texture */
+  m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture->release();
+
+  MTL::Device *device = m_metalLayer->device();
+  MTL::TextureDescriptor *overlayDesc =
+    MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatRGBA16Float, width, height, NO);
+  overlayDesc->setStorageMode(MTL::StorageModePrivate);
+  overlayDesc->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
+
+  MTL::Texture *overlayTex = device->newTexture(overlayDesc);
+  if (!overlayTex) {
+    anchor_fatal_error_dialog("Metal failed to create overlay texture!");
+  } else {
+    char pBuf[25] = "";
+    snprintf(pBuf, sizeof(pBuf), "Metal Overlay for Anchor Context: %p", this);
+    overlayTex->setLabel(NS_STRING_(pBuf));
+  }
+
+  m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture = overlayTex;
+
+  /* Clear texture on create */
+  MTL::CommandBuffer *cmdBuffer = m_queue->commandBuffer();
+  MTL::RenderPassDescriptor *passDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+  {
+    auto attachment = passDescriptor->colorAttachments()->object(0);
+    attachment->setTexture(m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture);
+    attachment->setLoadAction(MTL::LoadActionClear);
+    attachment->setClearColor(MTL::ClearColor::Make(0.294, 0.294, 0.294, 1.000));
+    attachment->setStoreAction(MTL::StoreActionStore);
+  }
+  {
+    MTL::RenderCommandEncoder *enc = cmdBuffer->renderCommandEncoder(passDescriptor);
+    enc->endEncoding();
+  }
+  cmdBuffer->commit();
+
+  m_metalLayer->setDrawableSize(CGSizeMake((CGFloat)width, (CGFloat)height));
+}
+
+eAnchorStatus AnchorContextMetal::UpdateDrawingContext()
+{
+  if (m_view) {
+    UpdateMetalFramebuffer();
+    return ANCHOR_SUCCESS;
+  }
+
+  return ANCHOR_FAILURE;
+}
+
+void AnchorContextMetal::MetalSwapChain()
+{
+  NS::AutoreleasePool *pool;
+
+  /** ----------------- @ AUTORELEASEPOOL: Begin ------ */
+  pool = NS::AutoreleasePool::alloc()->init();
+  UpdateDrawingContext();
+
+  CA::MetalDrawable *drawable = m_metalLayer->nextDrawable();
+  if (!drawable) {
+    return;
+  }
+
+  MTL::RenderPassDescriptor *passDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+  {
+    auto attachment = passDescriptor->colorAttachments()->object(0);
+    attachment->setTexture(drawable->texture());
+    attachment->setLoadAction(MTL::LoadActionClear);
+    attachment->setClearColor(MTL::ClearColor::Make(1.0, 0.294, 0.294, 1.000));
+    attachment->setStoreAction(MTL::StoreActionStore);
+  }
+
+  assert(m_contextPresentCallback);
+  assert(m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture != nil);
+  (*m_contextPresentCallback)(passDescriptor,
+                              m_pipeline,
+                              m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture,
+                              drawable);
+
+  pool->drain();
+  pool = nil;
+  /** ------------------- @ AUTORELEASEPOOL: End ------ */
+}
+
+eAnchorStatus AnchorContextMetal::ActivateDrawingContext()
+{
+  return ANCHOR_SUCCESS;
+}
+
+eAnchorStatus AnchorContextMetal::ReleaseDrawingContext()
+{
+  return ANCHOR_SUCCESS;
+}
+
+unsigned int AnchorContextMetal::GetDefaultFramebuffer()
+{
+  return 0;
+}
+
+eAnchorStatus AnchorContextMetal::SwapBuffers()
+{
+  if (m_view) {
+    MetalSwapChain();
+  }
+
+  return ANCHOR_SUCCESS;
 }

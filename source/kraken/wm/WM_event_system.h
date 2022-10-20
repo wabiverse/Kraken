@@ -24,21 +24,22 @@
  * Making GUI Fly.
  */
 
-#include <wabi/usd/usd/attribute.h>
-#include <wabi/wabi.h>
-
-#include "KKE_context.h"
-#include "KKE_idtype.h"
-
+#include "USD_listBase.h"
 #include "USD_wm_types.h"
-#include "USD_object.h"
 
-#include "WM_operators.h"
-#include "WM_keymap.h"
+#ifdef __cplusplus
+#  include <wabi/base/tf/token.h>
+#endif /* _cplusplus */
 
-
-
+struct kContext;
+struct KrakemPRIM;
+struct KrakemPROP;
+struct wmOperator;
+struct wmOperatorType;
 struct wmEvent;
+struct wmEventHandler;
+struct wmEventHandler_Keymap;
+struct wmEventHandler_KeymapResult;
 
 #define WM_HANDLER_CONTINUE 0
 #define WM_HANDLER_BREAK 1
@@ -79,49 +80,56 @@ struct wmEvent;
     ISNDOF_BUTTON(event_type)) &&                                                        \
    (ISKEYMODIFIER(event_type) == false))
 
-void wm_event_free_handler(wmEventHandler *handler);
-void WM_event_remove_handlers(kContext *C, ListBase *handlers);
-wmEventHandlerUI *WM_event_add_ui_handler(const kContext *C,
+void WM_event_do_handlers(struct kContext *C);
+
+void wm_event_free_handler(struct wmEventHandler *handler);
+void WM_event_remove_handlers(struct kContext *C, ListBase *handlers);
+wmEventHandlerUI *WM_event_add_ui_handler(const struct kContext *C,
                                           std::vector<wmEventHandlerUI *> handlers,
                                           wmUIHandlerFunc handle_fn,
                                           wmUIHandlerRemoveFunc remove_fn,
                                           void *user_data,
                                           const char flag);
 
-void WM_event_add_anchorevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata);
-wmEvent *wm_event_add(wmWindow *win, const wmEvent *event_to_add);
+void WM_event_add_anchorevent(struct wmWindowManager *wm,
+                              struct wmWindow *win,
+                              int type,
+                              void *customdata);
+wmEvent *wm_event_add(struct wmWindow *win, const wmEvent *event_to_add);
 void WM_main_add_notifier(unsigned int type, void *reference);
-void WM_event_add_notifier_ex(wmWindowManager *wm, wmWindow *win, uint type, void *reference);
-void WM_event_add_notifier(kContext *C, uint type, void *reference);
-void WM_event_add_mousemove(wmWindow *win);
+void WM_event_add_notifier_ex(struct wmWindowManager *wm,
+                              struct wmWindow *win,
+                              uint type,
+                              void *reference);
+void WM_event_add_notifier(struct kContext *C, uint type, void *reference);
+void WM_event_add_mousemove(struct wmWindow *win);
 
 bool WM_event_is_tablet(const wmEvent *event);
 int WM_event_drag_threshold(const wmEvent *event);
 bool WM_event_drag_test_with_delta(const wmEvent *event, const int drag_delta[2]);
 bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2]);
 
-int WM_operator_name_call_ptr(kContext *C,
-                              wmOperatorType *ot,
+int WM_operator_name_call_ptr(struct kContext *C,
+                              struct wmOperatorType *ot,
                               short context,
                               KrakenPRIM *properties);
 
 void WM_event_init_from_window(wmWindow *win, wmEvent *event);
 
-int WM_operator_name_call(kContext *C,
-                          const TfToken &optoken,
+int WM_operator_name_call(struct kContext *C,
+                          const wabi::TfToken &optoken,
                           short context,
                           KrakenPRIM *properties);
 
-void WM_event_do_refresh_wm(kContext *C);
+void WM_event_do_refresh_wm(struct kContext *C);
 
-void WM_event_get_keymaps_from_handler(wmWindowManager *wm,
-                                       wmWindow *win,
-                                       wmEventHandler_Keymap *handler,
-                                       wmEventHandler_KeymapResult *km_result);
+void WM_event_get_keymaps_from_handler(struct wmWindowManager *wm,
+                                       struct wmWindow *win,
+                                       struct wmEventHandler_Keymap *handler,
+                                       struct wmEventHandler_KeymapResult *km_result);
 
-bool WM_operator_poll_context(kContext *C, wmOperatorType *ot, short context);
+bool WM_operator_poll_context(struct kContext *C, struct wmOperatorType *ot, short context);
 
 void WM_reportf(eReportType type, const char *format, ...);
 void WM_report(eReportType type, const char *message);
 void WM_report_banner_show(void);
-

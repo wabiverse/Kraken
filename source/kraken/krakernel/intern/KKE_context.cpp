@@ -158,21 +158,18 @@ static void *ctx_wm_python_context_get(const kContext *C,
  * Main CTX Creation. */
 kContext *CTX_create(void)
 {
-  TfAutoMallocTag2 tag("kContext", "CTX_create");
-
-  return new kContext();
+  kContext *C = MEM_new<kContext>("kContext");
+  return C;
 }
 
 /**
  * Main CTX Deletion. */
 void CTX_free(kContext *C)
 {
-  TfAutoMallocTag2 tag("kContext", "CTX_free");
-
   /**
    * CTX out - */
 
-  delete C;
+  MEM_delete(C);
 }
 
 /* store */
@@ -181,57 +178,55 @@ kContextStore *CTX_store_add(ListBase *contexts, const char *name, const KrakenP
 {
   /* ensure we have a context to put the entry in, if it was already used
    * we have to copy the context to ensure */
-  // kContextStore *ctx = contexts.back();
+  kContextStore *ctx = static_cast<kContextStore *>(contexts->last);
 
-  // if (!ctx || ctx->used) {
-  //   if (ctx) {
-  //     kContextStore *lastctx = ctx;
-  //     ctx = (kContextStore *)MEM_dupallocN(lastctx);
-  //     std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
-  //   }
-  //   else {
-  //     ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
-  //   }
+  if (!ctx || ctx->used) {
+    if (ctx) {
+      kContextStore *lastctx = ctx;
+      ctx = (kContextStore *)MEM_dupallocN(lastctx);
+      KLI_duplicatelist(&ctx->entries, &lastctx->entries);
+    } else {
+      ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
+    }
 
-  //   contexts.push_back(ctx);
-  // }
+    KLI_addtail(contexts, ctx);
+  }
 
-  // kContextStoreEntry *entry = (kContextStoreEntry *)MEM_callocN(sizeof(kContextStoreEntry), "kContextStoreEntry");
-  // entry->name = name;
-  // *entry->ptr = ptr;
+  kContextStoreEntry *entry = (kContextStoreEntry *)MEM_callocN(sizeof(kContextStoreEntry),
+                                                                "kContextStoreEntry");
+  KLI_strncpy(entry->name, name, sizeof(entry->name));
+  entry->ptr = ptr;
 
-  // ctx->entries.push_back(entry);
+  KLI_addtail(&ctx->entries, entry);
 
-  return nullptr;
+  return ctx;
 }
 
 kContextStore *CTX_store_add_all(ListBase *contexts, kContextStore *context)
 {
   /* ensure we have a context to put the entries in, if it was already used
    * we have to copy the context to ensure */
-  // kContextStore *ctx = contexts.back();
+  kContextStore *ctx = (kContextStore *)contexts->last;
 
-  // if (!ctx || ctx->used) {
-  //   if (ctx) {
-  //     kContextStore *lastctx = ctx;
-  //     ctx = (kContextStore *)MEM_dupallocN(lastctx);
-  //     std::copy(lastctx->entries.begin(), lastctx->entries.end(), ctx->entries);
-  //   }
-  //   else {
-  //     ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
-  //   }
+  if (!ctx || ctx->used) {
+    if (ctx) {
+      kContextStore *lastctx = ctx;
+      ctx = (kContextStore *)MEM_dupallocN(lastctx);
+      KLI_duplicatelist(&ctx->entries, &lastctx->entries);
+    } else {
+      ctx = (kContextStore *)MEM_callocN(sizeof(kContextStore), "kContextStore");
+    }
 
-  //   contexts.push_back(ctx);
+    KLI_addtail(contexts, ctx);
+  }
 
-  return nullptr;
-  // }
+  LISTBASE_FOREACH(kContextStoreEntry *, tentry, &context->entries)
+  {
+    kContextStoreEntry *entry = (kContextStoreEntry *)MEM_dupallocN(tentry);
+    KLI_addtail(&ctx->entries, entry);
+  }
 
-  // for (auto &tentry : context->entries) {
-  //   kContextStoreEntry *entry = (kContextStoreEntry *)MEM_dupallocN(tentry);
-  //   ctx->entries.push_back(entry);
-  // }
-
-  // return ctx;
+  return ctx;
 }
 
 kContextStore *CTX_store_get(kContext *C)
@@ -244,27 +239,17 @@ void CTX_store_set(kContext *C, kContextStore *store)
   C->wm.store = store;
 }
 
-static kContextStoreEntry *CTX_lookup_loop(const kContextStore *store, const char *name)
-{
-  // for (auto &needle : store->entries) {
-  //   if (needle->name == name) {
-  //     return needle;
-  //   }
-  // }
-
-  return nullptr;
-}
-
 const KrakenPRIM *CTX_store_ptr_lookup(const kContextStore *store,
                                        const char *name,
                                        const KrakenPRIM *type)
 {
-  kContextStoreEntry *entry = CTX_lookup_loop(store, name);
+  kContextStoreEntry *entry = (kContextStoreEntry *)
+    KLI_rfindstring(&store->entries, name, offsetof(kContextStoreEntry, name));
   if (!entry) {
     return NULL;
   }
 
-  if (type && !LUXO_struct_is_a(entry->ptr, type)) {
+  if (type && !LUXO_struct_is_a(entry->ptr->type, type)) {
     return NULL;
   }
   return entry->ptr;
@@ -272,24 +257,24 @@ const KrakenPRIM *CTX_store_ptr_lookup(const kContextStore *store,
 
 kContextStore *CTX_store_copy(kContextStore *store)
 {
-  // kContextStore *ctx = (kContextStore *)MEM_dupallocN(store);
-  // std::copy(store->entries.begin(), store->entries.end(), ctx->entries);
+  kContextStore *ctx = (kContextStore *)MEM_dupallocN(store);
+  KLI_duplicatelist(&ctx->entries, &store->entries);
 
-  return store;
+  return ctx;
 }
 
 void CTX_store_free(kContextStore *store)
 {
-  KLI_listbase_clear(&store->entries);
+  KLI_freelistN(&store->entries);
   MEM_freeN(store);
 }
 
 void CTX_store_free_list(ListBase *contexts)
 {
-  // kContextStore *ctx = contexts.front();
-  // while (ctx = contexts.front()) {
-  // CTX_store_free(ctx);
-  // }
+  kContextStore *ctx;
+  while ((ctx = (kContextStore *)KLI_pophead(contexts))) {
+    CTX_store_free(ctx);
+  }
 }
 
 

@@ -28,7 +28,11 @@
 
 #include "KKE_context.h"
 
-
+typedef struct ARegion *(*wmTooltipInitFn)(struct kContext *C,
+                                           struct ARegion *region,
+                                           int *pass,
+                                           double *r_pass_delay,
+                                           bool *r_exit_on_event);
 
 void WM_tooltip_init(kContext *C, wmWindow *win);
 void WM_tooltip_refresh(kContext *C, wmWindow *win);

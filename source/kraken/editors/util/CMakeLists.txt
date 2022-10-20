@@ -38,7 +38,9 @@ set(SRC
   ../include/ED_interface_icons.h
   ../include/ED_interface.h
   ../include/ED_resources.h
+  ../include/ED_space_api.h
   ../include/ED_tokens.h
+  ../include/ED_userpref.h
   ../include/UI_abstract_view.hh
   ../include/UI_icons.h
   ../include/UI_interface_icons.h

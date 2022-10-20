@@ -158,6 +158,8 @@ class AnchorDisplayManager; /** <- Anchor Display Management. */
 class AnchorEventManager;   /** <- Anchor Event Management.   */
 class AnchorWindowManager;  /** <- Anchor Window Management.  */
 
+class AnchorContext;  // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
+
 /**
  * Forward declarations */
 struct AnchorDrawChannel;  // Temporary storage to output draw commands out of order, used by
@@ -188,7 +190,6 @@ struct AnchorButtons;  // Stores the state of the mouse buttons. Buttons can be 
                        // masks.
 struct AnchorModifierKeys;  // Stores the state of modifier keys. Discriminates left and right
                             // modifiers.
-struct AnchorContext;  // ANCHOR context (opaque structure, unless including ANCHOR_internal.h)
 struct AnchorIO;       // Main configuration and I/O between your application and ANCHOR
 struct AnchorInputTextCallbackData;  // Shared state of InputText() when using custom
                                      // ANCHORInputTextCallback (rare/advanced use)

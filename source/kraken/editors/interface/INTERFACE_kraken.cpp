@@ -1702,7 +1702,7 @@ static KrakenPRIM *ui_but_extra_operator_icon_add_ptr(uiBut *but,
                                                       eWmOperatorContext opcontext,
                                                       int icon)
 {
-  uiButExtraOpIcon *extra_op_icon = MEM_new<uiButExtraOpIcon>(__func__);
+  uiButExtraOpIcon *extra_op_icon = MEM_cnew<uiButExtraOpIcon>(__func__);
 
   extra_op_icon->icon = (KIFIconID)icon;
   extra_op_icon->optype_params = MEM_cnew<wmOperatorCallParams>(__func__);

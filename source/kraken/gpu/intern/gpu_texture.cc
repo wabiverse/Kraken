@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -48,21 +48,21 @@ namespace kraken::gpu
   Texture::Texture(const char *name)
   {
     if (name) {
-      KLI_strncpy(name_, name, sizeof(name_));
+      KLI_strncpy(m_name, name, sizeof(m_name));
     } else {
-      name_[0] = '\0';
+      m_name[0] = '\0';
     }
 
-    for (int i = 0; i < ARRAY_SIZE(fb_); i++) {
-      fb_[i] = nullptr;
+    for (int i = 0; i < ARRAY_SIZE(m_fb); i++) {
+      m_fb[i] = nullptr;
     }
   }
 
   Texture::~Texture()
   {
-    for (int i = 0; i < ARRAY_SIZE(fb_); i++) {
-      if (fb_[i] != nullptr) {
-        fb_[i]->attachment_remove(fb_attachment_[i]);
+    for (int i = 0; i < ARRAY_SIZE(m_fb); i++) {
+      if (m_fb[i] != nullptr) {
+        m_fb[i]->attachment_remove(m_fb_attachment[i]);
       }
     }
 
@@ -75,15 +75,15 @@ namespace kraken::gpu
 
   bool Texture::init_1D(int w, int layers, int mip_len, eGPUTextureFormat format)
   {
-    w_ = w;
-    h_ = layers;
-    d_ = 0;
+    m_w = w;
+    m_h = layers;
+    m_d = 0;
     int mip_len_max = 1 + floorf(log2f(w));
-    mipmaps_ = min_ii(mip_len, mip_len_max);
-    format_ = format;
-    format_flag_ = to_format_flag(format);
-    type_ = (layers > 0) ? GPU_TEXTURE_1D_ARRAY : GPU_TEXTURE_1D;
-    if ((format_flag_ & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
+    m_mipmaps = min_ii(mip_len, mip_len_max);
+    m_format = format;
+    m_format_flag = to_format_flag(format);
+    m_type = (layers > 0) ? GPU_TEXTURE_1D_ARRAY : GPU_TEXTURE_1D;
+    if ((m_format_flag & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
       sampler_state = GPU_SAMPLER_FILTER;
     }
     return this->init_internal();
@@ -91,15 +91,15 @@ namespace kraken::gpu
 
   bool Texture::init_2D(int w, int h, int layers, int mip_len, eGPUTextureFormat format)
   {
-    w_ = w;
-    h_ = h;
-    d_ = layers;
+    m_w = w;
+    m_h = h;
+    m_d = layers;
     int mip_len_max = 1 + floorf(log2f(max_ii(w, h)));
-    mipmaps_ = min_ii(mip_len, mip_len_max);
-    format_ = format;
-    format_flag_ = to_format_flag(format);
-    type_ = (layers > 0) ? GPU_TEXTURE_2D_ARRAY : GPU_TEXTURE_2D;
-    if ((format_flag_ & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
+    m_mipmaps = min_ii(mip_len, mip_len_max);
+    m_format = format;
+    m_format_flag = to_format_flag(format);
+    m_type = (layers > 0) ? GPU_TEXTURE_2D_ARRAY : GPU_TEXTURE_2D;
+    if ((m_format_flag & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
       sampler_state = GPU_SAMPLER_FILTER;
     }
     return this->init_internal();
@@ -107,15 +107,15 @@ namespace kraken::gpu
 
   bool Texture::init_3D(int w, int h, int d, int mip_len, eGPUTextureFormat format)
   {
-    w_ = w;
-    h_ = h;
-    d_ = d;
+    m_w = w;
+    m_h = h;
+    m_d = d;
     int mip_len_max = 1 + floorf(log2f(max_iii(w, h, d)));
-    mipmaps_ = min_ii(mip_len, mip_len_max);
-    format_ = format;
-    format_flag_ = to_format_flag(format);
-    type_ = GPU_TEXTURE_3D;
-    if ((format_flag_ & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
+    m_mipmaps = min_ii(mip_len, mip_len_max);
+    m_format = format;
+    m_format_flag = to_format_flag(format);
+    m_type = GPU_TEXTURE_3D;
+    if ((m_format_flag & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
       sampler_state = GPU_SAMPLER_FILTER;
     }
     return this->init_internal();
@@ -123,15 +123,15 @@ namespace kraken::gpu
 
   bool Texture::init_cubemap(int w, int layers, int mip_len, eGPUTextureFormat format)
   {
-    w_ = w;
-    h_ = w;
-    d_ = max_ii(1, layers) * 6;
+    m_w = w;
+    m_h = w;
+    m_d = max_ii(1, layers) * 6;
     int mip_len_max = 1 + floorf(log2f(w));
-    mipmaps_ = min_ii(mip_len, mip_len_max);
-    format_ = format;
-    format_flag_ = to_format_flag(format);
-    type_ = (layers > 0) ? GPU_TEXTURE_CUBE_ARRAY : GPU_TEXTURE_CUBE;
-    if ((format_flag_ & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
+    m_mipmaps = min_ii(mip_len, mip_len_max);
+    m_format = format;
+    m_format_flag = to_format_flag(format);
+    m_type = (layers > 0) ? GPU_TEXTURE_CUBE_ARRAY : GPU_TEXTURE_CUBE;
+    if ((m_format_flag & (GPU_FORMAT_DEPTH_STENCIL | GPU_FORMAT_INTEGER)) == 0) {
       sampler_state = GPU_SAMPLER_FILTER;
     }
     return this->init_internal();
@@ -143,12 +143,12 @@ namespace kraken::gpu
     if (format == GPU_DEPTH_COMPONENT24) {
       return false;
     }
-    w_ = GPU_vertbuf_get_vertex_len(vbo);
-    h_ = 0;
-    d_ = 0;
-    format_ = format;
-    format_flag_ = to_format_flag(format);
-    type_ = GPU_TEXTURE_BUFFER;
+    m_w = GPU_vertbuf_get_vertex_len(vbo);
+    m_h = 0;
+    m_d = 0;
+    m_format = format;
+    m_format_flag = to_format_flag(format);
+    m_type = GPU_TEXTURE_BUFFER;
     return this->init_internal(vbo);
   }
 
@@ -161,35 +161,35 @@ namespace kraken::gpu
                           bool cube_as_array)
   {
     const Texture *src = unwrap(src_);
-    w_ = src->w_;
-    h_ = src->h_;
-    d_ = src->d_;
+    m_w = src->m_w;
+    m_h = src->m_h;
+    m_d = src->m_d;
     layer_start = min_ii(layer_start, src->layer_count() - 1);
     layer_len = min_ii(layer_len, (src->layer_count() - layer_start));
-    switch (src->type_) {
+    switch (src->m_type) {
       case GPU_TEXTURE_1D_ARRAY:
-        h_ = layer_len;
+        m_h = layer_len;
         break;
       case GPU_TEXTURE_CUBE_ARRAY:
         KLI_assert(layer_len % 6 == 0);
         ATTR_FALLTHROUGH;
       case GPU_TEXTURE_2D_ARRAY:
-        d_ = layer_len;
+        m_d = layer_len;
         break;
       default:
         KLI_assert(layer_len == 1 && layer_start == 0);
         break;
     }
-    mip_start = min_ii(mip_start, src->mipmaps_ - 1);
-    mip_len = min_ii(mip_len, (src->mipmaps_ - mip_start));
-    mipmaps_ = mip_len;
-    format_ = format;
-    format_flag_ = to_format_flag(format);
+    mip_start = min_ii(mip_start, src->m_mipmaps - 1);
+    mip_len = min_ii(mip_len, (src->m_mipmaps - mip_start));
+    m_mipmaps = mip_len;
+    m_format = format;
+    m_format_flag = to_format_flag(format);
     /* For now always copy the target. Target aliasing could be exposed later. */
-    type_ = src->type_;
+    m_type = src->m_type;
     if (cube_as_array) {
-      KLI_assert(type_ & GPU_TEXTURE_CUBE);
-      type_ = (type_ & ~GPU_TEXTURE_CUBE) | GPU_TEXTURE_2D_ARRAY;
+      KLI_assert(m_type & GPU_TEXTURE_CUBE);
+      m_type = (m_type & ~GPU_TEXTURE_CUBE) | GPU_TEXTURE_2D_ARRAY;
     }
     sampler_state = src->sampler_state;
     return this->init_internal(src_, mip_start, layer_start);
@@ -203,10 +203,10 @@ namespace kraken::gpu
 
   void Texture::attach_to(FrameBuffer *fb, GPUAttachmentType type)
   {
-    for (int i = 0; i < ARRAY_SIZE(fb_); i++) {
-      if (fb_[i] == nullptr) {
-        fb_attachment_[i] = type;
-        fb_[i] = fb;
+    for (int i = 0; i < ARRAY_SIZE(m_fb); i++) {
+      if (m_fb[i] == nullptr) {
+        m_fb_attachment[i] = type;
+        m_fb[i] = fb;
         return;
       }
     }
@@ -215,10 +215,10 @@ namespace kraken::gpu
 
   void Texture::detach_from(FrameBuffer *fb)
   {
-    for (int i = 0; i < ARRAY_SIZE(fb_); i++) {
-      if (fb_[i] == fb) {
-        fb_[i]->attachment_remove(fb_attachment_[i]);
-        fb_[i] = nullptr;
+    for (int i = 0; i < ARRAY_SIZE(m_fb); i++) {
+      if (m_fb[i] == fb) {
+        m_fb[i]->attachment_remove(m_fb_attachment[i]);
+        m_fb[i] = nullptr;
         return;
       }
     }

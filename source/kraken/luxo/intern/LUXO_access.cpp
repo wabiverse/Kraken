@@ -286,16 +286,6 @@ PropertyType LUXO_property_type(KrakenPROP *prop)
   return PROP_COLLECTION;
 }
 
-bool USD_enum_identifier(wabi::TfEnum item, const int value, const char **r_identifier)
-{
-  //   const int i = LUXO_enum_from_value(item, value);
-  //   if (i != -1) {
-  //     *r_identifier = item[i].identifier;
-  //     return true;
-  //   }
-  return false;
-}
-
 void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP *r_ptr)
 {
   KrakenPRIM prim;
@@ -305,9 +295,9 @@ void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP 
   }
 
   prim = ptr->GetPrim();
-  *r_ptr = prim.GetAttribute(name);
+  r_ptr = MEM_new<KrakenPROP>(__func__, prim.GetProperty(name));
 
-  if (!r_ptr || !r_ptr->IsValid()) {
+  if (!r_ptr || !r_ptr->intern_prop.IsValid()) {
     std::string msg;
     msg = TfStringPrintf("%s has no property %s. Available properties are:\n",
                          prim.GetName().GetText(),

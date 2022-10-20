@@ -38,16 +38,16 @@ set(SRC
   INTERFACE_ops.cpp
   INTERFACE_panel.cpp
   INTERFACE_query.cpp
-  INTERFACE_resources.c
   INTERFACE_region_menu_popup.cpp
   INTERFACE_region_popup.cpp
   INTERFACE_region_search.cpp
   INTERFACE_region_tooltip.cpp
   INTERFACE_regions.cpp
+  INTERFACE_resources.c
   INTERFACE_style.cpp
+  INTERFACE_templates.cpp
   INTERFACE_tokens.cpp
   INTERFACE_utils.cpp
-  INTERFACE_templates.cpp
   INTERFACE_view2d.cpp
 
   views/abstract_view_item.cpp

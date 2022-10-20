@@ -31,11 +31,11 @@
 
 #include "WM_msgbus.h"
 #include "WM_operators.h"
+#include "WM_tooltip.h"
 
 #include "KKE_context.h"
 
 #include <wabi/base/gf/rect2i.h>
-
 
 
 typedef void (*wmGenericUserDataFreeFn)(void *data);
@@ -78,14 +78,17 @@ bool WM_window_is_temp_screen(const wmWindow *win);
 void WM_anchor_init(kContext *C);
 void WM_anchor_exit(void);
 
-typedef struct ARegion *(*wmTooltipInitFn)(struct kContext *C,
-                                           struct ARegion *region,
-                                           int *pass,
-                                           double *r_pass_delay,
-                                           bool *r_exit_on_event);
-
-void WM_tooltip_timer_init(kContext *C, wmWindow *win, ScrArea *area, ARegion *region, wmTooltipInitFn init);
-void WM_tooltip_timer_init_ex(kContext *C, wmWindow *win, ScrArea *area, ARegion *region, wmTooltipInitFn init, double delay);
+void WM_tooltip_timer_init(kContext *C,
+                           wmWindow *win,
+                           ScrArea *area,
+                           ARegion *region,
+                           wmTooltipInitFn init);
+void WM_tooltip_timer_init_ex(kContext *C,
+                              wmWindow *win,
+                              ScrArea *area,
+                              ARegion *region,
+                              wmTooltipInitFn init,
+                              double delay);
 
 struct PanelType *WM_paneltype_find(const char *idname, bool quiet);
 
@@ -139,4 +142,3 @@ void wmOrtho2(float x1, float x2, float y1, float y2);
 static void wmOrtho2_offset(const float x, const float y, const float ofs);
 void wmOrtho2_region_pixelspace(const ARegion *region);
 void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct);
-

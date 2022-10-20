@@ -76,7 +76,6 @@ namespace NS
   {
     namespace Class
     {
-
       _NS_PRIVATE_DEF_CLS(NSAlert);
       _NS_PRIVATE_DEF_CLS(NSArray);
       _NS_PRIVATE_DEF_CLS(NSAutoreleasePool);
@@ -137,6 +136,7 @@ namespace NS
       _NS_PRIVATE_DEF_SEL(autorelease, "autorelease");
       _NS_PRIVATE_DEF_SEL(beginActivityWithOptions_reason_, "beginActivityWithOptions:reason:");
       _NS_PRIVATE_DEF_SEL(boolValue, "boolValue");
+      _NS_PRIVATE_DEF_SEL(bounds, "bounds");
       _NS_PRIVATE_DEF_SEL(broadcast, "broadcast");
       _NS_PRIVATE_DEF_SEL(builtInPlugInsPath, "builtInPlugInsPath");
       _NS_PRIVATE_DEF_SEL(builtInPlugInsURL, "builtInPlugInsURL");
@@ -152,6 +152,7 @@ namespace NS
       _NS_PRIVATE_DEF_SEL(cStringUsingEncoding_, "cStringUsingEncoding:");
       _NS_PRIVATE_DEF_SEL(code, "code");
       _NS_PRIVATE_DEF_SEL(compare_, "compare:");
+      _NS_PRIVATE_DEF_SEL(convertSizeToBacking_, "convertSizeToBacking:");
       _NS_PRIVATE_DEF_SEL(copy, "copy");
       _NS_PRIVATE_DEF_SEL(count, "count");
       _NS_PRIVATE_DEF_SEL(dateWithTimeIntervalSinceNow_, "dateWithTimeIntervalSinceNow:");
