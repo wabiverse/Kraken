@@ -53,9 +53,9 @@ namespace kraken
      protected:
 
       /** Data size in bytes. */
-      size_t size_in_bytes_;
+      size_t m_size_in_bytes;
       /** Continuous memory block to copy to GPU. This data is owned by the StorageBuf. */
-      void *data_ = nullptr;
+      void *m_data = nullptr;
       /** Debugging name */
       char m_name[DEBUG_NAME_LEN];
 

@@ -127,6 +127,7 @@ set(METAL_SRC
   metal/mtl_memory.cc
   metal/mtl_texture.cc
   metal/mtl_texture_util.cc
+  metal/mtl_uniform_buffer.cc
   metal/mtl_vertex_buffer.cc
 
   metal/mtl_backend.hh

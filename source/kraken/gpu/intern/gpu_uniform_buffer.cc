@@ -53,14 +53,14 @@ namespace kraken::gpu
     /* Make sure that UBO is padded to size of vec4 */
     KLI_assert((size % 16) == 0);
 
-    size_in_bytes_ = size;
+    m_size_in_bytes = size;
 
     KLI_strncpy(m_name, name, sizeof(m_name));
   }
 
   UniformBuf::~UniformBuf()
   {
-    MEM_SAFE_FREE(data_);
+    MEM_SAFE_FREE(m_data);
   }
 
 }  // namespace kraken::gpu
