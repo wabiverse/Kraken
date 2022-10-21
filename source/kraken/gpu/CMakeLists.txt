@@ -126,6 +126,7 @@ set(METAL_SRC
   metal/mtl_framebuffer.cc
   metal/mtl_immediate.cc
   metal/mtl_memory.cc
+  metal/mtl_state.cc
   metal/mtl_texture.cc
   metal/mtl_texture_util.cc
   metal/mtl_uniform_buffer.cc

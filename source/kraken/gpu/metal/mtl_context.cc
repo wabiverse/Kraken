@@ -1342,6 +1342,153 @@ namespace kraken::gpu
   /** @} */
 
   /* -------------------------------------------------------------------- */
+  /** @name Global Context State
+   * @{ */
+
+  /* Metal Context Pipeline State. */
+  void MTLContext::pipeline_state_init()
+  {
+    /*** Initialize state only once. ***/
+    if (!this->pipeline_state.initialised) {
+      this->pipeline_state.initialised = true;
+      this->pipeline_state.active_shader = nullptr;
+
+      /* Clear bindings state. */
+      for (int t = 0; t < GPU_max_textures(); t++) {
+        this->pipeline_state.texture_bindings[t].used = false;
+        this->pipeline_state.texture_bindings[t].slot_index = -1;
+        this->pipeline_state.texture_bindings[t].texture_resource = nullptr;
+      }
+      for (int s = 0; s < MTL_MAX_SAMPLER_SLOTS; s++) {
+        this->pipeline_state.sampler_bindings[s].used = false;
+      }
+      for (int u = 0; u < MTL_MAX_UNIFORM_BUFFER_BINDINGS; u++) {
+        this->pipeline_state.ubo_bindings[u].bound = false;
+        this->pipeline_state.ubo_bindings[u].ubo = nullptr;
+      }
+    }
+
+    /*** State defaults -- restored by GPU_state_init. ***/
+    /* Clear blending State. */
+    this->pipeline_state.color_write_mask = MTL::ColorWriteMaskRed | MTL::ColorWriteMaskGreen |
+                                            MTL::ColorWriteMaskBlue | MTL::ColorWriteMaskAlpha;
+    this->pipeline_state.blending_enabled = false;
+    this->pipeline_state.alpha_blend_op = MTL::BlendOperationAdd;
+    this->pipeline_state.rgb_blend_op = MTL::BlendOperationAdd;
+    this->pipeline_state.dest_alpha_blend_factor = MTL::BlendFactorZero;
+    this->pipeline_state.dest_rgb_blend_factor = MTL::BlendFactorZero;
+    this->pipeline_state.src_alpha_blend_factor = MTL::BlendFactorOne;
+    this->pipeline_state.src_rgb_blend_factor = MTL::BlendFactorOne;
+
+    /* Viewport and scissor. */
+    this->pipeline_state.viewport_offset_x = 0;
+    this->pipeline_state.viewport_offset_y = 0;
+    this->pipeline_state.viewport_width = 0;
+    this->pipeline_state.viewport_height = 0;
+    this->pipeline_state.scissor_x = 0;
+    this->pipeline_state.scissor_y = 0;
+    this->pipeline_state.scissor_width = 0;
+    this->pipeline_state.scissor_height = 0;
+    this->pipeline_state.scissor_enabled = false;
+
+    /* Culling State. */
+    this->pipeline_state.culling_enabled = false;
+    this->pipeline_state.cull_mode = GPU_CULL_NONE;
+    this->pipeline_state.front_face = GPU_COUNTERCLOCKWISE;
+
+    /* DATA and IMAGE access state. */
+    this->pipeline_state.unpack_row_length = 0;
+
+    /* Depth State. */
+    this->pipeline_state.depth_stencil_state.depth_write_enable = false;
+    this->pipeline_state.depth_stencil_state.depth_test_enabled = false;
+    this->pipeline_state.depth_stencil_state.depth_range_near = 0.0;
+    this->pipeline_state.depth_stencil_state.depth_range_far = 1.0;
+    this->pipeline_state.depth_stencil_state.depth_function = MTL::CompareFunctionAlways;
+    this->pipeline_state.depth_stencil_state.depth_bias = 0.0;
+    this->pipeline_state.depth_stencil_state.depth_slope_scale = 0.0;
+    this->pipeline_state.depth_stencil_state.depth_bias_enabled_for_points = false;
+    this->pipeline_state.depth_stencil_state.depth_bias_enabled_for_lines = false;
+    this->pipeline_state.depth_stencil_state.depth_bias_enabled_for_tris = false;
+
+    /* Stencil State. */
+    this->pipeline_state.depth_stencil_state.stencil_test_enabled = false;
+    this->pipeline_state.depth_stencil_state.stencil_read_mask = 0xFF;
+    this->pipeline_state.depth_stencil_state.stencil_write_mask = 0xFF;
+    this->pipeline_state.depth_stencil_state.stencil_ref = 0;
+    this->pipeline_state.depth_stencil_state.stencil_func = MTL::CompareFunctionAlways;
+    this->pipeline_state.depth_stencil_state.stencil_op_front_stencil_fail =
+      MTL::StencilOperationKeep;
+    this->pipeline_state.depth_stencil_state.stencil_op_front_depth_fail =
+      MTL::StencilOperationKeep;
+    this->pipeline_state.depth_stencil_state.stencil_op_front_depthstencil_pass =
+      MTL::StencilOperationKeep;
+    this->pipeline_state.depth_stencil_state.stencil_op_back_stencil_fail =
+      MTL::StencilOperationKeep;
+    this->pipeline_state.depth_stencil_state.stencil_op_back_depth_fail =
+      MTL::StencilOperationKeep;
+    this->pipeline_state.depth_stencil_state.stencil_op_back_depthstencil_pass =
+      MTL::StencilOperationKeep;
+  }
+
+  void MTLContext::set_viewport(int origin_x, int origin_y, int width, int height)
+  {
+    KLI_assert(this);
+    KLI_assert(width > 0);
+    KLI_assert(height > 0);
+    KLI_assert(origin_x >= 0);
+    KLI_assert(origin_y >= 0);
+    bool changed = (this->pipeline_state.viewport_offset_x != origin_x) ||
+                   (this->pipeline_state.viewport_offset_y != origin_y) ||
+                   (this->pipeline_state.viewport_width != width) ||
+                   (this->pipeline_state.viewport_height != height);
+    this->pipeline_state.viewport_offset_x = origin_x;
+    this->pipeline_state.viewport_offset_y = origin_y;
+    this->pipeline_state.viewport_width = width;
+    this->pipeline_state.viewport_height = height;
+    if (changed) {
+      this->pipeline_state.dirty_flags = (this->pipeline_state.dirty_flags |
+                                          MTL_PIPELINE_STATE_VIEWPORT_FLAG);
+    }
+  }
+
+  void MTLContext::set_scissor(int scissor_x, int scissor_y, int scissor_width, int scissor_height)
+  {
+    KLI_assert(this);
+    bool changed = (this->pipeline_state.scissor_x != scissor_x) ||
+                   (this->pipeline_state.scissor_y != scissor_y) ||
+                   (this->pipeline_state.scissor_width != scissor_width) ||
+                   (this->pipeline_state.scissor_height != scissor_height) ||
+                   (this->pipeline_state.scissor_enabled != true);
+    this->pipeline_state.scissor_x = scissor_x;
+    this->pipeline_state.scissor_y = scissor_y;
+    this->pipeline_state.scissor_width = scissor_width;
+    this->pipeline_state.scissor_height = scissor_height;
+    this->pipeline_state.scissor_enabled = (scissor_width > 0 && scissor_height > 0);
+
+    if (changed) {
+      this->pipeline_state.dirty_flags = (this->pipeline_state.dirty_flags |
+                                          MTL_PIPELINE_STATE_SCISSOR_FLAG);
+    }
+  }
+
+  void MTLContext::set_scissor_enabled(bool scissor_enabled)
+  {
+    /* Only turn on Scissor if requested scissor region is valid */
+    scissor_enabled = scissor_enabled && (this->pipeline_state.scissor_width > 0 &&
+                                          this->pipeline_state.scissor_height > 0);
+
+    bool changed = (this->pipeline_state.scissor_enabled != scissor_enabled);
+    this->pipeline_state.scissor_enabled = scissor_enabled;
+    if (changed) {
+      this->pipeline_state.dirty_flags = (this->pipeline_state.dirty_flags |
+                                          MTL_PIPELINE_STATE_SCISSOR_FLAG);
+    }
+  }
+
+  /** @} */
+
+  /* -------------------------------------------------------------------- */
   /** @name Swap-chain management and Metal presentation.
    * @{ */
 
