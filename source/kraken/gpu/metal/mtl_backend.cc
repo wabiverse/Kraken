@@ -41,7 +41,7 @@
 // #include "mtl_index_buffer.hh"
 // #include "mtl_query.hh"
 #include "mtl_shader.hh"
-// #include "mtl_uniform_buffer.hh"
+#include "mtl_uniform_buffer.hh"
 #include "mtl_vertex_buffer.hh"
 
 #include "gpu_capabilities_private.hh"

@@ -134,7 +134,7 @@ namespace kraken::gpu
    private:
 
     /* Metal resource. */
-    MTL::Buffer *metal_buffer_;
+    MTL::Buffer *m_metal_buffer;
 
     /* Host-visible mapped-memory pointer. Behavior depends on buffer type:
      * - Shared buffers: pointer represents base address of #MTLBuffer whose data
@@ -143,25 +143,25 @@ namespace kraken::gpu
      * - Managed buffer: Host-side mapped buffer region for CPU (Host) access. Managed buffers
      *                   must be manually flushed to transfer data to GPU-resident buffer.
      * - Private buffer: Host access is invalid, `data` will be nullptr. */
-    void *data_;
+    void *m_data;
 
     /* Whether buffer is allocated from an external source. */
-    bool is_external_ = false;
+    bool m_is_external = false;
 
     /* Allocation info. */
-    MTL::ResourceOptions options_;
-    MTL::Device *device_;
-    uint64_t alignment_;
-    uint64_t size_;
+    MTL::ResourceOptions m_options;
+    MTL::Device *m_device;
+    uint64_t m_alignment;
+    uint64_t m_size;
 
     /* Allocated size may be larger than actual size. */
-    uint64_t usage_size_;
+    uint64_t m_usage_size;
 
     /* Lifetime info - whether the current buffer is actively in use. A buffer
      * should be in use after it has been allocated. De-allocating the buffer, and
      * returning it to the free buffer pool will set in_use to false. Using a buffer
      * while it is not in-use should not be allowed and result in an error. */
-    std::atomic<bool> in_use_;
+    std::atomic<bool> m_in_use;
 
    public:
 
@@ -232,21 +232,21 @@ namespace kraken::gpu
 
    private:
 
-    MTLContext &own_context_;
+    MTLContext &m_own_context;
 
     /* Wrapped MTLBuffer allocation handled. */
-    gpu::MTLBuffer *cbuffer_;
+    gpu::MTLBuffer *m_cbuffer;
 
     /* Current offset where next allocation will begin. */
-    uint64_t current_offset_;
+    uint64_t m_current_offset;
 
     /* Whether the Circular Buffer can grow during re-allocation if
      * the size is exceeded. */
-    bool can_resize_;
+    bool m_can_resize;
 
     /* Usage information. */
-    uint64_t used_frame_index_;
-    uint64_t last_flush_base_offset_;
+    uint64_t m_used_frame_index;
+    uint64_t m_last_flush_base_offset;
 
    public:
 
@@ -321,19 +321,19 @@ namespace kraken::gpu
 
    private:
 
-    std::atomic<int> reference_count_;
-    std::atomic<bool> in_free_queue_;
-    std::recursive_mutex lock_;
+    std::atomic<int> m_reference_count;
+    std::atomic<bool> m_in_free_queue;
+    std::recursive_mutex m_lock;
 
     /* Linked list of next MTLSafeFreeList chunk if current chunk is full. */
-    std::atomic<int> has_next_pool_;
-    std::atomic<MTLSafeFreeList *> next_;
+    std::atomic<int> m_has_next_pool;
+    std::atomic<MTLSafeFreeList *> m_next;
 
     /* Lockless list. MAX_NUM_BUFFERS_ within a chunk based on considerations
      * for performance and memory. */
-    static const int MAX_NUM_BUFFERS_ = 1024;
-    std::atomic<int> current_list_index_;
-    gpu::MTLBuffer *safe_free_pool_[MAX_NUM_BUFFERS_];
+    static const int m_MAX_NUM_BUFFERS = 1024;
+    std::atomic<int> m_current_list_index;
+    gpu::MTLBuffer *m_safe_free_pool[m_MAX_NUM_BUFFERS];
 
    public:
 
@@ -353,9 +353,9 @@ namespace kraken::gpu
 
     void flag_in_queue()
     {
-      in_free_queue_ = true;
-      if (has_next_pool_) {
-        MTLSafeFreeList *next_pool = next_.load();
+      m_in_free_queue = true;
+      if (m_has_next_pool) {
+        MTLSafeFreeList *next_pool = m_next.load();
         KLI_assert(next_pool != nullptr);
         next_pool->flag_in_queue();
       }
@@ -382,7 +382,7 @@ namespace kraken::gpu
    private:
 
     /* Memory statistics. */
-    int64_t total_allocation_bytes_ = 0;
+    int64_t m_total_allocation_bytes = 0;
 
 #if MTL_DEBUG_MEMORY_STATISTICS == 1
     /* Debug statistics. */
@@ -392,8 +392,8 @@ namespace kraken::gpu
 #endif
 
     /* Metal resources. */
-    bool ensure_initialised_ = false;
-    MTL::Device *device_ = nil;
+    bool m_ensure_initialised = false;
+    MTL::Device *m_device = nil;
 
     /* The buffer selection aims to pick a buffer which meets the minimum size requirements.
      * To do this, we keep an ordered set of all available buffers. If the buffer is larger than
@@ -403,7 +403,7 @@ namespace kraken::gpu
      * - A lower value may result in more dynamic allocations, but minimized memory usage for a
      * given scenario. The current value of 1.26 is calibrated for optimal performance and memory
      * utilization. */
-    static constexpr float mtl_buffer_size_threshold_factor_ = 1.26;
+    static constexpr float m_mtl_buffer_size_threshold_factor = 1.26;
 
     /* Buffer pools using MTL::ResourceOptions as key for allocation type.
      * Aliased as 'uint64_t' for map type compatibility.
@@ -414,20 +414,20 @@ namespace kraken::gpu
     using MTLBufferPoolOrderedList = std::multiset<MTLBufferHandle, CompareMTLBuffer>;
     using MTLBufferResourceOptions = uint64_t;
 
-    kraken::Map<MTLBufferResourceOptions, MTLBufferPoolOrderedList *> buffer_pools_;
-    kraken::Vector<gpu::MTLBuffer *> allocations_;
+    kraken::Map<MTLBufferResourceOptions, MTLBufferPoolOrderedList *> m_buffer_pools;
+    kraken::Vector<gpu::MTLBuffer *> m_allocations;
 
     /* Maintain a queue of all MTLSafeFreeList's that have been released
      * by the GPU and are ready to have their buffers re-inserted into the
      * MemoryManager pools.
      * Access to this queue is made thread-safe through safelist_lock_. */
-    std::mutex safelist_lock_;
-    kraken::Vector<MTLSafeFreeList *> completed_safelist_queue_;
+    std::mutex m_safelist_lock;
+    kraken::Vector<MTLSafeFreeList *> m_completed_safelist_queue;
 
     /* Current free list, associated with active MTLCommandBuffer submission. */
     /* MTLBuffer::free() can be called from separate threads, due to usage within animation
      * system/worker threads. */
-    std::atomic<MTLSafeFreeList *> current_free_list_;
+    std::atomic<MTLSafeFreeList *> m_current_free_list;
 
    public:
 
@@ -479,7 +479,7 @@ namespace kraken::gpu
 
     /* Maximum number of scratch buffers to allocate. This should be the maximum number of
      * simultaneous frames in flight. */
-    static constexpr uint mtl_max_scratch_buffers_ = MTL_NUM_SAFE_FRAMES;
+    static constexpr uint m_mtl_max_scratch_buffers = MTL_NUM_SAFE_FRAMES;
 
    public:
 
@@ -487,22 +487,22 @@ namespace kraken::gpu
      * the newly allocated buffers will grow to. Larger allocations are possible if
      * `MTL_SCRATCH_BUFFER_ALLOW_TEMPORARY_EXPANSION` is enabled, but these will instead allocate
      * new buffers from the memory pools on the fly. */
-    static constexpr uint mtl_scratch_buffer_max_size_ = 128 * 1024 * 1024;
+    static constexpr uint m_mtl_scratch_buffer_max_size = 128 * 1024 * 1024;
 
     /* Initial size of circular scratch buffers prior to growth. */
-    static constexpr uint mtl_scratch_buffer_initial_size_ = 16 * 1024 * 1024;
+    static constexpr uint m_mtl_scratch_buffer_initial_size = 16 * 1024 * 1024;
 
    private:
 
     /* Parent MTLContext. */
     MTLContext &m_context;
-    bool initialised_ = false;
+    bool m_initialised = false;
 
     /* Scratch buffer currently in-use. */
-    uint current_scratch_buffer_ = 0;
+    uint m_current_scratch_buffer = 0;
 
     /* Scratch buffer pool. */
-    MTLCircularBuffer *scratch_buffers_[mtl_max_scratch_buffers_];
+    MTLCircularBuffer *m_scratch_buffers[m_mtl_max_scratch_buffers];
 
    public:
 

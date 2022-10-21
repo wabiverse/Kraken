@@ -334,11 +334,12 @@ using UsdImagingGLEngineSharedPtr = std::shared_ptr<class wabi::UsdImagingGLEngi
  *   pointers to -- as the client application
  *   maintains the lifetime of their own unique
  *   Anchor handles. */
-ANCHOR_DECLARE_HANDLE(AnchorEventHandle);
-ANCHOR_DECLARE_HANDLE(AnchorEventConsumerHandle);
 ANCHOR_DECLARE_HANDLE(AnchorSystemHandle);
 ANCHOR_DECLARE_HANDLE(AnchorSystemWindowHandle);
+ANCHOR_DECLARE_HANDLE(AnchorEventHandle);
+ANCHOR_DECLARE_HANDLE(AnchorEventConsumerHandle);
 ANCHOR_DECLARE_HANDLE(AnchorRectangleHandle);
+ANCHOR_DECLARE_HANDLE(AnchorContextHandle);
 
 struct ANCHOR_StringArray
 {

@@ -29,11 +29,7 @@
  * Pixel Magic.
  */
 
-#include "gpu_framebuffer_private.hh"
-
 #include "GPU_vertex_format.h"
-
-#include "KLI_index_range.hh"
 
 #include <Metal/Metal.hpp>
 
@@ -282,6 +278,19 @@ namespace kraken::gpu
       hash ^= uint64_t(this->point_size);
 
       return hash;
+    }
+
+    /* Reset the Vertex Descriptor to default. */
+    void reset_vertex_descriptor()
+    {
+      vertex_descriptor.num_attributes = 0;
+      vertex_descriptor.num_vert_buffers = 0;
+      for (int i = 0; i < GPU_VERT_ATTR_MAX_LEN; i++) {
+        vertex_descriptor.attributes[i].format = MTL::VertexFormatInvalid;
+        vertex_descriptor.attributes[i].offset = 0;
+      }
+      vertex_descriptor.uses_ssbo_vertex_fetch = false;
+      vertex_descriptor.num_ssbo_attributes = 0;
     }
   };
 

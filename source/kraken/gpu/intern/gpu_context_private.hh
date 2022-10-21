@@ -88,7 +88,7 @@ namespace kraken::gpu
     /** Thread on which this context is active. */
     pthread_t m_thread;
     bool m_is_active;
-    /** Avoid including GHOST headers. Can be nullptr for off-screen contexts. */
+    /** Avoid including Anchor headers. Can be nullptr for off-screen contexts. */
     void *m_anchor_window;
 
    public:

@@ -371,7 +371,7 @@ namespace kraken::gpu
     MTL::Library *temp_lib =
       ctx->device->newLibrary(tex_update_kernel_src, options, &error)->autorelease();
     if (error) {
-      MTL_LOG_ERROR("Compile Error - Metal Shader Library error %s ",
+      MTL_LOG_ERROR("Compile Error - Metal Shader Library error %s\n",
                     error->localizedFailureReason()->utf8String());
       KLI_assert(false);
       return nullptr;
@@ -388,7 +388,7 @@ namespace kraken::gpu
       temp_compute_function,
       &error);
     if (error || compute_pso == nil) {
-      MTL_LOG_ERROR("Failed to prepare texture_update MTLComputePipelineState %s",
+      MTL_LOG_ERROR("Failed to prepare texture_update MTLComputePipelineState %s\n",
                     error->localizedFailureReason()->utf8String());
       KLI_assert(false);
     }
@@ -693,7 +693,7 @@ namespace kraken::gpu
       MTL::Library *temp_lib =
         ctx->device->newLibrary(tex_update_kernel_src, options, &error)->autorelease();
       if (error) {
-        MTL_LOG_ERROR("Compile Error - Metal Shader Library error %s ",
+        MTL_LOG_ERROR("Compile Error - Metal Shader Library error %s\n",
                       error->localizedFailureReason()->utf8String());
         KLI_assert(false);
         return nil;
@@ -710,7 +710,7 @@ namespace kraken::gpu
         temp_compute_function,
         &error);
       if (error || compute_pso == nil) {
-        MTL_LOG_ERROR("Failed to prepare texture_read MTLComputePipelineState %s",
+        MTL_LOG_ERROR("Failed to prepare texture_read MTLComputePipelineState %s\n",
                       error->localizedFailureReason()->utf8String());
         KLI_assert(false);
         return nil;

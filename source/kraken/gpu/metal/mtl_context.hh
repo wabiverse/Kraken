@@ -367,7 +367,7 @@ namespace kraken::gpu
     uint num_samplers;
     /* MTLSamplerState permutations between 0..256 - slightly more than a byte. */
     gpu::MTLSamplerState mtl_sampler_flags[MTL_MAX_TEXTURE_SLOTS];
-    MTL::SamplerState *mtl_sampler[MTL_MAX_TEXTURE_SLOTS];
+    const MTL::SamplerState *mtl_sampler[MTL_MAX_TEXTURE_SLOTS];
 
     bool operator==(const MTLSamplerArray &other) const
     {
@@ -851,7 +851,7 @@ namespace kraken::gpu
 
    private:
 
-    void set_anchor_context(AnchorContext *anchorCtx);
+    void set_anchor_context(AnchorContextHandle anchorCtx);
     void set_anchor_window(AnchorSystemWindowHandle anchorWinHandle);
   };
 

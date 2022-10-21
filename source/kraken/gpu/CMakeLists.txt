@@ -123,6 +123,8 @@ set(DX3D_SRC
 set(METAL_SRC
   metal/mtl_backend.cc
   metal/mtl_context.cc
+  metal/mtl_immediate.cc
+  metal/mtl_memory.cc
   metal/mtl_texture.cc
   metal/mtl_texture_util.cc
   metal/mtl_vertex_buffer.cc
@@ -135,6 +137,7 @@ set(METAL_SRC
   metal/mtl_framebuffer.hh
   metal/mtl_immediate.hh
   metal/mtl_memory.hh
+  metal/mtl_primitive.hh
   metal/mtl_pso_descriptor_state.hh
   metal/mtl_shader.hh
   metal/mtl_shader_interface.hh
@@ -142,6 +145,7 @@ set(METAL_SRC
   metal/mtl_shader_shared.h
   metal/mtl_state.hh
   metal/mtl_texture.hh
+  metal/mtl_uniform_buffer.hh
   metal/mtl_vertex_buffer.hh
 )
 
