@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -43,201 +43,204 @@
 
 #include "gpu_framebuffer_private.hh"
 
-namespace kraken::gpu {
-
-/* -------------------------------------------------------------------- */
-/** \name Constructor / Destructor
- * \{ */
-
-FrameBuffer::FrameBuffer(const char *name)
+namespace kraken::gpu
 {
-  if (name) {
-    KLI_strncpy(m_name, name, sizeof(m_name));
-  }
-  else {
-    m_name[0] = '\0';
-  }
-  /* Force config on first use. */
-  dirty_attachments_ = true;
-  dirty_state_ = true;
 
-  for (GPUAttachment &attachment : attachments_) {
-    attachment.tex = nullptr;
-    attachment.mip = -1;
-    attachment.layer = -1;
-  }
-}
+  /* -------------------------------------------------------------------- */
+  /** \name Constructor / Destructor
+   * \{ */
 
-FrameBuffer::~FrameBuffer()
-{
-  for (GPUAttachment &attachment : attachments_) {
-    if (attachment.tex != nullptr) {
-      reinterpret_cast<Texture *>(attachment.tex)->detach_from(this);
+  FrameBuffer::FrameBuffer(const char *name)
+  {
+    if (name) {
+      KLI_strncpy(m_name, name, sizeof(m_name));
+    } else {
+      m_name[0] = '\0';
+    }
+    /* Force config on first use. */
+    m_dirty_attachments = true;
+    m_dirty_state = true;
+
+    for (GPUAttachment &attachment : m_attachments) {
+      attachment.tex = nullptr;
+      attachment.mip = -1;
+      attachment.layer = -1;
     }
   }
 
-#ifndef GPU_NO_USE_PY_REFERENCES
-  if (this->py_ref) {
-    *this->py_ref = nullptr;
-  }
-#endif
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Attachments Management
- * \{ */
-
-void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &new_attachment)
-{
-  if (new_attachment.mip == -1) {
-    return; /* GPU_ATTACHMENT_LEAVE */
-  }
-
-  if (type >= GPU_FB_MAX_ATTACHMENT) {
-    fprintf(stderr,
-            "GPUFramebuffer: Error: Trying to attach texture to type %d but maximum slot is %d.\n",
-            type - GPU_FB_COLOR_ATTACHMENT0,
-            GPU_FB_MAX_COLOR_ATTACHMENT);
-    return;
-  }
-
-  if (new_attachment.tex) {
-    if (new_attachment.layer > 0) {
-      KLI_assert(GPU_texture_cube(new_attachment.tex) || GPU_texture_array(new_attachment.tex));
-    }
-    if (GPU_texture_stencil(new_attachment.tex)) {
-      KLI_assert(ELEM(type, GPU_FB_DEPTH_STENCIL_ATTACHMENT));
-    }
-    else if (GPU_texture_depth(new_attachment.tex)) {
-      KLI_assert(ELEM(type, GPU_FB_DEPTH_ATTACHMENT));
-    }
-  }
-
-  GPUAttachment &attachment = attachments_[type];
-
-  if (attachment.tex == new_attachment.tex && attachment.layer == new_attachment.layer &&
-      attachment.mip == new_attachment.mip) {
-    return; /* Exact same texture already bound here. */
-  }
-  /* Unbind previous and bind new. */
-  /* TODO(fclem): cleanup the casts. */
-  if (attachment.tex) {
-    reinterpret_cast<Texture *>(attachment.tex)->detach_from(this);
-  }
-
-  attachment = new_attachment;
-
-  /* Might be null if this is for unbinding. */
-  if (attachment.tex) {
-    reinterpret_cast<Texture *>(attachment.tex)->attach_to(this, type);
-  }
-  else {
-    /* GPU_ATTACHMENT_NONE */
-  }
-
-  dirty_attachments_ = true;
-}
-
-void FrameBuffer::attachment_remove(GPUAttachmentType type)
-{
-  attachments_[type] = GPU_ATTACHMENT_NONE;
-  dirty_attachments_ = true;
-}
-
-void FrameBuffer::load_store_config_array(const GPULoadStore *load_store_actions, uint actions_len)
-{
-  /* Follows attachment structure of GPU_framebuffer_config_array/GPU_framebuffer_ensure_config */
-  const GPULoadStore &depth_action = load_store_actions[0];
-  Span<GPULoadStore> color_attachments(load_store_actions + 1, actions_len - 1);
-
-  if (this->attachments_[GPU_FB_DEPTH_STENCIL_ATTACHMENT].tex) {
-    this->attachment_set_loadstore_op(
-        GPU_FB_DEPTH_STENCIL_ATTACHMENT, depth_action.load_action, depth_action.store_action);
-  }
-  if (this->attachments_[GPU_FB_DEPTH_ATTACHMENT].tex) {
-    this->attachment_set_loadstore_op(
-        GPU_FB_DEPTH_ATTACHMENT, depth_action.load_action, depth_action.store_action);
-  }
-
-  GPUAttachmentType type = GPU_FB_COLOR_ATTACHMENT0;
-  for (const GPULoadStore &actions : color_attachments) {
-    if (this->attachments_[type].tex) {
-      this->attachment_set_loadstore_op(type, actions.load_action, actions.store_action);
-    }
-    ++type;
-  }
-}
-
-uint FrameBuffer::get_bits_per_pixel()
-{
-  uint total_bits = 0;
-  for (GPUAttachment &attachment : attachments_) {
-    Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
-    if (tex != nullptr) {
-      int bits = to_bytesize(tex->format_get()) * to_component_len(tex->format_get());
-      total_bits += bits;
-    }
-  }
-  return total_bits;
-}
-
-void FrameBuffer::recursive_downsample(int max_lvl,
-                                       void (*callback)(void *userData, int level),
-                                       void *userData)
-{
-  /* Bind to make sure the frame-buffer is up to date. */
-  this->bind(true);
-
-  /* FIXME(fclem): This assumes all mips are defined which may not be the case. */
-  max_lvl = min_ii(max_lvl, floor(log2(max_ii(width_, height_))));
-
-  for (int mip_lvl = 1; mip_lvl <= max_lvl; mip_lvl++) {
-    /* Replace attached mip-level for each attachment. */
-    for (GPUAttachment &attachment : attachments_) {
-      Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
-      if (tex != nullptr) {
-        /* Some Intel HDXXX have issue with rendering to a mipmap that is below
-         * the texture GL_TEXTURE_MAX_LEVEL. So even if it not correct, in this case
-         * we allow GL_TEXTURE_MAX_LEVEL to be one level lower. In practice it does work! */
-        int mip_max = (GPU_mip_render_workaround()) ? mip_lvl : (mip_lvl - 1);
-        /* Restrict fetches only to previous level. */
-        tex->mip_range_set(mip_lvl - 1, mip_max);
-        /* Bind next level. */
-        attachment.mip = mip_lvl;
+  FrameBuffer::~FrameBuffer()
+  {
+    for (GPUAttachment &attachment : m_attachments) {
+      if (attachment.tex != nullptr) {
+        reinterpret_cast<Texture *>(attachment.tex)->detach_from(this);
       }
     }
 
-    /* Update the internal attachments and viewport size. */
-    dirty_attachments_ = true;
-    this->bind(true);
+#ifndef GPU_NO_USE_PY_REFERENCES
+    if (this->py_ref) {
+      *this->py_ref = nullptr;
+    }
+#endif
+  }
 
-    /* Optimize load-store state. */
-    GPUAttachmentType type = GPU_FB_DEPTH_ATTACHMENT;
-    for (GPUAttachment &attachment : attachments_) {
-      Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
-      if (tex != nullptr) {
-        this->attachment_set_loadstore_op(type, GPU_LOADACTION_DONT_CARE, GPU_STOREACTION_STORE);
+  /** \} */
+
+  /* -------------------------------------------------------------------- */
+  /** \name Attachments Management
+   * \{ */
+
+  void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &new_attachment)
+  {
+    if (new_attachment.mip == -1) {
+      return; /* GPU_ATTACHMENT_LEAVE */
+    }
+
+    if (type >= GPU_FB_MAX_ATTACHMENT) {
+      fprintf(
+        stderr,
+        "GPUFramebuffer: Error: Trying to attach texture to type %d but maximum slot is %d.\n",
+        type - GPU_FB_COLOR_ATTACHMENT0,
+        GPU_FB_MAX_COLOR_ATTACHMENT);
+      return;
+    }
+
+    if (new_attachment.tex) {
+      if (new_attachment.layer > 0) {
+        KLI_assert(GPU_texture_cube(new_attachment.tex) || GPU_texture_array(new_attachment.tex));
+      }
+      if (GPU_texture_stencil(new_attachment.tex)) {
+        KLI_assert(ELEM(type, GPU_FB_DEPTH_STENCIL_ATTACHMENT));
+      } else if (GPU_texture_depth(new_attachment.tex)) {
+        KLI_assert(ELEM(type, GPU_FB_DEPTH_ATTACHMENT));
+      }
+    }
+
+    GPUAttachment &attachment = m_attachments[type];
+
+    if (attachment.tex == new_attachment.tex && attachment.layer == new_attachment.layer &&
+        attachment.mip == new_attachment.mip) {
+      return; /* Exact same texture already bound here. */
+    }
+    /* Unbind previous and bind new. */
+    /* TODO(fclem): cleanup the casts. */
+    if (attachment.tex) {
+      reinterpret_cast<Texture *>(attachment.tex)->detach_from(this);
+    }
+
+    attachment = new_attachment;
+
+    /* Might be null if this is for unbinding. */
+    if (attachment.tex) {
+      reinterpret_cast<Texture *>(attachment.tex)->attach_to(this, type);
+    } else {
+      /* GPU_ATTACHMENT_NONE */
+    }
+
+    m_dirty_attachments = true;
+  }
+
+  void FrameBuffer::attachment_remove(GPUAttachmentType type)
+  {
+    m_attachments[type] = GPU_ATTACHMENT_NONE;
+    m_dirty_attachments = true;
+  }
+
+  void FrameBuffer::load_store_config_array(const GPULoadStore *load_store_actions,
+                                            uint actions_len)
+  {
+    /* Follows attachment structure of GPU_framebuffer_config_array/GPU_framebuffer_ensure_config
+     */
+    const GPULoadStore &depth_action = load_store_actions[0];
+    Span<GPULoadStore> color_attachments(load_store_actions + 1, actions_len - 1);
+
+    if (this->m_attachments[GPU_FB_DEPTH_STENCIL_ATTACHMENT].tex) {
+      this->attachment_set_loadstore_op(GPU_FB_DEPTH_STENCIL_ATTACHMENT,
+                                        depth_action.load_action,
+                                        depth_action.store_action);
+    }
+    if (this->m_attachments[GPU_FB_DEPTH_ATTACHMENT].tex) {
+      this->attachment_set_loadstore_op(GPU_FB_DEPTH_ATTACHMENT,
+                                        depth_action.load_action,
+                                        depth_action.store_action);
+    }
+
+    GPUAttachmentType type = GPU_FB_COLOR_ATTACHMENT0;
+    for (const GPULoadStore &actions : color_attachments) {
+      if (this->m_attachments[type].tex) {
+        this->attachment_set_loadstore_op(type, actions.load_action, actions.store_action);
       }
       ++type;
     }
-
-    callback(userData, mip_lvl);
   }
 
-  for (GPUAttachment &attachment : attachments_) {
-    if (attachment.tex != nullptr) {
-      /* Reset mipmap level range. */
-      reinterpret_cast<Texture *>(attachment.tex)->mip_range_set(0, max_lvl);
-      /* Reset base level. NOTE: might not be the one bound at the start of this function. */
-      attachment.mip = 0;
+  uint FrameBuffer::get_bits_per_pixel()
+  {
+    uint total_bits = 0;
+    for (GPUAttachment &attachment : m_attachments) {
+      Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
+      if (tex != nullptr) {
+        int bits = to_bytesize(tex->format_get()) * to_component_len(tex->format_get());
+        total_bits += bits;
+      }
     }
+    return total_bits;
   }
-  dirty_attachments_ = true;
-}
 
-/** \} */
+  void FrameBuffer::recursive_downsample(int max_lvl,
+                                         void (*callback)(void *userData, int level),
+                                         void *userData)
+  {
+    /* Bind to make sure the frame-buffer is up to date. */
+    this->bind(true);
+
+    /* FIXME(fclem): This assumes all mips are defined which may not be the case. */
+    max_lvl = min_ii(max_lvl, floor(log2(max_ii(m_width, m_height))));
+
+    for (int mip_lvl = 1; mip_lvl <= max_lvl; mip_lvl++) {
+      /* Replace attached mip-level for each attachment. */
+      for (GPUAttachment &attachment : m_attachments) {
+        Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
+        if (tex != nullptr) {
+          /* Some Intel HDXXX have issue with rendering to a mipmap that is below
+           * the texture GL_TEXTURE_MAX_LEVEL. So even if it not correct, in this case
+           * we allow GL_TEXTURE_MAX_LEVEL to be one level lower. In practice it does work! */
+          int mip_max = (GPU_mip_render_workaround()) ? mip_lvl : (mip_lvl - 1);
+          /* Restrict fetches only to previous level. */
+          tex->mip_range_set(mip_lvl - 1, mip_max);
+          /* Bind next level. */
+          attachment.mip = mip_lvl;
+        }
+      }
+
+      /* Update the internal attachments and viewport size. */
+      m_dirty_attachments = true;
+      this->bind(true);
+
+      /* Optimize load-store state. */
+      GPUAttachmentType type = GPU_FB_DEPTH_ATTACHMENT;
+      for (GPUAttachment &attachment : m_attachments) {
+        Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
+        if (tex != nullptr) {
+          this->attachment_set_loadstore_op(type, GPU_LOADACTION_DONT_CARE, GPU_STOREACTION_STORE);
+        }
+        ++type;
+      }
+
+      callback(userData, mip_lvl);
+    }
+
+    for (GPUAttachment &attachment : m_attachments) {
+      if (attachment.tex != nullptr) {
+        /* Reset mipmap level range. */
+        reinterpret_cast<Texture *>(attachment.tex)->mip_range_set(0, max_lvl);
+        /* Reset base level. NOTE: might not be the one bound at the start of this function. */
+        attachment.mip = 0;
+      }
+    }
+    m_dirty_attachments = true;
+  }
+
+  /** \} */
 
 }  // namespace kraken::gpu
 
@@ -292,8 +295,7 @@ void GPU_backbuffer_bind(eGPUBackBuffer buffer)
 
   if (buffer == GPU_BACKBUFFER_LEFT) {
     ctx->back_left->bind(false);
-  }
-  else {
+  } else {
     ctx->back_right->bind(false);
   }
 }
@@ -340,15 +342,21 @@ void GPU_framebuffer_texture_attach(GPUFrameBuffer *fb, GPUTexture *tex, int slo
   GPU_framebuffer_texture_attach_ex(fb, attachment, slot);
 }
 
-void GPU_framebuffer_texture_layer_attach(
-    GPUFrameBuffer *fb, GPUTexture *tex, int slot, int layer, int mip)
+void GPU_framebuffer_texture_layer_attach(GPUFrameBuffer *fb,
+                                          GPUTexture *tex,
+                                          int slot,
+                                          int layer,
+                                          int mip)
 {
   GPUAttachment attachment = GPU_ATTACHMENT_TEXTURE_LAYER_MIP(tex, layer, mip);
   GPU_framebuffer_texture_attach_ex(fb, attachment, slot);
 }
 
-void GPU_framebuffer_texture_cubeface_attach(
-    GPUFrameBuffer *fb, GPUTexture *tex, int slot, int face, int mip)
+void GPU_framebuffer_texture_cubeface_attach(GPUFrameBuffer *fb,
+                                             GPUTexture *tex,
+                                             int slot,
+                                             int face,
+                                             int mip)
 {
   GPUAttachment attachment = GPU_ATTACHMENT_TEXTURE_CUBEFACE_MIP(tex, face, mip);
   GPU_framebuffer_texture_attach_ex(fb, attachment, slot);
@@ -370,16 +378,14 @@ void GPU_framebuffer_config_array(GPUFrameBuffer *gpu_fb,
 
   if (depth_attachment.mip == -1) {
     /* GPU_ATTACHMENT_LEAVE */
-  }
-  else if (depth_attachment.tex == nullptr) {
+  } else if (depth_attachment.tex == nullptr) {
     /* GPU_ATTACHMENT_NONE: Need to clear both targets. */
     fb->attachment_set(GPU_FB_DEPTH_STENCIL_ATTACHMENT, depth_attachment);
     fb->attachment_set(GPU_FB_DEPTH_ATTACHMENT, depth_attachment);
-  }
-  else {
+  } else {
     GPUAttachmentType type = GPU_texture_stencil(depth_attachment.tex) ?
-                                 GPU_FB_DEPTH_STENCIL_ATTACHMENT :
-                                 GPU_FB_DEPTH_ATTACHMENT;
+                               GPU_FB_DEPTH_STENCIL_ATTACHMENT :
+                               GPU_FB_DEPTH_ATTACHMENT;
     fb->attachment_set(type, depth_attachment);
   }
 
@@ -441,8 +447,13 @@ void GPU_clear_depth(float depth)
   Context::get()->active_fb->clear(GPU_DEPTH_BIT, clear_col, depth, 0x0);
 }
 
-void GPU_framebuffer_read_depth(
-    GPUFrameBuffer *gpu_fb, int x, int y, int w, int h, eGPUDataFormat format, void *data)
+void GPU_framebuffer_read_depth(GPUFrameBuffer *gpu_fb,
+                                int x,
+                                int y,
+                                int w,
+                                int h,
+                                eGPUDataFormat format,
+                                void *data)
 {
   int rect[4] = {x, y, w, h};
   unwrap(gpu_fb)->read(GPU_DEPTH_BIT, format, rect, 1, 1, data);
@@ -463,8 +474,13 @@ void GPU_framebuffer_read_color(GPUFrameBuffer *gpu_fb,
 }
 
 /* TODO(fclem): rename to read_color. */
-void GPU_frontbuffer_read_pixels(
-    int x, int y, int w, int h, int channels, eGPUDataFormat format, void *data)
+void GPU_frontbuffer_read_pixels(int x,
+                                 int y,
+                                 int w,
+                                 int h,
+                                 int channels,
+                                 eGPUDataFormat format,
+                                 void *data)
 {
   int rect[4] = {x, y, w, h};
   Context::get()->front_left->read(GPU_COLOR_BIT, format, rect, channels, 0, data);
@@ -488,8 +504,7 @@ void GPU_framebuffer_blit(GPUFrameBuffer *gpufb_read,
   if (blit_buffers & (GPU_DEPTH_BIT | GPU_STENCIL_BIT)) {
     read_tex = fb_read->depth_tex();
     write_tex = fb_write->depth_tex();
-  }
-  else {
+  } else {
     read_tex = fb_read->color_tex(read_slot);
     write_tex = fb_write->color_tex(write_slot);
   }
@@ -541,7 +556,8 @@ void GPU_framebuffer_py_reference_set(GPUFrameBuffer *gpu_fb, void **py_ref)
 
 #define FRAMEBUFFER_STACK_DEPTH 16
 
-static struct {
+static struct
+{
   GPUFrameBuffer *framebuffers[FRAMEBUFFER_STACK_DEPTH];
   uint top;
 } FrameBufferStack = {{nullptr}};
@@ -578,8 +594,10 @@ uint GPU_framebuffer_stack_level_get()
 
 #define MAX_CTX_FB_LEN 3
 
-struct GPUOffScreen {
-  struct {
+struct GPUOffScreen
+{
+  struct
+  {
     Context *ctx;
     GPUFrameBuffer *fb;
   } framebuffers[MAX_CTX_FB_LEN];
@@ -601,8 +619,8 @@ static GPUFrameBuffer *gpu_offscreen_fb_get(GPUOffScreen *ofs)
       framebuffer.ctx = ctx;
       GPU_framebuffer_ensure_config(&framebuffer.fb,
                                     {
-                                        GPU_ATTACHMENT_TEXTURE(ofs->depth),
-                                        GPU_ATTACHMENT_TEXTURE(ofs->color),
+                                      GPU_ATTACHMENT_TEXTURE(ofs->depth),
+                                      GPU_ATTACHMENT_TEXTURE(ofs->color),
                                     });
     }
 
@@ -618,8 +636,8 @@ static GPUFrameBuffer *gpu_offscreen_fb_get(GPUOffScreen *ofs)
    * to happen under normal usage. */
   KLI_assert(0);
   printf(
-      "Warning: GPUOffscreen used in more than 3 GPUContext. "
-      "This may create performance drop.\n");
+    "Warning: GPUOffscreen used in more than 3 GPUContext. "
+    "This may create performance drop.\n");
 
   for (auto &framebuffer : ofs->framebuffers) {
     GPU_framebuffer_free(framebuffer.fb);
@@ -629,8 +647,11 @@ static GPUFrameBuffer *gpu_offscreen_fb_get(GPUOffScreen *ofs)
   return gpu_offscreen_fb_get(ofs);
 }
 
-GPUOffScreen *GPU_offscreen_create(
-    int width, int height, bool depth, eGPUTextureFormat format, char err_out[256])
+GPUOffScreen *GPU_offscreen_create(int width,
+                                   int height,
+                                   bool depth,
+                                   eGPUTextureFormat format,
+                                   char err_out[256])
 {
   GPUOffScreen *ofs = MEM_cnew<GPUOffScreen>(__func__);
 
@@ -642,16 +663,15 @@ GPUOffScreen *GPU_offscreen_create(
   ofs->color = GPU_texture_create_2d("ofs_color", width, height, 1, format, nullptr);
 
   if (depth) {
-    ofs->depth = GPU_texture_create_2d(
-        "ofs_depth", width, height, 1, GPU_DEPTH24_STENCIL8, nullptr);
+    ofs->depth =
+      GPU_texture_create_2d("ofs_depth", width, height, 1, GPU_DEPTH24_STENCIL8, nullptr);
   }
 
   if ((depth && !ofs->depth) || !ofs->color) {
     const char error[] = "GPUTexture: Texture allocation failed.";
     if (err_out) {
       KLI_snprintf(err_out, 256, error);
-    }
-    else {
+    } else {
       fprintf(stderr, error);
     }
     GPU_offscreen_free(ofs);
@@ -704,8 +724,7 @@ void GPU_offscreen_unbind(GPUOffScreen *UNUSED(ofs), bool restore)
 
   if (fb) {
     GPU_framebuffer_bind(fb);
-  }
-  else {
+  } else {
     GPU_framebuffer_restore();
   }
 }

@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -98,18 +98,18 @@ namespace kraken
 
       /** Set of texture attachments to render to. DEPTH and DEPTH_STENCIL are mutually exclusive.
        */
-      GPUAttachment attachments_[GPU_FB_MAX_ATTACHMENT];
+      GPUAttachment m_attachments[GPU_FB_MAX_ATTACHMENT];
       /** Is true if internal representation need to be updated. */
-      bool dirty_attachments_ = true;
+      bool m_dirty_attachments = true;
       /** Size of attachment textures. */
-      int width_ = 0, height_ = 0;
+      int m_width = 0, m_height = 0;
       /** Debug name. */
       char m_name[DEBUG_NAME_LEN];
       /** Frame-buffer state. */
-      int viewport_[4] = {0};
-      int scissor_[4] = {0};
-      bool scissor_test_ = false;
-      bool dirty_state_ = true;
+      int m_viewport[4] = {0};
+      int m_scissor[4] = {0};
+      bool m_scissor_test = false;
+      bool m_dirty_state = true;
 
 #ifndef GPU_NO_USE_PY_REFERENCES
 
@@ -174,70 +174,70 @@ namespace kraken
 
       inline void size_set(int width, int height)
       {
-        width_ = width;
-        height_ = height;
-        dirty_state_ = true;
+        m_width = width;
+        m_height = height;
+        m_dirty_state = true;
       }
 
       inline void viewport_set(const int viewport[4])
       {
-        if (!equals_v4v4_int(viewport_, viewport)) {
-          copy_v4_v4_int(viewport_, viewport);
-          dirty_state_ = true;
+        if (!equals_v4v4_int(m_viewport, viewport)) {
+          copy_v4_v4_int(m_viewport, viewport);
+          m_dirty_state = true;
         }
       }
 
       inline void scissor_set(const int scissor[4])
       {
-        if (!equals_v4v4_int(scissor_, scissor)) {
-          copy_v4_v4_int(scissor_, scissor);
-          dirty_state_ = true;
+        if (!equals_v4v4_int(m_scissor, scissor)) {
+          copy_v4_v4_int(m_scissor, scissor);
+          m_dirty_state = true;
         }
       }
 
       inline void scissor_test_set(bool test)
       {
-        scissor_test_ = test;
+        m_scissor_test = test;
       }
 
       inline void viewport_get(int r_viewport[4]) const
       {
-        copy_v4_v4_int(r_viewport, viewport_);
+        copy_v4_v4_int(r_viewport, m_viewport);
       }
 
       inline void scissor_get(int r_scissor[4]) const
       {
-        copy_v4_v4_int(r_scissor, scissor_);
+        copy_v4_v4_int(r_scissor, m_scissor);
       }
 
       inline bool scissor_test_get() const
       {
-        return scissor_test_;
+        return m_scissor_test;
       }
 
       inline void viewport_reset()
       {
-        int viewport_rect[4] = {0, 0, width_, height_};
+        int viewport_rect[4] = {0, 0, m_width, m_height};
         viewport_set(viewport_rect);
       }
 
       inline void scissor_reset()
       {
-        int scissor_rect[4] = {0, 0, width_, height_};
+        int scissor_rect[4] = {0, 0, m_width, m_height};
         scissor_set(scissor_rect);
       }
 
       inline GPUTexture *depth_tex() const
       {
-        if (attachments_[GPU_FB_DEPTH_ATTACHMENT].tex) {
-          return attachments_[GPU_FB_DEPTH_ATTACHMENT].tex;
+        if (m_attachments[GPU_FB_DEPTH_ATTACHMENT].tex) {
+          return m_attachments[GPU_FB_DEPTH_ATTACHMENT].tex;
         }
-        return attachments_[GPU_FB_DEPTH_STENCIL_ATTACHMENT].tex;
+        return m_attachments[GPU_FB_DEPTH_STENCIL_ATTACHMENT].tex;
       };
 
       inline GPUTexture *color_tex(int slot) const
       {
-        return attachments_[GPU_FB_COLOR_ATTACHMENT0 + slot].tex;
+        return m_attachments[GPU_FB_COLOR_ATTACHMENT0 + slot].tex;
       };
     };
 
