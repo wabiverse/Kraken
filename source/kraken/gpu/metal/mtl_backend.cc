@@ -33,12 +33,12 @@
 
 #include "gpu_backend.hh"
 #include "mtl_backend.hh"
-// #include "mtl_batch.hh"
+#include "mtl_batch.hh"
 #include "mtl_context.hh"
 // #include "mtl_drawlist.hh"
 #include "mtl_framebuffer.hh"
 #include "mtl_immediate.hh"
-// #include "mtl_index_buffer.hh"
+#include "mtl_index_buffer.hh"
 // #include "mtl_query.hh"
 #include "mtl_shader.hh"
 #include "mtl_uniform_buffer.hh"
@@ -76,8 +76,7 @@ namespace kraken::gpu
   Batch *MTLBackend::batch_alloc()
   {
     /* TODO(Metal): Full MTLBatch implementation. */
-    // return new MTLBatch();
-    return nullptr;
+    return new MTLBatch();
   }
 
   DrawList *MTLBackend::drawlist_alloc(int list_length)
@@ -96,8 +95,7 @@ namespace kraken::gpu
 
   IndexBuf *MTLBackend::indexbuf_alloc()
   {
-    // return new MTLIndexBuf();
-    return nullptr;
+    return new MTLIndexBuf();
   }
 
   QueryPool *MTLBackend::querypool_alloc()

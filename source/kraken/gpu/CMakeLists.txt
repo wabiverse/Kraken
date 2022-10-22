@@ -123,11 +123,13 @@ set(DX3D_SRC
 # Metal Implementation.
 set(METAL_SRC
   metal/mtl_backend.cc
+  metal/mtl_batch.cc
   metal/mtl_command_buffer.cc
   metal/mtl_context.cc
   metal/mtl_debug.cc
   metal/mtl_framebuffer.cc
   metal/mtl_immediate.cc
+  metal/mtl_index_buffer.cc
   metal/mtl_memory.cc
   metal/mtl_shader.cc
   metal/mtl_shader_generator.cc
@@ -139,12 +141,14 @@ set(METAL_SRC
   metal/mtl_vertex_buffer.cc
 
   metal/mtl_backend.hh
+  metal/mtl_batch.hh
   metal/mtl_capabilities.hh
   metal/mtl_common.hh
   metal/mtl_context.hh
   metal/mtl_debug.hh
   metal/mtl_framebuffer.hh
   metal/mtl_immediate.hh
+  metal/mtl_index_buffer.hh
   metal/mtl_memory.hh
   metal/mtl_primitive.hh
   metal/mtl_pso_descriptor_state.hh
