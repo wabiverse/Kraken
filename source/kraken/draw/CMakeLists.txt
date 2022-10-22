@@ -137,6 +137,47 @@ set(GLSL_SRC
   engines/phoenix/shaders/volumetric_integration_frag.glsl
   engines/phoenix/shaders/world_vert.glsl
 
+  intern/shaders/common_aabb_lib.glsl
+  intern/shaders/common_attribute_lib.glsl
+  intern/shaders/common_colormanagement_lib.glsl
+  intern/shaders/common_debug_draw_lib.glsl
+  intern/shaders/common_debug_print_lib.glsl
+  intern/shaders/common_debug_shape_lib.glsl
+  intern/shaders/common_fullscreen_vert.glsl
+  intern/shaders/common_fxaa_lib.glsl
+  intern/shaders/common_gpencil_lib.glsl
+  intern/shaders/common_hair_lib.glsl
+  intern/shaders/common_hair_refine_comp.glsl
+  intern/shaders/common_hair_refine_vert.glsl
+  intern/shaders/common_intersect_lib.glsl
+  intern/shaders/common_math_geom_lib.glsl
+  intern/shaders/common_math_lib.glsl
+  intern/shaders/common_pointcloud_lib.glsl
+  intern/shaders/common_shape_lib.glsl
+  intern/shaders/common_smaa_lib.glsl
+  intern/shaders/common_subdiv_custom_data_interp_comp.glsl
+  intern/shaders/common_subdiv_ibo_lines_comp.glsl
+  intern/shaders/common_subdiv_ibo_tris_comp.glsl
+  intern/shaders/common_subdiv_lib.glsl
+  intern/shaders/common_subdiv_normals_accumulate_comp.glsl
+  intern/shaders/common_subdiv_normals_finalize_comp.glsl
+  intern/shaders/common_subdiv_patch_evaluation_comp.glsl
+  intern/shaders/common_subdiv_vbo_edge_fac_comp.glsl
+  intern/shaders/common_subdiv_vbo_edituv_strech_angle_comp.glsl
+  intern/shaders/common_subdiv_vbo_edituv_strech_area_comp.glsl
+  intern/shaders/common_subdiv_vbo_lnor_comp.glsl
+  intern/shaders/common_subdiv_vbo_sculpt_data_comp.glsl
+  intern/shaders/common_view_clipping_lib.glsl
+  intern/shaders/common_view_lib.glsl
+  intern/shaders/draw_command_generate_comp.glsl
+  intern/shaders/draw_debug_draw_display_frag.glsl
+  intern/shaders/draw_debug_draw_display_vert.glsl
+  intern/shaders/draw_debug_info.hh
+  intern/shaders/draw_debug_print_display_frag.glsl
+  intern/shaders/draw_debug_print_display_vert.glsl
+  intern/shaders/draw_resource_finalize_comp.glsl
+  intern/shaders/draw_visibility_comp.glsl
+
   intern/draw_command_shared.hh
   intern/draw_common_shader_shared.h
   intern/draw_defines.h
