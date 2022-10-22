@@ -119,8 +119,7 @@ namespace kraken::gpu
 
   UniformBuf *MTLBackend::uniformbuf_alloc(int size, const char *name)
   {
-    // return new MTLUniformBuf(size, name);
-    return nullptr;
+    return new MTLUniformBuf(size, name);
   }
 
   StorageBuf *MTLBackend::storagebuf_alloc(int size, GPUUsageType usage, const char *name)
@@ -131,8 +130,7 @@ namespace kraken::gpu
 
   VertBuf *MTLBackend::vertbuf_alloc()
   {
-    // return new MTLVertBuf();
-    return nullptr;
+    return new MTLVertBuf();
   }
 
   void MTLBackend::render_begin()
