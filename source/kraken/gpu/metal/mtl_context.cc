@@ -264,48 +264,6 @@ namespace kraken::gpu
     }
   }
 
-  MTL::SamplerState *MTLContext::generate_sampler_from_state(MTLSamplerState sampler_state)
-  {
-    /* Check if sampler already exists for given state. */
-    MTL::SamplerDescriptor *descriptor = MTL::SamplerDescriptor::alloc()->init();
-    descriptor->setNormalizedCoordinates(true);
-
-    MTL::SamplerAddressMode clamp_type = (sampler_state.state & GPU_SAMPLER_CLAMP_BORDER) ?
-                                           MTL::SamplerAddressModeClampToBorderColor :
-                                           MTL::SamplerAddressModeClampToEdge;
-    descriptor->setRAddressMode(
-      (sampler_state.state & GPU_SAMPLER_REPEAT_R) ? MTL::SamplerAddressModeRepeat : clamp_type);
-    descriptor->setSAddressMode(
-      (sampler_state.state & GPU_SAMPLER_REPEAT_S) ? MTL::SamplerAddressModeRepeat : clamp_type);
-    descriptor->setTAddressMode(
-      (sampler_state.state & GPU_SAMPLER_REPEAT_T) ? MTL::SamplerAddressModeRepeat : clamp_type);
-    descriptor->setBorderColor(MTL::SamplerBorderColorTransparentBlack);
-    descriptor->setMinFilter((sampler_state.state & GPU_SAMPLER_FILTER) ?
-                               MTL::SamplerMinMagFilterLinear :
-                               MTL::SamplerMinMagFilterNearest);
-    descriptor->setMagFilter((sampler_state.state & GPU_SAMPLER_FILTER) ?
-                               MTL::SamplerMinMagFilterLinear :
-                               MTL::SamplerMinMagFilterNearest);
-    descriptor->setMipFilter((sampler_state.state & GPU_SAMPLER_MIPMAP) ?
-                               MTL::SamplerMipFilterLinear :
-                               MTL::SamplerMipFilterNotMipmapped);
-    descriptor->setLodMinClamp(-1000);
-    descriptor->setLodMaxClamp(1000);
-    float aniso_filter = max_ff(16, U.anisotropic_filter);
-    descriptor->setMaxAnisotropy((sampler_state.state & GPU_SAMPLER_MIPMAP) ? aniso_filter : 1);
-    descriptor->setCompareFunction((sampler_state.state & GPU_SAMPLER_COMPARE) ?
-                                     MTL::CompareFunctionLessEqual :
-                                     MTL::CompareFunctionAlways);
-    descriptor->setSupportArgumentBuffers(true);
-
-    MTL::SamplerState *state = this->device->newSamplerState(descriptor);
-    m_sampler_state_cache[(uint)sampler_state] = state;
-
-    KLI_assert(state != nil);
-    descriptor->autorelease();
-    return state;
-  }
-
   void MTLContext::begin_frame()
   {
     KLI_assert(MTLBackend::get()->is_inside_render_boundary());
@@ -1484,6 +1442,169 @@ namespace kraken::gpu
       this->pipeline_state.dirty_flags = (this->pipeline_state.dirty_flags |
                                           MTL_PIPELINE_STATE_SCISSOR_FLAG);
     }
+  }
+
+  /** @} */
+
+  /* -------------------------------------------------------------------- */
+  /** @name Visibility buffer control for MTLQueryPool.
+   * @{ */
+
+  void MTLContext::set_visibility_buffer(gpu::MTLBuffer *buffer)
+  {
+    /* Flag visibility buffer as dirty if the buffer being used for visibility has changed --
+     * This is required by the render pass, and we will break the pass if the results destination
+     * buffer is modified. */
+    if (buffer) {
+      m_visibility_is_dirty = (buffer != m_visibility_buffer) || m_visibility_is_dirty;
+      m_visibility_buffer = buffer;
+      m_visibility_buffer->debug_ensure_used();
+    } else {
+      /* If buffer is null, reset visibility state, mark dirty to break render pass if results are
+       * no longer needed. */
+      m_visibility_is_dirty = (m_visibility_buffer != nullptr) || m_visibility_is_dirty;
+      m_visibility_buffer = nullptr;
+    }
+  }
+
+  gpu::MTLBuffer *MTLContext::get_visibility_buffer() const
+  {
+    return m_visibility_buffer;
+  }
+
+  void MTLContext::clear_visibility_dirty()
+  {
+    m_visibility_is_dirty = false;
+  }
+
+  bool MTLContext::is_visibility_dirty() const
+  {
+    return m_visibility_is_dirty;
+  }
+
+  /** @} */
+
+  /* -------------------------------------------------------------------- */
+  /** @name Texture State Management
+   * @{ */
+
+  void MTLContext::texture_bind(gpu::MTLTexture *mtl_texture, uint texture_unit)
+  {
+    KLI_assert(this);
+    KLI_assert(mtl_texture);
+
+    if (texture_unit < 0 || texture_unit >= GPU_max_textures() ||
+        texture_unit >= MTL_MAX_TEXTURE_SLOTS) {
+      MTL_LOG_WARNING("Attempting to bind texture '%s' to invalid texture unit %d\n",
+                      mtl_texture->get_name(),
+                      texture_unit);
+      KLI_assert(false);
+      return;
+    }
+
+    /* Bind new texture. */
+    this->pipeline_state.texture_bindings[texture_unit].texture_resource = mtl_texture;
+    this->pipeline_state.texture_bindings[texture_unit].used = true;
+    mtl_texture->m_is_bound = true;
+  }
+
+  void MTLContext::sampler_bind(MTLSamplerState sampler_state, uint sampler_unit)
+  {
+    KLI_assert(this);
+    if (sampler_unit < 0 || sampler_unit >= GPU_max_textures() ||
+        sampler_unit >= MTL_MAX_SAMPLER_SLOTS) {
+      MTL_LOG_WARNING("Attempting to bind sampler to invalid sampler unit %d\n", sampler_unit);
+      KLI_assert(false);
+      return;
+    }
+
+    /* Apply binding. */
+    this->pipeline_state.sampler_bindings[sampler_unit] = {true, sampler_state};
+  }
+
+  void MTLContext::texture_unbind(gpu::MTLTexture *mtl_texture)
+  {
+    KLI_assert(mtl_texture);
+
+    /* Iterate through textures in state and unbind. */
+    for (int i = 0; i < min_uu(GPU_max_textures(), MTL_MAX_TEXTURE_SLOTS); i++) {
+      if (this->pipeline_state.texture_bindings[i].texture_resource == mtl_texture) {
+        this->pipeline_state.texture_bindings[i].texture_resource = nullptr;
+        this->pipeline_state.texture_bindings[i].used = false;
+      }
+    }
+
+    /* Locally unbind texture. */
+    mtl_texture->m_is_bound = false;
+  }
+
+  void MTLContext::texture_unbind_all()
+  {
+    /* Iterate through context's bound textures. */
+    for (int t = 0; t < min_uu(GPU_max_textures(), MTL_MAX_TEXTURE_SLOTS); t++) {
+      if (this->pipeline_state.texture_bindings[t].used &&
+          this->pipeline_state.texture_bindings[t].texture_resource) {
+
+        this->pipeline_state.texture_bindings[t].used = false;
+        this->pipeline_state.texture_bindings[t].texture_resource = nullptr;
+      }
+    }
+  }
+
+  MTL::SamplerState *MTLContext::get_sampler_from_state(MTLSamplerState sampler_state)
+  {
+    KLI_assert((uint)sampler_state >= 0 && ((uint)sampler_state) < GPU_SAMPLER_MAX);
+    return m_sampler_state_cache[(uint)sampler_state];
+  }
+
+  MTL::SamplerState *MTLContext::generate_sampler_from_state(MTLSamplerState sampler_state)
+  {
+    /* Check if sampler already exists for given state. */
+    MTL::SamplerDescriptor *descriptor = MTL::SamplerDescriptor::alloc()->init();
+    descriptor->setNormalizedCoordinates(true);
+
+    MTL::SamplerAddressMode clamp_type = (sampler_state.state & GPU_SAMPLER_CLAMP_BORDER) ?
+                                           MTL::SamplerAddressModeClampToBorderColor :
+                                           MTL::SamplerAddressModeClampToEdge;
+    descriptor->setRAddressMode(
+      (sampler_state.state & GPU_SAMPLER_REPEAT_R) ? MTL::SamplerAddressModeRepeat : clamp_type);
+    descriptor->setSAddressMode(
+      (sampler_state.state & GPU_SAMPLER_REPEAT_S) ? MTL::SamplerAddressModeRepeat : clamp_type);
+    descriptor->setTAddressMode(
+      (sampler_state.state & GPU_SAMPLER_REPEAT_T) ? MTL::SamplerAddressModeRepeat : clamp_type);
+    descriptor->setBorderColor(MTL::SamplerBorderColorTransparentBlack);
+    descriptor->setMinFilter((sampler_state.state & GPU_SAMPLER_FILTER) ?
+                               MTL::SamplerMinMagFilterLinear :
+                               MTL::SamplerMinMagFilterNearest);
+    descriptor->setMagFilter((sampler_state.state & GPU_SAMPLER_FILTER) ?
+                               MTL::SamplerMinMagFilterLinear :
+                               MTL::SamplerMinMagFilterNearest);
+    descriptor->setMipFilter((sampler_state.state & GPU_SAMPLER_MIPMAP) ?
+                               MTL::SamplerMipFilterLinear :
+                               MTL::SamplerMipFilterNotMipmapped);
+    descriptor->setLodMinClamp(-1000);
+    descriptor->setLodMaxClamp(1000);
+    float aniso_filter = max_ff(16, U.anisotropic_filter);
+    descriptor->setMaxAnisotropy((sampler_state.state & GPU_SAMPLER_MIPMAP) ? aniso_filter : 1);
+    descriptor->setCompareFunction((sampler_state.state & GPU_SAMPLER_COMPARE) ?
+                                     MTL::CompareFunctionLessEqual :
+                                     MTL::CompareFunctionAlways);
+    descriptor->setSupportArgumentBuffers(true);
+
+    MTL::SamplerState *state = this->device->newSamplerState(descriptor);
+    m_sampler_state_cache[(uint)sampler_state] = state;
+
+    KLI_assert(state != nil);
+    descriptor->autorelease();
+    return state;
+  }
+
+  MTL::SamplerState *MTLContext::get_default_sampler_state()
+  {
+    if (m_default_sampler_state == nil) {
+      m_default_sampler_state = this->get_sampler_from_state(DEFAULT_SAMPLER_STATE);
+    }
+    return m_default_sampler_state;
   }
 
   /** @} */

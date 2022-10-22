@@ -547,10 +547,10 @@ namespace kraken::gpu
     /* Workload heuristics - We may need to split command buffers to optimize workload and
      * balancing.
      */
-    int current_draw_call_count_ = 0;
-    int encoder_count_ = 0;
-    int vertex_submitted_count_ = 0;
-    bool empty_ = true;
+    int m_current_draw_call_count = 0;
+    int m_encoder_count = 0;
+    int m_vertex_submitted_count = 0;
+    bool m_empty = true;
 
    public:
 

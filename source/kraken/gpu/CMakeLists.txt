@@ -122,7 +122,9 @@ set(DX3D_SRC
 # Metal Implementation.
 set(METAL_SRC
   metal/mtl_backend.cc
+  metal/mtl_command_buffer.cc
   metal/mtl_context.cc
+  metal/mtl_debug.cc
   metal/mtl_framebuffer.cc
   metal/mtl_immediate.cc
   metal/mtl_memory.cc
