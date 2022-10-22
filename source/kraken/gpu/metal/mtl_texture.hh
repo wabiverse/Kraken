@@ -188,7 +188,7 @@ namespace kraken::gpu
     enum
     {
       MTL_TEXTURE_MODE_DEFAULT,     /* Texture is self-initialized (Standard). */
-      MTL_TEXTURE_MODE_EXTERNAL,    /* Texture source from external id<MTLTexture> handle */
+      MTL_TEXTURE_MODE_EXTERNAL,    /* Texture source from external MTL::Texture handle */
       MTL_TEXTURE_MODE_VBO,         /* Texture source initialized from VBO */
       MTL_TEXTURE_MODE_TEXTURE_VIEW /* Texture is a view into an existing texture. */
     } m_resource_mode;

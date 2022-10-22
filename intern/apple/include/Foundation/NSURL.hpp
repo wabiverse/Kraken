@@ -43,8 +43,8 @@ public:
 
     const char* fileSystemRepresentation() const;
 
-    URL*        URLByAppendingPathComponent(const class String* pPath, bool isDirectory) const;
-    URL*        URLByDeletingLastPathComponent() const;
+    URL*        URLByAppendingPathComponent(const class String* pPath, bool isDirectory);
+    URL*        URLByDeletingLastPathComponent();
 };
 }
 
@@ -92,14 +92,14 @@ _NS_INLINE const char* NS::URL::fileSystemRepresentation() const
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::URL* NS::URL::URLByAppendingPathComponent(const NS::String *pPath, bool isDirectory) const
+_NS_INLINE NS::URL* NS::URL::URLByAppendingPathComponent(const NS::String *pPath, bool isDirectory)
 {
     return Object::sendMessage<URL*>(this, _NS_PRIVATE_SEL(URLByAppendingPathComponent_isDirectory_), pPath, isDirectory);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::URL* NS::URL::URLByDeletingLastPathComponent() const
+_NS_INLINE NS::URL* NS::URL::URLByDeletingLastPathComponent()
 {
     return Object::sendMessage<URL*>(this, _NS_PRIVATE_SEL(URLByDeletingLastPathComponent));
 }

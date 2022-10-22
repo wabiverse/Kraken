@@ -25,7 +25,10 @@
 #include "NSDefines.hpp"
 #include "NSNotification.hpp"
 #include "NSObject.hpp"
+#include "NSPrivate.hpp"
 #include "NSTypes.hpp"
+
+#include <functional>
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -39,7 +42,7 @@ namespace NS
 
     bool createDirectoryAtURL(const class URL *pURL,
                               bool createIntermediates,
-                              const class Dictionary *pAttributes,
+                              class Dictionary *pAttributes,
                               class Error **error);
   };
 }  // namespace NS
@@ -48,15 +51,15 @@ namespace NS
 
 _NS_INLINE NS::FileManager *NS::FileManager::defaultManager()
 {
-  return Object::sendMessage<FileManager *>(_NS_PRIVATE_CLS(NSFileManager),
-                                            _NS_PRIVATE_SEL(defaultManager));
+  return Object::sendMessage<FileManager*>(_NS_PRIVATE_CLS(NSFileManager),
+                                           _NS_PRIVATE_SEL(defaultManager));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 _NS_INLINE bool NS::FileManager::createDirectoryAtURL(const NS::URL *pURL,
                                                       bool createIntermediates,
-                                                      const NS::Dictionary *pAttributes,
+                                                      NS::Dictionary *pAttributes,
                                                       NS::Error **error)
 {
   return Object::sendMessage<bool>(

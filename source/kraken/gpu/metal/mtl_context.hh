@@ -826,7 +826,7 @@ namespace kraken::gpu
      * argument buffer is used to pass samplers to the shader.
      * Each unique configurations of multiple samplers can be cached, so as to not require
      * re-generation. `samplers_` stores the current list of bound sampler objects.
-     * `cached_sampler_buffers_` is a cache of encoded argument buffers which can be re-used. */
+     * `m_cached_sampler_buffers` is a cache of encoded argument buffers which can be re-used. */
     MTLSamplerArray m_samplers;
     kraken::Map<MTLSamplerArray, gpu::MTLBuffer *> m_cached_sampler_buffers;
 

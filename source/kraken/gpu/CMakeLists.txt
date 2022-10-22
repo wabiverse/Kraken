@@ -45,6 +45,7 @@ set(SRC
   intern/gpu_shader_builtin.c
   intern/gpu_shader_create_info.cc
   intern/gpu_shader_dependency.cc
+  intern/gpu_shader_interface.cc
   intern/gpu_shader_log.cc
   intern/gpu_state.cc
   intern/gpu_storage_buffer.cc
@@ -128,6 +129,9 @@ set(METAL_SRC
   metal/mtl_framebuffer.cc
   metal/mtl_immediate.cc
   metal/mtl_memory.cc
+  metal/mtl_shader.cc
+  metal/mtl_shader_generator.cc
+  metal/mtl_shader_interface.cc
   metal/mtl_state.cc
   metal/mtl_texture.cc
   metal/mtl_texture_util.cc
@@ -145,6 +149,7 @@ set(METAL_SRC
   metal/mtl_primitive.hh
   metal/mtl_pso_descriptor_state.hh
   metal/mtl_shader.hh
+  metal/mtl_shader_generator.hh
   metal/mtl_shader_interface.hh
   metal/mtl_shader_interface_type.hh
   metal/mtl_shader_shared.h

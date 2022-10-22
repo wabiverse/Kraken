@@ -118,8 +118,8 @@ namespace kraken::gpu
   /* #MTLShaderBuilder source wrapper used during initial compilation. */
   struct MTLShaderBuilder
   {
-    NS::String *msl_source_vert_ = NS_STRING_("");
-    NS::String *msl_source_frag_ = NS_STRING_("");
+    NS::String *m_msl_source_vert = NS_STRING_("");
+    NS::String *m_msl_source_frag = NS_STRING_("");
 
     /* Generated GLSL source used during compilation. */
     std::string m_glsl_vertex_source = "";
@@ -243,8 +243,8 @@ namespace kraken::gpu
               const char *name,
               NS::String *input_vertex_source,
               NS::String *input_fragment_source,
-              NS::String *vertex_function_name_,
-              NS::String *fragment_function_name_);
+              NS::String *m_vertex_function_name,
+              NS::String *m_fragment_function_name);
     ~MTLShader();
 
     /* Assign GLSL source. */
@@ -325,7 +325,7 @@ namespace kraken::gpu
 
     /* Metal shader properties and source mapping. */
     void set_vertex_function_name(NS::String *vetex_function_name);
-    void set_fragment_function_name(NS::String *fragment_function_name_);
+    void set_fragment_function_name(NS::String *m_fragment_function_name);
     void shader_source_from_msl(NS::String *input_vertex_source,
                                 NS::String *input_fragment_source);
     void set_interface(MTLShaderInterface *interface);

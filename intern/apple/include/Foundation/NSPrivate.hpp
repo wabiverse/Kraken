@@ -106,7 +106,9 @@ namespace NS
   namespace Private
   {
     namespace Protocol
-    {}  // namespace Protocol
+    {
+      _NS_PRIVATE_DEF_PRO(NSFileManagerDelegate);
+    }  // namespace Protocol
   }     // namespace Private
 }  // namespace NS
 

@@ -48,6 +48,7 @@ set(SRC
   intern/KLI_threads.cpp
   intern/KLI_time.cpp
   intern/KLI_winstuff.cpp
+  intern/bitmap.c
   intern/fileops.c
   intern/fileops.cc
   intern/fnmatch.c
@@ -71,6 +72,7 @@ set(SRC
   KLI_array.h
   KLI_array.hh
   KLI_assert.h
+  KLI_bitmap.h
   KLI_compiler_attrs.h
   KLI_compiler_compat.h
   KLI_compiler_typecheck.h

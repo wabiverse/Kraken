@@ -68,7 +68,7 @@ namespace kraken::gpu
    public:
 
     /** Flat array. In this order: Attributes, Ubos, Uniforms. */
-    ShaderInput *inputs_ = nullptr;
+    ShaderInput *m_inputs = nullptr;
     /** Buffer containing all inputs names separated by '\0'. */
     char *name_buffer_ = nullptr;
     /** Input counts inside input array. */
@@ -104,39 +104,39 @@ namespace kraken::gpu
 
     inline const ShaderInput *attr_get(const char *name) const
     {
-      return input_lookup(inputs_, attr_len_, name);
+      return input_lookup(m_inputs, attr_len_, name);
     }
     inline const ShaderInput *attr_get(const int binding) const
     {
-      return input_lookup(inputs_, attr_len_, binding);
+      return input_lookup(m_inputs, attr_len_, binding);
     }
 
     inline const ShaderInput *ubo_get(const char *name) const
     {
-      return input_lookup(inputs_ + attr_len_, ubo_len_, name);
+      return input_lookup(m_inputs + attr_len_, ubo_len_, name);
     }
     inline const ShaderInput *ubo_get(const int binding) const
     {
-      return input_lookup(inputs_ + attr_len_, ubo_len_, binding);
+      return input_lookup(m_inputs + attr_len_, ubo_len_, binding);
     }
 
     inline const ShaderInput *uniform_get(const char *name) const
     {
-      return input_lookup(inputs_ + attr_len_ + ubo_len_, uniform_len_, name);
+      return input_lookup(m_inputs + attr_len_ + ubo_len_, uniform_len_, name);
     }
 
     inline const ShaderInput *texture_get(const int binding) const
     {
-      return input_lookup(inputs_ + attr_len_ + ubo_len_, uniform_len_, binding);
+      return input_lookup(m_inputs + attr_len_ + ubo_len_, uniform_len_, binding);
     }
 
     inline const ShaderInput *ssbo_get(const char *name) const
     {
-      return input_lookup(inputs_ + attr_len_ + ubo_len_ + uniform_len_, ssbo_len_, name);
+      return input_lookup(m_inputs + attr_len_ + ubo_len_ + uniform_len_, ssbo_len_, name);
     }
     inline const ShaderInput *ssbo_get(const int binding) const
     {
-      return input_lookup(inputs_ + attr_len_ + ubo_len_ + uniform_len_, ssbo_len_, binding);
+      return input_lookup(m_inputs + attr_len_ + ubo_len_ + uniform_len_, ssbo_len_, binding);
     }
 
     inline const char *input_name_get(const ShaderInput *input) const

@@ -264,6 +264,72 @@ namespace kraken::gpu
     }
   }
 
+  MTLContext::~MTLContext()
+  {
+    KLI_assert(this == reinterpret_cast<MTLContext *>(GPU_context_active_get()));
+    /* Ensure rendering is complete command encoders/command buffers are freed. */
+    if (MTLBackend::get()->is_inside_render_boundary()) {
+      this->finish();
+
+      /* End frame. */
+      if (this->get_inside_frame()) {
+        this->end_frame();
+      }
+    }
+
+    /* Release Memory Manager */
+    this->get_scratchbuffer_manager().free();
+
+    /* Release update/blit shaders. */
+    this->get_texture_utils().cleanup();
+
+    /* Detach resource references */
+    GPU_texture_unbind_all();
+
+    /* Unbind UBOs */
+    for (int i = 0; i < MTL_MAX_UNIFORM_BUFFER_BINDINGS; i++) {
+      if (this->pipeline_state.ubo_bindings[i].bound &&
+          this->pipeline_state.ubo_bindings[i].ubo != nullptr) {
+        GPUUniformBuf *ubo = wrap(
+          static_cast<UniformBuf *>(this->pipeline_state.ubo_bindings[i].ubo));
+        GPU_uniformbuf_unbind(ubo);
+      }
+    }
+
+    /* Release Dummy resources */
+    this->free_dummy_resources();
+
+    /* Release Sampler States. */
+    for (int i = 0; i < GPU_SAMPLER_MAX; i++) {
+      if (m_sampler_state_cache[i] != nil) {
+        m_sampler_state_cache[i]->release();
+        m_sampler_state_cache[i] = nil;
+      }
+    }
+
+    /* Empty cached sampler argument buffers. */
+    for (auto entry : m_cached_sampler_buffers.values()) {
+      entry->free();
+    }
+    m_cached_sampler_buffers.clear();
+
+    /* Free null buffers. */
+    if (m_null_buffer) {
+      m_null_buffer->release();
+    }
+    if (m_null_attribute_buffer) {
+      m_null_attribute_buffer->release();
+    }
+
+    /* Free Metal objects. */
+    if (this->queue) {
+      this->queue->release();
+    }
+    if (this->device) {
+      this->device->release();
+    }
+  }
+
   void MTLContext::begin_frame()
   {
     KLI_assert(MTLBackend::get()->is_inside_render_boundary());
