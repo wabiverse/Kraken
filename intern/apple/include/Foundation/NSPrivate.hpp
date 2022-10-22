@@ -84,6 +84,7 @@ namespace NS
       _NS_PRIVATE_DEF_CLS(NSDate);
       _NS_PRIVATE_DEF_CLS(NSDictionary);
       _NS_PRIVATE_DEF_CLS(NSError);
+      _NS_PRIVATE_DEF_CLS(NSFileManager);
       _NS_PRIVATE_DEF_CLS(NSNotificationCenter);
       _NS_PRIVATE_DEF_CLS(NSNumber);
       _NS_PRIVATE_DEF_CLS(NSObject);
@@ -155,8 +156,10 @@ namespace NS
       _NS_PRIVATE_DEF_SEL(convertSizeToBacking_, "convertSizeToBacking:");
       _NS_PRIVATE_DEF_SEL(copy, "copy");
       _NS_PRIVATE_DEF_SEL(count, "count");
+      _NS_PRIVATE_DEF_SEL(createDirectoryAtURL_withIntermediateDirectories_attributes_error_, "createDirectoryAtURL:withIntermediateDirectories:attributes:error:");
       _NS_PRIVATE_DEF_SEL(dateWithTimeIntervalSinceNow_, "dateWithTimeIntervalSinceNow:");
       _NS_PRIVATE_DEF_SEL(defaultCenter, "defaultCenter");
+      _NS_PRIVATE_DEF_SEL(defaultManager, "defaultManager");
       _NS_PRIVATE_DEF_SEL(descriptionWithLocale_, "descriptionWithLocale:");
       _NS_PRIVATE_DEF_SEL(disableAutomaticTermination_, "disableAutomaticTermination:");
       _NS_PRIVATE_DEF_SEL(disableSuddenTermination, "disableSuddenTermination");
@@ -317,6 +320,8 @@ namespace NS
       _NS_PRIVATE_DEF_SEL(unsignedLongValue, "unsignedLongValue");
       _NS_PRIVATE_DEF_SEL(unsignedLongLongValue, "unsignedLongLongValue");
       _NS_PRIVATE_DEF_SEL(unsignedShortValue, "unsignedShortValue");
+      _NS_PRIVATE_DEF_SEL(URLByAppendingPathComponent_isDirectory_, "URLByAppendingPathComponent:isDirectory:");
+      _NS_PRIVATE_DEF_SEL(URLByDeletingLastPathComponent, "URLByDeletingLastPathComponent");
       _NS_PRIVATE_DEF_SEL(URLForAuxiliaryExecutable_, "URLForAuxiliaryExecutable:");
       _NS_PRIVATE_DEF_SEL(userInfo, "userInfo");
       _NS_PRIVATE_DEF_SEL(userName, "userName");

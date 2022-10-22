@@ -42,6 +42,9 @@ public:
     URL*        initFileURLWithPath(const class String* pPath);
 
     const char* fileSystemRepresentation() const;
+
+    URL*        URLByAppendingPathComponent(const class String* pPath, bool isDirectory) const;
+    URL*        URLByDeletingLastPathComponent() const;
 };
 }
 
@@ -85,6 +88,20 @@ _NS_INLINE NS::URL* NS::URL::initFileURLWithPath(const String* pPath)
 _NS_INLINE const char* NS::URL::fileSystemRepresentation() const
 {
     return Object::sendMessage<const char*>(this, _NS_PRIVATE_SEL(fileSystemRepresentation));
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE NS::URL* NS::URL::URLByAppendingPathComponent(const NS::String *pPath, bool isDirectory) const
+{
+    return Object::sendMessage<URL*>(this, _NS_PRIVATE_SEL(URLByAppendingPathComponent_isDirectory_), pPath, isDirectory);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE NS::URL* NS::URL::URLByDeletingLastPathComponent() const
+{
+    return Object::sendMessage<URL*>(this, _NS_PRIVATE_SEL(URLByDeletingLastPathComponent));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
