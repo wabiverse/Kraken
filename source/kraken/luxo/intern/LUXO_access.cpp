@@ -555,7 +555,7 @@ const char *LUXO_function_identifier(KrakenFUNC *func)
 
 const TfToken LUXO_struct_identifier(const KrakenPRIM *type)
 {
-  return (type->identifier != NULL) ? type->identifier : TfToken("Context");
+  return (type->identifier != TfToken()) ? type->identifier : TfToken("Context");
 }
 
 char *LUXO_pointer_as_string_keywords_ex(kContext *C,
