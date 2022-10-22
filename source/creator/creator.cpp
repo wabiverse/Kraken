@@ -67,7 +67,7 @@
 
 #include "WM_api.h"
 #include "WM_init_exit.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "IMB_imbuf.h"
 

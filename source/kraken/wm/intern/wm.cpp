@@ -47,7 +47,7 @@
 #include "WM_event_system.h"
 #include "WM_init_exit.h"
 #include "WM_tokens.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "ED_screen.h"
 

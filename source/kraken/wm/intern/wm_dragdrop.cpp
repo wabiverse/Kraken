@@ -37,7 +37,7 @@
 #include "KKE_context.h"
 
 #include "WM_inline_tools.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_dragdrop.h"
 
 #include "USD_ID.h"

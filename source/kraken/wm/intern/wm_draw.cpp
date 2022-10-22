@@ -30,7 +30,7 @@
 #include "KKE_context.h"
 
 #include "WM_draw.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 
 

@@ -44,7 +44,7 @@
 
 #include "WM_api.h"
 #include "WM_keymap.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_menu_type.h"
 
 #include "interface_intern.h"

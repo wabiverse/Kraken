@@ -3611,6 +3611,23 @@ void ANCHOR::GetAllocatorFunctions(ANCHORMemAllocFunc *p_alloc_func,
   *p_user_data = GImAllocatorUserData;
 }
 
+AnchorContextHandle ANCHOR::CreateGPUContext(AnchorSystemHandle systemhandle)
+{
+  AnchorISystem *system = (AnchorISystem *)systemhandle;
+
+  return (AnchorContextHandle)system->createOffscreenContext();
+}
+
+eAnchorStatus ANCHOR::ActivateGPUContext(AnchorContextHandle contexthandle)
+{
+  AnchorIContext *context = (AnchorIContext *)contexthandle;
+  if (context) {
+    return context->ActivateDrawingContext();
+  }
+  printf("%s: Context not valid\n", __func__);
+  return ANCHOR_FAILURE;
+}
+
 AnchorContext *ANCHOR::CreateContext(AnchorFontAtlas *shared_font_atlas)
 {
   AnchorContext *ctx = ANCHOR_NEW(AnchorContext)(shared_font_atlas);

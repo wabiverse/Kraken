@@ -26,11 +26,16 @@ set(INC
 )
 
 set(SRC
+  intern/draw_manager.c
+
   engines/phoenix/phoenix_stub.cc
 
   DRW_engine.h
+  intern/DRW_render.h
   intern/draw_common_shader_shared.h
+  intern/draw_manager.h
   intern/draw_shader_shared.h
+  intern/draw_state.h
 )
 
 set(LIB

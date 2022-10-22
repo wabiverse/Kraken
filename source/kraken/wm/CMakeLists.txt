@@ -9,6 +9,7 @@ set(INC
   ../krakernel
   ../kraklib
   ../krakfont
+  ../draw
   ../gpu
   ../universe
   ../python
@@ -64,6 +65,7 @@ set(SRC
   WM_tokens.h
   WM_tooltip.h
   WM_window.h
+  WM_window.hh
 )
 
 set(LIB

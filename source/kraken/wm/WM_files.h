@@ -25,7 +25,7 @@
 #pragma once
 
 #include "WM_api.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_msgbus.h"
 #include "WM_operators.h"
 

@@ -33,7 +33,7 @@
 #include "USD_window.h"
 #include "USD_workspace.h"
 
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_tooltip.h"
 
 #include "KLI_time.h"

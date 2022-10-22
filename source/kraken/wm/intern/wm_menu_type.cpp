@@ -33,7 +33,7 @@
 #include "WM_debug_codes.h"
 #include "WM_dragdrop.h"
 #include "WM_operators.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_menu_type.h"
 
 #include "USD_ID.h"

@@ -45,7 +45,7 @@
 #include "KLI_listbase.h"
 #include "KLI_math.h"
 
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "ED_defines.h"
 #include "ED_screen.h"

@@ -30,6 +30,8 @@
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
+#include "ANCHOR_internal.h"
+
 #if WITH_METAL
 #  include <Metal/Metal.hpp>
 #  include <KrakenOS/Kraken.OS.hpp>
@@ -55,6 +57,8 @@ class AnchorAppleMetal : public AnchorSystemWindow
   ~AnchorAppleMetal();
 
   bool getValid() const;
+
+  AnchorIContext *createOffscreenContext();
 
   eAnchorStatus activateDrawingContext();
 

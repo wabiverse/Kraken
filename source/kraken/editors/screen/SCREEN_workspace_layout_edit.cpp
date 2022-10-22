@@ -45,7 +45,7 @@
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
 
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "ED_screen.h"
 

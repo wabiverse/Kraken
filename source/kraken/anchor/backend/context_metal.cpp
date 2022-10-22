@@ -91,7 +91,7 @@ AnchorContextMetal::AnchorContextMetal(bool stereoVisual,
       m_metalLayer->setPresentsWithTransaction(NO);
       m_metalLayer->removeAllAnimations();
       m_metalLayer->setDevice(metalDevice);
-      m_metalLayer->allowsNextDrawableTimeout(NO);
+      m_metalLayer->setAllowsNextDrawableTimeout(NO);
       MetalInit();
     } else {
       anchor_fatal_error_dialog(
@@ -113,6 +113,27 @@ AnchorContextMetal::~AnchorContextMetal()
       m_metalLayer = nil;
     }
   }
+}
+
+eAnchorStatus AnchorContextMetal::InitializeDrawingContext()
+{
+  NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
+
+#ifdef GHOST_OPENGL_ALPHA
+  static const bool needAlpha = true;
+#else
+  static const bool needAlpha = false;
+#endif
+
+  /* NOTE(Metal): Metal-only path. */
+  if (m_view) {
+    InitMetalFramebuffer();
+  }
+
+  pool->drain();
+  pool = nil;
+
+  return ANCHOR_SUCCESS;
 }
 
 static const MTL::PixelFormat METAL_FRAMEBUFFERPIXEL_FORMAT = MTL::PixelFormatBGRA8Unorm;
@@ -258,6 +279,11 @@ MTL::Texture *AnchorContextMetal::GetMetalOverlayTexture()
 
   /* Return texture. */
   return m_defaultFramebufferMetalTexture[m_current_swapchain_index].texture;
+}
+
+void AnchorContextMetal::InitMetalFramebuffer()
+{
+  UpdateDrawingContext();
 }
 
 void AnchorContextMetal::UpdateMetalFramebuffer()

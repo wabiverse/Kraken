@@ -74,7 +74,7 @@
 #include "WM_api.h"
 #include "WM_files.h"
 #include "WM_init_exit.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "USD_api.h"
 #include "USD_pixar_utils.h"

@@ -26,6 +26,9 @@
 #include "ANCHOR_event.h"
 #include "ANCHOR_BACKEND_cocoa.h"
 #include "ANCHOR_BACKEND_metal.h"
+#include "ANCHOR_CONTEXT_metal.h"
+
+#include "ANCHOR_internal.h"
 
 #include <simd/simd.h>
 #include <Foundation/Foundation.hpp>
@@ -101,6 +104,22 @@ eAnchorStatus AnchorSystemCocoa::init()
     m_swift = KRKN::CreateSystem();
   }
   return success;
+}
+
+/**
+ * Create a new off-screen context.
+ * Never explicitly delete the context, use #disposeContext() instead.
+ * @return The new context (or 0 if creation failed).
+ */
+AnchorIContext *AnchorSystemCocoa::createOffscreenContext()
+{
+  AnchorContext *context = new AnchorContextMetal(false, nil, nil);
+  if (context->InitializeDrawingContext())
+    return context;
+  else
+    delete context;
+
+  return NULL;
 }
 
 AnchorU64 AnchorSystemCocoa::getMilliSeconds() const

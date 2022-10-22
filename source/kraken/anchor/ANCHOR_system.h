@@ -29,6 +29,8 @@
 #include "ANCHOR_event_manager.h"
 #include "ANCHOR_window_manager.h"
 
+#include "ANCHOR_internal.h"
+
 class AnchorISystem
 {
  public:
@@ -87,6 +89,13 @@ class AnchorISystem
    * Returns the combine dimensions of all monitors.
    * @return The dimension of the workspace. */
   virtual void getAllDisplayDimensions(AnchorU32 &width, AnchorU32 &height) const = 0;
+
+  /**
+   * Create a new off-screen context.
+   * Never explicitly delete the context, use #disposeContext() instead.
+   * @return The new context (or 0 if creation failed).
+   */
+  virtual AnchorIContext *createOffscreenContext() = 0;
 
   /**
    * Create a new window.
@@ -364,6 +373,13 @@ class AnchorSystem : public AnchorISystem
    * @param buttons: The state of the buttons.
    * \return Indication of success. */
   virtual eAnchorStatus getButtons(AnchorButtons &buttons) const = 0;
+
+  /**
+   * Create a new off-screen context.
+   * Never explicitly delete the context, use #disposeContext() instead.
+   * @return The new context (or 0 if creation failed).
+   */
+  virtual AnchorIContext *createOffscreenContext() = 0;
 
  protected:
 

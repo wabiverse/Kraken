@@ -25,6 +25,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_cursors_api.h"
 #include "WM_debug_codes.h"
 #include "WM_dragdrop.h"
@@ -1647,6 +1648,50 @@ void wmGetProjectionMatrix(float mat[4][4], const rcti *winrct)
                   (float)height - GLA_PIXEL_OFS,
                   GPU_MATRIX_ORTHO_CLIP_NEAR_DEFAULT,
                   GPU_MATRIX_ORTHO_CLIP_FAR_DEFAULT);
+}
+
+void *WM_gpu_context_create(void)
+{
+  /* On Windows there is a problem creating contexts that share resources (almost any object,
+   * including legacy display lists, but also textures) with a context which is current in another
+   * thread. This is a documented and behavior of both `::wglCreateContextAttribsARB()` and
+   * `::wglShareLists()`.
+   *
+   * Other platforms might successfully share resources from context which is active somewhere
+   * else, but to keep our code behave the same on all platform we expect contexts to only be
+   * created from the main thread. */
+
+  KLI_assert(KLI_thread_is_main());
+  KLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
+
+  // AnchorGLSettings glSettings = {0};
+  if (G.debug & G_DEBUG_GPU) {
+    // glSettings.flags |= GHOST_glDebugContext;
+  }
+  return ANCHOR::CreateGPUContext(anchor_system);
+}
+
+void WM_gpu_context_activate(void *context)
+{
+  KLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
+  ANCHOR::ActivateGPUContext((AnchorContextHandle)context);
+}
+
+void WM_window_reset_drawable(void)
+{
+  KLI_assert(KLI_thread_is_main());
+  KLI_assert(GPU_framebuffer_active_get() == GPU_framebuffer_back_get());
+  wmWindowManager *wm = (wmWindowManager *)G_MAIN->wm.first;
+
+  if (wm == NULL) {
+    return;
+  }
+  wmWindow *win = wm->windrawable;
+
+  if (win && win->anchorwin) {
+    wm_window_clear_drawable(wm);
+    wm_window_set_drawable(wm, win, true);
+  }
 }
 
 /**

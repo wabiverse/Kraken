@@ -55,7 +55,7 @@
 #include "WM_msgbus.h"
 #include "WM_operators.h"
 #include "WM_tokens.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_keymap.h"
 
 struct wmKeyMapItemFind_Params

@@ -56,7 +56,7 @@
 // #include "IMB_imbuf.h"
 
 #include "WM_api.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_keymap.h"
 #include "WM_tokens.h"
 #include "WM_event_system.h"

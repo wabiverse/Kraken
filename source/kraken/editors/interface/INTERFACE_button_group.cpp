@@ -33,7 +33,7 @@
 #include "USD_userpref.h"
 
 #include "WM_cursors_api.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_event_system.h"
 #include "WM_tooltip.h"
 

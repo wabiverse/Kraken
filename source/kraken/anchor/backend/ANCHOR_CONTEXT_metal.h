@@ -43,24 +43,32 @@ class AnchorContextMetal : public AnchorContext
   ~AnchorContextMetal();
 
   /**
+   * Call immediately after new to initialize.  If this fails then immediately delete the object.
+   * @return Indication as to whether initialization has succeeded.
+   */
+  eAnchorStatus InitializeDrawingContext() override;
+
+  /**
    * Activates the drawing context.
    * @return A boolean success indicator.
    */
-  eAnchorStatus ActivateDrawingContext();
+  eAnchorStatus ActivateDrawingContext() override;
 
   /**
    * Release the drawing context of the calling thread.
    * @return A boolean success indicator.
    */
-  eAnchorStatus ReleaseDrawingContext();
+  eAnchorStatus ReleaseDrawingContext() override;
 
-  unsigned int GetDefaultFramebuffer();
+  unsigned int GetDefaultFramebuffer() override;
 
   /**
    * Swaps front and back buffers of a window.
    * @return A boolean success indicator.
    */
-  eAnchorStatus SwapBuffers();
+  eAnchorStatus SwapBuffers() override;
+
+  eAnchorStatus UpdateDrawingContext() override;
 
   /**
    * Initialize metal, create GPU resources.
@@ -101,7 +109,8 @@ class AnchorContextMetal : public AnchorContext
    * Swaps front and back buffers of a window. */
   void MetalSwapChain();
 
-  eAnchorStatus UpdateDrawingContext();
+
+  void InitMetalFramebuffer();
 
   void UpdateMetalFramebuffer();
 

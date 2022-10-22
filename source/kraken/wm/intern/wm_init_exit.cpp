@@ -34,7 +34,7 @@
 #include "WM_msgbus.h"
 #include "WM_operators.h"
 #include "WM_tokens.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_files.h"
 
 #include "ANCHOR_api.h"
@@ -77,6 +77,8 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 
+#include "DRW_engine.h"
+
 #include <wabi/base/tf/stringUtils.h>
 
 CLG_LOGREF_DECLARE_GLOBAL(WM_LOG_OPERATORS, "wm.operator");
@@ -117,7 +119,7 @@ void WM_init_state_start_with_console_set(bool value)
  */
 static bool opengl_is_init = false;
 
-void WM_init_opengl(void)
+void WM_init_gpu(void)
 {
   /* Must be called only once. */
   KLI_assert(opengl_is_init == false);
@@ -131,8 +133,8 @@ void WM_init_opengl(void)
     return;
   }
 
-  /* Needs to be first to have an OpenGL context bound. */
-  // DRW_opengl_context_create();
+  /* Needs to be first to have an GPU context bound. */
+  DRW_gpu_context_create();
 
   GPU_init();
 
@@ -175,7 +177,7 @@ void WM_init(kContext *C, int argc, const char **argv)
   if (!G.background) {
     GPU_render_begin();
 
-    WM_init_opengl();
+    WM_init_gpu();
 
     GPU_context_begin_frame(GPU_context_active_get());
     UI_init();

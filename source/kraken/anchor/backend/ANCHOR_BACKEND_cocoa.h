@@ -30,6 +30,8 @@
 #include "ANCHOR_system.h"
 #include "ANCHOR_window.h"
 
+#include "ANCHOR_internal.h"
+
 #include "KrakenOS/Kraken.OS.hpp"
 
 class AnchorAppleMetal;
@@ -148,6 +150,13 @@ class AnchorSystemCocoa : public AnchorSystem
    * @param y: The y-coordinate of the cursor.
    * @return Indication of success. */
   eAnchorStatus setCursorPosition(AnchorS32 x, AnchorS32 y);
+
+  /**
+   * Create a new off-screen context.
+   * Never explicitly delete the context, use #disposeContext() instead.
+   * @return The new context (or 0 if creation failed).
+   */
+  AnchorIContext *createOffscreenContext();
 
  private:
 

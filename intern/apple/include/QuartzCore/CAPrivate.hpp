@@ -106,7 +106,7 @@ namespace CA
   {
     namespace Selector
     {
-      _CA_PRIVATE_DEF_SEL(allowsNextDrawableTimeout_, "allowsNextDrawableTimeout:");
+      _CA_PRIVATE_DEF_SEL(allowsNextDrawableTimeout, "allowsNextDrawableTimeout");
       _CA_PRIVATE_DEF_SEL(device, "device");
       _CA_PRIVATE_DEF_SEL(drawableSize, "drawableSize");
       _CA_PRIVATE_DEF_SEL(framebufferOnly, "framebufferOnly");
@@ -114,6 +114,7 @@ namespace CA
       _CA_PRIVATE_DEF_SEL(nextDrawable, "nextDrawable");
       _CA_PRIVATE_DEF_SEL(pixelFormat, "pixelFormat");
       _CA_PRIVATE_DEF_SEL(removeAllAnimations, "removeAllAnimations");
+      _CA_PRIVATE_DEF_SEL(setAllowsNextDrawableTimeout_, "setAllowsNextDrawableTimeout:");
       _CA_PRIVATE_DEF_SEL(setDevice_, "setDevice:");
       _CA_PRIVATE_DEF_SEL(setDrawableSize_, "setDrawableSize:");
       _CA_PRIVATE_DEF_SEL(setEdgeAntialiasingMask_, "setEdgeAntialiasingMask:");

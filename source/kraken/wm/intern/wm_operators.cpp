@@ -29,7 +29,7 @@
 #include "WM_debug_codes.h"
 #include "WM_msgbus.h"
 #include "WM_tokens.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 #include "WM_files.h"
 
 #include "USD_factory.h"

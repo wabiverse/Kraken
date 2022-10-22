@@ -45,7 +45,7 @@
 
 #include "WM_inline_tools.h"
 #include "WM_event_system.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "LUXO_access.h"
 

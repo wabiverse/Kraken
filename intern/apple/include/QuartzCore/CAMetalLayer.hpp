@@ -65,7 +65,8 @@ namespace CA
 
     void removeAllAnimations();
 
-    void allowsNextDrawableTimeout(bool nextDrawableTimeout);
+    bool allowsNextDrawableTimeout() const;
+    void setAllowsNextDrawableTimeout(bool nextDrawableTimeout);
   };
 }  // namespace CA
 
@@ -178,9 +179,16 @@ _CA_INLINE void CA::MetalLayer::removeAllAnimations()
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_CA_INLINE void CA::MetalLayer::allowsNextDrawableTimeout(bool nextDrawableTimeout)
+_CA_INLINE void CA::MetalLayer::setAllowsNextDrawableTimeout(bool nextDrawableTimeout)
 {
-  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(allowsNextDrawableTimeout_), nextDrawableTimeout);
+  Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setAllowsNextDrawableTimeout_), nextDrawableTimeout);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_CA_INLINE bool CA::MetalLayer::allowsNextDrawableTimeout() const
+{
+  return Object::sendMessage<bool>(this, _CA_PRIVATE_SEL(allowsNextDrawableTimeout));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------

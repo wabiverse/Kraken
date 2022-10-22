@@ -27,7 +27,7 @@
 
 #include "WM_cursors_api.h"
 #include "WM_cursors.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "USD_area.h"
 #include "USD_factory.h"

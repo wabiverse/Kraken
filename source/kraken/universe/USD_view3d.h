@@ -690,6 +690,33 @@ typedef enum eMotionPathVert_Flag {
   MOTIONPATH_VERT_KEY = (1 << 1),
 } eMotionPathVert_Flag;
 
+/**
+ * The following illustrates the orientation of the
+ * bounding box in local space
+ *
+ * <pre>
+ *
+ * Z  Y
+ * | /
+ * |/
+ * .-----X
+ *     2----------6
+ *    /|         /|
+ *   / |        / |
+ *  1----------5  |
+ *  |  |       |  |
+ *  |  3-------|--7
+ *  | /        | /
+ *  |/         |/
+ *  0----------4
+ * </pre>
+ */
+typedef struct BoundBox {
+  float vec[8][3];
+  int flag;
+  char _pad0[4];
+} BoundBox;
+
 #ifdef __cplusplus
 }
 #endif

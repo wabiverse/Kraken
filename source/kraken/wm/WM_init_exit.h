@@ -32,7 +32,7 @@ void WM_exit_ex(kContext *C, const bool do_python);
 
 void WM_init_state_start_with_console_set(bool value);
 
-void WM_init_opengl(void);
+void WM_init_gpu(void);
 
 void WM_init_manager(kContext *C);
 

@@ -492,6 +492,12 @@ namespace ANCHOR
    *    Memory Allocators" section of ANCHOR.cpp for details. */
 
   ANCHOR_API
+  AnchorContextHandle CreateGPUContext(AnchorSystemHandle systemhandle);
+
+  ANCHOR_API
+  eAnchorStatus ActivateGPUContext(AnchorContextHandle contexthandle);
+
+  ANCHOR_API
   AnchorContext *CreateContext(AnchorFontAtlas *shared_font_atlas = NULL);
 
   /**

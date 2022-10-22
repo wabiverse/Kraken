@@ -31,7 +31,7 @@
 #include "USD_window.h"
 #include "USD_workspace.h"
 
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "KLI_rhash.h"
 #include "KLI_time.h"

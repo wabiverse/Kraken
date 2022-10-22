@@ -40,7 +40,7 @@
 #include "USD_object.h"
 #include "USD_userpref.h"
 
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "ED_screen.h"
 

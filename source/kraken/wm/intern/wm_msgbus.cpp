@@ -35,7 +35,7 @@
 #include "WM_debug_codes.h"
 #include "WM_msgbus.h"
 #include "WM_operators.h"
-#include "WM_window.h"
+#include "WM_window.hh"
 
 #include "KLI_rhash.h"
 #include "KLI_listbase.h"

@@ -231,7 +231,7 @@ void DRW_uniform_attrs_pool_free(struct RHash *table);
 void DRW_render_context_enable(struct Render *render);
 void DRW_render_context_disable(struct Render *render);
 
-void DRW_opengl_context_create(void);
+void DRW_gpu_context_create(void);
 void DRW_opengl_context_destroy(void);
 void DRW_opengl_context_enable(void);
 void DRW_opengl_context_disable(void);

@@ -3126,6 +3126,25 @@ class AnchorContext : public AnchorIContext
   virtual ~AnchorContext() {}
 
   /**
+   * Call immediately after new to initialize.  If this fails then immediately delete the object.
+   * @return Indication as to whether initialization has succeeded.
+   */
+  virtual eAnchorStatus InitializeDrawingContext()
+  {
+    return ANCHOR_SUCCESS;
+  }
+
+  /**
+   * Updates the drawing context of this window. Needed
+   * whenever the window is changed.
+   * \return Indication of success.
+   */
+  virtual eAnchorStatus UpdateDrawingContext()
+  {
+    return ANCHOR_SUCCESS;
+  }
+
+  /**
    * Activates the drawing context.
    * @return A boolean success indicator.
    */
