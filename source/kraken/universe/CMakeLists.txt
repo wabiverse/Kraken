@@ -57,6 +57,7 @@ set(SRC
   USD_workspace.h
   USD_vec_types.h
   USD_view2d.h
+  USD_view3d.h
 )
 
 set(LIB
