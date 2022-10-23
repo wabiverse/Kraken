@@ -21,21 +21,23 @@
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#ifdef _WIN32
+
 /**
  * @file
  * KRAKEN Library.
  * Gadget Vault.
  */
 
-#include <Windows.h>
-#include <stdio.h>
+#  include <Windows.h>
+#  include <stdio.h>
 
-#include <dbghelp.h>
-#include <shlwapi.h>
-#include <tlhelp32.h>
+#  include <dbghelp.h>
+#  include <shlwapi.h>
+#  include <tlhelp32.h>
 
-#include "KLI_assert.h"
-#include "KLI_string.h"
+#  include "KLI_assert.h"
+#  include "KLI_string.h"
 
 static EXCEPTION_POINTERS *current_exception = NULL;
 
@@ -431,3 +433,5 @@ void KLI_system_backtrace(FILE *fp)
   // }
   // kli_windows_system_backtrace_modules(fp);
 }
+
+#endif /* _WIN32 only. */
