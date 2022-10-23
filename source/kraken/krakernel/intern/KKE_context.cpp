@@ -308,30 +308,30 @@ wmWindowManager *CTX_wm_manager(const kContext *C)
 wmWindow *CTX_wm_window(const kContext *C)
 {
   return (
-    wmWindow *)ctx_wm_python_context_get(C, "window", (KrakenPRIM *)&LUXO_Window, C->wm.window);
+    wmWindow *)ctx_wm_python_context_get(C, "window", (KrakenPRIM *)&PRIM_Window, C->wm.window);
 }
 
 WorkSpace *CTX_wm_workspace(const kContext *C)
 {
   return (WorkSpace *)
-    ctx_wm_python_context_get(C, "workspace", (KrakenPRIM *)&LUXO_WorkSpace, C->wm.workspace);
+    ctx_wm_python_context_get(C, "workspace", (KrakenPRIM *)&PRIM_WorkSpace, C->wm.workspace);
 }
 
 kScreen *CTX_wm_screen(const kContext *C)
 {
   return (
-    kScreen *)ctx_wm_python_context_get(C, "screen", (KrakenPRIM *)&LUXO_Screen, C->wm.screen);
+    kScreen *)ctx_wm_python_context_get(C, "screen", (KrakenPRIM *)&PRIM_Screen, C->wm.screen);
 }
 
 ScrArea *CTX_wm_area(const kContext *C)
 {
-  return (ScrArea *)ctx_wm_python_context_get(C, "area", (KrakenPRIM *)&LUXO_Area, C->wm.area);
+  return (ScrArea *)ctx_wm_python_context_get(C, "area", (KrakenPRIM *)&PRIM_Area, C->wm.area);
 }
 
 ARegion *CTX_wm_region(const kContext *C)
 {
   return (
-    ARegion *)ctx_wm_python_context_get(C, "region", (KrakenPRIM *)&LUXO_Region, C->wm.region);
+    ARegion *)ctx_wm_python_context_get(C, "region", (KrakenPRIM *)&PRIM_Region, C->wm.region);
 }
 
 ARegion *CTX_wm_menu(const kContext *C)

@@ -128,7 +128,7 @@ Main *KKE_main_new(void)
 
 const char *KKE_main_usdfile_path(const Main *kmain)
 {
-  return kmain->stage_id;
+  return kmain->filepath;
 }
 
 void KKE_kraken_globals_init(void)

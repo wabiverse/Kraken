@@ -1284,7 +1284,7 @@ typedef struct wmOperatorTypeMacro
 {
   /* operator id */
   char idname[MAX_NAME];
-  /* rna pointer to access properties, like keymap */
+  /* prim pointer to access properties, like keymap */
   /** Operator properties, assigned to ptr->data and can be written to a file. */
   IDProperty *properties;
   struct KrakenPRIM *ptr;

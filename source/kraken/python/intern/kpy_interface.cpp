@@ -25,20 +25,19 @@
 #include <Python.h>
 #include <frameobject.h>
 
-#include <float.h>
-#include <stddef.h>
+#include "MEM_guardedalloc.h"
 
+#include "CLG_log.h"
+
+#include "KLI_fileops.h"
+#include "KLI_listbase.h"
+#include "KLI_path_utils.h"
+#include "KLI_string.h"
+#include "KLI_string_utf8.h"
 #include "KLI_threads.h"
+#include "KLI_utildefines.h"
 
-#include "KKE_appdir.h"
-#include "KKE_appdir.hh"
-#include "KKE_global.h"
-
-#include "../generic/py_capi_utils.h"
-#include "../generic/python_utildefines.h"
-
-#include "KPY_api.h"
-#include "KPY_extern_python.h"
+#include "LUXO_types.h"
 
 #include "kpy.h"
 #include "kpy_capi_utils.h"
@@ -47,8 +46,27 @@
 #include "kpy_path.h"
 #include "kpy_stage.h"
 
+#include "KKE_appdir.h"
+#include "KKE_appdir.hh"
+#include "KKE_context.h"
+#include "KKE_global.h"
+#include "KKE_main.h"
+
+#include "KPY_extern_python.h"
+#include "KPY_extern_run.h"
+
+#include "../generic/py_capi_utils.h"
+#include "../generic/python_utildefines.h"
+#include "../gpu/gpu_py_api.h"
+
 #include <boost/python.hpp>
 #include <boost/python/overloads.hpp>
+
+/* Logging types to use anywhere in the Python modules. */
+
+CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_CONTEXT, "kpy.context");
+CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_INTERFACE, "kpy.interface");
+CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_PRIM, "kpy.prim");
 
 using namespace boost::python;
 
@@ -61,6 +79,13 @@ static int py_call_level = 0;
 /* Set by command line arguments before Python starts. */
 static bool py_use_system_env = false;
 
+#ifdef TIME_PY_RUN
+#  include "KLI_time.h"
+static int kpy_timer_count = 0;
+static double kpy_timer;         /* time since python starts */
+static double kpy_timer_run;     /* time for each python script run */
+static double kpy_timer_run_tot; /* accumulate python runs */
+#endif
 
 /* use for updating while a python script runs - in case of file load */
 void KPY_context_update(kContext *C)
@@ -83,6 +108,17 @@ void kpy_context_set(kContext *C, PyGILState_STATE *gilstate)
 
   if (py_call_level == 1) {
     KPY_context_update(C);
+
+#ifdef TIME_PY_RUN
+    if (kpy_timer_count == 0) {
+      /* record time from the beginning */
+      kpy_timer = PIL_check_seconds_timer();
+      kpy_timer_run = kpy_timer_run_tot = 0.0;
+    }
+    kpy_timer_run = PIL_check_seconds_timer();
+
+    kpy_timer_count++;
+#endif
   }
 }
 
@@ -97,7 +133,25 @@ void kpy_context_clear(kContext *UNUSED(C), const PyGILState_STATE *gilstate)
   if (py_call_level < 0) {
     fprintf(stderr, "ERROR: Python context internal state bug. this should not happen!\n");
   } else if (py_call_level == 0) {
+    /* XXX: Calling classes currently won't store the context :\,
+     * can't set NULL because of this. but this is very flaky still. */
+#if 0
+    KPY_context_set(NULL);
+#endif
+
+#ifdef TIME_PY_RUN
+    kpy_timer_run_tot += PIL_check_seconds_timer() - kpy_timer_run;
+    kpy_timer_count++;
+#endif
   }
+}
+
+static void kpy_context_end(kContext *C)
+{
+  if (UNLIKELY(C == NULL)) {
+    return;
+  }
+  CTX_wm_operator_poll_msg_clear(C);
 }
 
 /**
@@ -110,13 +164,23 @@ void KPY_modules_update(void)
 
 static struct _inittab kpy_internal_modules[] = {
   {"_kpy_path", KPyInit__kpy_path},
+  {"gpu",       KPyInit_gpu      },
   {NULL,        NULL             },
 };
 
 #ifndef WITH_PYTHON_MODULE
+/**
+ * Convenience function for #KPY_python_start.
+ *
+ * These should happen so rarely that having comprehensive errors isn't needed.
+ * For example if `sys.argv` fails to allocate memory.
+ *
+ * Show an error just to avoid silent failure in the unlikely event something goes wrong,
+ * in this case a developer will need to track down the root cause.
+ */
 static void pystatus_exit_on_error(PyStatus status)
 {
-  if (ARCH_UNLIKELY(PyStatus_Exception(status))) {
+  if (UNLIKELY(PyStatus_Exception(status))) {
     fputs("Internal error initializing Python!\n", stderr);
     /* This calls `exit`. */
     Py_ExitStatusException(status);
@@ -126,12 +190,12 @@ static void pystatus_exit_on_error(PyStatus status)
 
 void KPY_context_set(kContext *C)
 {
-  kpy_context_module->data = (void *)C;
+  kpy_context_module->ptr.data = (void *)C;
 }
 
 kContext *KPY_context_get(void)
 {
-  return (kContext *)kpy_context_module->data;
+  return (kContext *)kpy_context_module->ptr.data;
 }
 
 /* call KPY_context_set first */
@@ -282,7 +346,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
   /* Defines kpy.* and lets us import it */
   KPy_init_modules(C);
 
-  pystage_alloc_types();
+  pyprim_alloc_types();
 
 #ifndef WITH_PYTHON_MODULE
   /* py module runs atexit when kpy is freed */
@@ -298,14 +362,6 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
   const char *imports[] = {"atexit", "addon_utils", NULL};
   KPY_run_string_eval(C, imports, "atexit.register(addon_utils.disable_all)");
 #endif
-}
-
-static void kpy_context_end(kContext *C)
-{
-  if (ARCH_UNLIKELY(C == NULL)) {
-    return;
-  }
-  CTX_wm_operator_poll_msg_clear(C);
 }
 
 void KPY_python_use_system_env(void)
@@ -349,7 +405,7 @@ void KPY_python_end(void)
   // KPY_uni_props_clear_all();
 
   /* free other python data. */
-  // pystage_free_types();
+  // pyprim_free_types();
 
   /* clear all python data from structs */
 
@@ -389,8 +445,8 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
   } else if (item == Py_None) {
     done = true;
 
-  } else if (KPy_KrakenStage_Check(item)) {
-    ptr = new KrakenPRIM(((KPy_KrakenStage *)item)->ptr->GetPseudoRoot());
+  } else if (KPy_StagePRIM_Check(item)) {
+    ptr = &(((KPy_StagePRIM *)item)->ptr);
 
     // result->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
     CTX_data_pointer_set_ptr(result, ptr);
@@ -399,7 +455,6 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
 
   } else if (PySequence_Check(item)) {
     PyObject *seq_fast = PySequence_Fast(item, "kpy_context_get sequence conversion");
-
     if (seq_fast == NULL) {
       PyErr_Print();
       PyErr_Clear();
@@ -412,18 +467,21 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
       for (i = 0; i < len; i++) {
         PyObject *list_item = seq_fast_items[i];
 
-        if (KPy_KrakenStage_Check(list_item)) {
+        if (KPy_StagePRIM_Check(list_item)) {
 #if 0
           CollectionPointerLink *link = MEM_callocN(sizeof(CollectionPointerLink),
                                                     "kpy_context_get");
           link->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
           KLI_addtail(&result->list, link);
 #endif
-          ptr = new KrakenPRIM(((KPy_KrakenStage *)list_item)->ptr->GetPseudoRoot());
+          ptr = &(((KPy_StagePRIM *)list_item)->ptr);
           CTX_data_list_add_ptr(result, ptr);
         } else {
-          // TF_WARN("'%s' list item not a valid type in sequence type '%s'", member,
-          // Py_TYPE(item)->tp_name);
+          CLOG_INFO(KPY_LOG_CONTEXT,
+                    1,
+                    "'%s' list item not a valid type in sequence type '%s'",
+                    member,
+                    Py_TYPE(item)->tp_name);
         }
       }
       Py_DECREF(seq_fast);
@@ -434,12 +492,12 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
 
   if (done == false) {
     if (item) {
-      TF_WARN("'%s' not a valid type", member);
+      CLOG_INFO(KPY_LOG_CONTEXT, 1, "'%s' not a valid type", member);
     } else {
-      TF_WARN("'%s' not found", member);
+      CLOG_INFO(KPY_LOG_CONTEXT, 1, "'%s' not found", member);
     }
   } else {
-    TF_WARN("'%s' found", member);
+    CLOG_INFO(KPY_LOG_CONTEXT, 2, "'%s' found", member);
   }
 
   if (use_gil) {

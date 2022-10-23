@@ -72,26 +72,26 @@ WABI_NAMESPACE_USING
 
 KRAKEN_NAMESPACE_USING
 
-KPy_KrakenStage *kpy_context_module = NULL; /* for fast access */
+KPy_StagePRIM *kpy_context_module = NULL; /* for fast access */
 
-// PyTypeObject pystage_struct_meta_idprop_Type;
-// PyTypeObject pystage_struct_Type;
-// PyTypeObject pystage_prop_Type;
-// PyTypeObject pystage_prop_array_Type;
-// PyTypeObject pystage_prop_collection_Type;
-// PyTypeObject pystage_func_Type;
+// PyTypeObject pyprim_struct_meta_idprop_Type;
+// PyTypeObject pyprim_struct_Type;
+// PyTypeObject pyprim_prop_Type;
+// PyTypeObject pyprim_prop_array_Type;
+// PyTypeObject pyprim_prop_collection_Type;
+// PyTypeObject pyprim_func_Type;
 
-static PyObject *pystage_register_class(PyObject *self, PyObject *py_class);
-static PyObject *pystage_unregister_class(PyObject *self, PyObject *py_class);
+static PyObject *pyprim_register_class(PyObject *self, PyObject *py_class);
+static PyObject *pyprim_unregister_class(PyObject *self, PyObject *py_class);
 
 static bool uni_disallow_writes = false;
 
-bool pystage_write_check(void)
+bool pyprim_write_check(void)
 {
   return !uni_disallow_writes;
 }
 
-void pystage_write_set(bool val)
+void pyprim_write_set(bool val)
 {
   uni_disallow_writes = !val;
 }
@@ -117,7 +117,7 @@ struct KPy_TypesModule_State
   KrakenPROP prop;
 };
 
-PyTypeObject pystage_struct_meta_idprop_Type = {
+PyTypeObject pyprim_struct_meta_idprop_Type = {
   PyVarObject_HEAD_INIT(NULL, 0) "kpy_struct_meta_idprop", /* tp_name */
 
   /* NOTE! would be PyTypeObject, but subtypes of Type must be PyHeapTypeObject's */
@@ -142,9 +142,9 @@ PyTypeObject pystage_struct_meta_idprop_Type = {
   NULL,                                                          /* hashfunc tp_hash; */
   NULL,                                                          /* ternaryfunc tp_call; */
   NULL,                                                          /* reprfunc tp_str; */
-  NULL /* (getattrofunc) pystage_struct_meta_idprop_getattro */, /* getattrofunc tp_getattro; */
+  NULL /* (getattrofunc) pyprim_struct_meta_idprop_getattro */, /* getattrofunc tp_getattro; */
 
-  NULL,  // (setattrofunc)pystage_struct_meta_idprop_setattro,             /* setattrofunc
+  NULL,  // (setattrofunc)pyprim_struct_meta_idprop_setattro,             /* setattrofunc
          // tp_setattro; */
 
 
@@ -203,32 +203,32 @@ PyTypeObject pystage_struct_meta_idprop_Type = {
   NULL,
 };
 
-PyTypeObject pystage_struct_Type = {
+PyTypeObject pyprim_struct_Type = {
   PyVarObject_HEAD_INIT(NULL, 0) "kpy_struct", /* tp_name */
-  sizeof(KPy_KrakenStage),                     /* tp_basicsize */
+  sizeof(KPy_StagePRIM),                     /* tp_basicsize */
   0,                                           /* tp_itemsize */
   /* methods */
-  NULL,  //(destructor)pystage_struct_dealloc, /* tp_dealloc */
+  NULL,  //(destructor)pyprim_struct_dealloc, /* tp_dealloc */
   0,     /* tp_vectorcall_offset */
   NULL,  /* getattrfunc tp_getattr; */
   NULL,  /* setattrfunc tp_setattr; */
   NULL,
   /* tp_compare */ /* DEPRECATED in Python 3.0! */
-  NULL,            //(reprfunc)pystage_struct_repr, /* tp_repr */
+  NULL,            //(reprfunc)pyprim_struct_repr, /* tp_repr */
 
   /* Method suites for standard classes */
 
   NULL,  /* PyNumberMethods *tp_as_number; */
-  NULL,  //&pystage_struct_as_sequence, /* PySequenceMethods *tp_as_sequence; */
-  NULL,  //&pystage_struct_as_mapping,  /* PyMappingMethods *tp_as_mapping; */
+  NULL,  //&pyprim_struct_as_sequence, /* PySequenceMethods *tp_as_sequence; */
+  NULL,  //&pyprim_struct_as_mapping,  /* PyMappingMethods *tp_as_mapping; */
 
   /* More standard operations (here for binary compatibility) */
 
-  NULL,  //(hashfunc)pystage_struct_hash,         /* hashfunc tp_hash; */
+  NULL,  //(hashfunc)pyprim_struct_hash,         /* hashfunc tp_hash; */
   NULL,  /* ternaryfunc tp_call; */
-  NULL,  //(reprfunc)pystage_struct_str,          /* reprfunc tp_str; */
-  NULL,  //(getattrofunc)pystage_struct_getattro, /* getattrofunc tp_getattro; */
-  NULL,  //(setattrofunc)pystage_struct_setattro, /* setattrofunc tp_setattro; */
+  NULL,  //(reprfunc)pyprim_struct_str,          /* reprfunc tp_str; */
+  NULL,  //(getattrofunc)pyprim_struct_getattro, /* getattrofunc tp_getattro; */
+  NULL,  //(setattrofunc)pyprim_struct_setattro, /* setattrofunc tp_setattro; */
 
   /* Functions to access object as input/output buffer */
   NULL, /* PyBufferProcs *tp_as_buffer; */
@@ -244,10 +244,10 @@ PyTypeObject pystage_struct_Type = {
 /*** Assigned meaning in release 2.0 ***/
 /* call function for all accessible objects */
 #ifdef USE_PYRNA_STRUCT_REFERENCE
-  NULL,  //(traverseproc)pystage_struct_traverse, /* traverseproc tp_traverse; */
+  NULL,  //(traverseproc)pyprim_struct_traverse, /* traverseproc tp_traverse; */
 
   /* delete references to contained objects */
-  NULL,  //(inquiry)pystage_struct_clear, /* inquiry tp_clear; */
+  NULL,  //(inquiry)pyprim_struct_clear, /* inquiry tp_clear; */
 #else
   NULL,         /* traverseproc tp_traverse; */
 
@@ -257,11 +257,11 @@ PyTypeObject pystage_struct_Type = {
 
   /***  Assigned meaning in release 2.1 ***/
   /*** rich comparisons ***/
-  NULL,  //(richcmpfunc)pystage_struct_richcmp, /* richcmpfunc tp_richcompare; */
+  NULL,  //(richcmpfunc)pyprim_struct_richcmp, /* richcmpfunc tp_richcompare; */
 
 /***  weak reference enabler ***/
 #ifdef USE_WEAKREFS
-  offsetof(KPy_KrakenStage, in_weakreflist), /* long tp_weaklistoffset; */
+  offsetof(KPy_StagePRIM, in_weakreflist), /* long tp_weaklistoffset; */
 #else
   0,
 #endif
@@ -271,9 +271,9 @@ PyTypeObject pystage_struct_Type = {
   NULL, /* iternextfunc tp_iternext; */
 
   /*** Attribute descriptor and subclassing stuff ***/
-  NULL,  // pystage_struct_methods,   /* struct PyMethodDef *tp_methods; */
+  NULL,  // pyprim_struct_methods,   /* struct PyMethodDef *tp_methods; */
   NULL,  /* struct PyMemberDef *tp_members; */
-  NULL,  // pystage_struct_getseters, /* struct PyGetSetDef *tp_getset; */
+  NULL,  // pyprim_struct_getseters, /* struct PyGetSetDef *tp_getset; */
   NULL,  /* struct _typeobject *tp_base; */
   NULL,  /* PyObject *tp_dict; */
   NULL,  /* descrgetfunc tp_descr_get; */
@@ -281,7 +281,7 @@ PyTypeObject pystage_struct_Type = {
   0,     /* long tp_dictoffset; */
   NULL,  /* initproc tp_init; */
   NULL,  /* allocfunc tp_alloc; */
-  NULL,  // pystage_struct_new,       /* newfunc tp_new; */
+  NULL,  // pyprim_struct_new,       /* newfunc tp_new; */
   /*  Low-level free-memory routine */
   NULL, /* freefunc tp_free; */
   /* For PyObject_IS_GC */
@@ -299,9 +299,9 @@ PyTypeObject pystage_struct_Type = {
  * return a borrowed reference. */
 static PyObject *kpy_types_dict = NULL;
 
-static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
+static PyObject *pyprim_sprim_ExternalType(KrakenPRIM *sprim)
 {
-  const char *idname = LUXO_struct_identifier(srna).GetText();
+  const char *idname = LUXO_struct_identifier(sprim).GetText();
   PyObject *newclass;
 
   if (kpy_types_dict == NULL) {
@@ -321,7 +321,7 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
 
   /* Sanity check, could skip this unless in debug mode. */
   if (newclass) {
-    PyObject *base_compare = pystage_srna_PyBase(srna);
+    PyObject *base_compare = pyprim_sprim_PyBase(sprim);
     /* Can't do this because it gets super-classes values! */
     // PyObject *slots = PyObject_GetAttrString(newclass, "__slots__");
     /* Can do this, but faster not to. */
@@ -353,19 +353,19 @@ static PyObject *pystage_srna_ExternalType(KrakenPRIM *srna)
 }
 
 /* polymorphism. */
-static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
+static PyObject *pyprim_sprim_Subtype(KrakenPRIM *sprim)
 {
   PyObject *newclass = NULL;
 
   /* Stupid/simple case. */
-  if (srna == NULL) {
+  if (sprim == NULL) {
     newclass = NULL; /* Nothing to do. */
   }                  /* The class may have already been declared & allocated. */
-  else if ((newclass = (PyObject *)LUXO_struct_py_type_get(srna))) {
+  else if ((newclass = (PyObject *)LUXO_struct_py_type_get(sprim))) {
     Py_INCREF(newclass);
   } /* Check if kpy_types.py module has the class defined in it. */
-  else if ((newclass = pystage_srna_ExternalType(srna))) {
-    pystage_subtype_set_rna(newclass, srna);
+  else if ((newclass = pyprim_sprim_ExternalType(sprim))) {
+    pyprim_subtype_set_rna(newclass, sprim);
     Py_INCREF(newclass);
   } /* create a new class instance with the C api
      * mainly for the purposing of matching the C/RNA type hierarchy */
@@ -379,21 +379,21 @@ static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
      *   )
      */
 
-    /* Assume RNA_struct_py_type_get(srna) was already checked. */
-    PyObject *py_base = pystage_srna_PyBase(srna);
+    /* Assume RNA_struct_py_type_get(sprim) was already checked. */
+    PyObject *py_base = pyprim_sprim_PyBase(sprim);
     PyObject *metaclass;
-    const char *idname = LUXO_struct_identifier(srna).GetText();
+    const char *idname = LUXO_struct_identifier(sprim).GetText();
 
     /* Remove `__doc__` for now because we don't need it to generate docs. */
 #if 0
-    const char *descr = RNA_struct_ui_description(srna);
+    const char *descr = RNA_struct_ui_description(sprim);
     if (!descr) {
       descr = "(no docs)";
     }
 #endif
 
-    if (!PyObject_IsSubclass(py_base, (PyObject *)&pystage_struct_meta_idprop_Type)) {
-      metaclass = (PyObject *)&pystage_struct_meta_idprop_Type;
+    if (!PyObject_IsSubclass(py_base, (PyObject *)&pyprim_struct_meta_idprop_Type)) {
+      metaclass = (PyObject *)&pyprim_struct_meta_idprop_Type;
     } else {
       metaclass = (PyObject *)&PyType_Type;
     }
@@ -438,11 +438,11 @@ static PyObject *pystage_srna_Subtype(KrakenPRIM *srna)
     // PyC_ObSpit("new class ref", newclass);
 
     if (newclass) {
-      /* srna owns one, and the other is owned by the caller. */
-      pystage_subtype_set_rna(newclass, srna);
+      /* sprim owns one, and the other is owned by the caller. */
+      pyprim_subtype_set_rna(newclass, sprim);
 
       /* XXX, adding this back segfaults Blender on load. */
-      // Py_DECREF(newclass); /* let srna own */
+      // Py_DECREF(newclass); /* let sprim own */
     } else {
       /* This should not happen. */
       TF_WARN("failed to register '%s'", idname);
@@ -460,28 +460,28 @@ KrakenPRIM *LUXO_struct_base(KrakenPRIM *type)
 }
 
 /* polymorphism. */
-PyObject *pystage_srna_PyBase(KrakenPRIM *srna)
+PyObject *pyprim_sprim_PyBase(KrakenPRIM *sprim)
 {
   PyObject *py_base = NULL;
 
   /* Get the base type. */
-  KrakenPRIM *base = LUXO_struct_base(srna);
+  KrakenPRIM *base = LUXO_struct_base(sprim);
 
-  if (base && base != srna) {
-    py_base = pystage_srna_Subtype(base);
+  if (base && base != sprim) {
+    py_base = pyprim_sprim_Subtype(base);
     Py_DECREF(py_base);
   }
 
   if (py_base == NULL) {
-    py_base = (PyObject *)&pystage_struct_Type;
+    py_base = (PyObject *)&pyprim_struct_Type;
   }
 
   return py_base;
 }
 
-static PyObject *pystage_struct_Subtype(KrakenPRIM *ptr)
+static PyObject *pyprim_struct_Subtype(KrakenPRIM *ptr)
 {
-  return pystage_srna_Subtype(srna_from_ptr(ptr));
+  return pyprim_sprim_Subtype(sprim_from_ptr(ptr));
 }
 
 int LUXO_property_collection_lookup_token_index(KrakenPRIM *ptr,
@@ -536,7 +536,7 @@ static PyObject *kpy_types_module_getattro(PyObject *self, PyObject *pyname)
     PyErr_SetString(PyExc_AttributeError, "kpy.types: __getattr__ must be a string");
     ret = NULL;
   } else if (LUXO_property_collection_lookup_token(&state->ptr, TfToken(name), &newptr)) {
-    ret = pystage_struct_Subtype(&newptr);
+    ret = pyprim_struct_Subtype(&newptr);
     if (ret == NULL) {
       PyErr_Format(PyExc_RuntimeError,
                    "kpy.types.%.200s subtype could not be generated, this is a bug!",
@@ -545,7 +545,7 @@ static PyObject *kpy_types_module_getattro(PyObject *self, PyObject *pyname)
   } else {
 #if 0
     PyErr_Format(PyExc_AttributeError,
-                 "kpy.types.%.200s RNA_Struct does not exist",
+                 "kpy.types.%.200s PRIM_Struct does not exist",
                  PyUnicode_AsUTF8(pyname));
     return NULL;
 #endif
@@ -609,74 +609,74 @@ PyObject *KPY_uni_types(void)
 
   /* Internal base types we have no other accessors for. */
   {
-    static PyTypeObject *pystage_types[] = {
-      &pystage_struct_meta_idprop_Type,
-      &pystage_struct_Type,
-      // &pystage_prop_Type,
-      // &pystage_prop_array_Type,
-      // &pystage_prop_collection_Type,
-      // &pystage_func_Type,
+    static PyTypeObject *pyprim_types[] = {
+      &pyprim_struct_meta_idprop_Type,
+      &pyprim_struct_Type,
+      // &pyprim_prop_Type,
+      // &pyprim_prop_array_Type,
+      // &pyprim_prop_collection_Type,
+      // &pyprim_func_Type,
     };
 
     PyObject *submodule_dict = PyModule_GetDict(submodule);
-    for (int i = 0; i < ARRAY_SIZE(pystage_types); i += 1) {
+    for (int i = 0; i < ARRAY_SIZE(pyprim_types); i += 1) {
       PyDict_SetItemString(submodule_dict,
-                           pystage_types[i]->tp_name,
-                           (PyObject *)pystage_types[i]);
+                           pyprim_types[i]->tp_name,
+                           (PyObject *)pyprim_types[i]);
     }
   }
 
   return submodule;
 }
 
-// static PyObject *pystage_func_to_py(const KrakenPRIM *ptr, KrakenPRIM *func)
+// static PyObject *pyprim_func_to_py(const KrakenPRIM *ptr, KrakenPRIM *func)
 // {
 //   // KPy_KrakenFUNC *pyfunc = (KPy_KrakenFUNC *)PyObject_NEW(KPy_KrakenFUNC,
-//   // &pystage_func_Type); pyfunc->ptr = *ptr; pyfunc->func = (KrakenFUNC *)func; return
+//   // &pyprim_func_Type); pyfunc->ptr = *ptr; pyfunc->func = (KrakenFUNC *)func; return
 //   (PyObject
 //   // *)pyfunc;
 //   Py_RETURN_NONE;
 // }
 
-void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna)
+void pyprim_subtype_set_rna(PyObject *newclass, KrakenPRIM *sprim)
 {
   KrakenPRIM ptr;
   PyObject *item;
 
   Py_INCREF(newclass);
 
-  if (LUXO_struct_py_type_get(srna)) {
-    PyC_ObSpit("LUXO WAS SET - ", (PyObject *)LUXO_struct_py_type_get(srna));
+  if (LUXO_struct_py_type_get(sprim)) {
+    PyC_ObSpit("LUXO WAS SET - ", (PyObject *)LUXO_struct_py_type_get(sprim));
   }
 
-  Py_XDECREF(((PyObject *)LUXO_struct_py_type_get(srna)));
+  Py_XDECREF(((PyObject *)LUXO_struct_py_type_get(sprim)));
 
-  LUXO_struct_py_type_set(srna, (void *)newclass); /* Store for later use */
+  LUXO_struct_py_type_set(sprim, (void *)newclass); /* Store for later use */
 
   /* Not 100% needed, but useful,
    * having an instance within a type looks wrong, but this instance _is_ a LUXO type. */
 
   /* Python deals with the circular reference. */
-  LUXO_pointer_create(NULL, &LUXO_Struct, srna, &ptr);
-  item = pystage_struct_CreatePyObject(&ptr);
+  LUXO_pointer_create(NULL, &PRIM_Struct, sprim, &ptr);
+  item = pyprim_struct_CreatePyObject(&ptr);
 
   /* NOTE: must set the class not the __dict__ else the internal slots are not updated correctly.
    */
-  PyObject_SetAttr(newclass, kpy_intern_str_kr_stage, item);
+  PyObject_SetAttr(newclass, kpy_intern_str_kr_prim, item);
   Py_DECREF(item);
 
   /* Add staticmethods and classmethods. */
   // {
-  // const KrakenPRIM func_ptr(*srna);
+  // const KrakenPRIM func_ptr(*sprim);
 
-  // auto &lb = LUXO_struct_type_functions(srna);
+  // auto &lb = LUXO_struct_type_functions(sprim);
   // for (auto link : lb) {
   //   KrakenFUNC *func = (KrakenFUNC *)link;
   //   const int flag = LUXO_function_flag(func);
   //   if ((flag & FUNC_NO_SELF) &&         /* Is staticmethod or classmethod. */
   //       (flag & FUNC_REGISTER) == false) /* Is not for registration. */
   //   {
-  //     PyObject *func_py = pystage_func_to_py(&func_ptr, (KrakenPRIM *)func);
+  //     PyObject *func_py = pyprim_func_to_py(&func_ptr, (KrakenPRIM *)func);
   //     PyObject_SetAttrString(newclass, LUXO_function_identifier(func), func_py);
   //     Py_DECREF(func_py);
   //   }
@@ -686,61 +686,61 @@ void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna)
   /* Done with LUXO instance. */
 }
 
-KrakenPRIM *pystage_struct_as_srna(PyObject *self, const bool parent, const char *error_prefix)
+KrakenPRIM *pyprim_struct_as_sprim(PyObject *self, const bool parent, const char *error_prefix)
 {
-  KPy_KrakenStage *py_srna = NULL;
-  KrakenPRIM *srna;
+  KPy_StagePRIM *py_sprim = NULL;
+  KrakenPRIM *sprim;
 
   /* Unfortunately PyObject_GetAttrString won't look up this types tp_dict first :/ */
   if (PyType_Check(self)) {
-    py_srna = (KPy_KrakenStage *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict,
-                                                kpy_intern_str_kr_stage);
-    Py_XINCREF(py_srna);
+    py_sprim = (KPy_StagePRIM *)PyDict_GetItem(((PyTypeObject *)self)->tp_dict,
+                                                kpy_intern_str_kr_prim);
+    Py_XINCREF(py_sprim);
   }
 
   if (parent) {
-    /* be very careful with this since it will return a parent classes srna.
+    /* be very careful with this since it will return a parent classes sprim.
      * modifying this will do confusing stuff! */
-    if (py_srna == NULL) {
-      py_srna = (KPy_KrakenStage *)PyObject_GetAttr(self, kpy_intern_str_kr_stage);
+    if (py_sprim == NULL) {
+      py_sprim = (KPy_StagePRIM *)PyObject_GetAttr(self, kpy_intern_str_kr_prim);
     }
   }
 
-  if (py_srna == NULL) {
+  if (py_sprim == NULL) {
     PyErr_Format(PyExc_RuntimeError,
-                 "%.200s, missing bl_rna attribute from '%.200s' instance (may not be registered)",
+                 "%.200s, missing kr_prim attribute from '%.200s' instance (may not be registered)",
                  error_prefix,
                  Py_TYPE(self)->tp_name);
     return NULL;
   }
 
-  if (!KPy_KrakenStage_Check(py_srna)) {
+  if (!KPy_StagePRIM_Check(py_sprim)) {
     PyErr_Format(PyExc_TypeError,
-                 "%.200s, bl_rna attribute wrong type '%.200s' on '%.200s'' instance",
+                 "%.200s, kr_prim attribute wrong type '%.200s' on '%.200s'' instance",
                  error_prefix,
-                 Py_TYPE(py_srna)->tp_name,
+                 Py_TYPE(py_sprim)->tp_name,
                  Py_TYPE(self)->tp_name);
-    Py_DECREF(py_srna);
+    Py_DECREF(py_sprim);
     return NULL;
   }
 
-  if (!py_srna->ptr->GetPseudoRoot().IsValid()) {
+  if (py_sprim->ptr.type != &PRIM_Struct) {
     PyErr_Format(PyExc_TypeError,
-                 "%.200s, bl_rna attribute not a RNA_Struct, on '%.200s'' instance",
+                 "%.200s, kr_prim attribute not a PRIM_Struct, on '%.200s'' instance",
                  error_prefix,
                  Py_TYPE(self)->tp_name);
-    Py_DECREF(py_srna);
+    Py_DECREF(py_sprim);
     return NULL;
   }
 
-  srna = new KrakenPRIM(py_srna->ptr->GetPseudoRoot());
-  Py_DECREF(py_srna);
+  sprim = (KrakenPRIM *)py_sprim->ptr.data;
+  Py_DECREF(py_sprim);
 
-  return srna;
+  return sprim;
 }
 
 
-static int deferred_register_prop(KrakenPRIM *srna, PyObject *key, PyObject *item)
+static int deferred_register_prop(KrakenPRIM *sprim, PyObject *key, PyObject *item)
 {
   return 0;
 }
@@ -748,7 +748,7 @@ static int deferred_register_prop(KrakenPRIM *srna, PyObject *key, PyObject *ite
 /**
  * Extract `__annotations__` using `typing.get_type_hints` which handles the delayed evaluation.
  */
-static int pystage_deferred_register_class_from_type_hints(KrakenPRIM *srna,
+static int pyprim_deferred_register_class_from_type_hints(KrakenPRIM *sprim,
                                                            PyTypeObject *py_class)
 {
   PyObject *annotations_dict = NULL;
@@ -780,7 +780,7 @@ static int pystage_deferred_register_class_from_type_hints(KrakenPRIM *srna,
       Py_ssize_t pos = 0;
 
       while (PyDict_Next(annotations_dict, &pos, &key, &item)) {
-        ret = deferred_register_prop(srna, key, item);
+        ret = deferred_register_prop(sprim, key, item);
         if (ret != 0) {
           break;
         }
@@ -803,7 +803,7 @@ static int pystage_deferred_register_class_from_type_hints(KrakenPRIM *srna,
   return ret;
 }
 
-static int pystage_deferred_register_props(KrakenPRIM *srna, PyObject *class_dict)
+static int pyprim_deferred_register_props(KrakenPRIM *sprim, PyObject *class_dict)
 {
   PyObject *annotations_dict;
   PyObject *item, *key;
@@ -815,7 +815,7 @@ static int pystage_deferred_register_props(KrakenPRIM *srna, PyObject *class_dic
   if ((annotations_dict = PyDict_GetItem(class_dict, kpy_intern_str___annotations__)) &&
       PyDict_CheckExact(annotations_dict)) {
     while (PyDict_Next(annotations_dict, &pos, &key, &item)) {
-      ret = deferred_register_prop(srna, key, item);
+      ret = deferred_register_prop(sprim, key, item);
 
       if (ret != 0) {
         break;
@@ -826,7 +826,7 @@ static int pystage_deferred_register_props(KrakenPRIM *srna, PyObject *class_dic
   return ret;
 }
 
-static int pystage_deferred_register_class_recursive(KrakenPRIM *srna, PyTypeObject *py_class)
+static int pyprim_deferred_register_class_recursive(KrakenPRIM *sprim, PyTypeObject *py_class)
 {
   const int len = PyTuple_GET_SIZE(py_class->tp_bases);
   int i, ret;
@@ -845,8 +845,8 @@ static int pystage_deferred_register_class_recursive(KrakenPRIM *srna, PyTypeObj
      * This best fits having 'mix-in' classes for operators and render engines.
      */
     if (py_superclass != &PyBaseObject_Type &&
-        !PyObject_IsSubclass((PyObject *)py_superclass, (PyObject *)&pystage_struct_Type)) {
-      ret = pystage_deferred_register_class_recursive(srna, py_superclass);
+        !PyObject_IsSubclass((PyObject *)py_superclass, (PyObject *)&pyprim_struct_Type)) {
+      ret = pyprim_deferred_register_class_recursive(sprim, py_superclass);
 
       if (ret != 0) {
         return ret;
@@ -856,14 +856,14 @@ static int pystage_deferred_register_class_recursive(KrakenPRIM *srna, PyTypeObj
 
   /* Not register out own properties. */
   /* getattr(..., "__dict__") returns a proxy. */
-  return pystage_deferred_register_props(srna, py_class->tp_dict);
+  return pyprim_deferred_register_props(sprim, py_class->tp_dict);
 }
 
-int pystage_deferred_register_class(KrakenPRIM *srna, PyTypeObject *py_class)
+int pyprim_deferred_register_class(KrakenPRIM *sprim, PyTypeObject *py_class)
 {
   /* Panels and Menus don't need this
    * save some time and skip the checks here */
-  // if (!LUXO_struct_idprops_register_check(srna)) {
+  // if (!LUXO_struct_idprops_register_check(sprim)) {
   //   return 0;
   // }
 
@@ -874,13 +874,13 @@ int pystage_deferred_register_class(KrakenPRIM *srna, PyTypeObject *py_class)
 #endif
 
   if (use_postponed_annotations) {
-    return pystage_deferred_register_class_from_type_hints(srna, py_class);
+    return pyprim_deferred_register_class_from_type_hints(sprim, py_class);
   }
-  return pystage_deferred_register_class_recursive(srna, py_class);
+  return pyprim_deferred_register_class_recursive(sprim, py_class);
 }
 
 
-PyDoc_STRVAR(pystage_register_class_doc,
+PyDoc_STRVAR(pyprim_register_class_doc,
              ".. method:: register_class(cls)\n"
              "\n"
              "   Register a subclass of a Kraken type class.\n"
@@ -899,16 +899,16 @@ PyDoc_STRVAR(pystage_register_class_doc,
              "      If the class has a *register* class method it will be called\n"
              "      before registration.\n");
 PyMethodDef meth_kpy_register_class = {"register_class",
-                                       pystage_register_class,
+                                       pyprim_register_class,
                                        METH_O,
-                                       pystage_register_class_doc};
-static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_class)
+                                       pyprim_register_class_doc};
+static PyObject *pyprim_register_class(PyObject *UNUSED(self), PyObject *py_class)
 {
   kContext *C = NULL;
   ReportList reports;
   ObjectRegisterFunc reg;
-  KrakenPRIM *srna;
-  KrakenPRIM *srna_new;
+  KrakenPRIM *sprim;
+  KrakenPRIM *sprim_new;
   const char *identifier;
   PyObject *py_cls_meth;
   const char *error_prefix = "register_class(...):";
@@ -921,7 +921,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
     return NULL;
   }
 
-  if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, kpy_intern_str_kr_stage)) {
+  if (PyDict_GetItem(((PyTypeObject *)py_class)->tp_dict, kpy_intern_str_kr_prim)) {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): "
                  "already registered as a subclass '%.200s'",
@@ -929,7 +929,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
     return NULL;
   }
 
-  if (!pystage_write_check()) {
+  if (!pyprim_write_check()) {
     PyErr_Format(PyExc_RuntimeError,
                  "register_class(...): "
                  "can't run in readonly state '%.200s'",
@@ -937,32 +937,32 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
     return NULL;
   }
 
-  /* WARNING: gets parent classes srna, only for the register function. */
-  srna = pystage_struct_as_srna(py_class, true, "register_class(...):");
-  if (srna == NULL) {
+  /* WARNING: gets parent classes sprim, only for the register function. */
+  sprim = pyprim_struct_as_sprim(py_class, true, "register_class(...):");
+  if (sprim == NULL) {
     return NULL;
   }
 
   /* Fails in some cases, so can't use this check, but would like to :| */
 #if 0
-  if (RNA_struct_py_type_get(srna)) {
+  if (RNA_struct_py_type_get(sprim)) {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): %.200s's parent class %.200s is already registered, this "
                  "is not allowed",
                  ((PyTypeObject *)py_class)->tp_name,
-                 RNA_struct_identifier(srna));
+                 RNA_struct_identifier(sprim));
     return NULL;
   }
 #endif
 
   /* Check that we have a register callback for this type. */
-  reg = LUXO_struct_register(srna);
+  reg = LUXO_struct_register(sprim);
 
   if (!reg) {
     PyErr_Format(PyExc_ValueError,
                  "register_class(...): expected a subclass of a registerable "
                  "LUXO type (%.200s does not support registration)",
-                 LUXO_struct_identifier(srna).GetText());
+                 LUXO_struct_identifier(sprim).GetText());
     return NULL;
   }
 
@@ -974,7 +974,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
 
   identifier = ((PyTypeObject *)py_class)->tp_name;
 
-  srna_new = reg(CTX_data_main(C),
+  sprim_new = reg(CTX_data_main(C),
                  &reports,
                  py_class,
                  identifier,
@@ -995,16 +995,16 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
 
   /* Python errors validating are not converted into reports so the check above will fail.
    * the cause for returning NULL will be printed as an error */
-  if (srna_new == NULL) {
+  if (sprim_new == NULL) {
     return NULL;
   }
 
   /* Takes a reference to 'py_class'. */
-  pystage_subtype_set_rna(py_class, srna_new);
+  pyprim_subtype_set_rna(py_class, sprim_new);
 
-  /* Old srna still references us, keep the check in case registering somehow can free it. */
-  if (LUXO_struct_py_type_get(srna)) {
-    LUXO_struct_py_type_set(srna, NULL);
+  /* Old sprim still references us, keep the check in case registering somehow can free it. */
+  if (LUXO_struct_py_type_get(sprim)) {
+    LUXO_struct_py_type_set(sprim, NULL);
 #if 0
     /* Should be able to do this XXX since the old RNA adds a new ref. */
     Py_DECREF(py_class);
@@ -1015,7 +1015,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
    *
    * item = PyObject_GetAttrString(py_class, "__dict__");
    */
-  if (pystage_deferred_register_class(srna_new, (PyTypeObject *)py_class) != 0) {
+  if (pyprim_deferred_register_class(sprim_new, (PyTypeObject *)py_class) != 0) {
     return NULL;
   }
 
@@ -1041,7 +1041,7 @@ static PyObject *pystage_register_class(PyObject *UNUSED(self), PyObject *py_cla
 }
 
 #ifdef USE_PYUSD_OBJECT_REFERENCE
-static void pystage_struct_reference_set(KPy_KrakenStage *self, PyObject *reference)
+static void pyprim_struct_reference_set(KPy_StagePRIM *self, PyObject *reference)
 {
   if (self->reference) {
     PyObject_GC_UnTrack(self);
@@ -1085,7 +1085,7 @@ static RHash *id_weakref_pool_get(const SdfPath &id)
   return weakinfo_hash;
 }
 
-static void id_weakref_pool_add(const SdfPath &id, KPy_DummyKrakenPRIM *pystage)
+static void id_weakref_pool_add(const SdfPath &id, KPy_DummyKrakenPRIM *pyprim)
 {
   PyObject *weakref;
   PyObject *weakref_capsule;
@@ -1100,7 +1100,7 @@ static void id_weakref_pool_add(const SdfPath &id, KPy_DummyKrakenPRIM *pystage)
   Py_DECREF(weakref_capsule);
 
   /* Add weakref to weakinfo_hash list. */
-  weakref = PyWeakref_NewRef((PyObject *)pystage, weakref_cb_py);
+  weakref = PyWeakref_NewRef((PyObject *)pyprim, weakref_cb_py);
 
   Py_DECREF(weakref_cb_py); /* Function owned by the weakref now. */
 
@@ -1116,47 +1116,47 @@ void KPY_uni_init(void)
 {
 /* For some reason MSVC complains of these. */
 #if defined(_MSC_VER)
-  pystage_struct_meta_idprop_Type.tp_base = &PyType_Type;
+  pyprim_struct_meta_idprop_Type.tp_base = &PyType_Type;
 #endif
 
   /* metaclass */
-  if (PyType_Ready(&pystage_struct_meta_idprop_Type) < 0) {
+  if (PyType_Ready(&pyprim_struct_meta_idprop_Type) < 0) {
     return;
   }
 
-  if (PyType_Ready(&pystage_struct_Type) < 0) {
+  if (PyType_Ready(&pyprim_struct_Type) < 0) {
     return;
   }
 
-  // if (PyType_Ready(&pystage_prop_Type) < 0) {
+  // if (PyType_Ready(&pyprim_prop_Type) < 0) {
   //   return;
   // }
 
-  // if (PyType_Ready(&pystage_prop_array_Type) < 0) {
+  // if (PyType_Ready(&pyprim_prop_array_Type) < 0) {
   //   return;
   // }
 
-  // if (PyType_Ready(&pystage_prop_collection_Type) < 0) {
+  // if (PyType_Ready(&pyprim_prop_collection_Type) < 0) {
   //   return;
   // }
 
-  // if (PyType_Ready(&pystage_prop_collection_idprop_Type) < 0) {
+  // if (PyType_Ready(&pyprim_prop_collection_idprop_Type) < 0) {
   //   return;
   // }
 
-  // if (PyType_Ready(&pystage_func_Type) < 0) {
+  // if (PyType_Ready(&pyprim_func_Type) < 0) {
   //   return;
   // }
 
 #ifdef USE_PYUSD_ITER
-  // if (PyType_Ready(&pystage_prop_collection_iter_Type) < 0) {
+  // if (PyType_Ready(&pyprim_prop_collection_iter_Type) < 0) {
   //   return;
   // }
 #endif
 }
 
 
-PyDoc_STRVAR(pystage_unregister_class_doc,
+PyDoc_STRVAR(pyprim_unregister_class_doc,
              ".. method:: unregister_class(cls)\n"
              "\n"
              "   Unload the Python class from kraken.\n"
@@ -1165,15 +1165,15 @@ PyDoc_STRVAR(pystage_unregister_class_doc,
              "   before unregistering.\n");
 PyMethodDef meth_kpy_unregister_class = {
   "unregister_class",
-  pystage_unregister_class,
+  pyprim_unregister_class,
   METH_O,
-  pystage_unregister_class_doc,
+  pyprim_unregister_class_doc,
 };
-static PyObject *pystage_unregister_class(PyObject *UNUSED(self), PyObject *py_class)
+static PyObject *pyprim_unregister_class(PyObject *UNUSED(self), PyObject *py_class)
 {
   kContext *C = NULL;
   ObjectUnregisterFunc unreg;
-  UsdPrim srna;
+  UsdPrim sprim;
   PyObject *py_cls_meth;
 
   Py_RETURN_NONE;
@@ -1181,28 +1181,28 @@ static PyObject *pystage_unregister_class(PyObject *UNUSED(self), PyObject *py_c
 
 
 /* 'kpy.data' from Python. */
-static UsdStageWeakPtr stage_module_ptr = TfNullPtr;
+static KrakenPRIM *stage_module_ptr = nullptr;
 PyObject *KPY_stage_module(void)
 {
-  KPy_KrakenStage *pystage;
+  KPy_StagePRIM *pyprim;
   KrakenPRIM ptr;
 
   /* For now, return the base RNA type rather than a real module. */
-  LUXO_main_pointer_create(G.main, &ptr);
-  pystage = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ptr);
+  LUXO_main_pointer_create(G_MAIN, &ptr);
+  pyprim = (KPy_StagePRIM *)pyprim_struct_CreatePyObject(&ptr);
 
-  stage_module_ptr = pystage->ptr;
-  return (PyObject *)pystage;
+  stage_module_ptr = &pyprim->ptr;
+  return (PyObject *)pyprim;
 }
 
 void KPY_update_stage_module(void)
 {
   if (stage_module_ptr) {
-    stage_module_ptr->Open(G.main->stage_id);
+    stage_module_ptr->data = G_MAIN;
   }
 }
 
-void pystage_alloc_types(void)
+void pyprim_alloc_types(void)
 {
   // #ifdef DEBUG
   //   PyGILState_STATE gilstate;
@@ -1217,7 +1217,7 @@ void pystage_alloc_types(void)
   //   prop = LUXO_object_find_property(&ptr, "structs");
 
   //   USD_PROP_BEGIN (&ptr, itemptr, prop) {
-  //     PyObject *item = pystage_struct_Subtype(&itemptr);
+  //     PyObject *item = pyprim_struct_Subtype(&itemptr);
   //     if (item == NULL) {
   //       if (PyErr_Occurred()) {
   //         PyErr_Print();
@@ -1235,9 +1235,9 @@ void pystage_alloc_types(void)
 }
 
 /*-----------------------CreatePyObject---------------------------------*/
-PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
+PyObject *pyprim_struct_CreatePyObject(KrakenPRIM *ptr)
 {
-  KPy_KrakenStage *pystage = NULL;
+  KPy_StagePRIM *pyprim = NULL;
 
   /* NOTE: don't rely on this to return None since NULL data with a valid type can often crash. */
   if (ptr->data == NULL && ptr->type == NULL) { /* Operator RNA has NULL data. */
@@ -1246,85 +1246,85 @@ PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr)
 
   void **instance = ptr->data ? LUXO_struct_instance(ptr) : NULL;
   if (instance && *instance) {
-    pystage = (KPy_KrakenStage *)*instance;
+    pyprim = (KPy_StagePRIM *)*instance;
 
     /* Refine may have changed types after the first instance was created. */
-    if (ptr->type->GetPrim() == pystage->ptr->GetPrimAtPath(ptr->type->GetPath())) {
-      Py_INCREF(pystage);
-      return (PyObject *)pystage;
+    if (ptr->type == pyprim->ptr.type) {
+      Py_INCREF(pyprim);
+      return (PyObject *)pyprim;
     }
 
     /* Existing users will need to use 'type_recast' method. */
-    Py_DECREF(pystage);
+    Py_DECREF(pyprim);
     *instance = NULL;
     /* Continue as if no instance was made. */
 #if 0 /* No need to assign, will be written to next... */
-      pystage = NULL;
+      pyprim = NULL;
 #endif
   }
 
   {
-    PyTypeObject *tp = (PyTypeObject *)pystage_struct_Subtype(ptr);
+    PyTypeObject *tp = (PyTypeObject *)pyprim_struct_Subtype(ptr);
 
     if (tp) {
-      pystage = (KPy_KrakenStage *)tp->tp_alloc(tp, 0);
+      pyprim = (KPy_StagePRIM *)tp->tp_alloc(tp, 0);
 #ifdef USE_PYRNA_STRUCT_REFERENCE
       /* #PyType_GenericAlloc will have set tracking.
        * We only want tracking when `KrakenSTAGE.reference` has been set. */
-      if (pystage != NULL) {
-        PyObject_GC_UnTrack(pystage);
+      if (pyprim != NULL) {
+        PyObject_GC_UnTrack(pyprim);
       }
 #endif
-      Py_DECREF(tp); /* srna owns, can't hold a reference. */
+      Py_DECREF(tp); /* sprim owns, can't hold a reference. */
     } else {
       TF_WARN("kpy: could not make type '%s'", LUXO_struct_identifier(ptr).GetText());
 
 #ifdef USE_PYRNA_STRUCT_REFERENCE
-      pystage = (KPyKPy_KrakenStage_StructLUXO *)PyObject_GC_New(KPy_KrakenStage,
-                                                                 &pystage_struct_Type);
+      pyprim = (KPyKPy_StagePRIM_StructLUXO *)PyObject_GC_New(KPy_StagePRIM,
+                                                                 &pyprim_struct_Type);
 #else
-      pystage = (KPy_KrakenStage *)PyObject_New(KPy_KrakenStage, &pystage_struct_Type);
+      pyprim = (KPy_StagePRIM *)PyObject_New(KPy_StagePRIM, &pyprim_struct_Type);
 #endif
 
 #ifdef USE_WEAKREFS
-      if (pystage != NULL) {
-        pystage->in_weakreflist = NULL;
+      if (pyprim != NULL) {
+        pyprim->in_weakreflist = NULL;
       }
 #endif
     }
   }
 
-  if (pystage == NULL) {
+  if (pyprim == NULL) {
     PyErr_SetString(PyExc_MemoryError, "couldn't create kpy_struct object");
     return NULL;
   }
 
-  /* Blender's instance owns a reference (to avoid Python freeing it). */
+  /* Kraken's instance owns a reference (to avoid Python freeing it). */
   if (instance) {
-    *instance = pystage;
-    Py_INCREF(pystage);
+    *instance = pyprim;
+    Py_INCREF(pyprim);
   }
 
-  pystage->ptr = ptr->GetStage();
+  pyprim->ptr = *ptr;
 #ifdef PYRNA_FREE_SUPPORT
-  pystage->freeptr = false;
+  pyprim->freeptr = false;
 #endif
 
 #ifdef USE_PYRNA_STRUCT_REFERENCE
-  pystage->reference = NULL;
+  pyprim->reference = NULL;
 #endif
 
-  PyC_ObSpit("NewKrakenSTAGE: ", (PyObject *)pystage);
+  PyC_ObSpit("NewKrakenSTAGE: ", (PyObject *)pyprim);
 
 #ifdef USE_PYRNA_INVALIDATE_WEAKREF
   if (ptr->owner_id) {
-    id_weakref_pool_add(ptr->owner_id, (KPy_DummyKrakenPRIM *)pystage);
+    id_weakref_pool_add(ptr->owner_id, (KPy_DummyKrakenPRIM *)pyprim);
   }
 #endif
-  return (PyObject *)pystage;
+  return (PyObject *)pyprim;
 }
 
-static PyObject *pystage_kr_owner_id_get(PyObject *UNUSED(self))
+static PyObject *pyprim_kr_owner_id_get(PyObject *UNUSED(self))
 {
   // const char *name = RNA_struct_state_owner_get();
   // if (name) {
@@ -1333,7 +1333,7 @@ static PyObject *pystage_kr_owner_id_get(PyObject *UNUSED(self))
   Py_RETURN_NONE;
 }
 
-static PyObject *pystage_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
+static PyObject *pyprim_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value)
 {
   const char *name;
   if (value == Py_None) {
@@ -1353,13 +1353,13 @@ static PyObject *pystage_kr_owner_id_set(PyObject *UNUSED(self), PyObject *value
 
 PyMethodDef meth_kpy_owner_id_get = {
   "_kr_owner_id_get",
-  (PyCFunction)pystage_kr_owner_id_get,
+  (PyCFunction)pyprim_kr_owner_id_get,
   METH_NOARGS,
   NULL,
 };
 PyMethodDef meth_kpy_owner_id_set = {
   "_kr_owner_id_set",
-  (PyCFunction)pystage_kr_owner_id_set,
+  (PyCFunction)pyprim_kr_owner_id_set,
   METH_O,
   NULL,
 };

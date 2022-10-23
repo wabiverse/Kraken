@@ -68,7 +68,7 @@ KRAKEN_NAMESPACE_USING
 struct KPy_DataContext
 {
   PyObject_HEAD /* Required Python macro. */
-    KPy_KrakenStage *data_luxo;
+    KPy_StagePRIM *data_prim;
   char filepath[1024];
 };
 
@@ -84,20 +84,20 @@ static PyMethodDef kpy_pixar_data_context_methods[] = {
 
 static int kpy_pixar_data_context_traverse(KPy_DataContext *self, visitproc visit, void *arg)
 {
-  Py_VISIT(self->data_luxo);
+  Py_VISIT(self->data_prim);
   return 0;
 }
 
 static int kpy_pixar_data_context_clear(KPy_DataContext *self)
 {
-  Py_CLEAR(self->data_luxo);
+  Py_CLEAR(self->data_prim);
   return 0;
 }
 
 static void kpy_pixar_data_context_dealloc(KPy_DataContext *self)
 {
   PyObject_GC_UnTrack(self);
-  Py_CLEAR(self->data_luxo);
+  Py_CLEAR(self->data_prim);
   PyObject_GC_Del(self);
 }
 
@@ -211,7 +211,7 @@ static PyObject *kpy_pixar_data_temp_data(PyObject *UNUSED(self), PyObject *args
 
   ret = PyObject_GC_New(KPy_DataContext, &kpy_pixar_data_context_Type);
 
-  STRNCPY(ret->filepath, filepath ? filepath : G.main->stage_id);
+  STRNCPY(ret->filepath, filepath ? filepath : G.main->filepath);
 
   return (PyObject *)ret;
 }
@@ -220,20 +220,19 @@ static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
 {
   Main *kmain_temp = KKE_main_new();
   KrakenPRIM ptr;
-  LUXO_pointer_create(NULL, &LUXO_KrakenPixar, kmain_temp, &ptr);
+  LUXO_pointer_create(NULL, &PRIM_KrakenPRIM, kmain_temp, &ptr);
 
-  self->data_luxo = (KPy_KrakenStage *)pystage_struct_CreatePyObject(&ptr);
+  self->data_prim = (KPy_StagePRIM *)pyprim_struct_CreatePyObject(&ptr);
 
   PyObject_GC_Track(self);
 
-  return (PyObject *)self->data_luxo;
+  return (PyObject *)self->data_prim;
 }
 
 static PyObject *kpy_pixar_data_context_exit(KPy_DataContext *self, PyObject *UNUSED(args))
 {
-  self->data_luxo->ptr->Unload(self->data_luxo->ptr->GetPseudoRoot().GetPath());
-  KKE_main_free((Main *)self->data_luxo->data);
-  self->data_luxo->ptr.Reset();
+  KKE_main_free((Main *)self->data_prim->ptr.data);
+  PRIM_POINTER_INVALIDATE(&self->data_prim->ptr);
   Py_RETURN_NONE;
 }
 

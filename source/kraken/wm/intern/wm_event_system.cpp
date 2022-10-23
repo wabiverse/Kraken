@@ -268,21 +268,31 @@ static wmEvent *wm_event_add_mousemove(wmWindow *win, wmEvent *event)
 
 static wmWindow *wm_event_cursor_other_windows(wmWindowManager *wm, wmWindow *win, wmEvent *event)
 {
-  GfVec2i mval = GfVec2i(event->mouse_pos[0], event->mouse_pos[1]);
-
-  if (wm->windows.size() <= 1) {
+  if (wm->windows.first == wm->windows.last) {
     return nullptr;
   }
 
   /* In order to use window size and mouse position (pixels), we have to use a WM function. */
 
   /* check if outside, include top window bar... */
-  if (mval[0] < 0 || mval[1] < 0 || mval[0] > WM_window_pixels_x(win) ||
-      mval[1] > WM_window_pixels_y(win) + 30) {
-    wmWindow *win_other;
-    if (WM_window_find_under_cursor(wm, win, win, mval, &win_other, &mval)) {
-      event->mouse_pos[0] = mval[0];
-      event->mouse_pos[1] = mval[1];
+  int event_xy[2];
+  event_xy[0] = event->mouse_pos[0];
+  event_xy[1] = event->mouse_pos[1];
+  if (event_xy[0] < 0 || event_xy[1] < 0 || event_xy[0] > WM_window_pixels_x(win) ||
+      event_xy[1] > WM_window_pixels_y(win) + 30) {
+    /* Let's skip windows having modal handlers now. */
+    /* Potential XXX ugly... I wouldn't have added a `modalhandlers` list
+     * (introduced in rev 23331, ton). */
+    LISTBASE_FOREACH(wmEventHandler *, handler, &win->modalhandlers)
+    {
+      if (ELEM(handler->type, WM_HANDLER_TYPE_UI, WM_HANDLER_TYPE_OP)) {
+        return nullptr;
+      }
+    }
+
+    wmWindow *win_other = WM_window_find_under_cursor(win, event_xy, event_xy);
+    if (win_other && win_other != win) {
+      copy_v2_v2_int(event->mouse_pos, event_xy);
       return win_other;
     }
   }
@@ -1079,7 +1089,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
 
   /* Adding new operator could be function, only happens here now. */
   op->type = ot;
-  op->idname = ot->idname;
+  op->idname = TfToken(ot->idname);
 
   /* Initialize properties, either copy or create. */
   op->ptr = MEM_new<KrakenPRIM>("wmOperatorPtrPRIM");
@@ -1095,7 +1105,7 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
   if (reports) {
     op->reports = reports; /* Must be initialized already. */
   } else {
-    op->reports = MEM_new<ReportList>("wmOperatorReportList");
+    op->reports = MEM_cnew<ReportList>("wmOperatorReportList");
     KKE_reports_init(op->reports, RPT_STORE | RPT_FREE);
   }
 
@@ -1112,30 +1122,38 @@ static wmOperator *wm_operator_create(wmWindowManager *wm,
 
     /* If properties exist, it will contain everything needed. */
     if (properties) {
-      wmOperatorTypeMacro *otmacro = static_cast<wmOperatorTypeMacro *>(ot->macro.front());
+      std::vector<wmOperatorTypeMacro *>::const_iterator otmacro_begin = ot->macro.begin();
+      std::vector<wmOperatorTypeMacro *>::const_iterator otmacro_end = ot->macro.end();
+      wmOperatorTypeMacro *otmacro = (*otmacro_begin);
 
-      // LUXO_STRUCT_BEGIN(properties, prop)
-      // {
+      int otmacro_idx = 0;
+      for (auto &usdprop : properties->GetAttributes()) {
 
-      //   if (otmacro == nullptr) {
-      //     break;
-      //   }
+        KrakenPROP prop = usdprop;
 
-      //   /* Skip invalid properties. */
-      //   if (STREQ(LUXO_property_identifier(prop), otmacro->idname)) {
-      //     wmOperatorType *otm = WM_operatortype_find(otmacro->idname, false);
-      //     KrakenPRIM someptr = LUXO_property_pointer_get(properties, prop);
-      //     wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
+        if (otmacro == nullptr) {
+          break;
+        }
 
-      //     IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
+        /* Skip invalid properties. */
+        if (prop && prop.IsValid()) {
+          wmOperatorType *otm = WM_operatortype_find(TfToken(otmacro->idname));
+          KrakenPRIM someptr = prop.GetPrim();
+          wmOperator *opm = wm_operator_create(wm, otm, &someptr, nullptr);
 
-      //     motherop->macro.push_back(opm);
-      //     opm->opm = motherop; /* Pointer to mom, for modal(). */
+          IDP_ReplaceGroupInGroup(opm->properties, otmacro->properties);
 
-      //     otmacro = otmacro->next;
-      //   }
-      // }
-      // LUXO_STRUCT_END;
+          motherop->macro.push_back(opm);
+          opm->opm = motherop; /* Pointer to mom, for modal(). */
+
+          if (otmacro != (*otmacro_end)) {
+            otmacro_idx += 1;
+            otmacro = *(otmacro_begin + otmacro_idx);
+          } else {
+            break;
+          }
+        }
+      }
     } else {
       for (auto &macro : ot->macro) {
         wmOperatorType *otm = WM_operatortype_find(TfToken(macro->idname));
@@ -1635,14 +1653,14 @@ int WM_operator_name_call(kContext *C,
 void WM_event_do_refresh_wm(kContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
+  /* Cached: editor refresh callbacks now, they get context. */
+  LISTBASE_FOREACH(wmWindow *, win, &wm->windows)
+  {
+    const kScreen *screen = WM_window_get_active_screen(win);
 
-  UNIVERSE_FOR_ALL (win, wm->windows) {
-
-    const kScreen *screen = WM_window_get_active_screen(VALUE(win));
-
-    CTX_wm_window_set(C, VALUE(win));
-
-    UNIVERSE_FOR_ALL (area, screen->areas) {
+    CTX_wm_window_set(C, win);
+    LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
+    {
       if (area->do_refresh) {
         CTX_wm_area_set(C, area);
         ED_area_do_refresh(C, area);
@@ -1650,7 +1668,7 @@ void WM_event_do_refresh_wm(kContext *C)
     }
   }
 
-  CTX_wm_window_set(C, NULL);
+  CTX_wm_window_set(C, nullptr);
 }
 
 /* -------------------------------------------------------------------- */
@@ -1729,7 +1747,7 @@ static void wm_event_free(wmEvent *event)
   free(event);
 }
 
-static void wm_event_free_all(wmWindow *win)
+void WM_event_free_all(wmWindow *win)
 {
   wmEvent *event;
   while (!win->event_queue.empty()) {
@@ -1757,35 +1775,146 @@ void WM_event_do_handlers(kContext *C)
   // WM_keyconfig_update(wm);
   // WM_gizmoconfig_update(CTX_data_main(C));
 
-  UNIVERSE_FOR_ALL (win, wm->windows) {
-    kScreen *screen = WM_window_get_active_screen(VALUE(win));
+  LISTBASE_FOREACH(wmWindow *, win, &wm->windows)
+  {
+    kScreen *screen = WM_window_get_active_screen(win);
 
     /* Some safety checks - these should always be set! */
-    KLI_assert(WM_window_get_active_scene(VALUE(win)));
-    KLI_assert(WM_window_get_active_screen(VALUE(win)));
-    KLI_assert(WM_window_get_active_workspace(VALUE(win)));
+    KLI_assert(WM_window_get_active_scene(win));
+    KLI_assert(WM_window_get_active_screen(win));
+    KLI_assert(WM_window_get_active_workspace(win));
 
-    if (screen == NULL) {
-      wm_event_free_all(VALUE(win));
+    if (screen == nullptr) {
+      WM_event_free_all(win);
     } else {
-      kScene *scene = WM_window_get_active_scene(VALUE(win));
+      kScene *scene = WM_window_get_active_scene(win);
     }
 
-    wmEvent *event;
-    while ((event = (*VALUE(win)->event_queue.begin()))) {
+    std::deque<wmEvent *>::const_iterator event_it = win->event_queue.begin();
+    std::deque<wmEvent *>::const_iterator event_end = win->event_queue.end();
+    for (; event_it != event_end; ++event_it) {
       int action = WM_HANDLER_CONTINUE;
 
-      screen = WM_window_get_active_screen(VALUE(win));
+      /* Force handling drag if a key is pressed even if the drag threshold has not been met.
+       * Needed so tablet actions (which typically use a larger threshold) can click-drag
+       * then press keys - activating the drag action early.
+       * Limit to mouse-buttons drag actions interrupted by pressing any non-mouse button.
+       * Otherwise pressing two keys on the keyboard will interpret this as a drag action. */
+      // if (win->event_queue_check_drag) {
+      //   if ((event->val == KM_PRESS) && ((event->flag & WM_EVENT_IS_REPEAT) == 0) &&
+      //       ISKEYBOARD_OR_BUTTON(event->type) && ISMOUSE_BUTTON(event->prev_press_type)) {
+      //     event = wm_event_add_mousemove_to_head(win);
+      //     event->flag |= WM_EVENT_FORCE_DRAG_THRESHOLD;
+      //   }
+      // }
+      // const bool event_queue_check_drag_prev = win->event_queue_check_drag;
 
-      if (G.debug & (G_DEBUG_HANDLERS | G_DEBUG_EVENTS) &&
-          ((event->type != MOUSEMOVE) || (event->type != INBETWEEN_MOUSEMOVE))) {
-        TF_WARN("\n%s: Handling event\n", __func__);
+      screen = WM_window_get_active_screen(win);
+
+      if (G.debug & (G_DEBUG_HANDLERS | G_DEBUG_EVENTS) && !ISMOUSE_MOTION((*event_it)->type)) {
+        printf("\n%s: Handling event\n", __func__);
         // WM_event_print(event);
       }
 
-      CTX_wm_window_set(C, VALUE(win));
+      /* Take care of pie event filter. */
+      // if (wm_event_pie_filter(win, event)) {
+      //   if (!ISMOUSE_MOTION(event->type)) {
+      //     CLOG_INFO(WM_LOG_HANDLERS, 1, "event filtered due to pie button pressed");
+      //   }
+      //   KLI_remlink(&win->event_queue, event);
+      //   wm_event_free_last_handled(win, event);
+      //   continue;
+      // }
+
+      CTX_wm_window_set(C, win);
+
+      /* Clear tool-tip on mouse move. */
+      if (screen->tool_tip && screen->tool_tip->exit_on_event) {
+        if (ISMOUSE_MOTION((*event_it)->type)) {
+          if (len_manhattan_v2v2_int(screen->tool_tip->event_xy, (*event_it)->mouse_pos) >
+              WM_EVENT_CURSOR_MOTION_THRESHOLD) {
+            WM_tooltip_clear(C, win);
+          }
+        }
+      }
+
+      /* We let modal handlers get active area/region, also wm_paintcursor_test needs it. */
+      // CTX_wm_area_set(C, area_event_inside(C, (*event_it)->mouse_pos));
+      // CTX_wm_region_set(C, region_event_inside(C, (*event_it)->mouse_pos));
+
+      /* MVC demands to not draw in event handlers...
+       * but we need to leave it for GPU selecting etc. */
+      WM_window_make_drawable(wm, win);
+
+      wm_region_mouse_co(C, (*event_it));
+
+      /* First we do priority handlers, modal + some limited key-maps. */
+      // action |= wm_handlers_do(C, (*event_it), &win->modalhandlers);
+
+      /* File-read case. */
+      // if (CTX_wm_window(C) == nullptr) {
+      //   wm_event_free_and_remove_from_queue_if_valid((*event_it));
+      //   return;
+      // }
+
+      /* Check for a tool-tip. */
+      if (screen == WM_window_get_active_screen(win)) {
+        if (screen->tool_tip && screen->tool_tip->timer) {
+          if (((*event_it)->type == TIMER) &&
+              ((*event_it)->customdata == screen->tool_tip->timer)) {
+            WM_tooltip_init(C, win);
+          }
+        }
+      }
+
+      /* Check dragging, creates new event or frees, adds draw tag. */
+      // wm_event_drag_and_drop_test(wm, win, event);
+
+      /* If press was handled, we don't want to do click. This way
+       * press in tool key-map can override click in editor key-map. */
+      // if (ISMOUSE_BUTTON((*event_it)->type) && (*event_it)->val == KM_PRESS &&
+      //     !wm_action_not_handled(action)) {
+      //   win->event_queue_check_click = false;
+      // }
+
+      /* If the drag even was handled, don't attempt to keep re-handing the same
+       * drag event on every cursor motion, see: T87511. */
+      // if (win->event_queue_check_drag_handled) {
+      //   win->event_queue_check_drag = false;
+      //   win->event_queue_check_drag_handled = false;
+      // }
+
+      // if (event_queue_check_drag_prev && (win->event_queue_check_drag == false)) {
+      //   wm_region_tag_draw_on_gizmo_delay_refresh_for_tweak(win);
+      // }
+
+      /* Update previous mouse position for following events to use. */
+      copy_v2_v2_int(win->eventstate->prev_mouse_pos, (*event_it)->mouse_pos);
+
+      /* Un-link and free here, Blender-quit then frees all. */
+      win->event_queue.erase(event_it);
+      // wm_event_free_last_handled(win, (*event_it));
     }
+
+    /* Only add mouse-move when the event queue was read entirely. */
+    if (win->addmousemove && win->eventstate) {
+      wmEvent tevent = *(win->eventstate);
+      // printf("adding MOUSEMOVE %d %d\n", tevent.xy[0], tevent.xy[1]);
+      tevent.type = MOUSEMOVE;
+      tevent.val = KM_NOTHING;
+      tevent.prev_mouse_pos[0] = tevent.mouse_pos[0];
+      tevent.prev_mouse_pos[1] = tevent.mouse_pos[1];
+      tevent.flag = 0;
+      wm_event_add(win, &tevent);
+      win->addmousemove = 0;
+    }
+
+    CTX_wm_window_set(C, nullptr);
   }
+
+  /* Update key configuration after handling events. */
+  // WM_keyconfig_update(wm);
+  // WM_gizmoconfig_update(CTX_data_main(C));
 }
 
 bool WM_operator_poll_context(kContext *C, wmOperatorType *ot, short context)

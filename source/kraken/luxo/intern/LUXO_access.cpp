@@ -49,6 +49,7 @@
 #include "USD_scene.h"
 #include "USD_ID.h"
 
+#include "LUXO_define.h"
 #include "LUXO_runtime.h"
 #include "LUXO_access.h"
 #include "LUXO_main.h"
@@ -60,15 +61,15 @@
 
 WABI_NAMESPACE_USING
 
-KrakenPRIM LUXO_StageData;
-KrakenPRIM LUXO_KrakenPixar;
-KrakenPRIM LUXO_Context;
-KrakenPRIM LUXO_Struct;
-KrakenPRIM LUXO_Window;
-KrakenPRIM LUXO_WorkSpace;
-KrakenPRIM LUXO_Screen;
-KrakenPRIM LUXO_Area;
-KrakenPRIM LUXO_Region;
+KrakenPRIM PRIM_StageData;
+KrakenPRIM PRIM_KrakenPRIM;
+KrakenPRIM PRIM_Context;
+KrakenPRIM PRIM_Struct;
+KrakenPRIM PRIM_Window;
+KrakenPRIM PRIM_WorkSpace;
+KrakenPRIM PRIM_Screen;
+KrakenPRIM PRIM_Area;
+KrakenPRIM PRIM_Region;
 
 KrakenSTAGE KRAKEN_STAGE = {};
 
@@ -88,11 +89,6 @@ void LUXO_init(void)
   KKE_tempdir_init(NULL);
 
   LUXO_save_usd();
-}
-
-wabi::UsdStageWeakPtr LUXO_get_stage()
-{
-  return KRAKEN_STAGE;
 }
 
 void LUXO_set_stage_ctx(kContext *C)
@@ -117,7 +113,7 @@ ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr)
   return NULL;
 }
 
-bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna)
+bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *sprim)
 {
   const KrakenPRIM *base;
 
@@ -126,7 +122,7 @@ bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna)
   }
 
   for (base = type; base; base = base->base) {
-    if (base->GetTypeName() == srna->GetTypeName()) {
+    if (base->GetTypeName() == sprim->GetTypeName()) {
       return true;
     }
   }
@@ -488,7 +484,7 @@ void LUXO_main_pointer_create(struct Main *main, KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(K_FOUNDATION);
   r_ptr->owner_id = NULL;
-  r_ptr->type = &LUXO_StageData;
+  r_ptr->type = &PRIM_StageData;
   r_ptr->data = main;
 }
 
@@ -520,19 +516,19 @@ int LUXO_property_string_length(KrakenPRIM *ptr, KrakenPROP *prop)
   return strlen(sprop->defaultvalue);
 }
 
-void *LUXO_struct_py_type_get(KrakenPRIM *srna)
+void *LUXO_struct_py_type_get(KrakenPRIM *sprim)
 {
-  return srna->py_type;
+  return sprim->py_type;
 }
 
-void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type)
+void LUXO_struct_py_type_set(KrakenPRIM *sprim, void *type)
 {
-  srna->py_type = type;
+  sprim->py_type = type;
 }
 
-std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna)
+std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *sprim)
 {
-  return srna->functions;
+  return sprim->functions;
 }
 
 int LUXO_prim_ui_icon(const KrakenPRIM *type)
@@ -584,7 +580,7 @@ char *LUXO_pointer_as_string_keywords_ex(kContext *C,
 
     arg_name = LUXO_property_identifier(&kprop).GetText();
 
-    if (STREQ(arg_name, "rna_type")) {
+    if (STREQ(arg_name, "prim_type")) {
       continue;
     }
 
@@ -664,7 +660,7 @@ char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr)
     KrakenPROP kprop = prop;
     propname = LUXO_property_identifier(&kprop).GetText();
 
-    if (STREQ(propname, "rna_type")) {
+    if (STREQ(propname, "prim_type")) {
       continue;
     }
 
@@ -688,9 +684,9 @@ char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr)
 /**
  * Use for sub-typing so we know which ptr is used for a #KrakenPRIM.
  */
-KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr)
+KrakenPRIM *sprim_from_ptr(KrakenPRIM *ptr)
 {
-  if (ptr->type == &LUXO_Struct) {
+  if (ptr->type == &PRIM_Struct) {
     return (KrakenPRIM *)ptr->data;
   }
 
@@ -718,7 +714,7 @@ void LUXO_save_usd(void)
 
 KrakenSTAGE::KrakenSTAGE()
   : UsdStageRefPtr(UsdStage::CreateInMemory()),
-    structs{&LUXO_Window, &LUXO_WorkSpace, &LUXO_Screen, &LUXO_Area, &LUXO_Region}
+    structs{&PRIM_Window, &PRIM_WorkSpace, &PRIM_Screen, &PRIM_Area, &PRIM_Region}
 {}
 
 void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr)
@@ -744,7 +740,7 @@ void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 {
   *r_ptr = KRAKEN_STAGE->GetPseudoRoot().GetPrimAtPath(K_FOUNDATION);
   r_ptr->owner_id = NULL;
-  r_ptr->type = &LUXO_KrakenPixar;
+  r_ptr->type = &PRIM_KrakenPRIM;
   r_ptr->data = (void *&)KRAKEN_STAGE;
 }
 

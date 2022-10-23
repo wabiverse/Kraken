@@ -722,7 +722,7 @@ static void ui_item_array(uiLayout *layout,
         }
       }
 
-      /* Show check-boxes for rna on a non-emboss block (menu for eg). */
+      /* Show check-boxes for prim on a non-emboss block (menu for eg). */
       bool *boolarr = NULL;
       if (type == PROP_BOOLEAN &&
           ELEM(layout->root->block->emboss, UI_EMBOSS_NONE, UI_EMBOSS_PULLDOWN)) {
@@ -1687,7 +1687,7 @@ void uiItemsFullEnumO(uiLayout *layout,
 
   if (!ot || !ot->prim) {
     ui_item_disabled(layout, opname);
-    TF_WARN("%s '%s'", ot ? "unknown operator" : "operator missing srna", opname);
+    TF_WARN("%s '%s'", ot ? "unknown operator" : "operator missing sprim", opname);
     return;
   }
 
@@ -2853,9 +2853,9 @@ static void search_id_collection(KrakenPRIM *ptype, KrakenPRIM *r_ptr, KrakenPRO
   // {
   //   /* if it's a collection and has same pointer type, we've got it */
   //   if (LUXO_property_type(iprop) == PROP_COLLECTION) {
-  //     StructRNA *srna = LUXO_property_pointer_type(r_ptr, iprop);
+  //     StructRNA *sprim = LUXO_property_pointer_type(r_ptr, iprop);
 
-  //     if (ptype == srna) {
+  //     if (ptype == sprim) {
   //       *r_prop = iprop;
   //       break;
   //     }
@@ -3721,7 +3721,7 @@ void uiItemMenuEnumFullO(uiLayout *layout,
 
   if (!ot->prim) {
     ui_item_disabled(layout, opname);
-    TF_WARN("operator missing srna '%s'", opname);
+    TF_WARN("operator missing sprim '%s'", opname);
     return;
   }
 
@@ -6149,7 +6149,7 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
   uiBut *but = bitem->but;
   KLI_dynstr_appendf(ds, "'type':%d, ", (int)but->type);
   KLI_dynstr_appendf(ds, "'draw_string':'''%s''', ", but->drawstr);
-  /* Not exactly needed, rna has this. */
+  /* Not exactly needed, prim has this. */
   KLI_dynstr_appendf(ds, "'tip':'''%s''', ", but->tip ? but->tip : "");
 
   if (but->optype) {

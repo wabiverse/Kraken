@@ -73,6 +73,9 @@
 #include "UI_resources.h"
 #include "UI_tokens.h"
 
+#include "LUXO_access.h"
+#include "LUXO_define.h"
+
 /* for assert */
 #ifndef NDEBUG
 #  include "KLI_threads.h"
@@ -163,7 +166,7 @@ void wm_cursor_position_get(wmWindow *win, int *r_x, int *r_y)
 }
 
 
-static void wm_window_set_dpi(const wmWindow *win)
+void WM_window_set_dpi(const wmWindow *win)
 {
   float win_scale = FormFactory(win->scale);
   float win_linewidth = FormFactory(win->linewidth);
@@ -219,7 +222,7 @@ void wm_window_clear_drawable(wmWindowManager *wm)
   }
 }
 
-void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
+void WM_window_make_drawable(wmWindowManager *wm, wmWindow *win)
 {
   if (win != wm->windrawable && win->anchorwin) {
     wm_window_clear_drawable(wm);
@@ -227,7 +230,7 @@ void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win)
     wm_window_set_drawable(wm, win, true);
 
     /* this can change per window */
-    wm_window_set_dpi(win);
+    WM_window_set_dpi(win);
   }
 }
 
@@ -415,7 +418,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
         win->addmousemove = true; /* enables highlighted buttons */
 
-        wm_window_make_drawable(wm, win);
+        WM_window_make_drawable(wm, win);
 
         wmEvent event;
         WM_event_init_from_window(win, &event);
@@ -431,7 +434,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
         break;
       }
       case AnchorEventTypeWindowUpdate: {
-        wm_window_make_drawable(wm, win);
+        WM_window_make_drawable(wm, win);
         WM_event_add_notifier(C, NC_WINDOW, NULL);
         break;
       }
@@ -440,7 +443,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
         eAnchorWindowState state = ANCHOR::GetWindowState(
           (AnchorSystemWindowHandle)win->anchorwin);
         win->windowstate = state;
-        wm_window_set_dpi(win);
+        WM_window_set_dpi(win);
         if (state != AnchorWindowStateMinimized) {
           /**
            * Anchor sometimes sends size or move events when the window hasn't changed.
@@ -453,7 +456,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
           if (wm_window_update_size_position(win)) {
             const kScreen *screen = WM_window_get_active_screen(win);
 
-            wm_window_make_drawable(wm, win);
+            WM_window_make_drawable(wm, win);
             // KKE_icon_changed(screen->id.icon_id);
             WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
             WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
@@ -470,7 +473,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
       }
 
       case AnchorEventTypeWindowDPIHintChanged: {
-        wm_window_set_dpi(win);
+        WM_window_set_dpi(win);
 
         WM_main_add_notifier(NC_WINDOW, NULL);             /* full redraw */
         WM_main_add_notifier(NC_SCREEN | NA_EDITED, NULL); /* refresh region sizes */
@@ -485,8 +488,8 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
 
           KrakenPRIM props_ptr;
           WM_operator_properties_create_ptr(&props_ptr, ot);
-          CreationFactory::ASSET::Set(&props_ptr, "filepath", path);
-          CreationFactory::BOOL::Set(&props_ptr, "display_file_selector", false);
+          PrimFactory::ASSET::Set(&props_ptr, "filepath", path);
+          PrimFactory::BOOL::Set(&props_ptr, "display_file_selector", false);
           WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
           WM_operator_properties_free(&props_ptr);
 
@@ -549,7 +552,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
       case AnchorEventTypeNativeResolutionChange: {
         float pixelsize = FormFactory(win->pixelsz);
         float prev_pixelsize = pixelsize;
-        wm_window_set_dpi(win);
+        WM_window_set_dpi(win);
 
         if (pixelsize != prev_pixelsize) {
           // KKE_icon_changed(WM_window_get_active_screen(win)->id.icon_id);
@@ -560,7 +563,7 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
           // UI_popup_handlers_remove_all(C, &win->modalhandlers);
           CTX_wm_window_set(C, NULL);
 
-          wm_window_make_drawable(wm, win);
+          WM_window_make_drawable(wm, win);
           WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
           WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
         }
@@ -688,7 +691,7 @@ static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool 
     GPU_clear_color(0.55f, 0.55f, 0.55f, 1.0f);
 
     /* needed here, because it's used before it reads userdef */
-    wm_window_set_dpi(win);
+    WM_window_set_dpi(win);
 
     WM_window_swap_buffers(win);
 
@@ -775,7 +778,7 @@ static void wm_window_anchorwindow_ensure(wmWindowManager *wm, wmWindow *win, bo
 
   if (win->anchorwin) {
     // wm_window_ensure_eventstate(win);
-    wm_window_set_dpi(win);
+    WM_window_set_dpi(win);
   }
 
   /* add keymap handlers (1 handler for all keys in map!) */
@@ -831,7 +834,8 @@ void WM_window_screen_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect)
   screen_rect = window_rect;
 
   /* Subtract global areas from screen rectangle. */
-  UNIVERSE_FOR_ALL (global_area, win->global_areas.areas) {
+  LISTBASE_FOREACH(ScrArea *, global_area, &win->global_areas.areas)
+  {
     int height = ED_area_global_size_y(global_area) - 1;
 
     if (global_area->global->flag & GLOBAL_AREA_IS_HIDDEN) {
@@ -851,7 +855,13 @@ void WM_window_screen_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect)
     }
   }
 
-  KLI_assert(screen_rect.IsValid());
+  rcti rcti_fromgf;
+  rcti_fromgf.xmin = screen_rect.GetMinX();
+  rcti_fromgf.xmax = screen_rect.GetMaxX();
+  rcti_fromgf.ymin = screen_rect.GetMinY();
+  rcti_fromgf.ymax = screen_rect.GetMaxY();
+
+  KLI_assert(KLI_rcti_is_valid(&rcti_fromgf));
 
   *r_rect = screen_rect;
 }
@@ -859,8 +869,25 @@ void WM_window_screen_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect)
 
 void WM_window_anchorwindows_ensure(wmWindowManager *wm)
 {
-  UNIVERSE_FOR_ALL (win, wm->windows) {
-    wm_window_anchorwindow_ensure(wm, VALUE(win), false);
+  KLI_assert(G.background == false);
+
+  /* No command-line prefsize? then we set this.
+   * Note that these values will be used only
+   * when there is no startup.blend yet.
+   */
+  if (wm_init_state.size_x == 0) {
+    wm_get_screensize(&wm_init_state.size_x, &wm_init_state.size_y);
+
+    /* NOTE: this isn't quite correct, active screen maybe offset 1000s if PX,
+     * we'd need a #wm_get_screensize like function that gives offset,
+     * in practice the window manager will likely move to the correct monitor */
+    wm_init_state.start_x = 0;
+    wm_init_state.start_y = 0;
+  }
+
+  LISTBASE_FOREACH(wmWindow *, win, &wm->windows)
+  {
+    wm_window_anchorwindow_ensure(wm, win, false);
   }
 }
 
@@ -973,16 +1000,19 @@ wmWindow *WM_window_open(kContext *C,
 
   /* ----- */
 
-  /* Reuse temporary windows when they share the same title. */
-  wmWindow *win = POINTER_ZERO;
+  /* Reuse temporary windows when they share the same single area. */
+  wmWindow *win = NULL;
   if (temp) {
-    UNIVERSE_FOR_ALL (win_iter, wm->windows) {
-      if (WM_window_is_temp_screen(VALUE(win_iter))) {
-        char *wintitle = ANCHOR::GetTitle((AnchorSystemWindowHandle)VALUE(win_iter)->anchorwin);
-        if (STREQ(title, wintitle)) {
-          win = VALUE(win_iter);
+    LISTBASE_FOREACH(wmWindow *, win_iter, &wm->windows)
+    {
+      const kScreen *screen = WM_window_get_active_screen(win_iter);
+      if (screen && screen->temp && KLI_listbase_is_single(&screen->areas)) {
+        ScrArea *area = static_cast<ScrArea *>(screen->areas.first);
+        TfToken this_space_type = FormFactory(area->spacetype);
+        if (space_type == this_space_type) {
+          win = win_iter;
+          break;
         }
-        free(wintitle);
       }
     }
   }
@@ -991,9 +1021,16 @@ wmWindow *WM_window_open(kContext *C,
 
   /**
    * Create Window. */
-  if (win == POINTER_ZERO) {
+  if (win == nullptr) {
+    rcti crecti;
     win = wm_window_new(C, wm, win_prev, dialog);
-    FormFactory(win->pos, GfVec2f(GET_X(rect), GET_Y(rect)));
+    crecti.xmin = rect[0];
+    crecti.xmax = rect[1];
+    crecti.ymin = rect[2];
+    crecti.ymax = rect[3];
+    FormFactory(win->pos, GfVec2f((float)crecti.xmin, (float)crecti.ymin));
+    FormFactory(win->size,
+                GfVec2f((float)KLI_rcti_size_x(&crecti), (float)KLI_rcti_size_y(&crecti)));
   }
 
   /* ----- */
@@ -1002,12 +1039,12 @@ wmWindow *WM_window_open(kContext *C,
 
   FormFactory(win->size, GfVec2f(GET_Z(rect) - GET_X(rect), GET_W(rect) - GET_Y(rect)));
 
-  if (WM_window_get_active_workspace(win) == POINTER_ZERO) {
+  if (WM_window_get_active_workspace(win) == nullptr) {
     WorkSpace *workspace = WM_window_get_active_workspace(win_prev);
     KKE_workspace_active_set(win->workspace_hook, workspace);
   }
 
-  if (screen == POINTER_ZERO) {
+  if (screen == nullptr) {
     /* add new screen layout */
     WorkSpace *workspace = WM_window_get_active_workspace(win);
     WorkSpaceLayout *layout = ED_workspace_layout_add(C, workspace, win, "temp");
@@ -1016,10 +1053,16 @@ wmWindow *WM_window_open(kContext *C,
     WM_window_set_active_layout(win, workspace, layout);
   }
 
+  /* Set scene and view layer to match original window. */
+  // if (WM_window_get_active_scene(win) != scene) {
+  /* No need to refresh the tool-system as the window has not yet finished being setup. */
+  // ED_screen_scene_change(C, win, scene, false);
+  // }
+
   screen->temp = temp;
 
   CTX_wm_window_set(C, win);
-  const bool new_window = (win->anchorwin == POINTER_ZERO);
+  const bool new_window = (win->anchorwin == nullptr);
   if (new_window) {
     wm_window_anchorwindow_ensure(wm, win, dialog);
   }
@@ -1027,7 +1070,7 @@ wmWindow *WM_window_open(kContext *C,
 
   /* ensure it shows the right spacetype editor */
   if (space_type != UsdUITokens->spaceEmpty) {
-    ScrArea *area = screen->areas.at(0);
+    ScrArea *area = static_cast<ScrArea *>(screen->areas.first);
     CTX_wm_area_set(C, area);
     ED_area_newspace(C, area, space_type, false);
   }
@@ -1139,45 +1182,26 @@ static void wm_window_screen_pos_get(wmWindow *win, const GfVec2i desktop_pos, G
 }
 
 
-bool WM_window_find_under_cursor(wmWindowManager *wm,
-                                 wmWindow *win_ignore,
-                                 wmWindow *win,
-                                 const GfVec2i mval,
-                                 wmWindow **r_win,
-                                 GfVec2i *r_mval)
+wmWindow *WM_window_find_under_cursor(wmWindow *win, const int mval[2], int r_mval[2])
 {
-  GfVec2i desk_pos;
-  wm_window_desktop_pos_get(win, mval, &desk_pos);
+  int tmp[2];
+  copy_v2_v2_int(tmp, mval);
+  WM_cursor_position_to_anchor_screen_coords(win, &tmp[0], &tmp[1]);
 
-  /* TODO: This should follow the order of the activated windows.
-   * The current solution is imperfect but usable in most cases. */
-  UNIVERSE_FOR_ALL (win_iter, wm->windows) {
-    if (VALUE(win_iter) == win_ignore) {
-      continue;
-    }
+  /**
+   * @TODO:
+   * AnchorSystemWindowHandle anchorwin = ANCHOR::GetWindowUnderCursor(anchor_system, tmp[0],
+   * tmp[1]); */
+  AnchorSystemWindowHandle anchorwin = (AnchorSystemWindowHandle)win->anchorwin;
 
-    TfToken win_state = FormFactory(win->state);
-
-    if (win_state == UsdUITokens->minimized) {
-      continue;
-    }
-
-    GfVec2i scr_pos;
-    wm_window_screen_pos_get(VALUE(win_iter), desk_pos, &scr_pos);
-
-    GfVec2f win_pos = FormFactory(win->pos);
-
-    if (GET_X(scr_pos) >= 0 && GET_Y(win_pos) >= 0 &&
-        GET_X(scr_pos) <= WM_window_pixels_x(VALUE(win_iter)) &&
-        GET_Y(scr_pos) <= WM_window_pixels_y(VALUE(win_iter))) {
-      *r_win = VALUE(win_iter);
-
-      VEC2_SET(r_mval, GET_X(scr_pos), GET_Y(scr_pos));
-      return true;
-    }
+  if (!anchorwin) {
+    return nullptr;
   }
 
-  return false;
+  wmWindow *win_other = (wmWindow *)ANCHOR::GetWindowUserData(anchorwin);
+  WM_cursor_position_from_anchor(win_other, &tmp[0], &tmp[1]);
+  copy_v2_v2_int(r_mval, tmp);
+  return win_other;
 }
 
 
@@ -1225,31 +1249,107 @@ void WM_quit_with_optional_confirmation_prompt(kContext *C, wmWindow *win)
   CTX_wm_window_set(C, win_ctx);
 }
 
+static void wm_anchorwindow_destroy(wmWindowManager *wm, wmWindow *win)
+{
+  if (UNLIKELY(!win->anchorwin)) {
+    return;
+  }
+
+  /* Prevents non-drawable state of main windows (bugs T22967,
+   * T25071 and possibly T22477 too). Always clear it even if
+   * this window was not the drawable one, because we mess with
+   * drawing context to discard the GW context. */
+  wm_window_clear_drawable(wm);
+
+  if (win == wm->winactive) {
+    wm->winactive = NULL;
+  }
+
+  /* We need this window's opengl context active to discard it. */
+  ANCHOR::ActivateWindowDrawingContext((AnchorSystemWindowHandle)win->anchorwin);
+  GPU_context_active_set((GPUContext *)win->gpuctx);
+
+  /* Delete local GPU context. */
+  GPU_context_discard((GPUContext *)win->gpuctx);
+
+  // ANCHOR::DisposeWindow(anchor_system, win->anchorwin);
+  win->anchorwin = nullptr;
+  win->gpuctx = nullptr;
+}
+
+static void wm_window_free(kContext *C, wmWindowManager *wm, wmWindow *win)
+{
+  /* update context */
+  if (C) {
+    WM_event_remove_handlers(C, &win->handlers);
+    WM_event_remove_handlers(C, &win->modalhandlers);
+
+    if (CTX_wm_window(C) == win) {
+      CTX_wm_window_set(C, NULL);
+    }
+  }
+
+  // KKE_screen_area_map_free(&win->global_areas);
+
+  /* end running jobs, a job end also removes its timer */
+  // LISTBASE_FOREACH_MUTABLE (wmTimer *, wt, &wm->timers) {
+  //   if (wt->win == win && wt->event_type == TIMERJOBS) {
+  //     wm_jobs_timer_end(wm, wt);
+  //   }
+  // }
+
+  /* timer removing, need to call this api function */
+  for (auto &wt : wm->timers) {
+    if (wt->win == win) {
+      WM_event_remove_timer(wm, win, wt);
+    }
+  }
+
+  if (win->eventstate) {
+    MEM_freeN(win->eventstate);
+  }
+  // if (win->event_last_handled) {
+  //   MEM_freeN(win->event_last_handled);
+  // }
+
+  // if (win->cursor_keymap_status) {
+  //   MEM_freeN(win->cursor_keymap_status);
+  // }
+
+  // WM_gestures_free_all(win);
+
+  WM_event_free_all(win);
+
+  wm_anchorwindow_destroy(wm, win);
+
+  KKE_workspace_instance_hook_free(G_MAIN, win->workspace_hook);
+  // MEM_freeN(win->stereo3d_format);
+
+  MEM_delete(win);
+}
 
 /* this is event from anchor, or exit-kraken op */
 void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
 {
-  KrakenSTAGE stage = CTX_data_stage(C);
-
-  SdfPath other_hash;
+  wmWindow *win_other;
 
   /* First check if there is another main window remaining. */
-  UNIVERSE_FOR_ALL (win_other, wm->windows) {
-    if (VALUE(win_other) != win && VALUE(win_other)->parent == NULL) {
-      other_hash = HASH(win_other);
+  for (win_other = (wmWindow *)wm->windows.first; win_other; win_other = win_other->next) {
+    if (win_other != win && win_other->parent == nullptr && !WM_window_is_temp_screen(win_other)) {
       break;
     }
   }
 
-  if (win->parent == NULL) {
+  if (win->parent == nullptr && win_other == nullptr) {
     WM_quit_with_optional_confirmation_prompt(C, win);
     return;
   }
 
   /* Close child windows */
-  UNIVERSE_FOR_ALL (iter_win, wm->windows) {
-    if (VALUE(iter_win)->parent == win) {
-      wm_window_close(C, wm, VALUE(iter_win));
+  LISTBASE_FOREACH_MUTABLE(wmWindow *, iter_win, &wm->windows)
+  {
+    if (iter_win->parent == win) {
+      wm_window_close(C, wm, iter_win);
     }
   }
 
@@ -1257,24 +1357,27 @@ void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win)
   WorkSpace *workspace = WM_window_get_active_workspace(win);
   WorkSpaceLayout *layout = KKE_workspace_active_layout_get(win->workspace_hook);
 
-  /** Remove Window From HashMap */
-  wm->windows.erase(win->path);
+  KLI_remlink(&wm->windows, win);
 
   CTX_wm_window_set(C, win); /* needed by handlers */
-  // WM_event_remove_handlers(C, &win->handlers);
-  // WM_event_remove_handlers(C, &win->modalhandlers);
+  WM_event_remove_handlers(C, &win->handlers);
+  WM_event_remove_handlers(C, &win->modalhandlers);
 
   /** Remove All Screens. */
   if (screen) {
-    // ED_screen_exit(C, win, screen);
+    ED_screen_exit(C, win, screen);
   }
 
-  /** Null out C. */
-  if (CTX_wm_window(C) == win) {
-    CTX_wm_window_set(C, NULL);
-  }
+  wm_window_free(C, wm, win);
 
-  delete win;
+  /* if temp screen, delete it after window free (it stops jobs that can access it) */
+  if (screen && screen->temp) {
+    Main *kmain = CTX_data_main(C);
+
+    KLI_assert(KKE_workspace_layout_screen_get(layout) == screen);
+    KKE_workspace_layout_remove(kmain, workspace, layout);
+    WM_event_add_notifier(C, NC_SCREEN | ND_LAYOUTDELETE, NULL);
+  }
 }
 
 
@@ -1288,9 +1391,14 @@ static int find_free_winid(wmWindowManager *wm)
 {
   int id = 1;
 
-  UNIVERSE_FOR_ALL (win, wm->windows) {
-    if (id <= VALUE(win)->winid) {
-      id = VALUE(win)->winid + 1;
+  if (KLI_listbase_is_empty(&wm->windows)) {
+    return id;
+  }
+
+  LISTBASE_FOREACH(wmWindow *, win, &wm->windows)
+  {
+    if (id <= win->winid) {
+      id = win->winid + 1;
     }
   }
   return id;
@@ -1300,11 +1408,12 @@ static int find_free_winid(wmWindowManager *wm)
 wmWindow *wm_window_new(kContext *C, wmWindowManager *wm, wmWindow *parent, bool dialog)
 {
   int id = find_free_winid(wm);
-  wmWindow *win = new wmWindow(C, make_winpath(id));
-  UNIVERSE_INSERT_WINDOW(wm, win->path, win);
+  wmWindow *win = MEM_new<wmWindow>("window", C, make_winpath(id));
+
+  KLI_addtail(&wm->windows, win);
   win->winid = id;
 
-  const Main *kmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
 
   /* Dialogs may have a child window as parent. Otherwise, a child must not be a parent too. */
   win->parent = (!dialog && parent && parent->parent) ? parent->parent : parent;
@@ -1586,17 +1695,17 @@ void WM_event_remove_timer(wmWindowManager *wm, wmWindow *UNUSED(win), wmTimer *
 
   wm->timers.erase(std::remove(wm->timers.begin(), wm->timers.end(), wt), wm->timers.end());
   if (wt->customdata != NULL && (wt->flags & WM_TIMER_NO_FREE_CUSTOM_DATA) == 0) {
-    delete wt->customdata;
+    MEM_freeN(wt->customdata);
   }
-  delete wt;
+  MEM_delete(wt);
 
   /* there might be events in queue with this timer as customdata */
-  for (auto &win : wm->windows) {
-    for (auto &event : win.second->event_queue) {
+  LISTBASE_FOREACH(wmWindow *, win, &wm->windows)
+  {
+    for (auto &event : win->event_queue) {
       if (event->customdata == wt) {
         event->customdata = NULL;
-        /* Timer users customdata, don't want `NULL == NULL`. */
-        event->type = EVENT_NONE;
+        event->type = EVENT_NONE; /* Timer users customdata, don't want `NULL == NULL`. */
       }
     }
   }
@@ -1778,6 +1887,8 @@ static void WM_OT_window_close(wmOperatorType *ot)
 
   ot->exec = wm_window_close_exec;
   ot->poll = wm_operator_winactive;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 
@@ -1789,6 +1900,8 @@ static void WM_OT_window_new(wmOperatorType *ot)
 
   ot->exec = wm_window_new_exec;
   ot->poll = wm_operator_winactive_normal;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 
@@ -1800,6 +1913,8 @@ static void WM_OT_window_new_main(wmOperatorType *ot)
 
   ot->exec = wm_window_new_main_exec;
   ot->poll = wm_operator_winactive_normal;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 
@@ -1811,6 +1926,8 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 
   ot->exec = wm_window_fullscreen_toggle_exec;
   ot->poll = wm_operator_winactive;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 
@@ -1822,6 +1939,8 @@ static void WM_OT_quit_kraken(wmOperatorType *ot)
 
   ot->invoke = wm_exit_kraken_invoke;
   ot->exec = wm_exit_kraken_exec;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 

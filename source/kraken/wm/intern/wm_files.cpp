@@ -86,6 +86,8 @@ void WM_OT_files_create_appdata(wmOperatorType *ot)
   ot->description = "Install user directories at OS appdata";
 
   ot->exec = wm_user_datafiles_write_exec;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 static int wm_open_mainfile_exec(kContext *C, wmOperator *op)
@@ -107,18 +109,23 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
   ot->invoke = wm_open_mainfile_invoke;
   ot->exec = wm_open_mainfile_exec;
 
-  PRIM_def_struct(ot->prim, SdfPath(ot->idname), TfToken("Operator"));
-  PRIM_def_boolean(ot->prim,
-                   "load_ui",
-                   true,
-                   "Load UI",
-                   "Load user interface setup in the .usd file");
-  PRIM_def_boolean(ot->prim, "display_file_selector", true, "Display File Selector", "");
-  PRIM_def_asset(ot->prim,
-                 "filepath",
-                 G.main->stage_id,
-                 "File Path",
-                 "The path to a .usd file path to open");
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
+
+  PrimFactory::BOOL::Def(ot->prim,
+                         "load_ui",
+                         true,
+                         "Load UI",
+                         "Load user interface setup in the .usd file");
+  PrimFactory::BOOL::Def(ot->prim,
+                         "display_file_selector",
+                         true,
+                         "Display File Selector",
+                         "Show the UI file selector indicator");
+  PrimFactory::ASSET::Def(ot->prim,
+                          "filepath",
+                          G.main->filepath,
+                          "File Path",
+                          "The path to a .usd file to open");
 }
 
 static void wm_block_file_close_cancel(kContext *C, void *arg_block, void *UNUSED(arg_data))

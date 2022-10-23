@@ -24,6 +24,8 @@
  * The @a central foundation for @a all data access.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "USD_wm_types.h"
 #include "USD_ID.h"
 
@@ -31,6 +33,7 @@
 
 #ifdef __cplusplus
 #  include <wabi/usd/usd/attribute.h>
+#  include <wabi/usd/usd/common.h>
 #  include <wabi/usd/usd/property.h>
 #  include <wabi/usd/usd/collectionAPI.h>
 #  include <wabi/usd/usd/prim.h>
@@ -257,13 +260,11 @@ enum PropertySubType
 
 struct KrakenPROP : public wabi::UsdAttribute
 {
-  KrakenPROP(const wabi::UsdAttribute &attr = wabi::UsdAttribute())
-    : wabi::UsdAttribute(attr)
-  {}
+  KrakenPROP(const wabi::UsdAttribute &attr = wabi::UsdAttribute()) : wabi::UsdAttribute(attr) {}
 
   /**
    * Create a KrakenPROP from a UsdProperty.
-   * 
+   *
    * @NOTE:
    * Not actually a valid Kraken "PROP" as it is just a relational
    * property. So it has no specified type and is just used for the
@@ -279,7 +280,7 @@ struct KrakenPROP : public wabi::UsdAttribute
   PropertyFlag flag;
   PropertySubType subtype;
   int icon;
-  
+
   wabi::UsdProperty intern_prop;
 };
 
@@ -388,9 +389,13 @@ struct KrakenFUNC
 
 struct KrakenPRIM : public wabi::UsdPrim
 {
-  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) : wabi::UsdPrim(prim) {}
+  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim())
+    : wabi::UsdPrim(prim)
+  {}
 
-  KrakenPRIM(const KrakenPRIM *prim) : wabi::UsdPrim(prim->GetPrim()) {}
+  KrakenPRIM(const KrakenPRIM *prim)
+    : wabi::UsdPrim(prim->GetPrim())
+  {}
 
   struct ID *owner_id;
   wabi::TfToken identifier;

@@ -53,9 +53,9 @@ struct PropertyPRIMOrID {
   KrakenPROP *rawprop;
   /** 
    * The real RNA property of this property, never NULL:
-   * - Static RNA: The rna property, also gives direct access to the data (from any matching
+   * - Static RNA: The prim property, also gives direct access to the data (from any matching
    *               KrakenPRIM).
-   * - Runtime RNA: The rna property, does not directly gives access to the data.
+   * - Runtime RNA: The prim property, does not directly gives access to the data.
    * - IDProperty: The generic PropertyRNA matching its type.
    */
   KrakenPROP *rnaprop;

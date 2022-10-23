@@ -63,7 +63,7 @@ class Context(KrakenPRIM):
         new_context = {}
         generic_attrs = (
             *KrakenPRIM.__dict__.keys(),
-            "kr_stage", "kr_type", "copy",
+            "kr_prim", "prim_type", "copy",
         )
         for attr in dir(self):
             if not (attr.startswith("_") or attr in generic_attrs):
@@ -79,28 +79,28 @@ class Operator(KrakenPRIM):
 
     def __getattribute__(self, attr):
         properties = KrakenPRIM.path_resolve(self, "properties")
-        kr_stage = getattr(properties, "kr_stage", None)
-        if (kr_stage is not None) and (attr in kr_stage.properties):
+        kr_prim = getattr(properties, "kr_prim", None)
+        if (kr_prim is not None) and (attr in kr_prim.properties):
             return getattr(properties, attr)
         return super().__getattribute__(attr)
 
     def __setattr__(self, attr, value):
         properties = KrakenPRIM.path_resolve(self, "properties")
-        kr_stage = getattr(properties, "kr_stage", None)
-        if (kr_stage is not None) and (attr in kr_stage.properties):
+        kr_prim = getattr(properties, "kr_prim", None)
+        if (kr_prim is not None) and (attr in kr_prim.properties):
             return setattr(properties, attr, value)
         return super().__setattr__(attr, value)
 
     def __delattr__(self, attr):
         properties = KrakenPRIM.path_resolve(self, "properties")
-        kr_stage = getattr(properties, "kr_stage", None)
-        if (kr_stage is not None) and (attr in kr_stage.properties):
+        kr_prim = getattr(properties, "kr_prim", None)
+        if (kr_prim is not None) and (attr in kr_prim.properties):
             return delattr(properties, attr)
         return super().__delattr__(attr)
 
     def as_keywords(self, *, ignore=()):
         """Return a copy of the properties as a dictionary"""
-        ignore = ignore + ("kr_type",)
+        ignore = ignore + ("prim_type",)
         return {attr: getattr(self, attr)
-                for attr in self.properties.kr_type.properties.keys()
+                for attr in self.properties.prim_type.properties.keys()
                 if attr not in ignore}

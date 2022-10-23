@@ -32,7 +32,10 @@
 #include <wabi/base/gf/vec2i.h>
 #include <wabi/usd/usdUI/screen.h>
 
-
+#define AREAGRID 4
+#define AREAMINX 29
+#define HEADER_PADDING_Y 6
+#define HEADERY (20 + HEADER_PADDING_Y)
 
 #define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->verts)
 
@@ -228,21 +231,21 @@ enum
 
 struct ScrVert
 {
+  struct ScrVert *next, *prev, *newv;
+
   wabi::GfVec2h vec;
   /* first one used internally, second one for tools */
   short flag, editflag;
-
-  ScrVert() : vec(VALUE_ZERO), flag(VALUE_ZERO), editflag(VALUE_ZERO) {}
 };
 
 struct ScrEdge
 {
+  struct ScrEdge *next, *prev;
+
   ScrVert *v1, *v2;
   /** 1 when at edge of screen. */
   short border;
   short flag;
-
-  ScrEdge() : v1(POINTER_ZERO), v2(POINTER_ZERO), border(VALUE_ZERO), flag(VALUE_ZERO) {}
 };
 
 struct kScreen : public wabi::UsdUIScreen
@@ -252,12 +255,12 @@ struct kScreen : public wabi::UsdUIScreen
   wabi::UsdAttribute align;
   wabi::UsdRelationship areas_rel;
 
-  std::vector<ScrVert *> verts;
-  std::vector<ScrEdge *> edges;
-  std::vector<ScrArea *> areas;
+  ListBase verts;
+  ListBase edges;
+  ListBase areas;
 
   /** Screen level regions (menus), runtime only. */
-  std::vector<ARegion *> regions;
+  ListBase regions;
   short alignment;
 
   ARegion *active_region;
@@ -271,6 +274,12 @@ struct kScreen : public wabi::UsdUIScreen
 
   /** Notifier for drawing edges. */
   char do_draw;
+  /** Notifier for gesture draw. */
+  char do_draw_gesture;
+  /** Notifier for paint cursor draw. */
+  char do_draw_paintcursor;
+  /** Notifier for dragging draw. */
+  char do_draw_drag;
 
   /** Runtime. */
   struct wmTooltipState *tool_tip;
@@ -283,9 +292,6 @@ kScreen::kScreen(kContext *C, const wabi::SdfPath &stagepath)
     path(GetPath()),
     align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
     areas_rel(CreateAreasRel()),
-    verts(EMPTY),
-    areas(EMPTY),
-    regions(EMPTY),
     active_region(POINTER_ZERO),
     redraws_flag(VALUE_ZERO),
     temp(VALUE_ZERO),
@@ -293,7 +299,12 @@ kScreen::kScreen(kContext *C, const wabi::SdfPath &stagepath)
     do_refresh(VALUE_ZERO),
     do_draw(VALUE_ZERO),
     tool_tip(POINTER_ZERO)
-{}
+{
+  verts = {NULL, NULL};
+  edges = {NULL, NULL};
+  areas = {NULL, NULL};
+  regions = {NULL, NULL};
+}
 
 
 struct wmRegionMessageSubscribeParams
@@ -316,5 +327,3 @@ struct wmRegionMessageSubscribeParams
       region(POINTER_ZERO)
   {}
 };
-
-

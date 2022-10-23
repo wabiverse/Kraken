@@ -50,6 +50,8 @@
 #include "USD_screen.h"
 #include "USD_window.h"
 
+#include "ED_screen.h"
+
 static ListBase dropboxes = {nullptr, nullptr};
 
 struct wmDropBoxMap {
@@ -134,16 +136,16 @@ static void wm_dropbox_invoke(kContext *C, wmDrag *drag)
    * Everything that isn't visible in the current window should not prefetch any data. */
   bool area_region_tag[SPACE_TYPE_NUM][RGN_TYPE_NUM] = {{false}};
 
-  for (auto &win : wm->windows) {
-    kScreen *screen = WM_window_get_active_screen(VALUE(win));
-    for (auto &area : screen->areas) {
-      for (auto &region : area->regions) {
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+    kScreen *screen = WM_window_get_active_screen(win);
+    ED_screen_areas_iter (win, screen, area) {
+      LISTBASE_FOREACH (ARegion *, region, &area->regions) {
         if (region->visible) {
           wabi::TfToken spacetype;
           area->spacetype.Get(&spacetype);
-          KLI_assert(wm_spacetype_enum_from_token(spacetype) < SPACE_TYPE_NUM);
+          KLI_assert(WM_spacetype_enum_from_token(spacetype) < SPACE_TYPE_NUM);
           KLI_assert(region->regiontype < RGN_TYPE_NUM);
-          area_region_tag[wm_spacetype_enum_from_token(spacetype)][region->regiontype] = true;
+          area_region_tag[WM_spacetype_enum_from_token(spacetype)][region->regiontype] = true;
         }
       }
     }

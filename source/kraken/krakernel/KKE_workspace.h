@@ -67,4 +67,6 @@ void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
 
 WorkSpace *KKE_workspace_active_get(WorkSpaceInstanceHook *hook);
 WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid);
+void KKE_workspace_instance_hook_free(const Main *kmain, WorkSpaceInstanceHook *hook);
+void KKE_workspace_layout_remove(Main *kmain, WorkSpace *workspace, WorkSpaceLayout *layout);
 bool KKE_workspace_owner_id_check(const struct WorkSpace *workspace, const TfToken &owner_id) ATTR_NONNULL();

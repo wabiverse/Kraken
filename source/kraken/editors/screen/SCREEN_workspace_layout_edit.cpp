@@ -52,10 +52,11 @@
 
 static kScreen *screen_fullscreen_find_associated_normal_screen(const Main *kmain, kScreen *screen)
 {
-  LISTBASE_FOREACH (kScreen *, screen_iter, &kmain->screens) {
-    if ((screen_iter != screen)) {
-      ScrArea *area = screen_iter->areas.at(0);
-      if (area) {
+  LISTBASE_FOREACH(kScreen *, screen_iter, &kmain->screens)
+  {
+    if ((screen_iter != screen) /*&& ELEM(screen_iter->state, SCREENMAXIMIZED, SCREENFULL)*/) {
+      ScrArea *area = (ScrArea *)screen_iter->areas.first;
+      if (area /*&& area->full == screen*/) {
         return screen_iter;
       }
     }

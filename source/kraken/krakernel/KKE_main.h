@@ -58,7 +58,10 @@ typedef struct KrakenThumbnail {
 
 typedef struct Main
 {
-  char stage_id[1024];
+  struct Main *next, *prev;
+
+  /** The file-path of this usd file, an empty string indicates an unsaved file. */
+  char filepath[1024];
   short versionfile, subversionfile;
   short minversionfile, minsubversionfile;
 
@@ -81,12 +84,47 @@ typedef struct Main
 
   char launch_time[80];
 
-  ListBase materials; /* for shaders. */
-  ListBase objects;   /* for shaders. */
-  ListBase screens;
+  /**
+   * @note
+   * Like Blender, we use doubly-linked lists for all linked lists
+   * in the Kraken library system. This effectively allows Pixar Stage
+   * traversal of all prim types in a way that makes it compatible with
+   * C, and likewise, use the same API across C, Python, CXX, and Swift.
+   */
   ListBase scenes;
+  ListBase libraries;
+  ListBase objects;
+  ListBase meshes;
+  ListBase curves;
+  ListBase materials;
+  ListBase textures;
+  ListBase images;
+  ListBase lights;
+  ListBase cameras;
+  ListBase worlds;
+  ListBase screens;
+  ListBase fonts;
+  ListBase texts;
+  ListBase speakers;
+  ListBase sounds;
+  ListBase collections;
+  ListBase armatures;
+  ListBase actions;
+  ListBase nodetrees;
+  ListBase brushes;
+  ListBase particles;
+  ListBase palettes;
+  ListBase paintcurves;
   ListBase wm;
+  ListBase gpencils;
+  ListBase movieclips;
+  ListBase masks;
+  ListBase linestyles;
+  ListBase cachefiles;
   ListBase workspaces;
+  ListBase pointclouds;
+  ListBase volumes;
+  ListBase simulations;
 
   struct MainLock *lock;
 } Main;

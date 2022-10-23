@@ -198,7 +198,7 @@ static bool panel_active_animation_changed(ListBase *lb,
 static bool properties_space_needs_realign(const ScrArea *area, const ARegion *region)
 {
   TfToken spacetype = FormFactory(area->spacetype);
-  if (wm_spacetype_enum_from_token(spacetype) == SPACE_PROPERTIES &&
+  if (WM_spacetype_enum_from_token(spacetype) == SPACE_PROPERTIES &&
       region->regiontype == RGN_TYPE_WINDOW) {
     const SpaceProperties *sbuts = area->spacedata.front();
 

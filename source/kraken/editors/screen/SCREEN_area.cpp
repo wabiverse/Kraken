@@ -40,6 +40,7 @@
 #include "USD_workspace.h"
 
 #include "KKE_context.h"
+#include "KKE_global.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
@@ -50,9 +51,12 @@
 
 #include "WM_event_system.h"
 #include "WM_window.hh"
+#include "WM_inline_tools.h"
 
 #include "ED_defines.h"
 #include "ED_screen.h"
+
+#include "UI_interface.h"
 
 struct RegionTypeAlignInfo
 {
@@ -78,7 +82,8 @@ static void region_align_info_from_area(ScrArea *area, RegionTypeAlignInfo *r_al
     r_align_info->by_type[index].hidden = true;
   }
 
-  UNIVERSE_FOR_ALL (region, area->regions) {
+  LISTBASE_FOREACH(ARegion *, region, &area->regions)
+  {
     const int index = region->regiontype;
     if ((uint)index < RGN_TYPE_NUM) {
       r_align_info->by_type[index].alignment = RGN_ALIGN_ENUM_FROM_MASK(region->alignment);
@@ -166,7 +171,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
       // st->free(sl);
       // area->spacedata.erase(sl);
       // if (slold == sl) {
-        // slold = NULL;
+      // slold = NULL;
       // }
       sl = NULL;
     }
@@ -207,7 +212,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
       // region_align_info_to_area(area, region_align_info);
     }
 
-    // ED_area_init(CTX_wm_manager(C), win, area);
+    ED_area_init(CTX_wm_manager(C), win, area);
 
     /* tell WM to refresh, cursor types etc */
     WM_event_add_mousemove(win);
@@ -215,13 +220,18 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
     /* send space change notifier */
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_CHANGED, area);
 
-    // ED_area_tag_refresh(area);
+    ED_area_tag_refresh(area);
   }
 
   /* also redraw when re-used */
   // ED_area_tag_redraw(area);
 }
 
+int ED_area_headersize(void)
+{
+  /* Accommodate widget and padding. */
+  return U.widget_unit + (int)(UI_DPI_FAC * HEADER_PADDING_Y);
+}
 
 bool ED_area_is_global(const ScrArea *area)
 {
@@ -285,4 +295,156 @@ void ED_area_do_msg_notify_tag_refresh(
 {
   ScrArea *area = (ScrArea *)msg_val->user_data;
   ED_area_tag_refresh(area);
+}
+
+ScrArea *ED_screen_areas_iter_first(const wmWindow *win, const kScreen *screen)
+{
+  ScrArea *global_area = (ScrArea *)win->global_areas.areas.first;
+
+  if (!global_area) {
+    return (ScrArea *)screen->areas.first;
+  }
+  if ((global_area->global->flag & GLOBAL_AREA_IS_HIDDEN) == 0) {
+    return global_area;
+  }
+  /* Find next visible area. */
+  return ED_screen_areas_iter_next(screen, global_area);
+}
+ScrArea *ED_screen_areas_iter_next(const kScreen *screen, const ScrArea *area)
+{
+  if (area->global == nullptr) {
+    return area->next;
+  }
+
+  for (ScrArea *area_iter = area->next; area_iter; area_iter = area_iter->next) {
+    if ((area_iter->global->flag & GLOBAL_AREA_IS_HIDDEN) == 0) {
+      return area_iter;
+    }
+  }
+  /* No visible next global area found, start iterating over layout areas. */
+  return (ScrArea *)screen->areas.first;
+}
+
+static void area_calc_totrct(ScrArea *area, const rcti *window_rect)
+{
+  short px = (short)U.pixelsize;
+
+  area->totrct.xmin = (int)(area->v1->vec[0].bits());
+  area->totrct.xmax = (int)(area->v4->vec[0].bits());
+  area->totrct.ymin = (int)(area->v1->vec[1].bits());
+  area->totrct.ymax = (int)(area->v2->vec[1].bits());
+
+  /* scale down totrct by 1 pixel on all sides not matching window borders */
+  if (area->totrct.xmin > window_rect->xmin) {
+    area->totrct.xmin += px;
+  }
+  if (area->totrct.xmax < (window_rect->xmax - 1)) {
+    area->totrct.xmax -= px;
+  }
+  if (area->totrct.ymin > window_rect->ymin) {
+    area->totrct.ymin += px;
+  }
+  if (area->totrct.ymax < (window_rect->ymax - 1)) {
+    area->totrct.ymax -= px;
+  }
+  /* Although the following asserts are correct they lead to a very unstable Blender.
+   * And the asserts would fail even in 2.7x
+   * (they were added in 2.8x as part of the top-bar commit).
+   * For more details see T54864. */
+#if 0
+  KLI_assert(area->totrct.xmin >= 0);
+  KLI_assert(area->totrct.xmax >= 0);
+  KLI_assert(area->totrct.ymin >= 0);
+  KLI_assert(area->totrct.ymax >= 0);
+#endif
+
+  /* for speedup */
+  FormFactory(area->size,
+              GfVec2f(KLI_rcti_size_x(&area->totrct) + 1, KLI_rcti_size_y(&area->totrct) + 1));
+}
+
+void ED_area_init(wmWindowManager *wm, wmWindow *win, ScrArea *area)
+{
+  WorkSpace *workspace = WM_window_get_active_workspace(win);
+  const kScreen *screen = KKE_workspace_active_screen_get(win->workspace_hook);
+  const kScene *scene = WM_window_get_active_scene(win);
+  // ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+
+  if (ED_area_is_global(area) && (area->global->flag & GLOBAL_AREA_IS_HIDDEN)) {
+    return;
+  }
+
+  wabi::GfRect2i window_rect;
+  WM_window_rect_calc(win, &window_rect);
+
+  /* Set type-definitions. */
+  wabi::TfToken st = FormFactory(area->spacetype);
+  area->type = KKE_spacetype_from_id(WM_spacetype_enum_from_token(st));
+
+  if (area->type == nullptr) {
+    FormFactory(area->spacetype, UsdUITokens->spaceView3D);
+    area->type = KKE_spacetype_from_id(WM_spacetype_enum_from_token(UsdUITokens->spaceView3D));
+  }
+
+  LISTBASE_FOREACH(ARegion *, region, &area->regions)
+  {
+    region->type = KKE_regiontype_from_id_or_first(area->type, region->regiontype);
+  }
+
+  /* area sizes */
+  rcti gf_torcti;
+  gf_torcti.xmin = window_rect.GetMinX();
+  gf_torcti.xmax = window_rect.GetMaxX();
+  gf_torcti.ymin = window_rect.GetMinY();
+  gf_torcti.ymax = window_rect.GetMaxY();
+  area_calc_totrct(area, &gf_torcti);
+
+  /* region rect sizes */
+  rcti rect = area->totrct;
+  rcti overlap_rect = rect;
+  // region_rect_recursive(area, area->regionbase.first, &rect, &overlap_rect, 0);
+  // area->flag &= ~AREA_FLAG_REGION_SIZE_UPDATE;
+
+  /* default area handlers */
+  // ed_default_handlers(wm, area, NULL, &area->handlers, area->type->keymapflag);
+  /* checks spacedata, adds own handlers */
+  if (area->type->init) {
+    area->type->init(wm, area);
+  }
+
+  /* clear all azones, add the area triangle widgets */
+  // area_azone_init(win, screen, area);
+
+  /* region windows, default and own handlers */
+  LISTBASE_FOREACH(ARegion *, region, &area->regions)
+  {
+    // region_subwindow(region);
+
+    if (region->visible) {
+      /* default region handlers */
+      // ed_default_handlers(wm, area, region, &region->handlers, region->type->keymapflag);
+      /* own handlers */
+      if (region->type->init) {
+        region->type->init(wm, region);
+      }
+    } else {
+      /* prevent uiblocks to run */
+      UI_blocklist_free(NULL, region);
+    }
+
+    /* Some AZones use View2D data which is only updated in region init, so call that first! */
+    // region_azones_add(screen, area, region);
+  }
+
+  /* Avoid re-initializing tools while resizing the window. */
+  // if ((G.moving & G_TRANSFORM_WM) == 0) {
+  //   TfToken st = FormFactory(area->spacetype);
+  //   if ((1 << WM_spacetype_enum_from_token(st)) & WM_TOOLSYSTEM_SPACE_MASK) {
+  //     // WM_toolsystem_refresh_screen_area(workspace, scene, view_layer, area);
+  //     // area->flag |= AREA_FLAG_ACTIVE_TOOL_UPDATE;
+  //   } else {
+  //     // area->runtime.tool = NULL;
+  //     // area->runtime.is_tool_set = true;
+  //   }
+  // }
 }

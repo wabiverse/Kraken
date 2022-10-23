@@ -122,10 +122,10 @@ static void arg_py_context_backup(kContext *C,
 {
   c_py->wm = CTX_wm_manager(C);
   c_py->scene = CTX_data_scene(C);
-  c_py->has_win = (VALUE_PTR(c_py->wm->windows.begin()) != nullptr);
+  c_py->has_win = !KLI_listbase_is_empty(&c_py->wm->windows);
   if (c_py->has_win) {
     c_py->win = CTX_wm_window(C);
-    CTX_wm_window_set(C, VALUE_PTR(c_py->wm->windows.begin()));
+    CTX_wm_window_set(C, (wmWindow *)c_py->wm->windows.first);
   } else {
     c_py->win = NULL;
     fprintf(stderr,
@@ -730,7 +730,7 @@ static int arg_handle_print_help(int UNUSED(argc), const char **UNUSED(argv), vo
   CREATOR_args_print_arg_doc(ka, "--debug-depsgraph-time");
   CREATOR_args_print_arg_doc(ka, "--debug-depsgraph-pretty");
   CREATOR_args_print_arg_doc(ka, "--debug-depsgraph-uuid");
-  CREATOR_args_print_arg_doc(ka, "--debug-ghost");
+  CREATOR_args_print_arg_doc(ka, "--debug-anchor");
   CREATOR_args_print_arg_doc(ka, "--debug-wintab");
   CREATOR_args_print_arg_doc(ka, "--debug-gpu");
   CREATOR_args_print_arg_doc(ka, "--debug-gpu-force-workarounds");
@@ -1874,7 +1874,7 @@ static int arg_handle_scene_set(int argc, const char **argv, void *data)
        * otherwise scripts that run later won't get this scene back from the context. */
       wmWindow *win = CTX_wm_window(C);
       if (win == nullptr || !win->GetPrim().IsValid()) {
-        win = VALUE_PTR(CTX_wm_manager(C)->windows.begin());
+        win = (wmWindow *)CTX_wm_manager(C)->windows.first;
       }
       if (win != nullptr && win->GetPrim().IsValid()) {
         // WM_window_set_active_scene(CTX_data_main(C), C, win, scene);
@@ -2213,7 +2213,7 @@ static int arg_handle_load_file(int UNUSED(argc), const char **argv, void *data)
     if (KLI_has_kfile_extension(filepath)) {
       /* Just pretend a file was loaded, so the user can press Save and it'll
        * save at the filepath from the CLI. */
-      STRNCPY(G_MAIN->stage_id, filepath);
+      STRNCPY(G_MAIN->filepath, filepath);
       printf("... opened default scene instead; saving will write to: %s\n", filepath);
     } else {
       printf(
@@ -2419,13 +2419,13 @@ static void sig_handle_crash(int signum)
 
   char fname[FILE_MAX];
 
-  if (!(G_MAIN && G_MAIN->stage_id[0])) {
+  if (!(G_MAIN && G_MAIN->filepath[0])) {
     KLI_join_dirfile(fname, sizeof(fname), KKE_tempdir_base(), "kraken.crash.txt");
   } else {
     KLI_join_dirfile(fname,
                      sizeof(fname),
                      KKE_tempdir_base(),
-                     KLI_path_basename(G_MAIN->stage_id));
+                     KLI_path_basename(G_MAIN->filepath));
     KLI_path_extension_replace(fname, sizeof(fname), ".crash.txt");
   }
 
@@ -2621,7 +2621,7 @@ void CREATOR_args_setup(kContext *C, kArgs *ka)
 
   CREATOR_args_add(ka,
                    NULL,
-                   "--debug-ghost",
+                   "--debug-anchor",
                    CB_EX(arg_handle_debug_mode_generic_set, ghost),
                    (void *)G_DEBUG_ANCHOR);
   CREATOR_args_add(ka,

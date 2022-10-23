@@ -28,6 +28,7 @@
 #include "USD_object.h"
 #include "USD_screen.h"
 #include "USD_window.h"
+#include "USD_ID.h"
 
 #include "KKE_context.h"
 
@@ -42,8 +43,6 @@ struct WorkSpaceLayout
 
   WorkSpaceLayout() : screen(POINTER_ZERO), name(EMPTY) {}
 };
-
-typedef std::vector<WorkSpaceLayout *> WorkSpaceLayoutVector;
 
 enum eWorkSpaceFlags {
   WORKSPACE_USE_FILTER_BY_ORIGIN = (1 << 1),
@@ -68,6 +67,8 @@ struct WorkSpaceInstanceHook
 
 struct WorkSpaceDataRelation
 {
+  struct WorkSpaceDataRelation *next, *prev;
+
   WorkSpaceInstanceHook *parent;
   WorkSpaceLayout *value;
 
@@ -76,18 +77,18 @@ struct WorkSpaceDataRelation
   WorkSpaceDataRelation() : parent(POINTER_ZERO), value(POINTER_ZERO), parentid(VALUE_ZERO) {}
 };
 
-typedef std::vector<WorkSpaceDataRelation *> WorkSpaceDataRelationVector;
-
 struct WorkSpace : public UsdUIWorkspace
 {
+  ID id;
+
   SdfPath path;
 
   UsdAttribute name;
   UsdRelationship screen_rel;
 
-  WorkSpaceLayoutVector layouts;
+  ListBase layouts;
 
-  WorkSpaceDataRelationVector hook_layout_relations;
+  ListBase hook_layout_relations;
 
   short flags;
 

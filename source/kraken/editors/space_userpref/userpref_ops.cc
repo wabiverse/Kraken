@@ -50,6 +50,9 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "LUXO_access.h"
+#include "LUXO_define.h"
+
 WABI_NAMESPACE_USING
 
 /* -------------------------------------------------------------------- */
@@ -79,6 +82,8 @@ static void PREFERENCES_OT_reset_default_theme(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 /** \} */
@@ -105,6 +110,8 @@ static void PREFERENCES_OT_autoexec_path_add(wmOperatorType *ot)
   ot->exec = preferences_autoexec_add_exec;
 
   ot->flag = OPTYPE_INTERNAL;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 /** \} */
@@ -134,7 +141,9 @@ static void PREFERENCES_OT_autoexec_path_remove(wmOperatorType *ot)
 
   ot->flag = OPTYPE_INTERNAL;
 
-  CreationFactory::INT::Def(ot->prim, "index", 0, "Index", "");
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
+
+  PrimFactory::INT::Def(ot->prim, "index", 0, "Index", "");
 }
 
 /** \} */
@@ -184,6 +193,8 @@ static void PREFERENCES_OT_associate_usd(struct wmOperatorType *ot)
   /* api callbacks */
   ot->exec = associate_usd_exec;
   ot->poll = associate_usd_poll;
+
+  ot->prim = PRIM_def_struct_ptr(KRAKEN_STAGE, SdfPath(ot->idname), ot->prim);
 }
 
 /** \} */

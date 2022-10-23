@@ -1621,9 +1621,9 @@ static int ui_do_but_TAB(kContext *C,
 #endif
 
   if (data->state == BUTTON_STATE_HIGHLIGHT) {
-    const int rna_type = but->stageprop ? LUXO_property_type(but->stageprop) : 0;
+    const int prim_type = but->stageprop ? LUXO_property_type(but->stageprop) : 0;
 
-    if (is_property && ELEM(rna_type, PROP_POINTER, PROP_STRING) && (but->custom_data != NULL) &&
+    if (is_property && ELEM(prim_type, PROP_POINTER, PROP_STRING) && (but->custom_data != NULL) &&
         (event->type == LEFTMOUSE) &&
         ((event->val == KM_DBL_CLICK) || (event->modifier & KM_CTRL))) {
       button_activate_state(C, but, BUTTON_STATE_TEXT_EDITING);

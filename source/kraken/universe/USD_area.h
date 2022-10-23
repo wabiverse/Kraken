@@ -70,10 +70,15 @@ struct ScrGlobalAreaData
 
 struct ScrArea : public UsdUIArea
 {
+  struct ScrArea *next, *prev;
+
   int areaid;
   SdfPath path;
 
   ScrVert *v1, *v2, *v3, *v4;
+
+  /** Rect bound by v1 v2 v3 v4. */
+  rcti totrct;
 
   std::vector<SpaceProperties *> spacedata;
 
@@ -95,7 +100,7 @@ struct ScrArea : public UsdUIArea
    * runtime variable, updated by executing operators. */
   short region_active_win;
 
-  std::vector<ARegion *> regions;
+  ListBase regions;
   ListBase handlers;
 
   inline ScrArea(kContext *C, kScreen *prim, const SdfPath &stagepath);

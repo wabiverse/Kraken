@@ -69,9 +69,10 @@ void UI_popup_block_ex(kContext *C,
 
 bool UI_popup_block_name_exists(const kScreen *screen, const char *name)
 {
-  for (const auto &region : screen->regions) {
-    for (const auto &block : region->uiblocks) {
-      if (block->name == name) {
+  LISTBASE_FOREACH(const ARegion *, region, &screen->regions)
+  {
+    for (auto &block : region->uiblocks) {
+      if (STREQ(block->name, name)) {
         return true;
       }
     }

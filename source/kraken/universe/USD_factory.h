@@ -84,7 +84,7 @@ class FormFactory
  * - @param id Path to Owning Stage Object.
  * - @param pgroup group of properties.
  * - @param r_ptr A new Universe Object. */
-namespace CreationFactory
+namespace PrimFactory
 {
   namespace PTR
   {
@@ -125,6 +125,24 @@ namespace CreationFactory
   }  // namespace PTR
   namespace STR
   {
+    inline void Def(KrakenPRIM *ptr,
+                    const std::string &name,
+                    const std::string &value,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
+    {
+      UsdAttribute attr = ptr->CreateAttribute(TfToken(name), SdfValueTypeNames->String);
+      attr.Set(value);
+
+      if (!ui_name.empty()) {
+        attr.SetDisplayName(ui_name);
+      }
+      
+      if (!ui_description.empty()) {
+        attr.SetDocumentation(ui_description);
+      }
+    }
+
     inline void Set(KrakenPRIM *ptr, const std::string &name, const std::string &value)
     {
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
@@ -159,6 +177,24 @@ namespace CreationFactory
   }  // namespace INT
   namespace FLOAT
   {
+    inline void Def(KrakenPRIM *ptr,
+                    const std::string &name,
+                    const float &value,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
+    {
+      UsdAttribute attr = ptr->CreateAttribute(TfToken(name), SdfValueTypeNames->Float);
+      attr.Set(value);
+
+      if (!ui_name.empty()) {
+        attr.SetDisplayName(ui_name);
+      }
+      
+      if (!ui_description.empty()) {
+        attr.SetDocumentation(ui_description);
+      }
+    }
+
     inline void Set(KrakenPRIM *ptr, const std::string &name, const float &value)
     {
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
@@ -167,6 +203,24 @@ namespace CreationFactory
   }  // namespace FLOAT
   namespace TOKEN
   {
+    inline void Def(KrakenPRIM *ptr,
+                    const std::string &name,
+                    const TfToken &value,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
+    {
+      UsdAttribute attr = ptr->CreateAttribute(TfToken(name), SdfValueTypeNames->Token);
+      attr.Set(value);
+
+      if (!ui_name.empty()) {
+        attr.SetDisplayName(ui_name);
+      }
+      
+      if (!ui_description.empty()) {
+        attr.SetDocumentation(ui_description);
+      }
+    }
+
     inline void Set(KrakenPRIM *ptr, const std::string &name, const TfToken &value)
     {
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
@@ -175,6 +229,24 @@ namespace CreationFactory
   }  // namespace TOKEN
   namespace ASSET
   {
+    inline void Def(KrakenPRIM *ptr,
+                    const std::string &name,
+                    const std::string &value,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
+    {
+      UsdAttribute attr = ptr->CreateAttribute(TfToken(name), SdfValueTypeNames->Asset);
+      attr.Set(SdfAssetPath(value));
+
+      if (!ui_name.empty()) {
+        attr.SetDisplayName(ui_name);
+      }
+      
+      if (!ui_description.empty()) {
+        attr.SetDocumentation(ui_description);
+      }
+    }
+
     inline void Set(KrakenPRIM *ptr, const std::string &name, const std::string &value)
     {
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
@@ -183,13 +255,31 @@ namespace CreationFactory
   }  // namespace ASSET
   namespace BOOL
   {
+    inline void Def(KrakenPRIM *ptr,
+                    const std::string &name,
+                    const bool &value,
+                    const std::string &ui_name,
+                    const std::string &ui_description)
+    {
+      UsdAttribute attr = ptr->CreateAttribute(TfToken(name), SdfValueTypeNames->Bool);
+      attr.Set(value);
+
+      if (!ui_name.empty()) {
+        attr.SetDisplayName(ui_name);
+      }
+      
+      if (!ui_description.empty()) {
+        attr.SetDocumentation(ui_description);
+      }
+    }
+
     inline void Set(KrakenPRIM *ptr, const std::string &name, const bool &value)
     {
       UsdAttribute attr = ptr->GetAttribute(TfToken(name));
       attr.Set(value);
     }
   }  // namespace BOOL
-}  // namespace CreationFactory
+}  // namespace PrimFactory
 
 template<> inline FormFactory::operator bool()
 {

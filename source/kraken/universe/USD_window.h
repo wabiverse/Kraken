@@ -24,6 +24,8 @@
  * Set the Stage.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "USD_wm_types.h"
 #include "USD_context.h"
 #include "USD_region.h"
@@ -31,6 +33,7 @@
 #include "USD_screen.h"
 #include "USD_workspace.h"
 #include "USD_ID.h"
+#include "USD_listBase.h"
 
 #include "WM_operators.h"
 
@@ -52,17 +55,17 @@ typedef std::deque<wmEvent *> wmEventQueue;
 struct ScrAreaMap
 {
   /** ScrVert. */
-  std::vector<struct ScrVert *> verts;
+  ListBase verts;
   /** ScrEdge. */
-  std::vector<struct ScrEdge *> edges;
+  ListBase edges;
   /** ScrArea. */
-  std::vector<struct ScrArea *> areas;
-
-  ScrAreaMap() : verts(EMPTY), edges(EMPTY), areas(EMPTY) {}
+  ListBase areas;
 };
 
 struct wmWindow : public wabi::UsdUIWindow
 {
+  struct wmWindow *next, *prev;
+
   wabi::SdfPath path;
   wmWindow *parent;
 
@@ -150,7 +153,7 @@ wmWindow::wmWindow(kContext *C, const SdfPath &stagepath)
     modalcursor(0),
     grabcursor(0),
     addmousemove(false),
-    eventstate(new wmEvent()),
+    eventstate((wmEvent *)MEM_callocN(sizeof(wmEvent), "window event state")),
     windowstate(0),
     winid(0),
     workspace_hook(nullptr)
@@ -177,7 +180,7 @@ wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
     anchorwin(nullptr),
     active(true),
     addmousemove(false),
-    eventstate(new wmEvent()),
+    eventstate((wmEvent *)MEM_callocN(sizeof(wmEvent), "window event state")),
     windowstate(0),
     winid(0),
     workspace_hook(nullptr)
@@ -218,7 +221,7 @@ struct wmWindowManager : public wabi::UsdPrim
   SdfPath path;
 
   /** All windows this manager controls. */
-  wabi::TfHashMap<SdfPath, wmWindow *, wabi::SdfPath::Hash> windows;
+  ListBase windows;
 
   wmWindow *windrawable, *winactive;
 

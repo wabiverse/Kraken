@@ -38,9 +38,12 @@
 #include "USD_window.h"
 #include "USD_workspace.h"
 
+#include "KLI_listbase.h"
 #include "KLI_string.h"
 
 #include "KKE_context.h"
+#include "KKE_global.h"
+#include "KKE_main.h"
 #include "KKE_workspace.h"
 
 #include "WM_draw.h"
@@ -51,6 +54,7 @@
 
 #include "ED_screen.h"
 
+#include "LUXO_access.h"
 
 void WM_main(kContext *C)
 {
@@ -88,8 +92,8 @@ void WM_init_manager(kContext *C)
 
 void wm_add_default(Main *kmain, kContext *C)
 {
-  wmWindow *win;
   wmWindowManager *wm = CTX_wm_manager(C);
+  wmWindow *win;
   kScreen *screen = CTX_wm_screen(C);
   WorkSpace *workspace;
   WorkSpaceLayout *layout = KKE_workspace_layout_find_global(kmain, screen, &workspace);
@@ -141,7 +145,7 @@ void wm_add_default(Main *kmain, kContext *C)
 
   /* ----- */
 
-  wm_window_make_drawable(wm, win);
+  WM_window_make_drawable(wm, win);
 
   /**
    * Create default user preferences. */
@@ -171,7 +175,7 @@ void wm_add_default(Main *kmain, kContext *C)
    * properly setup, and verfied for
    * correctness, this is now a valid
    * startup Kraken project file. */
-  USD_save_stage(C);
+  LUXO_save_usd();
 }
 
 
@@ -182,11 +186,11 @@ void WM_check(kContext *C)
 
   /* WM context. */
   if (wm == NULL) {
-    wm = new wmWindowManager();
+    wm = static_cast<wmWindowManager *>(kmain->wm.first);
     CTX_wm_manager_set(C, wm);
   }
 
-  if (wm == NULL || wm->windows.empty()) {
+  if (wm == NULL || KLI_listbase_is_empty(&wm->windows)) {
     return;
   }
 
@@ -195,22 +199,22 @@ void WM_check(kContext *C)
   //   wm->message_bus = WM_msgbus_create();
   // }
 
-  // if (!G.background) {
-  /* Case: fileread. */
-  // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
-  //   WM_keyconfig_init(C);
-  //   WM_autosave_init(wm);
-  // }
+  if (!G.background) {
+    /* Case: fileread. */
+    // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
+    // WM_keyconfig_init(C);
+    // WM_autosave_init(wm);
+    // }
 
-  /* Case: no open windows at all, for old file reads. */
-  WM_window_anchorwindows_ensure(wm);
-  // }
+    /* Case: no open windows at all, for old file reads. */
+    WM_window_anchorwindows_ensure(wm);
+  }
 
-  /* Case: fileread. */
-  /* Note: this runs in background mode to set the screen context cb. */
+  /* Case: file-read. */
+  /* NOTE: this runs in background mode to set the screen context cb. */
   // if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
-  //   ED_screens_init(kmain, wm);
-  //   wm->initialized |= WM_WINDOW_IS_INIT;
+  // ED_screens_init(bmain, wm);
+  // wm->initialized |= WM_WINDOW_IS_INIT;
   // }
 }
 

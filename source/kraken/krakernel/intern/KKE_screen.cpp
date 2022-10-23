@@ -40,6 +40,8 @@
 
 #include "KKE_screen.h"
 
+#include "WM_inline_tools.h"
+
 #include <wabi/usd/usd/tokens.h>
 
 
@@ -59,7 +61,8 @@ int find_free_screenid(kContext *C)
   int id = 1;
 
   Main *kmain = CTX_data_main(C);
-  LISTBASE_FOREACH(kScreen *, screen, &kmain->screens) {
+  LISTBASE_FOREACH(kScreen *, screen, &kmain->screens)
+  {
     if (id <= screen->winid) {
       id = screen->winid + 1;
     }
@@ -90,13 +93,13 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
   ScrArea *big = nullptr;
   int maxsize = 0;
 
-  for (auto &area : screen->areas) {
-    if ((spacetype == SPACE_TYPE_ANY) &&  area->spacetype.IsValid()) {
+  LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
+  {
+    TfToken st = FormFactory(area->spacetype);
+    if (ELEM(spacetype, SPACE_TYPE_ANY, WM_spacetype_enum_from_token(st))) {
       GfVec2f winsize = FormFactory(area->size);
-
       if (min <= GET_X(winsize) && min <= GET_Y(winsize)) {
         int size = GET_X(winsize) * GET_Y(winsize);
-
         if (size > maxsize) {
           maxsize = size;
           big = area;
@@ -111,23 +114,24 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
 ARegion *KKE_area_find_region_type(const ScrArea *area, int region_type)
 {
   if (area) {
-    UNIVERSE_FOR_ALL (region, area->regions) {
+    LISTBASE_FOREACH(ARegion *, region, &area->regions)
+    {
       if (region->regiontype == region_type) {
         return region;
       }
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ARegion *KKE_area_find_region_active_win(ScrArea *area)
 {
-  if (area == NULL) {
-    return NULL;
+  if (area == nullptr) {
+    return nullptr;
   }
 
-  ARegion *region = area->regions.at(area->region_active_win);
+  ARegion *region = (ARegion *)KLI_findlink(&area->regions, area->region_active_win);
   if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
     return region;
   }
@@ -155,6 +159,36 @@ ARegionType *KKE_regiontype_from_id(const SpaceType *st, int regionid)
   return NULL;
 }
 
+void KKE_screen_area_free(ScrArea *area)
+{
+  wabi::TfToken spacetype = FormFactory(area->spacetype);
+  SpaceType *st = KKE_spacetype_from_id(WM_spacetype_enum_from_token(spacetype));
+
+  LISTBASE_FOREACH(ARegion *, region, &area->regions)
+  {
+    KKE_area_region_free(st, region);
+  }
+
+  MEM_SAFE_FREE(area->global);
+  KLI_freelistN(&area->regions);
+
+  area->spacedata.clear();
+
+  // KLI_freelistN(&area->actionzones);
+}
+
+void KKE_screen_area_map_free(ScrAreaMap *area_map)
+{
+  LISTBASE_FOREACH_MUTABLE(ScrArea *, area, &area_map->areas)
+  {
+    KKE_screen_area_free(area);
+  }
+
+  KLI_freelistN(&area_map->verts);
+  KLI_freelistN(&area_map->edges);
+  KLI_freelistN(&area_map->areas);
+}
+
 void KKE_area_region_free(SpaceType *st, ARegion *region)
 {
   if (st) {
@@ -167,8 +201,7 @@ void KKE_area_region_free(SpaceType *st, ARegion *region)
     if (region->regiondata) {
       printf("regiondata free error\n");
     }
-  }
-  else if (region->type && region->type->free) {
+  } else if (region->type && region->type->free) {
     region->type->free(region);
   }
 
@@ -199,3 +232,32 @@ void KKE_area_region_free(SpaceType *st, ARegion *region)
   // KLI_freelistN(&region->panels_category_active);
 }
 
+ARegionType *KKE_regiontype_from_id_or_first(const SpaceType *st, int regionid)
+{
+  for (auto &art : st->regiontypes) {
+    if (art->regionid == regionid) {
+      return art;
+    }
+  }
+
+  printf("Error, region type %d missing in - name:\"%s\", id:%d\n",
+         regionid,
+         st->name.data(),
+         st->spaceid);
+  return st->regiontypes.front();
+}
+
+/* ***************** Screen edges & verts ***************** */
+
+ScrEdge *KKE_screen_find_edge(const kScreen *screen, ScrVert *v1, ScrVert *v2)
+{
+  KKE_screen_sort_scrvert(&v1, &v2);
+  LISTBASE_FOREACH(ScrEdge *, se, &screen->edges)
+  {
+    if (se->v1 == v1 && se->v2 == v2) {
+      return se;
+    }
+  }
+
+  return NULL;
+}

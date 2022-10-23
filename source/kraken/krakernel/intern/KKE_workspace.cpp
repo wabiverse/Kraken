@@ -22,6 +22,8 @@
  * Purple Underground.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "USD_wm_types.h"
 #include "USD_area.h"
 #include "USD_context.h"
@@ -36,6 +38,8 @@
 #include "USD_window.h"
 #include "USD_workspace.h"
 
+#include "KKE_main.h"
+#include "KKE_global.h"
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
 
@@ -43,85 +47,82 @@
 #include "KLI_listbase.h"
 #include "KLI_string.h"
 #include "KLI_string_utils.h"
+#include "KLI_threads.h"
 
 
 static WorkSpaceLayout *workspace_layout_find_exec(const WorkSpace *workspace,
                                                    const kScreen *screen)
 {
-  UNIVERSE_FOR_ALL (layout, workspace->layouts) {
-    if (layout->screen == screen) {
-      return layout;
-    }
-  }
-
-  return nullptr;
+  return static_cast<WorkSpaceLayout *>(
+    KLI_findptr(&workspace->layouts, screen, offsetof(WorkSpaceLayout, screen)));
 }
 
 
-static void workspace_relation_add(WorkSpaceDataRelationVector relation_list,
-                                   WorkSpaceInstanceHook *parent,
+static void workspace_relation_add(ListBase *relation_list,
+                                   void *parent,
                                    const int parentid,
-                                   WorkSpaceLayout *layout)
+                                   void *data)
 {
-  WorkSpaceDataRelation *relation = new WorkSpaceDataRelation();
-  relation->parent = parent;
+  WorkSpaceDataRelation *relation = MEM_new<WorkSpaceDataRelation>(__func__);
+  relation->parent = static_cast<WorkSpaceInstanceHook *>(parent);
   relation->parentid = parentid;
-  relation->value = layout;
+  relation->value = static_cast<WorkSpaceLayout *>(data);
   /* add to head, if we switch back to it soon we find it faster. */
-  relation_list.insert(relation_list.begin(), relation);
+  KLI_addhead(relation_list, relation);
 }
 
 
-static WorkSpaceLayout *workspace_relation_get_data_matching_parent(
-  const WorkSpaceDataRelationVector relation_list,
-  const WorkSpaceInstanceHook *parent)
+static void *workspace_relation_get_data_matching_parent(const ListBase *relation_list,
+                                                         const void *parent)
 {
-  UNIVERSE_FOR_ALL (relation, relation_list) {
-    if (relation->parent == parent) {
-      return relation->value;
-    }
+  WorkSpaceDataRelation *relation = static_cast<WorkSpaceDataRelation *>(
+    KLI_findptr(relation_list, parent, offsetof(WorkSpaceDataRelation, parent)));
+  if (relation != nullptr) {
+    return relation->value;
   }
 
   return nullptr;
 }
 
 
-static void workspace_relation_ensure_updated(WorkSpaceDataRelationVector relation_list,
-                                              WorkSpaceInstanceHook *parent,
+static void workspace_relation_ensure_updated(ListBase *relation_list,
+                                              void *parent,
                                               const int parentid,
-                                              WorkSpaceLayout *layout)
+                                              void *data)
 {
-  if (relation_list.begin() != relation_list.end()) {
-
-    auto relation = std::find_if(relation_list.begin(),
-                                 relation_list.end(),
-                                 [&](WorkSpaceDataRelation *r) -> bool {
-                                   if (r->parentid == parentid) {
-                                     r->parent = parent;
-                                     r->value = layout;
-                                     return true;
-                                   }
-
-                                   else {
-                                     return false;
-                                   }
-                                 });
-
+  WorkSpaceDataRelation *relation = static_cast<WorkSpaceDataRelation *>(
+    KLI_listbase_bytes_find(relation_list,
+                            &parentid,
+                            sizeof(parentid),
+                            offsetof(WorkSpaceDataRelation, parentid)));
+  if (relation != nullptr) {
+    relation->parent = static_cast<WorkSpaceInstanceHook *>(parent);
+    relation->value = static_cast<WorkSpaceLayout *>(data);
     /* reinsert at the head of the list, so that more commonly used relations are found faster. */
-    if (relation != relation_list.end()) {
-      std::rotate(relation_list.begin(), relation, relation + 1);
-      return;
-    }
+    KLI_remlink(relation_list, relation);
+    KLI_addhead(relation_list, relation);
+  } else {
+    /* no matching relation found, add new one */
+    workspace_relation_add(relation_list, parent, parentid, data);
   }
-  /* no matching relation found, add new one */
-  workspace_relation_add(relation_list, parent, parentid, layout);
 }
 
 
-static bool workspaces_is_screen_used(const Main *kmain, kScreen *screen)
+/**
+ * Checks if @a screen is already used within any workspace. A screen should never be assigned to
+ * multiple WorkSpaceLayouts, but that should be ensured outside of the KKE_workspace module
+ * and without such checks.
+ * Hence, this should only be used as assert check before assigning a screen to a workspace.
+ */
+#ifndef NDEBUG
+static bool workspaces_is_screen_used
+#else
+static bool UNUSED_FUNCTION(workspaces_is_screen_used)
+#endif
+  (const Main *kmain, kScreen *screen)
 {
-  LISTBASE_FOREACH(WorkSpace *, workspace, &kmain->workspaces)
-  {
+  for (WorkSpace *workspace = static_cast<WorkSpace *>(kmain->workspaces.first); workspace;
+       workspace = static_cast<WorkSpace *>(workspace->id.next)) {
     if (workspace_layout_find_exec(workspace, screen)) {
       return true;
     }
@@ -134,20 +135,13 @@ static void workspace_layout_name_set(WorkSpace *workspace,
                                       WorkSpaceLayout *layout,
                                       const char *new_name)
 {
-  TfToken new_token(new_name);
-  layout->name.Swap(new_token);
-
-  ListBase wslist = {nullptr, nullptr};
-  for (auto &alayout : workspace->layouts) {
-    KLI_addtail(&wslist, alayout);
-  }
-
-  KLI_uniquename(&wslist,
+  layout->name = TfToken(new_name);
+  KLI_uniquename(&workspace->layouts,
                  layout,
                  "Layout",
                  '.',
                  offsetof(WorkSpaceLayout, name),
-                 sizeof(CHARALL(layout->name)));
+                 sizeof(layout->name));
 
   FormFactory(workspace->name, layout->name);
 }
@@ -155,7 +149,15 @@ static void workspace_layout_name_set(WorkSpace *workspace,
 WorkSpace *KKE_workspace_add(kContext *C, const char *name)
 {
   SdfPath path(STRINGALL(KRAKEN_PATH_DEFAULTS::KRAKEN_WORKSPACES));
-  WorkSpace *new_workspace = new WorkSpace(C, path.AppendPath(SdfPath(name)));
+  WorkSpace *new_workspace = MEM_new<WorkSpace>(__func__, C, path.AppendPath(SdfPath(name)));
+
+  Main *kmain = CTX_data_main(C);
+
+  KLI_spin_lock((SpinLock *)kmain->lock);
+  KLI_addtail(&kmain->workspaces, new_workspace);
+  kmain->is_memfile_undo_written = false;
+  KLI_spin_unlock((SpinLock *)kmain->lock);
+
   FormFactory(new_workspace->name, TfToken(name));
   return new_workspace;
 }
@@ -191,14 +193,17 @@ WorkSpaceLayout *KKE_workspace_layout_add(kContext *C,
                                           kScreen *screen,
                                           const char *name)
 {
-  WorkSpaceLayout *layout = new WorkSpaceLayout();
+  WorkSpaceLayout *layout = MEM_new<WorkSpaceLayout>(__func__);
 
   KLI_assert(!workspaces_is_screen_used(kmain, screen));
+#ifndef DEBUG
+  UNUSED_VARS(kmain);
+#endif
   layout->screen = screen;
   layout->screen->winid = find_free_screenid(C);
   layout->screen->path = make_screenpath(name, layout->screen->winid);
   workspace_layout_name_set(workspace, layout, name);
-  workspace->layouts.push_back(layout);
+  KLI_addtail(&workspace->layouts, layout);
 
   return layout;
 }
@@ -225,7 +230,7 @@ WorkSpaceLayout *KKE_workspace_layout_find(const WorkSpace *workspace, const kSc
     CHARALL(name),
     CHARALL(screen->path.GetName()));
 
-  return NULL;
+  return nullptr;
 }
 
 
@@ -241,7 +246,7 @@ void KKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
                                      WorkSpaceLayout *layout)
 {
   hook->act_layout = layout;
-  workspace_relation_ensure_updated(workspace->hook_layout_relations, hook, winid, layout);
+  workspace_relation_ensure_updated(&workspace->hook_layout_relations, hook, winid, layout);
 }
 
 
@@ -258,17 +263,67 @@ void KKE_workspace_active_screen_set(WorkSpaceInstanceHook *hook,
 
 WorkSpaceInstanceHook *KKE_workspace_instance_hook_create(const Main *kmain, const int winid)
 {
-  WorkSpaceInstanceHook *hook = new WorkSpaceInstanceHook();
+  WorkSpaceInstanceHook *hook = MEM_new<WorkSpaceInstanceHook>(__func__);
 
   /* set an active screen-layout for each possible window/workspace combination */
-  LISTBASE_FOREACH(WorkSpace *, workspace, &kmain->workspaces)
-  {
-    for (auto &layout : workspace->layouts) {
-      KKE_workspace_active_layout_set(hook, winid, workspace, layout);
-    }
+  for (WorkSpace *workspace = static_cast<WorkSpace *>(kmain->workspaces.first); workspace;
+       workspace = static_cast<WorkSpace *>(workspace->id.next)) {
+    KKE_workspace_active_layout_set(hook,
+                                    winid,
+                                    workspace,
+                                    static_cast<WorkSpaceLayout *>(workspace->layouts.first));
   }
 
   return hook;
+}
+
+void KKE_workspace_layout_remove(Main *kmain, WorkSpace *workspace, WorkSpaceLayout *layout)
+{
+  /* Screen should usually be set, but we call this from file reading to get rid of invalid
+   * layouts. */
+  if (layout->screen) {
+    LISTBASE_FOREACH_MUTABLE(kScreen *, screen, &kmain->screens)
+    {
+      if (layout->screen == screen) {
+        KLI_spin_lock((SpinLock *)kmain->lock);
+        KLI_remlink(&kmain->screens, layout->screen);
+        KLI_spin_unlock((SpinLock *)kmain->lock);
+        break;
+      }
+    }
+  }
+  KLI_freelinkN(&workspace->layouts, layout);
+}
+
+static void workspace_relation_remove(ListBase *relation_list, WorkSpaceDataRelation *relation)
+{
+  KLI_remlink(relation_list, relation);
+  MEM_delete(relation);
+}
+
+void KKE_workspace_instance_hook_free(const Main *kmain, WorkSpaceInstanceHook *hook)
+{
+  /* workspaces should never be freed before wm (during which we call this function).
+   * However, when running in background mode, loading a blend file may allocate windows (that need
+   * to be freed) without creating workspaces. This happens in BlendfileLoadingBaseTest. */
+  KLI_assert(!KLI_listbase_is_empty(&kmain->workspaces) || G.background);
+
+  /* Free relations for this hook */
+  for (WorkSpace *workspace = static_cast<WorkSpace *>(kmain->workspaces.first); workspace;
+       workspace = static_cast<WorkSpace *>(workspace->id.next)) {
+    for (WorkSpaceDataRelation *
+           relation = static_cast<WorkSpaceDataRelation *>(workspace->hook_layout_relations.first),
+          *relation_next;
+         relation;
+         relation = relation_next) {
+      relation_next = relation->next;
+      if (relation->parent == hook) {
+        workspace_relation_remove(&workspace->hook_layout_relations, relation);
+      }
+    }
+  }
+
+  MEM_delete(hook);
 }
 
 
@@ -279,11 +334,18 @@ WorkSpace *KKE_workspace_active_get(WorkSpaceInstanceHook *hook)
 
 void KKE_workspace_active_set(WorkSpaceInstanceHook *hook, WorkSpace *workspace)
 {
+  /* DO NOT check for `hook->active == workspace` here. Caller code is supposed to do it if
+   * that optimization is possible and needed.
+   * This code can be called from places where we might have this equality, but still want to
+   * ensure/update the active layout below.
+   * Known case where this is buggy and will crash later due to nullptr active layout: reading
+   * a blend file, when the new read workspace ID happens to have the exact same memory address
+   * as when it was saved in the blend file (extremely unlikely, but possible). */
+
   hook->active = workspace;
   if (workspace) {
-    WorkSpaceLayout *layout = workspace_relation_get_data_matching_parent(
-      workspace->hook_layout_relations,
-      hook);
+    WorkSpaceLayout *layout = static_cast<WorkSpaceLayout *>(
+      workspace_relation_get_data_matching_parent(&workspace->hook_layout_relations, hook));
     if (layout) {
       hook->act_layout = layout;
     }
@@ -297,7 +359,7 @@ kScreen *KKE_workspace_layout_screen_get(const WorkSpaceLayout *layout)
 
 bool KKE_workspace_owner_id_check(const WorkSpace *workspace, const TfToken &owner_id)
 {
-  if ((owner_id.IsEmpty()) || ((workspace->flags & WORKSPACE_USE_FILTER_BY_ORIGIN) == 0)) {
+  if ((owner_id == TfToken()) || ((workspace->flags & WORKSPACE_USE_FILTER_BY_ORIGIN) == 0)) {
     return true;
   }
 

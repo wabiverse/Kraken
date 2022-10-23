@@ -74,7 +74,7 @@ KLI_INLINE wabi::TfToken wm_verify_spacetype(const wabi::TfToken &query)
   }
 }
 
-KLI_INLINE eSpaceType wm_spacetype_enum_from_token(const wabi::TfToken &query)
+KLI_INLINE eSpaceType WM_spacetype_enum_from_token(const wabi::TfToken &query)
 {
   if (query.IsEmpty()) {
     return SPACE_EMPTY;
@@ -116,3 +116,4 @@ KLI_INLINE eSpaceType wm_spacetype_enum_from_token(const wabi::TfToken &query)
     return SPACE_EMPTY;
   }
 }
+

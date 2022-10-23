@@ -81,7 +81,7 @@ struct wmEventHandler_KeymapResult;
    (ISKEYMODIFIER(event_type) == false))
 
 void WM_event_do_handlers(struct kContext *C);
-
+void WM_event_free_all(struct wmWindow *win);
 void wm_event_free_handler(struct wmEventHandler *handler);
 void WM_event_remove_handlers(struct kContext *C, ListBase *handlers);
 wmEventHandlerUI *WM_event_add_ui_handler(const struct kContext *C,
@@ -112,14 +112,14 @@ bool WM_event_drag_test(const wmEvent *event, const int prev_xy[2]);
 int WM_operator_name_call_ptr(struct kContext *C,
                               struct wmOperatorType *ot,
                               short context,
-                              KrakenPRIM *properties);
+                              struct KrakenPRIM *properties);
 
 void WM_event_init_from_window(wmWindow *win, wmEvent *event);
 
 int WM_operator_name_call(struct kContext *C,
                           const wabi::TfToken &optoken,
                           short context,
-                          KrakenPRIM *properties);
+                          struct KrakenPRIM *properties);
 
 void WM_event_do_refresh_wm(struct kContext *C);
 

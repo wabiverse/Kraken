@@ -71,8 +71,23 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
   kprim = MEM_new<KrakenPRIM>(K_BEDROCK.GetText(), kstage->GetPrimAtPath(K_BEDROCK));
 
   if (primfrom && primfrom->IsValid()) {
-    const TfToken type = primfrom->GetName();
-    const TfToken type_ctx = TfToken(type.GetString() + "s");
+    /** 
+     * Ensure if a type, such as "Operators" is passed, we deduce
+     * down to the actual type, "Operator". This is a lame check
+     * and is only meant to be done with Kraken stage data and 
+     * not on user stage data. */
+    const std::string type_maybe_plural = primfrom->GetName().GetString();
+    size_t final_s = type_maybe_plural.find_last_of("s");
+
+    std::string type_no_plural;
+    if (final_s != std::string::npos) {
+      type_no_plural = type_maybe_plural.substr(0, final_s);
+    } else {
+      type_no_plural = type_maybe_plural;
+    }
+    
+    const TfToken type = TfToken(type_no_plural);
+    const TfToken type_ctx = primfrom->GetName();
 
     const SdfPath path = kprim->GetPath();
     const SdfPath path_ctx = path.AppendPath(SdfPath(type_ctx)).AppendPath(identifier);
@@ -84,10 +99,18 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
   } else {
     const SdfPath path_ctx = SdfPath(identifier.GetString());
 
-    kprim = MEM_new<KrakenPRIM>(K_BEDROCK.AppendPath(path_ctx).GetText(),
-                                kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx)));
+    /**
+     * Handle case in which we just want a pointer to
+     * top level Kraken prim hierarchy, which is already
+     * set above, nothing to do.
+     */
+    if (!identifier.GetString().contains("Struct")) {
+      kprim = MEM_new<KrakenPRIM>(K_BEDROCK.AppendPath(path_ctx).GetText(),
+                                  kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx)));
+    }
+
     kprim->py_type = NULL;
-    kprim->base = kprim;
+    kprim->base = MEM_new<KrakenPRIM>(__func__, kprim->GetParent());
   }
 
   kprim->identifier = kprim->GetName();

@@ -479,7 +479,7 @@ void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
   msg_key_test.msg.params = *msg_key_params;
 
   const char *none = "<none>";
-  printf("rna(id='%s', %s.%s, info='%s')\n",
+  printf("prim(id='%s', %s.%s, info='%s')\n",
          msg_key_params->ptr.owner_id ?
            std::string(((ID *)msg_key_params->ptr.owner_id)->name).c_str() :
            none,

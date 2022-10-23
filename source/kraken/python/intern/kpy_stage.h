@@ -67,14 +67,13 @@
 //   KrakenPRIM ptr;
 // };
 
-struct KPy_KrakenStage
+struct KPy_StagePRIM
 {
   PyObject_HEAD /* Required Python macro. */
 #ifdef USE_WEAKREFS
     PyObject *in_weakreflist;
 #endif
-  wabi::UsdStageWeakPtr ptr;
-  void *data;
+  KrakenPRIM ptr;
 #ifdef USE_PYUSD_OBJECT_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
@@ -123,44 +122,44 @@ struct KPy_UsdPropertyVector
 extern "C" {
 #endif
 
-extern PyTypeObject pystage_struct_meta_idprop_Type;
-extern PyTypeObject pystage_struct_Type;
-// extern PyTypeObject pystage_prop_Type;
-// extern PyTypeObject pystage_prop_array_Type;
-// extern PyTypeObject pystage_prop_collection_Type;
-// extern PyTypeObject pystage_func_Type;
+extern PyTypeObject pyprim_struct_meta_idprop_Type;
+extern PyTypeObject pyprim_struct_Type;
+// extern PyTypeObject pyprim_prop_Type;
+// extern PyTypeObject pyprim_prop_array_Type;
+// extern PyTypeObject pyprim_prop_collection_Type;
+// extern PyTypeObject pyprim_func_Type;
 
-#define KPy_KrakenStage_Check(v) (PyObject_TypeCheck(v, &pystage_struct_Type))
-#define KPy_KrakenStage_CheckExact(v) (Py_TYPE(v) == &pystage_struct_Type)
-// #define KPy_KrakenPROP_Check(v) (PyObject_TypeCheck(v, &pystage_prop_Type))
-// #define KPy_KrakenPROP_CheckExact(v) (Py_TYPE(v) == &pystage_prop_Type)
+#define KPy_StagePRIM_Check(v) (PyObject_TypeCheck(v, &pyprim_struct_Type))
+#define KPy_StagePRIM_CheckExact(v) (Py_TYPE(v) == &pyprim_struct_Type)
+// #define KPy_KrakenPROP_Check(v) (PyObject_TypeCheck(v, &pyprim_prop_Type))
+// #define KPy_KrakenPROP_CheckExact(v) (Py_TYPE(v) == &pyprim_prop_Type)
 
 #define PYUSD_STRUCT_CHECK_OBJ(obj)                              \
-  if (ARCH_UNLIKELY(pystage_struct_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyprim_struct_validity_check(obj) == -1)) { \
     return NULL;                                                 \
   }                                                              \
   (void)0
 #define PYUSD_STRUCT_CHECK_INT(obj)                              \
-  if (ARCH_UNLIKELY(pystage_struct_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyprim_struct_validity_check(obj) == -1)) { \
     return -1;                                                   \
   }                                                              \
   (void)0
 
 #define PYUSD_PROP_CHECK_OBJ(obj)                              \
-  if (ARCH_UNLIKELY(pystage_prop_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyprim_prop_validity_check(obj) == -1)) { \
     return NULL;                                               \
   }                                                            \
   (void)0
 #define PYUSD_PROP_CHECK_INT(obj)                              \
-  if (ARCH_UNLIKELY(pystage_prop_validity_check(obj) == -1)) { \
+  if (ARCH_UNLIKELY(pyprim_prop_validity_check(obj) == -1)) { \
     return -1;                                                 \
   }                                                            \
   (void)0
 
-#define PYUSD_STRUCT_IS_VALID(pystage) \
-  (ARCH_LIKELY(((KPy_KrakenStage *)(pystage))->ptr->GetStage().IsInvalid() != true))
-#define PYUSD_PROP_IS_VALID(pystage) \
-  (ARCH_LIKELY(((KPy_KrakenPROP *)(pystage))->ptr->IsValid() == true))
+#define PYUSD_STRUCT_IS_VALID(pyprim) \
+  (ARCH_LIKELY(((KPy_StagePRIM *)(pyprim))->ptr->GetStage().IsInvalid() != true))
+#define PYUSD_PROP_IS_VALID(pyprim) \
+  (ARCH_LIKELY(((KPy_KrakenPROP *)(pyprim))->ptr->IsValid() == true))
 
 #ifdef __cplusplus
 }
@@ -172,14 +171,14 @@ PyObject *KPY_stage_module(void);
 
 void KPY_update_stage_module(void);
 
-KrakenPRIM *pystage_struct_as_srna(PyObject *self,
+KrakenPRIM *pyprim_struct_as_sprim(PyObject *self,
                                          const bool parent,
                                          const char *error_prefix);
-PyObject *pystage_struct_CreatePyObject(KrakenPRIM *ptr);
-void pystage_alloc_types(void);
+PyObject *pyprim_struct_CreatePyObject(KrakenPRIM *ptr);
+void pyprim_alloc_types(void);
 
-PyObject *pystage_srna_PyBase(KrakenPRIM *srna);
-void pystage_subtype_set_rna(PyObject *newclass, KrakenPRIM *srna);
+PyObject *pyprim_sprim_PyBase(KrakenPRIM *sprim);
+void pyprim_subtype_set_rna(PyObject *newclass, KrakenPRIM *sprim);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;
@@ -189,4 +188,4 @@ extern PyMethodDef meth_kpy_unregister_class;
 extern PyMethodDef meth_kpy_owner_id_set;
 extern PyMethodDef meth_kpy_owner_id_get;
 
-extern KPy_KrakenStage *kpy_context_module;
+extern KPy_StagePRIM *kpy_context_module;

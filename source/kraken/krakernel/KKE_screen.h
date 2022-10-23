@@ -178,3 +178,8 @@ ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const sh
 
 ARegionType *KKE_regiontype_from_id(const SpaceType *st, int regionid);
 void KKE_area_region_free(SpaceType *st, ARegion *region);
+void KKE_screen_area_map_free(struct ScrAreaMap *area_map);
+void KKE_screen_area_free(ScrArea *area);
+
+ScrEdge *KKE_screen_find_edge(const kScreen *screen, struct ScrVert *v1, struct ScrVert *v2);
+ARegionType *KKE_regiontype_from_id_or_first(const SpaceType *st, int regionid);

@@ -29,4 +29,12 @@
  * However, it is currently of little use. */
 // #define KPYGPU_USE_GPUOBJ_FREE_METHOD
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 PyObject *KPyInit_gpu(void);
+
+#ifdef __cplusplus
+}
+#endif

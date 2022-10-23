@@ -52,28 +52,27 @@ struct KrakenPROP;
 
 extern KrakenSTAGE KRAKEN_STAGE;
 
-extern KrakenPRIM LUXO_StageData;
-extern KrakenPRIM LUXO_KrakenPixar;
-extern KrakenPRIM LUXO_Context;
-extern KrakenPRIM LUXO_Struct;
-extern KrakenPRIM LUXO_Window;
-extern KrakenPRIM LUXO_WorkSpace;
-extern KrakenPRIM LUXO_Screen;
-extern KrakenPRIM LUXO_Area;
-extern KrakenPRIM LUXO_Region;
+extern KrakenPRIM PRIM_StageData;
+extern KrakenPRIM PRIM_KrakenPRIM;
+extern KrakenPRIM PRIM_Context;
+extern KrakenPRIM PRIM_Struct;
+extern KrakenPRIM PRIM_Window;
+extern KrakenPRIM PRIM_WorkSpace;
+extern KrakenPRIM PRIM_Screen;
+extern KrakenPRIM PRIM_Area;
+extern KrakenPRIM PRIM_Region;
 
 bool LUXO_struct_undo_check(const KrakenPRIM *type);
 
-#define LUXO_POINTER_INVALIDATE(ptr) \
+#define PRIM_POINTER_INVALIDATE(ptr) \
   {                                  \
-    (ptr)->ptr = NULL;               \
+    (ptr)->type = NULL;               \
     (ptr)->owner_id = NULL;          \
   }                                  \
   (void)0
 
 void LUXO_init(void);
 
-/* remove this once we go back to UsdStage::CreateInMemory */
 void LUXO_save_usd(void);
 
 void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr);
@@ -81,8 +80,8 @@ void LUXO_main_pointer_create(Main *main, KrakenPRIM *r_ptr);
 void LUXO_pointer_create(ID *id, KrakenPRIM *type, void *data, KrakenPRIM *r_ptr);
 void LUXO_stage_pointer_ensure(KrakenPRIM *r_ptr);
 const wabi::TfToken LUXO_property_identifier(const KrakenPROP *prop);
-void *LUXO_struct_py_type_get(KrakenPRIM *srna);
-void LUXO_struct_py_type_set(KrakenPRIM *srna, void *type);
+void *LUXO_struct_py_type_get(KrakenPRIM *sprim);
+void LUXO_struct_py_type_set(KrakenPRIM *sprim, void *type);
 
 PropertyScaleType LUXO_property_ui_scale(KrakenPROP *prop);
 PropertyType LUXO_property_type_enum(KrakenPROP *prop);
@@ -99,22 +98,20 @@ ObjectUnregisterFunc LUXO_struct_unregister(KrakenPRIM *ptr);
 void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP *r_ptr);
 void **LUXO_struct_instance(KrakenPRIM *ptr);
 const wabi::TfToken LUXO_struct_identifier(const KrakenPRIM *type);
-bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *srna);
+bool LUXO_struct_is_a(const KrakenPRIM *type, const KrakenPRIM *sprim);
 
-std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *srna);
+std::vector<KrakenPRIM *> &LUXO_struct_type_functions(KrakenPRIM *sprim);
 const char *LUXO_function_identifier(KrakenFUNC *func);
 
 int LUXO_prim_ui_icon(const KrakenPRIM *type);
 
 int LUXO_function_flag(KrakenFUNC *func);
 
-KrakenPRIM *srna_from_ptr(KrakenPRIM *ptr);
+KrakenPRIM *sprim_from_ptr(KrakenPRIM *ptr);
 
 UsdCollectionsVector LUXO_property_collection_begin(KrakenPRIM *ptr, const TfToken &name);
 
 void LUXO_set_stage_ctx(kContext *C);
-
-wabi::UsdStageWeakPtr LUXO_get_stage();
 
 char *LUXO_pointer_as_string_id(kContext *C, KrakenPRIM *ptr);
 char *LUXO_pointer_as_string_keywords(kContext *C,

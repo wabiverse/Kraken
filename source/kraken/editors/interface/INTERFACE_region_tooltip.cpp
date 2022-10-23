@@ -110,7 +110,7 @@ ARegion *ui_region_temp_add(kScreen *screen)
   wabi::UsdStageWeakPtr stage = screen->GetPrim().GetStage();
 
   ARegion *region = MEM_new<ARegion>(__func__, stage, screen, SdfPath("RegionTemp"));
-  screen->regions.push_back(region);
+  KLI_addtail(&screen->regions, region);
 
   region->regiontype = RGN_TYPE_TEMPORARY;
   region->alignment = RGN_ALIGN_FLOAT;

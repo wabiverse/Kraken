@@ -72,7 +72,7 @@ wmWindow *WM_window_open(kContext *C,
                          bool dialog,
                          bool temp);
 void wm_window_close(kContext *C, wmWindowManager *wm, wmWindow *win);
-void wm_window_make_drawable(wmWindowManager *wm, wmWindow *win);
+void WM_window_make_drawable(wmWindowManager *wm, wmWindow *win);
 bool WM_window_is_temp_screen(const wmWindow *win);
 
 void WM_anchor_init(kContext *C);
@@ -108,14 +108,9 @@ void WM_window_operators_register();
 /** Utils. */
 int WM_window_pixels_x(const wmWindow *win);
 int WM_window_pixels_y(const wmWindow *win);
-bool WM_window_find_under_cursor(wmWindowManager *wm,
-                                 wmWindow *win_ignore,
-                                 wmWindow *win,
-                                 const GfVec2i mval,
-                                 wmWindow **r_win,
-                                 GfVec2i *r_mval);
-void WM_window_screen_rect_calc(const wmWindow *win, GfRect2i *r_rect);
-
+wmWindow *WM_window_find_under_cursor(wmWindow *win, const int mval[2], int r_mval[2]);
+void WM_window_screen_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect);
+void WM_window_rect_calc(const wmWindow *win, wabi::GfRect2i *r_rect);
 void WM_cursor_position_to_anchor_screen_coords(wmWindow *win, int *x, int *y);
 void WM_cursor_position_to_anchor_client_coords(wmWindow *win, int *x, int *y);
 void WM_clipboard_text_set(const char *buf, bool selection);
@@ -124,6 +119,8 @@ kScene *WM_window_get_active_scene(const wmWindow *win);
 WorkSpace *WM_window_get_active_workspace(const wmWindow *win);
 kScreen *WM_window_get_active_screen(const wmWindow *win);
 WorkSpaceLayout *WM_window_get_active_layout(const wmWindow *win);
+
+void WM_window_set_dpi(const wmWindow *win);
 
 void WM_init_state_size_set(int stax, int stay, int sizx, int sizy);
 void WM_init_state_fullscreen_set(void);

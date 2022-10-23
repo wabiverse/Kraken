@@ -809,7 +809,8 @@ bool ui_region_contains_rect_px(const ARegion *region, const rcti *rect_px)
 
 ARegion *ui_screen_region_find_mouse_over_ex(kScreen *screen, const int xy[2])
 {
-  for (auto &region : screen->regions) {
+  LISTBASE_FOREACH(ARegion *, region, &screen->regions)
+  {
     rcti winrct;
 
     ui_region_winrct_get_no_margin(region, &winrct);

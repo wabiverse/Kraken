@@ -75,7 +75,7 @@ struct KPy_Library
   bool kmain_is_temp;
 };
 
-static PyObject *kpy_lib_load(KPy_KrakenStage *self, PyObject *args, PyObject *kwds);
+static PyObject *kpy_lib_load(KPy_StagePRIM *self, PyObject *args, PyObject *kwds);
 static PyObject *kpy_lib_enter(KPy_Library *self);
 static PyObject *kpy_lib_exit(KPy_Library *self, PyObject *args);
 static PyObject *kpy_lib_dir(KPy_Library *self);
@@ -187,20 +187,30 @@ PyDoc_STRVAR(
   "   :type relative: bool\n"
   "   :arg assets_only: If True, only list data-blocks marked as assets.\n"
   "   :type assets_only: bool\n");
-static PyObject *kpy_lib_load(KPy_KrakenStage *self, PyObject *args, PyObject *kw)
+static PyObject *kpy_lib_load(KPy_StagePRIM *self, PyObject *args, PyObject *kw)
 {
   Main *kmain_base = CTX_data_main(KPY_context_get());
-  Main *kmain = (Main *)self->data; /* Typically #G_MAIN */
+  Main *kmain = (Main *)self->ptr.data; /* Typically #G_MAIN */
   KPy_Library *ret;
-  const char *filename = NULL;
+  const char *filepath = NULL;
   bool is_rel = false, is_link = false, use_assets_only = false;
 
   static const char *_keywords[] = {"filepath", "link", "relative", "assets_only", NULL};
-  static _PyArg_Parser _parser = {"s|$O&O&O&:load", _keywords, 0};
+  static _PyArg_Parser _parser = {
+    "s" /* `filepath` */
+    /* Optional keyword only arguments. */
+    "|$"
+    "O&" /* `link` */
+    "O&" /* `relative` */
+    "O&" /* `assets_only` */
+    ":load",
+    _keywords,
+    0,
+  };
   if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                         kw,
                                         &_parser,
-                                        &filename,
+                                        &filepath,
                                         PyC_ParseBool,
                                         &is_link,
                                         PyC_ParseBool,
@@ -212,13 +222,14 @@ static PyObject *kpy_lib_load(KPy_KrakenStage *self, PyObject *args, PyObject *k
 
   ret = PyObject_New(KPy_Library, &kpy_lib_Type);
 
-  KLI_strncpy(ret->relpath, filename, sizeof(ret->relpath));
-  KLI_strncpy(ret->abspath, filename, sizeof(ret->abspath));
-  //   KLI_path_abs(ret->abspath, KKE_main_pixarfile_path(kmain));
+  KLI_strncpy(ret->relpath, filepath, sizeof(ret->relpath));
+  KLI_strncpy(ret->abspath, filepath, sizeof(ret->abspath));
+  KLI_path_abs(ret->abspath, KKE_main_usdfile_path(kmain));
 
   ret->kmain = kmain;
   ret->kmain_is_temp = (kmain != kmain_base);
 
+  ret->kr_handle = NULL;
   ret->flag = ((is_link ? FILE_LINK : 0) | (is_rel ? FILE_RELPATH : 0) |
                (use_assets_only ? FILE_ASSETS_ONLY : 0));
 

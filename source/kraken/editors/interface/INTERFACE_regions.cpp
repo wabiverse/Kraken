@@ -22,6 +22,8 @@
  * Tools for Artists.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "kraken/kraken.h"
 
 #include "USD_area.h"
@@ -35,6 +37,8 @@
 
 #include "UI_interface.h"
 
+#include "KLI_listbase.h"
+
 #include "KKE_context.h"
 #include "KKE_screen.h"
 
@@ -46,18 +50,14 @@ void ui_region_temp_remove(kContext *C, kScreen *screen, ARegion *region)
   wmWindow *win = CTX_wm_window(C);
 
   KLI_assert(region->regiontype == RGN_TYPE_TEMPORARY);
-  KLI_assert(std::find(screen->regions.begin(), screen->regions.end(), region) !=
-             screen->regions.end());
+  KLI_assert(KLI_findindex(&screen->regions, region) != -1);
   if (win) {
-    // WM_draw_region_clear(win, region);
+    WM_draw_region_clear(win, region);
   }
 
   ED_region_exit(C, region);
+  KKE_area_region_free(nullptr, region); /* nullptr: no space-type. */
+  KLI_remlink(&screen->regions, region);
 
-  /* nullptr: no space-type. */
-  KKE_area_region_free(nullptr, region);
-
-  screen->regions.erase(std::remove(screen->regions.begin(), screen->regions.end(), region),
-                        screen->regions.end());
-  delete region;
+  MEM_delete(region);
 }

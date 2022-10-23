@@ -1482,7 +1482,7 @@ static bool ui_but_event_property_operator_string(const kContext *C,
     ID *id = ptr->owner_id;
 
     if (GS(id->name) == ID_SCR) {
-      if (LUXO_struct_is_a(ptr->type, &LUXO_Area)) {
+      if (LUXO_struct_is_a(ptr->type, &PRIM_Area)) {
         /* data should be directly on here... */
         TfToken prop_id = prop->GetName();
         /* Hack since keys access 'type', UI shows 'ui_type'. */
@@ -2290,7 +2290,7 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
         }
 
         UI_GET_BUT_VALUE_INIT(but, *value);
-        /* support for rna enum buts */
+        /* support for prim enum buts */
         if (but->stageprop && (LUXO_property_type(but->stageprop) & PROP_ENUM_FLAG)) {
           if ((int)*value & (int)but->hardmax) {
             is_push = true;
@@ -4581,7 +4581,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     KLI_assert(index == -1);
   }
 
-  /* use rna values if parameters are not specified */
+  /* use prim values if parameters are not specified */
   if ((proptype == PROP_ENUM) && ELEM(type, UI_BTYPE_MENU, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
     bool free;
     const EnumPropertyItem *item;
@@ -6809,7 +6809,7 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
               // tmp = KLI_strdup(CTX_TIP_(pt->translation_context, pt->label));
             } else {
               /* Not all panels are from Python. */
-              // if (pt->luxo_ext.srna) {
+              // if (pt->luxo_ext.sprim) {
               //   /* Panels don't yet have descriptions, this may be added. */
               // }
             }
@@ -6821,11 +6821,11 @@ void UI_but_string_info_get(kContext *C, uiBut *but, ...)
       // if (but->stageprop) {
       //   _tmp = LUXO_property_translation_context(but->stageprop);
       // } else if (but->optype) {
-      //   _tmp = LUXO_struct_translation_context(but->optype->srna);
+      //   _tmp = LUXO_struct_translation_context(but->optype->sprim);
       // } else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
       //   MenuType *mt = UI_but_menutype_get(but);
       //   if (mt) {
-      //     _tmp = LUXO_struct_translation_context(mt->luxo_ext.srna);
+      //     _tmp = LUXO_struct_translation_context(mt->luxo_ext.sprim);
       //   }
       // }
       // if (BLT_is_default_context(_tmp)) {

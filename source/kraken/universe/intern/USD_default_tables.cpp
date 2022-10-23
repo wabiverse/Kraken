@@ -32,6 +32,8 @@
 
 #include "KKE_context.h"
 
+#include "KLI_listbase.h"
+
 #include <wabi/usd/usd/stage.h>
 #include <wabi/usd/usdGeom/cube.h>
 #include <wabi/usd/usdUI/tokens.h>
@@ -105,7 +107,7 @@ void USD_default_table_area_screen(kContext *C)
 {
   kScreen *screen = CTX_wm_screen(C);
 
-  UNIVERSE_FOR_ALL(area, screen->areas)
+  LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
   {
     /** Add UI Areas to Screen's Collection of Areas. */
     FormFactory(PROP_IFACE(screen->areas_rel), VALUE_IFACE(SdfPath(area->path)));

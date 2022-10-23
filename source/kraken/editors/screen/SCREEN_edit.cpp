@@ -37,6 +37,7 @@
 #include "USD_workspace.h"
 
 #include "KKE_context.h"
+#include "KKE_global.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
 #include "KKE_workspace.h"
@@ -45,7 +46,10 @@
 #include "KLI_listbase.h"
 #include "KLI_math.h"
 
+#include "WM_event_system.h"
+#include "WM_inline_tools.h"
 #include "WM_window.hh"
+#include "WM_window.h"
 
 #include "ED_defines.h"
 #include "ED_screen.h"
@@ -53,6 +57,16 @@
 #include <wabi/base/gf/rect2i.h>
 #include <wabi/usd/usdUI/tokens.h>
 
+#include "UI_interface.h"
+
+static int screen_geom_area_height(const ScrArea *area)
+{
+  return area->v2->vec[1] - area->v1->vec[1] + 1;
+}
+static int screen_geom_area_width(const ScrArea *area)
+{
+  return area->v4->vec[0] - area->v1->vec[0] + 1;
+}
 
 bool ED_screen_change(kContext *C, kScreen *screen)
 {
@@ -119,17 +133,17 @@ void ED_area_exit(kContext *C, ScrArea *area)
   wmWindow *win = CTX_wm_window(C);
   ScrArea *prevsa = CTX_wm_area(C);
 
-  // if (area->type && area->type->exit) {
-  // area->type->exit(wm, area);
-  // }
+  if (area->type && area->type->exit) {
+    area->type->exit(wm, area);
+  }
 
   CTX_wm_area_set(C, area);
 
-  UNIVERSE_FOR_ALL (region, area->regions) {
+  LISTBASE_FOREACH (ARegion *, region, &area->regions) {
     ED_region_exit(C, region);
   }
 
-  // WM_event_remove_handlers(C, &area->handlers);
+  WM_event_remove_handlers(C, &area->handlers);
   // WM_event_modal_handler_area_replace(win, area, NULL);
 
   CTX_wm_area_set(C, prevsa);
@@ -142,17 +156,27 @@ void ED_screen_exit(kContext *C, wmWindow *window, kScreen *screen)
 
   CTX_wm_window_set(C, window);
 
-  screen->active_region = NULL;
+  // if (screen->animtimer) {
+  //   WM_event_remove_timer(wm, window, screen->animtimer);
 
-  UNIVERSE_FOR_ALL (region, screen->regions) {
+  //   Hydra *hydra = CTX_data_hydra_pointer(C);
+  //   Scene *scene = WM_window_get_active_scene(prevwin);
+  //   Scene *scene_eval = (Scene *)Hydra_get_evaluated_id(hydra, &scene->id);
+  //   KKE_sound_stop_scene(scene_eval);
+  // }
+  // screen->animtimer = nullptr;
+  // screen->scrubbing = false;
+
+  screen->active_region = nullptr;
+
+  LISTBASE_FOREACH (ARegion *, region, &screen->regions) {
     ED_region_exit(C, region);
   }
-
-  UNIVERSE_FOR_ALL (area, screen->areas) {
+  LISTBASE_FOREACH (ScrArea *, area, &screen->areas) {
     ED_area_exit(C, area);
   }
-
-  UNIVERSE_FOR_ALL (area, window->global_areas.areas) {
+  /* Don't use ED_screen_areas_iter here, it skips hidden areas. */
+  LISTBASE_FOREACH (ScrArea *, area, &window->global_areas.areas) {
     ED_area_exit(C, area);
   }
 
@@ -194,8 +218,9 @@ static int find_free_areaid(kContext *C)
    * Though of course, users should be allowed to
    * create any number of screen areas without them
    * noticing a performance impact. */
-  LISTBASE_FOREACH (kScreen *, screen, &kmain->screens) {
-    UNIVERSE_FOR_ALL (area, screen->areas) {
+  LISTBASE_FOREACH(kScreen *, screen, &kmain->screens)
+  {
+    LISTBASE_FOREACH (ScrArea *, area, &screen->areas) {
       if (id <= area->areaid) {
         id = area->areaid + 1;
       }
@@ -223,7 +248,7 @@ static ScrArea *screen_addarea_ex(kContext *C,
   area->v4 = bottom_right;
   FormFactory(area->spacetype, spacetype);
 
-  area_map->areas.push_back(area);
+  KLI_addtail(&area_map->areas, area);
 
   FormFactory(screen->areas_rel, area->path);
 
@@ -274,4 +299,230 @@ kScreen *screen_add(kContext *C, const char *name, const rcti *rect)
   screen_addarea(C, screen, sv1, sv2, sv3, sv4, UsdUITokens->spaceEmpty);
 
   return screen;
+}
+
+static bool screen_geom_vertices_scale_pass(const wmWindow *win,
+                                            const kScreen *screen,
+                                            const rcti *screen_rect)
+{
+
+  const int screen_size_x = KLI_rcti_size_x(screen_rect);
+  const int screen_size_y = KLI_rcti_size_y(screen_rect);
+  bool needs_another_pass = false;
+
+  /* calculate size */
+  float min[2] = {20000.0f, 20000.0f};
+  float max[2] = {0.0f, 0.0f};
+
+  LISTBASE_FOREACH(ScrVert *, sv, &screen->verts)
+  {
+    const float fv[2] = {(float)sv->vec[0], (float)sv->vec[1]};
+    minmax_v2v2_v2(min, max, fv);
+  }
+
+  int screen_size_x_prev = (max[0] - min[0]) + 1;
+  int screen_size_y_prev = (max[1] - min[1]) + 1;
+
+  if (screen_size_x_prev != screen_size_x || screen_size_y_prev != screen_size_y) {
+    const float facx = ((float)screen_size_x - 1) / ((float)screen_size_x_prev - 1);
+    const float facy = ((float)screen_size_y - 1) / ((float)screen_size_y_prev - 1);
+
+    /* make sure it fits! */
+    LISTBASE_FOREACH(ScrVert *, sv, &screen->verts)
+    {
+      sv->vec[0] = screen_rect->xmin + round_fl_to_short((sv->vec[0] - min[0]) * facx);
+      CLAMP(sv->vec[0], screen_rect->xmin, screen_rect->xmax - 1);
+
+      sv->vec[1] = screen_rect->ymin + round_fl_to_short((sv->vec[1] - min[1]) * facy);
+      CLAMP(sv->vec[1], screen_rect->ymin, screen_rect->ymax - 1);
+    }
+
+    /* test for collapsed areas. This could happen in some blender version... */
+    /* ton: removed option now, it needs Context... */
+
+    int headery = ED_area_headersize() + (U.pixelsize * 2);
+
+    if (facy > 1) {
+      /* Keep timeline small in video edit workspace. */
+      LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
+      {
+        TfToken st = FormFactory(area->spacetype);
+        if (WM_spacetype_enum_from_token(st) == SPACE_ACTION &&
+            area->v1->vec[1] == screen_rect->ymin &&
+            screen_geom_area_height(area) <= headery * facy + 1) {
+          ScrEdge *se = KKE_screen_find_edge(screen, area->v2, area->v3);
+          if (se) {
+            const int yval = area->v1->vec[1] + headery - 1;
+
+            screen_geom_select_connected_edge(win, se);
+
+            /* all selected vertices get the right offset */
+            LISTBASE_FOREACH(ScrVert *, sv, &screen->verts)
+            {
+              /* if is a collapsed area */
+              if (!ELEM(sv, area->v1, area->v4)) {
+                if (sv->flag) {
+                  sv->vec[1] = yval;
+                  /* Changed size of a area. Run another pass to ensure everything still fits. */
+                  needs_another_pass = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    if (facy < 1) {
+      /* make each window at least ED_area_headersize() high */
+      LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
+      {
+        if (screen_geom_area_height(area) < headery) {
+          /* lower edge */
+          ScrEdge *se = KKE_screen_find_edge(screen, area->v4, area->v1);
+          if (se && area->v1 != area->v2) {
+            const int yval = area->v2->vec[1] - headery + 1;
+
+            screen_geom_select_connected_edge(win, se);
+
+            /* all selected vertices get the right offset */
+            LISTBASE_FOREACH(ScrVert *, sv, &screen->verts)
+            {
+              /* if is not a collapsed area */
+              if (!ELEM(sv, area->v2, area->v3)) {
+                if (sv->flag) {
+                  sv->vec[1] = yval;
+                  /* Changed size of a area. Run another pass to ensure everything still fits. */
+                  needs_another_pass = true;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return needs_another_pass;
+}
+
+static void screen_geom_vertices_scale(const wmWindow *win, kScreen *screen)
+{
+  wabi::GfRect2i window_rect, screen_rect;
+  WM_window_rect_calc(win, &window_rect);
+  WM_window_screen_rect_calc(win, &screen_rect);
+
+  rcti gf_screen_rcti;
+  gf_screen_rcti.xmin = screen_rect.GetMinX();
+  gf_screen_rcti.xmax = screen_rect.GetMaxX();
+  gf_screen_rcti.ymin = screen_rect.GetMinY();
+  gf_screen_rcti.ymax = screen_rect.GetMaxY();
+
+  bool needs_another_pass;
+  int max_passes_left = 10; /* Avoids endless loop. Number is rather arbitrary. */
+  do {
+    needs_another_pass = screen_geom_vertices_scale_pass(win, screen, &gf_screen_rcti);
+    max_passes_left--;
+  } while (needs_another_pass && (max_passes_left > 0));
+
+  screen_rect.SetMinX(gf_screen_rcti.xmin);
+  screen_rect.SetMaxX(gf_screen_rcti.xmax);
+  screen_rect.SetMinY(gf_screen_rcti.ymin);
+  screen_rect.SetMaxY(gf_screen_rcti.ymax);
+
+  /* Global areas have a fixed size that only changes with the DPI.
+   * Here we ensure that exactly this size is set. */
+  LISTBASE_FOREACH(ScrArea *, area, &win->global_areas.areas)
+  {
+    if (area->global->flag & GLOBAL_AREA_IS_HIDDEN) {
+      continue;
+    }
+
+    int height = ED_area_global_size_y(area) - 1;
+
+    if (area->v1->vec[1] > window_rect.GetMinY()) {
+      height += U.pixelsize;
+    }
+    if (area->v2->vec[1] < (window_rect.GetMaxY() - 1)) {
+      height += U.pixelsize;
+    }
+
+    /* width */
+    area->v1->vec[0] = area->v2->vec[0] = window_rect.GetMinX();
+    area->v3->vec[0] = area->v4->vec[0] = window_rect.GetMaxX() - 1;
+    /* height */
+    area->v1->vec[1] = area->v4->vec[1] = window_rect.GetMinY();
+    area->v2->vec[1] = area->v3->vec[1] = window_rect.GetMaxY() - 1;
+
+    switch (area->global->align) {
+      case GLOBAL_AREA_ALIGN_TOP:
+        area->v1->vec[1] = area->v4->vec[1] = area->v2->vec[1] - height;
+        break;
+      case GLOBAL_AREA_ALIGN_BOTTOM:
+        area->v2->vec[1] = area->v3->vec[1] = area->v1->vec[1] + height;
+        break;
+    }
+  }
+}
+
+void ED_screen_global_areas_refresh(wmWindow *win)
+{
+  /* Don't create global area for child and temporary windows. */
+  kScreen *screen = KKE_workspace_active_screen_get(win->workspace_hook);
+  if ((win->parent != NULL) || screen->temp) {
+    if (win->global_areas.areas.first) {
+      screen->do_refresh = true;
+      KKE_screen_area_map_free(&win->global_areas);
+    }
+    return;
+  }
+
+  // screen_global_topbar_area_refresh(win, screen);
+  // screen_global_statusbar_area_refresh(win, screen);
+}
+
+void ED_screen_refresh(wmWindowManager *wm, wmWindow *win)
+{
+  kScreen *screen = WM_window_get_active_screen(win);
+
+  /* Exception for background mode, we only need the screen context. */
+  if (!G.background) {
+
+    /* Called even when creating the ghost window fails in #WM_window_open. */
+    if (win->anchorwin) {
+      /* Header size depends on DPI, let's verify. */
+      WM_window_set_dpi(win);
+    }
+
+    ED_screen_global_areas_refresh(win);
+
+    screen_geom_vertices_scale(win, screen);
+
+    ED_screen_areas_iter(win, screen, area)
+    {
+      /* Set space-type and region callbacks, calls init() */
+      /* Sets sub-windows for regions, adds handlers. */
+      ED_area_init(wm, win, area);
+    }
+
+    /* wake up animtimer */
+    // if (screen->animtimer) {
+    //   WM_event_timer_sleep(wm, win, screen->animtimer, false);
+    // }
+  }
+
+  if (G.debug & G_DEBUG_EVENTS) {
+    printf("%s: set screen\n", __func__);
+  }
+  screen->do_refresh = false;
+  /* prevent multiwin errors */
+  screen->winid = win->winid;
+
+  // screen->context = ed_screen_context;
+}
+
+void ED_screen_ensure_updated(wmWindowManager *wm, wmWindow *win, kScreen *screen)
+{
+  if (screen->do_refresh) {
+    ED_screen_refresh(wm, win);
+  }
 }

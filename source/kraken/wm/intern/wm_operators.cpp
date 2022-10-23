@@ -97,11 +97,12 @@ static void wm_operatortype_append__end(wmOperatorType *ot)
   /* Allow calling _begin without _end in operatortype creation. */
   // WM_operatortype_props_advanced_end(ot);
 
+  PRIM_def_struct_identifier(KRAKEN_STAGE, ot->prim, ot->idname);
+
   /* XXX All ops should have a description but for now allow them not to. */
   PRIM_def_struct_ui_text(ot->prim,
                           ot->name,
                           ot->description ? ot->description : UNDOCUMENTED_OPERATOR_TIP);
-  PRIM_def_struct_identifier(KRAKEN_STAGE, ot->prim, ot->idname);
 
   KLI_rhash_insert(global_ops_hash, (void *)ot->idname.data(), ot);
 }

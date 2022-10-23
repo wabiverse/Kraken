@@ -55,8 +55,17 @@ struct GfRect2i;
 #  include "ED_defines.h"
 #endif /* __cplusplus */
 
+typedef enum eScreenAxis
+{
+  /** Horizontal. */
+  SCREEN_AXIS_H = 'h',
+  /** Vertical. */
+  SCREEN_AXIS_V = 'v',
+} eScreenAxis;
+
 struct WorkSpace *ED_workspace_add(struct kContext *C, const char *name);
 
+void ED_area_init(struct wmWindowManager *wm, struct wmWindow *win, struct ScrArea *area);
 void ED_area_exit(struct kContext *C, struct ScrArea *area);
 void ED_area_do_refresh(struct kContext *C, struct ScrArea *area);
 bool ED_area_is_global(const struct ScrArea *area);
@@ -71,6 +80,8 @@ void ED_area_tag_refresh(struct ScrArea *area);
 void ED_region_tag_redraw(struct ARegion *region);
 void ED_region_tag_redraw_no_rebuild(struct ARegion *region);
 void ED_region_tag_refresh_ui(struct ARegion *region);
+
+int ED_area_headersize(void);
 
 #ifdef __cplusplus
 void ED_area_newspace(struct kContext *C,
@@ -108,3 +119,25 @@ struct ScrEdge *screen_geom_edge_add(struct kScreen *screen,
 struct ScrEdge *screen_geom_edge_add_ex(struct ScrAreaMap *area_map,
                                         struct ScrVert *v1,
                                         struct ScrVert *v2);
+void screen_geom_select_connected_edge(const struct wmWindow *win, struct ScrEdge *edge);
+
+void ED_screen_global_areas_refresh(struct wmWindow *win);
+void ED_screen_refresh(struct wmWindowManager *wm, struct wmWindow *win);
+void ED_screen_ensure_updated(struct wmWindowManager *wm, struct wmWindow *win, struct kScreen *screen);
+
+struct ScrArea *ED_screen_areas_iter_first(const struct wmWindow *win,
+                                           const struct kScreen *screen);
+struct ScrArea *ED_screen_areas_iter_next(const struct kScreen *screen,
+                                          const struct ScrArea *area);
+
+#define ED_screen_areas_iter(win, screen, area_name)                                    \
+  for (ScrArea *area_name = ED_screen_areas_iter_first(win, screen); area_name != NULL; \
+       area_name = ED_screen_areas_iter_next(screen, area_name))
+#define ED_screen_verts_iter(win, screen, vert_name)                          \
+  for (ScrVert *vert_name = (ScrVert *)(win)->global_areas.verts.first ?      \
+                              (ScrVert *)(win)->global_areas.verts.first :    \
+                              (ScrVert *)(screen)->verts.first;               \
+       vert_name != NULL;                                                     \
+       vert_name = (vert_name == (ScrVert *)(win)->global_areas.verts.last) ? \
+                     (ScrVert *)(screen)->verts.first :                       \
+                     vert_name->next)
