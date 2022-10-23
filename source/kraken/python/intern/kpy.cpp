@@ -31,6 +31,11 @@
 #include "KLI_utildefines.h"
 #include "KLI_string.h"
 
+#include "USD_factory.h"
+#include "USD_object.h"
+#include "USD_types.h"
+#include "USD_wm_types.h"
+
 #include "KKE_appdir.h"
 #include "KKE_appdir.hh"
 #include "KKE_context.h"
@@ -40,10 +45,6 @@
 
 #include "LUXO_access.h"
 #include "LUXO_runtime.h"
-
-#include "USD_factory.h"
-#include "USD_types.h"
-#include "USD_wm_types.h"
 
 #include "../generic/py_capi_utils.h"
 #include "../generic/python_utildefines.h"

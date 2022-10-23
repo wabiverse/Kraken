@@ -117,12 +117,6 @@ typedef struct Material
   ListBase gpumaterial;
 } Material;
 
-typedef struct Object
-{
-  ID id;
-  struct Object *parent, *track;
-} Object;
-
 typedef struct RenderResult
 {
   struct RenderResult *next, *prev;

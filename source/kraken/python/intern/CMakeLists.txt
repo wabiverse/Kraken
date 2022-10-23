@@ -44,6 +44,7 @@ set(SRC
   ../KPY_api.h
   ../KPY_extern_python.h
   ../KPY_extern_run.h
+  ../KPY_extern.h
 )
 
 set(INC_SYS

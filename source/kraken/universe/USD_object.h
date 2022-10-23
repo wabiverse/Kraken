@@ -26,6 +26,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "USD_object_types.h"
 #include "USD_wm_types.h"
 #include "USD_ID.h"
 
@@ -41,7 +42,7 @@
 
 typedef struct IDProperty **(*IDPropertiesFunc)(struct KrakenPRIM *ptr);
 
-enum PropertyType
+typedef enum PropertyType
 {
   PROP_BOOLEAN = 0,
   PROP_INT = 1,
@@ -50,9 +51,9 @@ enum PropertyType
   PROP_ENUM = 4,
   PROP_POINTER = 5,
   PROP_COLLECTION = 6,
-};
+} PropertyType;
 
-enum FunctionFlag
+typedef enum FunctionFlag
 {
   FUNC_USE_SELF_ID = (1 << 11),
   FUNC_NO_SELF = (1 << 0),
@@ -64,12 +65,12 @@ enum FunctionFlag
   FUNC_REGISTER_OPTIONAL = FUNC_REGISTER | (1 << 6),
   FUNC_ALLOW_WRITE = (1 << 12),
   FUNC_RUNTIME = (1 << 9),
-};
+} FunctionFlag;
 
 /* Make sure enums are updated with these */
 /* HIGHEST FLAG IN USE: 1 << 31
  * FREE FLAGS: 2, 9, 11, 13, 14, 15. */
-enum PropertyFlag
+typedef enum PropertyFlag
 {
   /**
    * Editable means the property is editable in the user
@@ -183,9 +184,9 @@ enum PropertyFlag
   /** For enums not to be translated (e.g. viewlayers' names in nodes). */
   PROP_ENUM_NO_TRANSLATE = (1 << 29),
   PROP_NO_DEG_UPDATE = (1 << 30),
-};
+} PropertyFlag;
 
-enum PropertyUnit
+typedef enum PropertyUnit
 {
   PROP_UNIT_NONE = (0 << 16),
   PROP_UNIT_LENGTH = (1 << 16),        /* m */
@@ -200,9 +201,9 @@ enum PropertyUnit
   PROP_UNIT_CAMERA = (10 << 16),       /* mm */
   PROP_UNIT_POWER = (11 << 16),        /* W */
   PROP_UNIT_TEMPERATURE = (12 << 16),  /* C */
-};
+} PropertyUnit;
 
-enum PropertySubType
+typedef enum PropertySubType
 {
   PROP_NONE = 0,
 
@@ -256,8 +257,9 @@ enum PropertySubType
 
   /* temperature */
   PROP_TEMPERATURE = 43 | PROP_UNIT_TEMPERATURE,
-};
+} PropertySubType;
 
+#ifdef __cplusplus
 struct KrakenPROP : public wabi::UsdAttribute
 {
   KrakenPROP(const wabi::UsdAttribute &attr = wabi::UsdAttribute()) : wabi::UsdAttribute(attr) {}
@@ -300,19 +302,23 @@ typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
                                                  ObjectCallbackFunc call,
                                                  ObjectFreeFunc free);
 typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const wabi::UsdPrim &type);
+#endif /* __cplusplus */
+
 typedef void **(*ObjectInstanceFunc)(struct KrakenPRIM *ptr);
 
 typedef void (*PropStringGetFunc)(struct KrakenPRIM *ptr, char *value);
 typedef int (*PropStringLengthFunc)(struct KrakenPRIM *ptr);
 typedef void (*PropStringSetFunc)(struct KrakenPRIM *ptr, const char *value);
 typedef int (*PropEnumGetFunc)(struct KrakenPRIM *ptr);
-typedef void (*PropStringGetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop, char *value);
-typedef int (*PropStringLengthFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop);
-typedef void (*PropStringSetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop, const char *value);
-typedef int (*PropEnumGetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop);
-typedef void (*PropEnumSetFuncEx)(struct KrakenPRIM *ptr, KrakenPROP *prop, int value);
+typedef void (*PropStringGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, char *value);
+typedef int (*PropStringLengthFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
+typedef void (*PropStringSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, const char *value);
+typedef int (*PropEnumGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
+typedef void (*PropEnumSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, int value);
 
+#ifdef __cplusplus
 typedef std::vector<wabi::UsdCollectionAPI> UsdCollectionsVector;
+#endif /* __cplusplus */
 
 typedef struct StringPropertySearchVisitParams
 {
@@ -325,7 +331,7 @@ typedef void (*StringPropertySearchVisitFunc)(void *visit_user_data,
                                               const StringPropertySearchVisitParams *params);
 typedef void (*StringPropertySearchFunc)(const struct kContext *C,
                                          struct KrakenPRIM *ptr,
-                                         KrakenPROP *prop,
+                                         struct KrakenPROP *prop,
                                          const char *edit_text,
                                          StringPropertySearchVisitFunc visit_fn,
                                          void *visit_user_data);
@@ -337,6 +343,7 @@ typedef enum eStringPropertySearchFlag
   PROP_STRING_SEARCH_SUGGESTION = (1 << 2),
 } eStringPropertySearchFlag;
 
+#ifdef __cplusplus
 struct KrakenPROPString
 {
   KrakenPROP property;
@@ -356,13 +363,14 @@ struct KrakenPROPString
 
   const char *defaultvalue;
 };
+#endif /* __cplusplus */
 
-struct ParameterList
+typedef struct ParameterList
 {
   void *data;
   struct KrakenFUNC *func;
   int alloc_size;
-};
+} ParameterList;
 
 typedef struct KrakenPRIM *(*StructRefineFunc)(struct KrakenPRIM *ptr);
 
@@ -372,6 +380,7 @@ typedef void (*CallFunc)(struct kContext *C,
                          struct ParameterList *parms);
 
 
+#ifdef __cplusplus
 struct KrakenFUNC
 {
   std::vector<KrakenFUNC> cont;
@@ -389,13 +398,9 @@ struct KrakenFUNC
 
 struct KrakenPRIM : public wabi::UsdPrim
 {
-  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim())
-    : wabi::UsdPrim(prim)
-  {}
+  KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) : wabi::UsdPrim(prim) {}
 
-  KrakenPRIM(const KrakenPRIM *prim)
-    : wabi::UsdPrim(prim->GetPrim())
-  {}
+  KrakenPRIM(const KrakenPRIM *prim) : wabi::UsdPrim(prim->GetPrim()) {}
 
   struct ID *owner_id;
   wabi::TfToken identifier;
@@ -425,20 +430,4 @@ struct KrakenPRIM : public wabi::UsdPrim
 
   std::vector<KrakenPRIM *> functions;
 };
-
-/* is this ID type used as object data */
-#define OB_DATA_SUPPORT_ID(_id_type) \
-  (ELEM(_id_type,                    \
-        ID_ME,                       \
-        ID_CU_LEGACY,                \
-        ID_MB,                       \
-        ID_LA,                       \
-        ID_SPK,                      \
-        ID_LP,                       \
-        ID_CA,                       \
-        ID_LT,                       \
-        ID_GD,                       \
-        ID_AR,                       \
-        ID_CV,                       \
-        ID_PT,                       \
-        ID_VO))
+#endif /* __cplusplus */

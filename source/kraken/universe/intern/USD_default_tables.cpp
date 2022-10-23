@@ -25,8 +25,10 @@
 #include "USD_api.h"
 #include "USD_area.h"
 #include "USD_factory.h"
+#include "USD_object.h"
 #include "USD_region.h"
 #include "USD_screen.h"
+#include "USD_types.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
 

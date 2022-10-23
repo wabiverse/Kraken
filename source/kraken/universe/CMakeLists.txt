@@ -40,6 +40,7 @@ set(SRC
   USD_ID_enums.h
   USD_listBase.h
   USD_object.h
+  USD_object_types.h
   USD_operator.h
   USD_path_defaults.h
   USD_pixar_utils.h

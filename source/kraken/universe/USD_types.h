@@ -33,8 +33,6 @@
 #include <wabi/usd/usd/collectionAPI.h>
 #include <wabi/usd/usd/primRange.h>
 
-
-
 struct ReportList;
 struct kContext;
 

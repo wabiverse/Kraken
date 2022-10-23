@@ -27,6 +27,7 @@
 #include "KPY_api.h"
 
 #include "kpy.h"
+#include "kpy_capi_utils.h"
 #include "kpy_interface.h"
 
 #include "WM_api.h"
@@ -40,7 +41,7 @@ KRAKEN_NAMESPACE_USING
 
 static PyObject *kpy_atexit(PyObject *UNUSED(self), PyObject *UNUSED(args), PyObject *UNUSED(kw))
 {
-  /* close down enough of blender at least not to crash */
+  /* close down enough of kraken at least not to crash */
   struct kContext *C = KPY_context_get();
 
   //   WM_exit_ex(C, false);

@@ -26,24 +26,27 @@
 #include "KLI_path_utils.h"
 #include "KLI_fileops.hh"
 
-#include "KKE_context.h"
-#include "KKE_main.h"
-#include "KKE_report.h"
-#include "KKE_screen.h"
-
-#include "LUXO_runtime.h"
-
 #include "USD_api.h"
 #include "USD_area.h"
 #include "USD_context.h"
 #include "USD_default_tables.h"
 #include "USD_factory.h"
 #include "USD_file.h"
+#include "USD_object_types.h"
+#include "USD_object.h"
 #include "USD_scene.h"
 #include "USD_screen.h"
+#include "USD_types.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
 #include "USD_workspace.h"
+
+#include "KKE_context.h"
+#include "KKE_main.h"
+#include "KKE_report.h"
+#include "KKE_screen.h"
+
+#include "LUXO_runtime.h"
 
 #include <wabi/wabi.h>
 

@@ -121,6 +121,11 @@ struct CollectionPropertyIterator {
   int valid;
 };
 
+typedef struct CollectionPointerLink {
+  struct CollectionPointerLink *next, *prev;
+  KrakenPRIM ptr;
+} CollectionPointerLink;
+
 /** Separator for RNA enum items (shown in the UI). */
 #define LUXO_ENUM_ITEM_SEPR           \
   {                                   \

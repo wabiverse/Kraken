@@ -48,8 +48,6 @@
 
 #include <deque>
 
-
-
 typedef std::deque<wmEvent *> wmEventQueue;
 
 struct ScrAreaMap
@@ -118,7 +116,7 @@ struct wmWindow : public wabi::UsdUIWindow
   char windowstate;
   int winid;
 
-  WorkSpaceInstanceHook *workspace_hook;
+  struct WorkSpaceInstanceHook *workspace_hook;
 
   ScrAreaMap global_areas;
 

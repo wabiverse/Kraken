@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    "File last modified: Thursday, October 13, 2022 09:39:34 AM"
+    "File last modified: Sunday, October 23, 2022 11:09:41 AM"
     colorConfiguration = @/Users/furby/Library/Application Support/Kraken/1.50/datafiles/colormanagement/config.ocio@
     colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
@@ -22,6 +22,101 @@ def "WabiAnimationStudios" (
             )
             {
                 custom uniform token ui:name = "Operator"
+            }
+        }
+
+        def "Operators"
+        {
+            def Operator "WM_OT_window_close" (
+                doc = "Close the current window"
+            )
+            {
+                custom uniform token ui:name = "Close Window"
+            }
+
+            def Operator "WM_OT_window_new" (
+                doc = "Create a new window"
+            )
+            {
+                custom uniform token ui:name = "New Window"
+            }
+
+            def Operator "WM_OT_window_new_main" (
+                doc = "Create a new main window with its own workspace and scene selection"
+            )
+            {
+                custom uniform token ui:name = "New Main Window"
+            }
+
+            def Operator "WM_OT_window_fullscreen_toggle" (
+                doc = "Toggle the current window fullscreen"
+            )
+            {
+                custom uniform token ui:name = "Toggle Window Fullscreen"
+            }
+
+            def Operator "WM_OT_quit_kraken" (
+                doc = "Quit Kraken"
+            )
+            {
+                custom uniform token ui:name = "Quit Kraken"
+            }
+
+            def Operator "WM_OT_files_create_appdata" (
+                doc = "Install user directories at OS appdata"
+            )
+            {
+                custom uniform token ui:name = "Create User AppData Directory"
+            }
+
+            def Operator "WM_OT_open_mainfile" (
+                doc = "Open a Kraken file"
+            )
+            {
+                custom bool display_file_selector = 1 (
+                    displayName = "Display File Selector"
+                    doc = "Show the UI file selector indicator"
+                )
+                custom asset filepath = @@ (
+                    displayName = "File Path"
+                    doc = "The path to a .usd file to open"
+                )
+                custom bool load_ui = 1 (
+                    displayName = "Load UI"
+                    doc = "Load user interface setup in the .usd file"
+                )
+                custom uniform token ui:name = "Open"
+            }
+
+            def Operator "PREFERENCES_OT_reset_default_theme" (
+                doc = "Reset to the default theme colors"
+            )
+            {
+                custom uniform token ui:name = "Reset to Default Theme"
+            }
+
+            def Operator "PREFERENCES_OT_autoexec_path_add" (
+                doc = "Add path to exclude from auto-execution"
+            )
+            {
+                custom uniform token ui:name = "Add Auto-Execution Path"
+            }
+
+            def Operator "PREFERENCES_OT_autoexec_path_remove" (
+                doc = "Remove path to exclude from auto-execution"
+            )
+            {
+                custom int index = 0 (
+                    displayName = "Index"
+                )
+                custom uniform token ui:name = "Remove Auto-Execution Path"
+            }
+
+            def Operator "PREFERENCES_OT_associate_usd" (
+                doc = "Use this installation for .usd files and to display thumbnails"
+            )
+            {
+                custom uniform token ui:name = "Register File Association"
             }
         }
     }

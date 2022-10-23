@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "USD_factory.h"
+#include "USD_object.h"
 #include "USD_userdef_types.h"
 #include "USD_space_types.h"
 
@@ -36,7 +37,6 @@
 
 #include "KKE_context.h"
 #include "KKE_main.h"
-
 #include "KKE_report.h"
 
 #include "UI_interface.h"

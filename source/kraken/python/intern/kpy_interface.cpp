@@ -52,6 +52,7 @@
 #include "KKE_global.h"
 #include "KKE_main.h"
 
+#include "KPY_extern.h"
 #include "KPY_extern_python.h"
 #include "KPY_extern_run.h"
 
@@ -152,6 +153,40 @@ static void kpy_context_end(kContext *C)
     return;
   }
   CTX_wm_operator_poll_msg_clear(C);
+}
+
+void KPY_context_dict_clear_members_array(void **dict_p,
+                                          void *dict_orig,
+                                          const char *context_members[],
+                                          uint context_members_len)
+{
+  PyGILState_STATE gilstate;
+  const bool use_gil = !PyC_IsInterpreterActive();
+
+  if (use_gil) {
+    gilstate = PyGILState_Ensure();
+  }
+
+  /* Copy on write. */
+  if (*dict_p == dict_orig) {
+    *dict_p = PyDict_Copy(static_cast<PyObject *>(dict_orig));
+  }
+
+  PyObject *dict = static_cast<PyObject *>(*dict_p);
+  KLI_assert(PyDict_Check(dict));
+
+  /* Use #PyDict_Pop instead of #PyDict_DelItemString to avoid setting the exception,
+   * while supported it's good to avoid for low level functions like this that run often. */
+  for (uint i = 0; i < context_members_len; i++) {
+    PyObject *key = PyUnicode_FromString(context_members[i]);
+    PyObject *item = _PyDict_Pop(dict, key, Py_None);
+    Py_DECREF(key);
+    Py_DECREF(item);
+  }
+
+  if (use_gil) {
+    PyGILState_Release(gilstate);
+  }
 }
 
 /**

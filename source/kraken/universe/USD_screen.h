@@ -248,6 +248,11 @@ struct ScrEdge
   short flag;
 };
 
+/** Function mapping a context member name to its value. */
+typedef int /*eContextResult*/ (*kContextDataCallback)(const kContext *C,
+                                                       const char *member,
+                                                       kContextDataResult *result);
+
 struct kScreen : public wabi::UsdUIScreen
 {
   wabi::SdfPath path;
@@ -263,7 +268,13 @@ struct kScreen : public wabi::UsdUIScreen
   ListBase regions;
   short alignment;
 
+  /** Active region that has mouse focus. */
   ARegion *active_region;
+
+  /** If set, screen has timer handler added in window. */
+  struct wmTimer *animtimer;
+  /** Context callback. */
+  kContextDataCallback context;
 
   /** Runtime */
   short redraws_flag;
@@ -293,6 +304,8 @@ kScreen::kScreen(kContext *C, const wabi::SdfPath &stagepath)
     align(CreateAlignmentAttr(DEFAULT_VALUE(UsdUITokens->none))),
     areas_rel(CreateAreasRel()),
     active_region(POINTER_ZERO),
+    animtimer(POINTER_ZERO),
+    context(POINTER_ZERO),
     redraws_flag(VALUE_ZERO),
     temp(VALUE_ZERO),
     winid(VALUE_ZERO),

@@ -22,13 +22,11 @@
  * Set the Stage.
  */
 
-#include "KKE_context.h"
-
 #include "USD_object.h"
 #include "USD_types.h"
 #include "USD_context.h"
 
-
+#include "KKE_context.h"
 
 void USD_save_stage(kContext *C)
 {

@@ -35,25 +35,6 @@ enum eIconSizes {
   NUM_ICON_SIZES,
 };
 
-/* does not belong here... */
-/** #Object.mode */
-typedef enum eObjectMode {
-  OB_MODE_OBJECT = 0,
-  OB_MODE_EDIT = 1 << 0,
-  OB_MODE_SCULPT = 1 << 1,
-  OB_MODE_VERTEX_PAINT = 1 << 2,
-  OB_MODE_WEIGHT_PAINT = 1 << 3,
-  OB_MODE_TEXTURE_PAINT = 1 << 4,
-  OB_MODE_PARTICLE_EDIT = 1 << 5,
-  OB_MODE_POSE = 1 << 6,
-  OB_MODE_EDIT_GPENCIL = 1 << 7,
-  OB_MODE_PAINT_GPENCIL = 1 << 8,
-  OB_MODE_SCULPT_GPENCIL = 1 << 9,
-  OB_MODE_WEIGHT_GPENCIL = 1 << 10,
-  OB_MODE_VERTEX_GPENCIL = 1 << 11,
-  OB_MODE_SCULPT_CURVES = 1 << 12,
-} eObjectMode;
-
 /**
  * Defines for working with IDs.
  *
@@ -82,7 +63,7 @@ typedef enum ID_Type {
   ID_LI = MAKE_ID2('L', 'I'),        /* Library */
   ID_OB = MAKE_ID2('O', 'B'),        /* Object */
   ID_ME = MAKE_ID2('M', 'E'),        /* Mesh */
-  ID_CU_LEGACY = MAKE_ID2('C', 'U'), /* Curve. ID_CV should be used in the future (see T95355). */
+  ID_CV = MAKE_ID2('C', 'V'),        /* Curves */
   ID_MB = MAKE_ID2('M', 'B'),        /* MetaBall */
   ID_MA = MAKE_ID2('M', 'A'),        /* Material */
   ID_TE = MAKE_ID2('T', 'E'),        /* Tex (Texture) */
@@ -114,7 +95,6 @@ typedef enum ID_Type {
   ID_CF = MAKE_ID2('C', 'F'),        /* CacheFile */
   ID_WS = MAKE_ID2('W', 'S'),        /* WorkSpace */
   ID_LP = MAKE_ID2('L', 'P'),        /* LightProbe */
-  ID_CV = MAKE_ID2('C', 'V'),        /* Curves */
   ID_PT = MAKE_ID2('P', 'T'),        /* PointCloud */
   ID_VO = MAKE_ID2('V', 'O'),        /* Volume */
   ID_SIM = MAKE_ID2('S', 'I'),       /* Simulation (geometry node groups) */

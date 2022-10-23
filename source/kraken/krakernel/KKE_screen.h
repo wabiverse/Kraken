@@ -43,10 +43,10 @@
 
 struct wmRegionListenerParams
 {
-  wmWindow *window;
+  struct wmWindow *window;
   struct ScrArea *area;
-  ARegion *region;
-  wmNotifier *notifier;
+  struct ARegion *region;
+  struct wmNotifier *notifier;
   const kScene *scene;
 
   wmRegionListenerParams()
@@ -124,7 +124,7 @@ struct SpaceType
 
   void (*init)(wmWindowManager *wm, struct ScrArea *area);
   void (*exit)(wmWindowManager *wm, struct ScrArea *area);
-  void (*listener)(const wmSpaceTypeListenerParams *params);
+  void (*listener)(const struct wmSpaceTypeListenerParams *params);
 
 
   void (*deactivate)(struct ScrArea *area);

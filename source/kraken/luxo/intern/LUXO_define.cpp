@@ -40,6 +40,7 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
+#include "KKE_context.h"
 #include "KKE_utils.h"
 #include "KLI_listbase.h"
 
