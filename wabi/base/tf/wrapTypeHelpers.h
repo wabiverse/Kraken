@@ -90,6 +90,30 @@ TF_API TfType TfType_DefinePythonTypeAndBases(const boost::python::object &class
  * In order to avoid duplicated converters, this should be used before
  * attempting to register a converter for any general type that might
  * be used in more than one Python wrapper. - furby™ */
+#define REGISTER_CONVERTER(T, policy)                            \
+  {                                                              \
+    boost::python::type_info info = boost::python::type_id<T>(); \
+    const boost::python::converter::registration *reg =          \
+      boost::python::converter::registry::query(info);           \
+    if (reg == NULL) {                                           \
+      from_python_sequence<T, policy>();                         \
+    } else if ((*reg).m_to_python == NULL) {                     \
+      from_python_sequence<T, policy>();                         \
+    }                                                            \
+  }
+
+#define TF_REGISTER_PY_CONVERTER(T, policy)                        \
+  {                                                                \
+    boost::python::type_info info = boost::python::type_id<T>();   \
+    const boost::python::converter::registration *reg =            \
+      boost::python::converter::registry::query(info);             \
+    if (reg == NULL) {                                             \
+      TfPyContainerConversions::from_python_sequence<T, policy>(); \
+    } else if ((*reg).m_to_python == NULL) {                       \
+      TfPyContainerConversions::from_python_sequence<T, policy>(); \
+    }                                                              \
+  }
+
 template<class PyType> struct TfPyRegistry
 {
   static bool IsTypeRegistered()

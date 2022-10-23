@@ -32,6 +32,8 @@ TF_REGISTRY_FUNCTION(TfDebug)
 {
   TF_DEBUG_ENVIRONMENT_SYMBOL(TF_SCRIPT_MODULE_LOADER, "show script module loading activity");
   TF_DEBUG_ENVIRONMENT_SYMBOL(TF_TYPE_REGISTRY, "show changes to the TfType registry");
+  TF_DEBUG_ENVIRONMENT_SYMBOL(TF_TYPE_REGISTRY_PYTHON_WARNINGS,
+                              "show superfluous python warnings about re-registered types.");
   TF_DEBUG_ENVIRONMENT_SYMBOL(TF_ATTACH_DEBUGGER_ON_ERROR,
                               "attach/stop in a debugger for all errors");
   TF_DEBUG_ENVIRONMENT_SYMBOL(TF_ATTACH_DEBUGGER_ON_FATAL_ERROR,

@@ -27,6 +27,8 @@
 #include "wabi/base/tf/type.h"
 
 #include "wabi/base/arch/demangle.h"
+#include "wabi/base/tf/debugCodes.h"
+#include "wabi/base/tf/diagnostic.h"
 #include "wabi/base/tf/hash.h"
 #include "wabi/base/tf/hashmap.h"
 #include "wabi/base/tf/instantiateSingleton.h"
@@ -935,7 +937,7 @@ void TfType::DefinePythonClass(const TfPyObjWrapper &classObj) const
   if (!TfPyIsNone(_info->pyClass)) {
     infoLock.release();
     regLock.release();
-    TF_CODING_ERROR(
+    TF_DEBUG(TF_TYPE_REGISTRY_PYTHON_WARNINGS).Msg(
       "TfType '%s' already has a defined Python type; "
       "cannot redefine",
       GetTypeName().c_str());
@@ -956,7 +958,7 @@ void TfType::_DefineCppType(const std::type_info &typeInfo,
   if (_info->typeInfo.load() != nullptr) {
     infoLock.release();
     regLock.release();
-    TF_CODING_ERROR(
+    TF_DEBUG(TF_TYPE_REGISTRY_PYTHON_WARNINGS).Msg(
       "TfType '%s' already has a defined C++ type; "
       "cannot redefine",
       GetTypeName().c_str());
