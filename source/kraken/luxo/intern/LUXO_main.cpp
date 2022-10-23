@@ -30,6 +30,7 @@
 
 static void luxo_preprocess(const KrakenSTAGE &kstage)
 {
+  PRIM_def_context(kstage);
   PRIM_def_wm(kstage);
   PRIM_def_info(kstage);
 }

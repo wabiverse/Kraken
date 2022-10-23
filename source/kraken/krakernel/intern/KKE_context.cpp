@@ -585,6 +585,11 @@ void CTX_wm_menu_set(kContext *C, ARegion *menu)
 
 Main *CTX_data_main(const kContext *C)
 {
+  Main *kmain;
+  if (ctx_data_pointer_verify(C, "usd_data", (void **)&kmain)) {
+    return kmain;
+  }
+
   return C->data.main;
 }
 

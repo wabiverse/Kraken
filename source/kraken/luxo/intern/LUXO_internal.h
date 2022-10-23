@@ -107,6 +107,7 @@ struct EnumPropertyPRIM {
   const char *native_enum_type;
 };
 
+void PRIM_def_context(const KrakenSTAGE &kstage);
 void PRIM_def_info(const KrakenSTAGE &kstage);
 void PRIM_def_wm(const KrakenSTAGE &kstage);
 

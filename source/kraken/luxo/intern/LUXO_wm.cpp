@@ -278,27 +278,34 @@ const EnumPropertyItem luxo_enum_event_type_items[] = {
   {0,                         wabi::TfToken(),              0, NULL,                        NULL          },
 };
 
-static void prim_def_operator(KrakenPRIM *wm)
+static void rna_def_operator_common(KrakenPRIM *sprim)
 {
-  KrakenPRIM *op;
+  PrimFactory::STR::Def(sprim, "name", "", "Name", "The name of this operator, used in the UI");
+}
 
-  op = PRIM_def_struct(wm, SdfPath("Operator"));
-  PRIM_def_struct_ui_text(op,
+static void prim_def_operator(KrakenPRIM *kprim)
+{
+  KrakenPRIM *sprim;
+
+  sprim = PRIM_def_struct(kprim, SdfPath("Operator"));
+  PRIM_def_struct_ui_text(sprim,
                           "Operator",
                           "Storage of an operator being executed, or registered after execution");
   // PRIM_def_struct_refine_func(kstage, "rna_Operator_refine");
   // PRIM_def_struct_flag(kstage, STRUCT_PUBLIC_NAMESPACE_INHERIT);
+
+  rna_def_operator_common(sprim);
 }
 
 void PRIM_def_wm(const KrakenSTAGE &kstage)
 {
-  KrakenPRIM *wm;
+  KrakenPRIM *kprim;
 
-  wm = PRIM_def_struct_ptr(kstage, SdfPath("WindowManager"));
+  kprim = PRIM_def_struct_ptr(kstage, SdfPath("WindowManager"));
 
   /* all types that make up wm... */
 
-  prim_def_operator(wm);
+  prim_def_operator(kprim);
 
   /* ... */
 }

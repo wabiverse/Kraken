@@ -9,6 +9,7 @@ if(HAVE_MALLOC_STATS_H)
 endif()
 
 set(DEFSRC
+  LUXO_context.cpp
   LUXO_info.cpp
   LUXO_id.cpp
   LUXO_main.cpp
