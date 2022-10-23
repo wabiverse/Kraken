@@ -449,7 +449,13 @@ void KPY_python_end(void)
 #ifndef WITH_PYTHON_MODULE
   KPY_atexit_unregister(); /* without this we get recursive calls to WM_exit */
 
+#  ifndef WITH_BOOST
+  /**
+   * @NOTE: Boost says that this should never be called.
+   * https://www.boost.org/doc/libs/1_80_0/libs/python/doc/html/tutorial/tutorial/embedding.html#tutorial.embedding.getting_started
+   */
   Py_Finalize();
+#  endif /* WITH_BOOST */
 
   (void)gilstate;
 #else

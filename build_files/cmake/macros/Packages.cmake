@@ -422,6 +422,8 @@ if(WIN32)
   # set(Boost_USE_STATIC_LIBS ON) # suffix -s
   set(BOOST_ROOT "${LIBDIR}/boost")
   set(Boost_INCLUDE_DIR "${LIBDIR}/boost/include/boost-1_78")
+  set(WITH_BOOST ON)
+  add_definitions(-DWITH_BOOST=1)
   find_package(Boost REQUIRED)
   set(boost_version_string "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}")
 
@@ -439,6 +441,8 @@ if(WIN32)
   set(Boost_THREAD_LIBRARY         ${LIBDIR}/boost/lib/boost_thread-${BOOST_LIBRARY_SUFFIX}.lib)
 
 elseif(UNIX AND NOT APPLE)
+  set(WITH_BOOST ON)
+  add_definitions(-DWITH_BOOST=1)
   set(Boost_USE_STATIC_LIBS ON)
   find_package(Boost REQUIRED
                COMPONENTS
@@ -462,6 +466,8 @@ elseif(UNIX AND NOT APPLE)
   set(Boost_SYSTEM_LIBRARY         Boost::system)
   set(Boost_THREAD_LIBRARY         Boost::thread)
 elseif(APPLE)
+  set(WITH_BOOST ON)
+  add_definitions(-DWITH_BOOST=1)
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_ROOT                     ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost)
   set(Boost_INCLUDE_DIRS             ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost/include)

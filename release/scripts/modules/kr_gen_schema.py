@@ -75,7 +75,7 @@ _os.environ["USD_DISABLE_PRIM_DEFINITIONS_FOR_USDGENSCHEMA"] = "1"
 # Object used for printing. This gives us a way to control output with regards 
 # to program arguments such as --quiet.
 class _Printer():
-    def __init__(self, quiet=False):
+    def __init__(self, quiet=True):
         self._quiet = quiet
 
     def __PrintImpl(self, stream, *args):
