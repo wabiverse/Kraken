@@ -28,6 +28,8 @@
 
 #include "ED_defines.h"
 
+#include "USD_view3d.h"
+
 #include <wabi/base/gf/frustum.h>
 #include <wabi/base/gf/rotation.h>
 #include <wabi/base/gf/vec4d.h>
@@ -75,147 +77,6 @@
 #  endif
 #  define VIEW3D_EDITOR_LOCAL ARCH_HIDDEN
 #endif
-
-#define VIEW3D_MAXNAME 64
-
-/** Figure out why this is the magical timecode multiplier value. */
-#define MAGIC_TIMECODE_MULTIPLIER 0.2
-
-/** Use with #View3D.shading.mode */
-enum eView3DShadingMode
-{
-  VIEW3D_MODE_WIREFRAME = 0,
-  VIEW3D_MODE_SOLID,
-  VIEW3D_MODE_SHADED
-};
-
-struct View3DShading
-{
-  /** Shading type (WIREFRAME, ..). */
-  eView3DShadingMode mode;
-
-  /** Viewport background color. */
-  wabi::GfVec4f background_color;
-
-  /** HDR dome light texture settings. */
-  char studiolight_texture[VIEW3D_MAXNAME];
-  float studiolight_rot_z;
-  float studiolight_background;
-  float studiolight_intensity;
-  float studiolight_blur;
-
-  /** Selection outline color. */
-  wabi::GfVec4f object_outline_color;
-
-  /** Alpha transparency for xray'd objects. */
-  float xray_alpha;
-
-  int render_pass;
-  char aov_name[VIEW3D_MAXNAME];
-};
-
-/** Use with #View3D.status */
-enum eView3DStatusFlag
-{
-  VIEW3D_SUCCESS = 0,
-  VIEW3D_ERROR,
-  VIEW3D_UPDATE,
-  VIEW3D_IDLE,
-  VIEW3D_INIT,
-};
-
-struct View3DStatus
-{
-  /** Hydra graphics interface status flag. */
-  eView3DStatusFlag hgi_flag;
-  /** Render engine selection status flag. */
-  eView3DStatusFlag engine_flag;
-  /** Viewport camera status flag. */
-  eView3DStatusFlag camera_flag;
-  /** Viewport hydra export status flag. */
-  eView3DStatusFlag export_flag;
-  /** Hydra engine settings status flag. */
-  eView3DStatusFlag settings_flag;
-  /** Viewport Animation status flag. */
-  eView3DStatusFlag animation_flag;
-  /** Viewport redraw status flag. */
-  eView3DStatusFlag redraw_flag;
-
-  /** Animation timecode. */
-  wabi::UsdTimeCode timecode;
-};
-
-struct View3DOverlay
-{
-  /** Edit mode settings. */
-  int edit_flag;
-  float normals_length;
-  float backwire_opacity;
-
-  /** Paint mode settings. */
-  int paint_flag;
-
-  /** Weight paint mode settings. */
-  int weight_paint_flag;
-
-  /** Alpha for texture, weight, vertex paint overlay. */
-  float texture_paint_mode_opacity;
-  float vertex_paint_mode_opacity;
-  float weight_paint_mode_opacity;
-  float sculpt_mode_mask_opacity;
-  float sculpt_mode_face_sets_opacity;
-
-  /** Skel edit/pose mode settings. */
-  float xray_alpha_bone;
-
-  /** Darken Inactive. */
-  float fade_alpha;
-
-  /** Other settings. */
-  float wireframe_threshold;
-  float wireframe_opacity;
-
-  /** Etcher brush settings. */
-  float etcher_paper_opacity;
-  float etcher_grid_opacity;
-  float etcher_fade_layer;
-
-  /** Factor for mixing vertex paint with original color */
-  float etcher_vertex_paint_opacity;
-};
-
-struct View3D
-{
-  /** Viewport camera settings. */
-  wabi::UsdGeomCamera camera;
-  float lens;
-  float clip_start, clip_end;
-
-  /** Animation playback. */
-  bool anim_playback;
-  double anim_start, anim_end;
-
-  /** Show / hide 3D gizmos. */
-  bool gizmo_show_geo;
-  bool gizmo_show_skel;
-  bool gizmo_show_xform;
-  bool gizmo_show_lux;
-  bool gizmo_show_camera;
-
-  /** Viewport gridline settings. */
-  int gridlines;
-  int gridsubdiv;
-
-  /** Viewport display settings. */
-  View3DShading shading;
-  View3DOverlay overlay;
-
-  /** Hydra update status. */
-  View3DStatus status;
-
-  /** Hydra Engine Params. */
-  wabi::UsdImagingGLRenderParams render_params;
-};
 
 VIEW3D_EDITOR_API
 void ED_view3d_init_engine(const wabi::SdfPath &root, bool &reset);

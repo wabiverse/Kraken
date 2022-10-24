@@ -15,9 +15,9 @@
  *
  * Derived from original work by Copyright 2022, Blender Foundation.
  * From the Blender GPU library. (source/blender/gpu).
- * 
+ *
  * With any additions or modifications specific to Kraken.
- * 
+ *
  * Modifications Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
@@ -38,6 +38,8 @@
 
 #include "GPU_common_types.h"
 #include "GPU_texture.h"
+
+#define GPU_INFO_SIZE 512 /* IMA_MAX_RENDER_TEXT */
 
 typedef enum eGPUFrameBufferBits
 {

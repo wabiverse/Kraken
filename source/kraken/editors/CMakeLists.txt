@@ -1,6 +1,7 @@
 
 # add_subdirectory(code)
 add_subdirectory(interface)
+add_subdirectory(object)
 add_subdirectory(screen)
 add_subdirectory(space_api)
 add_subdirectory(space_file)

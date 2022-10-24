@@ -24,18 +24,12 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "WM_operators.h"
-#include "WM_debug_codes.h"
-#include "WM_msgbus.h"
-#include "WM_tokens.h"
-#include "WM_files.h"
-#include "WM_event_system.h"
-
 #include "USD_object.h"
 #include "USD_factory.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
+#include "USD_wm_types.h"
 
 #include "LUXO_access.h"
 #include "LUXO_define.h"
@@ -50,18 +44,42 @@
 #include "KKE_report.h"
 #include "KKE_global.h"
 
+#include "ED_fileselect.h"
+#include "ED_screen.h"
+#include "ED_util.h"
+
 #include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_tokens.h"
+#include "UI_view2d.h"
+
+#include "DRW_engine.h"
+
+#ifdef WITH_PYTHON
+#  include "KPY_extern_python.h"
+#  include "KPY_extern_run.h"
+#endif
+
+#include "WM_operators.h"
+#include "WM_debug_codes.h"
+#include "WM_msgbus.h"
+#include "WM_tokens.h"
+#include "WM_files.h"
+#include "WM_event_system.h"
+#include "WM_window.hh"
 
 #include <filesystem>
+
+#include "CLG_log.h"
+
+static CLG_LogRef LOG = {"wm.files"};
 
 namespace fs = std::filesystem;
 
 
 static int wm_user_datafiles_write_exec(kContext *C, wmOperator *op)
 {
-  Main *bmain = CTX_data_main(C);
+  Main *kmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
   const std::string appdir = KKE_appdir_copy_recursive(KRAKEN_SYSTEM_DATAFILES,
@@ -159,7 +177,7 @@ static void wm_block_file_close_save(kContext *C, void *arg_block, void *arg_dat
 
   // int modified_images_count = ED_image_save_all_modified_info(CTX_data_main(C), NULL);
   // if (modified_images_count > 0 && save_images_when_file_is_closed) {
-  //   if (ED_image_should_save_modified(bmain)) {
+  //   if (ED_image_should_save_modified(kmain)) {
   //     ReportList *reports = CTX_wm_reports(C);
   //     ED_image_save_all_modified(C, reports);
   //     WM_report_banner_show();
@@ -475,6 +493,183 @@ void WM_init_state_app_template_set(const char *app_template)
   }
 }
 
+
+/**
+ * Store the action needed if the user needs to reload the file with Python scripts enabled.
+ *
+ * When left to NULL, this is simply revert.
+ * When loading files through the recover auto-save or session,
+ * we need to revert using other operators.
+ */
+static struct
+{
+  wmOperatorType *ot;
+  KrakenPRIM *ptr;
+} wm_test_autorun_revert_action_data = {
+  .ot = nullptr,
+  .ptr = nullptr,
+};
+
+void WM_test_autorun_revert_action_set(wmOperatorType *ot, KrakenPRIM *ptr)
+{
+  KLI_assert(!G.background);
+  wm_test_autorun_revert_action_data.ot = NULL;
+  if (wm_test_autorun_revert_action_data.ptr != NULL) {
+    WM_operator_properties_free(wm_test_autorun_revert_action_data.ptr);
+    MEM_freeN(wm_test_autorun_revert_action_data.ptr);
+    wm_test_autorun_revert_action_data.ptr = NULL;
+  }
+  wm_test_autorun_revert_action_data.ot = ot;
+  wm_test_autorun_revert_action_data.ptr = ptr;
+}
+
+/**
+ * Parameters for #wm_file_read_post, also used for deferred initialization.
+ */
+struct wmFileReadPost_Params
+{
+  uint use_data : 1;
+  uint use_userdef : 1;
+
+  uint is_startup_file : 1;
+  uint is_factory_startup : 1;
+  uint reset_app_template : 1;
+};
+
+/**
+ * Logic shared between #WM_file_read & #wm_homefile_read,
+ * updates to make after reading a file.
+ */
+static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *params)
+{
+  wmWindowManager *wm = CTX_wm_manager(C);
+
+  const bool use_data = params->use_data;
+  const bool use_userdef = params->use_userdef;
+  const bool is_startup_file = params->is_startup_file;
+  const bool is_factory_startup = params->is_factory_startup;
+  const bool reset_app_template = params->reset_app_template;
+
+  bool addons_loaded = false;
+
+  if (use_data) {
+    if (!G.background) {
+      /* remove windows which failed to be added via WM_check */
+      WM_window_anchorwindows_remove_invalid(C, wm);
+    }
+    CTX_wm_window_set(C, (wmWindow*)wm->windows.first);
+  }
+
+#ifdef WITH_PYTHON
+  if (is_startup_file) {
+    /* On startup (by default), Python won't have been initialized.
+     *
+     * The following block handles data & preferences being reloaded
+     * which requires resetting some internal variables. */
+    if (CTX_py_init_get(C)) {
+      bool reset_all = use_userdef;
+      if (use_userdef || reset_app_template) {
+        /* Only run when we have a template path found. */
+        if (KKE_appdir_app_template_any()) {
+          KPY_run_string_eval(C,
+                              (const char *[]){"kr_app_template_utils", NULL},
+                              "kr_app_template_utils.reset()");
+          reset_all = true;
+        }
+      }
+      if (reset_all) {
+        KPY_run_string_exec(
+          C,
+          (const char *[]){"kpy", "addon_utils", NULL},
+          /* Refresh scripts as the preferences may have changed the user-scripts path.
+           *
+           * This is needed when loading settings from the previous version,
+           * otherwise the script path stored in the preferences would be ignored. */
+          "kpy.utils.refresh_script_paths()\n"
+          /* Sync add-ons, these may have changed from the defaults. */
+          "addon_utils.reset_all()");
+      }
+      if (use_data) {
+        KPY_python_reset(C);
+      }
+      addons_loaded = true;
+    }
+  } else {
+    /* run any texts that were loaded in and flagged as modules */
+    if (use_data) {
+      KPY_python_reset(C);
+    }
+    addons_loaded = true;
+  }
+#else
+  UNUSED_VARS(is_startup_file, reset_app_template);
+#endif /* WITH_PYTHON */
+
+  Main *kmain = CTX_data_main(C);
+
+  if (use_userdef) {
+    if (is_factory_startup) {
+      KKE_callback_exec_null(kmain, KKE_CB_EVT_LOAD_FACTORY_USERDEF_POST);
+    }
+  }
+
+  if (use_data) {
+    /* important to do before NULL'ing the context */
+    KKE_callback_exec_null(kmain, KKE_CB_EVT_VERSION_UPDATE);
+    KKE_callback_exec_null(kmain, KKE_CB_EVT_LOAD_POST);
+    if (is_factory_startup) {
+      KKE_callback_exec_null(kmain, KKE_CB_EVT_LOAD_FACTORY_STARTUP_POST);
+    }
+  }
+
+  if (use_data) {
+    WM_operatortype_last_properties_clear_all();
+
+    // wm_event_do_hydra(C, true);
+
+    ED_editors_init(C);
+
+#if 1
+    WM_event_add_notifier(C, NC_WM | ND_FILEREAD, NULL);
+#else
+    WM_msg_publish_static(CTX_wm_message_bus(C), WM_MSG_STATICTYPE_FILE_READ);
+#endif
+  }
+
+  /* report any errors.
+   * currently disabled if addons aren't yet loaded */
+  if (addons_loaded) {
+    WM_file_read_report(C, kmain);
+  }
+
+  if (use_data) {
+    if (!G.background) {
+    //   if (wm->undo_stack == nullptr) {
+    //     wm->undo_stack = KKE_undosys_stack_create();
+    //   } else {
+    //     KKE_undosys_stack_clear(wm->undo_stack);
+    //   }
+    //   KKE_undosys_stack_init_from_main(wm->undo_stack, kmain);
+    //   KKE_undosys_stack_init_from_context(wm->undo_stack, C);
+    }
+  }
+
+  if (use_data) {
+    if (!G.background) {
+      /* in background mode this makes it hard to load
+       * a usd file and do anything since the screen
+       * won't be set to a valid value again */
+      CTX_wm_window_set(C, NULL); /* exits queues */
+
+      /* Ensure auto-run action is not used from a previous blend file load. */
+      WM_test_autorun_revert_action_set(NULL, NULL);
+
+      /* Ensure tools are registered. */
+      // WM_toolsystem_init(C);
+    }
+  }
+}
+
 /* -------------------------------------------------------------------- */
 /** \name Read USD-File Shared Utilities
  * \{ */
@@ -490,6 +685,32 @@ void WM_file_autoexec_init(const char *filepath)
     KLI_split_dir_part(filepath, path, sizeof(path));
     if (KKE_autoexec_match(path)) {
       G.f &= ~G_FLAG_SCRIPT_AUTOEXEC;
+    }
+  }
+}
+
+void WM_file_read_report(kContext *C, Main *kmain)
+{
+  ReportList *reports = NULL;
+  LISTBASE_FOREACH (Scene *, scene, &kmain->scenes) {
+    if (scene->r.engine[0] &&
+        KLI_findstring(&R_engines, scene->r.engine, offsetof(RenderEngineType, idname)) == NULL) {
+      if (reports == NULL) {
+        reports = CTX_wm_reports(C);
+      }
+
+      BKE_reportf(reports,
+                  RPT_ERROR,
+                  "Engine '%s' not available for scene '%s' (an add-on may need to be installed "
+                  "or enabled)",
+                  scene->r.engine,
+                  scene->id.name + 2);
+    }
+  }
+
+  if (reports) {
+    if (!G.background) {
+      WM_report_banner_show();
     }
   }
 }

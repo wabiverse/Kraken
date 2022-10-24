@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// #include "KLI_endian_switch.h"
+#include "KLI_dynstr.h"
 #include "KLI_listbase.h"
 #include "KLI_math.h"
 #include "KLI_string.h"
@@ -530,7 +530,7 @@ void IDP_ReplaceGroupInGroup(IDProperty *dest, const IDProperty *src)
       if (STREQ(loop->name, prop->name)) {
         KLI_insertlinkafter(&dest->data.group, loop, IDP_CopyProperty(prop));
         // dest->data.group.insert(dest->data.group.begin() + index, IDP_CopyProperty(prop));
-        // IDP_FreeProperty(loop);
+        IDP_FreeProperty(loop);
         break;
       }
 
@@ -571,4 +571,401 @@ void IDP_ReplaceInGroup(IDProperty *group, IDProperty *prop)
   IDProperty *prop_exist = IDP_GetPropertyFromGroup(group, wabi::TfToken(prop->name));
 
   IDP_ReplaceInGroup_ex(group, prop, prop_exist);
+}
+
+/* ----------- Numerical Array Type ----------- */
+static void idp_resize_group_array(IDProperty *prop, int newlen, void *newarr)
+{
+  if (prop->subtype != IDP_GROUP) {
+    return;
+  }
+
+  if (newlen >= prop->len) {
+    /* bigger */
+    IDProperty **array = (IDProperty **)newarr;
+    IDPropertyTemplate val;
+
+    for (int a = prop->len; a < newlen; a++) {
+      val.i = 0; /* silence MSVC warning about uninitialized var when debugging */
+      array[a] = IDP_New(IDP_GROUP, &val, wabi::TfToken("IDP_ResizeArray group"));
+    }
+  } else {
+    /* smaller */
+    IDProperty **array = (IDProperty **)prop->data.pointer;
+
+    for (int a = newlen; a < prop->len; a++) {
+      IDP_FreeProperty(array[a]);
+    }
+  }
+}
+
+static void IDP_FreeIDPArray(IDProperty *prop, const bool do_id_user)
+{
+  KLI_assert(prop->type == IDP_IDPARRAY);
+
+  for (int i = 0; i < prop->len; i++) {
+    IDP_FreePropertyContent_ex(GETPROP(prop, i), do_id_user);
+  }
+
+  if (prop->data.pointer) {
+    MEM_freeN(prop->data.pointer);
+  }
+}
+
+void IDP_ResizeArray(IDProperty *prop, int newlen)
+{
+  const bool is_grow = newlen >= prop->len;
+
+  /* first check if the array buffer size has room */
+  if (newlen <= prop->totallen && prop->totallen - newlen < IDP_ARRAY_REALLOC_LIMIT) {
+    idp_resize_group_array(prop, newlen, prop->data.pointer);
+    prop->len = newlen;
+    return;
+  }
+
+  /* NOTE: This code comes from python, here's the corresponding comment. */
+  /* This over-allocates proportional to the list size, making room
+   * for additional growth.  The over-allocation is mild, but is
+   * enough to give linear-time amortized behavior over a long
+   * sequence of appends() in the presence of a poorly-performing
+   * system realloc().
+   * The growth pattern is:  0, 4, 8, 16, 25, 35, 46, 58, 72, 88, ...
+   */
+  int newsize = newlen;
+  newsize = (newsize >> 3) + (newsize < 9 ? 3 : 6) + newsize;
+
+  if (is_grow == false) {
+    idp_resize_group_array(prop, newlen, prop->data.pointer);
+  }
+
+  prop->data.pointer = MEM_recallocN(prop->data.pointer,
+                                     idp_size_table[(int)prop->subtype] * (size_t)newsize);
+
+  if (is_grow == true) {
+    idp_resize_group_array(prop, newlen, prop->data.pointer);
+  }
+
+  prop->len = newlen;
+  prop->totallen = newsize;
+}
+
+void IDP_FreeArray(IDProperty *prop)
+{
+  if (prop->data.pointer) {
+    idp_resize_group_array(prop, 0, NULL);
+    MEM_freeN(prop->data.pointer);
+  }
+}
+
+void IDP_FreeString(IDProperty *prop)
+{
+  KLI_assert(prop->type == IDP_STRING);
+
+  if (prop->data.pointer) {
+    MEM_freeN(prop->data.pointer);
+  }
+}
+
+/* Ok, the way things work, Groups free the ID Property structs of their children.
+ * This is because all ID Property freeing functions free only direct data (not the ID Property
+ * struct itself), but for Groups the child properties *are* considered
+ * direct data. */
+static void IDP_FreeGroup(IDProperty *prop, const bool do_id_user)
+{
+  KLI_assert(prop->type == IDP_GROUP);
+
+  LISTBASE_FOREACH(IDProperty *, loop, &prop->data.group)
+  {
+    IDP_FreePropertyContent_ex(loop, do_id_user);
+  }
+  KLI_freelistN(&prop->data.group);
+}
+
+void IDP_ui_data_free(IDProperty *prop)
+{
+  switch (IDP_ui_data_type(prop)) {
+    case IDP_UI_DATA_TYPE_STRING: {
+      IDPropertyUIDataString *ui_data_string = (IDPropertyUIDataString *)prop->ui_data;
+      MEM_SAFE_FREE(ui_data_string->default_value);
+      break;
+    }
+    case IDP_UI_DATA_TYPE_ID: {
+      break;
+    }
+    case IDP_UI_DATA_TYPE_INT: {
+      IDPropertyUIDataInt *ui_data_int = (IDPropertyUIDataInt *)prop->ui_data;
+      MEM_SAFE_FREE(ui_data_int->default_array);
+      break;
+    }
+    case IDP_UI_DATA_TYPE_FLOAT: {
+      IDPropertyUIDataFloat *ui_data_float = (IDPropertyUIDataFloat *)prop->ui_data;
+      MEM_SAFE_FREE(ui_data_float->default_array);
+      break;
+    }
+    case IDP_UI_DATA_TYPE_UNSUPPORTED: {
+      break;
+    }
+  }
+
+  MEM_SAFE_FREE(prop->ui_data->description);
+
+  MEM_freeN(prop->ui_data);
+  prop->ui_data = NULL;
+}
+
+void IDP_FreePropertyContent_ex(IDProperty *prop, const bool do_id_user)
+{
+  switch (prop->type) {
+    case IDP_ARRAY:
+      IDP_FreeArray(prop);
+      break;
+    case IDP_STRING:
+      IDP_FreeString(prop);
+      break;
+    case IDP_GROUP:
+      IDP_FreeGroup(prop, do_id_user);
+      break;
+    case IDP_IDPARRAY:
+      IDP_FreeIDPArray(prop, do_id_user);
+      break;
+    case IDP_ID:
+      if (do_id_user) {
+        id_us_min(IDP_Id(prop));
+      }
+      break;
+  }
+
+  if (prop->ui_data != NULL) {
+    IDP_ui_data_free(prop);
+  }
+}
+
+void IDP_FreePropertyContent(IDProperty *prop)
+{
+  IDP_FreePropertyContent_ex(prop, true);
+}
+
+void IDP_FreeProperty_ex(IDProperty *prop, const bool do_id_user)
+{
+  IDP_FreePropertyContent_ex(prop, do_id_user);
+  MEM_freeN(prop);
+}
+
+void IDP_FreeProperty(IDProperty *prop)
+{
+  IDP_FreePropertyContent(prop);
+  MEM_freeN(prop);
+}
+
+/* -------------------------------------------------------------------- */
+/** @name IDProp Repr
+ *
+ * Convert an IDProperty to a string.
+ *
+ * Output should be a valid Python literal
+ * (with minor exceptions - float nan for eg).
+ * @{ */
+
+struct ReprState
+{
+  void (*str_append_fn)(void *user_data, const char *str, uint str_len);
+  void *user_data;
+  /* Big enough to format any primitive type. */
+  char buf[128];
+};
+
+static void idp_str_append_escape(struct ReprState *state,
+                                  const char *str,
+                                  const uint str_len,
+                                  bool quote)
+{
+  if (quote) {
+    state->str_append_fn(state->user_data, "\"", 1);
+  }
+  uint i_prev = 0, i = 0;
+  while (i < str_len) {
+    const char c = str[i];
+    if (c == '"') {
+      if (i_prev != i) {
+        state->str_append_fn(state->user_data, str + i_prev, i - i_prev);
+      }
+      state->str_append_fn(state->user_data, "\\\"", 2);
+      i_prev = i + 1;
+    } else if (c == '\\') {
+      if (i_prev != i) {
+        state->str_append_fn(state->user_data, str + i_prev, i - i_prev);
+      }
+      state->str_append_fn(state->user_data, "\\\\", 2);
+      i_prev = i + 1;
+    } else if (c < 32) {
+      if (i_prev != i) {
+        state->str_append_fn(state->user_data, str + i_prev, i - i_prev);
+      }
+      char buf[5];
+      uint len = (uint)KLI_snprintf_rlen(buf, sizeof(buf), "\\x%02x", c);
+      KLI_assert(len == 4);
+      state->str_append_fn(state->user_data, buf, len);
+      i_prev = i + 1;
+    }
+    i++;
+  }
+  state->str_append_fn(state->user_data, str + i_prev, i - i_prev);
+  if (quote) {
+    state->str_append_fn(state->user_data, "\"", 1);
+  }
+}
+
+static void idp_repr_fn_recursive(struct ReprState *state, const IDProperty *prop)
+{
+  /* NOTE: 'strlen' will be calculated at compile time for literals. */
+#define STR_APPEND_STR(str) state->str_append_fn(state->user_data, str, (uint)strlen(str))
+
+#define STR_APPEND_STR_QUOTE(str) idp_str_append_escape(state, str, (uint)strlen(str), true)
+#define STR_APPEND_STR_LEN_QUOTE(str, str_len) idp_str_append_escape(state, str, str_len, true)
+
+#define STR_APPEND_FMT(format, ...) \
+  state->str_append_fn(             \
+    state->user_data,               \
+    state->buf,                     \
+    (uint)KLI_snprintf_rlen(state->buf, sizeof(state->buf), format, __VA_ARGS__))
+
+  switch (prop->type) {
+    case IDP_STRING: {
+      STR_APPEND_STR_LEN_QUOTE(IDP_String(prop), (uint)MAX2(0, prop->len - 1));
+      break;
+    }
+    case IDP_INT: {
+      STR_APPEND_FMT("%d", IDP_Int(prop));
+      break;
+    }
+    case IDP_FLOAT: {
+      STR_APPEND_FMT("%g", (double)IDP_Float(prop));
+      break;
+    }
+    case IDP_DOUBLE: {
+      STR_APPEND_FMT("%g", IDP_Double(prop));
+      break;
+    }
+    case IDP_ARRAY: {
+      STR_APPEND_STR("[");
+      switch (prop->subtype) {
+        case IDP_INT:
+          for (const int *v = (int *)prop->data.pointer, *v_end = v + prop->len; v != v_end;
+               v++) {
+            if (v != prop->data.pointer) {
+              STR_APPEND_STR(", ");
+            }
+            STR_APPEND_FMT("%d", *v);
+          }
+          break;
+        case IDP_FLOAT:
+          for (const float *v = (float *)prop->data.pointer, *v_end = v + prop->len;
+               v != v_end;
+               v++) {
+            if (v != prop->data.pointer) {
+              STR_APPEND_STR(", ");
+            }
+            STR_APPEND_FMT("%g", (double)*v);
+          }
+          break;
+        case IDP_DOUBLE:
+          for (const double *v = (double *)prop->data.pointer, *v_end = v + prop->len;
+               v != v_end;
+               v++) {
+            if (v != prop->data.pointer) {
+              STR_APPEND_STR(", ");
+            }
+            STR_APPEND_FMT("%g", *v);
+          }
+          break;
+      }
+      STR_APPEND_STR("]");
+      break;
+    }
+    case IDP_IDPARRAY: {
+      STR_APPEND_STR("[");
+      for (const IDProperty *v = (IDProperty *)prop->data.pointer, *v_end = v + prop->len;
+           v != v_end;
+           v++) {
+        if (v != prop->data.pointer) {
+          STR_APPEND_STR(", ");
+        }
+        idp_repr_fn_recursive(state, v);
+      }
+      STR_APPEND_STR("]");
+      break;
+    }
+    case IDP_GROUP: {
+      STR_APPEND_STR("{");
+      LISTBASE_FOREACH(const IDProperty *, subprop, &prop->data.group)
+      {
+        if (subprop != prop->data.group.first) {
+          STR_APPEND_STR(", ");
+        }
+        STR_APPEND_STR_QUOTE(subprop->name);
+        STR_APPEND_STR(": ");
+        idp_repr_fn_recursive(state, subprop);
+      }
+      STR_APPEND_STR("}");
+      break;
+    }
+    case IDP_ID: {
+      const ID *id = (ID *)prop->data.pointer;
+      if (id != NULL) {
+        STR_APPEND_STR("bpy.data.");
+        STR_APPEND_STR(KKE_idtype_idcode_to_name_plural(GS(id->name)));
+        STR_APPEND_STR("[");
+        STR_APPEND_STR_QUOTE(id->name + 2);
+        STR_APPEND_STR("]");
+      } else {
+        STR_APPEND_STR("None");
+      }
+      break;
+    }
+    default: {
+      KLI_assert_unreachable();
+      break;
+    }
+  }
+
+#undef STR_APPEND_STR
+#undef STR_APPEND_STR_QUOTE
+#undef STR_APPEND_STR_LEN_QUOTE
+#undef STR_APPEND_FMT
+}
+
+void IDP_repr_fn(const IDProperty *prop,
+                 void (*str_append_fn)(void *user_data, const char *str, uint str_len),
+                 void *user_data)
+{
+  struct ReprState state = {
+    .str_append_fn = str_append_fn,
+    .user_data = user_data,
+  };
+  idp_repr_fn_recursive(&state, prop);
+}
+
+static void repr_str(void *user_data, const char *str, uint len)
+{
+  KLI_dynstr_nappend((DynStr *)user_data, str, (int)len);
+}
+
+char *IDP_reprN(const IDProperty *prop, uint *r_len)
+{
+  DynStr *ds = KLI_dynstr_new();
+  IDP_repr_fn(prop, repr_str, ds);
+  char *cstring = KLI_dynstr_get_cstring(ds);
+  if (r_len != NULL) {
+    *r_len = (uint)KLI_dynstr_get_len(ds);
+  }
+  KLI_dynstr_free(ds);
+  return cstring;
+}
+
+void IDP_print(const IDProperty *prop)
+{
+  char *repr = IDP_reprN(prop, NULL);
+  printf("IDProperty(%p): ", prop);
+  puts(repr);
+  MEM_freeN(repr);
 }

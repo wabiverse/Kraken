@@ -20,25 +20,22 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Editors.
+ * Tools for Artists.
  */
 
-#include "WM_api.h"
-#include "WM_window.hh"
-#include "WM_msgbus.h"
-#include "WM_operators.h"
+#include "KLI_compiler_attrs.h"
+#include "USD_object_types.h"
+#include "USD_userdef_types.h"
 
-#include "KKE_context.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void WM_file_autoexec_init(const char *filepath);
-void WM_file_read_report(struct kContext *C, Main *kmain);
-void WM_file_operators_register(void);
+/* object_ops.cc */
 
-void WM_files_init(struct kContext *C);
+void ED_operatortypes_object(void);
 
-void WM_init_state_app_template_set(const char *app_template);
-
-void WM_close_file_dialog(struct kContext *C, struct wmGenericCallback *post_action);
-
-void WM_test_autorun_revert_action_set(struct wmOperatorType *ot, struct KrakenPRIM *ptr);
+#ifdef __cplusplus
+}
+#endif

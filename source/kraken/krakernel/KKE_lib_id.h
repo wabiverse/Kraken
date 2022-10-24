@@ -103,6 +103,8 @@ enum {
                          LIB_ID_COPY_NO_LIB_OVERRIDE,
 };
 
-void id_lib_extern(struct ID *id);
-void id_us_plus_no_lib(struct ID *id);
 void id_us_plus(struct ID *id);
+void id_us_min(struct ID *id);
+void id_us_ensure_real(ID *id);
+void id_us_plus_no_lib(struct ID *id);
+void id_lib_extern(struct ID *id);

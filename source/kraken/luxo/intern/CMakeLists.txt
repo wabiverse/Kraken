@@ -156,6 +156,7 @@ set(LIB
   kraken_universe
   kraken_editor_space_api
 
+  kraken_editor_object
   kraken_editor_interface
   kraken_editor_spacefile
   kraken_editor_screen

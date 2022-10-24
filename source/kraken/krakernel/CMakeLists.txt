@@ -39,6 +39,7 @@ set(SRC
   intern/appdir.c
   intern/autoexec.c
   intern/cryptomatte.cc
+  intern/idtype.cc
   intern/material.c
 
   KKE_api.h

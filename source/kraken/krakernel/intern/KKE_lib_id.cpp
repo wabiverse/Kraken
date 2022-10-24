@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "CLG_log.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "USD_ID.h"
@@ -47,6 +49,8 @@
 #include "LUXO_access.h"
 
 #include "atomic_ops.h"
+
+static CLG_LogRef LOG = {.identifier = "kke.lib_id"};
 
 IDTypeInfo IDType_ID_LINK_PLACEHOLDER = {
   .id_code = ID_LINK_PLACEHOLDER,
@@ -83,6 +87,54 @@ void id_us_plus(ID *id)
   if (id) {
     id_us_plus_no_lib(id);
     id_lib_extern(id);
+  }
+}
+
+void id_us_min(ID *id)
+{
+  if (id) {
+    const int limit = ID_FAKE_USERS(id);
+
+    if (id->us <= limit) {
+      if (!ID_TYPE_IS_DEPRECATED(GS(id->name))) {
+        /* Do not assert on deprecated ID types, we cannot really ensure that their ID refcounting
+         * is valid... */
+        CLOG_ERROR(&LOG,
+                   "ID user decrement error: %s (from '%s'): %d <= %d",
+                   id->name,
+                   id->lib ? id->lib->filepath_abs : "[Main]",
+                   id->us,
+                   limit);
+      }
+      id->us = limit;
+    }
+    else {
+      id->us--;
+    }
+
+    if ((id->us == limit) && (id->tag & LIB_TAG_EXTRAUSER)) {
+      /* We need an extra user here, but never actually incremented user count for it so far,
+       * do it now. */
+      id_us_ensure_real(id);
+    }
+  }
+}
+
+void id_us_ensure_real(ID *id)
+{
+  if (id) {
+    const int limit = ID_FAKE_USERS(id);
+    id->tag |= LIB_TAG_EXTRAUSER;
+    if (id->us <= limit) {
+      if (id->us < limit || ((id->us == limit) && (id->tag & LIB_TAG_EXTRAUSER_SET))) {
+        CLOG_ERROR(&LOG,
+                   "ID user count error: %s (from '%s')",
+                   id->name,
+                   id->lib ? id->lib->filepath_abs : "[Main]");
+      }
+      id->us = limit + 1;
+      id->tag |= LIB_TAG_EXTRAUSER_SET;
+    }
   }
 }
 

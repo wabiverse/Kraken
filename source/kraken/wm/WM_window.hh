@@ -95,6 +95,7 @@ struct PanelType *WM_paneltype_find(const char *idname, bool quiet);
 void WM_window_process_events(kContext *C);
 void WM_window_swap_buffers(wmWindow *win);
 
+void WM_window_anchorwindows_remove_invalid(kContext *C, wmWindowManager *wm);
 void WM_window_anchorwindows_ensure(wmWindowManager *wm);
 
 wmTimer *WM_event_add_timer(wmWindowManager *wm, wmWindow *win, int event_type, double timestep);

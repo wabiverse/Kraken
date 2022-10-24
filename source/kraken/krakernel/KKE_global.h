@@ -343,6 +343,7 @@ void KKE_callback_exec(struct Main *bmain,
                        struct KrakenPRIM **pointers,
                        const int num_pointers,
                        eCbEvent evt);
+void KKE_callback_exec_null(struct Main *kmain, eCbEvent evt);                       
 
 /** Defined in KKE_kraken.cpp */
 extern Global G;

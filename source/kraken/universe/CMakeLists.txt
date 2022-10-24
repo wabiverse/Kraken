@@ -28,6 +28,7 @@ set(SRC
 
   USD_api.h
   USD_area.h
+  USD_collection.h
   USD_color_types.h
   USD_context.h
   USD_curveprofile_types.h
@@ -38,6 +39,8 @@ set(SRC
   USD_file.h
   USD_ID.h
   USD_ID_enums.h
+  USD_lights.h
+  USD_linestyles.h
   USD_listBase.h
   USD_object.h
   USD_object_types.h
@@ -48,6 +51,7 @@ set(SRC
   USD_scene.h
   USD_scene_types.h
   USD_screen.h
+  USD_simulation.h
   USD_system.h
   USD_texture_types.h
   USD_types.h
@@ -59,6 +63,7 @@ set(SRC
   USD_vec_types.h
   USD_view2d.h
   USD_view3d.h
+  USD_world.h
 )
 
 set(LIB

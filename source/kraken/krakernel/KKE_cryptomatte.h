@@ -11,7 +11,7 @@
 #include "USD_ID.h"
 
 #include "USD_vec_types.h"
-// #include "USD_layer_types.h"
+#include "USD_materials.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -108,14 +108,6 @@ typedef struct CryptomatteEntry
   char name[64];
   char _pad[4];
 } CryptomatteEntry;
-
-typedef struct Material
-{
-  ID id;
-
-  /** Runtime cache for GLSL materials. */
-  ListBase gpumaterial;
-} Material;
 
 typedef struct RenderResult
 {

@@ -55,6 +55,9 @@ typedef struct wmOperatorType
 
   KrakenPRIM *prim;
 
+  /** previous settings - for initializing on re-use */
+  struct IDProperty *last_properties;
+
   std::vector<wmOperatorTypeMacro *> macro;
 
   /** Signal changes, allow for Pub/Sub. */
@@ -72,16 +75,18 @@ typedef struct wmOperatorType
   bool (*poll)(kContext *C) ATTR_WARN_UNUSED_RESULT;
 } wmOperatorType;
 
-void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
 void WM_operators_init(kContext *C);
 void WM_operators_free(void);
 void WM_operators_register(kContext *C);
 
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot);
 void WM_operator_properties_free(KrakenPRIM *ptr);
-
-wmOperatorType *WM_operatortype_find(const wabi::TfToken &idname);
 bool WM_operator_properties_default(KrakenPRIM *ptr, bool do_update);
+
+void WM_operatortype_append(void (*opfunc)(wmOperatorType *));
+void WM_operatortype_iter(RHashIterator *rhi);
+wmOperatorType *WM_operatortype_find(const wabi::TfToken &idname);
+void WM_operatortype_last_properties_clear_all(void);
 const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties);
 
 size_t WM_operator_py_idname(char *dst, const char *src);

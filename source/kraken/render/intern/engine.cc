@@ -16,29 +16,50 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
-#pragma once
-
 /**
- * @file
- * Window Manager.
- * Making GUI Fly.
+ * @file Render.
+ * Absurd attempts for impossible outcomes.
  */
 
-#include "WM_api.h"
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+
+#include "MEM_guardedalloc.h"
+
+#include "KLI_rhash.h"
+#include "KLI_listbase.h"
+#include "KLI_math_bits.h"
+#include "KLI_rect.h"
+#include "KLI_string.h"
+#include "KLI_utildefines.h"
+
+#include "USD_object_types.h"
+
+#include "KKE_colortools.h"
+#include "KKE_global.h"
+#include "KKE_report.h"
+#include "KKE_scene.h"
+
+#include "LUXO_access.h"
+
+#ifdef WITH_PYTHON
+#  include "KPY_extern.h"
+#endif
+
+#include "RE_engine.h"
+
+#include "DRW_engine.h"
+
+#include "GPU_context.h"
+#include "WM_window.h"
 #include "WM_window.hh"
-#include "WM_msgbus.h"
-#include "WM_operators.h"
 
-#include "KKE_context.h"
+/* Render Engine Types */
 
-void WM_file_autoexec_init(const char *filepath);
-void WM_file_read_report(struct kContext *C, Main *kmain);
-void WM_file_operators_register(void);
+ListBase R_engines = {nullptr, nullptr};
 
-void WM_files_init(struct kContext *C);
-
-void WM_init_state_app_template_set(const char *app_template);
-
-void WM_close_file_dialog(struct kContext *C, struct wmGenericCallback *post_action);
-
-void WM_test_autorun_revert_action_set(struct wmOperatorType *ot, struct KrakenPRIM *ptr);
+void RE_engines_init(void)
+{
+  DRW_engines_register();
+}

@@ -16,13 +16,13 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * Universe.
  * Set the Stage.
  */
-
-#pragma once
 
 #include "USD_ID.h"
 #include "USD_defs.h"

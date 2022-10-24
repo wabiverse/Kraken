@@ -605,6 +605,17 @@ static int anchor_event_proc(AnchorEventHandle evt, ANCHOR_UserPtr C_void_ptr)
   return 1;
 }
 
+void WM_window_anchorwindows_remove_invalid(kContext *C, wmWindowManager *wm)
+{
+  KLI_assert(G.background == false);
+
+  LISTBASE_FOREACH_MUTABLE (wmWindow *, win, &wm->windows) {
+    if (win->anchorwin == nullptr) {
+      wm_window_close(C, wm, win);
+    }
+  }
+}
+
 static void wm_window_anchorwindow_add(wmWindowManager *wm, wmWindow *win, bool is_dialog)
 {
 

@@ -174,6 +174,37 @@ void WM_init(kContext *C, int argc, const char **argv)
 
   KLI_assert((G.fileflags & G_FILE_NO_UI) == 0);
 
+  /**
+   * NOTE: Startup file and order of initialization.
+   *
+   * Loading #KRAKEN_STARTUP_FILE, #KRAKEN_USERPREF_FILE, starting Python and other sub-systems,
+   * have inter-dependencies, for example.
+   *
+   * - Some sub-systems depend on the preferences (initializing icons depend on the theme).
+   * - Add-ons depends on the preferences to know what has been enabled.
+   * - Add-ons depends on the window-manger to register their key-maps.
+   * - Evaluating the startup file depends on Python for animation-drivers (see T89046).
+   * - Starting Python depends on the startup file so key-maps can be added in the window-manger.
+   *
+   * Loading preferences early, then application subsystems and finally the startup data would
+   * simplify things if it weren't for key-maps being part of the window-manager
+   * which is usd file data.
+   * Creating a dummy window-manager early, or moving the key-maps into the preferences
+   * would resolve this and may be worth looking into long-term, see: D12184 for details.
+   */
+  struct wmFileReadPost_Params *params_file_read_post = NULL;
+  wm_homefile_read_ex(C,
+                      &(const struct wmHomeFileRead_Params){
+                        .use_data = true,
+                        .use_userdef = true,
+                        .use_factory_settings = G.factory_startup,
+                        .use_empty_data = false,
+                        .filepath_startup_override = NULL,
+                        .app_template_override = WM_init_state_app_template_get(),
+                      },
+                      NULL,
+                      &params_file_read_post);
+
   /* NOTE: leave `G.main->filepath` set to an empty string since this
    * matches behavior after loading a new file. */
   KLI_assert(G_MAIN->filepath[0] == '\0');

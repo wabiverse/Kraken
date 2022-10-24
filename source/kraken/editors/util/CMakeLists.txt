@@ -1,9 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
+  .
+  ../include
+  ../../../../. # Pixar USD
+  ../../../../source
   ../include
   # ../space_sequencer
-  # ../../krakenfont
+  ../../krakfont
   ../../krakernel
   ../../kraklib
   ../../gpu
@@ -30,17 +34,17 @@ set(SRC
   ../include/ED_debug_codes.h
   ../include/ED_defines.h
   ../include/ED_fileselect.h
-  ../include/ED_screen.h
-  ../include/ED_tokens.h
-  ../include/ED_util.h
-  ../include/ED_view3d.h
   ../include/ED_icons.h
   ../include/ED_interface_icons.h
   ../include/ED_interface.h
+  ../include/ED_object.h
   ../include/ED_resources.h
+  ../include/ED_screen.h
   ../include/ED_space_api.h
   ../include/ED_tokens.h
   ../include/ED_userpref.h
+  ../include/ED_util.h
+  ../include/ED_view3d.h
   ../include/UI_abstract_view.hh
   ../include/UI_icons.h
   ../include/UI_interface_icons.h

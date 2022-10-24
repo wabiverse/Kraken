@@ -40,6 +40,7 @@
 #include "UI_interface.h"
 #include "UI_view2d.h"
 
+#include "ED_object.h"
 #include "ED_screen.h"
 #include "ED_space_api.h"
 #include "ED_userpref.h"
@@ -51,4 +52,5 @@ void ED_spacetypes_init(void)
   U.widget_unit = 20;
 
   ED_operatortypes_userpref();
+  ED_operatortypes_object();
 }

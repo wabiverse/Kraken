@@ -57,6 +57,7 @@
 
 /* KRAKEN KERNEL */
 #include "KKE_context.h"
+#include "KKE_global.h"
 #include "KKE_main.h"
 #include "KKE_screen.h"
 #include "KKE_utils.h"
@@ -264,7 +265,7 @@ static bool callbacks_initialized = false;
                  "Callbacks should be initialized with KKE_callback_global_init() before using " \
                  "the callback system.")
 
-void KKE_callback_exec(struct Main *bmain,
+void KKE_callback_exec(struct Main *kmain,
                        struct KrakenPRIM **pointers,
                        const int num_pointers,
                        eCbEvent evt)
@@ -275,8 +276,13 @@ void KKE_callback_exec(struct Main *bmain,
   ListBase *lb = &callback_slots[evt];
   LISTBASE_FOREACH_MUTABLE(kCallbackFuncStore *, funcstore, lb)
   {
-    funcstore->func(bmain, pointers, num_pointers, funcstore->arg);
+    funcstore->func(kmain, pointers, num_pointers, funcstore->arg);
   }
+}
+
+void KKE_callback_exec_null(struct Main *kmain, eCbEvent evt)
+{
+  KKE_callback_exec(kmain, NULL, 0, evt);
 }
 
 void KKE_callback_remove(kCallbackFuncStore *funcstore, eCbEvent evt)

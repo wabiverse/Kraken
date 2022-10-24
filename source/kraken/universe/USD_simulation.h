@@ -20,25 +20,35 @@
 
 /**
  * @file
- * Window Manager.
- * Making GUI Fly.
+ * Universe.
+ * Set the Stage.
  */
 
-#include "WM_api.h"
-#include "WM_window.hh"
-#include "WM_msgbus.h"
-#include "WM_operators.h"
+#include "USD_ID.h"
+#include "USD_customdata_types.h"
 
-#include "KKE_context.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void WM_file_autoexec_init(const char *filepath);
-void WM_file_read_report(struct kContext *C, Main *kmain);
-void WM_file_operators_register(void);
+typedef struct Simulation {
+  USD_DEFINE_CXX_METHODS(Simulation)
 
-void WM_files_init(struct kContext *C);
+  ID id;
+  // struct AnimData *adt; /* animation data (must be immediately after id) */
 
-void WM_init_state_app_template_set(const char *app_template);
+  /* This nodetree is embedded into the data block. */
+  struct kNodeTree *nodetree;
 
-void WM_close_file_dialog(struct kContext *C, struct wmGenericCallback *post_action);
+  uint32_t flag;
+  char _pad[4];
+} Simulation;
 
-void WM_test_autorun_revert_action_set(struct wmOperatorType *ot, struct KrakenPRIM *ptr);
+/** #Simulation.flag */
+enum {
+  SIM_DS_EXPAND = (1 << 0),
+};
+
+#ifdef __cplusplus
+}
+#endif

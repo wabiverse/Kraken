@@ -32,6 +32,7 @@
 #include "WM_window.hh"
 #include "WM_files.h"
 
+#include "USD_ID.h"
 #include "USD_factory.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
@@ -44,8 +45,10 @@
 #include "KLI_dynstr.h"
 
 #include "KKE_context.h"
-#include "KKE_utils.h"
 #include "KKE_global.h"
+#include "KKE_idprop.h"
+#include "KKE_lib_id.h"
+#include "KKE_utils.h"
 
 #define UNDOCUMENTED_OPERATOR_TIP N_("(undocumented operator)")
 
@@ -69,6 +72,12 @@ wmOperatorType *WM_operatortype_find(const TfToken &idname)
   }
 
   return NULL;
+}
+
+
+void WM_operatortype_iter(RHashIterator *rhi)
+{
+  KLI_rhashIterator_init(rhi, global_ops_hash);
 }
 
 /* -------------------------------------------------------------------- */
@@ -220,6 +229,21 @@ char *WM_operator_pystring_ex(kContext *C,
 void WM_operator_properties_create_ptr(KrakenPRIM *ptr, wmOperatorType *ot)
 {
   LUXO_pointer_create(&((wmWindowManager *)G.main->wm.first)->id, ot->prim, NULL, ptr);
+}
+
+void WM_operatortype_last_properties_clear_all(void)
+{
+  RHashIterator iter;
+
+  for (WM_operatortype_iter(&iter); !KLI_rhashIterator_done(&iter);
+       KLI_rhashIterator_step(&iter)) {
+    wmOperatorType *ot = static_cast<wmOperatorType *>(KLI_rhashIterator_getValue(&iter));
+
+    if (ot->last_properties) {
+      IDP_FreeProperty(ot->last_properties);
+      ot->last_properties = NULL;
+    }
+  }
 }
 
 const char *WM_operatortype_name(struct wmOperatorType *ot, KrakenPRIM *properties)
