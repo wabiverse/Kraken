@@ -39,7 +39,7 @@
 
 #include "IMB_colormanagement.h"
 
-// #include "RE_engine.h"
+#include "RE_engine.h"
 // #include "RE_pipeline.h"
 
 #include "UI_resources.h"
@@ -92,3 +92,7 @@ void DRW_gpu_context_create(void)
   WM_window_reset_drawable();
 }
 
+void DRW_engines_register(void)
+{
+  RE_engines_register(&DRW_engine_viewport_phoenix_type);
+}

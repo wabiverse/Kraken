@@ -60,7 +60,7 @@
 
 #include "MEM_guardedalloc.h"
 
-// #include "RE_engine.h"
+#include "RE_engine.h"
 
 #ifdef __cplusplus
 extern "C" {

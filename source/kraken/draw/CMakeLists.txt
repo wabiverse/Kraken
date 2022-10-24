@@ -1,24 +1,27 @@
 set(INC
   .
-  ../../../. # Pixar USD
-  ../../../source
-  ../krakernel
   intern
 
-  ../krakfont
-  ../kraklib
+  ../../../. # Pixar USD
+  ../../../source
   ../editors/include
   ../editors/space_view3d
   ../gpu
   ../gpu/intern
   ../imbuf
-  ../universe
+  ../krakernel
+  ../krakfont
+  ../kraklib
   ../luxo
+  ../render
+  ../render/intern
+  ../universe
   ../wm
 
   ../../../intern/atomic
   ../../../intern/clog
   ../../../intern/guardedalloc
+  # ../../../intern/opensubdiv
 
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../universe/intern
@@ -28,7 +31,7 @@ set(INC
 set(SRC
   intern/draw_manager.c
 
-  engines/phoenix/phoenix_stub.cc
+  engines/phoenix/phoenix_engine.cc
 
   DRW_engine.h
   intern/DRW_render.h
@@ -36,6 +39,9 @@ set(SRC
   intern/draw_manager.h
   intern/draw_shader_shared.h
   intern/draw_state.h
+  engines/phoenix/phoenix_api.h
+  engines/phoenix/phoenix_engine.h
+  engines/phoenix/phoenix_private.h
 )
 
 set(LIB

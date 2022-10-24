@@ -24,8 +24,7 @@
  */
 
 #include "KLI_sys_types.h" /* for bool */
-
-// #include "USD_object_enums.h"
+#include "USD_object_types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,54 +53,6 @@ struct View3D;
 struct ViewLayer;
 struct kContext;
 struct rcti;
-
-/* needs to go in draw. */
-typedef struct RenderEngineType
-{
-  struct RenderEngineType *next, *prev;
-
-  /* type info */
-  char idname[64]; /* best keep the same size as BKE_ST_MAXNAME. */
-  char name[64];
-  int flag;
-
-  void (*update)(struct RenderEngine *engine, struct Main *bmain, struct Hydra *hydra);
-
-  void (*render)(struct RenderEngine *engine, struct Hydra *hydra);
-
-  /* Offline rendering is finished - no more view layers will be rendered.
-   *
-   * All the pending data is to be communicated from the engine back to Blender. In a possibly
-   * most memory-efficient manner (engine might free its database before making Blender to allocate
-   * full-frame render result). */
-  void (*render_frame_finish)(struct RenderEngine *engine);
-
-  void (*draw)(struct RenderEngine *engine, const struct kContext *context, struct Hydra *hydra);
-
-  void (*bake)(struct RenderEngine *engine,
-               struct Hydra *hydra,
-               struct Object *object,
-               int pass_type,
-               int pass_filter,
-               int width,
-               int height);
-
-  void (*view_update)(struct RenderEngine *engine,
-                      const struct kContext *context,
-                      struct Hydra *hydra);
-  void (*view_draw)(struct RenderEngine *engine,
-                    const struct kContext *context,
-                    struct Hydra *hydra);
-
-  void (*update_script_node)(struct RenderEngine *engine,
-                             struct kNodeTree *ntree,
-                             struct kNode *node);
-  void (*update_render_passes)(struct RenderEngine *engine,
-                               struct Scene *scene,
-                               struct ViewLayer *view_layer);
-
-  struct DrawEngineType *draw_engine;
-} RenderEngineType;
 
 void DRW_engines_register(void);
 void DRW_engines_register_experimental(void);

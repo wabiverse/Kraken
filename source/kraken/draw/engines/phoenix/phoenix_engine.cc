@@ -24,14 +24,62 @@
  * The OpenSubdiv-based real-time render engine of the 21st century.
  */
 
-#include "DRW_engine.h"
+#include <memory>
+#include <mutex>
 
-class Phoenix
-{
- public:
+#include "DRW_render.h"
 
-  Phoenix()
-  {
-    /* suspense. */
-  }
+#include "USD_world.h"
+
+#include "IMB_imbuf.h"
+
+#include "phoenix_private.h"
+
+#include "phoenix_engine.h" /* own include */
+
+#define PHOENIX_ENGINE "KRAKEN_PHOENIX"
+
+using namespace wabi;
+
+
+
+static const DrawEngineDataSize phoenix_data_size = DRW_VIEWPORT_DATA_SIZE(PhoenixGPUData);
+
+DrawEngineType draw_engine_phoenix_type = {
+  NULL,
+  NULL,
+  N_("Phoenix"),
+  &phoenix_data_size,
+  NULL,
+  NULL,
+  NULL, /* instance_free */
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
 };
+
+RenderEngineType DRW_engine_viewport_phoenix_type = {
+  NULL,
+  NULL,
+  PHOENIX_ENGINE,
+  N_("Phoenix"),
+  RE_INTERNAL | RE_USE_PREVIEW | RE_USE_STEREO_VIEWPORT | RE_USE_GPU_CONTEXT,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  &draw_engine_phoenix_type,
+  {NULL, NULL, NULL},
+};
+
+#undef PHOENIX_ENGINE
