@@ -72,10 +72,10 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
   kprim = MEM_new<KrakenPRIM>(K_BEDROCK.GetText(), kstage->GetPrimAtPath(K_BEDROCK));
 
   if (primfrom && primfrom->IsValid()) {
-    /** 
+    /**
      * Ensure if a type, such as "Operators" is passed, we deduce
      * down to the actual type, "Operator". This is a lame check
-     * and is only meant to be done with Kraken stage data and 
+     * and is only meant to be done with Kraken stage data and
      * not on user stage data. */
     const std::string type_maybe_plural = primfrom->GetName().GetString();
     size_t final_s = type_maybe_plural.find_last_of("s");
@@ -86,7 +86,7 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
     } else {
       type_no_plural = type_maybe_plural;
     }
-    
+
     const TfToken type = TfToken(type_no_plural);
     const TfToken type_ctx = primfrom->GetName();
 
@@ -220,4 +220,22 @@ void PRIM_def_asset(KrakenPRIM *prim,
   if (ui_description.length()) {
     attr.SetDocumentation(ui_description);
   }
+}
+
+void PRIM_def_py_data(KrakenPROP *prop, void *py_data)
+{
+  prop->py_data = py_data;
+}
+
+static void (*g_py_data_clear_fn)(KrakenPROP *prop) = NULL;
+
+/**
+ * Set the callback used to decrement the user count of a property.
+ *
+ * This function is called when freeing each dynamically defined property.
+ */
+void PRIM_def_property_free_pointers_set_py_data_callback(
+  void (*py_data_clear_fn)(KrakenPROP *prop))
+{
+  g_py_data_clear_fn = py_data_clear_fn;
 }

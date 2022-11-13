@@ -41,8 +41,6 @@
 
 using namespace wabi;
 
-
-
 static const DrawEngineDataSize phoenix_data_size = DRW_VIEWPORT_DATA_SIZE(PhoenixGPUData);
 
 DrawEngineType draw_engine_phoenix_type = {

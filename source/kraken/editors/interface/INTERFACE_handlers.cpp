@@ -786,7 +786,8 @@ static uiBut *ui_context_button_active(const ARegion *region, bool (*but_check_c
     uiBut *active_but_last = nullptr;
 
     /* find active button */
-    for (auto &block : region->uiblocks) {
+    LISTBASE_FOREACH(uiBlock *, block, &region->uiblocks)
+    {
       for (auto &but : block->buttons) {
         if (but->flag & UI_BUT_ACTIVE_OVERRIDE) {
           active_but_override = but;
@@ -1621,7 +1622,7 @@ static int ui_do_but_TAB(kContext *C,
 #endif
 
   if (data->state == BUTTON_STATE_HIGHLIGHT) {
-    const int prim_type = but->stageprop ? LUXO_property_type(but->stageprop) : 0;
+    const int prim_type = but->stageprop ? LUXO_prop_type(but->stageprop) : 0;
 
     if (is_property && ELEM(prim_type, PROP_POINTER, PROP_STRING) && (but->custom_data != NULL) &&
         (event->type == LEFTMOUSE) &&
@@ -2232,7 +2233,7 @@ static void ui_numedit_begin(uiBut *but, uiHandleButtonData *data)
     float softmin = but->softmin;
     float softmax = but->softmax;
     float softrange = softmax - softmin;
-    const PropertyScaleType scale_type = static_cast<PropertyScaleType>(ui_but_scale_type(but));
+    const PropScaleTYPE scale_type = static_cast<PropScaleTYPE>(ui_but_scale_type(but));
 
     float log_min = (scale_type == PROP_SCALE_LOG) ? max_ff(softmin, UI_PROP_SCALE_LOG_MIN) : 0.0f;
 
@@ -2853,7 +2854,7 @@ static void button_activate_init(kContext *C,
     /* activate first button in submenu */
     if (data->menu && data->menu->region) {
       ARegion *subar = data->menu->region;
-      uiBlock *subblock = subar->uiblocks.front();
+      uiBlock *subblock = static_cast<uiBlock *>(subar->uiblocks.first);
       uiBut *subbut;
 
       if (subblock) {
@@ -2917,7 +2918,8 @@ static void ui_blocks_set_tooltips(ARegion *region, const bool enable)
   }
 
   /* We disabled buttons when they were already shown, and re-enable them on mouse move. */
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH(uiBlock *, block, &region->uiblocks)
+  {
     block->tooltipdisabled = !enable;
   }
 }
@@ -3035,7 +3037,7 @@ static void ui_but_copy_numeric_array(uiBut *but, char *output, int output_len_m
 {
   // const int values_len = get_but_property_array_length(but);
   // float *values = alloca(values_len * sizeof(float));
-  // LUXO_property_float_get_array(&but->rnapoin, but->stageprop, values);
+  // LUXO_prop_float_get_array(&but->rnapoin, but->stageprop, values);
   // float_array_to_string(values, values_len, output, output_len_max);
 }
 
@@ -3146,7 +3148,7 @@ static void ui_but_copy_color(uiBut *but, char *output, int output_len_max)
   ui_but_v3_get(but, rgba);
 
   /* convert to linear color to do compatible copy between gamma and non-gamma */
-  if (but->stageprop && LUXO_property_subtype(but->stageprop) == PROP_COLOR_GAMMA) {
+  if (but->stageprop && LUXO_prop_subtype(but->stageprop) == PROP_COLOR_GAMMA) {
     srgb_to_linearrgb_v3_v3(rgba, rgba);
   }
 
@@ -3792,7 +3794,7 @@ static int ui_handle_button_event(kContext *C, const wmEvent *event, uiBut *but)
 
     /* Reset the button value when empty text is typed. */
     if ((data->cancel == false) && (data->str != NULL) && (data->str[0] == '\0') &&
-        (but->stageprop && ELEM(LUXO_property_type(but->stageprop), PROP_FLOAT, PROP_INT))) {
+        (but->stageprop && ELEM(LUXO_prop_type(but->stageprop), PROP_FLOAT, PROP_INT))) {
       MEM_SAFE_FREE(data->str);
       // ui_button_value_default(but, &data->value);
 
@@ -3937,7 +3939,7 @@ static void ui_apply_but_funcs_after(kContext *C)
     }
 
     if (after.stagepoin.data) {
-      // LUXO_property_update(C, &after.stagepoin, after.stageprop);
+      LUXO_prop_update(C, &after.stagepoin, after.stageprop);
     }
 
     if (after.context) {
@@ -4092,7 +4094,8 @@ static void button_activate_exit(kContext *C,
   }
 
   /* Disable tool-tips until mouse-move + last active flag. */
-  for (auto &block_iter : data->region->uiblocks) {
+  LISTBASE_FOREACH(uiBlock *, block_iter, &data->region->uiblocks)
+  {
     for (auto &bt : block_iter->buttons) {
       bt->flag &= ~UI_BUT_LAST_ACTIVE;
     }
@@ -4156,7 +4159,7 @@ static int ui_handle_menu_return_submenu(kContext *C,
                                          uiPopupBlockHandle *menu)
 {
   ARegion *region = menu->region;
-  uiBlock *block = region->uiblocks.front();
+  uiBlock *block = static_cast<uiBlock *>(region->uiblocks.first);
 
   uiBut *but = ui_region_find_active_but(region);
 
@@ -4217,7 +4220,7 @@ static int ui_handle_menus_recursive(kContext *C,
   uiPopupBlockHandle *submenu = (data) ? data->menu : NULL;
 
   if (submenu) {
-    uiBlock *block = menu->region->uiblocks.front();
+    uiBlock *block = static_cast<uiBlock *>(menu->region->uiblocks.first);
     const bool is_menu = ui_block_is_menu(block);
     bool inside = false;
     /* root pie menus accept the key that spawned
@@ -4263,7 +4266,7 @@ static int ui_handle_menus_recursive(kContext *C,
     }
 
     if (do_but_search) {
-      uiBlock *block = menu->region->uiblocks.front();
+      uiBlock *block = static_cast<uiBlock *>(menu->region->uiblocks.first);
 
       // retval = ui_handle_menu_button(C, event, menu);
 
@@ -4275,7 +4278,7 @@ static int ui_handle_menus_recursive(kContext *C,
         }
       }
     } else {
-      uiBlock *block = menu->region->uiblocks.front();
+      uiBlock *block = static_cast<uiBlock *>(menu->region->uiblocks.first);
       uiBut *listbox = ui_list_find_mouse_over(menu->region, event);
 
       if (block->flag & UI_BLOCK_RADIAL) {
@@ -4434,7 +4437,7 @@ static int ui_popup_handler(kContext *C, const wmEvent *event, void *userdata)
     wmWindow *win = CTX_wm_window(C);
     /* copy values, we have to free first (closes region) */
     const uiPopupBlockHandle temp = *menu;
-    uiBlock *block = menu->region->uiblocks.front();
+    uiBlock *block = static_cast<uiBlock *>(menu->region->uiblocks.first);
 
     /* set last pie event to allow chained pie spawning */
     if (block->flag & UI_BLOCK_RADIAL) {

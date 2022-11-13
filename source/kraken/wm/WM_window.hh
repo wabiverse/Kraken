@@ -25,6 +25,7 @@
  */
 
 #include "USD_wm_types.h"
+#include "USD_workspace.h"
 #include "USD_vec_types.h"
 
 #include "WM_api.h"

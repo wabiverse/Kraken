@@ -55,6 +55,8 @@ struct KrakenFileData
   struct kScene *curscene;
 
   eKrakenFileType type;
+
+  wabi::SdfLayerRefPtr sdf_handle;
 };
 
 enum eUndoStepDir
@@ -89,14 +91,14 @@ struct FileData
   char relabase[FILE_MAX];
 
   wabi::SdfLayerRefPtr sdf_handle;
-  KrakenFileReadReport *reports;
+  struct KrakenFileReadReport *reports;
 
   std::string filedes;
 };
 
 typedef FileData KrakenHandle;
 
-FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *reports);
+FileData *kr_filedata_from_file(const char *filepath, struct KrakenFileReadReport *reports);
 
 /**
  * Open a krakenhandle from a file path.
@@ -104,5 +106,5 @@ FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *repo
  * @param filepath: The file path to open.
  * @param reports: Report errors in opening the file (can be NULL).
  * @return A handle on success, or NULL on failure. */
-KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadReport *reports);
+KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, struct KrakenFileReadReport *reports);
 

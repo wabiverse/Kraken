@@ -26,6 +26,7 @@
 
 #include "USD_object.h"
 #include "USD_factory.h"
+#include "USD_file.h"
 #include "USD_screen.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
@@ -62,11 +63,14 @@
 
 #include "WM_operators.h"
 #include "WM_debug_codes.h"
+#include "WM_init_exit.h"
 #include "WM_msgbus.h"
 #include "WM_tokens.h"
 #include "WM_files.h"
 #include "WM_event_system.h"
 #include "WM_window.hh"
+
+#include "RE_engine.h"
 
 #include <filesystem>
 
@@ -476,6 +480,69 @@ void WM_files_init(kContext *C)
   WM_operator_properties_free(&props_ptr);
 }
 
+/* -------------------------------------------------------------------- */
+/** @name Window Matching for File Reading
+ * @{ */
+
+/**
+ * To be able to read files without windows closing, opening, moving
+ * we try to prepare for worst case:
+ * - active window gets active screen from file
+ * - restoring the screens from non-active windows
+ * Best case is all screens match, in that case they get assigned to proper window.
+ */
+static void wm_window_match_init(kContext *C, ListBase *wmlist)
+{
+  *wmlist = G_MAIN->wm;
+
+  wmWindow *active_win = CTX_wm_window(C);
+
+  /* first wrap up running stuff */
+  /* code copied from wm_init_exit.c */
+  LISTBASE_FOREACH(wmWindowManager *, wm, wmlist)
+  {
+    WM_jobs_kill_all(wm);
+
+    LISTBASE_FOREACH(wmWindow *, win, &wm->windows)
+    {
+      CTX_wm_window_set(C, win); /* needed by operator close callbacks */
+      WM_event_remove_handlers(C, &win->handlers);
+      WM_event_remove_handlers(C, &win->modalhandlers);
+      ED_screen_exit(C, win, WM_window_get_active_screen(win));
+    }
+
+    /* NOTE(@campbellbarton): Clear the message bus so it's always cleared on file load.
+     * Otherwise it's cleared when "Load UI" is set (see #USER_FILENOUI & #wm_close_and_free).
+     * However it's _not_ cleared when the UI is kept. This complicates use from add-ons
+     * which can re-register subscribers on file-load. To support this use case,
+     * it's best to have predictable behavior - always clear. */
+    if (wm->message_bus != NULL) {
+      WM_msgbus_destroy(wm->message_bus);
+      wm->message_bus = NULL;
+    }
+  }
+
+  BLI_listbase_clear(&G_MAIN->wm);
+
+  /* reset active window */
+  CTX_wm_window_set(C, active_win);
+
+  /* XXX Hack! We have to clear context menu here, because removing all modalhandlers
+   * above frees the active menu (at least, in the 'startup splash' case),
+   * causing use-after-free error in later handling of the button callbacks in UI code
+   * (see ui_apply_but_funcs_after()).
+   * Tried solving this by always NULL-ing context's menu when setting wm/win/etc.,
+   * but it broke popups refreshing (see T47632),
+   * so for now just handling this specific case here. */
+  CTX_wm_menu_set(C, NULL);
+
+  ED_editors_exit(G_MAIN, true);
+}
+
+/* -------------------------------------------------------------------- */
+/** @name Read Main USD File API
+ * @{ */
+
 static struct
 {
   char app_template[64];
@@ -493,6 +560,364 @@ void WM_init_state_app_template_set(const char *app_template)
   }
 }
 
+const char *WM_init_state_app_template_get(void)
+{
+  return wm_init_state_app_template.override ? wm_init_state_app_template.app_template : NULL;
+}
+
+/** @} */
+
+/* -------------------------------------------------------------------- */
+/** @name Read Startup & Preferences USD File API
+ * @{ */
+
+
+
+void WM_homefile_read_ex(kContext *C,
+                         const struct wmHomeFileRead_Params *params_homefile,
+                         ReportList *reports,
+                         struct wmFileReadPost_Params **r_params_file_read_post)
+{
+#if 0 /* UNUSED, keep as this may be needed later & the comment below isn't self evident. */
+  /* Context does not always have valid main pointer here. */
+  Main *kmain = G_MAIN;
+#endif
+  ListBase wmbase;
+  bool success = false;
+
+  /* May be enabled, when the user configuration doesn't exist. */
+  const bool use_data = params_homefile->use_data;
+  const bool use_userdef = params_homefile->use_userdef;
+  bool use_factory_settings = params_homefile->use_factory_settings;
+  /* Currently this only impacts preferences as it doesn't make much sense to keep the default
+   * startup open in the case the app-template doesn't happen to define it's own startup.
+   * Unlike preferences where we might want to only reset the app-template part of the preferences
+   * so as not to reset the preferences for all other Blender instances, see: T96427. */
+  const bool use_factory_settings_app_template_only =
+    params_homefile->use_factory_settings_app_template_only;
+  const bool use_empty_data = params_homefile->use_empty_data;
+  const char *filepath_startup_override = params_homefile->filepath_startup_override;
+  const char *app_template_override = params_homefile->app_template_override;
+
+  bool filepath_startup_is_factory = true;
+  char filepath_startup[FILE_MAX];
+  char filepath_userdef[FILE_MAX];
+
+  /* When 'app_template' is set:
+   * '{KRAKEN_USER_CONFIG}/{app_template}' */
+  char app_template_system[FILE_MAX];
+  /* When 'app_template' is set:
+   * '{KRAKEN_SYSTEM_SCRIPTS}/startup/bl_app_templates_system/{app_template}' */
+  char app_template_config[FILE_MAX];
+
+  eKLOReadSkip skip_flags = 0;
+
+  if (use_data == false) {
+    skip_flags |= KLO_READ_SKIP_DATA;
+  }
+  if (use_userdef == false) {
+    skip_flags |= KLO_READ_SKIP_USERDEF;
+  }
+
+  /* True if we load startup.blend from memory
+   * or use app-template startup.blend which the user hasn't saved. */
+  bool is_factory_startup = true;
+
+  const char *app_template = NULL;
+  bool update_defaults = false;
+
+  if (filepath_startup_override != NULL) {
+    /* pass */
+  } else if (app_template_override) {
+    /* This may be clearing the current template by setting to an empty string. */
+    app_template = app_template_override;
+  } else if (!use_factory_settings && U.app_template[0]) {
+    app_template = U.app_template;
+  }
+
+  const bool reset_app_template = ((!app_template && U.app_template[0]) ||
+                                   (app_template && !STREQ(app_template, U.app_template)));
+
+  /* Options exclude each other. */
+  KLI_assert((use_factory_settings && filepath_startup_override) == 0);
+
+  if ((G.f & G_FLAG_SCRIPT_OVERRIDE_PREF) == 0) {
+    SET_FLAG_FROM_TEST(G.f, (U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0, G_FLAG_SCRIPT_AUTOEXEC);
+  }
+
+  if (use_data) {
+    if (reset_app_template) {
+      /* Always load UI when switching to another template. */
+      G.fileflags &= ~G_FILE_NO_UI;
+    }
+  }
+
+  if (use_userdef || reset_app_template) {
+#ifdef WITH_PYTHON
+    /* This only runs once Blender has already started. */
+    if (CTX_py_init_get(C)) {
+      /* This is restored by 'wm_file_read_post', disable before loading any preferences
+       * so an add-on can read their own preferences when un-registering,
+       * and use new preferences if/when re-registering, see T67577.
+       *
+       * Note that this fits into 'wm_file_read_pre' function but gets messy
+       * since we need to know if 'reset_app_template' is true. */
+      KPY_run_string_eval(C, (const char *[]){"addon_utils", NULL}, "addon_utils.disable_all()");
+    }
+#endif /* WITH_PYTHON */
+  }
+
+  /* For regular file loading this only runs after the file is successfully read.
+   * In the case of the startup file, the in-memory startup file is used as a fallback
+   * so we know this will work if all else fails. */
+  wm_file_read_pre(C, use_data, use_userdef);
+
+  if (use_data) {
+    /* put aside screens to match with persistent windows later */
+    wm_window_match_init(C, &wmbase);
+  }
+
+  filepath_startup[0] = '\0';
+  filepath_userdef[0] = '\0';
+  app_template_system[0] = '\0';
+  app_template_config[0] = '\0';
+
+  const char *const cfgdir = KKE_appdir_folder_id(KRAKEN_USER_CONFIG, NULL);
+  if (!use_factory_settings) {
+    if (cfgdir) {
+      KLI_path_join(filepath_startup, sizeof(filepath_startup), cfgdir, KRAKEN_STARTUP_FILE);
+      filepath_startup_is_factory = false;
+      if (use_userdef) {
+        KLI_path_join(filepath_userdef, sizeof(filepath_startup), cfgdir, KRAKEN_USERPREF_FILE);
+      }
+    } else {
+      use_factory_settings = true;
+    }
+
+    if (filepath_startup_override) {
+      KLI_strncpy(filepath_startup, filepath_startup_override, FILE_MAX);
+      filepath_startup_is_factory = false;
+    }
+  }
+
+  /* load preferences before startup.blend */
+  if (use_userdef) {
+    if (use_factory_settings_app_template_only) {
+      /* Use the current preferences as-is (only load in the app_template preferences). */
+      skip_flags = static_cast<eKLOReadSkip>(skip_flags | KLO_READ_SKIP_USERDEF);
+    } else if (!use_factory_settings && KLI_exists(filepath_userdef)) {
+      UserDef *userdef = CTX_data_prefs(C);
+      if (userdef != nullptr) {
+        SWAP(UserDef, *(&U), *userdef);
+        MEM_delete(userdef);
+        userdef = nullptr;
+
+        skip_flags = static_cast<eKLOReadSkip>(skip_flags | KLO_READ_SKIP_USERDEF);
+        printf("Read prefs: %s\n", filepath_userdef);
+      }
+    }
+  }
+
+  if ((app_template != NULL) && (app_template[0] != '\0')) {
+    if (!KKE_appdir_app_template_id_search(app_template,
+                                           app_template_system,
+                                           sizeof(app_template_system))) {
+      /* Can safely continue with code below, just warn it's not found. */
+      KKE_reportf(reports, RPT_WARNING, "Application Template '%s' not found", app_template);
+    }
+
+    /* Insert template name into startup file. */
+
+    /* note that the path is being set even when 'use_factory_settings == true'
+     * this is done so we can load a templates factory-settings */
+    if (!use_factory_settings) {
+      KLI_path_join(app_template_config, sizeof(app_template_config), cfgdir, app_template);
+      KLI_path_join(filepath_startup,
+                    sizeof(filepath_startup),
+                    app_template_config,
+                    KRAKEN_STARTUP_FILE);
+      filepath_startup_is_factory = false;
+      if (KLI_access(filepath_startup, R_OK) != 0) {
+        filepath_startup[0] = '\0';
+      }
+    } else {
+      filepath_startup[0] = '\0';
+    }
+
+    if (filepath_startup[0] == '\0') {
+      KLI_path_join(filepath_startup,
+                    sizeof(filepath_startup),
+                    app_template_system,
+                    KRAKEN_STARTUP_FILE);
+      filepath_startup_is_factory = true;
+
+      /* Update defaults only for system templates. */
+      update_defaults = true;
+    }
+  }
+
+  if (!use_factory_settings || (filepath_startup[0] != '\0')) {
+    if (KLI_access(filepath_startup, R_OK) == 0) {
+      const struct KrakenFileReadParams params = {
+        .is_startup = true,
+        .skip_flags = skip_flags | KLO_READ_SKIP_USERDEF,
+      };
+      KrakenFileReadReport bf_reports = {.reports = reports};
+      struct KrakenFileData *bfd = wm_usdfile_read(filepath_startup, &params, &bf_reports);
+
+      if (bfd != NULL) {
+        KKE_usdfile_read_setup_ex(C,
+                                  bfd,
+                                  &params,
+                                  &bf_reports,
+                                  update_defaults && use_data,
+                                  app_template);
+        success = true;
+      }
+    }
+    if (success) {
+      is_factory_startup = filepath_startup_is_factory;
+    }
+  }
+
+  if (use_userdef) {
+    if ((skip_flags & KLO_READ_SKIP_USERDEF) == 0) {
+      UserDef *userdef_default = KKE_usdfile_userdef_from_defaults();
+      KKE_blender_userdef_data_set_and_free(userdef_default);
+      skip_flags |= KLO_READ_SKIP_USERDEF;
+    }
+  }
+
+  if (success == false && filepath_startup_override && reports) {
+    /* We can not return from here because wm is already reset */
+    KKE_reportf(reports, RPT_ERROR, "Could not read '%s'", filepath_startup_override);
+  }
+
+  if (success == false) {
+    const struct KrakenFileReadParams params = {
+      .is_startup = true,
+      .skip_flags = skip_flags,
+    };
+    struct KrakenFileData *bfd = KKE_usdfile_read_from_memory(datatoc_startup_blend,
+                                                              datatoc_startup_blend_size,
+                                                              &params,
+                                                              NULL);
+    if (bfd != NULL) {
+      KKE_usdfile_read_setup_ex(C, bfd, &params, &(KrakenFileReadReport){NULL}, true, NULL);
+      success = true;
+    }
+
+    if (use_data && KLI_listbase_is_empty(&wmbase)) {
+      WM_clear_default_size(C);
+    }
+  }
+
+  if (use_empty_data) {
+    KKE_usdfile_read_make_empty(C);
+  }
+
+  /* Load template preferences,
+   * unlike regular preferences we only use some of the settings,
+   * see: KKE_blender_userdef_set_app_template */
+  if (app_template_system[0] != '\0') {
+    char temp_path[FILE_MAX];
+    temp_path[0] = '\0';
+    if (!use_factory_settings) {
+      KLI_path_join(temp_path, sizeof(temp_path), app_template_config, KRAKEN_USERPREF_FILE);
+      if (KLI_access(temp_path, R_OK) != 0) {
+        temp_path[0] = '\0';
+      }
+    }
+
+    if (temp_path[0] == '\0') {
+      KLI_path_join(temp_path, sizeof(temp_path), app_template_system, KRAKEN_USERPREF_FILE);
+    }
+
+    if (use_userdef) {
+      UserDef *userdef_template = NULL;
+      /* just avoids missing file warning */
+      if (KLI_exists(temp_path)) {
+        userdef_template = KKE_usdfile_userdef_read(temp_path, NULL);
+      }
+      if (userdef_template == NULL) {
+        /* we need to have preferences load to overwrite preferences from previous template */
+        userdef_template = KKE_usdfile_userdef_from_defaults();
+      }
+      if (userdef_template) {
+        KKE_blender_userdef_app_template_data_set_and_free(userdef_template);
+        userdef_template = NULL;
+      }
+    }
+  }
+
+  if (app_template_override) {
+    KLI_strncpy(U.app_template, app_template_override, sizeof(U.app_template));
+  }
+
+  Main *kmain = CTX_data_main(C);
+
+  if (use_userdef) {
+    /* check userdef before open window, keymaps etc */
+    wm_init_userdef(kmain);
+  }
+
+  if (use_data) {
+    /* match the read WM with current WM */
+    wm_window_match_do(C, &wmbase, &kmain->wm, &kmain->wm);
+  }
+
+  if (use_userdef) {
+    /* Clear keymaps because the current default keymap may have been initialized
+     * from user preferences, which have been reset. */
+    LISTBASE_FOREACH(wmWindowManager *, wm, &kmain->wm)
+    {
+      if (wm->defaultconf) {
+        wm->defaultconf->flag &= ~KEYCONF_INIT_DEFAULT;
+      }
+    }
+  }
+
+  if (use_data) {
+    WM_check(C); /* opens window(s), checks keymaps */
+
+    kmain->filepath[0] = '\0';
+  }
+
+  {
+    const struct wmFileReadPost_Params params_file_read_post = {
+      .use_data = use_data,
+      .use_userdef = use_userdef,
+      .is_startup_file = true,
+      .is_factory_startup = is_factory_startup,
+      .reset_app_template = reset_app_template,
+    };
+    if (r_params_file_read_post == NULL) {
+      wm_file_read_post(C, &params_file_read_post);
+    } else {
+      *r_params_file_read_post = MEM_mallocN(sizeof(struct wmFileReadPost_Params), __func__);
+      **r_params_file_read_post = params_file_read_post;
+
+      /* Match #wm_file_read_post which leaves the window cleared too. */
+      CTX_wm_window_set(C, NULL);
+    }
+  }
+}
+
+void wm_homefile_read(kContext *C,
+                      const struct wmHomeFileRead_Params *params_homefile,
+                      ReportList *reports)
+{
+  wm_homefile_read_ex(C, params_homefile, reports, NULL);
+}
+
+void wm_homefile_read_post(struct kContext *C,
+                           const struct wmFileReadPost_Params *params_file_read_post)
+{
+  wm_file_read_post(C, params_file_read_post);
+  MEM_freeN((void *)params_file_read_post);
+}
+
+/** @} */
 
 /**
  * Store the action needed if the user needs to reload the file with Python scripts enabled.
@@ -523,6 +948,72 @@ void WM_test_autorun_revert_action_set(wmOperatorType *ot, KrakenPRIM *ptr)
   wm_test_autorun_revert_action_data.ptr = ptr;
 }
 
+/* -------------------------------------------------------------------- */
+/** @name Read USD-File Shared Utilities
+ * @{ */
+
+void WM_file_autoexec_init(const char *filepath)
+{
+  if (G.f & G_FLAG_SCRIPT_OVERRIDE_PREF) {
+    return;
+  }
+
+  if (G.f & G_FLAG_SCRIPT_AUTOEXEC) {
+    char path[FILE_MAX];
+    KLI_split_dir_part(filepath, path, sizeof(path));
+    if (KKE_autoexec_match(path)) {
+      G.f &= ~G_FLAG_SCRIPT_AUTOEXEC;
+    }
+  }
+}
+
+void WM_file_read_report(kContext *C, Main *kmain)
+{
+  ReportList *reports = NULL;
+  LISTBASE_FOREACH(Scene *, scene, &kmain->scenes)
+  {
+    if (scene->r.engine[0] &&
+        KLI_findstring(&R_engines, scene->r.engine, offsetof(RenderEngineType, idname)) == NULL) {
+      if (reports == NULL) {
+        reports = CTX_wm_reports(C);
+      }
+
+      KKE_reportf(reports,
+                  RPT_ERROR,
+                  "Engine '%s' not available for scene '%s' (an add-on may need to be installed "
+                  "or enabled)",
+                  scene->r.engine,
+                  scene->id.name + 2);
+    }
+  }
+
+  if (reports) {
+    if (!G.background) {
+      WM_report_banner_show();
+    }
+  }
+}
+
+/**
+ * Logic shared between #WM_file_read & #WM_homefile_read,
+ * call before loading a file.
+ * @note In the case of #WM_file_read the file may fail to load.
+ * Change here shouldn't cause user-visible changes in that case.
+ */
+static void wm_file_read_pre(kContext *C, bool use_data, bool UNUSED(use_userdef))
+{
+  if (use_data) {
+    KKE_callback_exec_null(CTX_data_main(C), KKE_CB_EVT_LOAD_PRE);
+    KLI_timer_on_file_load();
+  }
+
+  /* Always do this as both startup and preferences may have loaded in many font's
+   * at a different zoom level to the file being loaded. */
+  UI_view2d_zoom_cache_reset();
+
+  ED_preview_restart_queue_free();
+}
+
 /**
  * Parameters for #wm_file_read_post, also used for deferred initialization.
  */
@@ -537,9 +1028,8 @@ struct wmFileReadPost_Params
 };
 
 /**
- * Logic shared between #WM_file_read & #wm_homefile_read,
- * updates to make after reading a file.
- */
+ * Logic shared between #WM_file_read & #WM_homefile_read,
+ * updates to make after reading a file. */
 static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *params)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -557,7 +1047,7 @@ static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *p
       /* remove windows which failed to be added via WM_check */
       WM_window_anchorwindows_remove_invalid(C, wm);
     }
-    CTX_wm_window_set(C, (wmWindow*)wm->windows.first);
+    CTX_wm_window_set(C, (wmWindow *)wm->windows.first);
   }
 
 #ifdef WITH_PYTHON
@@ -644,13 +1134,13 @@ static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *p
 
   if (use_data) {
     if (!G.background) {
-    //   if (wm->undo_stack == nullptr) {
-    //     wm->undo_stack = KKE_undosys_stack_create();
-    //   } else {
-    //     KKE_undosys_stack_clear(wm->undo_stack);
-    //   }
-    //   KKE_undosys_stack_init_from_main(wm->undo_stack, kmain);
-    //   KKE_undosys_stack_init_from_context(wm->undo_stack, C);
+      //   if (wm->undo_stack == nullptr) {
+      //     wm->undo_stack = KKE_undosys_stack_create();
+      //   } else {
+      //     KKE_undosys_stack_clear(wm->undo_stack);
+      //   }
+      //   KKE_undosys_stack_init_from_main(wm->undo_stack, kmain);
+      //   KKE_undosys_stack_init_from_context(wm->undo_stack, C);
     }
   }
 
@@ -670,47 +1160,4 @@ static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *p
   }
 }
 
-/* -------------------------------------------------------------------- */
-/** \name Read USD-File Shared Utilities
- * \{ */
-
-void WM_file_autoexec_init(const char *filepath)
-{
-  if (G.f & G_FLAG_SCRIPT_OVERRIDE_PREF) {
-    return;
-  }
-
-  if (G.f & G_FLAG_SCRIPT_AUTOEXEC) {
-    char path[FILE_MAX];
-    KLI_split_dir_part(filepath, path, sizeof(path));
-    if (KKE_autoexec_match(path)) {
-      G.f &= ~G_FLAG_SCRIPT_AUTOEXEC;
-    }
-  }
-}
-
-void WM_file_read_report(kContext *C, Main *kmain)
-{
-  ReportList *reports = NULL;
-  LISTBASE_FOREACH (Scene *, scene, &kmain->scenes) {
-    if (scene->r.engine[0] &&
-        KLI_findstring(&R_engines, scene->r.engine, offsetof(RenderEngineType, idname)) == NULL) {
-      if (reports == NULL) {
-        reports = CTX_wm_reports(C);
-      }
-
-      BKE_reportf(reports,
-                  RPT_ERROR,
-                  "Engine '%s' not available for scene '%s' (an add-on may need to be installed "
-                  "or enabled)",
-                  scene->r.engine,
-                  scene->id.name + 2);
-    }
-  }
-
-  if (reports) {
-    if (!G.background) {
-      WM_report_banner_show();
-    }
-  }
-}
+/** @} */

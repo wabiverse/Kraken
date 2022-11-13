@@ -40,7 +40,35 @@
 #  include <wabi/usd/usd/prim.h>
 #endif /* __cplusplus */
 
+/* -------------------------------------- */
+
+/* xxx  ***  fwd declare for C.  ***  xxx */
+
+struct KrakenPRIM;
+typedef struct KrakenPRIM KrakenPRIM;
+
+struct KrakenPROP;
+typedef struct KrakenPROP KrakenPROP;
+
+/* -------------------------------------- */
+
 typedef struct IDProperty **(*IDPropertiesFunc)(struct KrakenPRIM *ptr);
+
+/**
+ * Update callback for an PRIM property.
+ *
+ * @note This is NOT called automatically when writing into the property, it needs to be called
+ * manually (through #PRIM_property_update or #PRIM_property_update_main) when needed.
+ *
+ * @param kmain: the Main data-base to which `ptr` data belongs.
+ * @param active_scene: The current active scene (may be NULL in some cases).
+ * @param ptr: The PRIM pointer data to update.
+ */
+typedef void (*UpdateFUNC)(struct Main *kmain, struct Scene *active_scene, struct KrakenPRIM *ptr);
+typedef void (*ContextPropUpdateFUNC)(struct kContext *C,
+                                      struct KrakenPRIM *ptr,
+                                      struct KrakenPROP *prop);
+typedef void (*ContextUpdateFUNC)(struct kContext *C, struct KrakenPRIM *ptr);
 
 typedef enum PropertyType
 {
@@ -52,20 +80,6 @@ typedef enum PropertyType
   PROP_POINTER = 5,
   PROP_COLLECTION = 6,
 } PropertyType;
-
-typedef enum FunctionFlag
-{
-  FUNC_USE_SELF_ID = (1 << 11),
-  FUNC_NO_SELF = (1 << 0),
-  FUNC_USE_SELF_TYPE = (1 << 1),
-  FUNC_USE_MAIN = (1 << 2),
-  FUNC_USE_CONTEXT = (1 << 3),
-  FUNC_USE_REPORTS = (1 << 4),
-  FUNC_REGISTER = (1 << 5),
-  FUNC_REGISTER_OPTIONAL = FUNC_REGISTER | (1 << 6),
-  FUNC_ALLOW_WRITE = (1 << 12),
-  FUNC_RUNTIME = (1 << 9),
-} FunctionFlag;
 
 /* Make sure enums are updated with these */
 /* HIGHEST FLAG IN USE: 1 << 31
@@ -284,27 +298,51 @@ struct KrakenPROP : public wabi::UsdAttribute
   int icon;
 
   wabi::UsdProperty intern_prop;
+
+  unsigned int arraylength;
+
+  /* callback for updates on change */
+  UpdateFUNC update;
+  int noteflag;
+
+  /**
+   * Python handle to hold all callbacks.
+   * (in a pointer array at the moment, may later be a tuple) */
+  void *py_data;
 };
 
 typedef std::vector<KrakenPROP *> PropertyVectorLUXO;
-
-typedef int (*ObjectValidateFunc)(const wabi::UsdPrim &ptr, void *data, int *have_function);
-typedef int (*ObjectCallbackFunc)(struct kContext *C,
-                                  const wabi::UsdPrim &ptr,
-                                  void *func,
-                                  ListBase list);
-typedef void (*ObjectFreeFunc)(void *data);
-typedef struct KrakenPRIM *(*ObjectRegisterFunc)(struct Main *kmain,
-                                                 struct ReportList *reports,
-                                                 void *data,
-                                                 const char *identifier,
-                                                 ObjectValidateFunc validate,
-                                                 ObjectCallbackFunc call,
-                                                 ObjectFreeFunc free);
-typedef void (*ObjectUnregisterFunc)(struct Main *kmain, const wabi::UsdPrim &type);
 #endif /* __cplusplus */
 
-typedef void **(*ObjectInstanceFunc)(struct KrakenPRIM *ptr);
+typedef struct ParameterList
+{
+  /** Storage for parameters*. */
+  void *data;
+
+  /** Function passed at creation time. */
+  struct KrakenFUNC *func;
+
+  /** Store the parameter size. */
+  int alloc_size;
+
+  int arg_count, ret_count;
+} ParameterList;
+
+typedef int (*PrimValidateFUNC)(struct KrakenPRIM *ptr, void *data, int *have_function);
+typedef int (*PrimCallbackFUNC)(struct kContext *C,
+                                struct KrakenPRIM *ptr,
+                                struct KrakenFUNC *func,
+                                ParameterList *list);
+typedef void (*PrimFreeFUNC)(void *data);
+typedef struct KrakenPRIM *(*PrimRegisterFUNC)(struct Main *kmain,
+                                               struct ReportList *reports,
+                                               void *data,
+                                               const char *identifier,
+                                               PrimValidateFUNC validate,
+                                               PrimCallbackFUNC call,
+                                               PrimFreeFUNC free);
+typedef void (*PrimUnregisterFUNC)(struct Main *kmain, struct KrakenPRIM *ptr);
+typedef void **(*PrimInstanceFUNC)(struct KrakenPRIM *ptr);
 
 typedef void (*PropStringGetFunc)(struct KrakenPRIM *ptr, char *value);
 typedef int (*PropStringLengthFunc)(struct KrakenPRIM *ptr);
@@ -312,9 +350,25 @@ typedef void (*PropStringSetFunc)(struct KrakenPRIM *ptr, const char *value);
 typedef int (*PropEnumGetFunc)(struct KrakenPRIM *ptr);
 typedef void (*PropStringGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, char *value);
 typedef int (*PropStringLengthFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
-typedef void (*PropStringSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, const char *value);
+typedef void (*PropStringSetFuncEx)(struct KrakenPRIM *ptr,
+                                    struct KrakenPROP *prop,
+                                    const char *value);
 typedef int (*PropEnumGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
 typedef void (*PropEnumSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, int value);
+
+/**
+ * Extending
+ *
+ * This struct must be embedded in *Type structs in
+ * order to make them definable through LUXO.
+ */
+typedef struct ExtensionPRIM
+{
+  void *data;
+  struct KrakenPRIM *sprim;
+  PrimCallbackFUNC call;
+  PrimFreeFUNC free;
+} ExtensionPRIM;
 
 #ifdef __cplusplus
 typedef std::vector<wabi::UsdCollectionAPI> UsdCollectionsVector;
@@ -365,13 +419,6 @@ struct KrakenPROPString
 };
 #endif /* __cplusplus */
 
-typedef struct ParameterList
-{
-  void *data;
-  struct KrakenFUNC *func;
-  int alloc_size;
-} ParameterList;
-
 typedef struct KrakenPRIM *(*StructRefineFunc)(struct KrakenPRIM *ptr);
 
 typedef void (*CallFunc)(struct kContext *C,
@@ -379,23 +426,37 @@ typedef void (*CallFunc)(struct kContext *C,
                          struct KrakenPRIM *ptr,
                          struct ParameterList *parms);
 
-
-#ifdef __cplusplus
-struct KrakenFUNC
+/* Container - generic abstracted container of PRIM properties. */
+typedef struct ContainerPRIM
 {
-  std::vector<KrakenFUNC> cont;
+  void *next, *prev;
 
+  struct RHash *prophash;
+  ListBase properties;
+} ContainerPRIM;
+
+typedef struct KrakenFUNC
+{
+  /* structs are containers of properties */
+  ContainerPRIM cont;
+
+  /* unique identifier, keep after 'cont' */
   const char *identifier;
-
+  /* various options */
   int flag;
 
+  /* single line description, displayed in the tooltip for example */
   const char *description;
 
+  /* callback to execute the function */
   CallFunc call;
 
-  KrakenPRIM *c_ret;
-};
+  /* parameter for the return value
+   * NOTE: this is only the C return value, rna functions can have multiple return values. */
+  struct KrakenPROP *c_ret;
+} KrakenFUNC;
 
+#ifdef __cplusplus
 struct KrakenPRIM : public wabi::UsdPrim
 {
   KrakenPRIM(const wabi::UsdPrim &prim = wabi::UsdPrim()) : wabi::UsdPrim(prim) {}
@@ -406,6 +467,10 @@ struct KrakenPRIM : public wabi::UsdPrim
   wabi::TfToken identifier;
   wabi::UsdCollectionAPI collection;
   KrakenPRIM *type;
+  KrakenPRIM *nested;
+
+  /* property to iterate over properties */
+  KrakenPROP *iteratorproperty;
 
   /**
    * context (C) */
@@ -424,9 +489,9 @@ struct KrakenPRIM : public wabi::UsdPrim
 
   PropertyVectorLUXO props;
 
-  ObjectRegisterFunc reg;
-  ObjectUnregisterFunc unreg;
-  ObjectInstanceFunc instance;
+  PrimRegisterFUNC reg;
+  PrimUnregisterFUNC unreg;
+  PrimInstanceFUNC instance;
 
   std::vector<KrakenPRIM *> functions;
 };

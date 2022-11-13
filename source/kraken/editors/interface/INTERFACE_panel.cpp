@@ -616,7 +616,7 @@ static void panel_custom_data_active_set(Panel *panel)
 
   if (panel->type->active_property[0] != '\0') {
     KrakenPRIM *ptr = UI_panel_custom_data_get(panel);
-    KLI_assert(LUXO_struct_find_property(ptr, panel->type->active_property) != nullptr);
+    KLI_assert(LUXO_prim_find_property(ptr, panel->type->active_property) != nullptr);
     if (ptr != nullptr && ptr->IsValid()) {
       ptr->GetAttribute(TfToken(panel->type->active_property)).Set(true);
       // LUXO_boolean_set(ptr, panel->type->active_property, true);

@@ -22,6 +22,17 @@
  * The Universe Gets Animated.
  */
 
-DEF_ENUM(luxo_enum_event_type_items)
+/* NOTE: this is included multiple times with different #defines for DEF_ENUM. */
+
+/* use in cases where only dynamic types are used */
+DEF_ENUM(DummyPRIM_NULL_items)
+DEF_ENUM(DummyPRIM_DEFAULT_items)
+
+/* all others should follow 'prim_enum_*_items' naming */
+DEF_ENUM(prim_enum_id_type_items)
+
+DEF_ENUM(prim_enum_event_type_items)
+
+DEF_ENUM(prim_enum_prop_type_items)
 
 #undef DEF_ENUM

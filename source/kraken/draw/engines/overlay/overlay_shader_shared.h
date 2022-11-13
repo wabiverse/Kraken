@@ -24,6 +24,7 @@
 #ifndef GPU_SHADER
 #  include "GPU_shader_shared_utils.h"
 
+#  include "USD_action.h"
 #  include "USD_view3d.h"
 
 #  ifdef __cplusplus

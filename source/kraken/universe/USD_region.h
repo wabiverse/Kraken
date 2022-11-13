@@ -77,7 +77,7 @@ struct ARegion : public wabi::UsdUIArea
   /** 2D-View scrolling/zoom info (most regions are 2d anyways). */
   View2D v2d;
 
-  eRegionType regiontype;
+  short regiontype;
   short flag;
   short alignment;
 
@@ -85,8 +85,6 @@ struct ARegion : public wabi::UsdUIArea
   short visible;
 
   struct ARegionType *type;
-
-  void *regiondata;
 
   /** Private, cached notifier events. */
   short do_draw;
@@ -100,11 +98,23 @@ struct ARegion : public wabi::UsdUIArea
   /** Runtime for partial redraw, same or smaller than coords. */
   wabi::GfVec4i drawrct;
 
+  /** #uiBlock. */
+  ListBase uiblocks;
+  /** Panel. */
   ListBase panels;
+  /** Stack of panel categories. */
+  ListBase panels_category_active;
+  /** #uiList. */
+  ListBase ui_lists;
+  /** #uiPreview. */
+  ListBase ui_previews;
+  /** #wmEventHandler. */
+  ListBase handlers;
+  /** Panel categories runtime. */
   ListBase panels_category;
 
-  std::vector<struct uiBlock *> uiblocks;
-  ListBase handlers;
+  char *headerstr;
+  void *regiondata;
 
   ARegion_Runtime runtime;
 

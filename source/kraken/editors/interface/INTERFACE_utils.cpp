@@ -69,7 +69,7 @@ uiBut *uiDefAutoButR(uiBlock *block,
 {
   uiBut *but = nullptr;
 
-  switch (LUXO_property_type(prop)) {
+  switch (LUXO_prop_type(prop)) {
     case PROP_BOOLEAN: {
       if (prop->GetTypeName().IsArray() && index == -1) {
         return nullptr;
@@ -133,7 +133,7 @@ uiBut *uiDefAutoButR(uiBlock *block,
     case PROP_INT:
     case PROP_FLOAT: {
       if (prop->GetTypeName().IsArray() && index == -1) {
-        if (ELEM(LUXO_property_subtype(prop), PROP_COLOR, PROP_COLOR_GAMMA)) {
+        if (ELEM(LUXO_prop_subtype(prop), PROP_COLOR, PROP_COLOR_GAMMA)) {
           but = uiDefButR_prop(block,
                                UI_BTYPE_COLOR,
                                0,
@@ -153,8 +153,8 @@ uiBut *uiDefAutoButR(uiBlock *block,
         } else {
           return nullptr;
         }
-      } else if (LUXO_property_subtype(prop) == PROP_PERCENTAGE ||
-                 LUXO_property_subtype(prop) == PROP_FACTOR) {
+      } else if (LUXO_prop_subtype(prop) == PROP_PERCENTAGE ||
+                 LUXO_prop_subtype(prop) == PROP_FACTOR) {
         but = uiDefButR_prop(block,
                              UI_BTYPE_NUM_SLIDER,
                              0,
@@ -674,8 +674,8 @@ bool UI_but_online_manual_id(const uiBut *but, char *r_str, size_t maxlength)
     KLI_snprintf(r_str,
                  maxlength,
                  "%s.%s",
-                 LUXO_struct_identifier(but->stagepoin->type).data(),
-                 LUXO_property_identifier(but->stageprop).data());
+                 LUXO_prim_identifier(but->stagepoin->type).data(),
+                 LUXO_prop_identifier(but->stageprop).data());
     return true;
   }
   if (but->optype) {

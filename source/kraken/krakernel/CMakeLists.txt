@@ -42,6 +42,8 @@ set(SRC
   intern/idtype.cc
   intern/material.c
 
+  intern/lib_intern.h
+
   KKE_api.h
   KKE_appdir.h
   KKE_appdir.hh

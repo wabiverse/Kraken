@@ -1036,7 +1036,7 @@ void ui_pie_menu_level_create(uiBlock *block,
                               struct wmOperatorType *ot,
                               const char *propname,
                               IDProperty *properties,
-                              const struct EnumPropertyItem *items,
+                              const struct EnumPROP *items,
                               int totitem,
                               short context,
                               short flag);

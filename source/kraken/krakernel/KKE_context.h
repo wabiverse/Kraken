@@ -206,6 +206,7 @@ struct kScreen *CTX_wm_screen(const struct kContext *C);
 struct ScrArea *CTX_wm_area(const struct kContext *C);
 struct ARegion *CTX_wm_region(const struct kContext *C);
 struct ARegion *CTX_wm_menu(const struct kContext *C);
+struct wmMsgBus *CTX_wm_message_bus(const kContext *C);
 struct ReportList *CTX_wm_reports(const struct kContext *C);
 
 void CTX_wm_manager_set(struct kContext *C, struct wmWindowManager *wm);
@@ -236,7 +237,7 @@ void CTX_wm_operator_poll_msg_clear(struct kContext *C);
 /**
  * Data Context
  *
- * - #ListBase consists of #CollectionPointerLink items and must be
+ * - #ListBase consists of #CollectionPrimLINK items and must be
  *   freed with #MEM_delete followed by #KLI_listbase_clear!
  * - The dir #ListBase consists of #LinkData items.
  */
@@ -254,9 +255,9 @@ void CTX_data_list_add_ptr(struct kContextDataResult *result, const struct Krake
 #define CTX_DATA_BEGIN(C, Type, instance, member)                           \
   {                                                                         \
     ListBase ctx_data_list;                                                 \
-    CollectionPointerLink *ctx_link;                                        \
+    CollectionPrimLINK *ctx_link;                                        \
     CTX_data_##member(C, &ctx_data_list);                                   \
-    for (ctx_link = (CollectionPointerLink *)ctx_data_list.first; ctx_link; \
+    for (ctx_link = (CollectionPrimLINK *)ctx_data_list.first; ctx_link; \
          ctx_link = ctx_link->next) {                                       \
       Type instance = (Type)ctx_link->ptr.data;
 

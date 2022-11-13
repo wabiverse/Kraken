@@ -38,7 +38,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_path.h"
-#include "kpy_stage.h"
+#include "kpy_prim.h"
 
 #include <boost/python.hpp>
 #include <boost/python/overloads.hpp>

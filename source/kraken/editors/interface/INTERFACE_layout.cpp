@@ -517,23 +517,27 @@ static uiLayout *ui_item_local_sublayout(uiLayout *test, uiLayout *layout, bool 
 static void ui_layer_but_cb(kContext *C, void *arg_but, void *arg_index)
 {
   wmWindow *win = CTX_wm_window(C);
-  uiBut *but = (uiBut *)arg_but;
-  // KrakenPRIM *ptr = &but->stagepoin;
-  // KrakenPROP *prop = but->stageprop;
-  // const int index = POINTER_AS_INT(arg_index);
+  uiBut *but = static_cast<uiBut *>(arg_but);
+  KrakenPRIM *ptr = but->stagepoin;
+  KrakenPROP *prop = but->stageprop;
+  const int index = POINTER_AS_INT(arg_index);
   const bool shift = win->eventstate->modifier & KM_SHIFT;
-  // const int len = (int)ptr->GetAttribute(prop->GetName()).GetTypeName().GetDimensions().size;
+  const int len = LUXO_prop_array_length(ptr, prop);
+  SdfValueTypeName arr_type = (prop->GetTypeName().GetScalarType() == TfToken()) ?
+                                prop->GetTypeName().GetArrayType() :
+                                prop->GetTypeName().GetScalarType();
 
   if (!shift) {
-    // LUXO_property_boolean_set_index(ptr, prop, index, true);
 
-    // for (int i = 0; i < len; i++) {
-    //   if (i != index) {
-    //     LUXO_property_boolean_set_index(ptr, prop, i, 0);
-    //   }
-    // }
+    arr_type.GetDimensions().d[index] = (size_t)1;
 
-    // LUXO_property_update(C, ptr, prop);
+    for (int i = 0; i < len; i++) {
+      if (i != index) {
+        arr_type.GetDimensions().d[i] = (size_t)0;
+      }
+    }
+
+    LUXO_prop_update(C, ptr, prop);
 
     for (auto &cbut : but->block->buttons) {
       ui_but_update(cbut);
@@ -563,8 +567,8 @@ static void ui_item_array(uiLayout *layout,
   const uiStyle *style = layout->root->style;
 
   /* retrieve type and subtype */
-  const PropertyType type = LUXO_property_type(prop);
-  const PropertySubType subtype = LUXO_property_subtype(prop);
+  const PropertyType type = LUXO_prop_type(prop);
+  const PropertySubType subtype = LUXO_prop_subtype(prop);
 
   uiLayout *sub = ui_item_local_sublayout(layout, layout, 1);
   UI_block_layout_set_current(block, sub);
@@ -727,13 +731,13 @@ static void ui_item_array(uiLayout *layout,
       if (type == PROP_BOOLEAN &&
           ELEM(layout->root->block->emboss, UI_EMBOSS_NONE, UI_EMBOSS_PULLDOWN)) {
         boolarr = (bool *)MEM_callocN(sizeof(bool) * len, __func__);
-        // LUXO_property_boolean_get_array(ptr, prop, boolarr);
+        // LUXO_prop_boolean_get_array(ptr, prop, boolarr);
       }
 
       const char *str_buf = show_text ? str : "";
       for (int a = 0; a < len; a++) {
         if (!icon_only && show_text) {
-          // str[0] = LUXO_property_array_item_char(prop, a);
+          // str[0] = LUXO_prop_array_item_char(prop, a);
         }
         if (boolarr) {
           icon = boolarr[a] ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT;
@@ -776,13 +780,13 @@ static void ui_item_enum_expand_handle(kContext *C, void *arg1, void *arg2)
     // uiBut *but = (uiBut *)arg1;
     // const int enum_value = POINTER_AS_INT(arg2);
 
-    // int current_value = LUXO_property_enum_get(&but->stagepoin, but->stageprop);
+    // int current_value = LUXO_prop_enum_get(&but->stagepoin, but->stageprop);
     // if (!(current_value & enum_value)) {
     //   current_value = enum_value;
     // } else {
     //   current_value &= enum_value;
     // }
-    // LUXO_property_enum_set(&but->stagepoin, but->stageprop, current_value);
+    // LUXO_prop_enum_set(&but->stagepoin, but->stageprop, current_value);
   }
 }
 
@@ -797,7 +801,7 @@ static void ui_item_enum_expand_elem_exec(uiLayout *layout,
                                           const int h,
                                           const eButType but_type,
                                           const bool icon_only,
-                                          const EnumPropertyItem *item,
+                                          const EnumPROP *item,
                                           const bool is_first)
 {
   const char *name = (!uiname || uiname[0]) ? item->name : "";
@@ -900,16 +904,16 @@ static void ui_item_enum_expand_exec(uiLayout *layout,
    * - mont29
    */
 
-  KLI_assert(LUXO_property_type(prop) == PROP_ENUM);
+  KLI_assert(LUXO_prop_type(prop) == PROP_ENUM);
 
   const bool radial = (layout->root->type == UI_LAYOUT_PIEMENU);
 
   bool free;
-  std::vector<EnumPropertyItem *> item_array;
+  std::vector<EnumPROP *> item_array;
   if (radial) {
-    // LUXO_property_enum_items_gettexted_all(block->evil_C, ptr, prop, &item_array, NULL, &free);
+    // LUXO_prop_enum_items_gettexted_all(block->evil_C, ptr, prop, &item_array, NULL, &free);
   } else {
-    // LUXO_property_enum_items_gettexted(block->evil_C, ptr, prop, &item_array, NULL, &free);
+    // LUXO_prop_enum_items_gettexted(block->evil_C, ptr, prop, &item_array, NULL, &free);
   }
 
   /* We don't want nested rows, cols in menus. */
@@ -935,7 +939,7 @@ static void ui_item_enum_expand_exec(uiLayout *layout,
     const bool is_first = (item == item_array.front());
 
     if (!item->identifier.data()[0]) {
-      const EnumPropertyItem *next_item = item + 1;
+      const EnumPROP *next_item = item + 1;
 
       /* Separate items, potentially with a label. */
       if (next_item->identifier.data()) {
@@ -1011,7 +1015,7 @@ static void ui_item_enum_expand_tabs(uiLayout *layout,
                                       .GetDimensions()
                                       .size;
     bool *highlight_array = (bool *)alloca(sizeof(bool) * highlight_array_len);
-    // LUXO_property_boolean_get_array(ptr_highlight, prop_highlight, highlight_array);
+    // LUXO_prop_boolean_get_array(ptr_highlight, prop_highlight, highlight_array);
     int i = 0;
     for (uiBut *tab_but = last ? last->next : block->buttons.front();
          (tab_but != NULL) && (i < highlight_array_len);
@@ -1066,10 +1070,10 @@ static uiBut *ui_item_with_label(uiLayout *layout,
                                  (layout->item.flag & UI_ITEM_PROP_DECORATE_NO_PAD) == 0;
 #endif
 
-  // const bool is_keymapitem_ptr = LUXO_struct_is_a(ptr->type, &LUXO_KeyMapItem);
+  // const bool is_keymapitem_ptr = LUXO_prim_is_a(ptr->type, &LUXO_KeyMapItem);
   // if ((flag & UI_ITEM_R_FULL_EVENT) && !is_keymapitem_ptr) {
   //   TF_WARN("Data is not a keymap item struct: %s. Ignoring 'full_event' option.",
-  //           LUXO_struct_identifier(ptr->type).GetText());
+  //           LUXO_prim_identifier(ptr->type).GetText());
   // }
 
   UI_block_layout_set_current(block, layout);
@@ -1107,8 +1111,8 @@ static uiBut *ui_item_with_label(uiLayout *layout,
     }
   }
 
-  const PropertyType type = LUXO_property_type(prop);
-  const PropertySubType subtype = LUXO_property_subtype(prop);
+  const PropertyType type = LUXO_prop_type(prop);
+  const PropertySubType subtype = LUXO_prop_subtype(prop);
 
   uiBut *but;
   if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH)) {
@@ -1191,10 +1195,11 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
                                                 bool *r_is_undo,
                                                 bool *r_is_userdef)
 {
+  KrakenPRIM prim;
   ARegion *region = CTX_wm_menu(C) ? CTX_wm_menu(C) : CTX_wm_region(C);
   uiBut *prevbut = NULL;
 
-  *r_ptr = KrakenPRIM(r_ptr);
+  *r_ptr = prim;
   *r_prop = NULL;
   *r_is_undo = false;
   *r_is_userdef = false;
@@ -1203,10 +1208,11 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
     return;
   }
 
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH(uiBlock *, block, &region->uiblocks)
+  {
     for (auto &but : block->buttons) {
       if (but && but->stagepoin->data) {
-        if (LUXO_property_type(but->stageprop) == PROP_STRING) {
+        if (LUXO_prop_type(but->stageprop) == PROP_STRING) {
           prevbut = but;
         }
       }
@@ -1232,7 +1238,7 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
 /**
  * Update a buttons tip with an enum's description if possible.
  */
-static void ui_but_tip_from_enum_item(uiBut *but, const EnumPropertyItem *item)
+static void ui_but_tip_from_enum_item(uiBut *but, const EnumPROP *item)
 {
   if (but->tip == NULL || but->tip[0] == '\0') {
     if (item->description && item->description[0] && !(but->optype && but->optype->description)) {
@@ -1453,8 +1459,8 @@ static const char *ui_menu_enumpropname(uiLayout *layout,
                                         int retval)
 {
   bool free;
-  const EnumPropertyItem *item;
-  LUXO_property_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, NULL, &free);
+  const EnumPROP *item;
+  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, NULL, &free);
 
   const char *name;
   if (item->name) {
@@ -1480,13 +1486,13 @@ void uiItemEnumO_ptr(uiLayout *layout,
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
 
-  KrakenPROP *prop = LUXO_struct_find_property(&ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
   if (prop == NULL) {
-    TF_WARN("%s.%s not found", LUXO_struct_identifier(ptr.type).GetText(), propname);
+    TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
 
-  // LUXO_property_enum_set(&ptr, prop, value);
+  // LUXO_prop_enum_set(&ptr, prop, value);
 
   if (!name) {
     name = ui_menu_enumpropname(layout, &ptr, prop, value);
@@ -1531,13 +1537,13 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                             IDProperty *properties,
                             eWmOperatorContext context,
                             int flag,
-                            const EnumPropertyItem *item_array,
+                            const EnumPROP *item_array,
                             int totitem)
 {
-  const TfToken propname = LUXO_property_identifier(prop);
-  if (LUXO_property_type(prop) != PROP_ENUM) {
+  const TfToken propname = LUXO_prop_identifier(prop);
+  if (LUXO_prop_type(prop) != PROP_ENUM) {
     TF_WARN("%s.%s, not an enum type",
-            LUXO_struct_identifier(ptr.type).GetText(),
+            LUXO_prim_identifier(ptr.type).GetText(),
             propname.GetText());
     return;
   }
@@ -1574,12 +1580,12 @@ void uiItemsFullEnumO_items(uiLayout *layout,
   }
 
   bool last_iter = false;
-  const EnumPropertyItem *item = item_array;
+  const EnumPROP *item = item_array;
   for (int i = 1; item->identifier.data() && !last_iter; i++, item++) {
     /* handle oversized pies */
     if (radial && (totitem > PIE_MAX_ITEMS) && (i >= PIE_MAX_ITEMS)) {
       if (item->name) { /* only visible items */
-        const EnumPropertyItem *tmp;
+        const EnumPROP *tmp;
 
         /* Check if there are more visible items for the next level. If not, we don't
          * add a new level and add the remaining item instead of the 'more' button. */
@@ -1616,7 +1622,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
         }
         // tptr.data = IDP_CopyProperty(properties);
       }
-      // LUXO_property_enum_set(&tptr, prop, item->value);
+      // LUXO_prop_enum_set(&tptr, prop, item->value);
 
       uiItemFullO_ptr(target,
                       ot,
@@ -1695,14 +1701,14 @@ void uiItemsFullEnumO(uiLayout *layout,
   WM_operator_properties_create_ptr(&ptr, ot);
   /* so the context is passed to itemf functions (some need it) */
   // WM_operator_properties_sanitize(&ptr, false);
-  KrakenPROP *prop = LUXO_struct_find_property(&ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
 
   /* don't let bad properties slip through */
-  KLI_assert((prop == NULL) || (LUXO_property_type(prop) == PROP_ENUM));
+  KLI_assert((prop == NULL) || (LUXO_prop_type(prop) == PROP_ENUM));
 
   // uiBlock *block = layout->root->block;
-  if (prop && LUXO_property_type(prop) == PROP_ENUM) {
-    const EnumPropertyItem *item_array = NULL;
+  if (prop && LUXO_prop_type(prop) == PROP_ENUM) {
+    const EnumPROP *item_array = NULL;
     int totitem;
     bool free;
 
@@ -1713,14 +1719,14 @@ void uiItemsFullEnumO(uiLayout *layout,
        * (e.g. Mode Switch menu, after the introduction of GP editing modes).
        */
 #if 0
-      LUXO_property_enum_items_gettexted_all(
+      LUXO_prop_enum_items_gettexted_all(
           block->evil_C, &ptr, prop, &item_array, &totitem, &free);
 #else
-      // LUXO_property_enum_items_gettexted(block->evil_C, &ptr, prop, &item_array, &totitem,
+      // LUXO_prop_enum_items_gettexted(block->evil_C, &ptr, prop, &item_array, &totitem,
       // &free);
 #endif
     } else {
-      // LUXO_property_enum_items_gettexted(block->evil_C, &ptr, prop, &item_array, &totitem,
+      // LUXO_prop_enum_items_gettexted(block->evil_C, &ptr, prop, &item_array, &totitem,
       // &free);
     }
 
@@ -1733,11 +1739,11 @@ void uiItemsFullEnumO(uiLayout *layout,
 
     /* intentionally don't touch UI_BLOCK_IS_FLIP here,
      * we don't know the context this is called in */
-  } else if (prop && LUXO_property_type(prop) != PROP_ENUM) {
-    TF_WARN("%s.%s, not an enum type", LUXO_struct_identifier(ptr.type).GetText(), propname);
+  } else if (prop && LUXO_prop_type(prop) != PROP_ENUM) {
+    TF_WARN("%s.%s, not an enum type", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   } else {
-    TF_WARN("%s.%s not found", LUXO_struct_identifier(ptr.type).GetText(), propname);
+    TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
 }
@@ -1755,19 +1761,19 @@ void uiItemEnumO_value(uiLayout *layout,
                        int value)
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname));
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
 
   /* enum lookup */
-  KrakenPROP *prop = LUXO_struct_find_property(&ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
   if (prop == NULL) {
-    TF_WARN("%s.%s not found", LUXO_struct_identifier(ptr.type).GetText(), propname);
+    TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
 
-  // LUXO_property_enum_set(&ptr, prop, value);
+  // LUXO_prop_enum_set(&ptr, prop, value);
 
   /* same as uiItemEnumO */
   if (!name) {
@@ -1792,27 +1798,22 @@ void uiItemEnumO_string(uiLayout *layout,
                         const char *value_str)
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname));
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
 
-  KrakenPROP *prop = LUXO_struct_find_property(&ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
   if (prop == NULL) {
-    TF_WARN("%s.%s not found", LUXO_struct_identifier(ptr.type).GetText(), propname);
+    TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
 
   /* enum lookup */
   /* no need for translations here */
-  const EnumPropertyItem *item;
+  const EnumPROP *item;
   bool free;
-  LUXO_property_enum_items((kContext *)layout->root->block->evil_C,
-                           &ptr,
-                           prop,
-                           &item,
-                           NULL,
-                           &free);
+  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, &ptr, prop, &item, NULL, &free);
 
   int value;
   if (item == NULL /*|| LUXO_enum_value_from_id(item, value_str, &value) == 0*/) {
@@ -1820,7 +1821,7 @@ void uiItemEnumO_string(uiLayout *layout,
       MEM_freeN((void *)item);
     }
     TF_WARN("%s.%s, enum %s not found",
-            LUXO_struct_identifier(ptr.type).GetText(),
+            LUXO_prim_identifier(ptr.type).GetText(),
             propname,
             value_str);
     return;
@@ -1855,7 +1856,7 @@ void uiItemBooleanO(uiLayout *layout,
                     int value)
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname));
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
@@ -1879,7 +1880,7 @@ void uiItemIntO(uiLayout *layout,
                 int value)
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname));
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
@@ -1904,7 +1905,7 @@ void uiItemFloatO(uiLayout *layout,
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname));
 
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
@@ -1929,7 +1930,7 @@ void uiItemStringO(uiLayout *layout,
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname));
 
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   KrakenPRIM ptr;
   WM_operator_properties_create_ptr(&ptr, ot);
@@ -1966,8 +1967,8 @@ static void ui_item_luxo_size(uiLayout *layout,
   int w = 0, h;
 
   /* arbitrary extended width by type */
-  const PropertyType type = LUXO_property_type(prop);
-  const PropertySubType subtype = LUXO_property_subtype(prop);
+  const PropertyType type = LUXO_prop_type(prop);
+  const PropertySubType subtype = LUXO_prop_subtype(prop);
   const int len = (int)ptr->GetAttribute(prop->GetName()).GetTypeName().GetDimensions().size;
 
   bool is_checkbox_only = false;
@@ -1982,16 +1983,16 @@ static void ui_item_luxo_size(uiLayout *layout,
       icon = ICON_DOT;
     } else if (type == PROP_ENUM) {
       /* Find the longest enum item name, instead of using a dummy text! */
-      const EnumPropertyItem *item_array;
+      const EnumPROP *item_array;
       bool free;
-      // LUXO_property_enum_items_gettexted(layout->root->block->evil_C,
+      // LUXO_prop_enum_items_gettexted(layout->root->block->evil_C,
       //                                   ptr,
       //                                   prop,
       //                                   &item_array,
       //                                   NULL,
       //                                   &free);
 
-      for (const EnumPropertyItem *item = item_array; item->identifier.data(); item++) {
+      for (const EnumPROP *item = item_array; item->identifier.data(); item++) {
         if (item->identifier.data()[0]) {
           w = max_ii(w, ui_text_icon_width(layout, item->name, item->icon, compact));
         }
@@ -2055,7 +2056,7 @@ static void ui_item_luxo_size(uiLayout *layout,
 static bool ui_item_luxo_is_expand(KrakenPROP *prop, int index, int item_flag)
 {
   const bool is_array = prop->GetTypeName().IsArray();
-  const int subtype = LUXO_property_subtype(prop);
+  const int subtype = LUXO_prop_subtype(prop);
   return is_array && (index == LUXO_NO_INDEX) &&
          ((item_flag & UI_ITEM_R_EXPAND) ||
           !ELEM(subtype, PROP_COLOR, PROP_COLOR_GAMMA, PROP_DIRECTION));
@@ -2164,7 +2165,7 @@ void uiItemFullR(uiLayout *layout,
   // ui_block_new_button_group(block, UI_BUTTON_GROUP_UNSET);
 
   /* retrieve info */
-  const PropertyType type = LUXO_property_type(prop);
+  const PropertyType type = LUXO_prop_type(prop);
   const bool is_array = prop->GetTypeName().IsArray();
   const int len = (is_array) ? (int)prop->GetTypeName().GetDimensions().size : 0;
 
@@ -2222,10 +2223,10 @@ void uiItemFullR(uiLayout *layout,
           if (prop_flag & PROP_ICONS_CONSECUTIVE) {
             icon = ICON_CHECKBOX_DEHLT; /* but->iconadd will set to correct icon */
           } else if (is_array) {
-            // icon = (LUXO_property_boolean_get_index(ptr, prop, index)) ? ICON_CHECKBOX_HLT :
+            // icon = (LUXO_prop_boolean_get_index(ptr, prop, index)) ? ICON_CHECKBOX_HLT :
             //                                                             ICON_CHECKBOX_DEHLT;
           } else {
-            // icon = (LUXO_property_boolean_get(ptr, prop)) ? ICON_CHECKBOX_HLT :
+            // icon = (LUXO_prop_boolean_get(ptr, prop)) ? ICON_CHECKBOX_HLT :
             // ICON_CHECKBOX_DEHLT;
           }
         }
@@ -2310,7 +2311,7 @@ void uiItemFullR(uiLayout *layout,
         char name_with_suffix[UI_MAX_DRAW_STR + 2];
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
-          // str[0] = LUXO_property_array_item_char(prop, a);
+          // str[0] = LUXO_prop_array_item_char(prop, a);
           const bool use_prefix = (a == 0 && name && name[0]);
           if (use_prefix) {
             char *s = name_with_suffix;
@@ -2600,11 +2601,11 @@ void uiItemR(uiLayout *layout,
              const char *name,
              int icon)
 {
-  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
 
   if (!prop) {
     ui_item_disabled(layout, propname);
-    TF_WARN("property not found: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+    TF_WARN("property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
@@ -2633,10 +2634,10 @@ void uiItemFullR_with_popover(uiLayout *layout,
     but = but->next;
   }
   if (but == NULL) {
-    const char *propname = LUXO_property_identifier(prop).GetText();
+    const char *propname = LUXO_prop_identifier(prop).GetText();
     ui_item_disabled(layout, panel_type);
     TF_WARN("property could not use a popover: %s.%s (%s)",
-            LUXO_struct_identifier(ptr->type).GetText(),
+            LUXO_prim_identifier(ptr->type).GetText(),
             propname,
             panel_type);
   }
@@ -2664,10 +2665,10 @@ void uiItemFullR_with_menu(uiLayout *layout,
     but = but->next;
   }
   if (but == NULL) {
-    const char *propname = LUXO_property_identifier(prop).GetText();
+    const char *propname = LUXO_prop_identifier(prop).GetText();
     ui_item_disabled(layout, menu_type);
     TF_WARN("property could not use a menu: %s.%s (%s)",
-            LUXO_struct_identifier(ptr->type).GetText(),
+            LUXO_prim_identifier(ptr->type).GetText(),
             propname,
             menu_type);
   }
@@ -2680,10 +2681,10 @@ void uiItemEnumR_prop(uiLayout *layout,
                       KrakenPROP *prop,
                       int value)
 {
-  if (LUXO_property_type(prop) != PROP_ENUM) {
-    const char *propname = LUXO_property_identifier(prop).GetText();
+  if (LUXO_prop_type(prop) != PROP_ENUM) {
+    const char *propname = LUXO_prop_identifier(prop).GetText();
     ui_item_disabled(layout, propname);
-    TF_WARN("property not an enum: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+    TF_WARN("property not an enum: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
@@ -2697,11 +2698,11 @@ void uiItemEnumR(uiLayout *layout,
                  const char *propname,
                  int value)
 {
-  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
 
   if (prop == NULL) {
     ui_item_disabled(layout, propname);
-    TF_WARN("property not found: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+    TF_WARN("property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
@@ -2715,20 +2716,20 @@ void uiItemEnumR_string_prop(uiLayout *layout,
                              const char *name,
                              int icon)
 {
-  if (UNLIKELY(LUXO_property_type(prop) != PROP_ENUM)) {
-    const char *propname = LUXO_property_identifier(prop).GetText();
+  if (UNLIKELY(LUXO_prop_type(prop) != PROP_ENUM)) {
+    const char *propname = LUXO_prop_identifier(prop).GetText();
     ui_item_disabled(layout, propname);
-    TF_WARN("not an enum property: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+    TF_WARN("not an enum property: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
-  const EnumPropertyItem *item;
+  const EnumPROP *item;
   bool free;
-  LUXO_property_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, NULL, &free);
+  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, NULL, &free);
 
   int ivalue;
   // if (!LUXO_enum_value_from_id(item, value, &ivalue)) {
-  //   const char *propname = LUXO_property_identifier(prop).GetText();
+  //   const char *propname = LUXO_prop_identifier(prop).GetText();
   //   if (free) {
   //     MEM_freeN((void *)item);
   //   }
@@ -2770,12 +2771,10 @@ void uiItemEnumR_string(uiLayout *layout,
                         const char *name,
                         int icon)
 {
-  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
   if (UNLIKELY(prop == NULL)) {
     ui_item_disabled(layout, propname);
-    TF_WARN("enum property not found: %s.%s",
-            LUXO_struct_identifier(ptr->type).GetText(),
-            propname);
+    TF_WARN("enum property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
   uiItemEnumR_string_prop(layout, ptr, prop, value, name, icon);
@@ -2785,18 +2784,16 @@ void uiItemsEnumR(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname
 {
   uiBlock *block = layout->root->block;
 
-  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
 
   if (!prop) {
     ui_item_disabled(layout, propname);
-    TF_WARN("enum property not found: %s.%s",
-            LUXO_struct_identifier(ptr->type).GetText(),
-            propname);
+    TF_WARN("enum property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
-  if (LUXO_property_type(prop) != PROP_ENUM) {
-    TF_WARN("not an enum property: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+  if (LUXO_prop_type(prop) != PROP_ENUM) {
+    TF_WARN("not an enum property: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
@@ -2804,9 +2801,9 @@ void uiItemsEnumR(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname
   uiLayout *column = uiLayoutColumn(split, false);
 
   int totitem;
-  const EnumPropertyItem *item;
+  const EnumPROP *item;
   bool free;
-  // LUXO_property_enum_items_gettexted(block->evil_C, ptr, prop, &item, &totitem, &free);
+  // LUXO_prop_enum_items_gettexted(block->evil_C, ptr, prop, &item, &totitem, &free);
 
   for (int i = 0; i < totitem; i++) {
     if (item[i].identifier.data()[0]) {
@@ -2849,11 +2846,11 @@ static void search_id_collection(KrakenPRIM *ptype, KrakenPRIM *r_ptr, KrakenPRO
 
   *r_prop = NULL;
 
-  // LUXO_STRUCT_BEGIN(r_ptr, iprop)
+  // LUXO_PRIM_BEGIN(r_ptr, iprop)
   // {
   //   /* if it's a collection and has same pointer type, we've got it */
-  //   if (LUXO_property_type(iprop) == PROP_COLLECTION) {
-  //     StructRNA *sprim = LUXO_property_pointer_type(r_ptr, iprop);
+  //   if (LUXO_prop_type(iprop) == PROP_COLLECTION) {
+  //     KrakenPRIM *sprim = LUXO_prop_pointer_type(r_ptr, iprop);
 
   //     if (ptype == sprim) {
   //       *r_prop = iprop;
@@ -2861,7 +2858,7 @@ static void search_id_collection(KrakenPRIM *ptype, KrakenPRIM *r_ptr, KrakenPRO
   //     }
   //   }
   // }
-  // LUXO_STRUCT_END;
+  // LUXO_PRIM_END;
 }
 
 static void ui_luxo_collection_search_arg_free_fn(void *ptr)
@@ -2883,11 +2880,11 @@ uiBut *ui_but_add_search(uiBut *but,
 
   // KrakenPRIM sptr;
   // if (!searchprop) {
-  //   if (LUXO_property_type(prop) == PROP_STRING) {
+  //   if (LUXO_prop_type(prop) == PROP_STRING) {
   //     has_search_fn = (prop->flag != 0);
   //   }
-  //   if (LUXO_property_type(prop) == PROP_POINTER) {
-  //     // KrakenPRIM *ptype = LUXO_property_pointer_type(ptr, prop);
+  //   if (LUXO_prop_type(prop) == PROP_POINTER) {
+  //     // KrakenPRIM *ptype = LUXO_prop_pointer_type(ptr, prop);
   //     // search_id_collection(ptype, &sptr, &searchprop);
   //     // searchptr = &sptr;
   //   }
@@ -2910,7 +2907,7 @@ uiBut *ui_but_add_search(uiBut *but,
 
   //   but->hardmax = MAX2(but->hardmax, 256.0f);
   //   but->drawflag |= UI_BUT_ICON_LEFT | UI_BUT_TEXT_LEFT;
-  //   // if (LUXO_property_is_unlink(prop)) {
+  //   // if (LUXO_prop_is_unlink(prop)) {
   //   //   but->flag |= UI_BUT_VALUE_CLEAR;
   //   // }
 
@@ -2931,7 +2928,7 @@ uiBut *ui_but_add_search(uiBut *but,
   //   coll_search->butstore = UI_butstore_create(coll_search->butstore_block);
   //   UI_butstore_register(coll_search->butstore, &coll_search->search_but);
 
-  //   if (LUXO_property_type(prop) == PROP_ENUM) {
+  //   if (LUXO_prop_type(prop) == PROP_ENUM) {
   //     /* XXX, this will have a menu string,
   //      * but in this case we just want the text */
   //     but->str[0] = 0;
@@ -2948,7 +2945,8 @@ uiBut *ui_but_add_search(uiBut *but,
   //                          NULL,
   //                          NULL);
   //   /* If this is called multiple times for the same button, an earlier call may have taken the
-  //    * else branch below so the button was disabled. Now we have a searchprop, so it can be enabled
+  //    * else branch below so the button was disabled. Now we have a searchprop, so it can be
+  //    enabled
   //    * again. */
   //   but->flag &= ~UI_BUT_DISABLED;
   // } else if (but->type == UI_BTYPE_SEARCH_MENU) {
@@ -2973,17 +2971,17 @@ void uiItemPointerR_prop(uiLayout *layout,
 
   // ui_block_new_button_group(uiLayoutGetBlock(layout), UI_BUTTON_GROUP_UNSET);
 
-  const PropertyType type = LUXO_property_type(prop);
+  const PropertyType type = LUXO_prop_type(prop);
   if (!ELEM(type, PROP_POINTER, PROP_STRING, PROP_ENUM)) {
     TF_WARN("Property %s.%s must be a pointer, string or enum",
-            LUXO_struct_identifier(ptr->type).GetText(),
-            LUXO_property_identifier(prop).GetText());
+            LUXO_prim_identifier(ptr->type).GetText(),
+            LUXO_prop_identifier(prop).GetText());
     return;
   }
-  if (LUXO_property_type(searchprop) != PROP_COLLECTION) {
+  if (LUXO_prop_type(searchprop) != PROP_COLLECTION) {
     TF_WARN("search collection property is not a collection type: %s.%s",
-            LUXO_struct_identifier(searchptr->type).GetText(),
-            LUXO_property_identifier(searchprop).GetText());
+            LUXO_prim_identifier(searchptr->type).GetText(),
+            LUXO_prop_identifier(searchprop).GetText());
     return;
   }
 
@@ -2991,9 +2989,9 @@ void uiItemPointerR_prop(uiLayout *layout,
   if (icon == ICON_NONE) {
     KrakenPROP *icontype;
     if (type == PROP_POINTER) {
-      // icontype = LUXO_property_pointer_type(ptr, prop);
+      // icontype = LUXO_prop_pointer_type(ptr, prop);
     } else {
-      // icontype = LUXO_property_pointer_type(searchptr, searchprop);
+      // icontype = LUXO_prop_pointer_type(searchptr, searchprop);
     }
 
     icon = icontype->icon;
@@ -3027,15 +3025,15 @@ void uiItemPointerR(uiLayout *layout,
                     int icon)
 {
   /* validate arguments */
-  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
   if (!prop) {
-    TF_WARN("property not found: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+    TF_WARN("property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
-  KrakenPROP *searchprop = LUXO_struct_find_property(searchptr, searchpropname);
+  KrakenPROP *searchprop = LUXO_prim_find_property(searchptr, searchpropname);
   if (!searchprop) {
     TF_WARN("search collection property not found: %s.%s",
-            LUXO_struct_identifier(searchptr->type).GetText(),
+            LUXO_prim_identifier(searchptr->type).GetText(),
             searchpropname);
     return;
   }
@@ -3260,10 +3258,10 @@ void uiItemDecoratorR(uiLayout *layout, KrakenPRIM *ptr, const char *propname, i
 
   if (ptr && propname) {
     /* validate arguments */
-    prop = LUXO_struct_find_property(ptr, propname);
+    prop = LUXO_prim_find_property(ptr, propname);
     if (!prop) {
       ui_item_disabled(layout, propname);
-      TF_WARN("property not found: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+      TF_WARN("property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
       return;
     }
   }
@@ -3717,7 +3715,7 @@ void uiItemMenuEnumFullO(uiLayout *layout,
 {
   wmOperatorType *ot = WM_operatortype_find(TfToken(opname)); /* print error next */
 
-  UI_OPERATOR_ERROR_RET(ot, opname, return );
+  UI_OPERATOR_ERROR_RET(ot, opname, return);
 
   if (!ot->prim) {
     ui_item_disabled(layout, opname);
@@ -3762,7 +3760,7 @@ void uiItemMenuEnumR_prop(uiLayout *layout,
 
   MenuItemLevel *lvl = (MenuItemLevel *)MEM_callocN(sizeof(MenuItemLevel), "MenuItemLevel");
   lvl->stagepoin = *ptr;
-  KLI_strncpy(lvl->propname, LUXO_property_identifier(prop).GetText(), sizeof(lvl->propname));
+  KLI_strncpy(lvl->propname, LUXO_prop_identifier(prop).GetText(), sizeof(lvl->propname));
   lvl->opcontext = layout->root->opcontext;
 
   ui_item_menu(layout,
@@ -3781,10 +3779,10 @@ void uiItemMenuEnumR(uiLayout *layout,
                      const char *name,
                      int icon)
 {
-  KrakenPROP *prop = LUXO_struct_find_property(ptr, propname);
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
   if (!prop) {
     ui_item_disabled(layout, propname);
-    TF_WARN("property not found: %s.%s", LUXO_struct_identifier(ptr->type).GetText(), propname);
+    TF_WARN("property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
   }
 
@@ -5367,9 +5365,9 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
       // KrakenPROP *enum_prop = but->stageprop;
 
       int items_len;
-      const EnumPropertyItem *items_array = NULL;
+      const EnumPROP *items_array = NULL;
       bool free;
-      // LUXO_property_enum_items_gettexted(NULL, ptr, enum_prop, &items_array, &items_len, &free);
+      // LUXO_prop_enum_items_gettexted(NULL, ptr, enum_prop, &items_array, &items_len, &free);
 
       if (items_array == NULL) {
         return false;
@@ -5385,7 +5383,7 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
         }
       }
       if (free) {
-        MEM_freeN((EnumPropertyItem *)items_array);
+        MEM_freeN((EnumPROP *)items_array);
       }
     }
   }
@@ -5991,8 +5989,7 @@ void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but)
   if (but->stagepoin->data && but->stageprop) {
     /* TODO: index could be supported as well */
     KrakenPRIM ptr_prop;
-    KrakenPRIM ptr_new;
-    LUXO_pointer_create(NULL, &ptr_new, but->stageprop, &ptr_prop);
+    LUXO_pointer_create(NULL, &PRIM_KrakenPROP, but->stageprop, &ptr_prop);
     uiLayoutSetContextPointer(layout, "button_prop", &ptr_prop);
     uiLayoutSetContextPointer(layout, "button_pointer", but->stagepoin);
   }
@@ -6172,7 +6169,7 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
       KLI_dynstr_appendf(ds, "'operator':'''%s''', ", opstr ? opstr : "");
       KLI_dynstr_appendf(ds,
                          "'property':'''%s''', ",
-                         prop ? LUXO_property_identifier(prop).GetText() : "");
+                         prop ? LUXO_prop_identifier(prop).GetText() : "");
       MEM_freeN(opstr);
     }
   }
@@ -6180,8 +6177,8 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
   if (but->stageprop) {
     KLI_dynstr_appendf(ds,
                        "'prim':'%s.%s[%d]', ",
-                       LUXO_struct_identifier(but->stagepoin->type).GetText(),
-                       LUXO_property_identifier(but->stageprop).GetText(),
+                       LUXO_prim_identifier(but->stagepoin->type).GetText(),
+                       LUXO_prop_identifier(but->stageprop).GetText(),
                        but->rnaindex);
   }
 }

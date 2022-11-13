@@ -37,7 +37,7 @@ struct kNodeTreeType;
 struct kNodeType;
 
 /* Types */
-#define DEF_ENUM(id) extern const EnumPropertyItem id[];
+#define DEF_ENUM(id) extern const EnumPROP id[];
 #include "LUXO_enum_items.h"
 
 #ifdef __cplusplus

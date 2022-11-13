@@ -12,6 +12,7 @@ set(DEFSRC
   LUXO_context.cpp
   LUXO_info.cpp
   LUXO_id.cpp
+  LUXO_luxo.cpp
   LUXO_main.cpp
   LUXO_wm.cpp
 )

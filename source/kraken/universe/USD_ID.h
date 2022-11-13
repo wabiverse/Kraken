@@ -66,7 +66,7 @@ typedef struct IDPropertyUIData
   /** Tooltip / property description pointer. Owned by the IDProperty. */
   char *description;
   /** RNA subtype, used for every type except string properties (PropertySubType). */
-  int rna_subtype;
+  int prim_subtype;
 
   char _pad[4];
 } IDPropertyUIData;
@@ -206,40 +206,8 @@ enum
 
   /** This means the property is set but RNA will return false when checking
    * 'RNA_property_is_set', currently this is a runtime flag */
-  IDP_FLAG_GHOST = 1 << 7,
+  IDP_FLAG_ANCHOR = 1 << 7,
 };
-
-/* add any future new id property types here. */
-
-/* Static ID override structs. */
-
-typedef struct IDOverrideLibraryPropertyOperation
-{
-  struct IDOverrideLibraryPropertyOperation *next, *prev;
-
-  /* Type of override. */
-  short operation;
-  short flag;
-
-  /** Runtime, tags are common to both IDOverrideProperty and IDOverridePropertyOperation. */
-  short tag;
-  char _pad0[2];
-
-  /* Sub-item references, if needed (for arrays or collections only).
-   * We need both reference and local values to allow e.g. insertion into RNA collections
-   * (constraints, modifiers...).
-   * In RNA collection case, if names are defined, they are used in priority.
-   * Names are pointers (instead of char[64]) to save some space, NULL or empty string when unset.
-   * Indices are -1 when unset.
-   *
-   * NOTE: For insertion operations in RNA collections, reference may not actually exist in the
-   * linked reference data. It is used to identify the anchor of the insertion operation (i.e. the
-   * item after or before which the new local item should be inserted), in the local override. */
-  char *subitem_reference_name;
-  char *subitem_local_name;
-  int subitem_reference_index;
-  int subitem_local_index;
-} IDOverrideLibraryPropertyOperation;
 
 /* IDOverrideLibraryPropertyOperation->operation. */
 enum
@@ -464,10 +432,10 @@ typedef struct ID
    *
    * This isn't essential, it could be removed however it gives some advantages:
    *
-   * - Every time the #ID is accessed a #BPy_StructRNA doesn't have to be created & destroyed
+   * - Every time the #ID is accessed a #BPy_KrakenPRIM doesn't have to be created & destroyed
    *   (consider all the polling and drawing functions that access ID's).
    *
-   * - When this #ID is deleted, the #BPy_StructRNA can be invalidated
+   * - When this #ID is deleted, the #BPy_KrakenPRIM can be invalidated
    *   so accessing it from Python raises an exception instead of crashing.
    *
    *   This is of limited benefit though, as it doesn't apply to non #ID data
@@ -647,13 +615,11 @@ typedef struct PreviewImage
 
 /* Check whether datablock type is covered by copy-on-write. */
 #define ID_TYPE_IS_COW(_id_type) \
-  (!ELEM(_id_type, ID_LI, ID_IP, ID_SCR, ID_VF, ID_BR, ID_WM, ID_PAL, ID_PC, ID_WS, ID_IM))
+  (!ELEM(_id_type, ID_LI, ID_SCR, ID_VF, ID_BR, ID_WM, ID_PAL, ID_PC, ID_WS, ID_IM))
 
 /* Check whether data-block type requires copy-on-write from #ID_RECALC_PARAMETERS.
  * Keep in sync with #KKE_id_eval_properties_copy. */
 #define ID_TYPE_SUPPORTS_PARAMS_WITHOUT_COW(id_type) ELEM(id_type, ID_ME)
-
-#define ID_TYPE_IS_DEPRECATED(id_type) ELEM(id_type, ID_IP)
 
 #ifdef GS
 #  undef GS
@@ -1128,7 +1094,6 @@ enum
   INDEX_ID_LI = 0,
 
   /* Animation types, might be used by almost all other types. */
-  INDEX_ID_IP, /* Deprecated. */
   INDEX_ID_AC,
 
   /* Grease Pencil, special case, should be with the other obdata, but it can also be used by many
@@ -1204,6 +1169,90 @@ enum
   INDEX_ID_NULL,
   INDEX_ID_MAX,
 };
+
+typedef struct KeyBlock
+{
+  struct KeyBlock *next, *prev;
+
+  /**
+   * point in time   (Key->type == KEY_NORMAL) only,
+   * for historic reasons this is relative to (Key->ctime / 100),
+   * so this value increments by 0.1f per frame.
+   */
+  float pos;
+  /** influence (typically [0 - 1] but can be more), `(Key->type == KEY_RELATIVE)` only. */
+  float curval;
+
+  /** Interpolation type `(Key->type == KEY_NORMAL)` only. */
+  short type;
+  char _pad1[2];
+
+  /** relative == 0 means first key is reference, otherwise the index of Key->blocks */
+  short relative;
+  short flag;
+
+  /** total number if items in the keyblock (compare with mesh/curve verts to check we match) */
+  int totelem;
+  /** for meshes only, match the unique number with the customdata layer */
+  int uid;
+
+  /** array of shape key values, size is `(Key->elemsize * KeyBlock->totelem)` */
+  void *data;
+  /** MAX_NAME (unique name, user assigned) */
+  char name[64];
+  /** MAX_VGROUP_NAME (optional vertex group), array gets allocated into 'weights' when set */
+  char vgroup[64];
+
+  /** ranges, for RNA and UI only to clamp 'curval' */
+  float slidermin;
+  float slidermax;
+
+} KeyBlock;
+
+typedef struct Key
+{
+  ID id;
+  /** Animation data (must be immediately after id for utilities to use it). */
+  struct AnimData *adt;
+
+  /**
+   * commonly called 'Basis', `(Key->type == KEY_RELATIVE)` only.
+   * Looks like this is  _always_ 'key->block.first',
+   * perhaps later on it could be defined as some other KeyBlock - campbell
+   */
+  KeyBlock *refkey;
+
+  /**
+   * This is not a regular string, although it is \0 terminated
+   * this is an array of (element_array_size, element_type) pairs
+   * (each one char) used for calculating shape key-blocks. */
+  char elemstr[32];
+  /** Size of each element in #KeyBlock.data, use for allocation and stride. */
+  int elemsize;
+  char _pad[4];
+
+  /** list of KeyBlock's */
+  ListBase block;
+
+  ID *from;
+
+  /** (totkey == BLI_listbase_count(&key->block)) */
+  int totkey;
+  short flag;
+  /** absolute or relative shape key */
+  char type;
+  char _pad2;
+
+  /** Only used when (Key->type == KEY_NORMAL), this value is used as a time slider,
+   * rather than using the scene's time, this value can be animated to give greater control */
+  float ctime;
+
+  /**
+   * Can never be 0, this is used for detecting old data.
+   * current free UID for key-blocks.
+   */
+  int uidgen;
+} Key;
 
 #ifdef __cplusplus
 }

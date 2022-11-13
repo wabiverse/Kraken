@@ -42,12 +42,6 @@ extern "C" {
 #define GPU_SKY_WIDTH 512
 #define GPU_SKY_HEIGHT 128
 
-typedef struct KrakenFileReadReport
-{
-  /* General reports handling. */
-  struct ReportList *reports;
-} KrakenFileReadReport;
-
 typedef struct SequencerScopes
 {
   struct ImBuf *reference_ibuf;

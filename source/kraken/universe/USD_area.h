@@ -80,7 +80,8 @@ struct ScrArea : public UsdUIArea
   /** Rect bound by v1 v2 v3 v4. */
   rcti totrct;
 
-  std::vector<SpaceProperties *> spacedata;
+  /** #SpaceLink. */
+  ListBase spacedata;
 
   UsdAttribute name;
   UsdAttribute spacetype;

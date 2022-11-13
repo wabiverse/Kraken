@@ -212,7 +212,7 @@ wmDrag *WM_drag_data_create(kContext *C, int icon, int type, void *poin, double 
       // todo. handle this with usd.
       // const AssetLibraryReference *asset_library = CTX_wm_asset_library_ref(C);
       // ListBase asset_file_links = CTX_data_collection_get(C, "selected_asset_files");
-      // LISTBASE_FOREACH (const CollectionPointerLink *, link, &asset_file_links) {
+      // LISTBASE_FOREACH (const CollectionPrimLINK *, link, &asset_file_links) {
       //   const FileDirEntry *asset_file = static_cast<const FileDirEntry *>(link->ptr.data);
       //   const AssetHandle asset_handle = {asset_file};
       //   WM_drag_add_asset_list_item(drag, C, asset_library, &asset_handle);

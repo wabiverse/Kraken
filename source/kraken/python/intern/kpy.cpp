@@ -56,7 +56,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_library.h"
-#include "kpy_stage.h"
+#include "kpy_prim.h"
 #include "kpy_pixar_data.h"
 
 #include "wabi_python.h"
@@ -437,7 +437,7 @@ void KPy_init_modules(struct kContext *C)
   Py_DECREF(mod);
 
   /* needs to be first so kpy_types can run */
-  PyModule_AddObject(mod, "types", KPY_uni_types());
+  PyModule_AddObject(mod, "types", KPY_prim_types());
 
   /* The entirety of Pixar USD python bindings... */
   PyModule_AddObject(mod, "Tf", PyInit__tf());
@@ -481,20 +481,20 @@ void KPy_init_modules(struct kContext *C)
   KPY_pixar_data_context_type_ready();
 
   kpy_import_test("kpy_types");
-  PyModule_AddObject(mod, "data", KPY_stage_module()); /* imports kpy_types by running this */
+  PyModule_AddObject(mod, "data", KPY_prim_module()); /* imports kpy_types by running this */
   kpy_import_test("kpy_types");
 
   PyModule_AddObject(mod, "app", KPY_app_struct());
 
   LUXO_pointer_create(NULL, &PRIM_Context, C, &ctx_ptr);
-  kpy_context_module = (KPy_StagePRIM *)pyprim_struct_CreatePyObject(&ctx_ptr);
+  kpy_context_module = (KPy_StagePRIM *)pyprim_prim_CreatePyObject(&ctx_ptr);
   /* odd that this is needed, 1 ref on creation and another for the module
    * but without we get a crash on exit */
   Py_INCREF(kpy_context_module);
   PyModule_AddObject(mod, "context", (PyObject *)kpy_context_module);
 
   /* Register methods and property get/set for RNA types. */
-  //   KPY_uni_types_extend_capi();
+  //   KPY_prim_types_extend_capi();
 
   /* utility func's that have nowhere else to go */
   PyModule_AddObject(mod,
@@ -519,7 +519,7 @@ void KPy_init_modules(struct kContext *C)
                      meth_kpy_unescape_identifier.ml_name,
                      (PyObject *)PyCFunction_New(&meth_kpy_unescape_identifier, NULL));
 
-  /* register funcs (kpy_stage.c) */
+  /* register funcs (kpy_prim.c) */
   PyModule_AddObject(mod,
                      meth_kpy_register_class.ml_name,
                      (PyObject *)PyCFunction_New(&meth_kpy_register_class, NULL));

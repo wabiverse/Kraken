@@ -24,7 +24,7 @@
 #include "LUXO_internal.h"
 
 
-short LUXO_type_to_ID_code(const KrakenPRIM *type)
+short PRIM_type_to_ID_code(const KrakenPRIM *type)
 {
   const TfToken base_type = type->GetTypeName();
   if (UNLIKELY(base_type.IsEmpty())) {
@@ -168,4 +168,97 @@ short LUXO_type_to_ID_code(const KrakenPRIM *type)
   }
 
   return 0;
+}
+
+KrakenPRIM *ID_code_to_PRIM_type(short idcode)
+{
+  /* NOTE: this switch doesn't use a 'default',
+   * so adding new ID's causes a warning. */
+  switch ((ID_Type)idcode) {
+    case ID_AC:
+      return &PRIM_Action;
+    case ID_AR:
+      return &PRIM_Armature;
+    case ID_BR:
+      return &PRIM_Brush;
+    case ID_CA:
+      return &PRIM_Camera;
+    case ID_CF:
+      return &PRIM_CacheFile;
+    case ID_CV:
+      return &PRIM_Curve;
+    case ID_GD:
+      return &PRIM_GreasePencil;
+    case ID_GR:
+      return &PRIM_Collection;
+    case ID_IM:
+      return &PRIM_Image;
+    case ID_KE:
+      return &PRIM_Key;
+    case ID_LA:
+      return &PRIM_Light;
+    case ID_LI:
+      return &PRIM_Library;
+    case ID_LS:
+      return &PRIM_FreestyleLineStyle;
+    case ID_LT:
+      return &PRIM_Lattice;
+    case ID_MA:
+      return &PRIM_Material;
+    case ID_MB:
+      return &PRIM_MetaBall;
+    case ID_MC:
+      return &PRIM_MovieClip;
+    case ID_ME:
+      return &PRIM_Mesh;
+    case ID_MSK:
+      return &PRIM_Mask;
+    case ID_NT:
+      return &PRIM_NodeTree;
+    case ID_OB:
+      return &PRIM_Object;
+    case ID_PA:
+      return &PRIM_ParticleSettings;
+    case ID_PAL:
+      return &PRIM_Palette;
+    case ID_PC:
+      return &PRIM_PaintCurve;
+    case ID_PT:
+      return &PRIM_PointCloud;
+    case ID_LP:
+      return &PRIM_LightProbe;
+    case ID_SCE:
+      return &PRIM_Scene;
+    case ID_SCR:
+      return &PRIM_Screen;
+    case ID_SIM:
+      return &PRIM_Simulation;
+    case ID_SO:
+      return &PRIM_Sound;
+    case ID_SPK:
+      return &PRIM_Speaker;
+    case ID_TE:
+      return &PRIM_Texture;
+    case ID_TXT:
+      return &PRIM_Text;
+    case ID_VF:
+      return &PRIM_VectorFont;
+    case ID_VO:
+      return &PRIM_Volume;
+    case ID_WM:
+      return &PRIM_WindowManager;
+    case ID_WO:
+      return &PRIM_World;
+    case ID_WS:
+      return &PRIM_WorkSpace;
+  }
+
+  return &PRIM_ID;
+}
+
+KrakenPRIM *prim_ID_refine(KrakenPRIM *ptr)
+{
+  ID *id = (ID *)ptr->data;
+
+  return ID_code_to_PRIM_type(GS(id->name));
 }

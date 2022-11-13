@@ -61,7 +61,7 @@
 
 // #include "engines/basic/basic_engine.h"
 // #include "engines/compositor/compositor_engine.h"
-// #include "engines/phoenix/phoenix_engine.h"
+#include "engines/phoenix/phoenix_engine.h"
 // #include "engines/phoenix_next/phoenix_engine.h"
 // #include "engines/external/external_engine.h"
 // #include "engines/gpencil/gpencil_engine.h"

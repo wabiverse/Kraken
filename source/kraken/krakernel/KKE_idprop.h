@@ -124,7 +124,7 @@ void IDP_ReplaceInGroup_ex(struct IDProperty *group,
 bool IDP_AddToGroup(struct IDProperty *group, struct IDProperty *prop);
 
 struct IDProperty *IDP_GetPropertyFromGroup(const struct IDProperty *prop,
-                                            const char *name) ATTR_WARN_UNUSED_RESULT
+                                            const wabi::TfToken &name) ATTR_WARN_UNUSED_RESULT
   ATTR_NONNULL();
 
 /*-------- Main Functions --------*/
@@ -177,6 +177,16 @@ bool IDP_EqualsProperties(struct IDProperty *prop1, struct IDProperty *prop2);
  * a memory leak.
  */
 IDProperty *IDP_New(const char type, const IDPropertyTemplate *val, const wabi::TfToken &name);
+
+/**
+ * Call a callback for each #IDproperty in the hierarchy under given root one (included).
+ */
+typedef void (*IDPForeachPropertyCallback)(struct IDProperty *id_property, void *user_data);
+
+void IDP_foreach_property(struct IDProperty *id_property_root,
+                          const int type_filter,
+                          IDPForeachPropertyCallback callback,
+                          void *user_data);
 
 /**
  * @note This will free allocated data, all child properties of arrays and groups, and unlink IDs!

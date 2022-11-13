@@ -166,15 +166,15 @@ static void *ctx_wm_python_context_get(const kContext *C,
     KPY_context_member_get((kContext *)C, member, &result);
 
     if (result.ptr.data) {
-      if (LUXO_struct_is_a(result.ptr.type, member_type)) {
+      if (LUXO_prim_is_a(result.ptr.type, member_type)) {
         return result.ptr.data;
       }
 
       CLOG_WARN(&LOG,
                 "PyContext '%s' is a '%s', expected a '%s'",
                 member,
-                LUXO_struct_identifier(result.ptr.type).data(),
-                LUXO_struct_identifier(member_type).data());
+                LUXO_prim_identifier(result.ptr.type).data(),
+                LUXO_prim_identifier(member_type).data());
     }
   }
 #else
@@ -387,7 +387,7 @@ const KrakenPRIM *CTX_store_ptr_lookup(const kContextStore *store,
     return nullptr;
   }
 
-  if (type && !LUXO_struct_is_a(entry->ptr.type, type)) {
+  if (type && !LUXO_prim_is_a(entry->ptr.type, type)) {
     return nullptr;
   }
   return &entry->ptr;
@@ -495,6 +495,11 @@ ARegion *CTX_wm_region(const kContext *C)
 ARegion *CTX_wm_menu(const kContext *C)
 {
   return C->wm.menu;
+}
+
+struct wmMsgBus *CTX_wm_message_bus(const kContext *C)
+{
+  return C->wm.manager ? C->wm.manager->message_bus : nullptr;
 }
 
 ReportList *CTX_wm_reports(const kContext *C)
@@ -620,7 +625,7 @@ void CTX_data_pointer_set_ptr(kContextDataResult *result, const KrakenPRIM *ptr)
 
 void CTX_data_list_add_ptr(kContextDataResult *result, const KrakenPRIM *ptr)
 {
-  CollectionPointerLink *link = MEM_new<CollectionPointerLink>("CTX_data_list_add");
+  CollectionPrimLINK *link = MEM_new<CollectionPrimLINK>("CTX_data_list_add");
   link->ptr = *ptr;
 
   KLI_addtail(&result->list, link);

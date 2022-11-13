@@ -41,28 +41,32 @@
 
 #include "UI_resources.h"
 
-struct PropertyPRIMOrID {
+struct IDProperty;
+struct PropertyPRIMOrID;
+
+typedef struct PropertyPRIMOrID
+{
   KrakenPRIM ptr;
 
-  /** 
-   * The PropertyRNA passed as parameter, used to generate that structure's content:
-   * - Static RNA: The RNA property (same as `rnaprop`), never NULL.
-   * - Runtime RNA: The RNA property (same as `rnaprop`), never NULL.
+  /**
+   * The PropertyPRIM passed as parameter, used to generate that structure's content:
+   * - Static PRIM: The PRIM property (same as `primprop`), never NULL.
+   * - Runtime PRIM: The PRIM property (same as `primprop`), never NULL.
    * - IDProperty: The IDProperty, never NULL.
    */
   KrakenPROP *rawprop;
-  /** 
-   * The real RNA property of this property, never NULL:
-   * - Static RNA: The prim property, also gives direct access to the data (from any matching
+  /**
+   * The real PRIM property of this property, never NULL:
+   * - Static PRIM: The prim property, also gives direct access to the data (from any matching
    *               KrakenPRIM).
-   * - Runtime RNA: The prim property, does not directly gives access to the data.
-   * - IDProperty: The generic PropertyRNA matching its type.
+   * - Runtime PRIM: The prim property, does not directly gives access to the data.
+   * - IDProperty: The generic PropertyPRIM matching its type.
    */
-  KrakenPROP *rnaprop;
-  /** 
+  KrakenPROP *primprop;
+  /**
    * The IDProperty storing the data of this property, may be NULL:
-   * - Static RNA: Always NULL.
-   * - Runtime RNA: The IDProperty storing the data of that property, may be NULL if never set yet.
+   * - Static PRIM: Always NULL.
+   * - Runtime PRIM: The IDProperty storing the data of that property, may be NULL if never set yet.
    * - IDProperty: The IDProperty, never NULL.
    */
   IDProperty *idprop;
@@ -71,26 +75,29 @@ struct PropertyPRIMOrID {
 
   /** Whether this property is a 'pure' IDProperty or not. */
   bool is_idprop;
-  /** 
-   * For runtime RNA properties, whether it is set, defined, or not.
-   * WARNING: This DOES take into account the `IDP_FLAG_GHOST` flag, i.e. it matches result of
-   *          `RNA_property_is_set`. */
+  /**
+   * For runtime PRIM properties, whether it is set, defined, or not.
+   * WARNING: This DOES take into account the `IDP_FLAG_ANCHOR` flag, i.e. it matches result of
+   *          `PRIM_property_is_set`. */
   bool is_set;
 
   bool is_array;
   uint array_len;
-};
+} PropertyPRIMOrID;
+
+/* Function Callbacks */
 
 typedef int (*PropEnumGetFunc)(KrakenPRIM *ptr);
 typedef void (*PropEnumSetFunc)(KrakenPRIM *ptr, int value);
-typedef const EnumPropertyItem *(*PropEnumItemFunc)(kContext *C,
-                                                    KrakenPRIM *ptr,
-                                                    KrakenPROP *prop,
-                                                    bool *r_free);
+typedef const EnumPROP *(*PropEnumItemFunc)(kContext *C,
+                                            KrakenPRIM *ptr,
+                                            KrakenPROP *prop,
+                                            bool *r_free);
 typedef int (*PropEnumGetFuncEx)(KrakenPRIM *ptr, KrakenPROP *prop);
 typedef void (*PropEnumSetFuncEx)(KrakenPRIM *ptr, KrakenPROP *prop, int value);
 
-struct EnumPropertyPRIM {
+typedef struct EnumPropPRIM
+{
   KrakenPROP property;
 
   PropEnumGetFunc get;
@@ -100,14 +107,82 @@ struct EnumPropertyPRIM {
   PropEnumGetFuncEx get_ex;
   PropEnumSetFuncEx set_ex;
 
-  const EnumPropertyItem *item;
+  const EnumPROP *item;
   int totitem;
 
   int defaultvalue;
   const char *native_enum_type;
-};
+} EnumPropPRIM;
+
+typedef void (*PropCollectionBeginFunc)(struct CollectionPropIT *iter, struct KrakenPRIM *ptr);
+typedef void (*PropCollectionNextFunc)(struct CollectionPropIT *iter);
+typedef void (*PropCollectionEndFunc)(struct CollectionPropIT *iter);
+typedef KrakenPRIM (*PropCollectionGetFunc)(struct CollectionPropIT *iter);
+typedef int (*PropCollectionLengthFunc)(struct KrakenPRIM *ptr);
+typedef int (*PropCollectionLookupIntFunc)(struct KrakenPRIM *ptr,
+                                           int key,
+                                           struct KrakenPRIM *r_ptr);
+typedef int (*PropCollectionLookupStringFunc)(struct KrakenPRIM *ptr,
+                                              const char *key,
+                                              struct KrakenPRIM *r_ptr);
+typedef int (*PropCollectionAssignIntFunc)(struct KrakenPRIM *ptr,
+                                           int key,
+                                           const struct KrakenPRIM *assign_ptr);
+
+typedef KrakenPRIM (*PropPointerGetFunc)(struct KrakenPRIM *ptr);
+typedef KrakenPRIM *(*PropPointerTypeFunc)(struct KrakenPRIM *ptr);
+typedef void (*PropPointerSetFunc)(struct KrakenPRIM *ptr,
+                                   const KrakenPRIM value,
+                                   struct ReportList *reports);
+typedef bool (*PropPointerPollFunc)(struct KrakenPRIM *ptr, const KrakenPRIM value);
+typedef bool (*PropPointerPollFuncPy)(struct KrakenPRIM *ptr,
+                                      const KrakenPRIM value,
+                                      const KrakenPROP *prop);
+
+typedef struct KrakenPrimPROP
+{
+  KrakenPROP property;
+
+  PropPointerGetFunc get;
+  PropPointerSetFunc set;
+  PropPointerTypeFunc type_fn;
+  /** unlike operators, 'set' can still run if poll fails, used for filtering display. */
+  PropPointerPollFunc poll;
+
+  struct KrakenPRIM *type;
+} KrakenPrimPROP;
+
+typedef struct CollectionPropPRIM
+{
+  KrakenPROP property;
+
+  PropCollectionBeginFunc begin;
+  PropCollectionNextFunc next;
+  PropCollectionEndFunc end; /* optional */
+  PropCollectionGetFunc get;
+  PropCollectionLengthFunc length;             /* optional */
+  PropCollectionLookupIntFunc lookupint;       /* optional */
+  PropCollectionLookupStringFunc lookupstring; /* optional */
+  PropCollectionAssignIntFunc assignint;       /* optional */
+
+  KrakenPRIM *item_type; /* the type of this item */
+} CollectionPropPRIM;
+
+/**
+ * This function initializes a #PropertyPRIMOrID with all required info, from a given #PropertyPRIM
+ * and #KrakenPRIM data. It deals properly with the three cases
+ * (static PRIM, runtime PRIM, and #IDProperty).
+ * @warning given `ptr` #KrakenPRIM is assumed to be a valid data one here, calling code is
+ * responsible to ensure that.
+ */
+void prim_property_prim_or_id_get(KrakenPROP *prop,
+                                  KrakenPRIM *ptr,
+                                  PropertyPRIMOrID *r_prop_rna_or_id);
+void prim_idproperty_touch(IDProperty *idprop);
+IDProperty *prim_idproperty_find(KrakenPRIM *ptr, const TfToken &name);
+
+struct KrakenPRIM *prim_ID_refine(KrakenPRIM *ptr);
 
 void PRIM_def_context(const KrakenSTAGE &kstage);
 void PRIM_def_info(const KrakenSTAGE &kstage);
 void PRIM_def_wm(const KrakenSTAGE &kstage);
-

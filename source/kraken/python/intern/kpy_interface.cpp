@@ -44,7 +44,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_path.h"
-#include "kpy_stage.h"
+#include "kpy_prim.h"
 
 #include "KKE_appdir.h"
 #include "KKE_appdir.hh"
@@ -194,7 +194,7 @@ void KPY_context_dict_clear_members_array(void **dict_p,
 void KPY_modules_update(void)
 {
   /* refreshes the main struct */
-  KPY_update_stage_module();
+  KPY_update_prim_module();
 }
 
 static struct _inittab kpy_internal_modules[] = {
@@ -376,7 +376,7 @@ void KPY_python_start(kContext *C, int argc, const char **argv)
 #endif
 
   /* Run first, initializes PRIM types. */
-  KPY_uni_init();
+  KPY_prim_init();
 
   /* Defines kpy.* and lets us import it */
   KPy_init_modules(C);
@@ -403,6 +403,17 @@ void KPY_python_use_system_env(void)
 {
   KLI_assert(!Py_IsInitialized());
   py_use_system_env = true;
+}
+
+void KPY_DECREF_PRIM_INVALIDATE(void *pyob_ptr)
+{
+  const PyGILState_STATE gilstate = PyGILState_Ensure();
+  const bool do_invalidate = (Py_REFCNT((PyObject *)pyob_ptr) > 1);
+  Py_DECREF((PyObject *)pyob_ptr);
+  if (do_invalidate) {
+    pyprim_invalidate((KPy_DummyStagePRIM *)pyob_ptr);
+  }
+  PyGILState_Release(gilstate);
 }
 
 void KPY_python_backtrace(FILE *fp)
@@ -437,7 +448,7 @@ void KPY_python_end(void)
   kpy_context_end(KPY_context_get());
 
   /* Decrement user counts of all callback functions. */
-  // KPY_uni_props_clear_all();
+  // KPY_prim_props_clear_all();
 
   /* free other python data. */
   // pyprim_free_types();
@@ -510,7 +521,7 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
 
         if (KPy_StagePRIM_Check(list_item)) {
 #if 0
-          CollectionPointerLink *link = MEM_callocN(sizeof(CollectionPointerLink),
+          CollectionPrimLINK *link = MEM_callocN(sizeof(CollectionPrimLINK),
                                                     "kpy_context_get");
           link->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
           KLI_addtail(&result->list, link);

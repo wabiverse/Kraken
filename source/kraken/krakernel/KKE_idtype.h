@@ -22,7 +22,7 @@
  * @file
  * KRAKEN Kernel.
  * Purple Underground.
- * 
+ *
  * ID type structure, helping to factorize common operations and data for all data-block types.
  */
 
@@ -42,7 +42,8 @@ struct LibraryForeachIDData;
 struct Main;
 
 /** IDTypeInfo.flags. */
-enum {
+enum
+{
   /** Indicates that the given IDType does not support copying. */
   IDTYPE_FLAGS_NO_COPY = 1 << 0,
   /** Indicates that the given IDType does not support linking/appending from a library file. */
@@ -58,7 +59,8 @@ enum {
   IDTYPE_FLAGS_NO_ANIMDATA = 1 << 4,
 };
 
-typedef struct IDCacheKey {
+typedef struct IDCacheKey
+{
   /* The session UUID of the ID owning the cached data. */
   unsigned int id_session_uuid;
   /* Value uniquely identifying the cache within its ID.
@@ -86,7 +88,8 @@ typedef void (*IDTypeMakeLocalFunction)(struct Main *bmain, struct ID *id, int f
 
 typedef void (*IDTypeForeachIDFunction)(struct ID *id, struct LibraryForeachIDData *data);
 
-typedef enum eIDTypeInfoCacheCallbackFlags {
+typedef enum eIDTypeInfoCacheCallbackFlags
+{
   /** Indicates to the callback that cache may be stored in the .usd file,
    * so its pointer should not be cleared at read-time. */
   IDTYPE_CACHE_CB_FLAGS_PERSISTENT = 1 << 0,
@@ -117,7 +120,8 @@ typedef void (*IDTypeBlendReadUndoPreserve)(struct BlendLibReader *reader,
 
 typedef void (*IDTypeLibOverrideApplyPost)(struct ID *id_dst, struct ID *id_src);
 
-typedef struct IDTypeInfo {
+typedef struct IDTypeInfo
+{
   /* ********** General IDType data. ********** */
 
   /**
@@ -253,7 +257,6 @@ extern IDTypeInfo IDType_ID_IM;
 extern IDTypeInfo IDType_ID_LT;
 extern IDTypeInfo IDType_ID_LA;
 extern IDTypeInfo IDType_ID_CA;
-extern IDTypeInfo IDType_ID_IP;
 extern IDTypeInfo IDType_ID_KE;
 extern IDTypeInfo IDType_ID_WO;
 extern IDTypeInfo IDType_ID_SCR;

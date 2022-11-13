@@ -16,78 +16,33 @@
  * Copyright 2022, Wabi Animation Studios, Ltd. Co.
  */
 
+#pragma once
+
 /**
  * @file
  * Window Manager.
  * Making GUI Fly.
  */
 
-#pragma once
-
-#include <wabi/base/tf/notice.h>
-#include <wabi/base/tf/refBase.h>
-#include <wabi/usd/usd/common.h>
-
-#include <atomic>
-
-#include "USD_window.h"
-
-#include "WM_api.h"
-#include "WM_operators.h"
-
-#include "KKE_context.h"
-#include "KKE_robinhood.h"
-
-/**
- *  -----  The Kraken WindowManager. ----- */
-
-
-void WM_msgbus_types_init(void);
-
+#include "USD_listBase.h"
+#include <stdio.h>
 
 /* ------ */
 
-struct wmMsgParams_PRIM
-{
-  /** when #KrakenPRIM.data & owner_id are NULL. match against all. */
-  struct KrakenPRIM ptr;
-  /** when NULL, match against any property. */
-  const KrakenPROP *prop;
+struct ID;
+struct bContext;
+struct wmMsg;
 
-  /**
-   * Optional RNA data path for persistent RNA properties, ignore if NULL.
-   * otherwise it's allocated.
-   */
-  TfToken data_path;
-};
+struct wmMsgBus;
+struct wmMsgSubscribeKey;
+struct wmMsgSubscribeValue;
+struct wmMsgSubscribeValueLink;
 
-struct wmMsgTypeInfo {
-  struct {
-    unsigned int (*hash_fn)(const void *msg);
-    bool (*cmp_fn)(const void *a, const void *b);
-    void (*key_free_fn)(void *key);
-  } rset;
+/* ------ */
 
-  void (*update_by_id)(struct wmMsgBus *mbus, struct ID *id_src, struct ID *id_dst);
-  void (*remove_by_id)(struct wmMsgBus *mbus, const struct ID *id);
-  void (*repr)(FILE *stream, const struct wmMsgSubscribeKey *msg_key);
-
-  /* sizeof(wmMsgSubscribeKey_*) */
-  uint msg_key_size;
-};
-
-struct wmMsg {
-  unsigned int type;
-  // #ifdef DEBUG
-  /* For debugging: '__func__:__LINE__'. */
-  const char *id;
-  // #endif
-};
-
-struct wmMsg_PRIM {
-  wmMsg head; /* keep first */
-  wmMsgParams_PRIM params;
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef void (*wmMsgNotifyFn)(struct kContext *C,
                               struct wmMsgSubscribeKey *msg_key,
@@ -102,8 +57,51 @@ typedef void (*wmMsgSubscribeValueUpdateIdFn)(struct kContext *C,
                                               struct ID *id_dst,
                                               struct wmMsgSubscribeValue *msg_val);
 
+enum
+{
+  WM_MSG_TYPE_PRIM = 0,
+  WM_MSG_TYPE_STATIC = 1,
+};
+#define WM_MSG_TYPE_NUM 2
+
+typedef struct wmMsgTypeInfo
+{
+  struct
+  {
+    unsigned int (*hash_fn)(const void *msg);
+    bool (*cmp_fn)(const void *a, const void *b);
+    void (*key_free_fn)(void *key);
+  } rset;
+
+  void (*update_by_id)(struct wmMsgBus *mbus, struct ID *id_src, struct ID *id_dst);
+  void (*remove_by_id)(struct wmMsgBus *mbus, const struct ID *id);
+  void (*repr)(FILE *stream, const struct wmMsgSubscribeKey *msg_key);
+
+  /* sizeof(wmMsgSubscribeKey_*) */
+  uint msg_key_size;
+} wmMsgTypeInfo;
+
+typedef struct wmMsg
+{
+  unsigned int type;
+  // #ifdef DEBUG
+  /* For debugging: '__func__:__LINE__'. */
+  const char *id;
+  // #endif
+} wmMsg;
+
+typedef struct wmMsgSubscribeKey
+{
+  /** Linked list for predictable ordering, otherwise we would depend on #GHash bucketing. */
+  struct wmMsgSubscribeKey *next, *prev;
+  ListBase values;
+  /* over-alloc, eg: wmMsgSubscribeKey_RNA */
+  /* Last member will be 'wmMsg_*' */
+} wmMsgSubscribeKey;
+
 /** One of many in #wmMsgSubscribeKey.values */
-struct wmMsgSubscribeValue {
+typedef struct wmMsgSubscribeValue
+{
   struct wmMsgSubscribe *next, *prev;
 
   /** Handle, used to iterate and clear. */
@@ -121,78 +119,139 @@ struct wmMsgSubscribeValue {
   /* tag to run when handling events,
    * we may want option for immediate execution. */
   uint tag : 1;
-};
+} wmMsgSubscribeValue;
 
 /** One of many in #wmMsgSubscribeKey.values */
-struct wmMsgSubscribeValueLink {
+typedef struct wmMsgSubscribeValueLink
+{
   struct wmMsgSubscribeValueLink *next, *prev;
   wmMsgSubscribeValue params;
+} wmMsgSubscribeValueLink;
+
+void WM_msgbus_types_init(void);
+
+struct wmMsgBus *WM_msgbus_create(void);
+void WM_msgbus_destroy(struct wmMsgBus *mbus);
+
+void WM_msgbus_clear_by_owner(struct wmMsgBus *mbus, void *owner);
+
+void WM_msg_dump(struct wmMsgBus *mbus, const char *info_str);
+void WM_msgbus_handle(struct wmMsgBus *mbus, struct kContext *C);
+
+void WM_msg_publish_with_key(struct wmMsgBus *mbus, wmMsgSubscribeKey *msg_key);
+/**
+ * @param msg_key_test: Needs following #wmMsgSubscribeKey fields filled in:
+ * - `msg.params`
+ * - `msg.head.type`
+ * - `msg.head.id`
+ * .. other values should be zeroed.
+ *
+ * @return The key for this subscription.
+ * note that this is only needed in rare cases when the key needs further manipulation.
+ */
+wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
+                                             const wmMsgSubscribeKey *msg_key_test,
+                                             const wmMsgSubscribeValue *msg_val_params);
+
+void WM_msg_id_update(struct wmMsgBus *mbus, struct ID *id_src, struct ID *id_dst);
+void WM_msg_id_remove(struct wmMsgBus *mbus, const struct ID *id);
+
+enum
+{
+  /* generic window redraw */
+  WM_MSG_STATICTYPE_WINDOW_DRAW = 0,
+  WM_MSG_STATICTYPE_SCREEN_EDIT = 1,
+  WM_MSG_STATICTYPE_FILE_READ = 2,
 };
 
-struct wmMsgSubscribeKey {
-  /** Linked list for predictable ordering, otherwise we would depend on #RHash bucketing. */
-  struct wmMsgSubscribeKey *next, *prev;
-  std::vector<wmMsgSubscribeValueLink *> values;
-  /* over-alloc, eg: wmMsgSubscribeKey_RNA */
-  /* Last member will be 'wmMsg_*' */
-};
+typedef struct wmMsgParams_Static
+{
+  int event;
+} wmMsgParams_Static;
 
-struct wmMsgSubscribeKey_PRIM {
+typedef struct wmMsg_Static
+{
+  wmMsg head; /* keep first */
+  wmMsgParams_Static params;
+} wmMsg_Static;
+
+typedef struct wmMsgSubscribeKey_Static
+{
+  wmMsgSubscribeKey head;
+  wmMsg_Static msg;
+} wmMsgSubscribeKey_Static;
+
+void WM_msgtypeinfo_init_static(wmMsgTypeInfo *msgtype_info);
+
+wmMsgSubscribeKey_Static *WM_msg_lookup_static(struct wmMsgBus *mbus,
+                                               const wmMsgParams_Static *msg_key_params);
+void WM_msg_publish_static_params(struct wmMsgBus *mbus, const wmMsgParams_Static *msg_key_params);
+void WM_msg_publish_static(struct wmMsgBus *mbus,
+                           /* wmMsgParams_Static (expanded) */
+                           int event);
+void WM_msg_subscribe_static_params(struct wmMsgBus *mbus,
+                                    const wmMsgParams_Static *msg_key_params,
+                                    const wmMsgSubscribeValue *msg_val_params,
+                                    const char *id_repr);
+void WM_msg_subscribe_static(struct wmMsgBus *mbus,
+                             int event,
+                             const wmMsgSubscribeValue *msg_val_params,
+                             const char *id_repr);
+
+typedef struct wmMsgParams_PRIM
+{
+  /** when #KrakenPRIM.data & owner_id are NULL. match against all. */
+  struct KrakenPRIM ptr;
+  /** when NULL, match against any property. */
+  const KrakenPROP *prop;
+
+  /**
+   * Optional RNA data path for persistent RNA properties, ignore if NULL.
+   * otherwise it's allocated.
+   */
+  TfToken data_path;
+} wmMsgParams_PRIM;
+
+typedef struct wmMsg_PRIM
+{
+  wmMsg head; /* keep first */
+  wmMsgParams_PRIM params;
+} wmMsg_PRIM;
+
+typedef struct wmMsgSubscribeKey_PRIM
+{
   wmMsgSubscribeKey head;
   wmMsg_PRIM msg;
-};
+} wmMsgSubscribeKey_PRIM;
+
+void WM_msg_publish_prim_params(struct wmMsgBus *mbus, const wmMsgParams_PRIM *msg_key_params);
+void WM_msg_publish_prim(struct wmMsgBus *mbus,
+                        /* wmMsgParams_RNA (expanded) */
+                        KrakenPRIM *ptr,
+                        KrakenPROP *prop);
 
 wmMsgSubscribeKey *WM_msg_subscribe_with_key(struct wmMsgBus *mbus,
                                              const wmMsgSubscribeKey *msg_key_test,
                                              const wmMsgSubscribeValue *msg_val_params);
 
-void WM_msg_publish_with_key(struct wmMsgBus *mbus, wmMsgSubscribeKey *msg_key);
-
-/**
- *  -----  Forward Declarations. ----- */
-
-TF_DECLARE_WEAK_AND_REF_PTRS(MsgBusCallback);
-
-typedef MsgBusCallbackPtr MsgBus;
-
-/**
- *  -----  The MsgBus Callback. ----- */
-
-
-struct MsgBusCallback : public TfWeakBase
-{
-  /** Kraken WM Notifications. */
-  MsgBusCallback(wmNotifier *note);
-  void wmCOMM(const TfNotice &notice, MsgBus const &sender);
-
-  /** Kraken Operators. */
-  MsgBusCallback(wmOperatorType *ot);
-  void OperatorCOMM(const TfNotice &notice, MsgBus const &sender);
-
-  /** Reference Count. */
-  std::atomic<int> ref;
-
-  /** Notify @ Subscribe MsgBus. */
-  // TfNotice notice;
-
-  wmNotifier *note;
-
-  struct
-  {
-    wmOperatorType *type;
-  } op;
-};
-
-struct wmMsgSubscribeKey_Generic {
-  wmMsgSubscribeKey head;
-  wmMsg msg;
-};
 
 void WM_msg_subscribe_prim(struct wmMsgBus *mbus,
                            KrakenPRIM *ptr,
                            const KrakenPROP *prop,
                            const wmMsgSubscribeValue *msg_val_params,
                            const char *id_repr);
+
+/* ------ */
+
+void WM_msg_subscribe_value_free(wmMsgSubscribeKey *msg_key, wmMsgSubscribeValueLink *msg_lnk);
+
+/* ------ */
+
+typedef struct wmMsgSubscribeKey_Generic
+{
+  wmMsgSubscribeKey head;
+  wmMsg msg;
+} wmMsgSubscribeKey_Generic;
 
 KLI_INLINE const wmMsg *wm_msg_subscribe_value_msg_cast(const wmMsgSubscribeKey *key)
 {
@@ -203,5 +262,6 @@ KLI_INLINE wmMsg *wm_msg_subscribe_value_msg_cast_mut(wmMsgSubscribeKey *key)
   return &((wmMsgSubscribeKey_Generic *)key)->msg;
 }
 
-/* ------ */
-
+#ifdef __cplusplus
+}
+#endif

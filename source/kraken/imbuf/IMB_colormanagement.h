@@ -39,7 +39,7 @@ struct ColorManagedDisplaySettings;
 struct ColorManagedViewSettings;
 struct ColorManagedOutputSettings;
 struct ColormanageProcessor;
-struct EnumPropertyItem;
+struct EnumPROP;
 struct ImBuf;
 struct ImageFormatData;
 struct Main;

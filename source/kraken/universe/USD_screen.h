@@ -27,10 +27,18 @@
 #include "KKE_context.h"
 
 #include "USD_api.h"
+#include "USD_listBase.h"
 #include "USD_types.h"
 
 #include <wabi/base/gf/vec2i.h>
 #include <wabi/usd/usdUI/screen.h>
+
+/* ------ */
+
+struct wmMsgBus;
+
+/* ------ */
+
 
 #define AREAGRID 4
 #define AREAMINX 29
@@ -38,146 +46,6 @@
 #define HEADERY (20 + HEADER_PADDING_Y)
 
 #define AREAMAP_FROM_SCREEN(screen) ((ScrAreaMap *)&(screen)->verts)
-
-#define KKE_ST_MAXNAME 64
-
-struct Menu
-{
-  struct MenuType *type;   /* runtime */
-  struct uiLayout *layout; /* runtime for drawing */
-};
-
-struct MenuType
-{
-  wabi::TfToken idname;       /* unique name */
-  char label[KKE_ST_MAXNAME]; /* for button text */
-  char translation_context[KKE_ST_MAXNAME];
-  char owner_id[KKE_ST_MAXNAME]; /* optional, see: #wmOwnerID */
-  const char *description;
-
-  /* verify if the menu should draw or not */
-  bool (*poll)(const struct kContext *C, struct MenuType *mt);
-  /* draw entirely, view changes should be handled here */
-  void (*draw)(const struct kContext *C, struct Menu *menu);
-};
-
-struct PanelType
-{
-  wabi::TfToken idname;       /* unique name */
-  char label[KKE_ST_MAXNAME]; /* for panel header */
-  char *description;          /* for panel tooltip */
-  char translation_context[KKE_ST_MAXNAME];
-  char context[KKE_ST_MAXNAME];   /* for buttons window */
-  char category[KKE_ST_MAXNAME];  /* for category tabs */
-  char owner_id[KKE_ST_MAXNAME];  /* for work-spaces to selectively show. */
-  char parent_id[KKE_ST_MAXNAME]; /* parent idname for sub-panels */
-  /** Boolean property identifier of the panel custom data. Used to draw a highlighted border. */
-  char active_property[KKE_ST_MAXNAME];
-  short space_type;
-  short region_type;
-  /* For popovers, 0 for default. */
-  int ui_units_x;
-  int order;
-
-  int flag;
-
-  /* verify if the panel should draw or not */
-  bool (*poll)(const struct kContext *C, struct PanelType *pt);
-  /* draw header (optional) */
-  void (*draw_header)(const struct kContext *C, struct Panel *panel);
-  /* draw header preset (optional) */
-  void (*draw_header_preset)(const struct kContext *C, struct Panel *panel);
-  /* draw entirely, view changes should be handled here */
-  void (*draw)(const struct kContext *C, struct Panel *panel);
-
-  /* For instanced panels corresponding to a list: */
-
-  /** Reorder function, called when drag and drop finishes. */
-  void (*reorder)(struct kContext *C, struct Panel *pa, int new_index);
-  /**
-   * Get the panel and sub-panel's expansion state from the expansion flag in the corresponding
-   * data item. Called on draw updates.
-   * @note Sub-panels are indexed in depth first order,
-   * the visual order you would see if all panels were expanded.
-   */
-  short (*get_list_data_expand_flag)(const struct kContext *C, struct Panel *pa);
-  /**
-   * Set the expansion bit-field from the closed / open state of this panel and its sub-panels.
-   * Called when the expansion state of the panel changes with user input.
-   * @note Sub-panels are indexed in depth first order,
-   * the visual order you would see if all panels were expanded.
-   */
-  void (*set_list_data_expand_flag)(const struct kContext *C, struct Panel *pa, short expand_flag);
-
-  /* sub panels */
-  struct PanelType *parent;
-  ListBase children;
-};
-
-enum
-{
-  PANEL_TYPE_DEFAULT_CLOSED = (1 << 0),
-  PANEL_TYPE_NO_HEADER = (1 << 1),
-  /** Makes buttons in the header shrink/stretch to fill full layout width. */
-  PANEL_TYPE_HEADER_EXPAND = (1 << 2),
-  PANEL_TYPE_LAYOUT_VERT_BAR = (1 << 3),
-  /** This panel type represents data external to the UI. */
-  PANEL_TYPE_INSTANCED = (1 << 4),
-  /** Don't search panels with this type during property search. */
-  PANEL_TYPE_NO_SEARCH = (1 << 7),
-};
-
-struct Panel_Runtime
-{
-  /* Applied to Panel.ofsx, but saved separately so we can track changes between redraws. */
-  int region_ofsx;
-
-  /**
-   * Pointer for storing which data the panel corresponds to.
-   * Useful when there can be multiple instances of the same panel type.
-   *
-   * @note A panel and its sub-panels share the same custom data pointer.
-   * This avoids freeing the same pointer twice when panels are removed.
-   */
-  KrakenPRIM *custom_data_ptr;
-
-  /* Pointer to the panel's block. Useful when changes to panel #uiBlocks
-   * need some context from traversal of the panel "tree". */
-  uiBlock *block;
-
-  /* Non-owning pointer. The context is stored in the block. */
-  kContextStore *context;
-};
-
-struct Panel
-{
-  struct Panel *next;
-  /** Runtime. */
-  struct PanelType *type;
-  /** Runtime for drawing. */
-  struct uiLayout *layout;
-
-  /** Defined as UI_MAX_NAME_STR. */
-  char panelname[64];
-  /** Panel name is identifier for restoring location. */
-  char drawname[64];
-  /** Offset within the region. */
-  int ofsx, ofsy;
-  /** Panel size including children. */
-  int sizex, sizey;
-  /** Panel size excluding children. */
-  int blocksizex, blocksizey;
-  short labelofs;
-  short flag, runtime_flag;
-  /** Panels are aligned according to increasing sort-order. */
-  int sortorder;
-  /** Runtime for panel manipulation. */
-  void *activedata;
-  /** Sub panels. */
-  ListBase children;
-
-  Panel_Runtime runtime;
-};
 
 enum eScreenRedrawsFlag
 {
@@ -227,25 +95,6 @@ enum
 
   /* Only editor overlays (currently gizmos only!) should be redrawn. */
   RGN_DRAW_EDITOR_OVERLAYS = 32,
-};
-
-struct ScrVert
-{
-  struct ScrVert *next, *prev, *newv;
-
-  wabi::GfVec2h vec;
-  /* first one used internally, second one for tools */
-  short flag, editflag;
-};
-
-struct ScrEdge
-{
-  struct ScrEdge *next, *prev;
-
-  ScrVert *v1, *v2;
-  /** 1 when at edge of screen. */
-  short border;
-  short flag;
 };
 
 /** Function mapping a context member name to its value. */
@@ -319,6 +168,223 @@ kScreen::kScreen(kContext *C, const wabi::SdfPath &stagepath)
   regions = {NULL, NULL};
 }
 
+typedef struct ScrVert
+{
+  struct ScrVert *next, *prev, *newv;
+
+  wabi::GfVec2h vec;
+  /* first one used internally, second one for tools */
+  short flag, editflag;
+} ScrVert;
+
+typedef struct ScrEdge
+{
+  struct ScrEdge *next, *prev;
+
+  ScrVert *v1, *v2;
+  /** 1 when at edge of screen. */
+  short border;
+  short flag;
+} ScrEdge;
+
+typedef struct ScrAreaMap
+{
+  /** ScrVert. */
+  ListBase verts;
+  /** ScrEdge. */
+  ListBase edges;
+  /** ScrArea. */
+  ListBase areas;
+} ScrAreaMap;
+
+typedef struct Panel_Runtime
+{
+  /* Applied to Panel.ofsx, but saved separately so we can track changes between redraws. */
+  int region_ofsx;
+
+  /**
+   * Pointer for storing which data the panel corresponds to.
+   * Useful when there can be multiple instances of the same panel type.
+   *
+   * @note A panel and its sub-panels share the same custom data pointer.
+   * This avoids freeing the same pointer twice when panels are removed.
+   */
+  KrakenPRIM *custom_data_ptr;
+
+  /* Pointer to the panel's block. Useful when changes to panel #uiBlocks
+   * need some context from traversal of the panel "tree". */
+  uiBlock *block;
+
+  /* Non-owning pointer. The context is stored in the block. */
+  kContextStore *context;
+} Panel_Runtime;
+
+typedef struct Panel
+{
+  struct Panel *next;
+  /** Runtime. */
+  struct PanelType *type;
+  /** Runtime for drawing. */
+  struct uiLayout *layout;
+
+  /** Defined as UI_MAX_NAME_STR. */
+  char panelname[64];
+  /** Panel name is identifier for restoring location. */
+  char drawname[64];
+  /** Offset within the region. */
+  int ofsx, ofsy;
+  /** Panel size including children. */
+  int sizex, sizey;
+  /** Panel size excluding children. */
+  int blocksizex, blocksizey;
+  short labelofs;
+  short flag, runtime_flag;
+  /** Panels are aligned according to increasing sort-order. */
+  int sortorder;
+  /** Runtime for panel manipulation. */
+  void *activedata;
+  /** Sub panels. */
+  ListBase children;
+
+  Panel_Runtime runtime;
+} Panel;
+
+/**
+ * Used for passing expansion between instanced panel data and the panels themselves.
+ * There are 16 defines because the expansion data is typically stored in a short.
+ *
+ * @note Expansion for instanced panels is stored in depth first order. For example, the value of
+ * UI_SUBPANEL_DATA_EXPAND_2 correspond to mean the expansion of the second subpanel or the first
+ * subpanel's first subpanel.
+ */
+typedef enum uiPanelDataExpansion
+{
+  UI_PANEL_DATA_EXPAND_ROOT = (1 << 0),
+  UI_SUBPANEL_DATA_EXPAND_1 = (1 << 1),
+  UI_SUBPANEL_DATA_EXPAND_2 = (1 << 2),
+  UI_SUBPANEL_DATA_EXPAND_3 = (1 << 3),
+  UI_SUBPANEL_DATA_EXPAND_4 = (1 << 4),
+  UI_SUBPANEL_DATA_EXPAND_5 = (1 << 5),
+  UI_SUBPANEL_DATA_EXPAND_6 = (1 << 6),
+  UI_SUBPANEL_DATA_EXPAND_7 = (1 << 7),
+  UI_SUBPANEL_DATA_EXPAND_8 = (1 << 8),
+  UI_SUBPANEL_DATA_EXPAND_9 = (1 << 9),
+  UI_SUBPANEL_DATA_EXPAND_10 = (1 << 10),
+  UI_SUBPANEL_DATA_EXPAND_11 = (1 << 11),
+  UI_SUBPANEL_DATA_EXPAND_12 = (1 << 12),
+  UI_SUBPANEL_DATA_EXPAND_13 = (1 << 13),
+  UI_SUBPANEL_DATA_EXPAND_14 = (1 << 14),
+  UI_SUBPANEL_DATA_EXPAND_15 = (1 << 15),
+  UI_SUBPANEL_DATA_EXPAND_16 = (1 << 16),
+} uiPanelDataExpansion;
+
+/**
+ * Notes on Panel Categories:
+ *
+ * - #ARegion.panels_category (#PanelCategoryDyn)
+ *   is a runtime only list of categories collected during draw.
+ *
+ * - #ARegion.panels_category_active (#PanelCategoryStack)
+ *   is basically a list of strings (category id's).
+ *
+ * Clicking on a tab moves it to the front of region->panels_category_active,
+ * If the context changes so this tab is no longer displayed,
+ * then the first-most tab in #ARegion.panels_category_active is used.
+ *
+ * This way you can change modes and always have the tab you last clicked on.
+ */
+
+/* region level tabs */
+typedef struct PanelCategoryDyn
+{
+  struct PanelCategoryDyn *next, *prev;
+  char idname[64];
+  rcti rect;
+} PanelCategoryDyn;
+
+/** Region stack of active tabs. */
+typedef struct PanelCategoryStack
+{
+  struct PanelCategoryStack *next, *prev;
+  char idname[64];
+} PanelCategoryStack;
+
+typedef void (*uiListFreeRuntimeDataFunc)(struct uiList *ui_list);
+
+typedef struct uiListDyn
+{
+  /** Callback to free UI data when freeing UI-Lists in BKE. */
+  uiListFreeRuntimeDataFunc free_runtime_data_fn;
+
+  /** Number of rows needed to draw all elements. */
+  int height;
+  /** Actual visual height of the list (in rows). */
+  int visual_height;
+  /** Minimal visual height of the list (in rows). */
+  int visual_height_min;
+
+  /** Number of columns drawn for grid layouts. */
+  int columns;
+
+  /** Number of items in collection. */
+  int items_len;
+  /** Number of items actually visible after filtering. */
+  int items_shown;
+
+  /* Those are temp data used during drag-resize with GRIP button
+   * (they are in pixels, the meaningful data is the
+   * difference between resize_prev and resize)...
+   */
+  int resize;
+  int resize_prev;
+
+  /** Allocated custom data. Freed together with the #uiList (and when re-assigning). */
+  void *customdata;
+
+  /* Filtering data. */
+  /** Items_len length. */
+  int *items_filter_flags;
+  /** Org_idx -> new_idx, items_len length. */
+  int *items_filter_neworder;
+
+  struct wmOperatorType *custom_drag_optype;
+  struct KrakenPRIM *custom_drag_opptr;
+  struct wmOperatorType *custom_activate_optype;
+  struct KrakenPRIM *custom_activate_opptr;
+} uiListDyn;
+
+/* some list UI data need to be saved in file */
+typedef struct uiList
+{
+  struct uiList *next, *prev;
+
+  /** Runtime. */
+  struct uiListType *type;
+
+  /** Defined as UI_MAX_NAME_STR. */
+  char list_id[64];
+
+  /** How items are laid out in the list. */
+  int layout_type;
+  int flag;
+
+  int list_scroll;
+  int list_grip;
+  int list_last_len;
+  int list_last_activei;
+
+  /* Filtering data. */
+  /** Defined as UI_MAX_NAME_STR. */
+  char filter_byname[64];
+  int filter_flag;
+  int filter_sort_flag;
+
+  /* Custom sub-classes properties. */
+  IDProperty *properties;
+
+  /* Dynamic data (runtime). */
+  uiListDyn *dyn_data;
+} uiList;
 
 struct wmRegionMessageSubscribeParams
 {

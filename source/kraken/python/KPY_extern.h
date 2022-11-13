@@ -46,6 +46,8 @@ struct wmWindowManager;
 extern "C" {
 #endif
 
+void KPY_DECREF_PRIM_INVALIDATE(void *pyob_ptr);
+
 void KPY_context_set(struct kContext *C);
 /**
  * Use for updating while a python script runs - in case of file load.

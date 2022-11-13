@@ -25,6 +25,7 @@
 #include "USD_area.h"
 #include "USD_context.h"
 #include "USD_factory.h"
+#include "USD_listBase.h"
 #include "USD_object.h"
 #include "USD_operator.h"
 #include "USD_pixar_utils.h"
@@ -37,17 +38,22 @@
 #include "USD_workspace.h"
 
 #include "KLI_listbase.h"
-
+#include "KKE_idprop.h"
 #include "KKE_screen.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
 
 #include "WM_inline_tools.h"
 
+#include <wabi/usd/usdUI/area.h>
+#include <wabi/usd/usdUI/screen.h>
 #include <wabi/usd/usd/tokens.h>
 
+using namespace wabi;
 
 /* keep global; this has to be accessible outside of windowmanager */
-static std::vector<SpaceType *> spacetypes;
-
+static ListBase spacetypes = {NULL, NULL};
 
 SdfPath make_screenpath(const char *layout_name, int id)
 {
@@ -79,14 +85,14 @@ bool KKE_screen_is_used(const kScreen *screen)
 
 SpaceType *KKE_spacetype_from_id(int spaceid)
 {
-  UNIVERSE_FOR_ALL (st, spacetypes) {
+  LISTBASE_FOREACH(SpaceType *, st, &spacetypes)
+  {
     if (st->spaceid == spaceid) {
       return st;
     }
   }
-  return NULL;
+  return nullptr;
 }
-
 
 ScrArea *KKE_screen_find_big_area(kScreen *screen, const int spacetype, const short min)
 {
@@ -149,32 +155,27 @@ void KKE_screen_sort_scrvert(ScrVert **v1, ScrVert **v2)
   }
 }
 
-ARegionType *KKE_regiontype_from_id(const SpaceType *st, int regionid)
+static void area_region_panels_free_recursive(Panel *panel)
 {
-  for (auto &art : st->regiontypes) {
-    if (art->regionid == regionid) {
-      return art;
-    }
+  MEM_SAFE_FREE(panel->activedata);
+
+  LISTBASE_FOREACH_MUTABLE(Panel *, child_panel, &panel->children)
+  {
+    area_region_panels_free_recursive(child_panel);
   }
-  return NULL;
+
+  MEM_delete(panel);
 }
 
-void KKE_screen_area_free(ScrArea *area)
+void KKE_area_region_panels_free(ListBase *panels)
 {
-  wabi::TfToken spacetype = FormFactory(area->spacetype);
-  SpaceType *st = KKE_spacetype_from_id(WM_spacetype_enum_from_token(spacetype));
-
-  LISTBASE_FOREACH(ARegion *, region, &area->regions)
+  LISTBASE_FOREACH_MUTABLE(Panel *, panel, panels)
   {
-    KKE_area_region_free(st, region);
+    /* Free custom data just for parent panels to avoid a double free. */
+    MEM_SAFE_FREE(panel->runtime.custom_data_ptr);
+    area_region_panels_free_recursive(panel);
   }
-
-  MEM_SAFE_FREE(area->global);
-  KLI_freelistN(&area->regions);
-
-  area->spacedata.clear();
-
-  // KLI_freelistN(&area->actionzones);
+  KLI_listbase_clear(panels);
 }
 
 void KKE_screen_area_map_free(ScrAreaMap *area_map)
@@ -192,7 +193,7 @@ void KKE_screen_area_map_free(ScrAreaMap *area_map)
 void KKE_area_region_free(SpaceType *st, ARegion *region)
 {
   if (st) {
-    ARegionType *art = KKE_regiontype_from_id(st, region->regiontype);
+    struct ARegionType *art = KKE_regiontype_from_id(st, region->regiontype);
 
     if (art && art->free) {
       art->free(region);
@@ -205,36 +206,55 @@ void KKE_area_region_free(SpaceType *st, ARegion *region)
     region->type->free(region);
   }
 
-  // KKE_area_region_panels_free(&region->panels);
+  KKE_area_region_panels_free(&region->panels);
 
-  // for (auto &uilst : region->ui_lists) {
-  //   if (uilst->dyn_data && uilst->dyn_data->free_runtime_data_fn) {
-  //     uilst->dyn_data->free_runtime_data_fn(uilst);
-  //   }
-  //   if (uilst->properties) {
-  //     IDP_FreeProperty(uilst->properties);
-  //   }
-  //   MEM_SAFE_FREE(uilst->dyn_data);
-  // }
+  LISTBASE_FOREACH(uiList *, uilst, &region->ui_lists)
+  {
+    if (uilst->dyn_data && uilst->dyn_data->free_runtime_data_fn) {
+      uilst->dyn_data->free_runtime_data_fn(uilst);
+    }
+    if (uilst->properties) {
+      IDP_FreeProperty(uilst->properties);
+    }
+    MEM_SAFE_FREE(uilst->dyn_data);
+  }
 
-  // if (region->gizmo_map != NULL) {
-  //   region_free_gizmomap_callback(region->gizmo_map);
-  // }
+  if (region->gizmo_map != NULL) {
+    region_free_gizmomap_callback(region->gizmo_map);
+  }
 
-  // if (region->runtime.block_name_map != NULL) {
-  //   KLI_rhash_free(region->runtime.block_name_map, NULL, NULL);
-  //   region->runtime.block_name_map = NULL;
-  // }
+  if (region->runtime.block_name_map != NULL) {
+    KLI_ghash_free(region->runtime.block_name_map, NULL, NULL);
+    region->runtime.block_name_map = NULL;
+  }
 
-  // KLI_freelistN(&region->ui_lists);
-  // KLI_freelistN(&region->ui_previews);
-  // KLI_freelistN(&region->panels_category);
-  // KLI_freelistN(&region->panels_category_active);
+  KLI_freelistN(&region->ui_lists);
+  KLI_freelistN(&region->ui_previews);
+  KLI_freelistN(&region->panels_category);
+  KLI_freelistN(&region->panels_category_active);
+}
+
+void KKE_screen_area_free(ScrArea *area)
+{
+  TfToken space_type = FormFactory(area->spacetype);
+  SpaceType *st = KKE_spacetype_from_id(WM_spacetype_enum_from_token(space_type));
+
+  LISTBASE_FOREACH (ARegion *, region, &area->regions) {
+    KKE_area_region_free(st, region);
+  }
+
+  MEM_SAFE_FREE(area->global);
+  KLI_freelistN(&area->regionbase);
+
+  KKE_spacedata_freelist(&area->spacedata);
+
+  KLI_freelistN(&area->actionzones);
 }
 
 ARegionType *KKE_regiontype_from_id_or_first(const SpaceType *st, int regionid)
 {
-  for (auto &art : st->regiontypes) {
+  LISTBASE_FOREACH(ARegionType *, art, &st->regiontypes)
+  {
     if (art->regionid == regionid) {
       return art;
     }
@@ -242,10 +262,22 @@ ARegionType *KKE_regiontype_from_id_or_first(const SpaceType *st, int regionid)
 
   printf("Error, region type %d missing in - name:\"%s\", id:%d\n",
          regionid,
-         st->name.data(),
+         st->name,
          st->spaceid);
-  return st->regiontypes.front();
+  return (ARegionType *)st->regiontypes.first;
 }
+
+ARegionType *KKE_regiontype_from_id(SpaceType *st, int regionid)
+{
+  LISTBASE_FOREACH(ARegionType *, art, &st->regiontypes)
+  {
+    if (art->regionid == regionid) {
+      return art;
+    }
+  }
+  return nullptr;
+}
+
 
 /* ***************** Screen edges & verts ***************** */
 

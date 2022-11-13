@@ -62,7 +62,7 @@
 
 #include <wabi/base/tf/token.h>
 
-const EnumPropertyItem luxo_enum_event_type_items[] = {
+const EnumPROP luxo_enum_event_type_items[] = {
   /* - Note we abuse 'tooltip' message here to store a 'compact' form of some (too) long names.
   * - Intentionally excluded: #CAPSLOCKKEY, #UNKNOWNKEY.
   */

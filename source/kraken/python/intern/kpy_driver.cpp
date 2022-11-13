@@ -36,7 +36,7 @@
 
 #include "kpy_driver.h"
 #include "kpy_intern_string.h"
-#include "kpy_stage.h"
+#include "kpy_prim.h"
 
 #include "KPY_extern_python.h"
 

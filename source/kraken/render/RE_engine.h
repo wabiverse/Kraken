@@ -26,6 +26,8 @@
 #include "USD_listBase.h"
 #include "USD_scene_types.h"
 
+#include "LUXO_types.h"
+
 #include "KLI_threads.h"
 
 struct BakeTargets;
@@ -98,7 +100,7 @@ typedef struct RenderEngineType
    * full-frame render result). */
   void (*render_frame_finish)(struct RenderEngine *engine);
 
-  void (*draw)(struct RenderEngine *engine, const struct bContext *context, struct Hydra *hydra);
+  void (*draw)(struct RenderEngine *engine, const struct kContext *context, struct Hydra *hydra);
 
   void (*bake)(struct RenderEngine *engine,
                struct Hydra *hydra,
@@ -109,10 +111,10 @@ typedef struct RenderEngineType
                int height);
 
   void (*view_update)(struct RenderEngine *engine,
-                      const struct bContext *context,
+                      const struct kContext *context,
                       struct Hydra *hydra);
   void (*view_draw)(struct RenderEngine *engine,
-                    const struct bContext *context,
+                    const struct kContext *context,
                     struct Hydra *hydra);
 
   void (*update_script_node)(struct RenderEngine *engine,
@@ -124,6 +126,7 @@ typedef struct RenderEngineType
 
   struct DrawEngineType *draw_engine;
 
+  ExtensionPRIM prim_ext;
 } RenderEngineType;
 
 typedef void (*update_render_passes_cb_t)(void *userdata,

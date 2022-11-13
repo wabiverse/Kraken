@@ -46,6 +46,8 @@
 #include "KKE_report.h"
 #include "KKE_screen.h"
 
+#include "WM_files.h"
+
 #include "LUXO_runtime.h"
 
 #include <wabi/wabi.h>

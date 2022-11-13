@@ -487,7 +487,7 @@ typedef struct kNodeTree
   char idname[64];
 
   /** Runtime RNA type of the group interface. */
-  struct StructRNA *interface_type;
+  struct KrakenPRIM *interface_type;
 
   /** Grease pencil data. */
   struct bGPdata *gpd;

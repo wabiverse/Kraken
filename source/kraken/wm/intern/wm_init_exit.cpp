@@ -190,10 +190,9 @@ void WM_init(kContext *C, int argc, const char **argv)
    * simplify things if it weren't for key-maps being part of the window-manager
    * which is usd file data.
    * Creating a dummy window-manager early, or moving the key-maps into the preferences
-   * would resolve this and may be worth looking into long-term, see: D12184 for details.
-   */
+   * would resolve this and may be worth looking into long-term, see: D12184 for details. */
   struct wmFileReadPost_Params *params_file_read_post = NULL;
-  wm_homefile_read_ex(C,
+  WM_homefile_read_ex(C,
                       &(const struct wmHomeFileRead_Params){
                         .use_data = true,
                         .use_userdef = true,

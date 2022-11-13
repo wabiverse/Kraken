@@ -115,8 +115,8 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    *
    * @returns @c true if successful. */
 
-  HD_API
-  virtual bool IsStopSupported() const;
+  PHOENIX_API
+  virtual bool IsStopSupported() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -127,8 +127,8 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    *
    * @returns @c true if successful. */
 
-  HD_API
-  virtual bool IsStopped() const;
+  PHOENIX_API
+  virtual bool IsStopped() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -139,8 +139,8 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    *
    * @returns @c true if successful. */
 
-  HD_API
-  virtual bool Stop(bool blocking = true);
+  PHOENIX_API
+  virtual bool Stop(bool blocking = true) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -151,8 +151,8 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    *
    * @returns @c true if successful. */
 
-  HD_API
-  virtual bool Restart();
+  PHOENIX_API
+  virtual bool Restart() override;
 
   /**
    * ----------------------------------------------------------------------
@@ -163,7 +163,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * provided during its construction. Default implementation does nothing. */
 
   PHOENIX_API
-  virtual void SetDrivers(HdDriverVector const &drivers) override;
+  virtual void SetDrivers(wabi::HdDriverVector const &drivers) override;
 
 
   /**
@@ -182,7 +182,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * A render delegate may return null for the param. */
 
   PHOENIX_API
-  virtual HdRenderParam *GetRenderParam() const override;
+  virtual wabi::HdRenderParam *GetRenderParam() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -198,13 +198,13 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @BPRIM: Buffer primitive types, like render buffers, openvdb assets, etc. */
 
   PHOENIX_API
-  virtual const TfTokenVector &GetSupportedRprimTypes() const override;
+  virtual const wabi::TfTokenVector &GetSupportedRprimTypes() const override;
 
   PHOENIX_API
-  virtual const TfTokenVector &GetSupportedSprimTypes() const override;
+  virtual const wabi::TfTokenVector &GetSupportedSprimTypes() const override;
 
   PHOENIX_API
-  virtual const TfTokenVector &GetSupportedBprimTypes() const override;
+  virtual const wabi::TfTokenVector &GetSupportedBprimTypes() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -214,7 +214,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * Hydra resource registry. */
 
   PHOENIX_API
-  virtual HdResourceRegistrySharedPtr GetResourceRegistry() const override;
+  virtual wabi::HdResourceRegistrySharedPtr GetResourceRegistry() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -226,8 +226,9 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @return A shared pointer to the new renderpass or empty on error. */
 
   PHOENIX_API
-  virtual HdRenderPassSharedPtr CreateRenderPass(HdRenderIndex *index,
-                                                 HdRprimCollection const &collection) override;
+  virtual wabi::HdRenderPassSharedPtr CreateRenderPass(
+    wabi::HdRenderIndex *index,
+    wabi::HdRprimCollection const &collection) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -241,7 +242,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @return A shared pointer to the new renderpass state. */
 
   PHOENIX_API
-  virtual HdRenderPassStateSharedPtr CreateRenderPassState() const override;
+  virtual wabi::HdRenderPassStateSharedPtr CreateRenderPassState() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -254,10 +255,11 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @return A pointer to the new instancer or nullptr on error. */
 
   PHOENIX_API
-  virtual HdInstancer *CreateInstancer(HdSceneDelegate *delegate, SdfPath const &id) override;
+  virtual wabi::HdInstancer *CreateInstancer(wabi::HdSceneDelegate *delegate,
+                                             wabi::SdfPath const &id) override;
 
   PHOENIX_API
-  virtual void DestroyInstancer(HdInstancer *instancer) override;
+  virtual void DestroyInstancer(wabi::HdInstancer *instancer) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -270,10 +272,11 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @return A pointer to the new prim or nullptr on error. */
 
   PHOENIX_API
-  virtual HdRprim *CreateRprim(TfToken const &typeId, SdfPath const &rprimId) override;
+  virtual wabi::HdRprim *CreateRprim(wabi::TfToken const &typeId,
+                                     wabi::SdfPath const &rprimId) override;
 
   PHOENIX_API
-  virtual void DestroyRprim(HdRprim *rPrim) override;
+  virtual void DestroyRprim(wabi::HdRprim *rPrim) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -286,13 +289,14 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @return A pointer to the new prim or nullptr on error. */
 
   PHOENIX_API
-  virtual HdSprim *CreateSprim(TfToken const &typeId, SdfPath const &sprimId) override;
+  virtual wabi::HdSprim *CreateSprim(wabi::TfToken const &typeId,
+                                     wabi::SdfPath const &sprimId) override;
 
   PHOENIX_API
-  virtual HdSprim *CreateFallbackSprim(TfToken const &typeId) override;
+  virtual wabi::HdSprim *CreateFallbackSprim(wabi::TfToken const &typeId) override;
 
   PHOENIX_API
-  virtual void DestroySprim(HdSprim *sPrim) override;
+  virtual void DestroySprim(wabi::HdSprim *sPrim) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -305,13 +309,14 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * @return A pointer to the new prim or nullptr on error. */
 
   PHOENIX_API
-  virtual HdBprim *CreateBprim(TfToken const &typeId, SdfPath const &bprimId) override;
+  virtual wabi::HdBprim *CreateBprim(wabi::TfToken const &typeId,
+                                     wabi::SdfPath const &bprimId) override;
 
   PHOENIX_API
-  virtual HdBprim *CreateFallbackBprim(TfToken const &typeId) override;
+  virtual wabi::HdBprim *CreateFallbackBprim(wabi::TfToken const &typeId) override;
 
   PHOENIX_API
-  virtual void DestroyBprim(HdBprim *bPrim) override;
+  virtual void DestroyBprim(wabi::HdBprim *bPrim) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -328,7 +333,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * texture memory. */
 
   PHOENIX_API
-  virtual void CommitResources(HdChangeTracker *tracker) override;
+  virtual void CommitResources(wabi::HdChangeTracker *tracker) override;
 
   /**
    * ----------------------------------------------------------------------
@@ -345,7 +350,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * texture memory. */
 
   PHOENIX_API
-  virtual TfToken GetMaterialBindingPurpose() const override;
+  virtual wabi::TfToken GetMaterialBindingPurpose() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -356,7 +361,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * list contains an empty token. */
 
   PHOENIX_API
-  virtual TfTokenVector GetMaterialRenderContexts() const override;
+  virtual wabi::TfTokenVector GetMaterialRenderContexts() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -380,7 +385,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * supports. */
 
   PHOENIX_API
-  virtual TfTokenVector GetShaderSourceTypes() const override;
+  virtual wabi::TfTokenVector GetShaderSourceTypes() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -390,7 +395,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * things like preferred format. */
 
   PHOENIX_API
-  virtual HdAovDescriptor GetDefaultAovDescriptor(TfToken const &name) const override;
+  virtual wabi::HdAovDescriptor GetDefaultAovDescriptor(wabi::TfToken const &name) const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -400,7 +405,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * engine. */
 
   PHOENIX_API
-  virtual HdRenderSettingDescriptorList GetRenderSettingDescriptors() const override;
+  virtual wabi::HdRenderSettingDescriptorList GetRenderSettingDescriptors() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -409,7 +414,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * Returns a open-format dictionary of render statistics. */
 
   PHOENIX_API
-  virtual VtDictionary GetRenderStats() const override;
+  virtual wabi::VtDictionary GetRenderStats() const override;
 
   /**
    * ----------------------------------------------------------------------
@@ -418,7 +423,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
    * Returns a pointer to the underlying Hydra Graphics Interface (#Hgi). */
 
   PHOENIX_API
-  Hgi *GetHgi();
+  wabi::Hgi *GetHgi();
 
  protected:
 
@@ -435,7 +440,7 @@ class PhoenixRenderEngine final : public wabi::HdRenderDelegate
   wabi::Hgi *m_hgi;
 
   /** Phoenix Render Engine Settings State. */
-  HdRenderSettingsMap m_settingsMap;
+  wabi::HdRenderSettingsMap m_settingsMap;
   /** Phoenix Render Engine Version. */
   unsigned int m_phoenix_version;
 

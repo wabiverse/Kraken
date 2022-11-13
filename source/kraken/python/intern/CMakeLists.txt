@@ -25,7 +25,8 @@ set(SRC
   kpy_library_load.cpp
   kpy_path.cpp
   kpy_pixar_data.cpp
-  kpy_stage.cpp
+  kpy_prim.cpp
+  kpy_props.cpp
   kpy.cpp
 
   kpy_app.h
@@ -36,12 +37,14 @@ set(SRC
   kpy_intern_string.h
   kpy_library.h
   kpy_path.h
-  kpy_stage.h
+  kpy_prim.h
+  kpy_props.h
   kpy.h
 
   wabi_python.h
 
   ../KPY_api.h
+  ../KPY_extern_clog.h
   ../KPY_extern_python.h
   ../KPY_extern_run.h
   ../KPY_extern.h

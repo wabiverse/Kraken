@@ -158,7 +158,7 @@ const char *WM_key_event_string(const short type, const bool compact)
     }
   }
 
-  // const EnumPropertyItem *it;
+  // const EnumPROP *it;
   // const int i = LUXO_enum_from_value(luxo_enum_event_type_items, (int)type);
 
   // if (i == -1) {
@@ -619,10 +619,10 @@ static wmKeyMapItem *wm_keymap_item_find(const kContext *C,
 
   //     LUXO_pointer_create(NULL, &ot->prim, properties_temp, &opptr);
 
-  //     if (LUXO_property_is_set(&opptr, ot->prop)) {
+  //     if (LUXO_prop_is_set(&opptr, ot->prop)) {
   //       /* For operator that has enum menu,
   //        * unset it so its value does not affect comparison result. */
-  //       LUXO_property_unset(&opptr, ot->prop);
+  //       LUXO_prop_unset(&opptr, ot->prop);
 
   //       found = wm_keymap_item_find_props(C,
   //                                         opname,

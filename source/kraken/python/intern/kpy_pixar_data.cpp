@@ -51,7 +51,7 @@
 #include "kpy_interface.h"
 #include "kpy_intern_string.h"
 #include "kpy_library.h"
-#include "kpy_stage.h"
+#include "kpy_prim.h"
 #include "kpy_pixar_data.h"
 
 #include "wabi_python.h"
@@ -222,7 +222,7 @@ static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
   KrakenPRIM ptr;
   LUXO_pointer_create(NULL, &PRIM_KrakenPRIM, kmain_temp, &ptr);
 
-  self->data_prim = (KPy_StagePRIM *)pyprim_struct_CreatePyObject(&ptr);
+  self->data_prim = (KPy_StagePRIM *)pyprim_prim_CreatePyObject(&ptr);
 
   PyObject_GC_Track(self);
 

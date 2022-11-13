@@ -193,3 +193,6 @@ typedef struct DRWContextState {
 
 } DRWContextState;
 
+#ifdef __cplusplus
+}
+#endif

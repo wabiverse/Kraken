@@ -28,6 +28,13 @@ set(INC
   ${OPENSUBDIV_INCLUDE_DIRS}
 )
 
+set(INC_SYS
+  ${Boost_INCLUDE_DIRS}
+  ${TBB_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRS}
+)
+
 set(SRC
   intern/draw_manager.c
 
@@ -45,9 +52,16 @@ set(SRC
 )
 
 set(LIB
+  maelstrom
+  maelstrom_static
   kraken_kernel
   kraken_lib
   kraken_wm
+  ${TBB_LIBRARIES}
+  ${BOOST_LIBRARIES}
+  ${PYTHON_LIBRARIES}
+  ${VULKAN_LIBRARIES}
+  ${OPENGL_LIBRARIES}
 )
 
 set(GLSL_SRC

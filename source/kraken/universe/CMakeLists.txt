@@ -27,6 +27,7 @@ set(SRC
   intern/USD_userdef_default_theme.c
 
   USD_api.h
+  USD_action.h
   USD_area.h
   USD_collection.h
   USD_color_types.h
@@ -42,6 +43,7 @@ set(SRC
   USD_lights.h
   USD_linestyles.h
   USD_listBase.h
+  USD_mask.h
   USD_object.h
   USD_object_types.h
   USD_operator.h

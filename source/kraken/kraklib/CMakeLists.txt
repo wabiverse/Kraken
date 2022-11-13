@@ -66,8 +66,9 @@ set(SRC
   intern/KLI_mempool_private.h
   intern/list_sort_impl.h
 
-  KLI_asan.h
+  KLI_alloca.h
   KLI_allocator.hh
+  KLI_asan.h
   KLI_api.h
   KLI_array.h
   KLI_array.hh

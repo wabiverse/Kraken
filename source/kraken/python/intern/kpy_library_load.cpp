@@ -35,8 +35,11 @@
 #include "KKE_robinhood.h"
 #include "KKE_utils.h"
 
+#include "USD_ID.h"
 #include "USD_file.h"
 #include "USD_space_types.h"
+
+#include "WM_files.h"
 
 #include "../generic/py_capi_utils.h"
 #include "../generic/python_utildefines.h"
@@ -44,7 +47,7 @@
 #include "kpy_capi_utils.h"
 #include "kpy_interface.h"
 #include "kpy_library.h"
-#include "kpy_stage.h"
+#include "kpy_prim.h"
 
 #include <wabi/usd/sdf/layer.h>
 #include <wabi/usd/ar/resolver.h>
@@ -58,22 +61,20 @@ using namespace boost::python;
 
 KRAKEN_NAMESPACE_USING
 
-#define INDEX_ID_MAX 41
-
-struct KPy_Library
+typedef struct
 {
   /* Required Python macro. */
   PyObject_HEAD
 
-    char relpath[FILE_MAX];
+  char relpath[FILE_MAX];
   char abspath[FILE_MAX];
-  KrakenHandle *kr_handle;
+  KrakenHandle *krlo_handle;
   int flag;
   PyObject *dict;
 
   Main *kmain;
   bool kmain_is_temp;
-};
+} KPy_Library;
 
 static PyObject *kpy_lib_load(KPy_StagePRIM *self, PyObject *args, PyObject *kwds);
 static PyObject *kpy_lib_enter(KPy_Library *self);
@@ -229,7 +230,7 @@ static PyObject *kpy_lib_load(KPy_StagePRIM *self, PyObject *args, PyObject *kw)
   ret->kmain = kmain;
   ret->kmain_is_temp = (kmain != kmain_base);
 
-  ret->kr_handle = NULL;
+  ret->krlo_handle = NULL;
   ret->flag = ((is_link ? FILE_LINK : 0) | (is_rel ? FILE_RELPATH : 0) |
                (use_assets_only ? FILE_ASSETS_ONLY : 0));
 
@@ -248,7 +249,7 @@ static PyObject *_kpy_names(KPy_Library *self, const SdfPath &prim)
   PyObject *list;
   SdfPathVector paths;
 
-  SdfLayerRefPtr layer = self->kr_handle->sdf_handle;
+  SdfLayerRefPtr layer = self->krlo_handle->sdf_handle;
 
   SdfLayer::TraversalFunction appendFunc = std::bind(&_AppendToPaths,
                                                      paths,
@@ -280,16 +281,16 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
   KrakenFileReadReport kr_reports = {};
   kr_reports.reports = &reports;
 
-  self->kr_handle = KLO_krakenhandle_from_file(self->abspath, &kr_reports);
+  self->krlo_handle = KLO_krakenhandle_from_file(self->abspath, &kr_reports);
 
-  if (self->kr_handle == NULL) {
+  if (self->krlo_handle == NULL) {
     if (KPy_reports_to_error(&reports, PyExc_IOError, true) != -1) {
       PyErr_Format(PyExc_IOError, "load: %s failed to open kraken project file", self->abspath);
     }
     return NULL;
   }
 
-  SdfLayer::RootPrimsView prims = self->kr_handle->sdf_handle->GetRootPrims();
+  SdfLayer::RootPrimsView prims = self->krlo_handle->sdf_handle->GetRootPrims();
 
   UNIVERSE_FOR_ALL (prim, prims) {
     PyObject *str = PyUnicode_FromString(CHARALL(prim->GetName()));
@@ -308,7 +309,7 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
   KLI_strncpy(self_from->relpath, self->relpath, sizeof(self_from->relpath));
   KLI_strncpy(self_from->abspath, self->abspath, sizeof(self_from->abspath));
 
-  self_from->kr_handle = nullptr;
+  self_from->krlo_handle = nullptr;
   self_from->flag = 0;
   self_from->dict = from_dict; /* owns the dict */
 

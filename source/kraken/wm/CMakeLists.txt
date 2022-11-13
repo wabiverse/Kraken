@@ -3,16 +3,17 @@ set(INC
   ../../../. # Pixar USD
   ../../../source
   ../../../source/kraken
-  ../luxo
   ../anchor
+  ../draw
   ../editors/include
+  ../gpu
   ../krakernel
   ../kraklib
   ../krakfont
-  ../draw
-  ../gpu
-  ../universe
+  ../luxo
   ../python
+  ../render
+  ../universe
   ../../../intern/atomic
   ../../../intern/clog
   ../../../intern/guardedalloc

@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-struct EnumPropertyItem;
+struct EnumPROP;
 struct ReportList;
 
 /* Kpy ----  */

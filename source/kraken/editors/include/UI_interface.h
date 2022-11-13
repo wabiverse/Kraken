@@ -56,7 +56,7 @@ struct AssetFilterSettings;
 struct AssetHandle;
 struct AssetMetaData;
 struct AutoComplete;
-struct EnumPropertyItem;
+struct EnumPROP;
 struct FileDirEntry;
 struct FileSelectParams;
 struct ID;
@@ -2840,7 +2840,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                             IDProperty *properties,
                             short context,
                             int flag,
-                            const struct EnumPropertyItem *item_array,
+                            const struct EnumPROP *item_array,
                             int totitem);
 
 typedef struct uiPropertySplitWrapper

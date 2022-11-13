@@ -986,23 +986,6 @@ typedef struct wmEventHandlerUI
   } context;
 } wmEventHandlerUI;
 
-enum
-{
-  WM_MSG_TYPE_RNA = 0,
-  WM_MSG_TYPE_STATIC = 1,
-};
-#define WM_MSG_TYPE_NUM 2
-
-
-typedef struct wmMsgBus
-{
-  RSet *messages_rset[WM_MSG_TYPE_NUM];
-  /** Messages in order of being added. */
-  ListBase messages;
-  /** Avoid checking messages when no tags exist. */
-  uint messages_tag_count;
-} wmMsgBus;
-
 #define WM_DRAG_ID 0
 #define WM_DRAG_ASSET 1
 /** The user is dragging multiple assets. This is only supported in few specific cases, proper
@@ -1104,7 +1087,8 @@ typedef char *(*WMDropboxTooltipFunc)(struct kContext *,
                                       const int xy[2],
                                       struct wmDropBox *drop);
 
-typedef struct wmDragActiveDropState {
+typedef struct wmDragActiveDropState
+{
   struct wmDropBox *active_dropbox;
   struct ScrArea *area_from;
   struct ARegion *region_from;
@@ -1339,7 +1323,8 @@ typedef struct ReportTimerInfo
   float widthfac;
 } ReportTimerInfo;
 
-typedef struct RecentFile {
+typedef struct RecentFile
+{
   struct RecentFile *next, *prev;
   char *filepath;
 } RecentFile;

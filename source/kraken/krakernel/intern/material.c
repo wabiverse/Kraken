@@ -32,6 +32,7 @@
 
 #include "USD_ID.h"
 #include "USD_customdata_types.h"
+#include "USD_materials.h"
 #include "USD_space_types.h"
 #include "USD_color_types.h"
 #include "USD_scene_types.h"
@@ -72,4 +73,26 @@ void KKE_material_defaults_free_gpu(void)
       GPU_material_free(&ma->gpumaterial);
     }
   }
+}
+
+Material *KKE_material_add(Main *kmain, const char *name)
+{
+  Material *ma;
+
+  ma = KKE_id_new(kmain, ID_MA, name);
+
+  return ma;
+}
+
+Material *KKE_gpencil_material_add(Main *kmain, const char *name)
+{
+  Material *ma;
+
+  ma = KKE_material_add(kmain, name);
+
+  /* grease pencil settings */
+  if (ma != NULL) {
+    BKE_gpencil_material_attr_init(ma);
+  }
+  return ma;
 }

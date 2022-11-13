@@ -50,16 +50,6 @@
 
 typedef std::deque<wmEvent *> wmEventQueue;
 
-struct ScrAreaMap
-{
-  /** ScrVert. */
-  ListBase verts;
-  /** ScrEdge. */
-  ListBase edges;
-  /** ScrArea. */
-  ListBase areas;
-};
-
 struct wmWindow : public wabi::UsdUIWindow
 {
   struct wmWindow *next, *prev;
@@ -111,7 +101,7 @@ struct wmWindow : public wabi::UsdUIWindow
   wmEventQueue event_queue;
   ListBase modalhandlers;
   ListBase handlers;
-// uiPopupBlockHandle
+  // uiPopupBlockHandle
   /** Runtime Window State. */
   char windowstate;
   int winid;
@@ -184,18 +174,18 @@ wmWindow::wmWindow(kContext *C, wmWindow *prim, const SdfPath &stagepath)
     workspace_hook(nullptr)
 {}
 
-struct wmNotifier
+typedef struct wmNotifier
 {
-  wmWindow *window;
+  struct wmNotifier *next, *prev;
+
+  const struct wmWindow *window;
+
   unsigned int category, data, subtype, action;
+
   void *reference;
+} wmNotifier;
 
-  // TfNotice notice;
-
-  void Push();
-};
-
-struct wmSpaceTypeListenerParams
+typedef struct wmSpaceTypeListenerParams
 {
   wmWindow *window;
   struct ScrArea *area;
@@ -208,7 +198,7 @@ struct wmSpaceTypeListenerParams
       notifier(POINTER_ZERO),
       scene(POINTER_ZERO)
   {}
-};
+} wmSpaceTypeListenerParams;
 
 typedef std::deque<wmNotifier *> wmNotifierQueue;
 
@@ -248,6 +238,8 @@ struct wmWindowManager : public wabi::UsdPrim
 
   RSet *notifier_queue_set;
 
+  struct wmMsgBus *message_bus;
+
   inline wmWindowManager();
 };
 
@@ -261,4 +253,3 @@ wmWindowManager::wmWindowManager()
     drags(EMPTY),
     file_saved(VALUE_ZERO)
 {}
-

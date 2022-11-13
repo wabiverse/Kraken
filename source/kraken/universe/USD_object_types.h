@@ -25,11 +25,19 @@
  * @brief Object is a sort of wrapper for general info.
  */
 
+#include "MEM_guardedalloc.h"
+
 #include "USD_ID.h"
 #include "USD_color_types.h"
 #include "USD_customdata_types.h"
 #include "USD_defs.h"
 #include "USD_listBase.h"
+
+#ifdef __cplusplus
+#  include "KLI_array.hh"
+#  include "KLI_span.hh"
+#  include <mutex>
+#endif /* __cplusplus */
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,6 +59,712 @@ struct RigidBodyOb;
 struct SculptSession;
 struct SoftBody;
 struct kGPdata;
+
+typedef enum eMeshBatchDirtyMode
+{
+  KKE_MESH_BATCH_DIRTY_ALL = 0,
+  KKE_MESH_BATCH_DIRTY_SELECT,
+  KKE_MESH_BATCH_DIRTY_SELECT_PAINT,
+  KKE_MESH_BATCH_DIRTY_SHADING,
+  KKE_MESH_BATCH_DIRTY_UVEDIT_ALL,
+  KKE_MESH_BATCH_DIRTY_UVEDIT_SELECT,
+} eMeshBatchDirtyMode;
+
+/** #MeshRuntime.wrapper_type */
+typedef enum eMeshWrapperType
+{
+  /** Use mesh data (#Mesh.mvert, #Mesh.medge, #Mesh.mloop, #Mesh.mpoly). */
+  ME_WRAPPER_TYPE_MDATA = 0,
+  /** Use edit-mesh data (#Mesh.edit_mesh, #MeshRuntime.edit_data). */
+  ME_WRAPPER_TYPE_BMESH = 1,
+  /** Use subdivision mesh data (#MeshRuntime.mesh_eval). */
+  ME_WRAPPER_TYPE_SUBD = 2,
+} eMeshWrapperType;
+
+/**
+ * Mesh Vertices.
+ *
+ * Typically accessed from #Mesh.verts()
+ */
+typedef struct MVert
+{
+  float co[3];
+  /**
+   * Deprecated flag for storing hide status and selection, which are now stored in separate
+   * generic attributes. Kept for file read and write.
+   */
+  char flag_legacy;
+  char _pad[2];
+} MVert;
+
+/**
+ * Mesh Edges.
+ *
+ * Typically accessed with #Mesh.edges()
+ */
+typedef struct MEdge
+{
+  /** Un-ordered vertex indices (cannot match). */
+  unsigned int v1, v2;
+  /** Deprecated edge crease, now located in #CD_CREASE, except for file read and write. */
+  char crease_legacy;
+  short flag;
+} MEdge;
+
+/** #MEdge.flag */
+enum
+{
+  /** Deprecated selection status. Now stored in ".select_edge" attribute. */
+  /*  SELECT = (1 << 0), */
+  ME_EDGEDRAW = (1 << 1),
+  ME_SEAM = (1 << 2),
+  /** Deprecated hide status. Now stored in ".hide_edge" attribute. */
+  /*  ME_HIDE = (1 << 4), */
+  ME_EDGERENDER = (1 << 5),
+  ME_LOOSEEDGE = (1 << 7),
+  ME_SHARP = (1 << 9), /* only reason this flag remains a 'short' */
+};
+
+/**
+ * Mesh Faces.
+ * This only stores the polygon size & flags, the vertex & edge indices are stored in the #MLoop.
+ *
+ * Typically accessed with #Mesh.polys().
+ */
+typedef struct MPoly
+{
+  /** Offset into loop array and number of loops in the face. */
+  int loopstart;
+  /** Keep signed since we need to subtract when getting the previous loop. */
+  int totloop;
+  char flag, _pad;
+} MPoly;
+
+/**
+ * Mesh Face Corners.
+ * "Loop" is an internal name for the corner of a polygon (#MPoly).
+ *
+ * Typically accessed with #Mesh.loops().
+ */
+typedef struct MLoop
+{
+  /** Vertex index into an #MVert array. */
+  unsigned int v;
+  /** Edge index into an #MEdge array. */
+  unsigned int e;
+} MLoop;
+
+/**
+ * Optionally store the order of selected elements.
+ * This won't always be set since only some selection operations have an order.
+ *
+ * Typically accessed from #Mesh.mselect
+ */
+typedef struct MSelect
+{
+  /** Index in the vertex, edge or polygon array. */
+  int index;
+  /** #ME_VSEL, #ME_ESEL, #ME_FSEL. */
+  int type;
+} MSelect;
+
+typedef struct MLoopTri
+{
+  unsigned int tri[3];
+  unsigned int poly;
+} MLoopTri;
+
+typedef struct MVertTri
+{
+  unsigned int tri[3];
+} MVertTri;
+
+typedef struct CharInfo
+{
+  short kern;
+  /** Index start at 1, unlike mesh & nurbs. */
+  short mat_nr;
+  char flag;
+  char _pad[3];
+} CharInfo;
+
+typedef struct TextBox
+{
+  float x, y, w, h;
+} TextBox;
+
+typedef struct PackedFile
+{
+  int size;
+  int seek;
+  void *data;
+} PackedFile;
+
+typedef struct VFontData
+{
+  struct RHash *characters;
+  char name[128];
+  float scale;
+  /* Calculated from the font. */
+  float em_height;
+  float ascender;
+} VFontData;
+
+typedef struct VChar
+{
+  ListBase nurbsbase;
+  unsigned int index;
+  float width;
+} VChar;
+
+typedef struct VFont
+{
+  ID id;
+
+  /** 1024 = FILE_MAX. */
+  char filepath[1024];
+
+  struct VFontData *data;
+  struct PackedFile *packedfile;
+
+  /* runtime only, holds memory for freetype to read from
+   * TODO: replace this with #krf_font_new() style loading. */
+  struct PackedFile *temp_pf;
+} VFont;
+
+/**
+ * @note #KPoint.tilt location in struct is abused by Key system.
+ */
+typedef struct KPoint
+{
+  float vec[4];
+  /** Tilt in 3D View. */
+  float tilt;
+  /** Used for softbody goal weight. */
+  float weight;
+  /** F1: selection status,  hide: is point hidden or not. */
+  uint8_t f1;
+  char _pad1[1];
+  short hide;
+  /** User-set radius per point for beveling etc. */
+  float radius;
+  char _pad[4];
+} KPoint;
+
+/**
+ * Vertex group index and weight for #MDeformVert.dw
+ */
+typedef struct MDeformWeight
+{
+  /** The index for the vertex group, must *always* be unique when in an array. */
+  unsigned int def_nr;
+  /** Weight between 0.0 and 1.0. */
+  float weight;
+} MDeformWeight;
+
+/**
+ * Stores all of an element's vertex groups, and their weight values.
+ */
+typedef struct MDeformVert
+{
+  /**
+   * Array of weight indices and values.
+   * - There must not be any duplicate #def_nr indices.
+   * - Groups in the array are unordered.
+   * - Indices outside the usable range of groups are ignored.
+   */
+  struct MDeformWeight *dw;
+  /**
+   * The length of the #dw array.
+   * @note This is not necessarily the same length as the total number of vertex groups.
+   * However, generally it isn't larger.
+   */
+  int totweight;
+  /** Flag is only in use as a run-time tag at the moment. */
+  int flag;
+} MDeformVert;
+
+typedef struct EditMeshData
+{
+  /** when set, @a vertexNos, polyNos are lazy initialized */
+  const float (*vertexCos)[3];
+
+  /** lazy initialize (when @a vertexCos is set) */
+  float const (*vertexNos)[3];
+  float const (*polyNos)[3];
+  /** also lazy init but don't depend on @a vertexCos */
+  const float (*polyCos)[3];
+} EditMeshData;
+
+typedef struct EditNurb
+{
+  USD_DEFINE_CXX_METHODS(EditNurb)
+
+  /* base of nurbs' list (old Curve->editnurb) */
+  ListBase nurbs;
+
+  /* index data for shape keys */
+  struct RHash *keyindex;
+
+  /* shape key being edited */
+  int shapenr;
+
+  /**
+   * ID data is older than edit-mode data.
+   * Set #Main.is_memfile_undo_flush_needed when enabling.
+   */
+  char needs_flush_to_id;
+
+} EditNurb;
+
+typedef struct Curve
+{
+  USD_DEFINE_CXX_METHODS(Curve)
+
+  ID id;
+  /** Animation data (must be immediately after id for utilities to use it). */
+  struct AnimData *adt;
+
+  /** Actual data, called splines in rna. */
+  ListBase nurb;
+
+  /** Edited data, not in file, use pointer so we can check for it. */
+  EditNurb *editnurb;
+
+  struct Object *bevobj, *taperobj, *textoncurve;
+
+  struct Key *key;
+  struct Material **mat;
+
+  struct CurveProfile *bevel_profile;
+
+  /* texture space, copied as one block in editobject.c */
+  float loc[3];
+  float size[3];
+
+  /** Creation-time type of curve datablock. */
+  short type;
+
+  char texflag;
+  char _pad0[7];
+  short twist_mode;
+  float twist_smooth, smallcaps_scale;
+
+  int pathlen;
+  short bevresol, totcol;
+  int flag;
+  float offset, extrude, bevel_radius;
+
+  /* default */
+  short resolu, resolv;
+  short resolu_ren, resolv_ren;
+
+  /* edit, index in nurb list */
+  int actnu;
+  /* edit, index in active nurb (BPoint or BezTriple) */
+  int actvert;
+
+  char overflow;
+  char spacemode, align_y;
+  char bevel_mode;
+  /**
+   * Determine how the effective radius of the bevel point is computed when a taper object is
+   * specified. The effective radius is a function of the bevel point radius and the taper radius.
+   */
+  char taper_radius_mode;
+  char _pad;
+
+  /* font part */
+  short lines;
+  float spacing, linedist, shear, fsize, wordspace, ulpos, ulheight;
+  float xof, yof;
+  float linewidth;
+
+  /* copy of EditFont vars (wchar_t aligned),
+   * warning! don't use in editmode (storage only) */
+  int pos;
+  int selstart, selend;
+
+  /* text data */
+  /**
+   * Number of characters (unicode code-points)
+   * This is the length of #Curve.strinfo and the result of `BLI_strlen_utf8(cu->str)`.
+   */
+  int len_char32;
+  /** Number of bytes: `strlen(Curve.str)`. */
+  int len;
+  char *str;
+  struct EditFont *editfont;
+
+  char family[64];
+  struct VFont *vfont;
+  struct VFont *vfontb;
+  struct VFont *vfonti;
+  struct VFont *vfontbi;
+
+  struct TextBox *tb;
+  int totbox, actbox;
+
+  struct CharInfo *strinfo;
+  struct CharInfo curinfo;
+  /* font part end */
+
+  /** Current evaltime - for use by Objects parented to curves. */
+  float ctime;
+  float bevfac1, bevfac2;
+  char bevfac1_mapping, bevfac2_mapping;
+
+  char _pad2[6];
+  float fsize_realtime;
+
+  /**
+   * A pointer to curve data from evaluation. Owned by the object's #geometry_set_eval, either as a
+   * geometry instance or the data of the evaluated #CurveComponent. The curve may also contain
+   * data in the #nurb list, but for evaluated curves this is the proper place to retrieve data,
+   * since it also contains the result of geometry nodes evaluation, and isn't just a copy of the
+   * original object data.
+   */
+  const struct Curves *curve_eval;
+  /**
+   * If non-zero, the #editfont and #editnurb pointers are not owned by this #Curve. That means
+   * this curve is a container for the result of object geometry evaluation. This only works
+   * because evaluated object data never outlives original data.
+   */
+  char edit_data_from_original;
+  char _pad3[7];
+
+  void *batch_cache;
+} Curve;
+
+#ifdef __cplusplus
+namespace kraken::kke
+{
+
+  /**
+   * @warning Typical access is done via #Mesh::looptris().
+   */
+  struct MLoopTri_Store
+  {
+    /* WARNING! swapping between array (ready-to-be-used data) and array_wip
+     * (where data is actually computed)
+     * shall always be protected by same lock as one used for looptris computing. */
+    MLoopTri *array = nullptr;
+    MLoopTri *array_wip = nullptr;
+    int len = 0;
+    int len_alloc = 0;
+  };
+
+  struct MeshRuntime
+  {
+    /* Evaluated mesh for objects which do not have effective modifiers.
+     * This mesh is used as a result of modifier stack evaluation.
+     * Since modifier stack evaluation is threaded on object level we need some synchronization. */
+    Mesh *mesh_eval = nullptr;
+    std::mutex eval_mutex;
+
+    /* A separate mutex is needed for normal calculation, because sometimes
+     * the normals are needed while #eval_mutex is already locked. */
+    std::mutex normals_mutex;
+
+    /** Needed to ensure some thread-safety during render data pre-processing. */
+    std::mutex render_mutex;
+
+    /** Lazily initialized SoA data from the #edit_mesh field in #Mesh. */
+    EditMeshData *edit_data = nullptr;
+
+    /**
+     * Data used to efficiently draw the mesh in the viewport, especially useful when
+     * the same mesh is used in many objects or instances. See `draw_cache_impl_mesh.cc`.
+     */
+    void *batch_cache = nullptr;
+
+    /** Cache for derived triangulation of the mesh. */
+    MLoopTri_Store looptris;
+
+    /** Cache for BVH trees generated for the mesh. Defined in 'BKE_bvhutil.c' */
+    // BVHCache *bvh_cache = nullptr;
+
+    /** Cache of non-manifold boundary data for Shrink-wrap Target Project. */
+    // ShrinkwrapBoundaryData *shrinkwrap_data = nullptr;
+
+    /** Needed in case we need to lazily initialize the mesh. */
+    CustomData_MeshMasks cd_mask_extra = {};
+
+    // SubdivCCG *subdiv_ccg = nullptr;
+    int subdiv_ccg_tot_level = 0;
+
+    /** Set by modifier stack if only deformed from original. */
+    bool deformed_only = false;
+    /**
+     * Copied from edit-mesh (hint, draw with edit-mesh data when true).
+     *
+     * Modifiers that edit the mesh data in-place must set this to false
+     * (most #eModifierTypeType_NonGeometrical modifiers). Otherwise the edit-mesh
+     * data will be used for drawing, missing changes from modifiers. See T79517.
+     */
+    bool is_original_bmesh = false;
+
+    /** #eMeshWrapperType and others. */
+    eMeshWrapperType wrapper_type = ME_WRAPPER_TYPE_MDATA;
+    /**
+     * A type mask from wrapper_type,
+     * in case there are differences in finalizing logic between types.
+     */
+    eMeshWrapperType wrapper_type_finalize = ME_WRAPPER_TYPE_MDATA;
+
+    /**
+     * Settings for lazily evaluating the subdivision on the CPU if needed. These are
+     * set in the modifier when GPU subdivision can be performed, and owned by the by
+     * the modifier in the object.
+     */
+    // SubsurfRuntimeData *subsurf_runtime_data = nullptr;
+
+    /**
+     * Caches for lazily computed vertex and polygon normals. These are stored here rather than in
+     * #CustomData because they can be calculated on a `const` mesh, and adding custom data layers
+     * on a `const` mesh is not thread-safe.
+     */
+    bool vert_normals_dirty = false;
+    bool poly_normals_dirty = false;
+    float (*vert_normals)[3] = nullptr;
+    float (*poly_normals)[3] = nullptr;
+
+    /**
+     * A #BLI_bitmap containing tags for the center vertices of subdivided polygons, set by the
+     * subdivision surface modifier and used by drawing code instead of polygon center face dots.
+     */
+    uint32_t *subsurf_face_dot_tags = nullptr;
+
+    MeshRuntime() = default;
+    /** \warning This does not free all data currently. See #BKE_mesh_runtime_free_data. */
+    ~MeshRuntime() = default;
+
+    MEM_CXX_CLASS_ALLOC_FUNCS("MeshRuntime")
+  };
+
+}  // namespace kraken::kke
+#endif /* __cplusplus */
+
+typedef struct Mesh
+{
+  USD_DEFINE_CXX_METHODS(Mesh)
+
+  ID id;
+  /** Animation data (must be immediately after id for utilities to use it). */
+  struct AnimData *adt;
+
+  /** Old animation system, deprecated for 2.5. */
+  struct Key *key;
+
+  /**
+   * An array of materials, with length #totcol. These can be overridden by material slots
+   * on #Object. Indices in the "material_index" attribute control which material is used for every
+   * face.
+   */
+  struct Material **mat;
+
+  /** The number of vertices (#MVert) in the mesh, and the size of #vdata. */
+  int totvert;
+  /** The number of edges (#MEdge) in the mesh, and the size of #edata. */
+  int totedge;
+  /** The number of polygons/faces (#MPoly) in the mesh, and the size of #pdata. */
+  int totpoly;
+  /** The number of face corners (#MLoop) in the mesh, and the size of #ldata. */
+  int totloop;
+
+  CustomData vdata, edata, pdata, ldata;
+
+  /**
+   * List of vertex group (#bDeformGroup) names and flags only. Actual weights are stored in dvert.
+   * \note This pointer is for convenient access to the #CD_MDEFORMVERT layer in #vdata.
+   */
+  ListBase vertex_group_names;
+  /** The active index in the #vertex_group_names list. */
+  int vertex_group_active_index;
+
+  /**
+   * The index of the active attribute in the UI. The attribute list is a combination of the
+   * generic type attributes from vertex, edge, face, and corner custom data.
+   */
+  int attributes_active_index;
+
+  /**
+   * Runtime storage of the edit mode mesh. If it exists, it generally has the most up-to-date
+   * information about the mesh.
+   * \note When the object is available, the preferred access method is #BKE_editmesh_from_object.
+   */
+  struct KMEditMesh *edit_mesh;
+
+  /**
+   * This array represents the selection order when the user manually picks elements in edit-mode,
+   * some tools take advantage of this information. All elements in this array are expected to be
+   * selected, see #BKE_mesh_mselect_validate which ensures this. For procedurally created meshes,
+   * this is generally empty (selections are stored as boolean attributes in the corresponding
+   * custom data).
+   */
+  struct MSelect *mselect;
+
+  /** The length of the #mselect array. */
+  int totselect;
+
+  /**
+   * In most cases the last selected element (see #mselect) represents the active element.
+   * For faces we make an exception and store the active face separately so it can be active
+   * even when no faces are selected. This is done to prevent flickering in the material properties
+   * and UV Editor which base the content they display on the current material which is controlled
+   * by the active face.
+   *
+   * \note This is mainly stored for use in edit-mode.
+   */
+  int act_face;
+
+  /**
+   * An optional mesh owned elsewhere (by #Main) that can be used to override
+   * the texture space #loc and #size.
+   * \note Vertex indices should be aligned for this to work usefully.
+   */
+  struct Mesh *texcomesh;
+
+  /** Texture space location and size, used for procedural coordinates when rendering. */
+  float loc[3];
+  float size[3];
+  char texflag;
+
+  /** Various flags used when editing the mesh. */
+  char editflag;
+  /** Mostly more flags used when editing or displaying the mesh. */
+  uint16_t flag;
+
+  /**
+   * The angle for auto smooth in radians. `M_PI` (180 degrees) causes all edges to be smooth.
+   */
+  float smoothresh;
+
+  /**
+   * User-defined symmetry flag (#eMeshSymmetryType) that causes editing operations to maintain
+   * symmetrical geometry. Supported by operations such as transform and weight-painting.
+   */
+  char symmetry;
+
+  /** Choice between different remesh methods in the UI. */
+  char remesh_mode;
+
+  /** The length of the #mat array. */
+  short totcol;
+
+  /** Per-mesh settings for voxel remesh. */
+  float remesh_voxel_size;
+  float remesh_voxel_adaptivity;
+
+  int face_sets_color_seed;
+  /* Stores the initial Face Set to be rendered white. This way the overlay can be enabled by
+   * default and Face Sets can be used without affecting the color of the mesh. */
+  int face_sets_color_default;
+
+  char _pad1[4];
+
+  /**
+   * Data that isn't saved in files, including caches of derived data, temporary data to improve
+   * the editing experience, etc. Runtime data is created when reading files and can be accessed
+   * without null checks, with the exception of some temporary meshes which should allocate and
+   * free the data if they are passed to functions that expect run-time data.
+   */
+  // MeshRuntimeHandle *runtime;
+#ifdef __cplusplus
+  /**
+   * Array of vertex positions (and various other data). Edges and faces are defined by indices
+   * into this array.
+   */
+  kraken::Span<MVert> verts() const;
+  /** Write access to vertex data. */
+  kraken::MutableSpan<MVert> verts_for_write();
+  /**
+   * Array of edges, containing vertex indices. For simple triangle or quad meshes, edges could be
+   * calculated from the #MPoly and #MLoop arrays, however, edges need to be stored explicitly to
+   * edge domain attributes and to support loose edges that aren't connected to faces.
+   */
+  kraken::Span<MEdge> edges() const;
+  /** Write access to edge data. */
+  kraken::MutableSpan<MEdge> edges_for_write();
+  /**
+   * Face topology storage of the size and offset of each face's section of the face corners.
+   */
+  kraken::Span<MPoly> polys() const;
+  /** Write access to polygon data. */
+  kraken::MutableSpan<MPoly> polys_for_write();
+  /**
+   * Mesh face corners that "loop" around each face, storing the vertex index and the index of the
+   * subsequent edge.
+   */
+  kraken::Span<MLoop> loops() const;
+  /** Write access to loop data. */
+  kraken::MutableSpan<MLoop> loops_for_write();
+
+  // kraken::kke::AttributeAccessor attributes() const;
+  // kraken::kke::MutableAttributeAccessor attributes_for_write();
+
+  /**
+   * Vertex group data, encoded as an array of indices and weights for every vertex.
+   * \warning: May be empty.
+   */
+  kraken::Span<MDeformVert> deform_verts() const;
+  /** Write access to vertex group data. */
+  kraken::MutableSpan<MDeformVert> deform_verts_for_write();
+
+  /**
+   * Cached triangulation of the mesh.
+   */
+  kraken::Span<MLoopTri> looptris() const;
+#endif
+} Mesh;
+
+typedef struct EditLatt
+{
+  USD_DEFINE_CXX_METHODS(EditLatt)
+
+  struct Lattice *latt;
+
+  int shapenr;
+
+  /**
+   * ID data is older than edit-mode data.
+   * Set #Main.is_memfile_undo_flush_needed when enabling.
+   */
+  char needs_flush_to_id;
+} EditLatt;
+
+typedef struct Lattice
+{
+  USD_DEFINE_CXX_METHODS(Lattice)
+
+  ID id;
+  struct AnimData *adt;
+
+  short pntsu, pntsv, pntsw, flag;
+  short opntsu, opntsv, opntsw;
+  char _pad2[3];
+  char typeu, typev, typew;
+  /** Active element index, unset with LT_ACTBP_NONE. */
+  int actbp;
+
+  float fu, fv, fw, du, dv, dw;
+
+  struct KPoint *def;
+
+  struct Key *key;
+
+  struct MDeformVert *dvert;
+  /** Multiply the influence, MAX_VGROUP_NAME. */
+  char vgroup[64];
+  /** List of bDeformGroup names and flag only. */
+  ListBase vertex_group_names;
+  int vertex_group_active_index;
+
+  char _pad0[4];
+
+  struct EditLatt *editlatt;
+  void *batch_cache;
+} Lattice;
 
 /** #Object.mode */
 typedef enum eObjectMode

@@ -37,7 +37,13 @@
 #include "USD_types.h"
 #include "USD_object.h"
 
+#ifdef UNIT_TEST
+#  define LUXO_MAX_ARRAY_LENGTH 64
+#else
+#  define LUXO_MAX_ARRAY_LENGTH 32
+#endif
 
+#define LUXO_MAX_ARRAY_DIMENSION 3
 
 KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
                                 const wabi::SdfPath &identifier,
@@ -67,4 +73,7 @@ void PRIM_def_asset(KrakenPRIM *prim,
                     const std::string &ui_name,
                     const std::string &ui_description);
 
+void PRIM_def_py_data(KrakenPROP *prop, void *py_data);
 
+void PRIM_def_property_free_pointers_set_py_data_callback(
+  void (*py_data_clear_fn)(KrakenPROP *prop));
