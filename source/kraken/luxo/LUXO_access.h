@@ -52,7 +52,7 @@ struct KrakenPROP;
 
 extern KrakenSTAGE KRAKEN_STAGE;
 
-extern KrakenPRIM PRIM_Context;
+extern const KrakenPRIM KrakenPRIM_NULL;
 
 extern KrakenPRIM PRIM_Action;
 extern KrakenPRIM PRIM_Area;
@@ -61,6 +61,7 @@ extern KrakenPRIM PRIM_Brush;
 extern KrakenPRIM PRIM_Camera;
 extern KrakenPRIM PRIM_CacheFile;
 extern KrakenPRIM PRIM_Collection;
+extern KrakenPRIM PRIM_Context;
 extern KrakenPRIM PRIM_Curve;
 extern KrakenPRIM PRIM_GreasePencil;
 extern KrakenPRIM PRIM_ID;
@@ -134,8 +135,9 @@ void LUXO_prim_py_type_set(KrakenPRIM *sprim, void *type);
 void *LUXO_prop_py_data_get(KrakenPROP *prop);
 
 bool LUXO_prop_array_check(KrakenPROP *prop);
-int LUXO_prop_array_dimension(const KrakenPRIM *ptr, KrakenPROP *prop, int length[]);
+int LUXO_prop_array_length(KrakenPRIM *ptr, KrakenPROP *prop);
 int LUXO_prop_multi_array_length(KrakenPRIM *ptr, KrakenPROP *prop, int dim);
+int LUXO_prop_array_dimension(const KrakenPRIM *ptr, KrakenPROP *prop, int length[]);
 
 void LUXO_save_usd(void);
 
@@ -148,10 +150,12 @@ KrakenPRIM LUXO_prop_pointer_get(KrakenPRIM *ptr, KrakenPROP *prop);
 
 const wabi::TfToken LUXO_prop_identifier(const KrakenPROP *prop);
 
-PropScaleTYPE LUXO_prop_ui_scale(KrakenPROP *prop);
+PropertyScaleType LUXO_prop_ui_scale(KrakenPROP *prop);
 PropertyType LUXO_prop_type_enum(KrakenPROP *prop);
 PropertyType LUXO_prop_type(KrakenPROP *prop);
 PropertySubType LUXO_prop_subtype(KrakenPROP *prop);
+
+bool LUXO_prim_idprops_check(KrakenPRIM *sprim);
 KrakenPROP *LUXO_prim_find_property(KrakenPRIM *ptr, const char *identifier);
 
 PrimRegisterFUNC LUXO_prim_register(const KrakenPRIM *ptr);
@@ -169,11 +173,39 @@ int LUXO_function_defined(KrakenFUNC *func);
 
 KrakenPRIM *sprim_from_ptr(KrakenPRIM *ptr);
 
+/* Collections. */
+
 void LUXO_collection_begin(KrakenPRIM *ptr, const char *name, CollectionPropIT *iter);
-bool LUXO_prop_collection_type_get(KrakenPRIM *ptr, KrakenPROP *prop, KrakenPRIM *r_ptr);
-void LUXO_prop_collection_next(CollectionPropIT *iter);
 void LUXO_prop_collection_begin(KrakenPRIM *ptr, KrakenPROP *prop, CollectionPropIT *iter);
 void LUXO_prop_collection_end(CollectionPropIT *iter);
+void LUXO_prop_collection_next(CollectionPropIT *iter);
+void LUXO_prop_collection_skip(CollectionPropIT *iter, int num);
+int LUXO_prop_collection_length(KrakenPRIM *ptr, KrakenPROP *prop);
+bool LUXO_prop_collection_is_empty(KrakenPRIM *ptr, KrakenPROP *prop);
+int LUXO_prop_collection_assign_int(KrakenPRIM *ptr,
+                                    KrakenPROP *prop,
+                                    const int key,
+                                    const KrakenPRIM *assign_ptr);
+int LUXO_prop_collection_raw_set(ReportList *reports,
+                                 KrakenPRIM *ptr,
+                                 KrakenPROP *prop,
+                                 const char *propname,
+                                 void *array,
+                                 RawPropertyType type,
+                                 int len);
+bool LUXO_prop_collection_type_get(KrakenPRIM *ptr, KrakenPROP *prop, KrakenPRIM *r_ptr);
+bool LUXO_prop_collection_lookup_int_has_fn(KrakenPROP *prop);
+int LUXO_prop_collection_lookup_int(KrakenPRIM *ptr, KrakenPROP *prop, int key, KrakenPRIM *r_ptr);
+bool LUXO_prop_collection_lookup_string_has_fn(KrakenPROP *prop);
+int LUXO_prop_collection_lookup_string_index(KrakenPRIM *ptr,
+                                             KrakenPROP *prop,
+                                             const char *key,
+                                             KrakenPRIM *r_ptr,
+                                             int *r_index);
+int LUXO_prop_collection_lookup_string(KrakenPRIM *ptr,
+                                       KrakenPROP *prop,
+                                       const char *key,
+                                       KrakenPRIM *r_ptr);
 
 void LUXO_set_stage_ctx(kContext *C);
 
@@ -233,11 +265,49 @@ short PRIM_type_to_ID_code(const KrakenPRIM *type);
 KrakenPROP *LUXO_prim_iterator_property(KrakenPRIM *type);
 KrakenPRIM *LUXO_prop_pointer_type(KrakenPRIM *ptr, KrakenPROP *prop);
 
+int LUXO_prop_flag(KrakenPROP *prop);
+bool LUXO_prop_editable_flag(KrakenPRIM *ptr, KrakenPROP *prop);
+
+/* Getters. */
+
+int LUXO_prop_int_get(KrakenPRIM *ptr, KrakenPROP *prop);
+int LUXO_prop_int_get_index(KrakenPRIM *ptr, KrakenPROP *prop, int index);
+void LUXO_prop_int_get_array(KrakenPRIM *ptr, KrakenPROP *prop, int *values);
+
+bool LUXO_prop_boolean_get(KrakenPRIM *ptr, KrakenPROP *prop);
+bool LUXO_prop_boolean_get_index(KrakenPRIM *ptr, KrakenPROP *prop, int index);
+void LUXO_prop_boolean_get_array(KrakenPRIM *ptr, KrakenPROP *prop, bool *values);
+
+float LUXO_prop_float_get(KrakenPRIM *ptr, KrakenPROP *prop);
+float LUXO_prop_float_get_index(KrakenPRIM *ptr, KrakenPROP *prop, int index);
+void LUXO_prop_float_get_array(KrakenPRIM *ptr, KrakenPROP *prop, float *values);
+
+/* Setters. */
+
+void LUXO_prop_int_set(KrakenPRIM *ptr, KrakenPROP *prop, int value);
+void LUXO_prop_int_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, int value);
+void LUXO_prop_int_set_array(KrakenPRIM *ptr, KrakenPROP *prop, const int *values);
+
+void LUXO_prop_boolean_set(KrakenPRIM *ptr, KrakenPROP *prop, bool value);
+void LUXO_prop_boolean_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, bool value);
+void LUXO_prop_boolean_set_array(KrakenPRIM *ptr, KrakenPROP *prop, const bool *values);
+
+void LUXO_prop_float_set(KrakenPRIM *ptr, KrakenPROP *prop, float value);
+void LUXO_prop_float_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, float value);
+void LUXO_prop_float_set_array(KrakenPRIM *ptr, KrakenPROP *prop, const float *values);
+
 void LUXO_prop_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax);
 void LUXO_prop_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax);
 
+/* Clamps. */
+
+int LUXO_prop_int_clamp(KrakenPRIM *ptr, KrakenPROP *prop, int *value);
+int LUXO_prop_float_clamp(KrakenPRIM *ptr, KrakenPROP *prop, float *value);
+
+/* Updates. */
+
+bool LUXO_prop_update_check(KrakenPROP *prop);
 void LUXO_prop_update(struct kContext *C, KrakenPRIM *ptr, KrakenPROP *prop);
-int LUXO_prop_array_length(KrakenPRIM *ptr, KrakenPROP *prop);
 
 KrakenPROP *prim_struct_find_nested(KrakenPRIM *ptr, KrakenPRIM *sprim);
 char *LUXO_path_from_ID_to_struct(const KrakenPRIM *ptr);
@@ -252,6 +322,11 @@ char *LUXO_path_from_real_ID_to_property_index(Main *bmain,
                                                int index_dim,
                                                int index,
                                                ID **r_real_id);
+
+/* Raw types. */
+
+RawPropertyType LUXO_prop_raw_type(KrakenPROP *prop);
+int LUXO_raw_type_sizeof(RawPropertyType type);
 
 #define LUXO_BEGIN(sptr, itemptr, propname)                                              \
   {                                                                                      \

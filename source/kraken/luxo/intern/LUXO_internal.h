@@ -66,7 +66,8 @@ typedef struct PropertyPRIMOrID
   /**
    * The IDProperty storing the data of this property, may be NULL:
    * - Static PRIM: Always NULL.
-   * - Runtime PRIM: The IDProperty storing the data of that property, may be NULL if never set yet.
+   * - Runtime PRIM: The IDProperty storing the data of that property, may be NULL if never set
+   * yet.
    * - IDProperty: The IDProperty, never NULL.
    */
   IDProperty *idprop;
@@ -87,16 +88,80 @@ typedef struct PropertyPRIMOrID
 
 /* Function Callbacks */
 
+typedef bool (*PropBooleanGetFunc)(struct KrakenPRIM *ptr);
+typedef void (*PropBooleanSetFunc)(struct KrakenPRIM *ptr, bool value);
+typedef void (*PropBooleanArrayGetFunc)(struct KrakenPRIM *ptr, bool *values);
+typedef void (*PropBooleanArraySetFunc)(struct KrakenPRIM *ptr, const bool *values);
+
+typedef int (*PropIntGetFunc)(struct KrakenPRIM *ptr);
+typedef void (*PropIntSetFunc)(struct KrakenPRIM *ptr, int value);
+typedef void (*PropIntArrayGetFunc)(struct KrakenPRIM *ptr, int *values);
+typedef void (*PropIntArraySetFunc)(struct KrakenPRIM *ptr, const int *values);
+typedef void (
+  *PropIntRangeFunc)(struct KrakenPRIM *ptr, int *min, int *max, int *softmin, int *softmax);
+
+typedef float (*PropFloatGetFunc)(struct KrakenPRIM *ptr);
+typedef void (*PropFloatSetFunc)(struct KrakenPRIM *ptr, float value);
+typedef void (*PropFloatArrayGetFunc)(struct KrakenPRIM *ptr, float *values);
+typedef void (*PropFloatArraySetFunc)(struct KrakenPRIM *ptr, const float *values);
+typedef void (*PropFloatRangeFunc)(struct KrakenPRIM *ptr,
+                                   float *min,
+                                   float *max,
+                                   float *softmin,
+                                   float *softmax);
+
 typedef int (*PropEnumGetFunc)(KrakenPRIM *ptr);
 typedef void (*PropEnumSetFunc)(KrakenPRIM *ptr, int value);
 typedef const EnumPROP *(*PropEnumItemFunc)(kContext *C,
                                             KrakenPRIM *ptr,
                                             KrakenPROP *prop,
                                             bool *r_free);
+
+/* extended versions with PropertyRNA argument */
+
+typedef bool (*PropBooleanGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
+typedef void (*PropBooleanSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, bool value);
+typedef void (*PropBooleanArrayGetFuncEx)(struct KrakenPRIM *ptr,
+                                          struct KrakenPROP *prop,
+                                          bool *values);
+typedef void (*PropBooleanArraySetFuncEx)(struct KrakenPRIM *ptr,
+                                          struct KrakenPROP *prop,
+                                          const bool *values);
+
+typedef int (*PropIntGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
+typedef void (*PropIntSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, int value);
+typedef void (*PropIntArrayGetFuncEx)(struct KrakenPRIM *ptr,
+                                      struct KrakenPROP *prop,
+                                      int *values);
+typedef void (*PropIntArraySetFuncEx)(struct KrakenPRIM *ptr,
+                                      struct KrakenPROP *prop,
+                                      const int *values);
+typedef void (*PropIntRangeFuncEx)(struct KrakenPRIM *ptr,
+                                   struct KrakenPROP *prop,
+                                   int *min,
+                                   int *max,
+                                   int *softmin,
+                                   int *softmax);
+
+typedef float (*PropFloatGetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop);
+typedef void (*PropFloatSetFuncEx)(struct KrakenPRIM *ptr, struct KrakenPROP *prop, float value);
+typedef void (*PropFloatArrayGetFuncEx)(struct KrakenPRIM *ptr,
+                                        struct KrakenPROP *prop,
+                                        float *values);
+typedef void (*PropFloatArraySetFuncEx)(struct KrakenPRIM *ptr,
+                                        struct KrakenPROP *prop,
+                                        const float *values);
+typedef void (*PropFloatRangeFuncEx)(struct KrakenPRIM *ptr,
+                                     struct KrakenPROP *prop,
+                                     float *min,
+                                     float *max,
+                                     float *softmin,
+                                     float *softmax);
+
 typedef int (*PropEnumGetFuncEx)(KrakenPRIM *ptr, KrakenPROP *prop);
 typedef void (*PropEnumSetFuncEx)(KrakenPRIM *ptr, KrakenPROP *prop, int value);
 
-typedef struct EnumPropPRIM
+typedef struct EnumPrimPROP
 {
   KrakenPROP property;
 
@@ -112,7 +177,76 @@ typedef struct EnumPropPRIM
 
   int defaultvalue;
   const char *native_enum_type;
-} EnumPropPRIM;
+} EnumPrimPROP;
+
+typedef struct BoolPrimPROP
+{
+  KrakenPROP property;
+
+  PropBooleanGetFunc get;
+  PropBooleanSetFunc set;
+  PropBooleanArrayGetFunc getarray;
+  PropBooleanArraySetFunc setarray;
+
+  PropBooleanGetFuncEx get_ex;
+  PropBooleanSetFuncEx set_ex;
+  PropBooleanArrayGetFuncEx getarray_ex;
+  PropBooleanArraySetFuncEx setarray_ex;
+
+  bool defaultvalue;
+  const bool *defaultarray;
+} BoolPrimPROP;
+
+typedef struct IntPrimPROP
+{
+  KrakenPROP property;
+
+  PropIntGetFunc get;
+  PropIntSetFunc set;
+  PropIntArrayGetFunc getarray;
+  PropIntArraySetFunc setarray;
+  PropIntRangeFunc range;
+
+  PropIntGetFuncEx get_ex;
+  PropIntSetFuncEx set_ex;
+  PropIntArrayGetFuncEx getarray_ex;
+  PropIntArraySetFuncEx setarray_ex;
+  PropIntRangeFuncEx range_ex;
+
+  PropertyScaleType ui_scale_type;
+  int softmin, softmax;
+  int hardmin, hardmax;
+  int step;
+
+  int defaultvalue;
+  const int *defaultarray;
+} IntPrimPROP;
+
+typedef struct FloatPrimPROP
+{
+  KrakenPROP property;
+
+  PropFloatGetFunc get;
+  PropFloatSetFunc set;
+  PropFloatArrayGetFunc getarray;
+  PropFloatArraySetFunc setarray;
+  PropFloatRangeFunc range;
+
+  PropFloatGetFuncEx get_ex;
+  PropFloatSetFuncEx set_ex;
+  PropFloatArrayGetFuncEx getarray_ex;
+  PropFloatArraySetFuncEx setarray_ex;
+  PropFloatRangeFuncEx range_ex;
+
+  PropertyScaleType ui_scale_type;
+  float softmin, softmax;
+  float hardmin, hardmax;
+  float step;
+  int precision;
+
+  float defaultvalue;
+  const float *defaultarray;
+} FloatPrimPROP;
 
 typedef void (*PropCollectionBeginFunc)(struct CollectionPropIT *iter, struct KrakenPRIM *ptr);
 typedef void (*PropCollectionNextFunc)(struct CollectionPropIT *iter);
@@ -152,7 +286,7 @@ typedef struct KrakenPrimPROP
   struct KrakenPRIM *type;
 } KrakenPrimPROP;
 
-typedef struct CollectionPropPRIM
+typedef struct CollectionPrimPROP
 {
   KrakenPROP property;
 
@@ -166,7 +300,20 @@ typedef struct CollectionPropPRIM
   PropCollectionAssignIntFunc assignint;       /* optional */
 
   KrakenPRIM *item_type; /* the type of this item */
-} CollectionPropPRIM;
+} CollectionPrimPROP;
+
+/* internal flags WARNING! 16bits only! */
+typedef enum PropertyFlagIntern
+{
+  PROP_INTERN_BUILTIN = (1 << 0),
+  PROP_INTERN_RUNTIME = (1 << 1),
+  PROP_INTERN_RAW_ACCESS = (1 << 2),
+  PROP_INTERN_RAW_ARRAY = (1 << 3),
+  PROP_INTERN_FREE_POINTERS = (1 << 4),
+  /* Negative mirror of PROP_PTR_NO_OWNERSHIP, used to prevent automatically setting that one in
+   * makesrna when pointer is an ID... */
+  PROP_INTERN_PTR_OWNERSHIP_FORCED = (1 << 5),
+} PropertyFlagIntern;
 
 /**
  * This function initializes a #PropertyPRIMOrID with all required info, from a given #PropertyPRIM

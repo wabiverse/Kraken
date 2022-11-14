@@ -2233,7 +2233,7 @@ static void ui_numedit_begin(uiBut *but, uiHandleButtonData *data)
     float softmin = but->softmin;
     float softmax = but->softmax;
     float softrange = softmax - softmin;
-    const PropScaleTYPE scale_type = static_cast<PropScaleTYPE>(ui_but_scale_type(but));
+    const PropertyScaleType scale_type = static_cast<PropertyScaleType>(ui_but_scale_type(but));
 
     float log_min = (scale_type == PROP_SCALE_LOG) ? max_ff(softmin, UI_PROP_SCALE_LOG_MIN) : 0.0f;
 
@@ -3033,12 +3033,17 @@ static uiBut *ui_but_list_row_text_activate(kContext *C,
   return NULL;
 }
 
+static int get_but_property_array_length(uiBut *but)
+{
+  return LUXO_prop_array_length(but->stagepoin, but->stageprop);
+}
+
 static void ui_but_copy_numeric_array(uiBut *but, char *output, int output_len_max)
 {
-  // const int values_len = get_but_property_array_length(but);
-  // float *values = alloca(values_len * sizeof(float));
-  // LUXO_prop_float_get_array(&but->rnapoin, but->stageprop, values);
-  // float_array_to_string(values, values_len, output, output_len_max);
+  const int values_len = get_but_property_array_length(but);
+  float *values = static_cast<float *>(alloca(values_len * sizeof(float)));
+  LUXO_prop_float_get_array(but->stagepoin, but->stageprop, values);
+  float_array_to_string(values, values_len, output, output_len_max);
 }
 
 static void ui_but_copy_numeric_value(uiBut *but, char *output, int output_len_max)

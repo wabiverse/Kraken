@@ -35,6 +35,7 @@
 #include "KLI_string.h"
 
 #include "KKE_context.h"
+#include "KKE_idprop.h"
 #include "KKE_idtype.h"
 #include "KKE_main.h"
 #include "KKE_robinhood.h"
@@ -76,7 +77,7 @@ using namespace kraken;
 #define MAX_ARRAY_DIMENSION 10
 
 #define USE_PEDANTIC_WRITE
-#define USE_MATHUTILS
+// #define USE_MATHUTILS
 #define USE_STRING_COERCE
 
 /**
@@ -95,6 +96,23 @@ static PyObject *pyprim_prim_Subtype(KrakenPRIM *ptr);
 static PyObject *pyprim_register_class(PyObject *self, PyObject *py_class);
 static PyObject *pyprim_unregister_class(PyObject *self, PyObject *py_class);
 
+#define KPY_DOC_ID_PROP_TYPE_NOTE                                       \
+  "   .. note::\n"                                                      \
+  "\n"                                                                  \
+  "      Only the :class:`kpy.types.ID`, :class:`kpy.types.Bone` and\n" \
+  "      :class:`kpy.types.PoseBone` classes support custom properties.\n"
+
+int pyprim_prim_validity_check(KPy_StagePRIM *pysprim)
+{
+  if (pysprim->ptr.type) {
+    return 0;
+  }
+  PyErr_Format(PyExc_ReferenceError,
+               "StructRNA of type %.200s has been removed",
+               Py_TYPE(pysprim)->tp_name);
+  return -1;
+}
+
 int pyprim_prop_validity_check(KPy_StagePROP *self)
 {
   if (self->ptr.type) {
@@ -112,17 +130,50 @@ void pyprim_invalidate(KPy_DummyStagePRIM *self)
   PRIM_POINTER_INVALIDATE(&self->ptr);
 }
 
-static bool uni_disallow_writes = false;
+#ifdef USE_PEDANTIC_WRITE
+static bool prim_disallow_writes = false;
+
+static bool prim_id_write_error(KrakenPRIM *ptr, PyObject *key)
+{
+  ID *id = ptr->owner_id;
+  if (id) {
+    const short idcode = GS(id->name);
+    /* May need more ID types added here. */
+    if (!ELEM(idcode, ID_WM, ID_SCR, ID_WS)) {
+      const char *idtype = KKE_idtype_idcode_to_name(idcode);
+      const char *pyname;
+      if (key && PyUnicode_Check(key)) {
+        pyname = PyUnicode_AsUTF8(key);
+      } else {
+        pyname = "<UNKNOWN>";
+      }
+
+      /* Make a nice string error. */
+      KLI_assert(idtype != NULL);
+      PyErr_Format(PyExc_AttributeError,
+                   "Writing to ID classes in this context is not allowed: "
+                   "%.200s, %.200s datablock, error setting %.200s.%.200s",
+                   id->name + 2,
+                   idtype,
+                   LUXO_prim_identifier(ptr->type).data(),
+                   pyname);
+
+      return true;
+    }
+  }
+  return false;
+}
+#endif /* USE_PEDANTIC_WRITE */
 
 #ifdef USE_PEDANTIC_WRITE
 bool pyprim_write_check(void)
 {
-  return !uni_disallow_writes;
+  return !prim_disallow_writes;
 }
 
 void pyprim_write_set(bool val)
 {
-  uni_disallow_writes = !val;
+  prim_disallow_writes = !val;
 }
 #else  /* USE_PEDANTIC_WRITE */
 bool pyprim_write_check(void)
@@ -143,7 +194,7 @@ static int pyprim_py_to_prop(KrakenPRIM *ptr,
                              void *data,
                              PyObject *value,
                              const char *error_prefix);
-static int deferred_register_prop(KrakenPRIM *srna, PyObject *key, PyObject *item);
+static int deferred_register_prop(KrakenPRIM *sprim, PyObject *key, PyObject *item);
 
 /* Use our own dealloc so we can free a property if we use one. */
 static void pyprim_prop_dealloc(KPy_StagePROP *self)
@@ -293,25 +344,13 @@ PyObject *pyprim_array_index(KrakenPRIM *ptr, KrakenPROP *prop, int index)
 
   switch (LUXO_prop_type(prop)) {
     case PROP_FLOAT:
-      item = PyFloat_FromDouble((double)ptr->GetAttribute(prop->GetName())
-                                  .GetTypeName()
-                                  .GetArrayType()
-                                  .GetDimensions()
-                                  .d[index]);
+      item = PyFloat_FromDouble(LUXO_prop_float_get_index(ptr, prop, index));
       break;
     case PROP_BOOLEAN:
-      item = PyBool_FromLong((bool)ptr->GetAttribute(prop->GetName())
-                               .GetTypeName()
-                               .GetArrayType()
-                               .GetDimensions()
-                               .d[index]);
+      item = PyBool_FromLong(LUXO_prop_boolean_get_index(ptr, prop, index));
       break;
     case PROP_INT:
-      item = PyLong_FromLong((int)ptr->GetAttribute(prop->GetName())
-                               .GetTypeName()
-                               .GetArrayType()
-                               .GetDimensions()
-                               .d[index]);
+      item = PyLong_FromLong(LUXO_prop_int_get_index(ptr, prop, index));
       break;
     default:
       PyErr_SetString(PyExc_TypeError, "not an array type");
@@ -373,6 +412,68 @@ static PyObject *pyprim_prop_array_to_py_index(KPy_StagePropARRAY *self, int ind
   return pyprim_pyprim(self, &self->ptr, self->prop, index);
 }
 
+/* bool functions are for speed, so we can avoid getting the length
+ * of 1000's of items in a linked list for eg. */
+static int pyprim_prop_array_bool(KPy_StagePROP *self)
+{
+  PYSTAGE_PROP_CHECK_INT(self);
+
+  return LUXO_prop_array_length(&self->ptr, self->prop) ? 1 : 0;
+}
+
+static int pyprim_prop_collection_bool(KPy_StagePROP *self)
+{
+  PYSTAGE_PROP_CHECK_INT(self);
+
+  return !LUXO_prop_collection_is_empty(&self->ptr, self->prop);
+}
+
+/* notice getting the length of the collection is avoided unless negative
+ * index is used or to detect internal error with a valid index.
+ * This is done for faster lookups. */
+#define PYPRIM_PROP_COLLECTION_ABS_INDEX(ret_err)                                       \
+  if (keynum < 0) {                                                                     \
+    keynum_abs += LUXO_prop_collection_length(&self->ptr, self->prop);                  \
+    if (keynum_abs < 0) {                                                               \
+      PyErr_Format(PyExc_IndexError, "kpy_prop_collection[%d]: out of range.", keynum); \
+      return ret_err;                                                                   \
+    }                                                                                   \
+  }                                                                                     \
+  (void)0
+
+/* Values type must have been already checked. */
+static int pyprim_prop_collection_ass_subscript_int(KPy_StagePROP *self,
+                                                    Py_ssize_t keynum,
+                                                    PyObject *value)
+{
+  Py_ssize_t keynum_abs = keynum;
+  const KrakenPRIM *ptr = (value == Py_None) ? (&KrakenPRIM_NULL) : &((KPy_StagePRIM *)value)->ptr;
+
+  PYSTAGE_PROP_CHECK_INT(self);
+
+  PYPRIM_PROP_COLLECTION_ABS_INDEX(-1);
+
+  if (LUXO_prop_collection_assign_int(&self->ptr, self->prop, keynum_abs, ptr) == 0) {
+    const int len = LUXO_prop_collection_length(&self->ptr, self->prop);
+    if (keynum_abs >= len) {
+      PyErr_Format(PyExc_IndexError,
+                   "kpy_prop_collection[index] = value: "
+                   "index %d out of range, size %d",
+                   keynum,
+                   len);
+    } else {
+
+      PyErr_Format(PyExc_IndexError,
+                   "kpy_prop_collection[index] = value: "
+                   "failed assignment (unknown reason)",
+                   keynum);
+    }
+    return -1;
+  }
+
+  return 0;
+}
+
 static PyObject *pyprim_prop_array_subscript_int(KPy_StagePropARRAY *self, int keynum)
 {
   int len;
@@ -389,13 +490,162 @@ static PyObject *pyprim_prop_array_subscript_int(KPy_StagePropARRAY *self, int k
     return pyprim_prop_array_to_py_index(self, keynum);
   }
 
-  PyErr_Format(PyExc_IndexError, "bpy_prop_array[index]: index %d out of range", keynum);
+  PyErr_Format(PyExc_IndexError, "kpy_prop_array[index]: index %d out of range", keynum);
   return NULL;
 }
 
 /**
+ * Special case: `kpy.data.objects["some_id_name", "//some_lib_name.usd"]`
+ * also for:     `kpy.data.objects.get(("some_id_name", "//some_lib_name.usd"), fallback)`
+ *
+ * \note
+ * error codes since this is not to be called directly from Python,
+ * this matches Python's `__contains__` values C-API.
+ * - -1: exception set
+ * -  0: not found
+ * -  1: found
+ */
+static int pyprim_prop_collection_subscript_str_lib_pair_ptr(KPy_StagePROP *self,
+                                                             PyObject *key,
+                                                             const char *err_prefix,
+                                                             const short err_not_found,
+                                                             KrakenPRIM *r_ptr)
+{
+  const char *keyname;
+
+  /* First validate the args, all we know is that they are a tuple. */
+  if (PyTuple_GET_SIZE(key) != 2) {
+    PyErr_Format(PyExc_KeyError,
+                 "%s: tuple key must be a pair, not size %d",
+                 err_prefix,
+                 PyTuple_GET_SIZE(key));
+    return -1;
+  }
+  if (self->ptr.type != &PRIM_StageData) {
+    PyErr_Format(PyExc_KeyError,
+                 "%s: is only valid for kpy.data collections, not %.200s",
+                 err_prefix,
+                 LUXO_prim_identifier(self->ptr.type).data());
+    return -1;
+  }
+  if ((keyname = PyUnicode_AsUTF8(PyTuple_GET_ITEM(key, 0))) == NULL) {
+    PyErr_Format(PyExc_KeyError,
+                 "%s: id must be a string, not %.200s",
+                 err_prefix,
+                 Py_TYPE(PyTuple_GET_ITEM(key, 0))->tp_name);
+    return -1;
+  }
+
+  PyObject *keylib = PyTuple_GET_ITEM(key, 1);
+  Library *lib;
+  bool found = false;
+
+  if (keylib == Py_None) {
+    lib = NULL;
+  } else if (PyUnicode_Check(keylib)) {
+    Main *bmain = static_cast<Main *>(self->ptr.data);
+    const char *keylib_str = PyUnicode_AsUTF8(keylib);
+    lib = static_cast<Library *>(
+      KLI_findstring(&bmain->libraries, keylib_str, offsetof(Library, filepath)));
+    if (lib == NULL) {
+      if (err_not_found) {
+        PyErr_Format(PyExc_KeyError,
+                     "%s: lib filepath '%.1024s' "
+                     "does not reference a valid library",
+                     err_prefix,
+                     keylib_str);
+        return -1;
+      }
+
+      return 0;
+    }
+  } else {
+    PyErr_Format(PyExc_KeyError,
+                 "%s: lib must be a string or None, not %.200s",
+                 err_prefix,
+                 Py_TYPE(keylib)->tp_name);
+    return -1;
+  }
+
+  /* lib is either a valid pointer or NULL,
+   * either way can do direct comparison with id.lib */
+
+  LUXO_PROP_BEGIN(&self->ptr, itemptr, self->prop)
+  {
+    ID *id = static_cast<ID *>(itemptr.data); /* Always an ID. */
+    if (id->lib == lib && STREQLEN(keyname, id->name + 2, sizeof(id->name) - 2)) {
+      found = true;
+      if (r_ptr) {
+        *r_ptr = itemptr;
+      }
+      break;
+    }
+  }
+  LUXO_PROP_END;
+
+  /* We may want to fail silently as with collection.get(). */
+  if ((found == false) && err_not_found) {
+    /* Only runs for getitem access so use fixed string. */
+    PyErr_SetString(PyExc_KeyError, "kpy_prop_collection[key, lib]: not found");
+    return -1;
+  }
+
+  return found; /* 1 / 0, no exception. */
+}
+
+static PyObject *pyprim_prop_collection_subscript_str_lib_pair(KPy_StagePROP *self,
+                                                               PyObject *key,
+                                                               const char *err_prefix,
+                                                               const bool err_not_found)
+{
+  KrakenPRIM ptr;
+  const int contains =
+    pyprim_prop_collection_subscript_str_lib_pair_ptr(self, key, err_prefix, err_not_found, &ptr);
+
+  if (contains == 1) {
+    return pyprim_prim_CreatePyObject(&ptr);
+  }
+
+  return NULL;
+}
+
+static PyObject *pyprim_prop_collection_subscript_slice(KPy_StagePROP *self,
+                                                        Py_ssize_t start,
+                                                        Py_ssize_t stop)
+{
+  CollectionPropIT rna_macro_iter;
+  int count;
+
+  PyObject *list;
+  PyObject *item;
+
+  PYSTAGE_PROP_CHECK_OBJ(self);
+
+  list = PyList_New(0);
+
+  /* Skip to start. */
+  LUXO_prop_collection_begin(&self->ptr, self->prop, &rna_macro_iter);
+  LUXO_prop_collection_skip(&rna_macro_iter, start);
+
+  /* Add items until stop. */
+  for (count = start; rna_macro_iter.valid; LUXO_prop_collection_next(&rna_macro_iter)) {
+    item = pyprim_prim_CreatePyObject(&rna_macro_iter.ptr);
+    PyList_APPEND(list, item);
+
+    count++;
+    if (count == stop) {
+      break;
+    }
+  }
+
+  LUXO_prop_collection_end(&rna_macro_iter);
+
+  return list;
+}
+
+/**
  * TODO: dimensions
- * \note Could also use pyprim_prop_array_to_py_index(self, count) in a loop, but it's much slower
+ * @note Could also use pyprim_prop_array_to_py_index(self, count) in a loop, but it's much slower
  * since at the moment it reads (and even allocates) the entire array for each index.
  */
 static PyObject *pyprim_prop_array_subscript_slice(KPy_StagePropARRAY *self,
@@ -429,7 +679,7 @@ static PyObject *pyprim_prop_array_subscript_slice(KPy_StagePropARRAY *self,
         } else {
           values = values_stack;
         }
-        LUXO_prop_float_get_array(ptr->GetAttribute(prop->GetName()));
+        LUXO_prop_float_get_array(ptr, prop, values);
 
         for (count = start; count < stop; count++) {
           PyTuple_SET_ITEM(tuple, count - start, PyFloat_FromDouble(values[count]));
@@ -444,7 +694,7 @@ static PyObject *pyprim_prop_array_subscript_slice(KPy_StagePropARRAY *self,
         bool values_stack[PYPRIM_STACK_ARRAY];
         bool *values;
         if (length > PYPRIM_STACK_ARRAY) {
-          values = PyMem_MALLOC(sizeof(bool) * length);
+          values = static_cast<bool *>(PyMem_MALLOC(sizeof(bool) * length));
         } else {
           values = values_stack;
         }
@@ -463,7 +713,7 @@ static PyObject *pyprim_prop_array_subscript_slice(KPy_StagePropARRAY *self,
         int values_stack[PYPRIM_STACK_ARRAY];
         int *values;
         if (length > PYPRIM_STACK_ARRAY) {
-          values = PyMem_MALLOC(sizeof(int) * length);
+          values = static_cast<int *>(PyMem_MALLOC(sizeof(int) * length));
         } else {
           values = values_stack;
         }
@@ -479,7 +729,7 @@ static PyObject *pyprim_prop_array_subscript_slice(KPy_StagePropARRAY *self,
         break;
       }
       default:
-        BLI_assert_msg(0, "Invalid array type");
+        KLI_assert_msg(0, "Invalid array type");
 
         PyErr_SetString(PyExc_TypeError, "not an array type");
         Py_DECREF(tuple);
@@ -515,7 +765,7 @@ static PyObject *pyprim_prop_array_subscript(KPy_StagePropARRAY *self, PyObject 
       return NULL;
     }
     if (step != 1) {
-      PyErr_SetString(PyExc_TypeError, "bpy_prop_array[slice]: slice steps not supported");
+      PyErr_SetString(PyExc_TypeError, "kpy_prop_array[slice]: slice steps not supported");
       return NULL;
     }
     if (key_slice->start == Py_None && key_slice->stop == Py_None) {
@@ -539,8 +789,1467 @@ static PyObject *pyprim_prop_array_subscript(KPy_StagePropARRAY *self, PyObject 
     return pyprim_prop_array_subscript_slice(self, &self->ptr, self->prop, start, stop, len);
   }
 
-  PyErr_SetString(PyExc_AttributeError, "bpy_prop_array[key]: invalid key, key must be an int");
+  PyErr_SetString(PyExc_AttributeError, "kpy_prop_array[key]: invalid key, key must be an int");
   return NULL;
+}
+
+/**
+ * @param result: The result of calling a subscription operation on a collection (never NULL).
+ */
+static int pyprim_prop_collection_subscript_is_valid_or_error(const PyObject *value)
+{
+  if (value != Py_None) {
+    KLI_assert(KPy_StagePRIM_Check(value));
+    const KPy_StagePRIM *value_pyprim = (const KPy_StagePRIM *)value;
+    if (UNLIKELY(value_pyprim->ptr.type == NULL)) {
+      /* It's important to use a `TypeError` as that is what's returned when `__getitem__` is
+       * called on an object that doesn't support item access. */
+      PyErr_Format(PyExc_TypeError,
+                   "'%.200s' object is not subscriptable (only iteration is supported)",
+                   Py_TYPE(value)->tp_name);
+      return -1;
+    }
+  }
+  return 0;
+}
+
+static PyObject *pyprim_prop_collection_subscript_str(KPy_StagePROP *self, const char *keyname)
+{
+  KrakenPRIM newptr;
+
+  PYSTAGE_PROP_CHECK_OBJ(self);
+
+  if (LUXO_prop_collection_lookup_string_has_fn(self->prop)) {
+    if (LUXO_prop_collection_lookup_string(&self->ptr, self->prop, keyname, &newptr)) {
+      return pyprim_prim_CreatePyObject(&newptr);
+    }
+  } else {
+    /* No callback defined, just iterate and find the nth item. */
+    const int keylen = strlen(keyname);
+    char name[256];
+    int namelen;
+    PyObject *result = NULL;
+    bool found = false;
+    CollectionPropIT iter;
+    LUXO_prop_collection_begin(&self->ptr, self->prop, &iter);
+    for (int i = 0; iter.valid; LUXO_prop_collection_next(&iter), i++) {
+      KrakenPROP nameprop = iter.ptr.type->GetAttribute(TfToken("name"));
+      char *nameptr = KLI_strdup(nameprop.GetName().data());
+      if ((keylen == namelen) && STREQ(nameptr, keyname)) {
+        found = true;
+      }
+      if ((char *)&name != nameptr) {
+        MEM_freeN(nameptr);
+      }
+      if (found) {
+        result = pyprim_prim_CreatePyObject(&iter.ptr);
+        break;
+      }
+    }
+    /* It's important to end the iterator after `result` has been created
+     * so iterators may optionally invalidate items that were iterated over, see: T100286. */
+    LUXO_prop_collection_end(&iter);
+    if (found) {
+      if (result && (pyprim_prop_collection_subscript_is_valid_or_error(result) == -1)) {
+        Py_DECREF(result);
+        result = NULL; /* The exception has been set. */
+      }
+      return result;
+    }
+  }
+
+  PyErr_Format(PyExc_KeyError, "kpy_prop_collection[key]: key \"%.200s\" not found", keyname);
+  return NULL;
+}
+
+/* Internal use only. */
+static PyObject *pyprim_prop_collection_subscript_int(KPy_StagePROP *self, Py_ssize_t keynum)
+{
+  KrakenPRIM newptr;
+  Py_ssize_t keynum_abs = keynum;
+
+  PYSTAGE_PROP_CHECK_OBJ(self);
+
+  PYPRIM_PROP_COLLECTION_ABS_INDEX(NULL);
+
+  if (LUXO_prop_collection_lookup_int_has_fn(self->prop)) {
+    if (LUXO_prop_collection_lookup_int(&self->ptr, self->prop, keynum_abs, &newptr)) {
+      return pyprim_prim_CreatePyObject(&newptr);
+    }
+  } else {
+    /* No callback defined, just iterate and find the nth item. */
+    const int key = (int)keynum_abs;
+    PyObject *result = NULL;
+    bool found = false;
+    CollectionPropIT iter;
+    LUXO_prop_collection_begin(&self->ptr, self->prop, &iter);
+    for (int i = 0; iter.valid; LUXO_prop_collection_next(&iter), i++) {
+      if (i == key) {
+        result = pyprim_prim_CreatePyObject(&iter.ptr);
+        found = true;
+        break;
+      }
+    }
+    /* It's important to end the iterator after `result` has been created
+     * so iterators may optionally invalidate items that were iterated over, see: T100286. */
+    LUXO_prop_collection_end(&iter);
+    if (found) {
+      if (result && (pyprim_prop_collection_subscript_is_valid_or_error(result) == -1)) {
+        Py_DECREF(result);
+        result = NULL; /* The exception has been set. */
+      }
+      return result;
+    }
+  }
+
+  const int len = LUXO_prop_collection_length(&self->ptr, self->prop);
+  if (keynum_abs >= len) {
+    PyErr_Format(PyExc_IndexError,
+                 "kpy_prop_collection[index]: "
+                 "index %d out of range, size %d",
+                 keynum,
+                 len);
+  } else {
+    PyErr_Format(PyExc_RuntimeError,
+                 "kpy_prop_collection[index]: internal error, "
+                 "valid index %d given in %d sized collection, but value not found",
+                 keynum_abs,
+                 len);
+  }
+
+  return NULL;
+}
+
+static PyObject *pyprim_prop_collection_subscript(KPy_StagePROP *self, PyObject *key)
+{
+  PYSTAGE_PROP_CHECK_OBJ(self);
+
+  if (PyUnicode_Check(key)) {
+    return pyprim_prop_collection_subscript_str(self, PyUnicode_AsUTF8(key));
+  }
+  if (PyIndex_Check(key)) {
+    const Py_ssize_t i = PyNumber_AsSsize_t(key, PyExc_IndexError);
+    if (i == -1 && PyErr_Occurred()) {
+      return NULL;
+    }
+
+    return pyprim_prop_collection_subscript_int(self, i);
+  }
+  if (PySlice_Check(key)) {
+    PySliceObject *key_slice = (PySliceObject *)key;
+    Py_ssize_t step = 1;
+
+    if (key_slice->step != Py_None && !_PyEval_SliceIndex(key, &step)) {
+      return NULL;
+    }
+    if (step != 1) {
+      PyErr_SetString(PyExc_TypeError, "kpy_prop_collection[slice]: slice steps not supported");
+      return NULL;
+    }
+    if (key_slice->start == Py_None && key_slice->stop == Py_None) {
+      return pyprim_prop_collection_subscript_slice(self, 0, PY_SSIZE_T_MAX);
+    }
+
+    Py_ssize_t start = 0, stop = PY_SSIZE_T_MAX;
+
+    /* Avoid PySlice_GetIndicesEx because it needs to know the length ahead of time. */
+    if (key_slice->start != Py_None && !_PyEval_SliceIndex(key_slice->start, &start)) {
+      return NULL;
+    }
+    if (key_slice->stop != Py_None && !_PyEval_SliceIndex(key_slice->stop, &stop)) {
+      return NULL;
+    }
+
+    if (start < 0 || stop < 0) {
+      /* Only get the length for negative values. */
+      const Py_ssize_t len = (Py_ssize_t)LUXO_prop_collection_length(&self->ptr, self->prop);
+      if (start < 0) {
+        start += len;
+        CLAMP_MIN(start, 0);
+      }
+      if (stop < 0) {
+        stop += len;
+        CLAMP_MIN(stop, 0);
+      }
+    }
+
+    if (stop - start <= 0) {
+      return PyList_New(0);
+    }
+
+    return pyprim_prop_collection_subscript_slice(self, start, stop);
+  }
+  if (PyTuple_Check(key)) {
+    /* Special case, for ID datablocks we. */
+    return pyprim_prop_collection_subscript_str_lib_pair(self,
+                                                         key,
+                                                         "kpy_prop_collection[id, lib]",
+                                                         true);
+  }
+
+  PyErr_Format(PyExc_TypeError,
+               "kpy_prop_collection[key]: invalid key, "
+               "must be a string or an int, not %.200s",
+               Py_TYPE(key)->tp_name);
+  return NULL;
+}
+
+struct ItemConvertArgData;
+
+typedef void (*ItemConvertFunc)(const struct ItemConvertArgData *arg, PyObject *, char *);
+typedef int (*ItemTypeCheckFunc)(PyObject *);
+typedef void (*PRIM_SetArrayFunc)(KrakenPRIM *, KrakenPROP *, const char *);
+typedef void (*PRIM_SetIndexFunc)(KrakenPRIM *, KrakenPROP *, int index, void *);
+
+struct ItemConvertArgData
+{
+  union
+  {
+    struct
+    {
+      int range[2];
+    } int_data;
+    struct
+    {
+      float range[2];
+    } float_data;
+  };
+};
+
+/**
+ * Callback and args needed to apply the value (clamp range for now)
+ */
+typedef struct ItemConvert_FuncArg
+{
+  ItemConvertFunc func;
+  struct ItemConvertArgData arg;
+} ItemConvert_FuncArg;
+
+/*
+ * arr[3][4][5]
+ *     0  1  2  <- dimension index
+ */
+
+/*
+ *  arr[2] = x
+ *
+ *  py_to_array_index(arraydim=0, arrayoffset=0, index=2)
+ *      validate_array(lvalue_dim=0)
+ *      ... make real index ...
+ */
+
+/* arr[3] = x, self->arraydim is 0, lvalue_dim is 1 */
+
+/**
+ * @note
+ * Ensures that a python sequence has expected number of
+ * items/sub-items and items are of desired type. */
+static int validate_array_type(PyObject *seq,
+                               int dim,
+                               int totdim,
+                               int dimsize[],
+                               const bool is_dynamic,
+                               ItemTypeCheckFunc check_item_type,
+                               const char *item_type_str,
+                               const char *error_prefix)
+{
+  Py_ssize_t i;
+
+  /* not the last dimension */
+  if (dim + 1 < totdim) {
+    /* check that a sequence contains dimsize[dim] items */
+    const int seq_size = PySequence_Size(seq);
+    if (seq_size == -1) {
+      PyErr_Format(PyExc_ValueError,
+                   "%s sequence expected at dimension %d, not '%s'",
+                   error_prefix,
+                   dim + 1,
+                   Py_TYPE(seq)->tp_name);
+      return -1;
+    }
+    for (i = 0; i < seq_size; i++) {
+      Py_ssize_t item_seq_size;
+      PyObject *item;
+      bool ok = true;
+      item = PySequence_GetItem(seq, i);
+
+      if (item == NULL) {
+        PyErr_Format(PyExc_TypeError,
+                     "%s sequence type '%s' failed to retrieve index %d",
+                     error_prefix,
+                     Py_TYPE(seq)->tp_name,
+                     i);
+        ok = 0;
+      } else if ((item_seq_size = PySequence_Size(item)) == -1) {
+        // KLI_snprintf(error_str, error_str_size, "expected a sequence of %s", item_type_str);
+        PyErr_Format(PyExc_TypeError,
+                     "%s expected a sequence of %s, not %s",
+                     error_prefix,
+                     item_type_str,
+                     Py_TYPE(item)->tp_name);
+        ok = 0;
+      }
+      /* arr[3][4][5]
+       * dimsize[1] = 4
+       * dimsize[2] = 5
+       *
+       * dim = 0 */
+      else if (item_seq_size != dimsize[dim + 1]) {
+        /* KLI_snprintf(error_str, error_str_size,
+         *              "sequences of dimension %d should contain %d items",
+         *              dim + 1, dimsize[dim + 1]); */
+        PyErr_Format(PyExc_ValueError,
+                     "%s sequences of dimension %d should contain %d items, not %d",
+                     error_prefix,
+                     dim + 1,
+                     dimsize[dim + 1],
+                     item_seq_size);
+        ok = 0;
+      } else if (validate_array_type(item,
+                                     dim + 1,
+                                     totdim,
+                                     dimsize,
+                                     is_dynamic,
+                                     check_item_type,
+                                     item_type_str,
+                                     error_prefix) == -1) {
+        ok = 0;
+      }
+
+      Py_XDECREF(item);
+
+      if (!ok) {
+        return -1;
+      }
+    }
+  } else {
+    /* check that items are of correct type */
+    const int seq_size = PySequence_Size(seq);
+    if (seq_size == -1) {
+      PyErr_Format(PyExc_ValueError,
+                   "%s sequence expected at dimension %d, not '%s'",
+                   error_prefix,
+                   dim + 1,
+                   Py_TYPE(seq)->tp_name);
+      return -1;
+    }
+    if ((seq_size != dimsize[dim]) && (is_dynamic == false)) {
+      PyErr_Format(PyExc_ValueError,
+                   "%s sequences of dimension %d should contain %d items, not %d",
+                   error_prefix,
+                   dim,
+                   dimsize[dim],
+                   seq_size);
+      return -1;
+    }
+
+    for (i = 0; i < seq_size; i++) {
+      PyObject *item = PySequence_GetItem(seq, i);
+
+      if (item == NULL) {
+        PyErr_Format(PyExc_TypeError,
+                     "%s sequence type '%s' failed to retrieve index %d",
+                     error_prefix,
+                     Py_TYPE(seq)->tp_name,
+                     i);
+        return -1;
+      }
+      if (!check_item_type(item)) {
+        Py_DECREF(item);
+
+#if 0
+        KLI_snprintf(
+            error_str, error_str_size, "sequence items should be of type %s", item_type_str);
+#endif
+        PyErr_Format(PyExc_TypeError,
+                     "%s expected sequence items of type %s, not %s",
+                     error_prefix,
+                     item_type_str,
+                     Py_TYPE(item)->tp_name);
+        return -1;
+      }
+
+      Py_DECREF(item);
+    }
+  }
+
+  return 0; /* ok */
+}
+
+/* Returns the number of items in a single- or multi-dimensional sequence. */
+static int count_items(PyObject *seq, int dim)
+{
+  int totitem = 0;
+
+  if (dim > 1) {
+    const Py_ssize_t seq_size = PySequence_Size(seq);
+    Py_ssize_t i;
+    for (i = 0; i < seq_size; i++) {
+      PyObject *item = PySequence_GetItem(seq, i);
+      if (item) {
+        const int tot = count_items(item, dim - 1);
+        Py_DECREF(item);
+        if (tot != -1) {
+          totitem += tot;
+        } else {
+          totitem = -1;
+          break;
+        }
+      } else {
+        totitem = -1;
+        break;
+      }
+    }
+  } else {
+    totitem = PySequence_Size(seq);
+  }
+
+  return totitem;
+}
+
+/* Modifies property array length if needed and PROP_DYNAMIC flag is set. */
+static int validate_array_length(PyObject *rvalue,
+                                 KrakenPRIM *ptr,
+                                 KrakenPROP *prop,
+                                 int lvalue_dim,
+                                 int *r_totitem,
+                                 const char *error_prefix)
+{
+  int dimsize[MAX_ARRAY_DIMENSION];
+  int tot, totdim, len;
+
+  totdim = LUXO_prop_array_dimension(ptr, prop, dimsize);
+  tot = count_items(rvalue, totdim - lvalue_dim);
+
+  if (tot == -1) {
+    PyErr_Format(PyExc_ValueError,
+                 "%s %.200s.%.200s, error validating the sequence length",
+                 error_prefix,
+                 LUXO_prim_identifier(ptr->type).data(),
+                 LUXO_prop_identifier(prop).data());
+    return -1;
+  }
+  if ((LUXO_prop_flag(prop) & PROP_DYNAMIC) && lvalue_dim == 0) {
+    if (LUXO_prop_array_length(ptr, prop) != tot) {
+#if 0
+      /* length is flexible */
+      if (!LUXO_prop_dynamic_array_set_length(ptr, prop, tot)) {
+        /* KLI_snprintf(error_str, error_str_size,
+         *              "%s.%s: array length cannot be changed to %d",
+         *              LUXO_prim_identifier(ptr->type), LUXO_prop_identifier(prop), tot); */
+        PyErr_Format(PyExc_ValueError,
+                     "%s %s.%s: array length cannot be changed to %d",
+                     error_prefix,
+                     LUXO_prim_identifier(ptr->type).data(),
+                     LUXO_prop_identifier(prop).data(),
+                     tot);
+        return -1;
+      }
+#else
+      *r_totitem = tot;
+      return 0;
+
+#endif
+    }
+
+    len = tot;
+  } else {
+    /* length is a constraint */
+    if (!lvalue_dim) {
+      len = LUXO_prop_array_length(ptr, prop);
+    }
+    /* array item assignment */
+    else {
+      int i;
+
+      len = 1;
+
+      /* arr[3][4][5]
+       *
+       *    arr[2] = x
+       *    dimsize = {4, 5}
+       *    dimsize[1] = 4
+       *    dimsize[2] = 5
+       *    lvalue_dim = 0, totdim = 3
+       *
+       *    arr[2][3] = x
+       *    lvalue_dim = 1
+       *
+       *    arr[2][3][4] = x
+       *    lvalue_dim = 2 */
+      for (i = lvalue_dim; i < totdim; i++) {
+        len *= dimsize[i];
+      }
+    }
+
+    if (tot != len) {
+      // KLI_snprintf(error_str, error_str_size, "sequence must have length of %d", len);
+      PyErr_Format(PyExc_ValueError,
+                   "%s %.200s.%.200s, sequence must have %d items total, not %d",
+                   error_prefix,
+                   LUXO_prim_identifier(ptr->type).data(),
+                   LUXO_prop_identifier(prop).data(),
+                   len,
+                   tot);
+      return -1;
+    }
+  }
+
+  *r_totitem = len;
+
+  return 0;
+}
+
+static int validate_array(PyObject *rvalue,
+                          KrakenPRIM *ptr,
+                          KrakenPROP *prop,
+                          int lvalue_dim,
+                          ItemTypeCheckFunc check_item_type,
+                          const char *item_type_str,
+                          int *r_totitem,
+                          const char *error_prefix)
+{
+  int dimsize[MAX_ARRAY_DIMENSION];
+  const int totdim = LUXO_prop_array_dimension(ptr, prop, dimsize);
+
+  /* validate type first because length validation may modify property array length */
+
+#ifdef USE_MATHUTILS
+  if (lvalue_dim == 0) { /* only valid for first level array */
+    if (MatrixObject_Check(rvalue)) {
+      MatrixObject *pymat = (MatrixObject *)rvalue;
+
+      if (BaseMath_ReadCallback(pymat) == -1) {
+        return -1;
+      }
+
+      if (LUXO_prop_type(prop) != PROP_FLOAT) {
+        PyErr_Format(PyExc_ValueError,
+                     "%s %.200s.%.200s, matrix assign to non float array",
+                     error_prefix,
+                     LUXO_prim_identifier(ptr->type).data(),
+                     LUXO_prop_identifier(prop).data());
+        return -1;
+      }
+      if (totdim != 2) {
+        PyErr_Format(PyExc_ValueError,
+                     "%s %.200s.%.200s, matrix assign array with %d dimensions",
+                     error_prefix,
+                     LUXO_prim_identifier(ptr->type).data(),
+                     LUXO_prop_identifier(prop).data(),
+                     totdim);
+        return -1;
+      }
+      if (pymat->col_num != dimsize[0] || pymat->row_num != dimsize[1]) {
+        PyErr_Format(PyExc_ValueError,
+                     "%s %.200s.%.200s, matrix assign dimension size mismatch, "
+                     "is %dx%d, expected be %dx%d",
+                     error_prefix,
+                     LUXO_prim_identifier(ptr->type).data(),
+                     LUXO_prop_identifier(prop).data(),
+                     pymat->col_num,
+                     pymat->row_num,
+                     dimsize[0],
+                     dimsize[1]);
+        return -1;
+      }
+
+      *r_totitem = dimsize[0] * dimsize[1];
+      return 0;
+    }
+  }
+#endif /* USE_MATHUTILS */
+
+  {
+    const int prop_flag = LUXO_prop_flag(prop);
+    if (validate_array_type(rvalue,
+                            lvalue_dim,
+                            totdim,
+                            dimsize,
+                            (prop_flag & PROP_DYNAMIC) != 0,
+                            check_item_type,
+                            item_type_str,
+                            error_prefix) == -1) {
+      return -1;
+    }
+
+    return validate_array_length(rvalue, ptr, prop, lvalue_dim, r_totitem, error_prefix);
+  }
+}
+
+static char *copy_value_single(PyObject *item,
+                               KrakenPRIM *ptr,
+                               KrakenPROP *prop,
+                               char *data,
+                               uint item_size,
+                               int *index,
+                               const ItemConvert_FuncArg *convert_item,
+                               PRIM_SetIndexFunc rna_set_index)
+{
+  if (!data) {
+    union
+    {
+      float fl;
+      int i;
+    } value_buf;
+    char *value = static_cast<char *>((void *)&value_buf);
+
+    convert_item->func(&convert_item->arg, item, value);
+    rna_set_index(ptr, prop, *index, value);
+    (*index) += 1;
+  } else {
+    convert_item->func(&convert_item->arg, item, data);
+    data += item_size;
+  }
+
+  return data;
+}
+
+static char *copy_values(PyObject *seq,
+                         KrakenPRIM *ptr,
+                         KrakenPROP *prop,
+                         int dim,
+                         char *data,
+                         uint item_size,
+                         int *index,
+                         const ItemConvert_FuncArg *convert_item,
+                         PRIM_SetIndexFunc rna_set_index)
+{
+  const int totdim = LUXO_prop_array_dimension(ptr, prop, NULL);
+  const Py_ssize_t seq_size = PySequence_Size(seq);
+  Py_ssize_t i;
+
+  /* Regarding PySequence_GetItem() failing.
+   *
+   * This should never be NULL since we validated it, _but_ some tricky python
+   * developer could write their own sequence type which succeeds on
+   * validating but fails later somehow, so include checks for safety.
+   */
+
+  /* Note that 'data can be NULL' */
+
+  if (seq_size == -1) {
+    return NULL;
+  }
+
+#ifdef USE_MATHUTILS
+  if (dim == 0) {
+    if (MatrixObject_Check(seq)) {
+      MatrixObject *pymat = (MatrixObject *)seq;
+      const size_t allocsize = pymat->col_num * pymat->row_num * sizeof(float);
+
+      /* read callback already done by validate */
+      /* since this is the first iteration we can assume data is allocated */
+      memcpy(data, pymat->matrix, allocsize);
+
+      /* not really needed but do for completeness */
+      data += allocsize;
+
+      return data;
+    }
+  }
+#endif /* USE_MATHUTILS */
+
+  for (i = 0; i < seq_size; i++) {
+    PyObject *item = PySequence_GetItem(seq, i);
+    if (item) {
+      if (dim + 1 < totdim) {
+        data = copy_values(item,
+                           ptr,
+                           prop,
+                           dim + 1,
+                           data,
+                           item_size,
+                           index,
+                           convert_item,
+                           rna_set_index);
+      } else {
+        data =
+          copy_value_single(item, ptr, prop, data, item_size, index, convert_item, rna_set_index);
+      }
+
+      Py_DECREF(item);
+
+      /* data may be NULL, but the for loop checks */
+    } else {
+      return NULL;
+    }
+  }
+
+  return data;
+}
+
+static int py_to_array_index(PyObject *py,
+                             KrakenPRIM *ptr,
+                             KrakenPROP *prop,
+                             int lvalue_dim,
+                             int arrayoffset,
+                             int index,
+                             ItemTypeCheckFunc check_item_type,
+                             const char *item_type_str,
+                             const ItemConvert_FuncArg *convert_item,
+                             PRIM_SetIndexFunc rna_set_index,
+                             const char *error_prefix)
+{
+  int totdim, dimsize[MAX_ARRAY_DIMENSION];
+  int totitem, i;
+
+  totdim = LUXO_prop_array_dimension(ptr, prop, dimsize);
+
+  /* convert index */
+
+  /* arr[3][4][5]
+   *
+   *    arr[2] = x
+   *    lvalue_dim = 0, index = 0 + 2 * 4 * 5
+   *
+   *    arr[2][3] = x
+   *    lvalue_dim = 1, index = 40 + 3 * 5 */
+
+  lvalue_dim++;
+
+  for (i = lvalue_dim; i < totdim; i++) {
+    index *= dimsize[i];
+  }
+
+  index += arrayoffset;
+
+  if (lvalue_dim == totdim) { /* single item, assign directly */
+    if (!check_item_type(py)) {
+      PyErr_Format(PyExc_TypeError,
+                   "%s %.200s.%.200s, expected a %s type, not %s",
+                   error_prefix,
+                   LUXO_prim_identifier(ptr->type).data(),
+                   LUXO_prop_identifier(prop).data(),
+                   item_type_str,
+                   Py_TYPE(py)->tp_name);
+      return -1;
+    }
+    copy_value_single(py, ptr, prop, NULL, 0, &index, convert_item, rna_set_index);
+  } else {
+    if (validate_array(py,
+                       ptr,
+                       prop,
+                       lvalue_dim,
+                       check_item_type,
+                       item_type_str,
+                       &totitem,
+                       error_prefix) == -1) {
+      return -1;
+    }
+
+    if (totitem) {
+      copy_values(py, ptr, prop, lvalue_dim, NULL, 0, &index, convert_item, rna_set_index);
+    }
+  }
+  return 0;
+}
+
+static void py_to_float(const struct ItemConvertArgData *arg, PyObject *py, char *data)
+{
+  const float *range = arg->float_data.range;
+  float value = (float)PyFloat_AsDouble(py);
+  CLAMP(value, range[0], range[1]);
+  *(float *)data = value;
+}
+
+static void py_to_int(const struct ItemConvertArgData *arg, PyObject *py, char *data)
+{
+  const int *range = arg->int_data.range;
+  int value = PyC_Long_AsI32(py);
+  CLAMP(value, range[0], range[1]);
+  *(int *)data = value;
+}
+
+static void py_to_bool(const struct ItemConvertArgData *UNUSED(arg), PyObject *py, char *data)
+{
+  *(bool *)data = (bool)PyObject_IsTrue(py);
+}
+
+static int py_float_check(PyObject *py)
+{
+  /* accept both floats and integers */
+  return PyNumber_Check(py);
+}
+
+static int py_int_check(PyObject *py)
+{
+  /* accept only integers */
+  return PyLong_Check(py);
+}
+
+static int py_bool_check(PyObject *py)
+{
+  return PyBool_Check(py);
+}
+
+static void float_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, void *value)
+{
+  LUXO_prop_float_set_index(ptr, prop, index, *(float *)value);
+}
+
+static void int_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, void *value)
+{
+  LUXO_prop_int_set_index(ptr, prop, index, *(int *)value);
+}
+
+static void bool_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, void *value)
+{
+  LUXO_prop_boolean_set_index(ptr, prop, index, *(bool *)value);
+}
+
+static void convert_item_init_float(KrakenPRIM *ptr,
+                                    KrakenPROP *prop,
+                                    ItemConvert_FuncArg *convert_item)
+{
+  float *range = convert_item->arg.float_data.range;
+  convert_item->func = py_to_float;
+  LUXO_prop_float_range(ptr, prop, &range[0], &range[1]);
+}
+
+static void convert_item_init_int(KrakenPRIM *ptr,
+                                  KrakenPROP *prop,
+                                  ItemConvert_FuncArg *convert_item)
+{
+  int *range = convert_item->arg.int_data.range;
+  convert_item->func = py_to_int;
+  LUXO_prop_int_range(ptr, prop, &range[0], &range[1]);
+}
+
+static void convert_item_init_bool(KrakenPRIM *UNUSED(ptr),
+                                   KrakenPROP *UNUSED(prop),
+                                   ItemConvert_FuncArg *convert_item)
+{
+  convert_item->func = py_to_bool;
+}
+
+
+static int pyprim_py_to_array_index(KrakenPRIM *ptr,
+                                    KrakenPROP *prop,
+                                    int arraydim,
+                                    int arrayoffset,
+                                    int index,
+                                    PyObject *py,
+                                    const char *error_prefix)
+{
+  int ret;
+  switch (LUXO_prop_type(prop)) {
+    case PROP_FLOAT: {
+      ItemConvert_FuncArg convert_item;
+      convert_item_init_float(ptr, prop, &convert_item);
+
+      ret = py_to_array_index(py,
+                              ptr,
+                              prop,
+                              arraydim,
+                              arrayoffset,
+                              index,
+                              py_float_check,
+                              "float",
+                              &convert_item,
+                              float_set_index,
+                              error_prefix);
+      break;
+    }
+    case PROP_INT: {
+      ItemConvert_FuncArg convert_item;
+      convert_item_init_int(ptr, prop, &convert_item);
+
+      ret = py_to_array_index(py,
+                              ptr,
+                              prop,
+                              arraydim,
+                              arrayoffset,
+                              index,
+                              py_int_check,
+                              "int",
+                              &convert_item,
+                              int_set_index,
+                              error_prefix);
+      break;
+    }
+    case PROP_BOOLEAN: {
+      ItemConvert_FuncArg convert_item;
+      convert_item_init_bool(ptr, prop, &convert_item);
+
+      ret = py_to_array_index(py,
+                              ptr,
+                              prop,
+                              arraydim,
+                              arrayoffset,
+                              index,
+                              py_bool_check,
+                              "boolean",
+                              &convert_item,
+                              bool_set_index,
+                              error_prefix);
+      break;
+    }
+    default: {
+      PyErr_SetString(PyExc_TypeError, "not an array type");
+      ret = -1;
+      break;
+    }
+  }
+
+  return ret;
+}
+
+static int pyprim_py_to_prop_array_index(KPy_StagePropARRAY *self, int index, PyObject *value)
+{
+  int ret = 0;
+  KrakenPRIM *ptr = &self->ptr;
+  KrakenPROP *prop = self->prop;
+
+  const int totdim = LUXO_prop_array_dimension(ptr, prop, NULL);
+
+  if (totdim > 1) {
+    // char error_str[512];
+    if (pyprim_py_to_array_index(&self->ptr,
+                                 self->prop,
+                                 self->arraydim,
+                                 self->arrayoffset,
+                                 index,
+                                 value,
+                                 "") == -1) {
+      /* Error is set. */
+      ret = -1;
+    }
+  } else {
+    /* See if we can coerce into a Python type - 'PropertyType'. */
+    switch (LUXO_prop_type(prop)) {
+      case PROP_BOOLEAN: {
+        const int param = PyC_Long_AsBool(value);
+
+        if (param == -1) {
+          /* Error is set. */
+          ret = -1;
+        } else {
+          LUXO_prop_boolean_set_index(ptr, prop, index, param);
+        }
+        break;
+      }
+      case PROP_INT: {
+        int param = PyC_Long_AsI32(value);
+        if (param == -1 && PyErr_Occurred()) {
+          PyErr_SetString(PyExc_TypeError, "expected an int type");
+          ret = -1;
+        } else {
+          LUXO_prop_int_clamp(ptr, prop, &param);
+          LUXO_prop_int_set_index(ptr, prop, index, param);
+        }
+        break;
+      }
+      case PROP_FLOAT: {
+        float param = PyFloat_AsDouble(value);
+        if (PyErr_Occurred()) {
+          PyErr_SetString(PyExc_TypeError, "expected a float type");
+          ret = -1;
+        } else {
+          LUXO_prop_float_clamp(ptr, prop, &param);
+          LUXO_prop_float_set_index(ptr, prop, index, param);
+        }
+        break;
+      }
+      default:
+        PyErr_SetString(PyExc_AttributeError, "not an array type");
+        ret = -1;
+        break;
+    }
+  }
+
+  /* Run RNA property functions. */
+  if (LUXO_prop_update_check(prop)) {
+    LUXO_prop_update(KPY_context_get(), ptr, prop);
+  }
+
+  return ret;
+}
+
+/* generic check to see if a PyObject is compatible with a collection
+ * -1 on failure, 0 on success, sets the error */
+static int pyprim_prop_collection_type_check(KPy_StagePROP *self, PyObject *value)
+{
+  KrakenPRIM *prop_sprim;
+
+  if (value == Py_None) {
+    if (LUXO_prop_flag(self->prop) & PROP_NEVER_NULL) {
+      PyErr_Format(PyExc_TypeError,
+                   "kpy_prop_collection[key] = value: invalid, "
+                   "this collection doesn't support None assignment");
+      return -1;
+    }
+
+    return 0; /* None is OK. */
+  }
+  if (KPy_StagePRIM_Check(value) == 0) {
+    PyErr_Format(PyExc_TypeError,
+                 "kpy_prop_collection[key] = value: invalid, "
+                 "expected a StructRNA type or None, not a %.200s",
+                 Py_TYPE(value)->tp_name);
+    return -1;
+  }
+  if ((prop_sprim = LUXO_prop_pointer_type(&self->ptr, self->prop))) {
+    KrakenPRIM *value_sprim = ((KPy_StagePRIM *)value)->ptr.type;
+    if (LUXO_prim_is_a(value_sprim, prop_sprim) == 0) {
+      PyErr_Format(PyExc_TypeError,
+                   "kpy_prop_collection[key] = value: invalid, "
+                   "expected a '%.200s' type or None, not a '%.200s'",
+                   LUXO_prim_identifier(prop_sprim).data(),
+                   LUXO_prim_identifier(value_sprim).data());
+      return -1;
+    }
+
+    return 0; /* OK, this is the correct type! */
+  }
+
+  PyErr_Format(PyExc_TypeError,
+               "kpy_prop_collection[key] = value: internal error, "
+               "failed to get the collection type");
+  return -1;
+}
+
+/* NOTE: currently this is a copy of 'pyprim_prop_collection_subscript' with
+ * large blocks commented, we may support slice/key indices later */
+static int pyprim_prop_collection_ass_subscript(KPy_StagePROP *self,
+                                                PyObject *key,
+                                                PyObject *value)
+{
+  PYSTAGE_PROP_CHECK_INT(self);
+
+  /* Validate the assigned value. */
+  if (value == NULL) {
+    PyErr_SetString(PyExc_TypeError, "del kpy_prop_collection[key]: not supported");
+    return -1;
+  }
+  if (pyprim_prop_collection_type_check(self, value) == -1) {
+    return -1; /* Exception is set. */
+  }
+
+#if 0
+  if (PyUnicode_Check(key)) {
+    return pyprim_prop_collection_subscript_str(self, PyUnicode_AsUTF8(key));
+  }
+  else
+#endif
+  if (PyIndex_Check(key)) {
+    const Py_ssize_t i = PyNumber_AsSsize_t(key, PyExc_IndexError);
+    if (i == -1 && PyErr_Occurred()) {
+      return -1;
+    }
+
+    return pyprim_prop_collection_ass_subscript_int(self, i, value);
+  }
+#if 0 /* TODO: fake slice assignment. */
+  else if (PySlice_Check(key)) {
+    PySliceObject *key_slice = (PySliceObject *)key;
+    Py_ssize_t step = 1;
+
+    if (key_slice->step != Py_None && !_PyEval_SliceIndex(key, &step)) {
+      return NULL;
+    }
+    else if (step != 1) {
+      PyErr_SetString(PyExc_TypeError, "kpy_prop_collection[slice]: slice steps not supported");
+      return NULL;
+    }
+    else if (key_slice->start == Py_None && key_slice->stop == Py_None) {
+      return pyprim_prop_collection_subscript_slice(self, 0, PY_SSIZE_T_MAX);
+    }
+    else {
+      Py_ssize_t start = 0, stop = PY_SSIZE_T_MAX;
+
+      /* Avoid PySlice_GetIndicesEx because it needs to know the length ahead of time. */
+      if (key_slice->start != Py_None && !_PyEval_SliceIndex(key_slice->start, &start)) {
+        return NULL;
+      }
+      if (key_slice->stop != Py_None && !_PyEval_SliceIndex(key_slice->stop, &stop)) {
+        return NULL;
+      }
+
+      if (start < 0 || stop < 0) {
+        /* Only get the length for negative values. */
+        Py_ssize_t len = (Py_ssize_t)LUXO_prop_collection_length(&self->ptr, self->prop);
+        if (start < 0) {
+          start += len;
+          CLAMP_MIN(start, 0);
+        }
+        if (stop < 0) {
+          stop += len;
+          CLAMP_MIN(stop, 0);
+        }
+      }
+
+      if (stop - start <= 0) {
+        return PyList_New(0);
+      }
+      else {
+        return pyprim_prop_collection_subscript_slice(self, start, stop);
+      }
+    }
+  }
+#endif
+
+  PyErr_Format(PyExc_TypeError,
+               "kpy_prop_collection[key]: invalid key, "
+               "must be a string or an int, not %.200s",
+               Py_TYPE(key)->tp_name);
+  return -1;
+}
+
+/**
+ * Helpers for #prop_subscript_ass_array_slice
+ */
+
+static PyObject *prop_subscript_ass_array_slice__as_seq_fast(PyObject *value, int length)
+{
+  PyObject *value_fast;
+  if (!(value_fast = PySequence_Fast(value,
+                                     "kpy_prop_array[slice] = value: "
+                                     "element in assignment is not a sequence type"))) {
+    return NULL;
+  }
+  if (PySequence_Fast_GET_SIZE(value_fast) != length) {
+    Py_DECREF(value_fast);
+    PyErr_SetString(PyExc_ValueError,
+                    "kpy_prop_array[slice] = value: "
+                    "re-sizing kpy_struct element in arrays isn't supported");
+
+    return NULL;
+  }
+
+  return value_fast;
+}
+
+static int prop_subscript_ass_array_slice__float_recursive(PyObject **value_items,
+                                                           float *value,
+                                                           int totdim,
+                                                           const int dimsize[],
+                                                           const float range[2])
+{
+  const int length = dimsize[0];
+  if (totdim > 1) {
+    int index = 0;
+    int i;
+    for (i = 0; i != length; i++) {
+      PyObject *subvalue = prop_subscript_ass_array_slice__as_seq_fast(value_items[i], dimsize[1]);
+      if (UNLIKELY(subvalue == NULL)) {
+        return 0;
+      }
+
+      index += prop_subscript_ass_array_slice__float_recursive(PySequence_Fast_ITEMS(subvalue),
+                                                               &value[index],
+                                                               totdim - 1,
+                                                               &dimsize[1],
+                                                               range);
+
+      Py_DECREF(subvalue);
+    }
+    return index;
+  }
+
+  KLI_assert(totdim == 1);
+  const float min = range[0], max = range[1];
+  int i;
+  for (i = 0; i != length; i++) {
+    float v = PyFloat_AsDouble(value_items[i]);
+    CLAMP(v, min, max);
+    value[i] = v;
+  }
+  return i;
+}
+
+static int prop_subscript_ass_array_slice__int_recursive(PyObject **value_items,
+                                                         int *value,
+                                                         int totdim,
+                                                         const int dimsize[],
+                                                         const int range[2])
+{
+  const int length = dimsize[0];
+  if (totdim > 1) {
+    int index = 0;
+    int i;
+    for (i = 0; i != length; i++) {
+      PyObject *subvalue = prop_subscript_ass_array_slice__as_seq_fast(value_items[i], dimsize[1]);
+      if (UNLIKELY(subvalue == NULL)) {
+        return 0;
+      }
+
+      index += prop_subscript_ass_array_slice__int_recursive(PySequence_Fast_ITEMS(subvalue),
+                                                             &value[index],
+                                                             totdim - 1,
+                                                             &dimsize[1],
+                                                             range);
+
+      Py_DECREF(subvalue);
+    }
+    return index;
+  }
+
+  KLI_assert(totdim == 1);
+  const int min = range[0], max = range[1];
+  int i;
+  for (i = 0; i != length; i++) {
+    int v = PyLong_AsLong(value_items[i]);
+    CLAMP(v, min, max);
+    value[i] = v;
+  }
+  return i;
+}
+
+static int prop_subscript_ass_array_slice__bool_recursive(PyObject **value_items,
+                                                          bool *value,
+                                                          int totdim,
+                                                          const int dimsize[])
+{
+  const int length = dimsize[0];
+  if (totdim > 1) {
+    int index = 0;
+    int i;
+    for (i = 0; i != length; i++) {
+      PyObject *subvalue = prop_subscript_ass_array_slice__as_seq_fast(value_items[i], dimsize[1]);
+      if (UNLIKELY(subvalue == NULL)) {
+        return 0;
+      }
+
+      index += prop_subscript_ass_array_slice__bool_recursive(PySequence_Fast_ITEMS(subvalue),
+                                                              &value[index],
+                                                              totdim - 1,
+                                                              &dimsize[1]);
+
+      Py_DECREF(subvalue);
+    }
+    return index;
+  }
+
+  KLI_assert(totdim == 1);
+  int i;
+  for (i = 0; i != length; i++) {
+    const int v = PyLong_AsLong(value_items[i]);
+    value[i] = v;
+  }
+  return i;
+}
+
+/* Could call `pyprim_py_to_prop_array_index(self, i, value)` in a loop, but it is slow. */
+static int prop_subscript_ass_array_slice(KrakenPRIM *ptr,
+                                          KrakenPROP *prop,
+                                          int arraydim,
+                                          int arrayoffset,
+                                          int start,
+                                          int stop,
+                                          int length,
+                                          PyObject *value_orig)
+{
+  const int length_flat = LUXO_prop_array_length(ptr, prop);
+  PyObject *value;
+  void *values_alloc = NULL;
+  int ret = 0;
+
+  if (value_orig == NULL) {
+    PyErr_SetString(
+      PyExc_TypeError,
+      "kpy_prop_array[slice] = value: deleting with list types is not supported by kpy_struct");
+    return -1;
+  }
+
+  if (!(value = PySequence_Fast(
+          value_orig,
+          "kpy_prop_array[slice] = value: assignment is not a sequence type"))) {
+    return -1;
+  }
+
+  if (PySequence_Fast_GET_SIZE(value) != stop - start) {
+    Py_DECREF(value);
+    PyErr_SetString(PyExc_TypeError,
+                    "kpy_prop_array[slice] = value: re-sizing kpy_struct arrays isn't supported");
+    return -1;
+  }
+
+  int dimsize[3];
+  const int totdim = LUXO_prop_array_dimension(ptr, prop, dimsize);
+  if (totdim > 1) {
+    KLI_assert(dimsize[arraydim] == length);
+  }
+
+  int span = 1;
+  if (totdim > 1) {
+    for (int i = arraydim + 1; i < totdim; i++) {
+      span *= dimsize[i];
+    }
+  }
+
+  PyObject **value_items = PySequence_Fast_ITEMS(value);
+  switch (LUXO_prop_type(prop)) {
+    case PROP_FLOAT: {
+      float values_stack[PYPRIM_STACK_ARRAY];
+      float *values = (length_flat > PYPRIM_STACK_ARRAY) ?
+                        (float *)(values_alloc = PyMem_MALLOC(sizeof(*values) * length_flat)) :
+                        values_stack;
+      if (start != 0 || stop != length) {
+        /* Partial assignment? - need to get the array. */
+        LUXO_prop_float_get_array(ptr, prop, values);
+      }
+
+      float range[2];
+      LUXO_prop_float_range(ptr, prop, &range[0], &range[1]);
+
+      dimsize[arraydim] = stop - start;
+      prop_subscript_ass_array_slice__float_recursive(value_items,
+                                                      &values[arrayoffset + (start * span)],
+                                                      totdim - arraydim,
+                                                      &dimsize[arraydim],
+                                                      range);
+
+      if (PyErr_Occurred()) {
+        ret = -1;
+      } else {
+        LUXO_prop_float_set_array(ptr, prop, values);
+      }
+      break;
+    }
+    case PROP_INT: {
+      int values_stack[PYPRIM_STACK_ARRAY];
+      int *values = (length_flat > PYPRIM_STACK_ARRAY) ?
+                      (int *)(values_alloc = PyMem_MALLOC(sizeof(*values) * length_flat)) :
+                      values_stack;
+      if (start != 0 || stop != length) {
+        /* Partial assignment? - need to get the array. */
+        LUXO_prop_int_get_array(ptr, prop, values);
+      }
+
+      int range[2];
+      LUXO_prop_int_range(ptr, prop, &range[0], &range[1]);
+
+      dimsize[arraydim] = stop - start;
+      prop_subscript_ass_array_slice__int_recursive(value_items,
+                                                    &values[arrayoffset + (start * span)],
+                                                    totdim - arraydim,
+                                                    &dimsize[arraydim],
+                                                    range);
+
+      if (PyErr_Occurred()) {
+        ret = -1;
+      } else {
+        LUXO_prop_int_set_array(ptr, prop, values);
+      }
+      break;
+    }
+    case PROP_BOOLEAN: {
+      bool values_stack[PYPRIM_STACK_ARRAY];
+      bool *values = (length_flat > PYPRIM_STACK_ARRAY) ?
+                       (bool *)(values_alloc = PyMem_MALLOC(sizeof(bool) * length_flat)) :
+                       values_stack;
+
+      if (start != 0 || stop != length) {
+        /* Partial assignment? - need to get the array. */
+        LUXO_prop_boolean_get_array(ptr, prop, values);
+      }
+
+      dimsize[arraydim] = stop - start;
+      prop_subscript_ass_array_slice__bool_recursive(value_items,
+                                                     &values[arrayoffset + (start * span)],
+                                                     totdim - arraydim,
+                                                     &dimsize[arraydim]);
+
+      if (PyErr_Occurred()) {
+        ret = -1;
+      } else {
+        LUXO_prop_boolean_set_array(ptr, prop, values);
+      }
+      break;
+    }
+    default:
+      PyErr_SetString(PyExc_TypeError, "not an array type");
+      ret = -1;
+      break;
+  }
+
+  Py_DECREF(value);
+
+  if (values_alloc) {
+    PyMem_FREE(values_alloc);
+  }
+
+  return ret;
+}
+
+static int prop_subscript_ass_array_int(KPy_StagePropARRAY *self,
+                                        Py_ssize_t keynum,
+                                        PyObject *value)
+{
+  PYSTAGE_PROP_CHECK_INT((KPy_StagePROP *)self);
+
+  int len = pyprim_prop_array_length(self);
+
+  if (keynum < 0) {
+    keynum += len;
+  }
+
+  if (keynum >= 0 && keynum < len) {
+    return pyprim_py_to_prop_array_index(self, keynum, value);
+  }
+
+  PyErr_SetString(PyExc_IndexError, "kpy_prop_array[index] = value: index out of range");
+  return -1;
+}
+
+static int pyprim_prop_array_ass_subscript(KPy_StagePropARRAY *self,
+                                           PyObject *key,
+                                           PyObject *value)
+{
+  // char *keyname = NULL; /* Not supported yet. */
+  int ret = -1;
+
+  PYSTAGE_PROP_CHECK_INT((KPy_StagePROP *)self);
+
+  if (!LUXO_prop_editable_flag(&self->ptr, self->prop)) {
+    PyErr_Format(PyExc_AttributeError,
+                 "kpy_prop_collection: attribute \"%.200s\" from \"%.200s\" is read-only",
+                 LUXO_prop_identifier(self->prop).data(),
+                 LUXO_prim_identifier(self->ptr.type).data());
+    ret = -1;
+  }
+
+  else if (PyIndex_Check(key)) {
+    const Py_ssize_t i = PyNumber_AsSsize_t(key, PyExc_IndexError);
+    if (i == -1 && PyErr_Occurred()) {
+      ret = -1;
+    } else {
+      ret = prop_subscript_ass_array_int(self, i, value);
+    }
+  } else if (PySlice_Check(key)) {
+    const Py_ssize_t len = pyprim_prop_array_length(self);
+    Py_ssize_t start, stop, step, slicelength;
+
+    if (PySlice_GetIndicesEx(key, len, &start, &stop, &step, &slicelength) < 0) {
+      ret = -1;
+    } else if (slicelength <= 0) {
+      ret = 0; /* Do nothing. */
+    } else if (step == 1) {
+      ret = prop_subscript_ass_array_slice(&self->ptr,
+                                           self->prop,
+                                           self->arraydim,
+                                           self->arrayoffset,
+                                           start,
+                                           stop,
+                                           len,
+                                           value);
+    } else {
+      PyErr_SetString(PyExc_TypeError, "slice steps not supported with RNA");
+      ret = -1;
+    }
+  } else {
+    PyErr_SetString(PyExc_AttributeError, "invalid key, key must be an int");
+    ret = -1;
+  }
+
+  if (ret != -1) {
+    if (LUXO_prop_update_check(self->prop)) {
+      LUXO_prop_update(KPY_context_get(), &self->ptr, self->prop);
+    }
+  }
+
+  return ret;
 }
 
 /* For slice only. */
@@ -580,6 +2289,232 @@ static PyNumberMethods pyprim_prop_collection_as_number = {
   NULL,                                 /* nb_positive */
   NULL,                                 /* nb_absolute */
   (inquiry)pyprim_prop_collection_bool, /* nb_bool */
+};
+
+static int pyprim_array_contains_py(KrakenPRIM *ptr, KrakenPROP *prop, PyObject *value)
+{
+  /* TODO: multi-dimensional arrays. */
+
+  const int len = LUXO_prop_array_length(ptr, prop);
+  int type;
+  int i;
+
+  if (len == 0) {
+    /* possible with dynamic arrays */
+    return 0;
+  }
+
+  if (LUXO_prop_array_dimension(ptr, prop, NULL) > 1) {
+    PyErr_SetString(PyExc_TypeError, "PropertyRNA - multi dimensional arrays not supported yet");
+    return -1;
+  }
+
+  type = LUXO_prop_type(prop);
+
+  switch (type) {
+    case PROP_FLOAT: {
+      const float value_f = PyFloat_AsDouble(value);
+      if (value_f == -1 && PyErr_Occurred()) {
+        PyErr_Clear();
+        return 0;
+      }
+
+      float tmp[32];
+      float *tmp_arr;
+
+      if (len * sizeof(float) > sizeof(tmp)) {
+        tmp_arr = static_cast<float *>(PyMem_MALLOC(len * sizeof(float)));
+      } else {
+        tmp_arr = tmp;
+      }
+
+      LUXO_prop_float_get_array(ptr, prop, tmp_arr);
+
+      for (i = 0; i < len; i++) {
+        if (tmp_arr[i] == value_f) {
+          break;
+        }
+      }
+
+      if (tmp_arr != tmp) {
+        PyMem_FREE(tmp_arr);
+      }
+
+      return i < len ? 1 : 0;
+
+      break;
+    }
+    case PROP_INT: {
+      const int value_i = PyC_Long_AsI32(value);
+      if (value_i == -1 && PyErr_Occurred()) {
+        PyErr_Clear();
+        return 0;
+      }
+
+      int tmp[32];
+      int *tmp_arr;
+
+      if (len * sizeof(int) > sizeof(tmp)) {
+        tmp_arr = static_cast<int *>(PyMem_MALLOC(len * sizeof(int)));
+      } else {
+        tmp_arr = tmp;
+      }
+
+      LUXO_prop_int_get_array(ptr, prop, tmp_arr);
+
+      for (i = 0; i < len; i++) {
+        if (tmp_arr[i] == value_i) {
+          break;
+        }
+      }
+
+      if (tmp_arr != tmp) {
+        PyMem_FREE(tmp_arr);
+      }
+
+      return i < len ? 1 : 0;
+
+      break;
+    }
+    case PROP_BOOLEAN: {
+      const int value_i = PyC_Long_AsBool(value);
+      if (value_i == -1 && PyErr_Occurred()) {
+        PyErr_Clear();
+        return 0;
+      }
+
+      bool tmp[32];
+      bool *tmp_arr;
+
+      if (len * sizeof(bool) > sizeof(tmp)) {
+        tmp_arr = static_cast<bool *>(PyMem_MALLOC(len * sizeof(bool)));
+      } else {
+        tmp_arr = tmp;
+      }
+
+      LUXO_prop_boolean_get_array(ptr, prop, tmp_arr);
+
+      for (i = 0; i < len; i++) {
+        if (tmp_arr[i] == value_i) {
+          break;
+        }
+      }
+
+      if (tmp_arr != tmp) {
+        PyMem_FREE(tmp_arr);
+      }
+
+      return i < len ? 1 : 0;
+
+      break;
+    }
+  }
+
+  /* should never reach this */
+  PyErr_SetString(PyExc_TypeError, "PropertyRNA - type not in float/bool/int");
+  return -1;
+}
+
+static int pyprim_prop_array_contains(KPy_StagePROP *self, PyObject *value)
+{
+  return pyprim_array_contains_py(&self->ptr, self->prop, value);
+}
+
+static int pyprim_prop_collection_contains(KPy_StagePROP *self, PyObject *key)
+{
+  KrakenPRIM newptr; /* Not used, just so LUXO_prop_collection_lookup_string runs. */
+
+  if (PyTuple_Check(key)) {
+    /* Special case, for ID data-blocks. */
+    return pyprim_prop_collection_subscript_str_lib_pair_ptr(self,
+                                                             key,
+                                                             "(id, lib) in kpy_prop_collection",
+                                                             false,
+                                                             NULL);
+  }
+
+  /* Key in dict style check. */
+  const char *keyname = PyUnicode_AsUTF8(key);
+
+  if (keyname == NULL) {
+    PyErr_SetString(PyExc_TypeError,
+                    "kpy_prop_collection.__contains__: expected a string or a tuple of strings");
+    return -1;
+  }
+
+  if (LUXO_prop_collection_lookup_string(&self->ptr, self->prop, keyname, &newptr)) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static int pyprim_prim_contains(KPy_StagePRIM *self, PyObject *value)
+{
+  const char *name = PyUnicode_AsUTF8(value);
+
+  PYSTAGE_PRIM_CHECK_INT(self);
+
+  if (!name) {
+    PyErr_SetString(PyExc_TypeError, "kpy_struct.__contains__: expected a string");
+    return -1;
+  }
+
+  if (LUXO_prim_idprops_check(self->ptr.type) == 0) {
+    PyErr_SetString(PyExc_TypeError, "kpy_struct: this type doesn't support IDProperties");
+    return -1;
+  }
+
+  IDProperty *group = LUXO_prim_idprops(&self->ptr, 0);
+
+  if (!group) {
+    return 0;
+  }
+
+  return IDP_GetPropertyFromGroup(group, TfToken(name)) ? 1 : 0;
+}
+
+static PySequenceMethods pyprim_prop_array_as_sequence = {
+  (lenfunc)pyprim_prop_array_length,
+  NULL, /* sq_concat */
+  NULL, /* sq_repeat */
+  (ssizeargfunc)pyprim_prop_array_subscript_int,
+  /* sq_item */ /* Only set this so PySequence_Check() returns True */
+  NULL,         /* sq_slice */
+  (ssizeobjargproc)prop_subscript_ass_array_int, /* sq_ass_item */
+  NULL,                                          /* *was* sq_ass_slice */
+  (objobjproc)pyprim_prop_array_contains,        /* sq_contains */
+  (binaryfunc)NULL,                              /* sq_inplace_concat */
+  (ssizeargfunc)NULL,                            /* sq_inplace_repeat */
+};
+
+static PySequenceMethods pyprim_prop_collection_as_sequence = {
+  (lenfunc)pyprim_prop_collection_length,
+  NULL, /* sq_concat */
+  NULL, /* sq_repeat */
+  (ssizeargfunc)pyprim_prop_collection_subscript_int,
+  /* sq_item */                         /* Only set this so PySequence_Check() returns True */
+  NULL,                                 /* *was* sq_slice */
+  (ssizeobjargproc)                     /* pyprim_prop_collection_ass_subscript_int */
+  NULL /* let mapping take this one */, /* sq_ass_item */
+  NULL,                                 /* *was* sq_ass_slice */
+  (objobjproc)pyprim_prop_collection_contains, /* sq_contains */
+  (binaryfunc)NULL,                            /* sq_inplace_concat */
+  (ssizeargfunc)NULL,                          /* sq_inplace_repeat */
+};
+
+static PySequenceMethods pyprim_prim_as_sequence = {
+  NULL, /* Can't set the len otherwise it can evaluate as false */
+  NULL, /* sq_concat */
+  NULL, /* sq_repeat */
+  NULL,
+  /* sq_item */                     /* Only set this so PySequence_Check() returns True */
+  NULL,                             /* *was* sq_slice */
+  NULL,                             /* sq_ass_item */
+  NULL,                             /* *was* sq_ass_slice */
+  (objobjproc)pyprim_prim_contains, /* sq_contains */
+  (binaryfunc)NULL,                 /* sq_inplace_concat */
+  (ssizeargfunc)NULL,               /* sq_inplace_repeat */
 };
 
 /* NOTE(@campbellbarton): Regarding comparison `__cmp__`:
@@ -797,6 +2732,567 @@ static PyObject *pyprim_prop_update(KPy_StagePROP *self)
   Py_RETURN_NONE;
 }
 
+/* A bit of a kludge, make a list out of a collection or array,
+ * then return the list's iter function, not especially fast, but convenient for now. */
+static PyObject *pyprim_prop_array_iter(KPy_StagePropARRAY *self)
+{
+  /* Try get values from a collection. */
+  PyObject *ret;
+  PyObject *iter = NULL;
+  int len;
+
+  PYSTAGE_PROP_CHECK_OBJ((KPy_StagePROP *)self);
+
+  len = pyprim_prop_array_length(self);
+  ret = pyprim_prop_array_subscript_slice(self, &self->ptr, self->prop, 0, len, len);
+
+  /* we know this is a list so no need to PyIter_Check
+   * otherwise it could be NULL (unlikely) if conversion failed */
+  if (ret) {
+    iter = PyObject_GetIter(ret);
+    Py_DECREF(ret);
+  }
+
+  return iter;
+}
+
+static PyObject *pyprim_prop_collection_iter(KPy_StagePROP *self);
+
+PyDoc_STRVAR(pyprim_prop_collection_values_doc,
+             ".. method:: values()\n"
+             "\n"
+             "   Return the values of collection\n"
+             "   (matching Python's dict.values() functionality).\n"
+             "\n"
+             "   :return: the members of this collection.\n"
+             "   :rtype: list\n");
+static PyObject *pyprim_prop_collection_values(KPy_StagePROP *self)
+{
+  /* Re-use slice. */
+  return pyprim_prop_collection_subscript_slice(self, 0, PY_SSIZE_T_MAX);
+}
+
+#ifndef USE_PYRNA_ITER
+static PyObject *pyprim_prop_collection_iter(KPy_StagePROP *self)
+{
+  /* Try get values from a collection. */
+  PyObject *ret;
+  PyObject *iter = NULL;
+  ret = pyprim_prop_collection_values(self);
+
+  /* we know this is a list so no need to PyIter_Check
+   * otherwise it could be NULL (unlikely) if conversion failed */
+  if (ret) {
+    iter = PyObject_GetIter(ret);
+    Py_DECREF(ret);
+  }
+
+  return iter;
+}
+#endif /* # !USE_PYRNA_ITER */
+
+static bool foreach_attr_type(KPy_StagePROP *self,
+                              const char *attr,
+                              /* Values to assign. */
+                              RawPropertyType *r_raw_type,
+                              int *r_attr_tot,
+                              bool *r_attr_signed)
+{
+  KrakenPROP *prop;
+  bool attr_ok = true;
+  *r_raw_type = PROP_RAW_UNSET;
+  *r_attr_tot = 0;
+  *r_attr_signed = false;
+
+  /* NOTE: this is fail with zero length lists, so don't let this get called in that case. */
+  LUXO_PROP_BEGIN(&self->ptr, itemptr, self->prop)
+  {
+    prop = LUXO_prim_find_property(&itemptr, attr);
+    if (prop) {
+      *r_raw_type = LUXO_prop_raw_type(prop);
+      *r_attr_tot = LUXO_prop_array_length(&itemptr, prop);
+      *r_attr_signed = (LUXO_prop_subtype(prop) != PROP_UNSIGNED);
+    } else {
+      attr_ok = false;
+    }
+    break;
+  }
+  LUXO_PROP_END;
+
+  return attr_ok;
+}
+
+/* pyrna_prop_collection_foreach_get/set both use this. */
+static int foreach_parse_args(KPy_StagePROP *self,
+                              PyObject *args,
+
+                              /* Values to assign. */
+                              const char **r_attr,
+                              PyObject **r_seq,
+                              int *r_tot,
+                              int *r_size,
+                              RawPropertyType *r_raw_type,
+                              int *r_attr_tot,
+                              bool *r_attr_signed)
+{
+#if 0
+  int array_tot;
+  int target_tot;
+#endif
+
+  *r_size = *r_attr_tot = 0;
+  *r_attr_signed = false;
+  *r_raw_type = PROP_RAW_UNSET;
+
+  if (!PyArg_ParseTuple(args, "sO:foreach_get/set", r_attr, r_seq)) {
+    return -1;
+  }
+
+  if (!PySequence_Check(*r_seq) && PyObject_CheckBuffer(*r_seq)) {
+    PyErr_Format(
+      PyExc_TypeError,
+      "foreach_get/set expected second argument to be a sequence or buffer, not a %.200s",
+      Py_TYPE(*r_seq)->tp_name);
+    return -1;
+  }
+
+  /* TODO: buffer may not be a sequence! array.array() is though. */
+  *r_tot = PySequence_Size(*r_seq);
+
+  if (*r_tot > 0) {
+    if (!foreach_attr_type(self, *r_attr, r_raw_type, r_attr_tot, r_attr_signed)) {
+      PyErr_Format(PyExc_AttributeError,
+                   "foreach_get/set '%.200s.%200s[...]' elements have no attribute '%.200s'",
+                   LUXO_prim_identifier(self->ptr.type).data(),
+                   LUXO_prop_identifier(self->prop).data(),
+                   *r_attr);
+      return -1;
+    }
+    *r_size = LUXO_raw_type_sizeof(*r_raw_type);
+
+#if 0 /* Works fine, but not strictly needed. \
+       * we could allow LUXO_prop_collection_raw_* to do the checks */
+    if ((*r_attr_tot) < 1) {
+      *r_attr_tot = 1;
+    }
+
+    if (LUXO_prop_type(self->prop) == PROP_COLLECTION) {
+      array_tot = LUXO_prop_collection_length(&self->ptr, self->prop);
+    }
+    else {
+      array_tot = LUXO_prop_array_length(&self->ptr, self->prop);
+    }
+
+    target_tot = array_tot * (*r_attr_tot);
+
+    /* rna_access.c - rna_raw_access(...) uses this same method. */
+    if (target_tot != (*r_tot)) {
+      PyErr_Format(PyExc_TypeError,
+                   "foreach_get(attr, sequence) sequence length mismatch given %d, needed %d",
+                   *r_tot,
+                   target_tot);
+      return -1;
+    }
+#endif
+  }
+
+  /* Check 'r_attr_tot' otherwise we don't know if any values were set.
+   * This isn't ideal because it means running on an empty list may
+   * fail silently when it's not compatible. */
+  if (*r_size == 0 && *r_attr_tot != 0) {
+    PyErr_SetString(PyExc_AttributeError, "attribute does not support foreach method");
+    return -1;
+  }
+  return 0;
+}
+
+static bool foreach_compat_buffer(RawPropertyType raw_type, int attr_signed, const char *format)
+{
+  const char f = format ? *format : 'B'; /* B is assumed when not set */
+
+  switch (raw_type) {
+    case PROP_RAW_CHAR:
+      if (attr_signed) {
+        return (f == 'b') ? 1 : 0;
+      } else {
+        return (f == 'B') ? 1 : 0;
+      }
+    case PROP_RAW_SHORT:
+      if (attr_signed) {
+        return (f == 'h') ? 1 : 0;
+      } else {
+        return (f == 'H') ? 1 : 0;
+      }
+    case PROP_RAW_INT:
+      if (attr_signed) {
+        return (f == 'i') ? 1 : 0;
+      } else {
+        return (f == 'I') ? 1 : 0;
+      }
+    case PROP_RAW_BOOLEAN:
+      return (f == '?') ? 1 : 0;
+    case PROP_RAW_FLOAT:
+      return (f == 'f') ? 1 : 0;
+    case PROP_RAW_DOUBLE:
+      return (f == 'd') ? 1 : 0;
+    case PROP_RAW_UNSET:
+      return 0;
+  }
+
+  return 0;
+}
+
+static PyObject *foreach_getset(KPy_StagePROP *self, PyObject *args, int set)
+{
+  PyObject *item = NULL;
+  int i = 0, ok = 0;
+  bool buffer_is_compat;
+  void *array = NULL;
+
+  /* Get/set both take the same args currently. */
+  const char *attr;
+  PyObject *seq;
+  int tot, size, attr_tot;
+  bool attr_signed;
+  RawPropertyType raw_type;
+
+  if (foreach_parse_args(self,
+                         args,
+                         &attr,
+                         &seq,
+                         &tot,
+                         &size,
+                         &raw_type,
+                         &attr_tot,
+                         &attr_signed) == -1) {
+    return NULL;
+  }
+
+  if (tot == 0) {
+    Py_RETURN_NONE;
+  }
+
+  if (set) { /* Get the array from python. */
+    buffer_is_compat = false;
+    if (PyObject_CheckBuffer(seq)) {
+      Py_buffer buf;
+      PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT);
+
+      /* Check if the buffer matches. */
+
+      buffer_is_compat = foreach_compat_buffer(raw_type, attr_signed, buf.format);
+
+      if (buffer_is_compat) {
+        ok =
+          LUXO_prop_collection_raw_set(NULL, &self->ptr, self->prop, attr, buf.buf, raw_type, tot);
+      }
+
+      PyBuffer_Release(&buf);
+    }
+
+    /* Could not use the buffer, fallback to sequence. */
+    if (!buffer_is_compat) {
+      array = PyMem_Malloc(size * tot);
+
+      for (; i < tot; i++) {
+        item = PySequence_GetItem(seq, i);
+        switch (raw_type) {
+          case PROP_RAW_CHAR:
+            ((char *)array)[i] = (char)PyLong_AsLong(item);
+            break;
+          case PROP_RAW_SHORT:
+            ((short *)array)[i] = (short)PyLong_AsLong(item);
+            break;
+          case PROP_RAW_INT:
+            ((int *)array)[i] = (int)PyLong_AsLong(item);
+            break;
+          case PROP_RAW_BOOLEAN:
+            ((bool *)array)[i] = (int)PyLong_AsLong(item) != 0;
+            break;
+          case PROP_RAW_FLOAT:
+            ((float *)array)[i] = (float)PyFloat_AsDouble(item);
+            break;
+          case PROP_RAW_DOUBLE:
+            ((double *)array)[i] = (double)PyFloat_AsDouble(item);
+            break;
+          case PROP_RAW_UNSET:
+            /* Should never happen. */
+            KLI_assert_msg(0, "Invalid array type - set");
+            break;
+        }
+
+        Py_DECREF(item);
+      }
+
+      ok = LUXO_prop_collection_raw_set(NULL, &self->ptr, self->prop, attr, array, raw_type, tot);
+    }
+  } else {
+    buffer_is_compat = false;
+    if (PyObject_CheckBuffer(seq)) {
+      Py_buffer buf;
+      PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT);
+
+      /* Check if the buffer matches, TODO: signed/unsigned types. */
+
+      buffer_is_compat = foreach_compat_buffer(raw_type, attr_signed, buf.format);
+
+      if (buffer_is_compat) {
+        ok =
+          LUXO_prop_collection_raw_get(NULL, &self->ptr, self->prop, attr, buf.buf, raw_type, tot);
+      }
+
+      PyBuffer_Release(&buf);
+    }
+
+    /* Could not use the buffer, fallback to sequence. */
+    if (!buffer_is_compat) {
+      array = PyMem_Malloc(size * tot);
+
+      ok = LUXO_prop_collection_raw_get(NULL, &self->ptr, self->prop, attr, array, raw_type, tot);
+
+      if (!ok) {
+        /* Skip the loop. */
+        i = tot;
+      }
+
+      for (; i < tot; i++) {
+
+        switch (raw_type) {
+          case PROP_RAW_CHAR:
+            item = PyLong_FromLong((long)((char *)array)[i]);
+            break;
+          case PROP_RAW_SHORT:
+            item = PyLong_FromLong((long)((short *)array)[i]);
+            break;
+          case PROP_RAW_INT:
+            item = PyLong_FromLong((long)((int *)array)[i]);
+            break;
+          case PROP_RAW_FLOAT:
+            item = PyFloat_FromDouble((double)((float *)array)[i]);
+            break;
+          case PROP_RAW_DOUBLE:
+            item = PyFloat_FromDouble((double)((double *)array)[i]);
+            break;
+          case PROP_RAW_BOOLEAN:
+            item = PyBool_FromLong((long)((bool *)array)[i]);
+            break;
+          default: /* PROP_RAW_UNSET */
+            /* Should never happen. */
+            KLI_assert_msg(0, "Invalid array type - get");
+            item = Py_None;
+            Py_INCREF(item);
+            break;
+        }
+
+        PySequence_SetItem(seq, i, item);
+        Py_DECREF(item);
+      }
+    }
+  }
+
+  if (array) {
+    PyMem_Free(array);
+  }
+
+  if (PyErr_Occurred()) {
+    /* Maybe we could make our own error. */
+    PyErr_Print();
+    PyErr_SetString(PyExc_TypeError, "couldn't access the py sequence");
+    return NULL;
+  }
+  if (!ok) {
+    PyErr_SetString(PyExc_RuntimeError, "internal error setting the array");
+    return NULL;
+  }
+
+  Py_RETURN_NONE;
+}
+
+PyDoc_STRVAR(pyrna_prop_collection_foreach_get_doc,
+             ".. method:: foreach_get(attr, seq)\n"
+             "\n"
+             "   This is a function to give fast access to attributes within a collection.\n");
+static PyObject *pyrna_prop_collection_foreach_get(KPy_StagePROP *self, PyObject *args)
+{
+  PYRNA_PROP_CHECK_OBJ(self);
+
+  return foreach_getset(self, args, 0);
+}
+
+PyDoc_STRVAR(pyrna_prop_collection_foreach_set_doc,
+             ".. method:: foreach_set(attr, seq)\n"
+             "\n"
+             "   This is a function to give fast access to attributes within a collection.\n");
+static PyObject *pyrna_prop_collection_foreach_set(KPy_StagePROP *self, PyObject *args)
+{
+  PYRNA_PROP_CHECK_OBJ(self);
+
+  return foreach_getset(self, args, 1);
+}
+
+static PyObject *pyprop_array_foreach_getset(KPy_StagePropARRAY *self,
+                                             PyObject *args,
+                                             const bool do_set)
+{
+  PyObject *item = NULL;
+  Py_ssize_t i, seq_size, size;
+  void *array = NULL;
+  const PropertyType prop_type = LUXO_prop_type(self->prop);
+
+  /* Get/set both take the same args currently. */
+  PyObject *seq;
+
+  if (!ELEM(prop_type, PROP_INT, PROP_FLOAT)) {
+    PyErr_Format(PyExc_TypeError, "foreach_get/set available only for int and float");
+    return NULL;
+  }
+
+  if (!PyArg_ParseTuple(args, "O:foreach_get/set", &seq)) {
+    return NULL;
+  }
+
+  if (!PySequence_Check(seq) && PyObject_CheckBuffer(seq)) {
+    PyErr_Format(
+      PyExc_TypeError,
+      "foreach_get/set expected second argument to be a sequence or buffer, not a %.200s",
+      Py_TYPE(seq)->tp_name);
+    return NULL;
+  }
+
+  size = pyprim_prop_array_length(self);
+  seq_size = PySequence_Size(seq);
+
+  if (size != seq_size) {
+    PyErr_Format(PyExc_TypeError, "expected sequence size %d, got %d", size, seq_size);
+    return NULL;
+  }
+
+  Py_buffer buf;
+  if (PyObject_GetBuffer(seq, &buf, PyBUF_SIMPLE | PyBUF_FORMAT) == -1) {
+    PyErr_Clear();
+
+    switch (prop_type) {
+      case PROP_INT:
+        array = PyMem_Malloc(sizeof(int) * size);
+        if (do_set) {
+          for (i = 0; i < size; i++) {
+            item = PySequence_GetItem(seq, i);
+            ((int *)array)[i] = (int)PyLong_AsLong(item);
+            Py_DECREF(item);
+          }
+
+          LUXO_prop_int_set_array(&self->ptr, self->prop, static_cast<int *>(array));
+        } else {
+          LUXO_prop_int_get_array(&self->ptr, self->prop, static_cast<int *>(array));
+
+          for (i = 0; i < size; i++) {
+            item = PyLong_FromLong((long)((int *)array)[i]);
+            PySequence_SetItem(seq, i, item);
+            Py_DECREF(item);
+          }
+        }
+
+        break;
+      case PROP_FLOAT:
+        array = PyMem_Malloc(sizeof(float) * size);
+        if (do_set) {
+          for (i = 0; i < size; i++) {
+            item = PySequence_GetItem(seq, i);
+            ((float *)array)[i] = (float)PyFloat_AsDouble(item);
+            Py_DECREF(item);
+          }
+
+          LUXO_prop_float_set_array(&self->ptr, self->prop, static_cast<float *>(array));
+        } else {
+          LUXO_prop_float_get_array(&self->ptr, self->prop, static_cast<float *>(array));
+
+          for (i = 0; i < size; i++) {
+            item = PyFloat_FromDouble((double)((float *)array)[i]);
+            PySequence_SetItem(seq, i, item);
+            Py_DECREF(item);
+          }
+        }
+        break;
+      case PROP_BOOLEAN:
+      case PROP_STRING:
+      case PROP_ENUM:
+      case PROP_POINTER:
+      case PROP_COLLECTION:
+        /* Should never happen. */
+        KLI_assert_unreachable();
+        break;
+    }
+
+    PyMem_Free(array);
+
+    if (PyErr_Occurred()) {
+      /* Maybe we could make our own error. */
+      PyErr_Print();
+      PyErr_SetString(PyExc_TypeError, "couldn't access the py sequence");
+      return NULL;
+    }
+  } else {
+    const char f = buf.format ? buf.format[0] : 0;
+    if ((prop_type == PROP_INT && (buf.itemsize != sizeof(int) || !ELEM(f, 'l', 'i'))) ||
+        (prop_type == PROP_FLOAT && (buf.itemsize != sizeof(float) || f != 'f'))) {
+      PyBuffer_Release(&buf);
+      PyErr_Format(PyExc_TypeError, "incorrect sequence item type: %s", buf.format);
+      return NULL;
+    }
+
+    switch (prop_type) {
+      case PROP_INT:
+        if (do_set) {
+          LUXO_prop_int_set_array(&self->ptr, self->prop, static_cast<int *>(buf.buf));
+        } else {
+          LUXO_prop_int_get_array(&self->ptr, self->prop, static_cast<int *>(buf.buf));
+        }
+        break;
+      case PROP_FLOAT:
+        if (do_set) {
+          LUXO_prop_float_set_array(&self->ptr, self->prop, static_cast<float *>(buf.buf));
+        } else {
+          LUXO_prop_float_get_array(&self->ptr, self->prop, static_cast<float *>(buf.buf));
+        }
+        break;
+      case PROP_BOOLEAN:
+      case PROP_STRING:
+      case PROP_ENUM:
+      case PROP_POINTER:
+      case PROP_COLLECTION:
+        /* Should never happen. */
+        KLI_assert_unreachable();
+        break;
+    }
+
+    PyBuffer_Release(&buf);
+  }
+
+  Py_RETURN_NONE;
+}
+
+PyDoc_STRVAR(pyprim_prop_array_foreach_get_doc,
+             ".. method:: foreach_get(seq)\n"
+             "\n"
+             "   This is a function to give fast access to array data.\n");
+static PyObject *pyprim_prop_array_foreach_get(KPy_StagePropARRAY *self, PyObject *args)
+{
+  PYSTAGE_PROP_CHECK_OBJ((KPy_StagePROP *)self);
+
+  return pyprop_array_foreach_getset(self, args, false);
+}
+
+PyDoc_STRVAR(pyprim_prop_array_foreach_set_doc,
+             ".. method:: foreach_set(seq)\n"
+             "\n"
+             "   This is a function to give fast access to array data.\n");
+static PyObject *pyprim_prop_array_foreach_set(KPy_StagePropARRAY *self, PyObject *args)
+{
+  PYSTAGE_PROP_CHECK_OBJ((KPy_StagePROP *)self);
+
+  return pyprop_array_foreach_getset(self, args, true);
+}
+
 static struct PyMethodDef pyprim_prop_methods[] = {
   {"path_from_id",
    (PyCFunction)pyprim_prop_path_from_id,
@@ -805,6 +3301,38 @@ static struct PyMethodDef pyprim_prop_methods[] = {
   {"update",       (PyCFunction)pyprim_prop_update,   METH_NOARGS, pyprim_prop_update_doc      },
   {"__dir__",      (PyCFunction)pyprim_prop_dir,      METH_NOARGS, NULL                        },
   {NULL,           NULL,                              0,           NULL                        },
+};
+
+static struct PyMethodDef pyprim_prop_array_methods[] = {
+  {"foreach_get",
+   (PyCFunction)pyprim_prop_array_foreach_get,
+   METH_VARARGS,                                  pyprim_prop_array_foreach_get_doc},
+  {"foreach_set",
+   (PyCFunction)pyprim_prop_array_foreach_set,
+   METH_VARARGS,                                  pyprim_prop_array_foreach_set_doc},
+
+  {NULL,          NULL,                        0, NULL                             },
+};
+
+static struct PyMethodDef pyprim_prop_collection_methods[] = {
+  {"foreach_get",
+   (PyCFunction)pyprim_prop_collection_foreach_get,
+   METH_VARARGS,                                                          pyprim_prop_collection_foreach_get_doc},
+  {"foreach_set",
+   (PyCFunction)pyprim_prop_collection_foreach_set,
+   METH_VARARGS,                                                          pyprim_prop_collection_foreach_set_doc},
+
+  {"keys",        (PyCFunction)pyprim_prop_collection_keys, METH_NOARGS,  pyprim_prop_collection_keys_doc       },
+  {"items",
+   (PyCFunction)pyprim_prop_collection_items,
+   METH_NOARGS,                                                           pyprim_prop_collection_items_doc      },
+  {"values",
+   (PyCFunction)pyprim_prop_collection_values,
+   METH_NOARGS,                                                           pyprim_prop_collection_values_doc     },
+
+  {"get",         (PyCFunction)pyprim_prop_collection_get,  METH_VARARGS, pyprim_prop_collection_get_doc        },
+  {"find",        (PyCFunction)pyprim_prop_collection_find, METH_O,       pyprim_prop_collection_find_doc       },
+  {NULL,          NULL,                                     0,            NULL                                  },
 };
 
 PyDoc_STRVAR(pyprim_prim_get_id_data_doc,
@@ -878,11 +3406,11 @@ static PyObject *pyprim_prim_new(PyTypeObject *type, PyObject *args, PyObject *U
       /* this almost never runs, only when using user defined subclasses of built-in object.
        * this isn't common since it's NOT related to registerable subclasses. eg:
        *
-       *  >>> class MyObSubclass(bpy.types.Object):
+       *  >>> class MyObSubclass(kpy.types.Object):
        *  ...     def test_func(self):
        *  ...         print(100)
        *  ...
-       *  >>> myob = MyObSubclass(bpy.context.object)
+       *  >>> myob = MyObSubclass(kpy.context.object)
        *  >>> myob.test_func()
        *  100
        *
@@ -903,12 +3431,12 @@ static PyObject *pyprim_prim_new(PyTypeObject *type, PyObject *args, PyObject *U
 
     /* Error, invalid type given. */
     PyErr_Format(PyExc_TypeError,
-                 "bpy_struct.__new__(type): type '%.200s' is not a subtype of bpy_struct",
+                 "kpy_struct.__new__(type): type '%.200s' is not a subtype of kpy_struct",
                  type->tp_name);
     return NULL;
   }
 
-  PyErr_Format(PyExc_TypeError, "bpy_struct.__new__(type): expected a single argument");
+  PyErr_Format(PyExc_TypeError, "kpy_struct.__new__(type): expected a single argument");
   return NULL;
 }
 
@@ -920,7 +3448,7 @@ static PyObject *pyprim_prop_new(PyTypeObject *type, PyObject *args, PyObject *U
 {
   KPy_StagePROP *base;
 
-  if (!PyArg_ParseTuple(args, "O!:bpy_prop.__new__", &pyprim_prop_Type, &base)) {
+  if (!PyArg_ParseTuple(args, "O!:kpy_prop.__new__", &pyprim_prop_Type, &base)) {
     return NULL;
   }
 
@@ -935,7 +3463,7 @@ static PyObject *pyprim_prop_new(PyTypeObject *type, PyObject *args, PyObject *U
   }
 
   PyErr_Format(PyExc_TypeError,
-               "bpy_prop.__new__(type): type '%.200s' is not a subtype of bpy_prop",
+               "kpy_prop.__new__(type): type '%.200s' is not a subtype of kpy_prop",
                type->tp_name);
   return NULL;
 }
@@ -1252,7 +3780,7 @@ PyTypeObject pyprim_prop_array_Type = {
 
 /***  weak reference enabler ***/
 #ifdef USE_WEAKREFS
-  offsetof(BPy_PropertyArrayRNA, in_weakreflist), /* long tp_weaklistoffset; */
+  offsetof(KPy_StagePropARRAY, in_weakreflist), /* long tp_weaklistoffset; */
 #else
   0,
 #endif
@@ -1263,6 +3791,91 @@ PyTypeObject pyprim_prop_array_Type = {
 
   /*** Attribute descriptor and subclassing stuff ***/
   pyprim_prop_array_methods,      /* struct PyMethodDef *tp_methods; */
+  NULL,                           /* struct PyMemberDef *tp_members; */
+  NULL /*pyprim_prop_getseters*/, /* struct PyGetSetDef *tp_getset; */
+  &pyprim_prop_Type,              /* struct _typeobject *tp_base; */
+  NULL,                           /* PyObject *tp_dict; */
+  NULL,                           /* descrgetfunc tp_descr_get; */
+  NULL,                           /* descrsetfunc tp_descr_set; */
+  0,                              /* long tp_dictoffset; */
+  NULL,                           /* initproc tp_init; */
+  NULL,                           /* allocfunc tp_alloc; */
+  NULL,                           /* newfunc tp_new; */
+  /*  Low-level free-memory routine */
+  NULL, /* freefunc tp_free; */
+  /* For PyObject_IS_GC */
+  NULL, /* inquiry tp_is_gc; */
+  NULL, /* PyObject *tp_bases; */
+  /* method resolution order */
+  NULL, /* PyObject *tp_mro; */
+  NULL, /* PyObject *tp_cache; */
+  NULL, /* PyObject *tp_subclasses; */
+  NULL, /* PyObject *tp_weaklist; */
+  NULL,
+};
+
+PyTypeObject pyprim_prop_collection_Type = {
+  PyVarObject_HEAD_INIT(NULL, 0) "bpy_prop_collection", /* tp_name */
+  sizeof(KPy_StagePROP),                                /* tp_basicsize */
+  0,                                                    /* tp_itemsize */
+  /* methods */
+  (destructor)pyprim_prop_dealloc, /* tp_dealloc */
+  0,                               /* tp_vectorcall_offset */
+  NULL,                            /* getattrfunc tp_getattr; */
+  NULL,                            /* setattrfunc tp_setattr; */
+  NULL,
+  /* tp_compare */ /* DEPRECATED in Python 3.0! */
+  NULL,
+  /* subclassed */ /* tp_repr */
+
+  /* Method suites for standard classes */
+
+  &pyprim_prop_collection_as_number,   /* PyNumberMethods *tp_as_number; */
+  &pyprim_prop_collection_as_sequence, /* PySequenceMethods *tp_as_sequence; */
+  &pyprim_prop_collection_as_mapping,  /* PyMappingMethods *tp_as_mapping; */
+
+  /* More standard operations (here for binary compatibility) */
+
+  NULL, /* hashfunc tp_hash; */
+  NULL, /* ternaryfunc tp_call; */
+  NULL, /* reprfunc tp_str; */
+
+  /* will only use these if this is a subtype of a py class */
+  (getattrofunc)pyprim_prop_collection_getattro, /* getattrofunc tp_getattro; */
+  (setattrofunc)pyprim_prop_collection_setattro, /* setattrofunc tp_setattro; */
+
+  /* Functions to access object as input/output buffer */
+  NULL, /* PyBufferProcs *tp_as_buffer; */
+
+  /*** Flags to define presence of optional/expanded features ***/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* long tp_flags; */
+
+  NULL, /*  char *tp_doc;  Documentation string */
+  /*** Assigned meaning in release 2.0 ***/
+  /* call function for all accessible objects */
+  NULL, /* traverseproc tp_traverse; */
+
+  /* delete references to contained objects */
+  NULL, /* inquiry tp_clear; */
+
+  /***  Assigned meaning in release 2.1 ***/
+  /*** rich comparisons (subclassed) ***/
+  NULL, /* richcmpfunc tp_richcompare; */
+
+/***  weak reference enabler ***/
+#ifdef USE_WEAKREFS
+  offsetof(KPy_StagePROP, in_weakreflist), /* long tp_weaklistoffset; */
+#else
+  0,
+#endif
+
+  /*** Added in release 2.2 ***/
+  /*   Iterators */
+  (getiterfunc)pyprim_prop_collection_iter, /* getiterfunc tp_iter; */
+  NULL,                                     /* iternextfunc tp_iternext; */
+
+  /*** Attribute descriptor and subclassing stuff ***/
+  pyprim_prop_collection_methods, /* struct PyMethodDef *tp_methods; */
   NULL,                           /* struct PyMemberDef *tp_members; */
   NULL /*pyprim_prop_getseters*/, /* struct PyGetSetDef *tp_getset; */
   &pyprim_prop_Type,              /* struct _typeobject *tp_base; */
@@ -1634,6 +4247,375 @@ static PyObject *pyprim_prop_dir(KPy_StagePROP *self)
   }
 
   return ret;
+}
+
+static PyObject *pyprim_prop_array_getattro(KPy_StagePROP *self, PyObject *pyname)
+{
+  return PyObject_GenericGetAttr((PyObject *)self, pyname);
+}
+
+/**
+ * Note that #PROP_NONE is included as a vector subtype. this is because it is handy to
+ * have x/y access to fcurve keyframes and other fixed size float arrays of length 2-4.
+ */
+#define PROP_ALL_VECTOR_SUBTYPES \
+  PROP_COORDS:                   \
+  case PROP_TRANSLATION:         \
+  case PROP_DIRECTION:           \
+  case PROP_VELOCITY:            \
+  case PROP_ACCELERATION:        \
+  case PROP_XYZ:                 \
+  case PROP_XYZ_LENGTH
+
+PyObject *pyprim_math_object_from_array(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  PyObject *ret = NULL;
+
+#ifdef USE_MATHUTILS
+  int subtype, totdim;
+  int len;
+  const int flag = LUXO_prop_flag(prop);
+  const int type = LUXO_prop_type(prop);
+  const bool is_thick = (flag & PROP_THICK_WRAP) != 0;
+
+  /* disallow dynamic sized arrays to be wrapped since the size could change
+   * to a size mathutils does not support */
+  if (flag & PROP_DYNAMIC) {
+    return NULL;
+  }
+
+  len = LUXO_prop_array_length(ptr, prop);
+  if (type == PROP_FLOAT) {
+    /* pass */
+  } else if (type == PROP_INT) {
+    if (is_thick) {
+      goto thick_wrap_slice;
+    } else {
+      return NULL;
+    }
+  } else {
+    return NULL;
+  }
+
+  subtype = LUXO_prop_subtype(prop);
+  totdim = LUXO_prop_array_dimension(ptr, prop, NULL);
+
+  if (totdim == 1 || (totdim == 2 && subtype == PROP_MATRIX)) {
+    if (!is_thick) {
+      /* Owned by the mathutils PyObject. */
+      ret = pyprim_prop_CreatePyObject(ptr, prop);
+    }
+
+    switch (subtype) {
+      case PROP_ALL_VECTOR_SUBTYPES:
+        if (len >= 2 && len <= 4) {
+          if (is_thick) {
+            ret = Vector_CreatePyObject(NULL, len, NULL);
+            LUXO_prop_float_get_array(ptr, prop, ((VectorObject *)ret)->vec);
+          } else {
+            PyObject *vec_cb = Vector_CreatePyObject_cb(ret,
+                                                        len,
+                                                        mathutils_rna_array_cb_index,
+                                                        MATHUTILS_CB_SUBTYPE_VEC);
+            Py_DECREF(ret); /* The vector owns 'ret' now. */
+            ret = vec_cb;   /* Return the vector instead. */
+          }
+        }
+        break;
+      case PROP_MATRIX:
+        if (len == 16) {
+          if (is_thick) {
+            ret = Matrix_CreatePyObject(NULL, 4, 4, NULL);
+            LUXO_prop_float_get_array(ptr, prop, ((MatrixObject *)ret)->matrix);
+          } else {
+            PyObject *mat_cb =
+              Matrix_CreatePyObject_cb(ret, 4, 4, mathutils_rna_matrix_cb_index, 0);
+            Py_DECREF(ret); /* The matrix owns 'ret' now. */
+            ret = mat_cb;   /* Return the matrix instead. */
+          }
+        } else if (len == 9) {
+          if (is_thick) {
+            ret = Matrix_CreatePyObject(NULL, 3, 3, NULL);
+            LUXO_prop_float_get_array(ptr, prop, ((MatrixObject *)ret)->matrix);
+          } else {
+            PyObject *mat_cb =
+              Matrix_CreatePyObject_cb(ret, 3, 3, mathutils_rna_matrix_cb_index, 0);
+            Py_DECREF(ret); /* The matrix owns 'ret' now. */
+            ret = mat_cb;   /* Return the matrix instead. */
+          }
+        }
+        break;
+      case PROP_EULER:
+      case PROP_QUATERNION:
+        if (len == 3) { /* Euler. */
+          if (is_thick) {
+            /* Attempt to get order,
+             * only needed for thick types since wrapped with update via callbacks. */
+            PropertyRNA *prop_eul_order = NULL;
+            const short order = pyprim_rotation_euler_order_get(ptr,
+                                                                EULER_ORDER_XYZ,
+                                                                &prop_eul_order);
+
+            ret = Euler_CreatePyObject(NULL, order, NULL); /* TODO: get order from RNA. */
+            LUXO_prop_float_get_array(ptr, prop, ((EulerObject *)ret)->eul);
+          } else {
+            /* Order will be updated from callback on use. */
+            /* TODO: get order from RNA. */
+            PyObject *eul_cb = Euler_CreatePyObject_cb(ret,
+                                                       EULER_ORDER_XYZ,
+                                                       mathutils_rna_array_cb_index,
+                                                       MATHUTILS_CB_SUBTYPE_EUL);
+            Py_DECREF(ret); /* The euler owns 'ret' now. */
+            ret = eul_cb;   /* Return the euler instead. */
+          }
+        } else if (len == 4) {
+          if (is_thick) {
+            ret = Quaternion_CreatePyObject(NULL, NULL);
+            LUXO_prop_float_get_array(ptr, prop, ((QuaternionObject *)ret)->quat);
+          } else {
+            PyObject *quat_cb = Quaternion_CreatePyObject_cb(ret,
+                                                             mathutils_rna_array_cb_index,
+                                                             MATHUTILS_CB_SUBTYPE_QUAT);
+            Py_DECREF(ret); /* The quat owns 'ret' now. */
+            ret = quat_cb;  /* Return the quat instead. */
+          }
+        }
+        break;
+      case PROP_COLOR:
+      case PROP_COLOR_GAMMA:
+        if (len == 3) { /* Color. */
+          if (is_thick) {
+            ret = Color_CreatePyObject(NULL, NULL);
+            LUXO_prop_float_get_array(ptr, prop, ((ColorObject *)ret)->col);
+          } else {
+            PyObject *col_cb = Color_CreatePyObject_cb(ret,
+                                                       mathutils_rna_array_cb_index,
+                                                       MATHUTILS_CB_SUBTYPE_COLOR);
+            Py_DECREF(ret); /* The color owns 'ret' now. */
+            ret = col_cb;   /* Return the color instead. */
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  if (ret == NULL) {
+    if (is_thick) {
+      /* This is an array we can't reference (since it is not thin wrappable)
+       * and cannot be coerced into a mathutils type, so return as a list. */
+    thick_wrap_slice:
+      ret = pyprim_prop_array_subscript_slice(NULL, ptr, prop, 0, len, len);
+    } else {
+      ret = pyprim_prop_CreatePyObject(ptr, prop); /* Owned by the mathutils PyObject. */
+    }
+  }
+#else  /* USE_MATHUTILS */
+  (void)ptr;
+  (void)prop;
+#endif /* USE_MATHUTILS */
+
+  return ret;
+}
+
+PyObject *pyprim_py_from_array(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  PyObject *ret;
+
+  ret = pyprim_math_object_from_array(ptr, prop);
+
+  /* is this a maths object? */
+  if (ret) {
+    return ret;
+  }
+
+  return pyprim_prop_CreatePyObject(ptr, prop);
+}
+
+PyObject *pyprim_prop_to_py(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  PyObject *ret;
+  const int type = LUXO_prop_type(prop);
+
+  if (LUXO_prop_array_check(prop)) {
+    return pyprim_py_from_array(ptr, prop);
+  }
+
+  /* See if we can coerce into a Python type - 'PropertyType'. */
+  switch (type) {
+    case PROP_BOOLEAN:
+      ret = PyBool_FromLong(LUXO_prop_boolean_get(ptr, prop));
+      break;
+    case PROP_INT:
+      ret = PyLong_FromLong(LUXO_prop_int_get(ptr, prop));
+      break;
+    case PROP_FLOAT:
+      ret = PyFloat_FromDouble(LUXO_prop_float_get(ptr, prop));
+      break;
+    case PROP_STRING: {
+      const int subtype = LUXO_prop_subtype(prop);
+      const char *buf;
+      int buf_len;
+      char buf_fixed[32];
+
+      buf = LUXO_prop_string_get_alloc(ptr, prop, buf_fixed, sizeof(buf_fixed), &buf_len);
+#ifdef USE_STRING_COERCE
+      /* Only file paths get special treatment, they may contain non UTF-8 chars. */
+      if (subtype == PROP_BYTESTRING) {
+        ret = PyBytes_FromStringAndSize(buf, buf_len);
+      } else if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH, PROP_FILENAME)) {
+        ret = PyC_UnicodeFromByteAndSize(buf, buf_len);
+      } else {
+        ret = PyUnicode_FromStringAndSize(buf, buf_len);
+      }
+#else  /* USE_STRING_COERCE */
+      if (subtype == PROP_BYTESTRING) {
+        ret = PyBytes_FromStringAndSize(buf, buf_len);
+      } else {
+        ret = PyUnicode_FromStringAndSize(buf, buf_len);
+      }
+#endif /* USE_STRING_COERCE */
+      if (buf_fixed != buf) {
+        MEM_freeN((void *)buf);
+      }
+      break;
+    }
+    case PROP_ENUM: {
+      ret = pyprim_enum_to_py(ptr, prop, LUXO_prop_enum_get(ptr, prop));
+      break;
+    }
+    case PROP_POINTER: {
+      PointerRNA newptr;
+      newptr = LUXO_prop_pointer_get(ptr, prop);
+      if (newptr.data) {
+        ret = pyprim_struct_CreatePyObject(&newptr);
+      } else {
+        ret = Py_None;
+        Py_INCREF(ret);
+      }
+      break;
+    }
+    case PROP_COLLECTION:
+      ret = pyprim_prop_CreatePyObject(ptr, prop);
+      break;
+    default:
+      PyErr_Format(PyExc_TypeError,
+                   "bpy_struct internal error: unknown type '%d' (pyprim_prop_to_py)",
+                   type);
+      ret = NULL;
+      break;
+  }
+
+  return ret;
+}
+
+static PyObject *pyprim_prop_collection_getattro(KPy_StagePROP *self, PyObject *pyname)
+{
+  const char *name = PyUnicode_AsUTF8(pyname);
+
+  if (name == NULL) {
+    PyErr_SetString(PyExc_AttributeError, "bpy_prop_collection: __getattr__ must be a string");
+    return NULL;
+  }
+  if (name[0] != '_') {
+    PyObject *ret;
+    KrakenPROP *prop;
+    KrakenFUNC *func;
+
+    KrakenPRIM r_ptr;
+    if (LUXO_prop_collection_type_get(&self->ptr, self->prop, &r_ptr)) {
+      if ((prop = LUXO_prim_find_property(&r_ptr, name))) {
+        ret = pyprim_prop_to_py(&r_ptr, prop);
+
+        return ret;
+      }
+      if ((func = LUXO_prim_find_function(r_ptr.type, name))) {
+        PyObject *self_collection = pyprim_struct_CreatePyObject(&r_ptr);
+        ret = pyprim_func_to_py(&((BPy_DummyPointerRNA *)self_collection)->ptr, func);
+        Py_DECREF(self_collection);
+
+        return ret;
+      }
+    }
+  }
+
+#if 0
+  return PyObject_GenericGetAttr((PyObject *)self, pyname);
+#else
+  {
+    /* Could just do this except for 1 awkward case.
+     * `PyObject_GenericGetAttr((PyObject *)self, pyname);`
+     * so as to support `bpy.data.library.load()` */
+
+    PyObject *ret = PyObject_GenericGetAttr((PyObject *)self, pyname);
+
+    if (ret == NULL && name[0] != '_') { /* Avoid inheriting `__call__` and similar. */
+      /* Since this is least common case, handle it last. */
+      PointerRNA r_ptr;
+      if (LUXO_prop_collection_type_get(&self->ptr, self->prop, &r_ptr)) {
+        PyObject *cls;
+
+        PyObject *error_type, *error_value, *error_traceback;
+        PyErr_Fetch(&error_type, &error_value, &error_traceback);
+
+        cls = pyprim_struct_Subtype(&r_ptr);
+        ret = PyObject_GenericGetAttr(cls, pyname);
+        Py_DECREF(cls);
+
+        /* Restore the original error. */
+        if (ret == NULL) {
+          PyErr_Restore(error_type, error_value, error_traceback);
+        } else {
+          if (Py_TYPE(ret) == &PyMethodDescr_Type) {
+            PyMethodDef *m = ((PyMethodDescrObject *)ret)->d_method;
+            /* TODO: #METH_CLASS */
+            if (m->ml_flags & METH_STATIC) {
+              /* Keep 'ret' as-is. */
+            } else {
+              Py_DECREF(ret);
+              ret = PyCMethod_New(m, (PyObject *)self, NULL, NULL);
+            }
+          }
+        }
+      }
+    }
+
+    return ret;
+  }
+#endif
+}
+
+/* --------------- setattr------------------------------------------- */
+static int pyprim_prop_collection_setattro(KPy_StagePROP *self, PyObject *pyname, PyObject *value)
+{
+  const char *name = PyUnicode_AsUTF8(pyname);
+  KrakenPROP *prop;
+  KrakenPRIM r_ptr;
+
+#ifdef USE_PEDANTIC_WRITE
+  if (prim_disallow_writes && prim_id_write_error(&self->ptr, pyname)) {
+    return -1;
+  }
+#endif /* USE_PEDANTIC_WRITE */
+
+  if (name == NULL) {
+    PyErr_SetString(PyExc_AttributeError, "bpy_prop: __setattr__ must be a string");
+    return -1;
+  }
+  if (value == NULL) {
+    PyErr_SetString(PyExc_AttributeError, "bpy_prop: del not supported");
+    return -1;
+  }
+  if (LUXO_prop_collection_type_get(&self->ptr, self->prop, &r_ptr)) {
+    if ((prop = LUXO_prim_find_property(&r_ptr, name))) {
+      /* pyprim_py_to_prop sets its own exceptions. */
+      return pyprim_py_to_prop(&r_ptr, prop, NULL, value, "KPy_StagePROP - Attribute (setattr):");
+    }
+  }
+
+  PyErr_Format(PyExc_AttributeError, "bpy_prop_collection: attribute \"%.200s\" not found", name);
+  return -1;
 }
 
 static PyObject *kpy_types_module_getattro(PyObject *self, PyObject *pyname)
@@ -2356,9 +5338,9 @@ void KPY_prim_init(void)
     return;
   }
 
-  // if (PyType_Ready(&pyprim_prop_collection_idprop_Type) < 0) {
-  //   return;
-  // }
+  if (PyType_Ready(&pyprim_prop_collection_idprop_Type) < 0) {
+    return;
+  }
 
   // if (PyType_Ready(&pyprim_func_Type) < 0) {
   //   return;

@@ -33,6 +33,7 @@
 #include "KLI_string.h"
 
 #ifdef __cplusplus
+#  include <wabi/usd/sdf/schema.h>
 #  include <wabi/usd/usd/attribute.h>
 #  include <wabi/usd/usd/common.h>
 #  include <wabi/usd/usd/property.h>
@@ -69,6 +70,12 @@ typedef void (*ContextPropUpdateFUNC)(struct kContext *C,
                                       struct KrakenPRIM *ptr,
                                       struct KrakenPROP *prop);
 typedef void (*ContextUpdateFUNC)(struct kContext *C, struct KrakenPRIM *ptr);
+
+typedef int (*PropArrayLengthGetFUNC)(const struct KrakenPRIM *ptr,
+                                      int length[/*LUXO_MAX_ARRAY_DIMENSION*/ 3]);
+
+typedef int (*EditableFUNC)(struct KrakenPRIM *ptr, const char **r_info);
+typedef int (*ItemEditableFUNC)(struct KrakenPRIM *ptr, int index);
 
 typedef enum PropertyType
 {
@@ -273,6 +280,17 @@ typedef enum PropertySubType
   PROP_TEMPERATURE = 43 | PROP_UNIT_TEMPERATURE,
 } PropertySubType;
 
+typedef enum RawPropertyType
+{
+  PROP_RAW_UNSET = -1,
+  PROP_RAW_INT, /* XXX: abused for types that are not set, eg. MFace.verts, needs fixing. */
+  PROP_RAW_SHORT,
+  PROP_RAW_CHAR,
+  PROP_RAW_BOOLEAN,
+  PROP_RAW_DOUBLE,
+  PROP_RAW_FLOAT,
+} RawPropertyType;
+
 #ifdef __cplusplus
 struct KrakenPROP : public wabi::UsdAttribute
 {
@@ -291,19 +309,67 @@ struct KrakenPROP : public wabi::UsdAttribute
       intern_prop(prop)
   {}
 
+  wabi::SdfTupleDimensions GetArrayDimensions() const
+  {
+    return GetTypeName().GetArrayType().GetDimensions();
+  }
+
+  unsigned int *GetArrayLength() const
+  {
+    unsigned int length[/*LUXO_MAX_ARRAY_DIMENSION*/ 3];
+    length[0] = (unsigned int)GetArrayDimensions().d[0];
+    length[1] = (unsigned int)GetArrayDimensions().d[1];
+    length[2] = (unsigned int)GetArrayDimensions().size;
+    return length;
+  }
+
+  unsigned int GetTotalArrayLength() const
+  {
+    wabi::VtArray<unsigned int> arr;
+    Get(&arr);
+
+    return (unsigned int)arr.size();
+  }
+
+  /* various options */
+  PropertyFlag flag;
+  /* various override options */
+  int flag_override;
+  /* Function parameters flags. */
+  short flag_parameter;
+  /* Internal ("private") flags. */
+  short flag_internal;
+  /* The subset of KrakenPRIM.prop_tag_defines values that applies to this property. */
+  short tags;
+
   wabi::TfToken name;
   PropertyType type;
-  PropertyFlag flag;
   PropertySubType subtype;
   int icon;
 
   wabi::UsdProperty intern_prop;
 
-  unsigned int arraylength;
+  /* if non-NULL, overrides arraylength. Must not return 0? */
+  PropArrayLengthGetFUNC getlength;
+
+  /**
+   * Array lengths for all dimensions (when `GetArrayDimensions() > SdfTupleDimensions()`). */
+  unsigned int arraylength[/*LUXO_MAX_ARRAY_DIMENSION*/ 3];
 
   /* callback for updates on change */
   UpdateFUNC update;
   int noteflag;
+
+  /* Callback for testing if editable. Its r_info parameter can be used to
+   * return info on editable state that might be shown to user. E.g. tooltips
+   * of disabled buttons can show reason why button is disabled using this. */
+  EditableFUNC editable;
+  /* callback for testing if array-item editable (if applicable) */
+  ItemEditableFUNC itemeditable;
+
+  /* raw access */
+  int rawoffset;
+  RawPropertyType rawtype;
 
   /**
    * Python handle to hold all callbacks.

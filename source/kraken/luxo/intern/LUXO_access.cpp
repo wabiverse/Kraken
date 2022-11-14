@@ -66,6 +66,8 @@
 
 WABI_NAMESPACE_USING
 
+const KrakenPRIM KrakenPRIM_NULL = {NULL};
+
 KrakenPRIM PRIM_StageData;
 KrakenPRIM PRIM_KrakenPRIM;
 KrakenPRIM PRIM_KrakenPROP;
@@ -172,26 +174,95 @@ KrakenPROP *prim_ensure_property(KrakenPROP *prop)
   }
 }
 
+int LUXO_prop_flag(KrakenPROP *prop)
+{
+  return prim_ensure_property(prop)->flag;
+}
+
 void LUXO_prop_int_range(KrakenPRIM *ptr, KrakenPROP *prop, int *hardmin, int *hardmax)
 {
-  KrakenPROP *iprop = prim_ensure_property(prop);
-  *hardmin = INT_MIN;
-  *hardmax = INT_MAX;
+  IntPrimPROP *iprop = (IntPrimPROP *)prim_ensure_property(prop);
+  int softmin, softmax;
+
+  if (prop->GetPrim().GetParent() == UsdPrim()) {
+    const IDProperty *idprop = (IDProperty *)prop;
+    if (idprop->ui_data) {
+      IDPropertyUIDataInt *ui_data = (IDPropertyUIDataInt *)idprop->ui_data;
+      *hardmin = ui_data->min;
+      *hardmax = ui_data->max;
+    } else {
+      *hardmin = INT_MIN;
+      *hardmax = INT_MAX;
+    }
+    return;
+  }
+
+  if (iprop->range) {
+    *hardmin = INT_MIN;
+    *hardmax = INT_MAX;
+
+    iprop->range(ptr, hardmin, hardmax, &softmin, &softmax);
+  } else if (iprop->range_ex) {
+    *hardmin = INT_MIN;
+    *hardmax = INT_MAX;
+
+    iprop->range_ex(ptr, prop, hardmin, hardmax, &softmin, &softmax);
+  } else {
+    *hardmin = iprop->hardmin;
+    *hardmax = iprop->hardmax;
+  }
 }
 
 void LUXO_prop_float_range(KrakenPRIM *ptr, KrakenPROP *prop, float *hardmin, float *hardmax)
 {
-  KrakenPROP *iprop = prim_ensure_property(prop);
-  *hardmin = FLT_MIN;
-  *hardmax = FLT_MAX;
+  FloatPrimPROP *fprop = (FloatPrimPROP *)prim_ensure_property(prop);
+  float softmin, softmax;
+
+  if (prop->GetPrim().GetParent() == UsdPrim()) {
+    const IDProperty *idprop = (IDProperty *)prop;
+    if (idprop->ui_data) {
+      IDPropertyUIDataFloat *ui_data = (IDPropertyUIDataFloat *)idprop->ui_data;
+      *hardmin = (float)ui_data->min;
+      *hardmax = (float)ui_data->max;
+    } else {
+      *hardmin = -FLT_MAX;
+      *hardmax = FLT_MAX;
+    }
+    return;
+  }
+
+  if (fprop->range) {
+    *hardmin = -FLT_MAX;
+    *hardmax = FLT_MAX;
+
+    fprop->range(ptr, hardmin, hardmax, &softmin, &softmax);
+  } else if (fprop->range_ex) {
+    *hardmin = -FLT_MAX;
+    *hardmax = FLT_MAX;
+
+    fprop->range_ex(ptr, prop, hardmin, hardmax, &softmin, &softmax);
+  } else {
+    *hardmin = fprop->hardmin;
+    *hardmax = fprop->hardmax;
+  }
 }
 
-PropScaleTYPE LUXO_prop_ui_scale(KrakenPROP *prop)
+PropertyScaleType LUXO_prop_ui_scale(KrakenPROP *prop)
 {
-  // KrakenPROP *prim_prop = prim_ensure_property(prop);
-  // SdfValueTypeName s_type = prim_prop->GetTypeName().GetScalarType();
+  KrakenPROP *prim_prop = prim_ensure_property(prop);
 
-  return PROP_SCALE_LINEAR;
+  switch (prim_prop->type) {
+    case PROP_INT: {
+      IntPrimPROP *iprop = (IntPrimPROP *)prim_prop;
+      return iprop->ui_scale_type;
+    }
+    case PROP_FLOAT: {
+      FloatPrimPROP *fprop = (FloatPrimPROP *)prim_prop;
+      return fprop->ui_scale_type;
+    }
+    default:
+      return PROP_SCALE_LINEAR;
+  }
 }
 
 PropertyType LUXO_prop_type_enum(KrakenPROP *prop)
@@ -261,17 +332,29 @@ const TfToken LUXO_prop_identifier(const KrakenPROP *prop)
 
 PropertySubType LUXO_prop_subtype(KrakenPROP *prop)
 {
-  KrakenPROP *stage_prop = prim_ensure_property(prop);
+  KrakenPROP *prim_prop = prim_ensure_property(prop);
 
   /* For custom properties, find and parse the 'subtype' metadata field. */
-  IDProperty *idprop = (IDProperty *)prop;
+  if (prop->GetPrim().GetParent() == UsdPrim()) {
+    IDProperty *idprop = (IDProperty *)prop;
 
-  if (idprop && idprop->ui_data) {
-    IDPropertyUIData *ui_data = idprop->ui_data;
-    return (PropertySubType)ui_data->prim_subtype;
+    if (idprop->ui_data) {
+      IDPropertyUIData *ui_data = idprop->ui_data;
+      return (PropertySubType)ui_data->prim_subtype;
+    }
   }
 
-  return stage_prop->subtype;
+  return prim_prop->subtype;
+}
+
+bool LUXO_prop_editable_flag(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  int flag;
+  const char *dummy_info;
+
+  prop = prim_ensure_property(prop);
+  flag = prop->editable ? prop->editable(ptr, &dummy_info) : prop->flag;
+  return (flag & PROP_EDITABLE) != 0;
 }
 
 PropertyType LUXO_prop_type(KrakenPROP *prop)
@@ -328,6 +411,12 @@ void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP 
   }
 }
 
+bool LUXO_prim_idprops_check(KrakenPRIM *sprim)
+{
+  return (sprim && sprim->idproperties);
+}
+
+
 static void prim_iterator_array_next(CollectionPropIT *iter)
 {
   ArrayIT *internal = &iter->internal.array;
@@ -345,7 +434,7 @@ static void prim_iterator_array_next(CollectionPropIT *iter)
 
 static void prim_property_collection_get_idp(CollectionPropIT *iter)
 {
-  CollectionPropPRIM *cprop = (CollectionPropPRIM *)iter->prop;
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)iter->prop;
 
   iter->ptr.data = prim_iterator_array_get(iter);
   iter->ptr.type = cprop->item_type;
@@ -361,7 +450,7 @@ static void prim_iterator_array_end(CollectionPropIT *iter)
 
 void LUXO_prop_collection_next(CollectionPropIT *iter)
 {
-  CollectionPropPRIM *cprop = (CollectionPropPRIM *)prim_ensure_property(iter->prop);
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(iter->prop);
 
   if (iter->idprop) {
     prim_iterator_array_next(iter);
@@ -374,9 +463,51 @@ void LUXO_prop_collection_next(CollectionPropIT *iter)
   }
 }
 
+void LUXO_prop_collection_skip(CollectionPropIT *iter, int num)
+{
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(iter->prop);
+  int i;
+
+  if (num > 1 && (iter->idprop || (cprop->property.flag_internal & PROP_INTERN_RAW_ARRAY))) {
+    /* fast skip for array */
+    ArrayIT *internal = &iter->internal.array;
+
+    if (!internal->skip) {
+      internal->ptr += internal->itemsize * (num - 1);
+      iter->valid = (internal->ptr < internal->endptr);
+      if (iter->valid) {
+        LUXO_prop_collection_next(iter);
+      }
+      return;
+    }
+  }
+
+  /* slow iteration otherwise */
+  for (i = 0; i < num && iter->valid; i++) {
+    LUXO_prop_collection_next(iter);
+  }
+}
+
+int LUXO_prop_collection_assign_int(KrakenPRIM *ptr,
+                                    KrakenPROP *prop,
+                                    const int key,
+                                    const KrakenPRIM *assign_ptr)
+{
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
+
+  if (cprop->assignint) {
+    /* we have a callback defined, use it */
+    return cprop->assignint(ptr, key, assign_ptr);
+  }
+
+  return 0;
+}
+
 void LUXO_prop_collection_end(CollectionPropIT *iter)
 {
-  CollectionPropPRIM *cprop = (CollectionPropPRIM *)prim_ensure_property(iter->prop);
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(iter->prop);
 
   if (iter->idprop) {
     prim_iterator_array_end(iter);
@@ -384,6 +515,27 @@ void LUXO_prop_collection_end(CollectionPropIT *iter)
     cprop->end(iter);
   }
 }
+
+bool LUXO_prop_collection_is_empty(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
+  CollectionPropIT iter;
+  LUXO_prop_collection_begin(ptr, prop, &iter);
+  bool test = iter.valid;
+  LUXO_prop_collection_end(&iter);
+  return !test;
+}
+
+// int LUXO_prop_collection_raw_set(ReportList *reports,
+//                                     KrakenPRIM *ptr,
+//                                     KrakenPROP *prop,
+//                                     const char *propname,
+//                                     void *array,
+//                                     RawPropertyType type,
+//                                     int len)
+// {
+//   return luxo_raw_access(reports, ptr, prop, propname, array, type, len, 1);
+// }
 
 void LUXO_collection_begin(KrakenPRIM *ptr, const char *name, CollectionPropIT *iter)
 {
@@ -456,7 +608,7 @@ void LUXO_prop_collection_begin(KrakenPRIM *ptr, KrakenPROP *prop, CollectionPro
 
     iter->idprop = 1;
   } else {
-    CollectionPropPRIM *cprop = (CollectionPropPRIM *)prop;
+    CollectionPrimPROP *cprop = (CollectionPrimPROP *)prop;
     cprop->begin(iter, ptr);
   }
 }
@@ -727,10 +879,10 @@ static void prim_property_update(kContext *C,
                                  KrakenPRIM *ptr,
                                  KrakenPROP *prop)
 {
-  const bool is_root = (prop->GetPrim().GetParent() == UsdPrim());
+  const bool is_prim = (prop->GetPrim().GetParent() != UsdPrim());
   prop = prim_ensure_property(prop);
 
-  if (is_root) {
+  if (is_prim) {
     if (prop->update) {
       /* ideally no context would be needed for update, but there's some
        * parts of the code that need it still, so we have this exception */
@@ -771,7 +923,7 @@ static void prim_property_update(kContext *C,
     /* End message bus. */
   }
 
-  if (!is_root || (prop->flag & PROP_IDPROPERTY)) {
+  if (!is_prim || (prop->flag & PROP_IDPROPERTY)) {
 
     /* Disclaimer: this logic is not applied consistently, causing some confusing behavior.
      *
@@ -808,7 +960,7 @@ static void prim_property_update(kContext *C,
 bool LUXO_prop_update_check(KrakenPROP *prop)
 {
   /* NOTE: must keep in sync with #prim_property_update. */
-  return (prop->GetPrim().GetParent() != UsdPrim() || prop->update || prop->noteflag);
+  return (prop->GetPrim().GetParent() == UsdPrim() || prop->update || prop->noteflag);
 }
 
 void LUXO_prop_update(kContext *C, KrakenPRIM *ptr, KrakenPROP *prop)
@@ -818,11 +970,10 @@ void LUXO_prop_update(kContext *C, KrakenPRIM *ptr, KrakenPROP *prop)
 
 static int prim_ensure_property_array_length(KrakenPRIM *ptr, KrakenPROP *prop)
 {
-  if (prop->GetPrim().GetParent() == UsdPrim()) {
+  if (prop->GetPrim().GetParent() != UsdPrim()) {
     int arraylen[LUXO_MAX_ARRAY_DIMENSION];
-    return (prop->GetTypeName().GetDimensions().size && ptr->data) ?
-             prop->GetTypeName().GetArrayType().GetDimensions().size :
-             (int)prop->GetPrim().GetAttributes().size();
+    return (prop->getlength && ptr->data) ? prop->getlength(ptr, arraylen) :
+                                            (int)prop->GetTotalArrayLength();
   }
   IDProperty *idprop = (IDProperty *)prop;
 
@@ -1054,7 +1205,7 @@ void LUXO_kraken_luxo_pointer_create(KrakenPRIM *r_ptr)
 
 int LUXO_prop_enum_get(KrakenPRIM *ptr, KrakenPROP *prop)
 {
-  EnumPropPRIM *eprop = (EnumPropPRIM *)prop;
+  EnumPrimPROP *eprop = (EnumPrimPROP *)prop;
   IDProperty *idprop;
 
   KLI_assert(LUXO_prop_type(prop) == PROP_ENUM);
@@ -1073,7 +1224,7 @@ int LUXO_prop_enum_get(KrakenPRIM *ptr, KrakenPROP *prop)
 
 void LUXO_prop_enum_set(KrakenPRIM *ptr, KrakenPROP *prop, int value)
 {
-  EnumPropPRIM *eprop = (EnumPropPRIM *)prop;
+  EnumPrimPROP *eprop = (EnumPrimPROP *)prop;
   IDProperty *idprop;
 
   KLI_assert(LUXO_prop_type(prop) == PROP_ENUM);
@@ -1147,7 +1298,7 @@ void LUXO_prop_enum_items_ex(kContext *C,
                              int *r_totitem,
                              bool *r_free)
 {
-  EnumPropPRIM *eprop = (EnumPropPRIM *)prim_ensure_property(prop);
+  EnumPrimPROP *eprop = (EnumPrimPROP *)prim_ensure_property(prop);
 
   *r_free = false;
 
@@ -1336,7 +1487,7 @@ KrakenPRIM *LUXO_prop_pointer_type(KrakenPRIM *ptr, KrakenPROP *prop)
       return pprop->type;
     }
   } else if (prop->type == PROP_COLLECTION) {
-    CollectionPropPRIM *cprop = (CollectionPropPRIM *)prop;
+    CollectionPrimPROP *cprop = (CollectionPrimPROP *)prop;
 
     if (cprop->item_type) {
       return cprop->item_type;
@@ -1433,6 +1584,103 @@ bool LUXO_prop_collection_type_get(KrakenPRIM *ptr, KrakenPROP *prop, KrakenPRIM
   *type = prim_ensure_property(prop)->GetPrim();
 
   return ((r_ptr->type = type) ? 1 : 0);
+}
+
+int LUXO_prop_collection_lookup_string_index(KrakenPRIM *ptr,
+                                             KrakenPROP *prop,
+                                             const char *key,
+                                             KrakenPRIM *r_ptr,
+                                             int *r_index)
+{
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
+
+  if (cprop->lookupstring) {
+    /* we have a callback defined, use it */
+    return cprop->lookupstring(ptr, key, r_ptr);
+  }
+  /* no callback defined, compare with name properties if they exist */
+  CollectionPropIT iter;
+  KrakenPROP *nameprop;
+  char name[256], *nameptr;
+  int found = 0;
+  int keylen = strlen(key);
+  int namelen;
+  int index = 0;
+
+  LUXO_prop_collection_begin(ptr, prop, &iter);
+  for (; iter.valid; LUXO_prop_collection_next(&iter), index++) {
+    if (iter.ptr.data && iter.ptr.type->GetAttribute(TfToken("name"))) {
+      *nameprop = iter.ptr.type->GetAttribute(TfToken("name"));
+
+      nameptr = KLI_strdup(nameprop->GetName().data());
+
+      if ((keylen == namelen) && STREQ(nameptr, key)) {
+        *r_ptr = iter.ptr;
+        found = 1;
+      }
+
+      if ((char *)&name != nameptr) {
+        MEM_freeN(nameptr);
+      }
+
+      if (found) {
+        break;
+      }
+    }
+  }
+  LUXO_prop_collection_end(&iter);
+
+  if (!iter.valid) {
+    memset(r_ptr, 0, sizeof(*r_ptr));
+    *r_index = -1;
+  } else {
+    *r_index = index;
+  }
+
+  return iter.valid;
+}
+
+int LUXO_prop_collection_lookup_string(KrakenPRIM *ptr,
+                                       KrakenPROP *prop,
+                                       const char *key,
+                                       KrakenPRIM *r_ptr)
+{
+  int index;
+  return LUXO_prop_collection_lookup_string_index(ptr, prop, key, r_ptr, &index);
+}
+
+bool LUXO_prop_collection_lookup_string_has_fn(KrakenPROP *prop)
+{
+  KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(prop);
+  return cprop->lookupstring != NULL;
+}
+
+int LUXO_prop_collection_length(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    return idprop->len;
+  }
+  if (cprop->length) {
+    return cprop->length(ptr);
+  }
+  CollectionPropIT iter;
+  int length = 0;
+
+  LUXO_prop_collection_begin(ptr, prop, &iter);
+  for (; iter.valid; LUXO_prop_collection_next(&iter)) {
+    length++;
+  }
+  LUXO_prop_collection_end(&iter);
+
+  return length;
 }
 
 IDProperty **LUXO_prim_idprops_p(KrakenPRIM *ptr)
@@ -1608,13 +1856,13 @@ KrakenPRIM LUXO_prop_pointer_get(KrakenPRIM *ptr, KrakenPROP *prop)
 bool LUXO_prop_collection_lookup_int_has_fn(KrakenPROP *prop)
 {
   KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
-  CollectionPropPRIM *cprop = (CollectionPropPRIM *)prim_ensure_property(prop);
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(prop);
   return cprop->lookupint != nullptr;
 }
 
 int LUXO_prop_collection_lookup_int(KrakenPRIM *ptr, KrakenPROP *prop, int key, KrakenPRIM *r_ptr)
 {
-  CollectionPropPRIM *cprop = (CollectionPropPRIM *)prim_ensure_property(prop);
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(prop);
 
   KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
 
@@ -1807,11 +2055,11 @@ static void prim_ensure_property_multi_array_length(const KrakenPRIM *ptr,
                                                     KrakenPROP *prop,
                                                     int length[])
 {
-  if (prop->IsValid()) {
-    if (prop->GetTypeName() && prop->GetTypeName().IsArray()) {
-      prop->arraylength = (unsigned int)prop->GetTypeName().GetArrayType().GetDimensions().size;
+  if (prop->GetPrim().GetParent() != UsdPrim()) {
+    if (prop->getlength) {
+      prop->getlength(ptr, length);
     } else {
-      // memcpy(length, prop->arraylength, prop->arraydimension * sizeof(int));
+      memcpy(length, prop->arraylength, prop->GetArrayDimensions().size * sizeof(int));
     }
   } else {
     IDProperty *idprop = (IDProperty *)prop;
@@ -1824,6 +2072,40 @@ static void prim_ensure_property_multi_array_length(const KrakenPRIM *ptr,
   }
 }
 
+int LUXO_prop_float_clamp(KrakenPRIM *ptr, KrakenPROP *prop, float *value)
+{
+  float min, max;
+
+  LUXO_prop_float_range(ptr, prop, &min, &max);
+
+  if (*value < min) {
+    *value = min;
+    return -1;
+  }
+  if (*value > max) {
+    *value = max;
+    return 1;
+  }
+  return 0;
+}
+
+int LUXO_prop_int_clamp(KrakenPRIM *ptr, KrakenPROP *prop, int *value)
+{
+  int min, max;
+
+  LUXO_prop_int_range(ptr, prop, &min, &max);
+
+  if (*value < min) {
+    *value = min;
+    return -1;
+  }
+  if (*value > max) {
+    *value = max;
+    return 1;
+  }
+  return 0;
+}
+
 int LUXO_prop_array_dimension(const KrakenPRIM *ptr, KrakenPROP *prop, int length[])
 {
   KrakenPROP *rprop = prim_ensure_property(prop);
@@ -1832,7 +2114,655 @@ int LUXO_prop_array_dimension(const KrakenPRIM *ptr, KrakenPROP *prop, int lengt
     prim_ensure_property_multi_array_length(ptr, prop, length);
   }
 
-  return rprop->arraylength;
+  return rprop->GetArrayDimensions().size;
+}
+
+static void prim_property_float_fill_default_array_values(const float *defarr,
+                                                          int defarr_length,
+                                                          float defvalue,
+                                                          int out_length,
+                                                          float *r_values)
+{
+  if (defarr && defarr_length > 0) {
+    defarr_length = MIN2(defarr_length, out_length);
+    memcpy(r_values, defarr, sizeof(float) * defarr_length);
+  } else {
+    defarr_length = 0;
+  }
+
+  for (int i = defarr_length; i < out_length; i++) {
+    r_values[i] = defvalue;
+  }
+}
+
+static void prim_prop_float_get_default_array_values(KrakenPRIM *ptr,
+                                                     FloatPrimPROP *fprop,
+                                                     float *r_values)
+{
+  int length = fprop->property.GetTotalArrayLength();
+  int out_length = LUXO_prop_array_length(ptr, (KrakenPROP *)fprop);
+
+  prim_property_float_fill_default_array_values(fprop->defaultarray,
+                                                length,
+                                                fprop->defaultvalue,
+                                                out_length,
+                                                r_values);
+}
+
+static void prim_prop_boolean_fill_default_array_values(const bool *defarr,
+                                                        int defarr_length,
+                                                        bool defvalue,
+                                                        int out_length,
+                                                        bool *r_values)
+{
+  if (defarr && defarr_length > 0) {
+    defarr_length = MIN2(defarr_length, out_length);
+    memcpy(r_values, defarr, sizeof(bool) * defarr_length);
+  } else {
+    defarr_length = 0;
+  }
+
+  for (int i = defarr_length; i < out_length; i++) {
+    r_values[i] = defvalue;
+  }
+}
+
+static void prim_prop_boolean_get_default_array_values(KrakenPRIM *ptr,
+                                                       BoolPrimPROP *bprop,
+                                                       bool *r_values)
+{
+  int length = bprop->property.GetTotalArrayLength();
+  int out_length = LUXO_prop_array_length(ptr, (KrakenPROP *)bprop);
+
+  prim_prop_boolean_fill_default_array_values(bprop->defaultarray,
+                                              length,
+                                              bprop->defaultvalue,
+                                              out_length,
+                                              r_values);
+}
+
+bool LUXO_prop_boolean_get(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  BoolPrimPROP *bprop = (BoolPrimPROP *)prop;
+  IDProperty *idprop;
+  bool value;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_BOOLEAN);
+  KLI_assert(LUXO_prop_array_check(prop) == false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    value = IDP_Int(idprop) != 0;
+  } else if (bprop->get) {
+    value = bprop->get(ptr);
+  } else if (bprop->get_ex) {
+    value = bprop->get_ex(ptr, prop);
+  } else {
+    value = bprop->defaultvalue;
+  }
+
+  KLI_assert(ELEM(value, false, true));
+
+  return value;
+}
+
+void LUXO_prop_boolean_get_array(KrakenPRIM *ptr, KrakenPROP *prop, bool *values)
+{
+  BoolPrimPROP *bprop = (BoolPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_BOOLEAN);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+      values[0] = LUXO_prop_boolean_get(ptr, prop);
+    } else {
+      int *values_src = static_cast<int *>(IDP_Array(idprop));
+      for (uint i = 0; i < idprop->len; i++) {
+        values[i] = (bool)values_src[i];
+      }
+    }
+  } else if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+    values[0] = LUXO_prop_boolean_get(ptr, prop);
+  } else if (bprop->getarray) {
+    bprop->getarray(ptr, values);
+  } else if (bprop->getarray_ex) {
+    bprop->getarray_ex(ptr, prop, values);
+  } else {
+    prim_prop_boolean_get_default_array_values(ptr, bprop, values);
+  }
+}
+
+bool LUXO_prop_boolean_get_index(KrakenPRIM *ptr, KrakenPROP *prop, int index)
+{
+  bool tmp[LUXO_MAX_ARRAY_LENGTH];
+  int len = prim_ensure_property_array_length(ptr, prop);
+  bool value;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_BOOLEAN);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+  KLI_assert(index >= 0);
+  KLI_assert(index < len);
+
+  if (len <= LUXO_MAX_ARRAY_LENGTH) {
+    LUXO_prop_boolean_get_array(ptr, prop, tmp);
+    value = tmp[index];
+  } else {
+    bool *tmparray;
+
+    tmparray = static_cast<bool *>(MEM_mallocN(sizeof(bool) * len, __func__));
+    LUXO_prop_boolean_get_array(ptr, prop, tmparray);
+    value = tmparray[index];
+    MEM_freeN(tmparray);
+  }
+
+  KLI_assert(ELEM(value, false, true));
+
+  return value;
+}
+
+void LUXO_prop_boolean_set_array(KrakenPRIM *ptr, KrakenPROP *prop, const bool *values)
+{
+  BoolPrimPROP *bprop = (BoolPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_BOOLEAN);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+      IDP_Int(idprop) = values[0];
+    } else {
+      int *values_dst = static_cast<int *>(IDP_Array(idprop));
+      for (uint i = 0; i < idprop->len; i++) {
+        values_dst[i] = (int)values[i];
+      }
+    }
+    prim_idproperty_touch(idprop);
+  } else if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+    LUXO_prop_boolean_set(ptr, prop, values[0]);
+  } else if (bprop->setarray) {
+    bprop->setarray(ptr, values);
+  } else if (bprop->setarray_ex) {
+    bprop->setarray_ex(ptr, prop, values);
+  } else if (prop->flag & PROP_EDITABLE) {
+    IDPropertyTemplate val = {0};
+    IDProperty *group;
+
+    val.array.len = prop->GetTotalArrayLength();
+    val.array.type = IDP_INT;
+
+    group = LUXO_prim_idprops(ptr, 1);
+    if (group) {
+      idprop = IDP_New(IDP_ARRAY, &val, prop->GetName());
+      IDP_AddToGroup(group, idprop);
+      int *values_dst = static_cast<int *>(IDP_Array(idprop));
+      for (uint i = 0; i < idprop->len; i++) {
+        values_dst[i] = (int)values[i];
+      }
+    }
+  }
+}
+
+void LUXO_prop_boolean_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, bool value)
+{
+  bool tmp[LUXO_MAX_ARRAY_LENGTH];
+  int len = prim_ensure_property_array_length(ptr, prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_BOOLEAN);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+  KLI_assert(index >= 0);
+  KLI_assert(index < len);
+  KLI_assert(ELEM(value, false, true));
+
+  if (len <= LUXO_MAX_ARRAY_LENGTH) {
+    LUXO_prop_boolean_get_array(ptr, prop, tmp);
+    tmp[index] = value;
+    LUXO_prop_boolean_set_array(ptr, prop, tmp);
+  } else {
+    bool *tmparray;
+
+    tmparray = static_cast<bool *>(MEM_mallocN(sizeof(bool) * len, __func__));
+    LUXO_prop_boolean_get_array(ptr, prop, tmparray);
+    tmparray[index] = value;
+    LUXO_prop_boolean_set_array(ptr, prop, tmparray);
+    MEM_freeN(tmparray);
+  }
+}
+
+void LUXO_prop_boolean_set(KrakenPRIM *ptr, KrakenPROP *prop, bool value)
+{
+  BoolPrimPROP *bprop = (BoolPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_BOOLEAN);
+  KLI_assert(LUXO_prop_array_check(prop) == false);
+  KLI_assert(ELEM(value, false, true));
+
+  /* just in case other values are passed */
+  KLI_assert(ELEM(value, true, false));
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    IDP_Int(idprop) = (int)value;
+    prim_idproperty_touch(idprop);
+  } else if (bprop->set) {
+    bprop->set(ptr, value);
+  } else if (bprop->set_ex) {
+    bprop->set_ex(ptr, prop, value);
+  } else if (prop->flag & PROP_EDITABLE) {
+    IDPropertyTemplate val = {0};
+    IDProperty *group;
+
+    val.i = value;
+
+    group = LUXO_prim_idprops(ptr, 1);
+    if (group) {
+      IDP_AddToGroup(group, IDP_New(IDP_INT, &val, prop->GetName()));
+    }
+  }
+}
+
+static void prim_prop_int_fill_default_array_values(const int *defarr,
+                                                    int defarr_length,
+                                                    int defvalue,
+                                                    int out_length,
+                                                    int *r_values)
+{
+  if (defarr && defarr_length > 0) {
+    defarr_length = MIN2(defarr_length, out_length);
+    memcpy(r_values, defarr, sizeof(int) * defarr_length);
+  } else {
+    defarr_length = 0;
+  }
+
+  for (int i = defarr_length; i < out_length; i++) {
+    r_values[i] = defvalue;
+  }
+}
+
+static void prim_prop_int_get_default_array_values(KrakenPRIM *ptr,
+                                                   IntPrimPROP *iprop,
+                                                   int *r_values)
+{
+  int length = iprop->property.GetTotalArrayLength();
+  int out_length = LUXO_prop_array_length(ptr, (KrakenPROP *)iprop);
+
+  prim_prop_int_fill_default_array_values(iprop->defaultarray,
+                                          length,
+                                          iprop->defaultvalue,
+                                          out_length,
+                                          r_values);
+}
+
+int LUXO_prop_int_get(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  IntPrimPROP *iprop = (IntPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_INT);
+  KLI_assert(LUXO_prop_array_check(prop) == false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    return IDP_Int(idprop);
+  }
+  if (iprop->get) {
+    return iprop->get(ptr);
+  }
+  if (iprop->get_ex) {
+    return iprop->get_ex(ptr, prop);
+  }
+  return iprop->defaultvalue;
+}
+
+int LUXO_prop_int_get_index(KrakenPRIM *ptr, KrakenPROP *prop, int index)
+{
+  int tmp[LUXO_MAX_ARRAY_LENGTH];
+  int len = prim_ensure_property_array_length(ptr, prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_INT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+  KLI_assert(index >= 0);
+  KLI_assert(index < len);
+
+  if (len <= LUXO_MAX_ARRAY_LENGTH) {
+    LUXO_prop_int_get_array(ptr, prop, tmp);
+    return tmp[index];
+  }
+  int *tmparray, value;
+
+  tmparray = static_cast<int *>(MEM_mallocN(sizeof(int) * len, __func__));
+  LUXO_prop_int_get_array(ptr, prop, tmparray);
+  value = tmparray[index];
+  MEM_freeN(tmparray);
+
+  return value;
+}
+
+void LUXO_prop_int_get_array(KrakenPRIM *ptr, KrakenPROP *prop, int *values)
+{
+  IntPrimPROP *iprop = (IntPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_INT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    KLI_assert(idprop->len == LUXO_prop_array_length(ptr, prop) || (prop->flag & PROP_IDPROPERTY));
+    if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+      values[0] = LUXO_prop_int_get(ptr, prop);
+    } else {
+      memcpy(values, IDP_Array(idprop), sizeof(int) * idprop->len);
+    }
+  } else if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+    values[0] = LUXO_prop_int_get(ptr, prop);
+  } else if (iprop->getarray) {
+    iprop->getarray(ptr, values);
+  } else if (iprop->getarray_ex) {
+    iprop->getarray_ex(ptr, prop, values);
+  } else {
+    prim_prop_int_get_default_array_values(ptr, iprop, values);
+  }
+}
+
+float LUXO_prop_float_get(KrakenPRIM *ptr, KrakenPROP *prop)
+{
+  FloatPrimPROP *fprop = (FloatPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_FLOAT);
+  KLI_assert(LUXO_prop_array_check(prop) == false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    if (idprop->type == IDP_FLOAT) {
+      return IDP_Float(idprop);
+    }
+    return (float)IDP_Double(idprop);
+  }
+  if (fprop->get) {
+    return fprop->get(ptr);
+  }
+  if (fprop->get_ex) {
+    return fprop->get_ex(ptr, prop);
+  }
+  return fprop->defaultvalue;
+}
+
+float LUXO_prop_float_get_index(KrakenPRIM *ptr, KrakenPROP *prop, int index)
+{
+  float tmp[LUXO_MAX_ARRAY_LENGTH];
+  int len = prim_ensure_property_array_length(ptr, prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_FLOAT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+  KLI_assert(index >= 0);
+  KLI_assert(index < len);
+
+  if (len <= LUXO_MAX_ARRAY_LENGTH) {
+    LUXO_prop_float_get_array(ptr, prop, tmp);
+    return tmp[index];
+  }
+  float *tmparray, value;
+
+  tmparray = static_cast<float *>(MEM_mallocN(sizeof(float) * len, __func__));
+  LUXO_prop_float_get_array(ptr, prop, tmparray);
+  value = tmparray[index];
+  MEM_freeN(tmparray);
+
+  return value;
+}
+
+void LUXO_prop_float_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, float value)
+{
+  float tmp[LUXO_MAX_ARRAY_LENGTH];
+  int len = prim_ensure_property_array_length(ptr, prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_FLOAT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+  KLI_assert(index >= 0);
+  KLI_assert(index < len);
+
+  if (len <= LUXO_MAX_ARRAY_LENGTH) {
+    LUXO_prop_float_get_array(ptr, prop, tmp);
+    tmp[index] = value;
+    LUXO_prop_float_set_array(ptr, prop, tmp);
+  } else {
+    float *tmparray;
+
+    tmparray = static_cast<float *>(MEM_mallocN(sizeof(float) * len, __func__));
+    LUXO_prop_float_get_array(ptr, prop, tmparray);
+    tmparray[index] = value;
+    LUXO_prop_float_set_array(ptr, prop, tmparray);
+    MEM_freeN(tmparray);
+  }
+}
+
+void LUXO_prop_float_get_array(KrakenPRIM *ptr, KrakenPROP *prop, float *values)
+{
+  FloatPrimPROP *fprop = (FloatPrimPROP *)prop;
+  IDProperty *idprop;
+  int i;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_FLOAT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    KLI_assert(idprop->len == LUXO_prop_array_length(ptr, prop) || (prop->flag & PROP_IDPROPERTY));
+    if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+      values[0] = (float)FormFactory(ptr->GetAttribute(prop->GetName()));
+    } else if (idprop->subtype == IDP_FLOAT) {
+      memcpy(values, IDP_Array(idprop), sizeof(float) * idprop->len);
+    } else {
+      for (i = 0; i < idprop->len; i++) {
+        values[i] = (float)(((double *)IDP_Array(idprop))[i]);
+      }
+    }
+  } else if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+    values[0] = (float)FormFactory(ptr->GetAttribute(prop->GetName()));
+  } else if (fprop->getarray) {
+    fprop->getarray(ptr, values);
+  } else if (fprop->getarray_ex) {
+    fprop->getarray_ex(ptr, prop, values);
+  } else {
+    prim_prop_float_get_default_array_values(ptr, fprop, values);
+  }
+}
+
+void LUXO_prop_float_set(KrakenPRIM *ptr, KrakenPROP *prop, float value)
+{
+  FloatPrimPROP *fprop = (FloatPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_FLOAT);
+  KLI_assert(LUXO_prop_array_check(prop) == false);
+  /* useful to check on bad values but set function should clamp */
+  // KLI_assert(LUXO_prop_float_clamp(ptr, prop, &value) == 0);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    LUXO_prop_float_clamp(ptr, prop, &value);
+    if (idprop->type == IDP_FLOAT) {
+      IDP_Float(idprop) = value;
+    } else {
+      IDP_Double(idprop) = value;
+    }
+
+    prim_idproperty_touch(idprop);
+  } else if (fprop->set) {
+    fprop->set(ptr, value);
+  } else if (fprop->set_ex) {
+    fprop->set_ex(ptr, prop, value);
+  } else if (prop->flag & PROP_EDITABLE) {
+    IDPropertyTemplate val = {0};
+    IDProperty *group;
+
+    LUXO_prop_float_clamp(ptr, prop, &value);
+
+    val.f = value;
+
+    group = LUXO_prim_idprops(ptr, 1);
+    if (group) {
+      IDP_AddToGroup(group, IDP_New(IDP_FLOAT, &val, prop->GetName()));
+    }
+  }
+}
+
+void LUXO_prop_float_set_array(KrakenPRIM *ptr, KrakenPROP *prop, const float *values)
+{
+  FloatPrimPROP *fprop = (FloatPrimPROP *)prop;
+  IDProperty *idprop;
+  int i;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_FLOAT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    KLI_assert(idprop->len == LUXO_prop_array_length(ptr, prop) || (prop->flag & PROP_IDPROPERTY));
+    if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+      if (idprop->type == IDP_FLOAT) {
+        IDP_Float(idprop) = values[0];
+      } else {
+        IDP_Double(idprop) = values[0];
+      }
+    } else if (idprop->subtype == IDP_FLOAT) {
+      memcpy(IDP_Array(idprop), values, sizeof(float) * idprop->len);
+    } else {
+      for (i = 0; i < idprop->len; i++) {
+        ((double *)IDP_Array(idprop))[i] = values[i];
+      }
+    }
+
+    prim_idproperty_touch(idprop);
+  } else if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+    LUXO_prop_float_set(ptr, prop, values[0]);
+  } else if (fprop->setarray) {
+    fprop->setarray(ptr, values);
+  } else if (fprop->setarray_ex) {
+    fprop->setarray_ex(ptr, prop, values);
+  } else if (prop->flag & PROP_EDITABLE) {
+    IDPropertyTemplate val = {0};
+    IDProperty *group;
+
+    /* TODO: LUXO_prop_float_clamp_array(ptr, prop, &value); */
+
+    val.array.len = prop->GetTotalArrayLength();
+    val.array.type = IDP_FLOAT;
+
+    group = LUXO_prim_idprops(ptr, 1);
+    if (group) {
+      idprop = IDP_New(IDP_ARRAY, &val, prop->GetName());
+      IDP_AddToGroup(group, idprop);
+      memcpy(IDP_Array(idprop), values, sizeof(float) * idprop->len);
+    }
+  }
+}
+
+void LUXO_float_set_array(KrakenPRIM *ptr, const char *name, const float *values)
+{
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, name);
+
+  if (prop) {
+    LUXO_prop_float_set_array(ptr, prop, values);
+  } else {
+    printf("%s: %s.%s not found.\n", __func__, ptr->type->identifier.data(), name);
+  }
+}
+
+void LUXO_prop_int_set_index(KrakenPRIM *ptr, KrakenPROP *prop, int index, int value)
+{
+  int tmp[LUXO_MAX_ARRAY_LENGTH];
+  int len = prim_ensure_property_array_length(ptr, prop);
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_INT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+  KLI_assert(index >= 0);
+  KLI_assert(index < len);
+
+  if (len <= LUXO_MAX_ARRAY_LENGTH) {
+    LUXO_prop_int_get_array(ptr, prop, tmp);
+    tmp[index] = value;
+    LUXO_prop_int_set_array(ptr, prop, tmp);
+  } else {
+    int *tmparray;
+
+    tmparray = static_cast<int *>(MEM_mallocN(sizeof(int) * len, __func__));
+    LUXO_prop_int_get_array(ptr, prop, tmparray);
+    tmparray[index] = value;
+    LUXO_prop_int_set_array(ptr, prop, tmparray);
+    MEM_freeN(tmparray);
+  }
+}
+
+void LUXO_prop_int_set_array(KrakenPRIM *ptr, KrakenPROP *prop, const int *values)
+{
+  IntPrimPROP *iprop = (IntPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_INT);
+  KLI_assert(LUXO_prop_array_check(prop) != false);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    KLI_assert(idprop->len == LUXO_prop_array_length(ptr, prop) || (prop->flag & PROP_IDPROPERTY));
+    if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+      IDP_Int(idprop) = values[0];
+    } else {
+      memcpy(IDP_Array(idprop), values, sizeof(int) * idprop->len);
+    }
+
+    prim_idproperty_touch(idprop);
+  } else if (prop->GetArrayDimensions() == SdfTupleDimensions()) {
+    LUXO_prop_int_set(ptr, prop, values[0]);
+  } else if (iprop->setarray) {
+    iprop->setarray(ptr, values);
+  } else if (iprop->setarray_ex) {
+    iprop->setarray_ex(ptr, prop, values);
+  } else if (prop->flag & PROP_EDITABLE) {
+    IDPropertyTemplate val = {0};
+    IDProperty *group;
+
+    /* TODO: LUXO_prop_int_clamp_array(ptr, prop, &value); */
+
+    val.array.len = prop->GetTotalArrayLength();
+    val.array.type = IDP_INT;
+
+    group = LUXO_prim_idprops(ptr, 1);
+    if (group) {
+      idprop = IDP_New(IDP_ARRAY, &val, prop->GetName());
+      IDP_AddToGroup(group, idprop);
+      memcpy(IDP_Array(idprop), values, sizeof(int) * idprop->len);
+    }
+  }
+}
+
+void LUXO_prop_int_set(KrakenPRIM *ptr, KrakenPROP *prop, int value)
+{
+  IntPrimPROP *iprop = (IntPrimPROP *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_INT);
+  KLI_assert(LUXO_prop_array_check(prop) == false);
+  /* useful to check on bad values but set function should clamp */
+  // KLI_assert(LUXO_prop_int_clamp(ptr, prop, &value) == 0);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    LUXO_prop_int_clamp(ptr, prop, &value);
+    IDP_Int(idprop) = value;
+    prim_idproperty_touch(idprop);
+  } else if (iprop->set) {
+    iprop->set(ptr, value);
+  } else if (iprop->set_ex) {
+    iprop->set_ex(ptr, prop, value);
+  } else if (prop->flag & PROP_EDITABLE) {
+    IDPropertyTemplate val = {0};
+    IDProperty *group;
+
+    LUXO_prop_int_clamp(ptr, prop, &value);
+
+    val.i = value;
+
+    group = LUXO_prim_idprops(ptr, 1);
+    if (group) {
+      IDP_AddToGroup(group, IDP_New(IDP_INT, &val, prop->GetName()));
+    }
+  }
 }
 
 int LUXO_prop_multi_array_length(KrakenPRIM *ptr, KrakenPROP *prop, int dim)
@@ -1959,4 +2889,45 @@ char *LUXO_path_from_real_ID_to_property_index(Main *kmain,
    * of the path either. */
   return path != nullptr ? prim_prepend_real_ID_path(kmain, ptr->owner_id, path, r_real_id) :
                            nullptr;
+}
+
+RawPropertyType LUXO_prop_raw_type(KrakenPROP *prop)
+{
+  if (prop->rawtype == PROP_RAW_UNSET) {
+    /* this property has no raw access,
+     * yet we try to provide a raw type to help building the array. */
+    switch (prop->type) {
+      case PROP_BOOLEAN:
+        return PROP_RAW_BOOLEAN;
+      case PROP_INT:
+        return PROP_RAW_INT;
+      case PROP_FLOAT:
+        return PROP_RAW_FLOAT;
+      case PROP_ENUM:
+        return PROP_RAW_INT;
+      default:
+        break;
+    }
+  }
+  return prop->rawtype;
+}
+
+int LUXO_raw_type_sizeof(RawPropertyType type)
+{
+  switch (type) {
+    case PROP_RAW_CHAR:
+      return sizeof(char);
+    case PROP_RAW_SHORT:
+      return sizeof(short);
+    case PROP_RAW_INT:
+      return sizeof(int);
+    case PROP_RAW_BOOLEAN:
+      return sizeof(bool);
+    case PROP_RAW_FLOAT:
+      return sizeof(float);
+    case PROP_RAW_DOUBLE:
+      return sizeof(double);
+    default:
+      return 0;
+  }
 }
