@@ -184,7 +184,7 @@ endif
 # use the default build path can still use utility helpers.
 ifeq ($(OS), Darwin)
 	CMAKE_CONFIG_ARGS:=$(CMAKE_CONFIG_ARGS) -G Xcode
-	BUILD_COMMAND:=xcodebuild docbuild -derivedDataPath "$(BUILD_DIR)/docbuild" -arch "arm64" -sdk "macosx13.0" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install | pwsh -Command xcprettyfix -r json-compilation-database --output "$(KRAKEN_DIR)/compile_commands.json"
+	BUILD_COMMAND:=xcodebuild docbuild -derivedDataPath "$(BUILD_DIR)/docbuild" -arch "arm64" -sdk "macosx13.3" -project "$(BUILD_DIR)/Kraken.xcodeproj" -configuration Release -scheme install | pwsh -Command xcprettyfix -r json-compilation-database --output "$(KRAKEN_DIR)/compile_commands.json"
 	DEPS_BUILD_COMMAND:=xcodebuild
 	KRAKEN_BIN?="$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
 	CLEAN_BUILD_COMMAND:=$(BUILD_COMMAND) -C "$(BUILD_DIR)_release" clean
@@ -250,7 +250,7 @@ all: .FORCE
 	$(BUILD_COMMAND)
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Kraken.app/Contents/MacOS/Kraken"
+	@echo Kraken successfully built, run from: "$(BUILD_DIR)/bin/Release/Kraken.app/Contents/MacOS/Kraken"
 	@echo
 
 debug: all
