@@ -517,6 +517,12 @@ add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 # Find Eigen
 
 set(EIGEN3_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/extern/Eigen3)
+if (APPLE)
+  # TODO:
+  # hack this out of here.
+  # else, we get no template named 'result_of' in namespace 'std'.
+  add_definitions(-DEIGEN_HAS_STD_RESULT_OF=0)
+endif()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Jinja2
