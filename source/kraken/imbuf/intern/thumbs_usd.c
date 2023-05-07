@@ -9,7 +9,7 @@
 #include <string.h>
 
 // #include "KLI_linklist.h"
-#include "KLI_listbase.h" /* Needed due to import of BLO_readfile.h */
+#include "KLI_listbase.h" /* Needed due to import of KLO_readfile.h */
 #include "KLI_utildefines.h"
 
 #include "KKE_icons.h"
@@ -20,6 +20,8 @@
 #include "USD_color_types.h"
 
 #include "KLO_readfile.h"
+
+#include "WM_reports.h"
 
 #include "IMB_imbuf.h"
 // #include "IMB_imbuf_types.h"
@@ -32,7 +34,7 @@ static ImBuf *imb_thumb_load_from_usd_id(const char *usd_path,
                                          const char *usd_id)
 {
   ImBuf *ima = NULL;
-  KrakenFileReadReport kf_reports = {.reports = NULL};
+  USDFileReadReport kf_reports = {.reports = NULL};
 
 
   return ima;

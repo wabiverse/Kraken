@@ -9,6 +9,7 @@ set(INC
   ../gpu
   ../krakernel
   ../kraklib
+  ../krakloader
   ../krakfont
   ../luxo
   ../python
@@ -17,6 +18,11 @@ set(INC
   ../../../intern/atomic
   ../../../intern/clog
   ../../../intern/guardedalloc
+
+  # for writefile.c: dna_type_offsets.h
+  ${CMAKE_BINARY_DIR}/source/kraken/universe/intern
+  # LUXO_prototypes.h
+  ${CMAKE_BINARY_DIR}/source/kraken/luxo
 )
 
 set(INC_SYS
@@ -63,6 +69,7 @@ set(SRC
   WM_menu_type.h
   WM_msgbus.h
   WM_operators.h
+  WM_reports.h
   WM_tokens.h
   WM_tooltip.h
   WM_window.h
@@ -72,6 +79,8 @@ set(SRC
 set(LIB
   maelstrom
   kraken_editor_screen
+  kraken_editor_util
+  kraken_editor_datafiles
   ${BOOST_LIBRARIES}
   ${TBB_LIBRARIES}
   ${PYTHON_LIBRARIES}
@@ -82,7 +91,8 @@ set(LIB
 
 add_definitions(-DKRAKEN_WM_EXPORTS)
 
-kraken_add_lib(kraken_wm "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+kraken_add_lib_nolist(kraken_wm "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
 add_dependencies(kraken_wm kraken_universe)
 add_dependencies(kraken_wm kraken_luxo)
+add_dependencies(kraken_wm luxo)

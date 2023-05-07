@@ -219,12 +219,12 @@ void KKE_area_region_free(SpaceType *st, ARegion *region)
     MEM_SAFE_FREE(uilst->dyn_data);
   }
 
-  if (region->gizmo_map != NULL) {
-    region_free_gizmomap_callback(region->gizmo_map);
-  }
+  // if (region->gizmo_map != NULL) {
+  //   region_free_gizmomap_callback(region->gizmo_map);
+  // }
 
   if (region->runtime.block_name_map != NULL) {
-    KLI_ghash_free(region->runtime.block_name_map, NULL, NULL);
+    KLI_rhash_free(region->runtime.block_name_map, NULL, NULL);
     region->runtime.block_name_map = NULL;
   }
 
@@ -244,14 +244,14 @@ void KKE_screen_area_free(ScrArea *area)
   }
 
   MEM_SAFE_FREE(area->global);
-  KLI_freelistN(&area->regionbase);
+  KLI_freelistN(&area->regions);
 
-  KKE_spacedata_freelist(&area->spacedata);
+  //KKE_spacedata_freelist(&area->spacedata);
 
-  KLI_freelistN(&area->actionzones);
+  //KLI_freelistN(&area->actionzones);
 }
 
-ARegionType *KKE_regiontype_from_id_or_first(const SpaceType *st, int regionid)
+ARegionType *KKE_regiontype_from_id_or_first(SpaceType *st, int regionid)
 {
   LISTBASE_FOREACH(ARegionType *, art, &st->regiontypes)
   {
@@ -262,7 +262,7 @@ ARegionType *KKE_regiontype_from_id_or_first(const SpaceType *st, int regionid)
 
   printf("Error, region type %d missing in - name:\"%s\", id:%d\n",
          regionid,
-         st->name,
+         st->name.data(),
          st->spaceid);
   return (ARegionType *)st->regiontypes.first;
 }

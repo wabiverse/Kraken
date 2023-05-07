@@ -64,14 +64,15 @@ set(SRC
   LUXO_define.cpp
   ${DEFSRC}
   ${APISRC}
-  # ../../../../intern/guardedalloc/intern/leak_detector.cc
-  # ../../../../intern/guardedalloc/intern/mallocn.c
-  # ../../../../intern/guardedalloc/intern/mallocn_guarded_impl.c
-  # ../../../../intern/guardedalloc/intern/mallocn_lockfree_impl.c
+  ../../../../intern/clog/clog.c
+  ../../../../intern/guardedalloc/intern/leak_detector.cc
+  ../../../../intern/guardedalloc/intern/mallocn.c
+  ../../../../intern/guardedalloc/intern/mallocn_guarded_impl.c
+  ../../../../intern/guardedalloc/intern/mallocn_lockfree_impl.c
 
   # Needed for defaults.
-  # ../../../../release/datafiles/userdef/userdef_default.c
-  # ../../../../release/datafiles/userdef/userdef_default_theme.c
+  ../../../../release/datafiles/userdef/userdef_default.c
+  ../../../../release/datafiles/userdef/userdef_default_theme.c
 )
 
 set(INC
@@ -80,6 +81,7 @@ set(INC
   ../../krakfont
   ../../krakernel
   ../../kraklib
+  ../../krakloader
   ../../gpu
   ../../imbuf
   ../../universe
@@ -136,10 +138,18 @@ endif()
 
 # Output LUXO_*_gen.cpp
 # note (linux only): with crashes try add this after COMMAND: valgrind --leak-check=full --track-origins=yes
+# add_custom_command(
+#   OUTPUT ${GENFILES}
+#   # COMMAND "$<TARGET_FILE:luxo>" ${CMAKE_CURRENT_BINARY_DIR}/  ${CMAKE_CURRENT_BINARY_DIR}/../
+#   COMMAND pwsh -Command "New-Item ${GENFILES} -Force"
+#   DEPENDS luxo
+# )
+# Output rna_*_gen.c
+# note (linux only): with crashes try add this after COMMAND: valgrind --leak-check=full --track-origins=yes
 add_custom_command(
   OUTPUT ${GENFILES}
-  # COMMAND "$<TARGET_FILE:luxo>" ${CMAKE_CURRENT_BINARY_DIR}/  ${CMAKE_CURRENT_BINARY_DIR}/../
   COMMAND pwsh -Command "New-Item ${GENFILES} -Force"
+  # COMMAND cp "$<TARGET_FILE:luxo>" ${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/../
   DEPENDS luxo
 )
 

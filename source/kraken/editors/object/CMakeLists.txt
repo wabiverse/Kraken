@@ -29,6 +29,17 @@ set(INC
   ${CMAKE_BINARY_DIR}/source/kraken/luxo
 )
 
+include_directories(${TBB_INCLUDE_DIRS})
+
+set(INC_SYS
+  ${Boost_INCLUDE_DIRS}
+  ${TBB_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIR}
+  ${PTHREADS_INCLUDE_DIR}
+  ${ZLIB_INCLUDE_DIR}
+  ${EIGEN3_INCLUDE_DIRS}
+)
+
 set(SRC
   object_ops.cc
 )

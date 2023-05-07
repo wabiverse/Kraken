@@ -74,7 +74,7 @@ void KKE_object_material_from_eval_data(struct Main *bmain,
                                         const struct ID *data_eval);
 struct Material *KKE_material_add(struct Main *bmain, const char *name);
 struct Material *KKE_gpencil_material_add(struct Main *bmain, const char *name);
-void KKE_gpencil_material_attr_init(struct Material *ma);
+//void KKE_gpencil_material_attr_init(struct Material *ma);
 
 /* UNUSED */
 // void automatname(struct Material *);

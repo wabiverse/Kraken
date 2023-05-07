@@ -265,6 +265,37 @@ static struct PyModuleDef props_module = {
   NULL,
 };
 
+static PyGetSetDef kpy_prop_deferred_getset[] = {
+    // {"function", (getter)kpy_prop_deferred_function_get, (setter)NULL, NULL, NULL},
+    // {"keywords", (getter)kpy_prop_deferred_keywords_get, (setter)NULL, NULL, NULL},
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+PyDoc_STRVAR(kpy_prop_deferred_doc,
+             "Intermediate storage for properties before registration.\n"
+             "\n"
+             ".. note::\n"
+             "\n"
+             "   This is not part of the stable API and may change between releases.");
+
+PyTypeObject kpy_prop_deferred_Type = {
+  PyVarObject_HEAD_INIT(NULL, 0)
+
+  .tp_name = "_PropertyDeferred",
+  .tp_basicsize = sizeof(KPy_PropDeferred),
+  // .tp_dealloc = (destructor)kpy_prop_deferred_dealloc,
+  // .tp_repr = (reprfunc)kpy_prop_deferred_repr,
+  // .tp_call = (ternaryfunc)kpy_prop_deferred_call,
+
+  .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
+
+  .tp_doc = kpy_prop_deferred_doc,
+  // .tp_traverse = (traverseproc)kpy_prop_deferred_traverse,
+  // .tp_clear = (inquiry)kpy_prop_deferred_clear,
+
+  .tp_getset = kpy_prop_deferred_getset,
+};
+
 PyObject *KPY_prim_props(void)
 {
   PyObject *submodule;

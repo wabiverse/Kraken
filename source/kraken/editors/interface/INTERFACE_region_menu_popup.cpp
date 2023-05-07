@@ -63,7 +63,7 @@ void UI_popup_block_ex(kContext *C,
   // handle->opcontext = opcontext;
 
   UI_popup_handlers_add(C, window->modalhandlers, handle, 0);
-  UI_block_active_only_flagged_buttons(C, handle->region, handle->region->uiblocks.front());
+  UI_block_active_only_flagged_buttons(C, handle->region, (uiBlock *)handle->region->uiblocks.first);
   WM_event_add_mousemove(window);
 }
 
@@ -71,7 +71,8 @@ bool UI_popup_block_name_exists(const kScreen *screen, const char *name)
 {
   LISTBASE_FOREACH(const ARegion *, region, &screen->regions)
   {
-    for (auto &block : region->uiblocks) {
+    LISTBASE_FOREACH(const uiBlock *, block, &region->uiblocks)
+    {
       if (STREQ(block->name, name)) {
         return true;
       }

@@ -67,7 +67,7 @@ void RE_engines_init(void)
 void RE_engines_register(RenderEngineType *render_type)
 {
   if (render_type->draw_engine) {
-    DRW_engine_register(render_type->draw_engine);
+    //DRW_engine_register(render_type->draw_engine);
   }
   KLI_addtail(&R_engines, render_type);
 }

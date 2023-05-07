@@ -491,7 +491,7 @@ typedef struct Library
 
   /** Temp data needed by read/write code, and lib-override recursive re-synchronized. */
   int temp_index;
-  /** See BLENDER_FILE_VERSION, BLENDER_FILE_SUBVERSION, needed for do_versions. */
+  /** See KRAKEN_FILE_VERSION, KRAKEN_FILE_SUBVERSION, needed for do_versions. */
   short versionfile, subversionfile;
 
   struct Library_Runtime runtime;

@@ -92,7 +92,7 @@ Material *KKE_gpencil_material_add(Main *kmain, const char *name)
 
   /* grease pencil settings */
   if (ma != NULL) {
-    BKE_gpencil_material_attr_init(ma);
+    //KKE_gpencil_material_attr_init(ma);
   }
   return ma;
 }

@@ -693,22 +693,6 @@ typedef enum SequenceColorTag
   SEQUENCE_COLOR_TOT,
 } SequenceColorTag;
 
-/* Collection->color_tag. */
-typedef enum CollectionColorTag
-{
-  COLLECTION_COLOR_NONE = -1,
-  COLLECTION_COLOR_01,
-  COLLECTION_COLOR_02,
-  COLLECTION_COLOR_03,
-  COLLECTION_COLOR_04,
-  COLLECTION_COLOR_05,
-  COLLECTION_COLOR_06,
-  COLLECTION_COLOR_07,
-  COLLECTION_COLOR_08,
-
-  COLLECTION_COLOR_TOT,
-} CollectionColorTag;
-
 typedef enum eRegionType
 {
   RGN_TYPE_WINDOW = 0,
@@ -1565,7 +1549,7 @@ typedef enum eFileAssetImportType
   FILE_ASSET_IMPORT_LINK = 0,
   /** Regular data-block appending (basically linking + "Make Local"). */
   FILE_ASSET_IMPORT_APPEND = 1,
-  /** Append data-block with the #BLO_LIBLINK_APPEND_LOCAL_ID_REUSE flag enabled. Some typically
+  /** Append data-block with the #KLO_LIBLINK_APPEND_LOCAL_ID_REUSE flag enabled. Some typically
    * heavy data dependencies (e.g. the image data-blocks of a material, the mesh of an object) may
    * be reused from an earlier append. */
   FILE_ASSET_IMPORT_APPEND_REUSE = 2,
@@ -1741,7 +1725,7 @@ typedef enum eFileSelectType
 /**
  * #FileSelectParams.flag / `sfile->params->flag`.
  * \note short flag, also used as 16 lower bits of flags in link/append code
- * (WM and BLO code area, see #eBLOLibLinkFlags in BLO_readfile.h).
+ * (WM and BLO code area, see #eBLOLibLinkFlags in KLO_readfile.h).
  */
 typedef enum eFileSelectParamsFlag
 {

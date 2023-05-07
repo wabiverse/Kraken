@@ -112,7 +112,7 @@ static FileData *kr_decode_and_check(FileData *fd, ReportList *reports)
   return fd;
 }
 
-static FileData *filedata_new(KrakenFileReadReport *reports)
+static FileData *filedata_new(USDFileReadReport *reports)
 {
   KLI_assert(reports != nullptr);
 
@@ -125,7 +125,7 @@ static FileData *filedata_new(KrakenFileReadReport *reports)
 }
 
 static FileData *kr_filedata_from_file_descriptor(const char *filepath,
-                                                  KrakenFileReadReport *reports,
+                                                  USDFileReadReport *reports,
                                                   SdfLayerRefPtr file)
 {
   char header[6];
@@ -157,7 +157,7 @@ static FileData *kr_filedata_from_file_descriptor(const char *filepath,
   return fd;
 }
 
-static FileData *kr_filedata_from_file_open(const char *filepath, KrakenFileReadReport *reports)
+static FileData *kr_filedata_from_file_open(const char *filepath, USDFileReadReport *reports)
 {
   errno = 0;
   SdfLayerRefPtr file = SdfLayer::FindOrOpen(filepath);
@@ -173,7 +173,7 @@ static FileData *kr_filedata_from_file_open(const char *filepath, KrakenFileRead
   return kr_filedata_from_file_descriptor(filepath, reports, file);
 }
 
-FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *reports)
+FileData *kr_filedata_from_file(const char *filepath, USDFileReadReport *reports)
 {
   FileData *fd = kr_filedata_from_file_open(filepath, reports);
   if (fd != nullptr) {
@@ -185,7 +185,7 @@ FileData *kr_filedata_from_file(const char *filepath, KrakenFileReadReport *repo
   return nullptr;
 }
 
-KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, KrakenFileReadReport *reports)
+KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, USDFileReadReport *reports)
 {
   KrakenHandle *kh;
 

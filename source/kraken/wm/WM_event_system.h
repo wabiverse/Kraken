@@ -33,7 +33,7 @@
 
 struct kContext;
 struct KrakemPRIM;
-struct KrakemPROP;
+struct KrakenPROP;
 struct wmOperator;
 struct wmOperatorType;
 struct wmEvent;

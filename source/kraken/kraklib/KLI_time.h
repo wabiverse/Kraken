@@ -32,7 +32,7 @@
 #include "KLI_sys_types.h"
 
 /* platform specific includes. */
-#if defined(ARCH_OS_LINUX) || defined(ARCH_OS_DARWIN)
+#if defined(__linux__) || defined(__APPLE__)
 #  include <sys/time.h>
 #  include <unistd.h>
 #elif defined(ARCH_OS_WINDOWS)

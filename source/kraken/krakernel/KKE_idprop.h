@@ -30,10 +30,10 @@
 
 #include <wabi/base/tf/token.h>
 
-struct UsdDataReader;
-struct UsdExpander;
-struct UsdLibReader;
-struct UsdWriter;
+struct USDDataReader;
+struct USDExpander;
+struct USDLibReader;
+struct USDWriter;
 struct ID;
 struct IDProperty;
 struct IDPropertyUIData;

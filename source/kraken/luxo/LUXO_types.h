@@ -138,7 +138,7 @@ typedef enum FunctionFlag
   /** Pass RNA type, used to define class functions, only valid when #FUNC_NO_SELF is set. */
   FUNC_USE_SELF_TYPE = (1 << 1),
 
-  /* Pass Main, bContext and/or ReportList. */
+  /* Pass Main, kContext and/or ReportList. */
   FUNC_USE_MAIN = (1 << 2),
   FUNC_USE_CONTEXT = (1 << 3),
   FUNC_USE_REPORTS = (1 << 4),

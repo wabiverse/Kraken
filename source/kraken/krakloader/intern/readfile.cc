@@ -36,6 +36,8 @@
 
 #include "KLO_readfile.h"
 
+#include "WM_files.h"
+
 #include <wabi/usd/usd/stage.h>
 
 WABI_NAMESPACE_USING
@@ -84,4 +86,25 @@ KrakenThumbnail *KLO_thumbnail_from_file(const char *filepath)
   }
 
   return data;
+}
+
+
+USDFileData *KLO_read_from_memory(const void *mem,
+                                  int memsize,
+                                  eKLOReadSkip skip_flags,
+                                  ReportList *reports)
+{
+  USDFileData *usd = nullptr;
+  USDFileReadReport usd_reports{};
+  usd_reports.reports = reports;
+
+  std::string layer = (const char *)mem;
+
+  usd = new USDFileData();
+  usd->type = eKrakenFileType::KRAKEN_FILETYPE_USD;
+  usd->fileflags = skip_flags;
+  usd->sdf_handle = SdfLayer::OpenAsAnonymous(layer);
+  KLI_strncpy(usd->filename, layer.data(), sizeof(usd->filename));
+
+  return usd;
 }

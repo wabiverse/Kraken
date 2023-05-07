@@ -33,10 +33,10 @@ extern "C" {
 #endif
 
 struct KPathForeachPathData;
-struct UsdDataReader;
-struct UsdExpander;
-struct UsdLibReader;
-struct UsdWriter;
+struct USDDataReader;
+struct USDExpander;
+struct USDLibReader;
+struct USDWriter;
 struct ID;
 struct LibraryForeachIDData;
 struct Main;
@@ -103,18 +103,18 @@ typedef void (*IDTypeForeachCacheFunction)(struct ID *id,
                                            IDTypeForeachCacheFunctionCallback function_callback,
                                            void *user_data);
 
-typedef void (*IDTypeForeachPathFunction)(struct ID *id, struct BPathForeachPathData *bpath_data);
+typedef void (*IDTypeForeachPathFunction)(struct ID *id, struct KPathForeachPathData *kpath_data);
 
 typedef struct ID **(*IDTypeEmbeddedOwnerPointerGetFunction)(struct ID *id);
 
-typedef void (*IDTypeBlendWriteFunction)(struct BlendWriter *writer,
+typedef void (*IDTypeUSDWriteFunction)(struct USDWriter *writer,
                                          struct ID *id,
                                          const void *id_address);
-typedef void (*IDTypeBlendReadDataFunction)(struct BlendDataReader *reader, struct ID *id);
-typedef void (*IDTypeBlendReadLibFunction)(struct BlendLibReader *reader, struct ID *id);
-typedef void (*IDTypeBlendReadExpandFunction)(struct BlendExpander *expander, struct ID *id);
+typedef void (*IDTypeUSDReadDataFunction)(struct USDDataReader *reader, struct ID *id);
+typedef void (*IDTypeUSDReadLibFunction)(struct USDLibReader *reader, struct ID *id);
+typedef void (*IDTypeUSDReadExpandFunction)(struct USDExpander *expander, struct ID *id);
 
-typedef void (*IDTypeBlendReadUndoPreserve)(struct BlendLibReader *reader,
+typedef void (*IDTypeUSDReadUndoPreserve)(struct USDLibReader *reader,
                                             struct ID *id_new,
                                             struct ID *id_old);
 
@@ -210,29 +210,29 @@ typedef struct IDTypeInfo
   /**
    * Write all structs that should be saved in a .usd file.
    */
-  IDTypeBlendWriteFunction usd_write;
+  IDTypeUSDWriteFunction usd_write;
 
   /**
    * Update pointers for all structs directly owned by this data block.
    */
-  IDTypeBlendReadDataFunction usd_read_data;
+  IDTypeUSDReadDataFunction usd_read_data;
 
   /**
    * Update pointers to other id data blocks.
    */
-  IDTypeBlendReadLibFunction usd_read_lib;
+  IDTypeUSDReadLibFunction usd_read_lib;
 
   /**
    * Specify which other id data blocks should be loaded when the current one is loaded.
    */
-  IDTypeBlendReadExpandFunction usd_read_expand;
+  IDTypeUSDReadExpandFunction usd_read_expand;
 
   /**
    * Allow an ID type to preserve some of its data across (memfile) undo steps.
    *
    * @note Called from #setup_app_data when undoing or redoing a memfile step.
    */
-  IDTypeBlendReadUndoPreserve usd_read_undo_preserve;
+  IDTypeUSDReadUndoPreserve usd_read_undo_preserve;
 
   /**
    * Called after library override operations have been applied.

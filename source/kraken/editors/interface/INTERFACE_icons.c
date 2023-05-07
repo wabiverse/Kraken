@@ -29,6 +29,7 @@
 #include "USD_wm_types.h"
 #include "USD_space_types.h"
 #include "USD_userdef_types.h"
+#include "USD_collection.h"
 
 // #include "LUXO_access.h"
 // #include "LUXO_prototypes.h"

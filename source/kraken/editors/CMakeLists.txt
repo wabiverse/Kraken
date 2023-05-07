@@ -7,6 +7,7 @@ add_subdirectory(space_api)
 add_subdirectory(space_file)
 add_subdirectory(space_userpref)
 add_subdirectory(space_view3d)
+add_subdirectory(util)
 # add_subdirectory(etcher)
 # add_subdirectory(space_nodes)
 

@@ -5,18 +5,18 @@
  * \ingroup edobj
  */
 
-#include <math.h>
-#include <stdlib.h>
+// #include <math.h>
+// #include <stdlib.h>
 
-#include "USD_object_types.h"
-#include "USD_wm_types.h"
+// #include "USD_object_types.h"
+// #include "USD_wm_types.h"
 
-#include "KKE_context.h"
+// #include "KKE_context.h"
 
-#include "LUXO_access.h"
+// #include "LUXO_access.h"
 
-#include "WM_window.h"
-#include "WM_window.hh"
+// #include "WM_window.h"
+// #include "WM_window.hh"
 
 #include "ED_object.h"
 

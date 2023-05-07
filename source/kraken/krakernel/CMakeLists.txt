@@ -23,6 +23,7 @@ set(INC
 )
 
 set(SRC
+  ${CMAKE_SOURCE_DIR}/release/datafiles/userdef/userdef_default.c
   intern/KKE_appdir.cpp
   intern/KKE_context.cpp
   intern/KKE_kraken.cpp
@@ -34,6 +35,7 @@ set(SRC
   intern/KKE_report.cpp
   intern/KKE_scene.cpp
   intern/KKE_screen.cpp
+  intern/KKE_usdfile.cc
   intern/KKE_utils.cpp
   intern/KKE_workspace.cpp
   intern/appdir.c

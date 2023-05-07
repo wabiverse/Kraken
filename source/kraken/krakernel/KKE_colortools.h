@@ -28,8 +28,8 @@
 extern "C" {
 #endif
 
-struct UsdDataReader;
-struct UsdWriter;
+struct USDDataReader;
+struct USDWriter;
 struct ColorManagedColorspaceSettings;
 struct ColorManagedDisplaySettings;
 struct ColorManagedViewSettings;
@@ -188,13 +188,13 @@ bool KKE_curvemapping_is_map_identity(const struct CurveMapping *curve_mapping, 
  */
 void KKE_curvemapping_premultiply(struct CurveMapping *cumap, bool restore);
 
-void KKE_curvemapping_blend_write(struct UsdWriter *writer, const struct CurveMapping *cumap);
-void KKE_curvemapping_curves_blend_write(struct UsdWriter *writer,
+void KKE_curvemapping_blend_write(struct USDWriter *writer, const struct CurveMapping *cumap);
+void KKE_curvemapping_curves_blend_write(struct USDWriter *writer,
                                          const struct CurveMapping *cumap);
 /**
  * \note `cumap` itself has been read already.
  */
-void KKE_curvemapping_blend_read(struct UsdDataReader *reader, struct CurveMapping *cumap);
+void KKE_curvemapping_blend_read(struct USDDataReader *reader, struct CurveMapping *cumap);
 
 void KKE_histogram_update_sample_line(struct Histogram *hist,
                                       struct ImBuf *ibuf,
@@ -233,9 +233,9 @@ void KKE_color_managed_view_settings_copy(struct ColorManagedViewSettings *new_s
                                           const struct ColorManagedViewSettings *settings);
 void KKE_color_managed_view_settings_free(struct ColorManagedViewSettings *settings);
 
-void KKE_color_managed_view_settings_blend_write(struct UsdWriter *writer,
+void KKE_color_managed_view_settings_blend_write(struct USDWriter *writer,
                                                  struct ColorManagedViewSettings *settings);
-void KKE_color_managed_view_settings_blend_read_data(struct UsdDataReader *reader,
+void KKE_color_managed_view_settings_blend_read_data(struct USDDataReader *reader,
                                                      struct ColorManagedViewSettings *settings);
 
 void KKE_color_managed_colorspace_settings_init(

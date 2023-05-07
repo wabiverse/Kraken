@@ -240,6 +240,19 @@ kScreen *KKE_workspace_active_screen_get(const WorkSpaceInstanceHook *hook)
 }
 
 
+WorkSpaceLayout *KKE_workspace_active_layout_for_workspace_get(const WorkSpaceInstanceHook *hook,
+                                                               const WorkSpace *workspace)
+{
+  /* If the workspace is active, the active layout can be returned, no need for a lookup. */
+  if (hook->active == workspace) {
+    return hook->act_layout;
+  }
+
+  /* Inactive workspace */
+  return static_cast<WorkSpaceLayout *>(workspace_relation_get_data_matching_parent(&workspace->hook_layout_relations, hook));
+}
+
+
 void KKE_workspace_active_layout_set(WorkSpaceInstanceHook *hook,
                                      const int winid,
                                      WorkSpace *workspace,

@@ -527,11 +527,12 @@ void WM_msg_publish_prim_params(struct wmMsgBus *mbus, const wmMsgParams_PRIM *m
 
 void WM_msg_publish_prim(struct wmMsgBus *mbus, KrakenPRIM *ptr, KrakenPROP *prop)
 {
-  WM_msg_publish_prim_params(mbus,
-                             &(wmMsgParams_PRIM){
-                               .ptr = *ptr,
-                               .prop = prop,
-                             });
+  const wmMsgParams_PRIM params = {
+    .ptr = *ptr, 
+    .prop = prop
+  };
+
+  WM_msg_publish_prim_params(mbus, &params);
 }
 
 void WM_msg_subscribe_prim_params(struct wmMsgBus *mbus,
@@ -685,10 +686,11 @@ void WM_msg_publish_static_params(struct wmMsgBus *mbus, const wmMsgParams_Stati
 
 void WM_msg_publish_static(struct wmMsgBus *mbus, int event)
 {
-  WM_msg_publish_static_params(mbus,
-                               &(wmMsgParams_Static){
-                                 .event = event,
-                               });
+  const wmMsgParams_Static params = {
+    .event = event,
+  };
+
+  WM_msg_publish_static_params(mbus, &params);
 }
 
 void WM_msg_subscribe_static_params(struct wmMsgBus *mbus,
@@ -712,10 +714,12 @@ void WM_msg_subscribe_static(struct wmMsgBus *mbus,
                              const wmMsgSubscribeValue *msg_val_params,
                              const char *id_repr)
 {
+  const wmMsgParams_Static params = {
+    .event = event,
+  };
+
   WM_msg_subscribe_static_params(mbus,
-                                 &(const wmMsgParams_Static){
-                                   .event = event,
-                                 },
+                                 &params,
                                  msg_val_params,
                                  id_repr);
 }

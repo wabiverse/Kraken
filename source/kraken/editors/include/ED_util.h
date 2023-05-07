@@ -33,3 +33,4 @@ struct Main;
 struct kContext;
 
 void ED_editors_init(struct kContext *C);
+void ED_editors_exit(struct Main *kmain, bool do_undo_system);

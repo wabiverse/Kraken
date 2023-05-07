@@ -3038,22 +3038,6 @@ static int get_but_property_array_length(uiBut *but)
   return LUXO_prop_array_length(but->stagepoin, but->stageprop);
 }
 
-static void ui_but_copy_numeric_array(uiBut *but, char *output, int output_len_max)
-{
-  const int values_len = get_but_property_array_length(but);
-  float *values = static_cast<float *>(alloca(values_len * sizeof(float)));
-  LUXO_prop_float_get_array(but->stagepoin, but->stageprop, values);
-  float_array_to_string(values, values_len, output, output_len_max);
-}
-
-static void ui_but_copy_numeric_value(uiBut *but, char *output, int output_len_max)
-{
-  /* Get many decimal places, then strip trailing zeros.
-   * NOTE: too high values start to give strange results. */
-  ui_but_string_get_ex(but, output, output_len_max, UI_PRECISION_FLOAT_MAX, false, NULL);
-  KLI_str_rstrip_float_zero(output, '\0');
-}
-
 static void float_array_to_string(const float *values,
                                   const int values_len,
                                   char *output,
@@ -3068,6 +3052,22 @@ static void float_array_to_string(const float *values,
                              (i != values_end) ? "%f, " : "%f]",
                              values[i]);
   }
+}
+
+static void ui_but_copy_numeric_array(uiBut *but, char *output, int output_len_max)
+{
+  const int values_len = get_but_property_array_length(but);
+  float *values = static_cast<float *>(alloca(values_len * sizeof(float)));
+  LUXO_prop_float_get_array(but->stagepoin, but->stageprop, values);
+  float_array_to_string(values, values_len, output, output_len_max);
+}
+
+static void ui_but_copy_numeric_value(uiBut *but, char *output, int output_len_max)
+{
+  /* Get many decimal places, then strip trailing zeros.
+   * NOTE: too high values start to give strange results. */
+  ui_but_string_get_ex(but, output, output_len_max, UI_PRECISION_FLOAT_MAX, false, NULL);
+  KLI_str_rstrip_float_zero(output, '\0');
 }
 
 static void ui_but_copy_text(uiBut *but, char *output, int output_len_max)

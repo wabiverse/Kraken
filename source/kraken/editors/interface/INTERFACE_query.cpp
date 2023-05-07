@@ -272,7 +272,7 @@ static uiBut *ui_but_find(const ARegion *region,
                           const uiButFindPollFn find_poll,
                           const void *find_custom_data)
 {
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     for (auto &but : block->buttons) {
       if (find_poll && find_poll(but, find_custom_data) == false) {
         continue;
@@ -296,7 +296,7 @@ uiBut *ui_but_find_mouse_over_ex(const ARegion *region,
   if (!ui_region_contains_point_px(region, xy)) {
     return nullptr;
   }
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     float mx = xy[0], my = xy[1];
     ui_window_to_block_fl(region, block, &mx, &my);
 
@@ -354,7 +354,7 @@ uiBut *ui_but_find_rect_over(const struct ARegion *region, const rcti *rect_px)
   KLI_rctf_rcti_copy(&rect_px_fl, rect_px);
   uiBut *butover = nullptr;
 
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     rctf rect_block;
     ui_window_to_block_rctf(region, block, &rect_block, &rect_px_fl);
 
@@ -385,7 +385,7 @@ uiBut *ui_list_find_mouse_over_ex(const ARegion *region, const int xy[2])
   if (!ui_region_contains_point_px(region, xy)) {
     return nullptr;
   }
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     float mx = xy[0], my = xy[1];
     ui_window_to_block_fl(region, block, &mx, &my);
     const auto &rit = block->buttons.rbegin();
@@ -692,7 +692,7 @@ uiBlock *ui_block_find_mouse_over_ex(const ARegion *region, const int xy[2], boo
   if (!ui_region_contains_point_px(region, xy)) {
     return nullptr;
   }
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     if (only_clip) {
       if ((block->flag & UI_BLOCK_CLIP_EVENTS) == 0) {
         continue;
@@ -723,7 +723,7 @@ uiBlock *ui_block_find_mouse_over(const ARegion *region, const wmEvent *event, b
 
 uiBut *ui_region_find_active_but(ARegion *region)
 {
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     uiBut *but = ui_block_active_but_get(block);
     if (but) {
       return but;
@@ -735,7 +735,7 @@ uiBut *ui_region_find_active_but(ARegion *region)
 
 uiBut *ui_region_find_first_but_test_flag(ARegion *region, int flag_include, int flag_exclude)
 {
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     for (auto &but : block->buttons) {
       if (((but->flag & flag_include) == flag_include) && ((but->flag & flag_exclude) == 0)) {
         return but;

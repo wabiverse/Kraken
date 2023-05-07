@@ -2,19 +2,14 @@
 
 set(INC
   .
-  ../include
   ../../../../. # Pixar USD
   ../../../../source
-  ../include
-  # ../space_sequencer
-  ../../krakfont
-  ../../krakernel
+  ../include/.
+  ../../anchor
   ../../kraklib
-  ../../gpu
-  ../../imbuf
-  ../../universe
+  ../../krakernel
   ../../luxo
-  # ../../sequencer
+  ../../universe
   ../../wm
   ../../../../intern/atomic
   ../../../../intern/clog
@@ -34,11 +29,8 @@ set(SRC
   ../include/ED_debug_codes.h
   ../include/ED_defines.h
   ../include/ED_fileselect.h
-  ../include/ED_icons.h
-  ../include/ED_interface_icons.h
-  ../include/ED_interface.h
   ../include/ED_object.h
-  ../include/ED_resources.h
+  #../include/ED_resources.h
   ../include/ED_screen.h
   ../include/ED_space_api.h
   ../include/ED_tokens.h
@@ -52,6 +44,13 @@ set(SRC
   ../include/UI_resources.h
   ../include/UI_tokens.h
   ../include/UI_view2d.h
+)
+
+set(INC_SYS
+  ${Boost_INCLUDE_DIRS}
+  ${TBB_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRS}
 )
 
 set(LIB

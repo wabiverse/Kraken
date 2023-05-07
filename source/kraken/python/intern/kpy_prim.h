@@ -69,7 +69,7 @@ extern PyTypeObject pyprim_prim_Type;
 extern PyTypeObject pyprim_prop_Type;
 // extern PyTypeObject pyprim_prop_array_Type;
 extern PyTypeObject pyprim_prop_collection_Type;
-// extern PyTypeObject pyprim_func_Type;
+extern PyTypeObject pyprim_func_Type;
 
 #define KPy_StagePRIM_Check(v) (PyObject_TypeCheck(v, &pyprim_prim_Type))
 #define KPy_StagePRIM_CheckExact(v) (Py_TYPE(v) == &pyprim_prim_Type)

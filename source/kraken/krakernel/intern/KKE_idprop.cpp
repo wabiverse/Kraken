@@ -36,6 +36,7 @@
 
 #include "KKE_main.h"
 #include "KKE_idprop.h"
+#include "KKE_idtype.h"
 #include "KKE_lib_id.h"
 
 #include "USD_ID.h"

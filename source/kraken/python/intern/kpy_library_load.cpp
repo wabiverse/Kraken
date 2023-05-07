@@ -278,7 +278,7 @@ static PyObject *kpy_lib_enter(KPy_Library *self)
   ReportList reports;
 
   KKE_reports_init(&reports, RPT_STORE);
-  KrakenFileReadReport kr_reports = {};
+  USDFileReadReport kr_reports = {};
   kr_reports.reports = &reports;
 
   self->krlo_handle = KLO_krakenhandle_from_file(self->abspath, &kr_reports);

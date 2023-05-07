@@ -529,11 +529,11 @@ static void ui_layer_but_cb(kContext *C, void *arg_but, void *arg_index)
 
   if (!shift) {
 
-    arr_type.GetDimensions().d[index] = (size_t)1;
+    arr_type.GetDimensions().d[index];// = (size_t)1;
 
     for (int i = 0; i < len; i++) {
       if (i != index) {
-        arr_type.GetDimensions().d[i] = (size_t)0;
+        arr_type.GetDimensions().d[i];// = (size_t)0;
       }
     }
 

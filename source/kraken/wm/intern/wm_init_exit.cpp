@@ -66,6 +66,7 @@
 #include "ED_debug_codes.h"
 #include "ED_screen.h"
 #include "ED_space_api.h"
+#include "ED_util.h"
 
 #include "GPU_capabilities.h"
 #include "GPU_context.h"
@@ -192,15 +193,17 @@ void WM_init(kContext *C, int argc, const char **argv)
    * Creating a dummy window-manager early, or moving the key-maps into the preferences
    * would resolve this and may be worth looking into long-term, see: D12184 for details. */
   struct wmFileReadPost_Params *params_file_read_post = NULL;
+  const wmHomeFileRead_Params params = {
+    .use_data = true,
+    .use_userdef = true,
+    .use_factory_settings = G.factory_startup,
+    .use_empty_data = false,
+    .filepath_startup_override = NULL,
+    .app_template_override = WM_init_state_app_template_get(),
+  };
+
   WM_homefile_read_ex(C,
-                      &(const struct wmHomeFileRead_Params){
-                        .use_data = true,
-                        .use_userdef = true,
-                        .use_factory_settings = G.factory_startup,
-                        .use_empty_data = false,
-                        .filepath_startup_override = NULL,
-                        .app_template_override = WM_init_state_app_template_get(),
-                      },
+                      &params,
                       NULL,
                       &params_file_read_post);
 
@@ -316,10 +319,10 @@ void WM_exit_ex(kContext *C, const bool do_python)
   // WM_menutype_free();
 
   /* all non-screen and non-space stuff editors did, like editmode */
-  // if (C) {
-  //   Main *kmain = CTX_data_main(C);
-  //   ED_editors_exit(kmain, true);
-  // }
+  if (C) {
+    Main *kmain = CTX_data_main(C);
+    ED_editors_exit(kmain, true);
+  }
 
   // ED_undosys_type_free();
 

@@ -64,6 +64,7 @@ elseif(APPLE)
   set(PYLIBPATH ${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/python)
   set(LIBPATH "/opt/homebrew")
   set(LIB_OBJ_EXT .a)
+  file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/boost" STATIC_WABI_BOOST)
   file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/openimageio" STATIC_BLENDER_OIIO)
   file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/opencolorio" STATIC_BLENDER_OCIO)
   file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/embree" STATIC_BLENDER_EMBREE)
@@ -78,6 +79,7 @@ elseif(APPLE)
   file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/imath" STATIC_BLENDER_IMATH)
   file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/../lib/apple_darwin_arm64/openexr" STATIC_BLENDER_OPENEXR)
   set(CMAKE_PREFIX_PATH 
+    ${STATIC_WABI_BOOST}
     ${STATIC_BLENDER_OIIO}
     ${STATIC_BLENDER_OCIO}
     ${STATIC_BLENDER_EMBREE}
@@ -107,6 +109,7 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ${LIB_OBJ_EXT})
 # ! Important
 # Convert the relative path to an absolute path.
 string(REPLACE "kraken/../" "" LIBDIR "${LIBPATH}")
+string(REPLACE "wabianimation/../" "" LIBDIR "${LIBPATH}")
 string(REPLACE "wabianimation/../" "" PYLIBDIR "${PYLIBPATH}")
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}")
@@ -411,17 +414,17 @@ endif()
 
 if(WIN32)
   set(LIB_OBJ_EXT "lib")
-  set(BOOST_VERSION_SCORE "1_78")
+  set(BOOST_VERSION_SCORE "1_81")
   if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(BOOST_LIBRARY_SUFFIX "vc143-mt-s-x64-1_78")
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-s-x64-1_81")
   else()
-    set(BOOST_LIBRARY_SUFFIX "vc143-mt-sgd-x64-1_78")
+    set(BOOST_LIBRARY_SUFFIX "vc143-mt-sgd-x64-1_81")
   endif()
   # set(Boost_USE_STATIC_RUNTIME ON) # prefix lib
   # set(Boost_USE_MULTITHREADED ON) # suffix -mt
   # set(Boost_USE_STATIC_LIBS ON) # suffix -s
   set(BOOST_ROOT "${LIBDIR}/boost")
-  set(Boost_INCLUDE_DIR "${LIBDIR}/boost/include/boost-1_78")
+  set(Boost_INCLUDE_DIR "${LIBDIR}/boost/include/boost-1_81")
   set(WITH_BOOST ON)
   add_definitions(-DWITH_BOOST=1)
   find_package(Boost REQUIRED)
@@ -578,7 +581,7 @@ if(WIN32)
   endif()
   set(TBB_INCLUDE_DIRS ${TBB_ROOT}/include)
   add_definitions(-DWITH_TBB=1)
-elseif(UNIX)
+else()
   # Enable TBBs Ability to wait for the completion
   # of worker threads.
   find_package(TBB REQUIRED COMPONENTS tbb)

@@ -221,12 +221,12 @@ static void klo_update_defaults_screen(kScreen *screen,
 
   /* Show tool-header by default (for most cases at least, hide for others). */
   const bool hide_image_tool_header = STREQ(workspace_name, "Rendering");
-  LISTBASE_FOREACH(ScrArea *, area, &screen->areabase)
+  LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
   {
     LISTBASE_FOREACH(SpaceLink *, sl, &area->spacedata)
     {
       ListBase *regionbase = (sl == static_cast<SpaceLink *>(area->spacedata.first)) ?
-                               &area->regionbase :
+                               &area->regions :
                                &sl->regionbase;
 
       LISTBASE_FOREACH(ARegion *, region, regionbase)
@@ -245,8 +245,11 @@ static void klo_update_defaults_screen(kScreen *screen,
 
   /* 2D animation template. */
   if (app_template && STREQ(app_template, "2D_Animation")) {
-    LISTBASE_FOREACH(ScrArea *, area, &screen->areabase)
+    LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
     {
+      TfToken st;
+      area->spacetype.Get(&st);
+
       if (WM_spacetype_enum_from_token(st) == SPACE_ACTION) {
         SpaceAction *saction = static_cast<SpaceAction *>(area->spacedata.first);
         /* Enable Sliders. */
@@ -273,25 +276,28 @@ void KLO_update_defaults_workspace(WorkSpace *workspace, const char *app_templat
 
   if (klo_is_builtin_template(app_template)) {
     /* Clear all tools to use default options instead, ignore the tool saved in the file. */
-    while (!KLI_listbase_is_empty(&workspace->tools)) {
-      KKE_workspace_tool_remove(workspace, static_cast<bToolRef *>(workspace->tools.first));
-    }
+    // while (!KLI_listbase_is_empty(&workspace->tools)) {
+    //   KKE_workspace_tool_remove(workspace, static_cast<kToolRef *>(workspace->tools.first));
+    // }
 
     /* For 2D animation template. */
-    if (STREQ(workspace->id.name + 2, "Drawing")) {
-      workspace->object_mode = OB_MODE_PAINT_GPENCIL;
-    }
+    // if (STREQ(workspace->id.name + 2, "Drawing")) {
+    //   workspace->object_mode = OB_MODE_PAINT_GPENCIL;
+    // }
 
     /* For Sculpting template. */
     if (STREQ(workspace->id.name + 2, "Sculpting")) {
       LISTBASE_FOREACH(WorkSpaceLayout *, layout, &workspace->layouts)
       {
-        bScreen *screen = layout->screen;
+        kScreen *screen = layout->screen;
         if (screen) {
-          LISTBASE_FOREACH(ScrArea *, area, &screen->areabase)
+          LISTBASE_FOREACH(ScrArea *, area, &screen->areas)
           {
-            LISTBASE_FOREACH(ARegion *, region, &area->regionbase)
+            LISTBASE_FOREACH(ARegion *, region, &area->regions)
             {
+              TfToken st;
+              region->spacetype.Get(&st);
+
               if (WM_spacetype_enum_from_token(st) == SPACE_VIEW3D) {
                 View3D *v3d = static_cast<View3D *>(area->spacedata.first);
                 v3d->shading.flag &= ~V3D_SHADING_CAVITY;
@@ -461,17 +467,17 @@ void KLO_update_defaults_startup_usd(Main *kmain, const char *app_template)
     {
       LISTBASE_FOREACH(WorkSpace *, workspace, &kmain->workspaces)
       {
-        WorkSpaceLayout *layout = KKE_workspace_active_layout_for_workspace_get(
-          win->workspace_hook,
-          workspace);
+        WorkSpaceLayout *layout = KKE_workspace_active_layout_for_workspace_get(win->workspace_hook,
+                                                                                workspace);
         /* Name all screens by their workspaces (avoids 'Default.###' names). */
         /* Default only has one window. */
         if (layout->screen) {
-          bScreen *screen = layout->screen;
-          if (!STREQ(screen->id.name + 2, workspace->id.name + 2)) {
-            KKE_main_namemap_remove_name(kmain, &screen->id, screen->id.name + 2);
-            KLI_strncpy(screen->id.name + 2, workspace->id.name + 2, sizeof(screen->id.name) - 2);
-            KLI_libKLOck_ensure_unique_name(kmain, screen->id.name);
+          kScreen *screen = layout->screen;
+          if (!STREQ(screen->path.GetName().data() + 2, workspace->id.name + 2)) {
+            KKE_main_namemap_remove_name(kmain, (ID *)screen->path.GetName().data(), screen->path.GetName().data() + 2);
+            screen->path.ReplaceName(TfToken(workspace->id.name + 2));
+
+            KKE_libblock_ensure_unique_name(kmain, screen->path.GetName().data());
           }
         }
 
@@ -490,7 +496,7 @@ void KLO_update_defaults_startup_usd(Main *kmain, const char *app_template)
   /* Scenes */
   LISTBASE_FOREACH(Scene *, scene, &kmain->scenes)
   {
-    KLO_update_defaults_scene(kmain, scene);
+    //KLO_update_defaults_scene(kmain, scene);
 
     if (app_template && STREQ(app_template, "Video_Editing")) {
       /* Filmic is too slow, use standard until it is optimized. */
@@ -513,52 +519,52 @@ void KLO_update_defaults_startup_usd(Main *kmain, const char *app_template)
   do_versions_rename_id(kmain, ID_OB, "Lamp", "Light");
   do_versions_rename_id(kmain, ID_LA, "Lamp", "Light");
 
-  if (app_template && STREQ(app_template, "2D_Animation")) {
-    LISTBASE_FOREACH(Object *, object, &kmain->objects)
-    {
-      if (object->type == OB_GPENCIL) {
-        /* Set grease pencil object in drawing mode */
-        bGPdata *gpd = (bGPdata *)object->data;
-        object->mode = OB_MODE_PAINT_GPENCIL;
-        gpd->flag |= GP_DATA_STROKE_PAINTMODE;
-        break;
-      }
-    }
-  }
+  // if (app_template && STREQ(app_template, "2D_Animation")) {
+  //   LISTBASE_FOREACH(Object *, object, &kmain->objects)
+  //   {
+  //     if (object->type == OB_GPENCIL) {
+  //       /* Set grease pencil object in drawing mode */
+  //       bGPdata *gpd = (bGPdata *)object->data;
+  //       object->mode = OB_MODE_PAINT_GPENCIL;
+  //       gpd->flag |= GP_DATA_STROKE_PAINTMODE;
+  //       break;
+  //     }
+  //   }
+  // }
 
-  LISTBASE_FOREACH(Mesh *, mesh, &kmain->meshes)
-  {
-    /* Match default for new meshes. */
-    mesh->smoothresh = DEG2RADF(30);
-    /* Match voxel remesher options for all existing meshes in templates. */
-    mesh->flag |= ME_REMESH_REPROJECT_VOLUME | ME_REMESH_REPROJECT_PAINT_MASK |
-                  ME_REMESH_REPROJECT_SCULPT_FACE_SETS | ME_REMESH_REPROJECT_VERTEX_COLORS;
+  // LISTBASE_FOREACH(Mesh *, mesh, &kmain->meshes)
+  // {
+  //   /* Match default for new meshes. */
+  //   mesh->smoothresh = DEG2RADF(30);
+  //   /* Match voxel remesher options for all existing meshes in templates. */
+  //   mesh->flag |= ME_REMESH_REPROJECT_VOLUME | ME_REMESH_REPROJECT_PAINT_MASK |
+  //                 ME_REMESH_REPROJECT_SCULPT_FACE_SETS | ME_REMESH_REPROJECT_VERTEX_COLORS;
 
-    /* For Sculpting template. */
-    if (app_template && STREQ(app_template, "Sculpting")) {
-      mesh->remesh_voxel_size = 0.035f;
-      KKE_mesh_smooth_flag_set(mesh, false);
-    } else {
-      /* Remove sculpt-mask data in default mesh objects for all non-sculpt templates. */
-      CustomData_free_layers(&mesh->vdata, CD_PAINT_MASK, mesh->totvert);
-      CustomData_free_layers(&mesh->ldata, CD_GRID_PAINT_MASK, mesh->totloop);
-    }
-    mesh->attributes_for_write().remove(".sculpt_face_set");
-  }
+  //   /* For Sculpting template. */
+  //   if (app_template && STREQ(app_template, "Sculpting")) {
+  //     mesh->remesh_voxel_size = 0.035f;
+  //     KKE_mesh_smooth_flag_set(mesh, false);
+  //   } else {
+  //     /* Remove sculpt-mask data in default mesh objects for all non-sculpt templates. */
+  //     CustomData_free_layers(&mesh->vdata, CD_PAINT_MASK, mesh->totvert);
+  //     CustomData_free_layers(&mesh->ldata, CD_GRID_PAINT_MASK, mesh->totloop);
+  //   }
+  //   mesh->attributes_for_write().remove(".sculpt_face_set");
+  // }
 
-  LISTBASE_FOREACH(Camera *, camera, &kmain->cameras)
-  {
-    /* Initialize to a useful value. */
-    camera->dof.focus_distance = 10.0f;
-    camera->dof.aperture_fstop = 2.8f;
-  }
+  // LISTBASE_FOREACH(Camera *, camera, &kmain->cameras)
+  // {
+  //   /* Initialize to a useful value. */
+  //   camera->dof.focus_distance = 10.0f;
+  //   camera->dof.aperture_fstop = 2.8f;
+  // }
 
-  LISTBASE_FOREACH(Light *, light, &kmain->lights)
-  {
-    /* Fix lights defaults. */
-    light->clipsta = 0.05f;
-    light->att_dist = 40.0f;
-  }
+  // LISTBASE_FOREACH(Light *, light, &kmain->lights)
+  // {
+  //   /* Fix lights defaults. */
+  //   light->clipsta = 0.05f;
+  //   light->att_dist = 40.0f;
+  // }
 
   /* Materials */
   LISTBASE_FOREACH(Material *, ma, &kmain->materials)
@@ -566,22 +572,22 @@ void KLO_update_defaults_startup_usd(Main *kmain, const char *app_template)
     /* Update default material to be a bit more rough. */
     ma->roughness = 0.5f;
 
-    if (ma->nodetree) {
-      LISTBASE_FOREACH(bNode *, node, &ma->nodetree->nodes)
-      {
-        if (node->type == SH_NODE_BSDF_PRINCIPLED) {
-          bNodeSocket *roughness_socket = nodeFindSocket(node, SOCK_IN, "Roughness");
-          bNodeSocketValueFloat *roughness_data = static_cast<bNodeSocketValueFloat *>(
-            roughness_socket->default_value);
-          roughness_data->value = 0.5f;
-          node->custom2 = SHD_SUBSURFACE_RANDOM_WALK;
-          KKE_ntree_update_tag_node_property(ma->nodetree, node);
-        } else if (node->type == SH_NODE_SUBSURFACE_SCATTERING) {
-          node->custom1 = SHD_SUBSURFACE_RANDOM_WALK;
-          KKE_ntree_update_tag_node_property(ma->nodetree, node);
-        }
-      }
-    }
+    // if (ma->nodetree) {
+    //   LISTBASE_FOREACH(kNode *, node, &ma->nodetree->nodes)
+    //   {
+    //     if (node->type == SH_NODE_BSDF_PRINCIPLED) {
+    //       bNodeSocket *roughness_socket = nodeFindSocket(node, SOCK_IN, "Roughness");
+    //       bNodeSocketValueFloat *roughness_data = static_cast<bNodeSocketValueFloat *>(
+    //         roughness_socket->default_value);
+    //       roughness_data->value = 0.5f;
+    //       node->custom2 = SHD_SUBSURFACE_RANDOM_WALK;
+    //       KKE_ntree_update_tag_node_property(ma->nodetree, node);
+    //     } else if (node->type == SH_NODE_SUBSURFACE_SCATTERING) {
+    //       node->custom1 = SHD_SUBSURFACE_RANDOM_WALK;
+    //       KKE_ntree_update_tag_node_property(ma->nodetree, node);
+    //     }
+    //   }
+    // }
   }
 
   /* Brushes */
@@ -591,25 +597,25 @@ void KLO_update_defaults_startup_usd(Main *kmain, const char *app_template)
     const char *brush_name = "Grab";
     Brush *brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (brush) {
-      brush->ob_mode |= OB_MODE_EDIT;
-    }
+    // if (brush) {
+    //   brush->ob_mode |= OB_MODE_EDIT;
+    // }
   }
 
-  LISTBASE_FOREACH(Brush *, brush, &kmain->brushes)
-  {
-    brush->blur_kernel_radius = 2;
+  // LISTBASE_FOREACH(Brush *, brush, &kmain->brushes)
+  // {
+  //   brush->blur_kernel_radius = 2;
 
-    /* Use full strength for all non-sculpt brushes,
-     * when painting we want to use full color/weight always.
-     *
-     * Note that sculpt is an exception,
-     * its values are overwritten by #KKE_brush_sculpt_reset below. */
-    brush->alpha = 1.0;
+  //   /* Use full strength for all non-sculpt brushes,
+  //    * when painting we want to use full color/weight always.
+  //    *
+  //    * Note that sculpt is an exception,
+  //    * its values are overwritten by #KKE_brush_sculpt_reset below. */
+  //   brush->alpha = 1.0;
 
-    /* Enable antialiasing by default */
-    brush->sampling_flag |= BRUSH_PAINT_ANTIALIASING;
-  }
+  //   /* Enable antialiasing by default */
+  //   brush->sampling_flag |= BRUSH_PAINT_ANTIALIASING;
+  // }
 
   {
     /* Change the spacing of the Smear brush to 3.0% */
@@ -619,143 +625,143 @@ void KLO_update_defaults_startup_usd(Main *kmain, const char *app_template)
     brush_name = "Smear";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (brush) {
-      brush->spacing = 3.0;
-    }
+    // if (brush) {
+    //   brush->spacing = 3.0;
+    // }
 
     brush_name = "Draw Sharp";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_DRAW_SHARP;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_DRAW_SHARP;
+    // }
 
     brush_name = "Elastic Deform";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_ELASTIC_DEFORM;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_ELASTIC_DEFORM;
+    // }
 
     brush_name = "Pose";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_POSE;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_POSE;
+    // }
 
     brush_name = "Multi-plane Scrape";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_MULTIPLANE_SCRAPE;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_MULTIPLANE_SCRAPE;
+    // }
 
     brush_name = "Clay Thumb";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_CLAY_THUMB;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_CLAY_THUMB;
+    // }
 
     brush_name = "Cloth";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_CLOTH;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_CLOTH;
+    // }
 
     brush_name = "Slide Relax";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_SLIDE_RELAX;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_SLIDE_RELAX;
+    // }
 
     brush_name = "Paint";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_PAINT;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_PAINT;
+    // }
 
     brush_name = "Smear";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_SMEAR;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_SMEAR;
+    // }
 
     brush_name = "Boundary";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_BOUNDARY;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_BOUNDARY;
+    // }
 
     brush_name = "Simplify";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_SIMPLIFY;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_SIMPLIFY;
+    // }
 
     brush_name = "Draw Face Sets";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_DRAW_FACE_SETS;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_DRAW_FACE_SETS;
+    // }
 
     brush_name = "Multires Displacement Eraser";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_DISPLACEMENT_ERASER;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_DISPLACEMENT_ERASER;
+    // }
 
     brush_name = "Multires Displacement Smear";
     brush = static_cast<Brush *>(
       KLI_findstring(&kmain->brushes, brush_name, offsetof(ID, name) + 2));
-    if (!brush) {
-      brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
-      id_us_min(&brush->id);
-      brush->sculpt_tool = SCULPT_TOOL_DISPLACEMENT_SMEAR;
-    }
+    // if (!brush) {
+    //   brush = KKE_brush_add(kmain, brush_name, OB_MODE_SCULPT);
+    //   id_us_min(&brush->id);
+    //   brush->sculpt_tool = SCULPT_TOOL_DISPLACEMENT_SMEAR;
+    // }
 
     /* Use the same tool icon color in the brush cursor */
-    LISTBASE_FOREACH(Brush *, brush, &kmain->brushes)
-    {
-      if (brush->ob_mode & OB_MODE_SCULPT) {
-        KLI_assert(brush->sculpt_tool != 0);
-        KKE_brush_sculpt_reset(brush);
-      }
-    }
+    // LISTBASE_FOREACH(Brush *, brush, &kmain->brushes)
+    // {
+    //   if (brush->ob_mode & OB_MODE_SCULPT) {
+    //     KLI_assert(brush->sculpt_tool != 0);
+    //     KKE_brush_sculpt_reset(brush);
+    //   }
+    // }
   }
 }

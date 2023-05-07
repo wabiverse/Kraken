@@ -559,6 +559,6 @@ struct KrakenPRIM : public wabi::UsdPrim
   PrimUnregisterFUNC unreg;
   PrimInstanceFUNC instance;
 
-  std::vector<KrakenPRIM *> functions;
+  ListBase functions;
 };
 #endif /* __cplusplus */

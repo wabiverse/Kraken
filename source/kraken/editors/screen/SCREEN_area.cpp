@@ -122,9 +122,9 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
 
   if (spacetype != type) {
     kSpaceLink *slold = MEM_new<kSpaceLink>("kSpaceLink");
-    slold->link_flag = area->spacedata.front()->link_flag;
+    slold->link_flag = ((kSpaceLink *)area->spacedata.first)->link_flag;
     // slold->regionbase = area->spacedata.front()->regionbase;
-    slold->spacetype = area->spacedata.front()->spacetype;
+    slold->spacetype = ((kSpaceLink *)area->spacedata.first)->spacetype;
 
 
     // void *area_exit = area->type ? area->type->exit : NULL;
@@ -160,7 +160,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
 
     /* check previously stored space */
     SpaceProperties *sl = POINTER_ZERO;
-    UNIVERSE_FOR_ALL (sl_iter, area->spacedata) {
+    LISTBASE_FOREACH (SpaceProperties *, sl_iter, &area->spacedata) {
       if (sl_iter->spacetype == type.Hash()) {
         sl = sl_iter;
         break;
@@ -187,23 +187,21 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
       sl->link_flag &= ~SPACE_FLAG_TYPE_WAS_ACTIVE;
 
       /* put in front of list */
-
-      // area->spacedata.erase(sl);
-      area->spacedata.insert(area->spacedata.begin(), sl);
+      KLI_addhead(&area->spacedata, sl);
     } else {
       /* new space */
       if (st) {
         /* Don't get scene from context here which may depend on space-data. */
         kScene *scene = CTX_data_scene(C);
-        // sl = st->create(area, scene);
-        area->spacedata.insert(area->spacedata.begin(), sl);
+        //sl = st->create(area, scene);
+        KLI_addhead(&area->spacedata, sl);
 
         /* swap regions */
         if (slold) {
-          // slold->regions = area->regions;
+          slold->regions = area->regions;
         }
-        // area->regions = sl->regions;
-        // sl->regions.clear();
+        area->regions = sl->regionbase;
+        KLI_freelist(&sl->regionbase);
       }
     }
 
@@ -224,7 +222,7 @@ void ED_area_newspace(kContext *C, ScrArea *area, TfToken type, bool skip_region
   }
 
   /* also redraw when re-used */
-  // ED_area_tag_redraw(area);
+  //ED_area_tag_redraw(area);
 }
 
 int ED_area_headersize(void)

@@ -170,6 +170,7 @@ if (APPLE)
   set_property(SOURCE ${CMAKE_SOURCE_DIR}/source/creator/kraken.docc PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
   kraken_add_lib(AnchorSystem "${SRC_APPLE_BACKEND}" "${INC}" "${INC_SYS}" "${LIB}")
   target_compile_options(AnchorSystem PRIVATE
+    "-Xcc" "-DWITH_PYTHON=1"
     "-static"
     "-emit-dependencies"
     "-emit-library"

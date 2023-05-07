@@ -27,6 +27,7 @@ set(INC_SYS
 
 set(SRC
   intern/readfile.cc
+  intern/versioning_defaults.cc
 
   KLO_readfile.h
 )

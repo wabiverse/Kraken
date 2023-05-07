@@ -31,6 +31,8 @@
 
 #include "KKE_context.h"
 
+#include "WM_reports.h"
+
 struct wmHomeFileRead_Params
 {
   /** Load data, disable when only loading user preferences. */
@@ -39,7 +41,7 @@ struct wmHomeFileRead_Params
   unsigned int use_userdef : 1;
 
   /**
-   * Ignore on-disk startup file, use bundled `datatoc_startup_blend` instead.
+   * Ignore on-disk startup file, use bundled `datatoc_startup_usd` instead.
    * Used for "Restore Factory Settings".
    */
   unsigned int use_factory_settings : 1;
@@ -61,60 +63,20 @@ struct wmHomeFileRead_Params
   const char *app_template_override;
 };
 
-typedef struct KrakenFileReadReport
+
+/**
+ * Parameters for #wm_file_read_post, also used for deferred initialization.
+ */
+struct wmFileReadPost_Params
 {
-  /* General reports handling. */
-  struct ReportList *reports;
+  uint use_data : 1;
+  uint use_userdef : 1;
 
-  /* Timing information. */
-  struct
-  {
-    double whole;
-    double libraries;
-    double lib_overrides;
-    double lib_overrides_resync;
-    double lib_overrides_recursive_resync;
-  } duration;
+  uint is_startup_file : 1;
+  uint is_factory_startup : 1;
+  uint reset_app_template : 1;
+};
 
-  /* Count information. */
-  struct
-  {
-    /* Some numbers of IDs that ended up in a specific state, or required some specific process
-     * during this file read. */
-    int missing_libraries;
-    int missing_linked_id;
-    /* Some sub-categories of the above `missing_linked_id` counter. */
-    int missing_obdata;
-    int missing_obproxies;
-
-    /* Number of root override IDs that were resynced. */
-    int resynced_lib_overrides;
-
-    /* Number of proxies converted to library overrides. */
-    int proxies_to_lib_overrides_success;
-    /* Number of proxies that failed to convert to library overrides. */
-    int proxies_to_lib_overrides_failures;
-    /* Number of sequencer strips that were not read because were in non-supported channels. */
-    int sequence_strips_skipped;
-  } count;
-
-  /* Number of libraries which had overrides that needed to be resynced, and a single linked list
-   * of those. */
-  int resynced_lib_overrides_libraries_count;
-  bool do_resynced_lib_overrides_libraries_list;
-  struct LinkNode *resynced_lib_overrides_libraries;
-} KrakenFileReadReport;
-
-/* skip reading some data-block types (may want to skip screen data too). */
-typedef enum eKLOReadSkip
-{
-  KLO_READ_SKIP_NONE = 0,
-  KLO_READ_SKIP_USERDEF = (1 << 0),
-  KLO_READ_SKIP_DATA = (1 << 1),
-  /** Do not attempt to re-use IDs from old bmain for unchanged ones in case of undo. */
-  KLO_READ_SKIP_UNDO_OLD_MAIN = (1 << 2),
-} eKLOReadSkip;
-#define KLO_READ_SKIP_ALL (KLO_READ_SKIP_USERDEF | KLO_READ_SKIP_DATA)
 
 /**
  * Called on startup, (context entirely filled with NULLs)

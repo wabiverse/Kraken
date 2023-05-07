@@ -6,9 +6,9 @@
  * Do not hand edit this file!
  */
 
-#include "DNA_userdef_types.h"
+#include "USD_userdef_types.h"
 
-#include "BLO_readfile.h"
+#include "KLO_readfile.h"
 
 /* clang-format off */
 
@@ -20,7 +20,7 @@
 #  define RGB(c)  {(c) & 0xff, ((c) >> 8) & 0xff, ((c) >> 16) & 0xff}
 #endif
 
-const bTheme U_theme_default = {
+const kTheme U_theme_default = {
   .name = "Default",
   .tui = {
     .wcol_regular = {

@@ -9,6 +9,7 @@ set(INC
   ../kraklib
   ../krakloader
   ../gpu
+  ../wm
   ../universe
   ../luxo
   ../editors/include

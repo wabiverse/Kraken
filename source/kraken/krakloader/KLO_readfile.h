@@ -40,6 +40,49 @@ struct KrakenThumbnail;
 
 struct KrakenThumbnail *KLO_thumbnail_from_file(const char *filepath);
 
+void KLO_update_defaults_startup_usd(struct Main *kmain, const char *app_template);
+void KLO_update_defaults_workspace(struct WorkSpace *workspace, const char *app_template);
+
+
+/* skip reading some data-block types (may want to skip screen data too). */
+typedef enum eKLOReadSkip
+{
+  KLO_READ_SKIP_NONE = 0,
+  KLO_READ_SKIP_USERDEF = (1 << 0),
+  KLO_READ_SKIP_DATA = (1 << 1),
+  /** Do not attempt to re-use IDs from old bmain for unchanged ones in case of undo. */
+  KLO_READ_SKIP_UNDO_OLD_MAIN = (1 << 2),
+} eKLOReadSkip;
+#define KLO_READ_SKIP_ALL (KLO_READ_SKIP_USERDEF | KLO_READ_SKIP_DATA)
+
+#ifdef __cplusplus
+inline eKLOReadSkip operator |(eKLOReadSkip a, eKLOReadSkip b)
+{
+  return static_cast<eKLOReadSkip>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline eKLOReadSkip operator &(eKLOReadSkip a, eKLOReadSkip b)
+{
+  return static_cast<eKLOReadSkip>(static_cast<int>(a) & static_cast<int>(b));
+}
+
+inline eKLOReadSkip& operator |=(eKLOReadSkip& a, eKLOReadSkip b)
+{
+  return a = a | b;
+}
+#endif /* __cplusplus */
+
+
+struct USDFileData *KLO_read_from_memory(const void *mem,
+                                         int memsize,
+                                         eKLOReadSkip skip_flags,
+                                         struct ReportList *reports);
+
+
+/* datafiles (generated theme) */
+extern const struct kTheme U_theme_default;
+extern const struct UserDef U_default;
+
 #ifdef __cplusplus
 }
 #endif

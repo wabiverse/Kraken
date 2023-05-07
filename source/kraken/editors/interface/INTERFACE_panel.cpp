@@ -200,7 +200,7 @@ static bool properties_space_needs_realign(const ScrArea *area, const ARegion *r
   TfToken spacetype = FormFactory(area->spacetype);
   if (WM_spacetype_enum_from_token(spacetype) == SPACE_PROPERTIES &&
       region->regiontype == RGN_TYPE_WINDOW) {
-    const SpaceProperties *sbuts = area->spacedata.front();
+    const SpaceProperties *sbuts = (SpaceProperties *)area->spacedata.first;
 
     if (sbuts->mainbo != sbuts->mainb) {
       return true;
@@ -1040,24 +1040,16 @@ void UI_panels_draw(const kContext *C, ARegion *region)
 {
   /* Draw in reverse order, because #uiBlocks are added in reverse order
    * and we need child panels to draw on top. */
-  const auto &it = region->uiblocks.rbegin();
-
-  while (it != region->uiblocks.rend()) {
-    if ((*it)->active && (*it)->panel && !UI_panel_is_dragging((*it)->panel) &&
-        !UI_block_is_search_only((*it))) {
-      UI_block_draw(C, (*it));
+  LISTBASE_FOREACH_BACKWARD (uiBlock *, block, &region->uiblocks) {
+    if (block->active && block->panel && !UI_panel_is_dragging(block->panel) && !UI_block_is_search_only(block)) {
+      UI_block_draw(C, block);
     }
-
-    ++(*it);
   }
 
-  while (it != region->uiblocks.rend()) {
-    if ((*it)->active && (*it)->panel && UI_panel_is_dragging((*it)->panel) &&
-        !UI_block_is_search_only((*it))) {
-      UI_block_draw(C, (*it));
+  LISTBASE_FOREACH_BACKWARD (uiBlock *, block, &region->uiblocks) {
+    if (block->active && block->panel && UI_panel_is_dragging(block->panel) && !UI_block_is_search_only(block)) {
+      UI_block_draw(C, block);
     }
-
-    ++(*it);
   }
 }
 
@@ -1346,7 +1338,7 @@ void UI_panel_category_draw_all(ARegion *region, const char *category_id_active)
   const uiFontStyle *fstyle = &style->widget;
   const int fontid = fstyle->uifont_id;
   float fstyle_points = fstyle->points;
-  const float aspect = ((uiBlock *)region->uiblocks.front())->aspect;
+  const float aspect = ((uiBlock *)region->uiblocks.first)->aspect;
   const float zoom = 1.0f / aspect;
   const int px = U.pixelsize;
   const int category_tabs_width = round_fl_to_int(UI_PANEL_CATEGORY_MARGIN_WIDTH * zoom);
@@ -1905,7 +1897,7 @@ void UI_panels_end(const kContext *C, ARegion *region, int *r_x, int *r_y)
   }
 
   /* Offset contents. */
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     if (block->active && block->panel) {
       ui_offset_panel_block(block);
     }
@@ -2011,7 +2003,7 @@ static void ui_panel_drag_collapse(const kContext *C,
 {
   ARegion *region = CTX_wm_region(C);
 
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     float xy_a_block[2] = {float(dragcol_data->xy_init[0]), float(dragcol_data->xy_init[1])};
     float xy_b_block[2] = {float(xy_dst[0]), float(xy_dst[1])};
     Panel *panel = block->panel;
@@ -2421,7 +2413,7 @@ int ui_handler_panel_region(kContext *C,
 
   const bool region_has_active_button = (ui_region_find_active_but(region) != nullptr);
 
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     Panel *panel = block->panel;
     if (panel == nullptr || panel->type == nullptr) {
       continue;
@@ -2521,7 +2513,7 @@ KrakenPRIM *UI_region_panel_custom_data_under_cursor(const kContext *C, const wm
 {
   ARegion *region = CTX_wm_region(C);
 
-  for (auto &block : region->uiblocks) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     Panel *panel = block->panel;
     if (panel == nullptr) {
       continue;

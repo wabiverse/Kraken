@@ -27,10 +27,15 @@
 #include "USD_listBase.h"
 #include <stdio.h>
 
+#ifdef __cplusplus
+/* For TfToken. */
+# include <wabi/base/tf/token.h>
+#endif /* __cplusplus */
+
 /* ------ */
 
 struct ID;
-struct bContext;
+struct kContext;
 struct wmMsg;
 
 struct wmMsgBus;
@@ -181,6 +186,7 @@ typedef struct wmMsgSubscribeKey_Static
   wmMsg_Static msg;
 } wmMsgSubscribeKey_Static;
 
+void WM_msgtypeinfo_init_prim(wmMsgTypeInfo *msgtype_info);
 void WM_msgtypeinfo_init_static(wmMsgTypeInfo *msgtype_info);
 
 wmMsgSubscribeKey_Static *WM_msg_lookup_static(struct wmMsgBus *mbus,
@@ -206,10 +212,10 @@ typedef struct wmMsgParams_PRIM
   const KrakenPROP *prop;
 
   /**
-   * Optional RNA data path for persistent RNA properties, ignore if NULL.
+   * Optional Prim data path for persistent Prim properties, ignore if NULL.
    * otherwise it's allocated.
    */
-  TfToken data_path;
+  wabi::TfToken data_path;
 } wmMsgParams_PRIM;
 
 typedef struct wmMsg_PRIM

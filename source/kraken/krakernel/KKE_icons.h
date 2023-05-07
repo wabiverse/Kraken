@@ -89,7 +89,7 @@ typedef struct LockfreeLinkList
 
 typedef struct Icon Icon;
 
-struct KrakenDataReader;
+struct USDDataReader;
 struct USDWriter;
 struct ID;
 struct ImBuf;

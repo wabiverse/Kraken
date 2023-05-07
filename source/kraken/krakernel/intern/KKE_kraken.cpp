@@ -55,6 +55,8 @@
 #include "KLI_listbase.h"
 #include "KLI_string.h"
 #include "KLI_threads.h"
+#include "KLI_utildefines.h"
+#include "KLI_mempool.h"
 
 /* KRAKEN KERNEL */
 #include "KKE_context.h"
@@ -64,6 +66,9 @@
 #include "KKE_screen.h"
 #include "KKE_utils.h"
 #include "KKE_global.h"
+
+/* KRAKEN FONT */
+#include "KRF_api.h"
 
 /* ANCHOR */
 #include "ANCHOR_api.h"
@@ -147,8 +152,8 @@ void KKE_main_free(Main *mainvar)
     ListBase *lb = lbarray[a];
     ID *id, *id_next;
 
-    for (id = lb->first; id != NULL; id = id_next) {
-      id_next = id->next;
+    for (id = (ID *)lb->first; id != NULL; id = id_next) {
+      id_next = (ID *)id->next;
 
       KKE_id_free_ex(mainvar, id, free_flag, false);
 
@@ -160,9 +165,9 @@ void KKE_main_free(Main *mainvar)
     KKE_main_relations_free(mainvar);
   }
 
-  if (mainvar->id_map) {
-    KKE_main_idmap_destroy(mainvar->id_map);
-  }
+  // if (mainvar->id_map) {
+  //   KKE_main_idmap_destroy(mainvar->id_map);
+  // }
 
   if (mainvar->name_map) {
     KKE_main_namemap_destroy(&mainvar->name_map);
@@ -171,6 +176,63 @@ void KKE_main_free(Main *mainvar)
   KLI_spin_end((SpinLock *)mainvar->lock);
   MEM_freeN(mainvar->lock);
   MEM_freeN(mainvar);  
+}
+
+void KKE_main_relations_free(Main *bmain)
+{
+  if (bmain->relations != NULL) {
+    if (bmain->relations->relations_from_pointers != NULL) {
+      KLI_rhash_free(bmain->relations->relations_from_pointers, NULL, MEM_freeN);
+    }
+    KLI_mempool_destroy(bmain->relations->entry_items_pool);
+    MEM_freeN(bmain->relations);
+    bmain->relations = NULL;
+  }
+}
+
+void KKE_kraken_userdef_data_swap(UserDef *userdef_a, UserDef *userdef_b)
+{
+  SWAP(UserDef, *userdef_a, *userdef_b);
+}
+
+void KKE_kraken_userdef_data_free(UserDef *userdef, bool clear_fonts)
+{
+#define U KLI_STATIC_ASSERT(false, "Global 'U' not allowed, only use arguments passed in!")
+#ifdef U /* quiet warning */
+#endif
+
+  // userdef_free_keymaps(userdef);
+  // userdef_free_keyconfig_prefs(userdef);
+  // userdef_free_user_menus(userdef);
+  // userdef_free_addons(userdef);
+
+  if (clear_fonts) {
+    LISTBASE_FOREACH (uiFont *, font, &userdef->uifonts) {
+      KRF_unload_id(font->krf_id);
+    }
+    KRF_default_set(-1);
+  }
+
+  KLI_freelistN(&userdef->autoexec_paths);
+  KLI_freelistN(&userdef->asset_libraries);
+
+  KLI_freelistN(&userdef->uistyles);
+  KLI_freelistN(&userdef->uifonts);
+  KLI_freelistN(&userdef->themes);
+
+#undef U
+}
+
+void KKE_kraken_userdef_data_set(UserDef *userdef)
+{
+  KKE_kraken_userdef_data_swap(&U, userdef);
+  KKE_kraken_userdef_data_free(userdef, true);
+}
+
+void KKE_kraken_userdef_data_set_and_free(UserDef *userdef)
+{
+  KKE_kraken_userdef_data_set(userdef);
+  MEM_freeN(userdef);
 }
 
 void KKE_main_lock(struct Main *kmain)

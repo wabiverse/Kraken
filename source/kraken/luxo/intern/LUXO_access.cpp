@@ -74,10 +74,48 @@ KrakenPRIM PRIM_KrakenPROP;
 KrakenPRIM PRIM_Context;
 KrakenPRIM PRIM_Struct;
 KrakenPRIM PRIM_Window;
+KrakenPRIM PRIM_WindowManager;
 KrakenPRIM PRIM_WorkSpace;
+KrakenPRIM PRIM_World;
 KrakenPRIM PRIM_Screen;
 KrakenPRIM PRIM_Area;
 KrakenPRIM PRIM_Region;
+
+KrakenPRIM PRIM_Action;
+KrakenPRIM PRIM_Armature;
+KrakenPRIM PRIM_Brush;
+KrakenPRIM PRIM_Camera;
+KrakenPRIM PRIM_CacheFile;
+KrakenPRIM PRIM_Collection;
+KrakenPRIM PRIM_Curve;
+KrakenPRIM PRIM_GreasePencil;
+KrakenPRIM PRIM_ID;
+KrakenPRIM PRIM_Image;
+KrakenPRIM PRIM_Key;
+KrakenPRIM PRIM_Light;
+KrakenPRIM PRIM_LightProbe;
+KrakenPRIM PRIM_Library;
+KrakenPRIM PRIM_FreestyleLineStyle;
+KrakenPRIM PRIM_Lattice;
+KrakenPRIM PRIM_Material;
+KrakenPRIM PRIM_MetaBall;
+KrakenPRIM PRIM_MovieClip;
+KrakenPRIM PRIM_Mesh;
+KrakenPRIM PRIM_Mask;
+KrakenPRIM PRIM_NodeTree;
+KrakenPRIM PRIM_Object;
+KrakenPRIM PRIM_ParticleSettings;
+KrakenPRIM PRIM_Palette;
+KrakenPRIM PRIM_PaintCurve;
+KrakenPRIM PRIM_PointCloud;
+KrakenPRIM PRIM_Scene;
+KrakenPRIM PRIM_Simulation;
+KrakenPRIM PRIM_Sound;
+KrakenPRIM PRIM_Speaker;
+KrakenPRIM PRIM_Texture;
+KrakenPRIM PRIM_Text;
+KrakenPRIM PRIM_VectorFont;
+KrakenPRIM PRIM_Volume;
 
 KrakenSTAGE KRAKEN_STAGE = {};
 
@@ -537,6 +575,116 @@ bool LUXO_prop_collection_is_empty(KrakenPRIM *ptr, KrakenPROP *prop)
 //   return luxo_raw_access(reports, ptr, prop, propname, array, type, len, 1);
 // }
 
+KrakenPROP *LUXO_prim_name_property(const KrakenPRIM *prim)
+{ 
+  KrakenPROP *prop;
+  
+  *prop = prim->GetAttribute(prim->GetName());
+
+  return prop;
+}
+
+void LUXO_prop_string_get(KrakenPRIM *ptr, KrakenPROP *prop, char *value)
+{
+  KrakenPROPString *sprop = (KrakenPROPString *)prop;
+  IDProperty *idprop;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_STRING);
+
+  if ((idprop = prim_idproperty_check(&prop, ptr))) {
+    /* editing bytes is not 100% supported
+     * since they can contain NIL chars */
+    if (idprop->subtype == IDP_STRING_SUB_BYTE) {
+      memcpy(value, IDP_String(idprop), idprop->len);
+      value[idprop->len] = '\0';
+    }
+    else {
+      memcpy(value, IDP_String(idprop), idprop->len);
+    }
+  }
+  else if (sprop->get) {
+    sprop->get(ptr, value);
+  }
+  else if (sprop->get_ex) {
+    sprop->get_ex(ptr, prop, value);
+  }
+  else {
+    strcpy(value, sprop->defaultvalue);
+  }
+}
+
+char *LUXO_prop_string_get_alloc(KrakenPRIM *ptr, KrakenPROP *prop, char *fixedbuf, int fixedlen, int *r_len)
+{
+  char *buf;
+  int length;
+
+  KLI_assert(LUXO_prop_type(prop) == PROP_STRING);
+
+  length = LUXO_prop_string_length(ptr, prop);
+
+  if (length + 1 < fixedlen) {
+    buf = fixedbuf;
+  }
+  else {
+    buf = static_cast<char *>(MEM_mallocN(sizeof(char) * (length + 1), __func__));
+  }
+
+#ifndef NDEBUG
+  /* safety check to ensure the string is actually set */
+  buf[length] = 255;
+#endif
+
+  LUXO_prop_string_get(ptr, prop, buf);
+
+#ifndef NDEBUG
+  KLI_assert(buf[length] == '\0');
+#endif
+
+  if (r_len) {
+    *r_len = length;
+  }
+
+  return buf;
+}
+
+char *LUXO_string_get_alloc(KrakenPRIM *ptr, const char *name, char *fixedbuf, int fixedlen, int *r_len)
+{
+  KrakenPROP *prop = LUXO_prim_find_property(ptr, name);
+
+  if (prop) {
+    return LUXO_prop_string_get_alloc(ptr, prop, fixedbuf, fixedlen, r_len);
+  }
+  printf("%s: %s.%s not found.\n", __func__, ptr->type->identifier.data(), name);
+  if (r_len != nullptr) {
+    *r_len = 0;
+  }
+  return nullptr;
+}
+
+KrakenFUNC *LUXO_prim_find_function(KrakenPRIM *prim, const char *identifier)
+{
+  KrakenFUNC *func;
+  for (; prim; prim = prim->base) {
+    func = (KrakenFUNC *)KLI_findstring_ptr(&prim->functions, identifier, offsetof(KrakenFUNC, identifier));
+    if (func) {
+      return func;
+    }
+  }
+
+  return nullptr;
+}
+
+char *LUXO_prim_name_get_alloc(KrakenPRIM *ptr, char *fixedbuf, int fixedlen, int *r_len)
+{
+  KrakenPROP *nameprop;
+
+  if (ptr->data && (nameprop = LUXO_prim_name_property(ptr->type))) {
+    return LUXO_prop_string_get_alloc(ptr, nameprop, fixedbuf, fixedlen, r_len);
+  }
+
+  return NULL;
+}
+
 void LUXO_collection_begin(KrakenPRIM *ptr, const char *name, CollectionPropIT *iter)
 {
   KrakenPROP *prop = LUXO_prim_find_property(ptr, name);
@@ -619,34 +767,6 @@ void prim_idproperty_touch(IDProperty *idprop)
 {
   /* so the property is seen as 'set'. */
   idprop->flag &= ~IDP_FLAG_ANCHOR;
-}
-
-IDProperty **LUXO_prim_idprops_p(KrakenPRIM *ptr)
-{
-  KrakenPRIM *type = ptr->type;
-  if (type == NULL) {
-    return NULL;
-  }
-  if (type->idproperties == NULL) {
-    return NULL;
-  }
-
-  return type->idproperties(ptr);
-}
-
-IDProperty *LUXO_prim_idprops(KrakenPRIM *ptr, bool create)
-{
-  IDProperty **property_ptr = LUXO_prim_idprops_p(ptr);
-  if (property_ptr == NULL) {
-    return NULL;
-  }
-
-  if (create && *property_ptr == NULL) {
-    IDPropertyTemplate val = {0};
-    *property_ptr = IDP_New(IDP_GROUP, &val, wabi::TfToken(__func__));
-  }
-
-  return *property_ptr;
 }
 
 IDProperty *prim_idproperty_find(KrakenPRIM *ptr, const TfToken &name)
@@ -830,9 +950,9 @@ void *LUXO_prop_py_data_get(KrakenPROP *prop)
   return prop->py_data;
 }
 
-std::vector<KrakenPRIM *> &LUXO_prim_type_functions(KrakenPRIM *sprim)
+const ListBase *LUXO_prim_type_functions(KrakenPRIM *sprim)
 {
-  return sprim->functions;
+  return &sprim->functions;
 }
 
 KrakenPRIM *LUXO_prim_base(KrakenPRIM *type)
@@ -866,11 +986,6 @@ int LUXO_function_defined(KrakenFUNC *func)
 const TfToken LUXO_prim_identifier(const KrakenPRIM *type)
 {
   return (type->identifier != TfToken()) ? type->identifier : TfToken("Context");
-}
-
-const TfToken LUXO_prop_identifier(const KrakenPROP *prop)
-{
-  return prop->GetName();
 }
 
 static void prim_property_update(kContext *C,
@@ -1467,12 +1582,6 @@ bool LUXO_enum_name_from_value(const EnumPROP *item, int value, const char **r_n
   return false;
 }
 
-KrakenPROP *LUXO_prim_iterator_property(KrakenPRIM *type)
-{
-  KrakenPROP it = type->GetAttributes().front();
-  return &it;
-}
-
 KrakenPRIM *LUXO_prop_pointer_type(KrakenPRIM *ptr, KrakenPROP *prop)
 {
   prop = prim_ensure_property(prop);
@@ -1699,11 +1808,11 @@ IDProperty **LUXO_prim_idprops_p(KrakenPRIM *ptr)
 IDProperty *LUXO_prim_idprops(KrakenPRIM *ptr, bool create)
 {
   IDProperty **property_ptr = LUXO_prim_idprops_p(ptr);
-  if (property_ptr == NULL) {
-    return NULL;
+  if (property_ptr == nullptr) {
+    return nullptr;
   }
 
-  if (create && *property_ptr == NULL) {
+  if (create && *property_ptr == nullptr) {
     IDPropertyTemplate val = {0};
     *property_ptr = IDP_New(IDP_GROUP, &val, wabi::TfToken(__func__));
   }
@@ -1788,7 +1897,7 @@ void LUXO_prop_pointer_add(KrakenPRIM *ptr, KrakenPROP *prop)
   } else {
     printf("%s %s.%s: only supported for id properties.\n",
            __func__,
-           ptr->type->identifier,
+           ptr->type->identifier.data(),
            prop->GetName().data());
   }
 }
@@ -2931,3 +3040,23 @@ int LUXO_raw_type_sizeof(RawPropertyType type)
       return 0;
   }
 }
+
+static char stage_prim_state_owner[64];
+void LUXO_prim_state_owner_set(const char *name)
+{
+  if (name) {
+    KLI_strncpy(stage_prim_state_owner, name, sizeof(stage_prim_state_owner));
+  }
+  else {
+    stage_prim_state_owner[0] = '\0';
+  }
+}
+
+const char *LUXO_prim_state_owner_get(void)
+{
+  if (stage_prim_state_owner[0]) {
+    return stage_prim_state_owner;
+  }
+  return NULL;
+}
+

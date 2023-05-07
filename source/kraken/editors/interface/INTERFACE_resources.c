@@ -25,7 +25,7 @@
 #include "KKE_global.h"
 // #include "KKE_mesh_runtime.h"
 
-//#include "BLO_readfile.h" /* for UserDef version patching. */
+#include "KLO_readfile.h" /* for UserDef version patching. */
 
 #include "KRF_api.h"
 

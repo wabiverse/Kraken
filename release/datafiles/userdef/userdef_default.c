@@ -3,22 +3,20 @@
 /* Preferences Data File 'U_default'. */
 
 /* For constants. */
-#include "BLI_math_base.h"
+#include "KLI_math_base.h"
 
-#include "DNA_anim_types.h"
-#include "DNA_curve_types.h"
-#include "DNA_space_types.h"
-#include "DNA_userdef_types.h"
+#include "USD_space_types.h"
+#include "USD_userdef_types.h"
 
-#include "BLI_math_rotation.h"
+#include "KLI_math_rotation.h"
 
-#include "BKE_blender_version.h"
+#include "KKE_version.h"
 
-#include "BLO_readfile.h" /* own include */
+#include "KLO_readfile.h" /* own include */
 
 const UserDef U_default = {
-    .versionfile = BLENDER_FILE_VERSION,
-    .subversionfile = BLENDER_FILE_SUBVERSION,
+    .versionfile = KRAKEN_FILE_VERSION,
+    .subversionfile = KRAKEN_FILE_SUBVERSION,
     .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_RELPATHS | USER_RELEASECONFIRM |
              USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES),
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_LATTICE | USER_DUP_FONT |
@@ -86,13 +84,13 @@ const UserDef U_default = {
     .user_keymaps = {NULL},
     .user_keyconfig_prefs = {NULL},
 
-    /** Initialized by #BKE_blendfile_userdef_from_defaults. */
+    /** Initialized by #KKE_usdfile_userdef_from_defaults. */
     .addons = {NULL},
 
     .autoexec_paths = {NULL},
     .user_menus = {NULL},
 
-    .keyconfigstr = "Blender",
+    .keyconfigstr = "Kraken",
     .undosteps = 32,
     .undomemory = 0,
     .gp_manhattandist = 1,
@@ -100,7 +98,7 @@ const UserDef U_default = {
     .gp_eraser = 25,
     .gp_settings = 0,
 
-    /** Initialized by: #BKE_studiolight_default. */
+    /** Initialized by: #KKE_studiolight_default. */
     .light_param = {{0}},
     .light_ambient = {0, 0, 0},
 

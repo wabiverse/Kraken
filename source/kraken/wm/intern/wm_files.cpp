@@ -36,6 +36,7 @@
 #include "LUXO_define.h"
 
 #include "KLI_path_utils.h"
+#include "KLI_time.h"
 
 #include "KKE_autoexec.h"
 #include "KKE_context.h"
@@ -44,10 +45,14 @@
 #include "KKE_appdir.hh"
 #include "KKE_report.h"
 #include "KKE_global.h"
+#include "KKE_usdfile.hh"
+
+#include "KLO_readfile.h"
 
 #include "ED_fileselect.h"
 #include "ED_screen.h"
 #include "ED_util.h"
+#include "ED_datafiles.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -80,6 +85,7 @@ static CLG_LogRef LOG = {"wm.files"};
 
 namespace fs = std::filesystem;
 
+static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *params);
 
 static int wm_user_datafiles_write_exec(kContext *C, wmOperator *op)
 {
@@ -522,7 +528,7 @@ static void wm_window_match_init(kContext *C, ListBase *wmlist)
     }
   }
 
-  BLI_listbase_clear(&G_MAIN->wm);
+  KLI_listbase_clear(&G_MAIN->wm);
 
   /* reset active window */
   CTX_wm_window_set(C, active_win);
@@ -572,6 +578,26 @@ const char *WM_init_state_app_template_get(void)
  * @{ */
 
 
+/**
+ * Logic shared between #WM_file_read & #WM_homefile_read,
+ * call before loading a file.
+ * @note In the case of #WM_file_read the file may fail to load.
+ * Change here shouldn't cause user-visible changes in that case.
+ */
+static void wm_file_read_pre(kContext *C, bool use_data, bool UNUSED(use_userdef))
+{
+  if (use_data) {
+    KKE_callback_exec_null(CTX_data_main(C), KKE_CB_EVT_LOAD_PRE);
+    KLI_timer_on_file_load();
+  }
+
+  /* Always do this as both startup and preferences may have loaded in many font's
+   * at a different zoom level to the file being loaded. */
+  //UI_view2d_zoom_cache_reset();
+
+  //ED_preview_restart_queue_free();
+}
+
 
 void WM_homefile_read_ex(kContext *C,
                          const struct wmHomeFileRead_Params *params_homefile,
@@ -610,7 +636,7 @@ void WM_homefile_read_ex(kContext *C,
    * '{KRAKEN_SYSTEM_SCRIPTS}/startup/bl_app_templates_system/{app_template}' */
   char app_template_config[FILE_MAX];
 
-  eKLOReadSkip skip_flags = 0;
+  eKLOReadSkip skip_flags = static_cast<eKLOReadSkip>(0);
 
   if (use_data == false) {
     skip_flags |= KLO_READ_SKIP_DATA;
@@ -758,18 +784,18 @@ void WM_homefile_read_ex(kContext *C,
 
   if (!use_factory_settings || (filepath_startup[0] != '\0')) {
     if (KLI_access(filepath_startup, R_OK) == 0) {
-      const struct KrakenFileReadParams params = {
+      const struct USDFileReadParams params = {
         .is_startup = true,
         .skip_flags = skip_flags | KLO_READ_SKIP_USERDEF,
       };
-      KrakenFileReadReport bf_reports = {.reports = reports};
-      struct KrakenFileData *bfd = wm_usdfile_read(filepath_startup, &params, &bf_reports);
+      USDFileReadReport usd_reports = {.reports = reports};
+      struct USDFileData *usd = KKE_usdfile_read(filepath_startup, &params, &usd_reports);
 
-      if (bfd != NULL) {
+      if (usd != NULL) {
         KKE_usdfile_read_setup_ex(C,
-                                  bfd,
+                                  usd,
                                   &params,
-                                  &bf_reports,
+                                  &usd_reports,
                                   update_defaults && use_data,
                                   app_template);
         success = true;
@@ -783,7 +809,7 @@ void WM_homefile_read_ex(kContext *C,
   if (use_userdef) {
     if ((skip_flags & KLO_READ_SKIP_USERDEF) == 0) {
       UserDef *userdef_default = KKE_usdfile_userdef_from_defaults();
-      KKE_blender_userdef_data_set_and_free(userdef_default);
+      KKE_kraken_userdef_data_set_and_free(userdef_default);
       skip_flags |= KLO_READ_SKIP_USERDEF;
     }
   }
@@ -794,26 +820,29 @@ void WM_homefile_read_ex(kContext *C,
   }
 
   if (success == false) {
-    const struct KrakenFileReadParams params = {
+    const struct USDFileReadParams params = {
       .is_startup = true,
       .skip_flags = skip_flags,
     };
-    struct KrakenFileData *bfd = KKE_usdfile_read_from_memory(datatoc_startup_blend,
-                                                              datatoc_startup_blend_size,
-                                                              &params,
-                                                              NULL);
-    if (bfd != NULL) {
-      KKE_usdfile_read_setup_ex(C, bfd, &params, &(KrakenFileReadReport){NULL}, true, NULL);
-      success = true;
-    }
+    // struct USDFileData *usd = KKE_usdfile_read_from_memory(datatoc_startup_usd,
+    //                                                        datatoc_startup_usd_size,
+    //                                                        &params,
+    //                                                        NULL);
+    // if (usd != NULL) {
+    //   USDFileReadReport reports = {
+    //     NULL
+    //   };
+    //   KKE_usdfile_read_setup_ex(C, usd, &params, &reports, true, NULL);
+    //   success = true;
+    // }
 
     if (use_data && KLI_listbase_is_empty(&wmbase)) {
-      WM_clear_default_size(C);
+      //WM_clear_default_size(C);
     }
   }
 
   if (use_empty_data) {
-    KKE_usdfile_read_make_empty(C);
+    //KKE_usdfile_read_make_empty(C);
   }
 
   /* Load template preferences,
@@ -837,14 +866,14 @@ void WM_homefile_read_ex(kContext *C,
       UserDef *userdef_template = NULL;
       /* just avoids missing file warning */
       if (KLI_exists(temp_path)) {
-        userdef_template = KKE_usdfile_userdef_read(temp_path, NULL);
+        //userdef_template = KKE_usdfile_userdef_read(temp_path, NULL);
       }
       if (userdef_template == NULL) {
         /* we need to have preferences load to overwrite preferences from previous template */
         userdef_template = KKE_usdfile_userdef_from_defaults();
       }
       if (userdef_template) {
-        KKE_blender_userdef_app_template_data_set_and_free(userdef_template);
+        //KKE_kraken_userdef_app_template_data_set_and_free(userdef_template);
         userdef_template = NULL;
       }
     }
@@ -858,12 +887,12 @@ void WM_homefile_read_ex(kContext *C,
 
   if (use_userdef) {
     /* check userdef before open window, keymaps etc */
-    wm_init_userdef(kmain);
+    //wm_init_userdef(kmain);
   }
 
   if (use_data) {
     /* match the read WM with current WM */
-    wm_window_match_do(C, &wmbase, &kmain->wm, &kmain->wm);
+    //wm_window_match_do(C, &wmbase, &kmain->wm, &kmain->wm);
   }
 
   if (use_userdef) {
@@ -872,7 +901,7 @@ void WM_homefile_read_ex(kContext *C,
     LISTBASE_FOREACH(wmWindowManager *, wm, &kmain->wm)
     {
       if (wm->defaultconf) {
-        wm->defaultconf->flag &= ~KEYCONF_INIT_DEFAULT;
+        //wm->defaultconf->flag &= ~KEYCONF_INIT_DEFAULT;
       }
     }
   }
@@ -894,7 +923,7 @@ void WM_homefile_read_ex(kContext *C,
     if (r_params_file_read_post == NULL) {
       wm_file_read_post(C, &params_file_read_post);
     } else {
-      *r_params_file_read_post = MEM_mallocN(sizeof(struct wmFileReadPost_Params), __func__);
+      *r_params_file_read_post = (wmFileReadPost_Params *)MEM_mallocN(sizeof(struct wmFileReadPost_Params), __func__);
       **r_params_file_read_post = params_file_read_post;
 
       /* Match #wm_file_read_post which leaves the window cleared too. */
@@ -907,7 +936,7 @@ void wm_homefile_read(kContext *C,
                       const struct wmHomeFileRead_Params *params_homefile,
                       ReportList *reports)
 {
-  wm_homefile_read_ex(C, params_homefile, reports, NULL);
+  WM_homefile_read_ex(C, params_homefile, reports, NULL);
 }
 
 void wm_homefile_read_post(struct kContext *C,
@@ -996,41 +1025,8 @@ void WM_file_read_report(kContext *C, Main *kmain)
 
 /**
  * Logic shared between #WM_file_read & #WM_homefile_read,
- * call before loading a file.
- * @note In the case of #WM_file_read the file may fail to load.
- * Change here shouldn't cause user-visible changes in that case.
- */
-static void wm_file_read_pre(kContext *C, bool use_data, bool UNUSED(use_userdef))
-{
-  if (use_data) {
-    KKE_callback_exec_null(CTX_data_main(C), KKE_CB_EVT_LOAD_PRE);
-    KLI_timer_on_file_load();
-  }
-
-  /* Always do this as both startup and preferences may have loaded in many font's
-   * at a different zoom level to the file being loaded. */
-  UI_view2d_zoom_cache_reset();
-
-  ED_preview_restart_queue_free();
-}
-
-/**
- * Parameters for #wm_file_read_post, also used for deferred initialization.
- */
-struct wmFileReadPost_Params
-{
-  uint use_data : 1;
-  uint use_userdef : 1;
-
-  uint is_startup_file : 1;
-  uint is_factory_startup : 1;
-  uint reset_app_template : 1;
-};
-
-/**
- * Logic shared between #WM_file_read & #WM_homefile_read,
  * updates to make after reading a file. */
-static void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *params)
+void wm_file_read_post(kContext *C, const struct wmFileReadPost_Params *params)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
 

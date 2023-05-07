@@ -505,6 +505,20 @@ void *KKE_id_new(Main *kmain, const short type, const char *name)
   return id;
 }
 
+void KKE_libblock_init_empty(ID *id)
+{
+  const IDTypeInfo *idtype_info = KKE_idtype_get_info_from_id(id);
+
+  if (idtype_info != NULL) {
+    if (idtype_info->init_data != NULL) {
+      idtype_info->init_data(id);
+    }
+    return;
+  }
+
+  KLI_assert_msg(0, "IDType Missing IDTypeInfo");
+}
+
 void KKE_libblock_runtime_reset_remapping_status(ID *id)
 {
   id->runtime.remap.status = 0;
@@ -1851,13 +1865,16 @@ void KKE_lib_query_foreachid_process(LibraryForeachIDData *data, ID **id_pp, int
     cb_flag |= IDWALK_CB_OVERRIDE_LIBRARY_NOT_OVERRIDABLE;
   }
 
-  const int callback_return = data->callback(
-    &(struct LibraryIDLinkCallbackData){.user_data = data->user_data,
-                                        .kmain = data->kmain,
-                                        .id_owner = data->owner_id,
-                                        .id_self = data->self_id,
-                                        .id_pointer = id_pp,
-                                        .cb_flag = cb_flag});
+  LibraryIDLinkCallbackData cbdata = {
+    .user_data = data->user_data,
+    .kmain = data->kmain,
+    .id_owner = data->owner_id,
+    .id_self = data->self_id,
+    .id_pointer = id_pp,
+    .cb_flag = cb_flag
+  };
+
+  const int callback_return = data->callback(&cbdata);
   if (flag & IDWALK_READONLY) {
     KLI_assert(*(id_pp) == old_id);
   }

@@ -243,6 +243,12 @@ void KKE_kraken_enable_debug_codes(void);
 
 const char *KKE_kraken_version_string(void);
 
+void KKE_main_relations_free(Main *bmain);
+void KKE_kraken_userdef_data_swap(struct UserDef *userdef_a, struct UserDef *userdef_b);
+void KKE_kraken_userdef_data_set(struct UserDef *userdef);
+void KKE_kraken_userdef_data_set_and_free(struct UserDef *userdef);
+void KKE_kraken_userdef_data_free(struct UserDef *userdef, bool clear_fonts);
+
 /* *** Generic utils to loop over whole Main database. *** */
 
 #define FOREACH_MAIN_LISTBASE_ID_BEGIN(_lb, _id)              \

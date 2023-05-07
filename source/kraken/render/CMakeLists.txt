@@ -1,8 +1,8 @@
 set(INC
   .
+  intern
   ../../../. # Pixar USD
   ../../../source
-  intern
   ../krakernel
   ../kraklib
   # ../hydra
@@ -26,6 +26,15 @@ set(SRC
   intern/engine.cc
 
   RE_engine.h
+)
+
+set(INC_SYS
+  ${Boost_INCLUDE_DIRS}
+  ${TBB_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIR}
+  ${SDL2_INCLUDE_DIR}
+  ${Vulkan_INCLUDE_DIRS}
+  ${PTHREADS_INCLUDE_DIR}
 )
 
 set(LIB

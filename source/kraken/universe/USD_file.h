@@ -42,7 +42,7 @@ enum eKrakenFileType
   KRAKEN_FILETYPE_USDA,
 };
 
-struct KrakenFileData
+struct USDFileData
 {
   struct Main *main;
   struct kUserDef *user;
@@ -66,7 +66,7 @@ enum eUndoStepDir
   STEP_INVALID = 0,
 };
 
-struct KrakenFileReadParams
+struct USDFileReadParams
 {
   uint skip_flags : 3;
   uint is_startup : 1;
@@ -91,14 +91,14 @@ struct FileData
   char relabase[FILE_MAX];
 
   wabi::SdfLayerRefPtr sdf_handle;
-  struct KrakenFileReadReport *reports;
+  struct USDFileReadReport *reports;
 
   std::string filedes;
 };
 
 typedef FileData KrakenHandle;
 
-FileData *kr_filedata_from_file(const char *filepath, struct KrakenFileReadReport *reports);
+FileData *kr_filedata_from_file(const char *filepath, struct USDFileReadReport *reports);
 
 /**
  * Open a krakenhandle from a file path.
@@ -106,5 +106,5 @@ FileData *kr_filedata_from_file(const char *filepath, struct KrakenFileReadRepor
  * @param filepath: The file path to open.
  * @param reports: Report errors in opening the file (can be NULL).
  * @return A handle on success, or NULL on failure. */
-KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, struct KrakenFileReadReport *reports);
+KrakenHandle *KLO_krakenhandle_from_file(const char *filepath, struct USDFileReadReport *reports);
 
