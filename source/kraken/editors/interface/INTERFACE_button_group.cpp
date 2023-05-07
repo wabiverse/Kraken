@@ -54,17 +54,15 @@
 void UI_block_new_button_group(uiBlock *block, uiButtonGroupFlag flag)
 {
   /* Don't create a new group if there is a "lock" on new groups. */
-  if (!block->button_groups.empty()) {
-    uiButtonGroup *last_button_group = block->button_groups.back();
-    if (last_button_group->flag & UI_BUTTON_GROUP_LOCK) {
+  if (!block->button_groups.is_empty()) {
+    uiButtonGroup &last_group = block->button_groups.last();
+    if (last_group.flag & UI_BUTTON_GROUP_LOCK) {
       return;
     }
   }
 
-  uiButtonGroup *new_group = new uiButtonGroup();
-  new_group->buttons.clear();
-  new_group->flag = flag;
-  block->button_groups.push_back(new_group);
+  block->button_groups.append({});
+  block->button_groups.last().flag = flag;
 }
 
 /** \} */

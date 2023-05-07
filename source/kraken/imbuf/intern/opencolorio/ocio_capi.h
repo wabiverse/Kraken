@@ -32,10 +32,8 @@ extern "C" {
 typedef struct OCIO_GPUShader OCIO_GPUShader;
 
 #define OCIO_DECLARE_HANDLE(name) \
-  typedef struct name##__         \
-  {                               \
-    int unused;                   \
-  } * name
+  struct name; \
+  typedef struct name *name##Ptr;
 
 #define OCIO_ROLE_DATA "data"
 #define OCIO_ROLE_SCENE_LINEAR "scene_linear"
@@ -45,13 +43,13 @@ typedef struct OCIO_GPUShader OCIO_GPUShader;
 #define OCIO_ROLE_DEFAULT_FLOAT "default_float"
 #define OCIO_ROLE_DEFAULT_SEQUENCER "default_sequencer"
 
-OCIO_DECLARE_HANDLE(OCIO_ConstConfigRcPtr);
-OCIO_DECLARE_HANDLE(OCIO_ConstColorSpaceRcPtr);
-OCIO_DECLARE_HANDLE(OCIO_ConstProcessorRcPtr);
-OCIO_DECLARE_HANDLE(OCIO_ConstCPUProcessorRcPtr);
-OCIO_DECLARE_HANDLE(OCIO_ConstContextRcPtr);
+OCIO_DECLARE_HANDLE(OCIO_ConstConfigRc);
+OCIO_DECLARE_HANDLE(OCIO_ConstColorSpaceRc);
+OCIO_DECLARE_HANDLE(OCIO_ConstProcessorRc);
+OCIO_DECLARE_HANDLE(OCIO_ConstCPUProcessorRc);
+OCIO_DECLARE_HANDLE(OCIO_ConstContextRc);
 OCIO_DECLARE_HANDLE(OCIO_PackedImageDesc);
-OCIO_DECLARE_HANDLE(OCIO_ConstLookRcPtr);
+OCIO_DECLARE_HANDLE(OCIO_ConstLookRc);
 
 /* Standard XYZ (D65) to linear Rec.709 transform. */
 static const float OCIO_XYZ_TO_REC709[3][3] = {

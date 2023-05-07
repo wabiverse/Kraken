@@ -314,13 +314,13 @@ struct KrakenPROP : public wabi::UsdAttribute
     return GetTypeName().GetArrayType().GetDimensions();
   }
 
-  unsigned int *GetArrayLength() const
+  const unsigned int *GetArrayLength()
   {
-    unsigned int length[/*LUXO_MAX_ARRAY_DIMENSION*/ 3];
-    length[0] = (unsigned int)GetArrayDimensions().d[0];
-    length[1] = (unsigned int)GetArrayDimensions().d[1];
-    length[2] = (unsigned int)GetArrayDimensions().size;
-    return length;
+    arraydims[0] = (uint)GetArrayDimensions().d[0];
+    arraydims[1] = (uint)GetArrayDimensions().d[1];
+    arraydims[2] = (uint)GetArrayDimensions().size;
+
+    return arraydims.data();
   }
 
   unsigned int GetTotalArrayLength() const
@@ -330,6 +330,11 @@ struct KrakenPROP : public wabi::UsdAttribute
 
     return (unsigned int)arr.size();
   }
+
+  std::vector<uint> arraydims { 0, 0, 0 };
+
+  /* magic bytes to distinguish with IDProperty */
+  int magic;
 
   /* various options */
   PropertyFlag flag;

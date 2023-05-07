@@ -235,6 +235,7 @@ KRAKEN_WM_TOKENS_TYPE::KRAKEN_WM_TOKENS_TYPE()
     KRAKEN_DEFINE_STATIC_TOKEN(ACTIONZONE_REGION),
     KRAKEN_DEFINE_STATIC_TOKEN(ACTIONZONE_FULLSCREEN),
     KRAKEN_DEFINE_STATIC_TOKEN(XR_ACTION),
+    KRAKEN_DEFINE_STATIC_TOKEN(name),
     allTokens({WM_OT_files_create_appdata,
                WM_OT_open_mainfile,
                WM_OT_save_mainfile,
@@ -442,7 +443,8 @@ KRAKEN_WM_TOKENS_TYPE::KRAKEN_WM_TOKENS_TYPE()
                ACTIONZONE_AREA,
                ACTIONZONE_REGION,
                ACTIONZONE_FULLSCREEN,
-               XR_ACTION})
+               XR_ACTION,
+               name})
 {}
 
 TfStaticData<KRAKEN_WM_TOKENS_TYPE> KRAKEN_WM_TOKENS;

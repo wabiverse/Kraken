@@ -1,13 +1,14 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * Copyright 2001-2002 NaN Holding BV. All rights reserved. */
 
-/** \file
+/** 
+ * @file
  * \ingroup edinterface
  */
 
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
 
 #include "MEM_guardedalloc.h"
 
@@ -31,7 +32,7 @@
 #include "USD_userdef_types.h"
 #include "USD_collection.h"
 
-// #include "LUXO_access.h"
+#include "LUXO_access.h"
 // #include "LUXO_prototypes.h"
 
 #include "KKE_appdir.h"
@@ -44,9 +45,13 @@
 #include "IMB_imbuf.h"
 
 #include "ED_datafiles.h"
+// #include "ED_render.h"
 
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
+
+#include "WM_api.h"
+// #include "WM_types.h"
 
 #include "interface_intern.h"
 
@@ -60,16 +65,16 @@
 #  define ICON_GRID_H 32
 #endif /* WITH_HEADLESS */
 
-typedef struct IconImage
+struct IconImage
 {
   int w;
   int h;
   uint *rect;
   const uchar *datatoc_rect;
   int datatoc_size;
-} IconImage;
+};
 
-typedef void (*VectorDrawFunc)(int x, int y, int w, int h, float alpha);
+using VectorDrawFunc = void (*)(int x, int y, int w, int h, float alpha);
 
 #define ICON_TYPE_PREVIEW 0
 #define ICON_TYPE_COLOR_TEXTURE 1
@@ -82,32 +87,32 @@ typedef void (*VectorDrawFunc)(int x, int y, int w, int h, float alpha);
 #define ICON_TYPE_GPLAYER 8
 #define ICON_TYPE_BLANK 9
 
-typedef struct DrawInfo
+struct DrawInfo 
 {
   int type;
 
-  union
+  union 
   {
     /* type specific data */
-    struct
+    struct 
     {
       VectorDrawFunc func;
     } vector;
-    struct
+    struct 
     {
       ImBuf *image_cache;
       bool inverted;
     } geom;
-    struct
+    struct 
     {
       IconImage *image;
     } buffer;
-    struct
+    struct 
     {
       int x, y, w, h;
       int theme_color;
     } texture;
-    struct
+    struct 
     {
       /* Can be packed into a single int. */
       short event_type;
@@ -117,69 +122,56 @@ typedef struct DrawInfo
       struct DrawInfo *next;
     } input;
   } data;
-} DrawInfo;
+};
 
-typedef struct IconTexture
+struct IconTexture 
 {
-  struct GPUTexture *tex[2];
+  GPUTexture *tex[2];
   int num_textures;
   int w;
   int h;
   float invw;
   float invh;
-} IconTexture;
+};
 
-typedef struct IconType
+struct IconType 
 {
   int type;
   int theme_color;
-} IconType;
+};
 
 /* ******************* STATIC LOCAL VARS ******************* */
 /* Static here to cache results of icon directory scan, so it's not
  * scanning the file-system each time the menu is drawn. */
-static struct ListBase iconfilelist = {NULL, NULL};
-static IconTexture icongltex = {
-  {NULL, NULL},
-  0,
-  0,
-  0,
-  0.0f,
-  0.0f
-};
+static ListBase iconfilelist = {nullptr, nullptr};
+static IconTexture icongltex = {{nullptr, nullptr}, 0, 0, 0, 0.0f, 0.0f};
 
 static const IconType icontypes[] = {
-#define DEF_ICON(name) {ICON_TYPE_MONO_TEXTURE, 0},
-#define DEF_ICON_SCENE(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_SCENE},
-#define DEF_ICON_COLLECTION(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_COLLECTION},
-#define DEF_ICON_OBJECT(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_OBJECT},
-#define DEF_ICON_OBJECT_DATA(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_OBJECT_DATA},
-#define DEF_ICON_MODIFIER(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_MODIFIER},
-#define DEF_ICON_SHADING(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_SHADING},
-#define DEF_ICON_FOLDER(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_FOLDER},
-#define DEF_ICON_FUND(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_FUND},
-#define DEF_ICON_VECTOR(name) {ICON_TYPE_VECTOR, 0},
-#define DEF_ICON_COLOR(name) {ICON_TYPE_COLOR_TEXTURE, 0},
-#define DEF_ICON_BLANK(name) {ICON_TYPE_BLANK, 0},
-#include "UI_icons.h"
+#  define DEF_ICON(name) {ICON_TYPE_MONO_TEXTURE, 0},
+#  define DEF_ICON_SCENE(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_SCENE},
+#  define DEF_ICON_COLLECTION(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_COLLECTION},
+#  define DEF_ICON_OBJECT(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_OBJECT},
+#  define DEF_ICON_OBJECT_DATA(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_OBJECT_DATA},
+#  define DEF_ICON_MODIFIER(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_MODIFIER},
+#  define DEF_ICON_SHADING(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_SHADING},
+#  define DEF_ICON_FOLDER(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_FOLDER},
+#  define DEF_ICON_FUND(name) {ICON_TYPE_MONO_TEXTURE, TH_ICON_FUND},
+#  define DEF_ICON_VECTOR(name) {ICON_TYPE_VECTOR, 0},
+#  define DEF_ICON_COLOR(name) {ICON_TYPE_COLOR_TEXTURE, 0},
+#  define DEF_ICON_BLANK(name) {ICON_TYPE_BLANK, 0},
+#  include "UI_icons.h"
 };
 
 /* **************************************************** */
 
-static DrawInfo *def_internal_icon(ImBuf *bbuf,
-                                   int icon_id,
-                                   int xofs,
-                                   int yofs,
-                                   int size,
-                                   int type,
-                                   int theme_color)
+static DrawInfo *def_internal_icon(ImBuf *bbuf, int icon_id, int xofs, int yofs, int size, int type, int theme_color)
 {
-  Icon *new_icon = MEM_callocN(sizeof(Icon), "texicon");
+  Icon *new_icon = MEM_cnew<Icon>(__func__);
 
-  new_icon->obj = NULL; /* icon is not for library object */
+  new_icon->obj = nullptr; /* icon is not for library object */
   new_icon->id_type = 0;
 
-  DrawInfo *di = MEM_callocN(sizeof(DrawInfo), "drawinfo");
+  DrawInfo *di = MEM_cnew<DrawInfo>(__func__);
   di->type = type;
 
   if (ELEM(type, ICON_TYPE_COLOR_TEXTURE, ICON_TYPE_MONO_TEXTURE)) {
@@ -188,8 +180,9 @@ static DrawInfo *def_internal_icon(ImBuf *bbuf,
     di->data.texture.y = yofs;
     di->data.texture.w = size;
     di->data.texture.h = size;
-  } else if (type == ICON_TYPE_BUFFER) {
-    IconImage *iimg = MEM_callocN(sizeof(IconImage), "icon_img");
+  }
+  else if (type == ICON_TYPE_BUFFER) {
+    IconImage *iimg = MEM_cnew<IconImage>(__func__);
     iimg->w = size;
     iimg->h = size;
 
@@ -197,18 +190,17 @@ static DrawInfo *def_internal_icon(ImBuf *bbuf,
     if (bbuf) {
       int y, imgsize;
 
-      iimg->rect = MEM_mallocN(size * size * sizeof(uint), "icon_rect");
+      iimg->rect = static_cast<uint *>(MEM_mallocN(size * size * sizeof(uint), __func__));
 
       /* Here we store the rect in the icon - same as before */
       if (size == bbuf->x && size == bbuf->y && xofs == 0 && yofs == 0) {
         memcpy(iimg->rect, bbuf->rect, size * size * sizeof(int));
-      } else {
+      }
+      else {
         /* this code assumes square images */
         imgsize = bbuf->x;
         for (y = 0; y < size; y++) {
-          memcpy(&iimg->rect[y * size],
-                 &bbuf->rect[(y + yofs) * imgsize + xofs],
-                 size * sizeof(int));
+          memcpy(&iimg->rect[y * size], &bbuf->rect[(y + yofs) * imgsize + xofs], size * sizeof(int));
         }
       }
     }
@@ -225,16 +217,16 @@ static DrawInfo *def_internal_icon(ImBuf *bbuf,
 
 static void def_internal_vicon(int icon_id, VectorDrawFunc drawFunc)
 {
-  Icon *new_icon = MEM_callocN(sizeof(Icon), "texicon");
+  Icon *new_icon = MEM_cnew<Icon>("texicon");
 
-  new_icon->obj = NULL; /* icon is not for library object */
+  new_icon->obj = nullptr; /* icon is not for library object */
   new_icon->id_type = 0;
 
-  DrawInfo *di = MEM_callocN(sizeof(DrawInfo), "drawinfo");
+  DrawInfo *di = MEM_cnew<DrawInfo>("drawinfo");
   di->type = ICON_TYPE_VECTOR;
   di->data.vector.func = drawFunc;
 
-  new_icon->drawinfo_free = NULL;
+  new_icon->drawinfo_free = nullptr;
   new_icon->drawinfo = di;
 
   KKE_icon_set(icon_id, new_icon);
@@ -483,16 +475,16 @@ static void init_internal_icons(void)
                      vicon_strip_color_draw_library_data_override_noneditable);
 }
 
-static void init_iconfile_list(struct ListBase *list)
+static void init_iconfile_list(ListBase *list)
 {
   KLI_listbase_clear(list);
   const char *icondir = KKE_appdir_folder_id(KRAKEN_DATAFILES, "icons");
 
-  if (icondir == NULL) {
+  if (icondir == nullptr) {
     return;
   }
 
-  struct direntry *dir;
+  direntry *dir;
   const int totfile = KLI_filelist_dir_contents(icondir, &dir);
 
   int index = 1;
@@ -502,10 +494,10 @@ static void init_iconfile_list(struct ListBase *list)
 
       if (KLI_path_extension_check(filename, ".png")) {
         /* loading all icons on file start is overkill & slows startup
-         * its possible they change size after kraken load anyway. */
+         * its possible they change size after kraken loads anyway. */
 
         /* found a potential icon file, so make an entry for it in the cache list */
-        IconFile *ifile = MEM_callocN(sizeof(IconFile), "IconFile");
+        IconFile *ifile = MEM_cnew<IconFile>(__func__);
 
         KLI_strncpy(ifile->filename, filename, sizeof(ifile->filename));
         ifile->index = index;
@@ -518,7 +510,7 @@ static void init_iconfile_list(struct ListBase *list)
   }
 
   KLI_filelist_free(dir, totfile);
-  dir = NULL;
+  dir = nullptr;
 }
 
 static DrawInfo *g_di_event_list = NULL;
@@ -677,7 +669,7 @@ static ImBuf *create_mono_icon_with_border(ImBuf *buf,
                                            int resolution_divider,
                                            float border_intensity)
 {
-  ImBuf *result = MEM_callocN(sizeof(buf), __func__);
+  ImBuf *result = IMB_dupImBuf(buf);
   const float border_sharpness = 16.0 / (resolution_divider * resolution_divider);
 
   float blurred_alpha_buffer[(ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) *
@@ -729,8 +721,8 @@ static ImBuf *create_mono_icon_with_border(ImBuf *buf,
           const int blurred_alpha_offset = by * (ICON_GRID_W + 2 * ICON_MONO_BORDER_OUTSET) + bx;
           const int offset_write = (sy + by) * buf->x + (sx + bx);
           const float blurred_alpha = blurred_alpha_buffer[blurred_alpha_offset];
-          const float border_srgb[4] =
-            {0, 0, 0, MIN2(1.0, blurred_alpha * border_sharpness) * border_intensity};
+          const float border_srgb[4] = {
+              0, 0, 0, MIN2(1.0f, blurred_alpha * border_sharpness) * border_intensity};
 
           const uint color_read = buf->rect[offset_write];
           const uchar *orig_color = (uchar *)&color_read;
@@ -745,14 +737,13 @@ static ImBuf *create_mono_icon_with_border(ImBuf *buf,
           blend_color_interpolate_float(dest_rgba, orig_rgba, border_rgba, 1.0 - orig_rgba[3]);
           linearrgb_to_srgb_v4(dest_srgb, dest_rgba);
 
-          const uint alpha_mask = ((uint)(dest_srgb[3] * 255)) << 24;
+          const uint alpha_mask = uint(dest_srgb[3] * 255) << 24;
           const uint cpack = rgb_to_cpack(dest_srgb[0], dest_srgb[1], dest_srgb[2]) | alpha_mask;
           result->rect[offset_write] = cpack;
         }
       }
     }
   }
-
   return result;
 }
 
@@ -771,10 +762,7 @@ static void free_icons_textures(void)
 
 static void free_iconfile_list(struct ListBase *list)
 {
-  IconFile *ifile = NULL, *next_ifile = NULL;
-
-  for (ifile = list->first; ifile; ifile = next_ifile) {
-    next_ifile = ifile->next;
+  LISTBASE_FOREACH_MUTABLE (IconFile *, ifile, &iconfilelist) {
     KLI_freelinkN(list, ifile);
   }
 }
@@ -967,19 +955,24 @@ static DrawInfo *icon_create_drawinfo(Icon *icon)
 {
   const int icon_data_type = icon->obj_type;
 
-  DrawInfo *di = MEM_callocN(sizeof(DrawInfo), "di_icon");
+  DrawInfo *di = MEM_cnew<DrawInfo>("di_icon");
 
   if (ELEM(icon_data_type, ICON_DATA_ID, ICON_DATA_PREVIEW)) {
     di->type = ICON_TYPE_PREVIEW;
-  } else if (icon_data_type == ICON_DATA_IMBUF) {
+  }
+  else if (icon_data_type == ICON_DATA_IMBUF) {
     di->type = ICON_TYPE_IMBUF;
-  } else if (icon_data_type == ICON_DATA_GEOM) {
+  }
+  else if (icon_data_type == ICON_DATA_GEOM) {
     di->type = ICON_TYPE_GEOM;
-  } else if (icon_data_type == ICON_DATA_STUDIOLIGHT) {
+  }
+  else if (icon_data_type == ICON_DATA_STUDIOLIGHT) {
     di->type = ICON_TYPE_BUFFER;
-  } else if (icon_data_type == ICON_DATA_GPLAYER) {
+  }
+  else if (icon_data_type == ICON_DATA_GPLAYER) {
     di->type = ICON_TYPE_GPLAYER;
-  } else {
+  }
+  else {
     KLI_assert(0);
   }
 
@@ -995,25 +988,22 @@ typedef struct IMMDrawPixelsTexState
   bool do_shader_unbind;
 } IMMDrawPixelsTexState;
 
-/* does not belong here. */
 static void immDrawPixelsTexSetupAttributes(IMMDrawPixelsTexState *state)
 {
   GPUVertFormat *vert_format = immVertexFormat();
   state->pos = GPU_vertformat_attr_add(vert_format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  state->texco =
-    GPU_vertformat_attr_add(vert_format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+  state->texco = GPU_vertformat_attr_add(vert_format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 }
 
-/* does not belong here. */
 static IMMDrawPixelsTexState immDrawPixelsTexSetup(int builtin)
 {
   IMMDrawPixelsTexState state;
   immDrawPixelsTexSetupAttributes(&state);
 
-  state.shader = GPU_shader_get_builtin_shader(builtin);
+  state.shader = GPU_shader_get_builtin_shader(static_cast<eGPUBuiltinShader>(builtin));
 
   /* Shader will be unbind by immUnbindProgram in a `immDrawPixelsTex` function. */
-  immBindBuiltinProgram(builtin);
+  immBindBuiltinProgram(static_cast<eGPUBuiltinShader>(builtin));
   immUniform1i("image", 0);
   state.do_shader_unbind = true;
 
@@ -1269,7 +1259,7 @@ static void icon_draw_texture(float x,
 static DrawInfo *icon_ensure_drawinfo(Icon *icon)
 {
   if (icon->drawinfo) {
-    return icon->drawinfo;
+    return static_cast<DrawInfo *>(icon->drawinfo);
   }
   DrawInfo *di = icon_create_drawinfo(icon);
   icon->drawinfo = di;
@@ -1311,7 +1301,7 @@ static void icon_draw_size(float x,
   // UI_widgetbase_draw_cache_flush();
 
   if (di->type == ICON_TYPE_IMBUF) {
-    ImBuf *ibuf = icon->obj;
+    ImBuf *ibuf = static_cast<ImBuf *>(icon->obj);
 
     GPU_blend(GPU_BLEND_ALPHA_PREMULT);
     icon_draw_rect(x, y, w, h, aspect, ibuf->x, ibuf->y, ibuf->rect, alpha, desaturate);
@@ -1543,20 +1533,94 @@ void UI_icon_draw_ex(float x,
                  mono_border);
 }
 
+
+
+/* ********** Move these to imbuf. ********** */
+
+static void IMB_premultiply_rect(uint *rect, char planes, int w, int h)
+{
+  char *cp;
+  int x, y, val;
+
+  if (planes == 24) { /* put alpha at 255 */
+    cp = (char *)(rect);
+
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++, cp += 4) {
+        cp[3] = 255;
+      }
+    }
+  }
+  else {
+    cp = (char *)(rect);
+
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++, cp += 4) {
+        val = cp[3];
+        cp[0] = (cp[0] * val) >> 8;
+        cp[1] = (cp[1] * val) >> 8;
+        cp[2] = (cp[2] * val) >> 8;
+      }
+    }
+  }
+}
+
+static void IMB_premultiply_rect_float(float *rect_float, int channels, int w, int h)
+{
+  float val, *cp;
+  int x, y;
+
+  if (channels == 4) {
+    cp = rect_float;
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++, cp += 4) {
+        val = cp[3];
+        cp[0] = cp[0] * val;
+        cp[1] = cp[1] * val;
+        cp[2] = cp[2] * val;
+      }
+    }
+  }
+}
+
+static void IMB_premultiply_alpha(ImBuf *ibuf)
+{
+  if (ibuf == nullptr) {
+    return;
+  }
+
+  if (ibuf->rect) {
+    IMB_premultiply_rect(ibuf->rect, ibuf->planes, ibuf->x, ibuf->y);
+  }
+
+  if (ibuf->rect_float) {
+    IMB_premultiply_rect_float(ibuf->rect_float, ibuf->channels, ibuf->x, ibuf->y);
+  }
+}
+
+
+
+/* ********** Alert Icons ********** */
+
 ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon)
 {
+#ifdef WITH_HEADLESS
+  UNUSED_VARS(icon);
+  return nullptr;
+#else
   const int ALERT_IMG_SIZE = 256;
-  icon = MIN2(icon, ALERT_ICON_MAX - 1);
+  icon = eAlertIcon(MIN2(icon, ALERT_ICON_MAX - 1));
   const int left = icon * ALERT_IMG_SIZE;
   const rcti crop = {left, left + ALERT_IMG_SIZE - 1, 0, ALERT_IMG_SIZE - 1};
   ImBuf *ibuf = IMB_ibImageFromMemory((const uchar *)datatoc_alert_icons_png,
                                       datatoc_alert_icons_png_size,
                                       IB_rect,
-                                      NULL,
+                                      nullptr,
                                       "alert_icon");
   IMB_rect_crop(ibuf, &crop);
-  // IMB_premultiply_alpha(ibuf);
+  IMB_premultiply_alpha(ibuf);
   return ibuf;
+#endif
 }
 
 void UI_icons_init()
@@ -1570,9 +1634,9 @@ void UI_icons_init()
 
 void UI_icons_free_drawinfo(void *drawinfo)
 {
-  DrawInfo *di = drawinfo;
+  DrawInfo *di = static_cast<DrawInfo *>(drawinfo);
 
-  if (di == NULL) {
+  if (di == nullptr) {
     return;
   }
 
@@ -1583,9 +1647,10 @@ void UI_icons_free_drawinfo(void *drawinfo)
       }
       MEM_freeN(di->data.buffer.image);
     }
-  } else if (di->type == ICON_TYPE_GEOM) {
+  }
+  else if (di->type == ICON_TYPE_GEOM) {
     if (di->data.geom.image_cache) {
-      // IMB_freeImBuf(di->data.geom.image_cache);
+      IMB_freeImBuf(di->data.geom.image_cache);
     }
   }
 

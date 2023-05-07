@@ -54,6 +54,7 @@
 #include "USD_scene.h"
 #include "USD_screen.h"
 #include "USD_system.h"
+#include "USD_types.h"
 #include "USD_userpref.h"
 #include "USD_window.h"
 

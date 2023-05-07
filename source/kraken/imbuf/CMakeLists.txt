@@ -17,10 +17,12 @@ set(INC
 )
 
 set(SRC
-  intern/colormanagement.c
+  intern/allocimbuf.cc
+  intern/colormanagement.cc
   intern/filetype.c
   intern/filetype.cc
   intern/imageprocess.c
+  intern/metadata.cc
   intern/module.c
   intern/readimage.c
   intern/rectop.c
@@ -28,8 +30,11 @@ set(SRC
 
   IMB_colormanagement.h
   IMB_imbuf.h
+  IMB_metadata.h
   IMB_thumbs.h
   
+  intern/imbuf.h
+  intern/IMB_allocimbuf.h
   intern/IMB_colormanagement_intern.h
   intern/IMB_filetype.h
 )

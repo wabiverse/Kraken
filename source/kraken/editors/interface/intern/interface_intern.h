@@ -12,10 +12,13 @@
 #endif /* __cplusplus */
 
 #include "KLI_rhash.h"
-
 #include "KLI_compiler_attrs.h"
 #include "KLI_listbase.h"
 #include "KLI_rect.h"
+
+#ifdef __cplusplus
+#  include "KLI_vector.hh"
+#endif /* __cplusplus */
 
 #include "USD_listBase.h"
 #include "USD_vec_types.h"
@@ -102,12 +105,6 @@ enum
   /* WARNING: rest of #uiBut.flag in UI_interface.h */
 };
 
-/** #uiBut.dragflag */
-enum
-{
-  UI_BUT_DRAGPOIN_FREE = (1 << 0),
-};
-
 /** #uiBut.pie_dir */
 typedef enum RadialDirection
 {
@@ -172,24 +169,25 @@ enum
 
 struct uiBut
 {
-  struct uiBut *next, *prev;
+  uiBut *next = nullptr, *prev = nullptr;
 
   /** Pointer back to the layout item holding this button. */
-  uiLayout *layout;
-  int flag, drawflag;
-  eButType type;
-  eButPointerType pointype;
-  short bit, bitnr, retval, strwidth, alignnr;
-  short ofs, pos, selsta, selend;
+  uiLayout *layout = nullptr;
+  int flag = 0;
+  int drawflag = 0;
+  eButType type = eButType(0);
+  eButPointerType pointype = UI_BUT_POIN_NONE;
+  short bit = 0, bitnr = 0, retval = 0, strwidth = 0, alignnr = 0;
+  short ofs = 0, pos = 0, selsta = 0, selend = 0;
 
-  char *str;
-  char strdata[UI_MAX_NAME_STR];
-  char drawstr[UI_MAX_DRAW_STR];
+  char *str = nullptr;
+  char strdata[UI_MAX_NAME_STR] = "";
+  char drawstr[UI_MAX_DRAW_STR] = "";
 
-  struct rctf rect; /* block relative coords */
+  rctf rect = {}; /* block relative coords */
 
-  char *poin;
-  float hardmin, hardmax, softmin, softmax;
+  char *poin = nullptr;
+  float hardmin = 0, hardmax = 0, softmin = 0, softmax = 0;
 
   /* both these values use depends on the button type
    * (polymorphic struct or union would be nicer for this stuff) */
@@ -200,7 +198,7 @@ struct uiBut
    * - UI_BTYPE_SCROLL:       Use as scroll size.
    * - UI_BTYPE_SEARCH_MENU:  Use as number or rows.
    */
-  float a1;
+  float a1 = 0;
 
   /**
    * For #uiBut.type:
@@ -208,239 +206,211 @@ struct uiBut
    * - UI_BTYPE_LABEL:        If `(a1 == 1.0f)` use a2 as a blending factor.
    * - UI_BTYPE_SEARCH_MENU:  Use as number or columns.
    */
-  float a2;
+  float a2 = 0;
 
-  uchar col[4];
+  uchar col[4] = {0};
 
   /** See \ref UI_but_func_identity_compare_set(). */
-  uiButIdentityCompareFunc identity_cmp_func;
+  uiButIdentityCompareFunc identity_cmp_func = nullptr;
 
-  uiButHandleFunc func;
-  void *func_arg1;
-  void *func_arg2;
+  uiButHandleFunc func = nullptr;
+  void *func_arg1 = nullptr;
+  void *func_arg2 = nullptr;
 
-  uiButHandleNFunc funcN;
-  void *func_argN;
+  uiButHandleNFunc funcN = nullptr;
+  void *func_argN = nullptr;
 
-  struct kContextStore *context;
+  kContextStore *context = nullptr;
 
-  uiButCompleteFunc autocomplete_func;
-  void *autofunc_arg;
+  uiButCompleteFunc autocomplete_func = nullptr;
+  void *autofunc_arg = nullptr;
 
-  uiButHandleRenameFunc rename_func;
-  void *rename_arg1;
-  void *rename_orig;
+  uiButHandleRenameFunc rename_func = nullptr;
+  void *rename_arg1 = nullptr;
+  void *rename_orig = nullptr;
 
   /** Run an action when holding the button down. */
-  uiButHandleHoldFunc hold_func;
-  void *hold_argN;
+  uiButHandleHoldFunc hold_func = nullptr;
+  void *hold_argN = nullptr;
 
-  const char *tip;
-  uiButToolTipFunc tip_func;
-  void *tip_arg;
-  uiFreeArgFunc tip_arg_free;
+  const char *tip = nullptr;
+  uiButToolTipFunc tip_func = nullptr;
+  void *tip_arg = nullptr;
+  uiFreeArgFunc tip_arg_free = nullptr;
 
   /** info on why button is disabled, displayed in tooltip */
-  const char *disabled_info;
+  const char *disabled_info = nullptr;
 
-  int icon;
+  KIFIconID icon = ICON_NONE;
   /** Copied from the #uiBlock.emboss */
-  short emboss;
+  eUIEmbossType emboss = UI_EMBOSS;
   /** direction in a pie menu, used for collision detection. */
-  short pie_dir;
+  RadialDirection pie_dir = UI_RADIAL_NONE;
   /** could be made into a single flag */
-  bool changed;
+  bool changed = false;
   /** so buttons can support unit systems which are not RNA */
-  uchar unit_type;
-  short iconadd;
+  uchar unit_type = 0;
+  short iconadd = 0;
 
   /** #UI_BTYPE_BLOCK data */
-  uiBlockCreateFunc block_create_func;
+  uiBlockCreateFunc block_create_func = nullptr;
 
   /** #UI_BTYPE_PULLDOWN / #UI_BTYPE_MENU data */
-  uiMenuCreateFunc menu_create_func;
+  uiMenuCreateFunc menu_create_func = nullptr;
 
-  uiMenuStepFunc menu_step_func;
+  uiMenuStepFunc menu_step_func = nullptr;
 
-  /* RNA data */
-  struct KrakenPRIM *stagepoin;
-  struct KrakenPROP *stageprop;
-  int rnaindex;
+  /* USD data */
+  KrakenPRIM stagepoin = {};
+  KrakenPROP *stageprop = nullptr;
+  int rnaindex = 0;
 
   /* Operator data */
-  struct wmOperatorType *optype;
-  struct KrakenPRIM *opptr;
-  short opcontext;
+  wmOperatorType *optype = nullptr;
+  KrakenPRIM *opptr = nullptr;
+  eWmOperatorContext opcontext = WM_OP_INVOKE_DEFAULT;
 
   /** When non-zero, this is the key used to activate a menu items (`a-z` always lower case). */
-  uchar menu_key;
+  uchar menu_key = 0;
 
-#ifdef __cplusplus
-  std::vector<struct uiButExtraOpIcon *> extra_op_icons; /** #uiButExtraOpIcon */
-#endif                                                   /* __cplusplus */
+  ListBase extra_op_icons = {nullptr, nullptr}; /** #uiButExtraOpIcon */
 
   /* Drag-able data, type is WM_DRAG_... */
-  char dragtype;
-  short dragflag;
-  void *dragpoin;
-  struct ImBuf *imb;
-  float imb_scale;
+  char dragtype = WM_DRAG_ID;
+  short dragflag = 0;
+  void *dragpoin = nullptr;
+  ImBuf *imb = nullptr;
+  float imb_scale = 0;
 
   /** Active button data (set when the user is hovering or interacting with a button). */
-  struct uiHandleButtonData *active;
+  uiHandleButtonData *active = nullptr;
 
   /** Custom button data (borrowed, not owned). */
-  void *custom_data;
+  void *custom_data = nullptr;
 
-  char *editstr;
-  double *editval;
-  float *editvec;
+  char *editstr = nullptr;
+  double *editval = nullptr;
+  float *editvec = nullptr;
 
-  uiButPushedStateFunc pushed_state_func;
-  const void *pushed_state_arg;
+  uiButPushedStateFunc pushed_state_func = nullptr;
+  const void *pushed_state_arg = nullptr;
+
+  /** Little indicator (e.g., counter) displayed on top of some icons. */
+  IconTextOverlay icon_overlay_text = {};
 
   /* pointer back */
-  uiBlock *block;
+  uiBlock *block = nullptr;
+
+  uiBut() = default;
+  /** Performs a mostly shallow copy for now. Only contained C++ types are deep copied. */
+  uiBut(const uiBut &other) = default;
+  /** Mostly shallow copy, just like copy constructor above. */
+  uiBut &operator=(const uiBut &other) = default;
 };
 
 /** Derived struct for #UI_BTYPE_NUM */
-typedef struct uiButNumber
-{
-  uiBut but;
-
-  float step_size;
-  float precision;
-} uiButNumber;
+struct uiButNumber : public uiBut {
+  float step_size = 0;
+  float precision = 0;
+};
 
 /** Derived struct for #UI_BTYPE_COLOR */
-typedef struct uiButColor
-{
-  uiBut but;
-
-  bool is_pallete_color;
-  int palette_color_index;
-} uiButColor;
+struct uiButColor : public uiBut {
+  bool is_pallete_color = false;
+  int palette_color_index = -1;
+};
 
 /** Derived struct for #UI_BTYPE_TAB */
-typedef struct uiButTab
-{
-  uiBut but;
-  struct MenuType *menu;
-} uiButTab;
+struct uiButTab : public uiBut {
+  struct MenuType *menu = nullptr;
+};
 
 /** Derived struct for #UI_BTYPE_SEARCH_MENU */
-typedef struct uiButSearch
-{
-  uiBut but;
+struct uiButSearch : public uiBut {
+  uiButSearchCreateFn popup_create_fn = nullptr;
+  uiButSearchUpdateFn items_update_fn = nullptr;
+  uiButSearchListenFn listen_fn = nullptr;
 
-  uiButSearchCreateFn popup_create_fn;
-  uiButSearchUpdateFn items_update_fn;
-  uiButSearchListenFn listen_fn;
+  void *item_active = nullptr;
 
-  void *item_active;
+  void *arg = nullptr;
+  uiFreeArgFunc arg_free_fn = nullptr;
 
-  void *arg;
-  uiFreeArgFunc arg_free_fn;
+  uiButSearchContextMenuFn item_context_menu_fn = nullptr;
+  uiButSearchTooltipFn item_tooltip_fn = nullptr;
 
-  uiButSearchContextMenuFn item_context_menu_fn;
-  uiButSearchTooltipFn item_tooltip_fn;
+  const char *item_sep_string = nullptr;
 
-  const char *item_sep_string;
-
-  struct KrakenPRIM *rnasearchpoin;
-  struct KrakenPROP *rnasearchprop;
+  KrakenPRIM rnasearchpoin = {};
+  KrakenPROP *rnasearchprop = nullptr;
 
   /**
    * The search box only provides suggestions, it does not force
    * the string to match one of the search items when applying.
    */
-  bool results_are_suggestions;
-} uiButSearch;
+  bool results_are_suggestions = false;
+};
 
-/** Derived struct for #UI_BTYPE_DECORATOR */
-typedef struct uiButDecorator
-{
-  uiBut but;
-
-  struct KrakenPRIM *stagepoin;
-  struct KrakenPROP *stageprop;
-  int rnaindex;
-} uiButDecorator;
+/** Derived struct for #UI_BTYPE_DECORATOR
+ * Decorators have own RNA data, using the normal #uiBut RNA members has many side-effects.
+ */
+struct uiButDecorator : public uiBut {
+  struct KrakenPRIM decorated_rnapoin = {};
+  struct KrakenPROP *decorated_rnaprop = nullptr;
+  int decorated_rnaindex = -1;
+};
 
 /** Derived struct for #UI_BTYPE_PROGRESS_BAR. */
-typedef struct uiButProgressbar
-{
-  uiBut but;
-
+struct uiButProgressbar : public uiBut {
   /* 0..1 range */
-  float progress;
-} uiButProgressbar;
+  float progress = 0;
+};
 
-typedef struct uiButViewItem
-{
-  uiBut but;
-
+struct uiButViewItem : public uiBut {
   /* C-Handle to the view item this button was created for. */
-  uiViewItemHandle *view_item;
-} uiButViewItem;
+  uiViewItemHandle *view_item = nullptr;
+};
 
 /** Derived struct for #UI_BTYPE_HSVCUBE. */
-typedef struct uiButHSVCube
-{
-  uiBut but;
-
-  eButGradientType gradient_type;
-} uiButHSVCube;
+struct uiButHSVCube : public uiBut {
+  eButGradientType gradient_type = UI_GRAD_SV;
+};
 
 /** Derived struct for #UI_BTYPE_COLORBAND. */
-typedef struct uiButColorBand
-{
-  uiBut but;
-
-  struct ColorBand *edit_coba;
-} uiButColorBand;
+struct uiButColorBand : public uiBut {
+  ColorBand *edit_coba = nullptr;
+};
 
 /** Derived struct for #UI_BTYPE_CURVEPROFILE. */
-typedef struct uiButCurveProfile
-{
-  uiBut but;
-
-  struct CurveProfile *edit_profile;
-} uiButCurveProfile;
+struct uiButCurveProfile : public uiBut {
+  struct CurveProfile *edit_profile = nullptr;
+};
 
 /** Derived struct for #UI_BTYPE_CURVE. */
-typedef struct uiButCurveMapping
-{
-  uiBut but;
-
-  struct CurveMapping *edit_cumap;
-  eButGradientType gradient_type;
-} uiButCurveMapping;
+struct uiButCurveMapping : public uiBut {
+  struct CurveMapping *edit_cumap = nullptr;
+  eButGradientType gradient_type = UI_GRAD_SV;
+};
 
 /** Derived struct for #UI_BTYPE_HOTKEY_EVENT. */
-typedef struct uiButHotkeyEvent
-{
-  uiBut but;
-
-  short modifier_key;
-} uiButHotkeyEvent;
+struct uiButHotkeyEvent : public uiBut {
+  short modifier_key = 0;
+};
 
 /**
  * Additional, superimposed icon for a button, invoking an operator.
  */
-typedef struct uiButExtraOpIcon
-{
-  struct uiButExtraOpIcon *next, *prev;
+struct uiButExtraOpIcon {
+  uiButExtraOpIcon *next, *prev;
 
   KIFIconID icon;
-  struct wmOperatorCallParams *optype_params;
+  wmOperatorCallParams *optype_params;
 
   bool highlighted;
   bool disabled;
-} uiButExtraOpIcon;
+};
 
-typedef struct ColorPicker
-{
+struct ColorPicker {
   struct ColorPicker *next, *prev;
 
   /** Color in HSV or HSL, in color picking color space. Used for HSV cube,
@@ -461,12 +431,11 @@ typedef struct ColorPicker
   bool use_color_lock;
   bool use_luminosity_lock;
   float luminosity_lock_value;
-} ColorPicker;
+};
 
-typedef struct ColorPickerData
-{
+struct ColorPickerData {
   ListBase list;
-} ColorPickerData;
+};
 
 struct PieMenuData
 {
@@ -493,21 +462,6 @@ enum eBlockContentHints
   UI_BLOCK_CONTAINS_SUBMENU_BUT = (1 << 0),
 };
 
-/**
- * A group of button references, used by property search to keep track of sets of buttons that
- * should be searched together. For example, in property split layouts number buttons and their
- * labels (and even their decorators) are separate buttons, but they must be searched and
- * highlighted together.
- */
-typedef struct uiButtonGroup
-{
-  void *next, *prev;
-#ifdef __cplusplus
-  std::vector<uiBut *> buttons; /* #LinkData with #uiBut data field. */
-#endif                          /* __cplusplus */
-  short flag;
-} uiButtonGroup;
-
 /* #uiButtonGroup.flag. */
 typedef enum uiButtonGroupFlag
 {
@@ -519,28 +473,34 @@ typedef enum uiButtonGroupFlag
 } uiButtonGroupFlag;
 ENUM_OPERATORS(uiButtonGroupFlag, UI_BUTTON_GROUP_PANEL_HEADER);
 
+/**
+ * A group of button references, used by property search to keep track of sets of buttons that
+ * should be searched together. For example, in property split layouts number buttons and their
+ * labels (and even their decorators) are separate buttons, but they must be searched and
+ * highlighted together.
+ */
+struct uiButtonGroup {
+  kraken::Vector<uiBut *> buttons;
+  uiButtonGroupFlag flag;
+};
+
 struct uiBlock
 {
   uiBlock *next, *prev;
 
-#ifdef __cplusplus
-  std::vector<struct uiBut *> buttons;
-#endif /* __cplusplus */
-
-  struct Panel *panel;
+  ListBase buttons;
+  Panel *panel;
   uiBlock *oldblock;
 
   /** Used for `UI_butstore_*` runtime function. */
   ListBase butstore;
 
-#ifdef __cplusplus
-  std::vector<uiButtonGroup *> button_groups; /* #uiButtonGroup. */
-  std::vector<uiLayout *> layouts;
-#endif /* __cplusplus */
+  kraken::Vector<uiButtonGroup> button_groups;
+
+  ListBase layouts;
+  uiLayout *curlayout;
 
   ListBase contexts;
-
-  struct uiLayout *curlayout;
 
 
   /** A block can store "views" on data-sets. Currently tree-views (#AbstractTreeView) only.
@@ -548,7 +508,9 @@ struct uiBlock
    * state that is persistent over redraws (e.g. collapsed tree-view items). */
   ListBase views;
 
-  char name[MAX_NAME];
+  ListBase dynamic_listeners; /* #uiBlockDynamicListener */
+
+  char name[UI_MAX_NAME_STR];
 
   float winmat[4][4];
 
@@ -624,14 +586,14 @@ struct uiBlock
 
   /** use so presets can find the operator,
    * across menus and from nested popups which fail for operator context. */
-  struct wmOperator *ui_operator;
+  wmOperator *ui_operator;
 
   /** XXX hack for dynamic operator enums */
   void *evil_C;
 
   /** unit system, used a lot for numeric buttons so include here
    * rather than fetching through the scene every time. */
-  struct UnitSettings *unit;
+  UnitSettings *unit;
   /** @note only accessed by color picker templates. */
   ColorPickerData color_pickers;
 
@@ -644,7 +606,7 @@ struct uiBlock
    */
   char display_device[64];
 
-  struct PieMenuData pie_data;
+  PieMenuData pie_data;
 };
 
 typedef struct uiSafetyRct
@@ -1331,7 +1293,7 @@ void ui_draw_preview_item_stateless(const struct uiFontStyle *fstyle,
 extern const float ui_pixel_jitter[UI_PIXEL_AA_JITTER][2];
 
 
-/* interface_icons.c */
+/* interface_icons.cc */
 
 void ui_icon_ensure_deferred(const struct kContext *C, int icon_id, bool big);
 int ui_id_icon_get(const struct kContext *C, struct ID *id, bool big);
@@ -1396,7 +1358,7 @@ void ui_item_paneltype_func(struct kContext *C, struct uiLayout *layout, void *a
  * Every function that adds a set of buttons must create another group,
  * then #ui_def_but adds buttons to the current group (the last).
  */
-void ui_block_new_button_group(uiBlock *block, uiButtonGroupFlag flag);
+void UI_block_new_button_group(uiBlock *block, uiButtonGroupFlag flag);
 void ui_button_group_add_but(uiBlock *block, uiBut *but);
 void ui_button_group_replace_but_ptr(uiBlock *block, const void *old_but_ptr, uiBut *new_but);
 void ui_block_free_button_groups(uiBlock *block);

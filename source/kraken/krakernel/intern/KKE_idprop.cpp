@@ -1003,3 +1003,40 @@ void IDP_print(const IDProperty *prop)
   puts(repr);
   MEM_freeN(repr);
 }
+
+void IDP_AssignStringMaxSize(IDProperty *prop, const char *st, int maxncpy)
+{
+  KLI_assert(prop->type == IDP_STRING);
+  const bool is_byte = prop->subtype == IDP_STRING_SUB_BYTE;
+  int stlen = (int)strlen(st) + (is_byte ? 0 : 1);
+  if ((maxncpy > 0) && (maxncpy < stlen)) {
+    stlen = maxncpy;
+  }
+  IDP_ResizeArray(prop, stlen);
+  if (stlen > 0) {
+    memcpy(prop->data.pointer, st, (size_t)stlen);
+    if (is_byte == false) {
+      IDP_String(prop)[stlen - 1] = '\0';
+    }
+  }
+}
+
+void IDP_AssignString(IDProperty *prop, const char *st)
+{
+  IDP_AssignStringMaxSize(prop, st, 0);
+}
+
+void IDP_RemoveFromGroup(IDProperty *group, IDProperty *prop)
+{
+  KLI_assert(group->type == IDP_GROUP);
+  KLI_assert(KLI_findindex(&group->data.group, prop) != -1);
+
+  group->len--;
+  KLI_remlink(&group->data.group, prop);
+}
+
+void IDP_FreeFromGroup(IDProperty *group, IDProperty *prop)
+{
+  IDP_RemoveFromGroup(group, prop);
+  IDP_FreeProperty(prop);
+}

@@ -170,6 +170,27 @@ typedef struct ColormanageCache
   ColormanageCacheData *data;
 } ColormanageCache;
 
+
+static struct MovieCache *colormanage_moviecache_get(const ImBuf *ibuf)
+{
+  if (!ibuf->colormanage_cache) {
+    return nullptr;
+  }
+
+  return ibuf->colormanage_cache->moviecache;
+}
+
+
+static ColormanageCacheData *colormanage_cachedata_get(const ImBuf *ibuf)
+{
+  if (!ibuf->colormanage_cache) {
+    return nullptr;
+  }
+
+  return ibuf->colormanage_cache->data;
+}
+
+
 /* -------------------------------------------------------------------- */
 /** \name Initialization / De-initialization
  * \{ */
@@ -249,8 +270,8 @@ static void colormanage_load_config(OCIO_ConstConfigRcPtr *config)
 
     colorspace->num_aliases = OCIO_colorSpaceGetNumAliases(ocio_colorspace);
     if (colorspace->num_aliases > 0) {
-      colorspace->aliases = MEM_callocN(sizeof(*colorspace->aliases) * colorspace->num_aliases,
-                                        "ColorSpace aliases");
+      colorspace->aliases = static_cast<char(*)[MAX_COLORSPACE_NAME]>(MEM_callocN(
+          sizeof(*colorspace->aliases) * colorspace->num_aliases, "ColorSpace aliases"));
       for (int i = 0; i < colorspace->num_aliases; i++) {
         KLI_strncpy(colorspace->aliases[i],
                     OCIO_colorSpaceGetAlias(ocio_colorspace, i),
@@ -332,7 +353,7 @@ static void colormanage_free_config(void)
   ColorManagedDisplay *display;
 
   /* free color spaces */
-  colorspace = global_colorspaces.first;
+  colorspace = static_cast<ColorSpace *>(global_colorspaces.first);
   while (colorspace) {
     ColorSpace *colorspace_next = colorspace->next;
 
@@ -354,7 +375,7 @@ static void colormanage_free_config(void)
   global_tot_colorspace = 0;
 
   /* free displays */
-  display = global_displays.first;
+  display = static_cast<ColorManagedDisplay *>(global_displays.first);
   while (display) {
     ColorManagedDisplay *display_next = display->next;
 
@@ -515,12 +536,12 @@ ColorManagedDisplay *colormanage_display_add(const char *name)
   int index = 0;
 
   if (global_displays.last) {
-    ColorManagedDisplay *last_display = global_displays.last;
+    ColorManagedDisplay *last_display = static_cast<ColorManagedDisplay *>(global_displays.last);
 
     index = last_display->index;
   }
 
-  display = MEM_callocN(sizeof(ColorManagedDisplay), "ColorManagedDisplay");
+  display = MEM_cnew<ColorManagedDisplay>("ColorManagedDisplay");
 
   display->index = index + 1;
 
@@ -533,21 +554,19 @@ ColorManagedDisplay *colormanage_display_add(const char *name)
 
 ColorManagedDisplay *colormanage_display_get_named(const char *name)
 {
-  ColorManagedDisplay *display;
-
-  for (display = global_displays.first; display; display = display->next) {
+  LISTBASE_FOREACH (ColorManagedDisplay *, display, &global_displays) {
     if (STREQ(display->name, name)) {
       return display;
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ColorManagedDisplay *colormanage_display_get_indexed(int index)
 {
   /* display indices are 1-based */
-  return KLI_findlink(&global_displays, index - 1);
+  return static_cast<ColorManagedDisplay *>(KLI_findlink(&global_displays, index - 1));
 }
 
 int IMB_colormanagement_display_get_named_index(const char *name)
@@ -635,7 +654,7 @@ ColorManagedView *colormanage_view_add(const char *name)
   ColorManagedView *view;
   int index = global_tot_view;
 
-  view = MEM_callocN(sizeof(ColorManagedView), "ColorManagedView");
+  view = MEM_cnew<ColorManagedView>("ColorManagedView");
   view->index = index + 1;
   KLI_strncpy(view->name, name, sizeof(view->name));
 
@@ -648,38 +667,35 @@ ColorManagedView *colormanage_view_add(const char *name)
 
 ColorManagedView *colormanage_view_get_named(const char *name)
 {
-  ColorManagedView *view;
-
-  for (view = global_views.first; view; view = view->next) {
+  LISTBASE_FOREACH (ColorManagedView *, view, &global_views) {
     if (STREQ(view->name, name)) {
       return view;
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ColorManagedView *colormanage_view_get_indexed(int index)
 {
   /* view transform indices are 1-based */
-  return KLI_findlink(&global_views, index - 1);
+  return static_cast<ColorManagedView *>(KLI_findlink(&global_views, index - 1));
 }
 
 ColorManagedView *colormanage_view_get_named_for_display(const char *display_name,
                                                          const char *name)
 {
   ColorManagedDisplay *display = colormanage_display_get_named(display_name);
-  if (display == NULL) {
-    return NULL;
+  if (display == nullptr) {
+    return nullptr;
   }
-  LISTBASE_FOREACH(LinkData *, view_link, &display->views)
-  {
-    ColorManagedView *view = view_link->data;
+  LISTBASE_FOREACH (LinkData *, view_link, &display->views) {
+    ColorManagedView *view = static_cast<ColorManagedView *>(view_link->data);
     if (STRCASEEQ(name, view->name)) {
       return view;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 int IMB_colormanagement_view_get_named_index(const char *name)
@@ -753,7 +769,7 @@ ColorSpace *colormanage_colorspace_add(const char *name,
   ColorSpace *colorspace, *prev_space;
   int counter = 1;
 
-  colorspace = MEM_callocN(sizeof(ColorSpace), "ColorSpace");
+  colorspace = MEM_cnew<ColorSpace>("ColorSpace");
 
   KLI_strncpy(colorspace->name, name, sizeof(colorspace->name));
 
@@ -766,7 +782,9 @@ ColorSpace *colormanage_colorspace_add(const char *name,
   colorspace->is_invertible = is_invertible;
   colorspace->is_data = is_data;
 
-  for (prev_space = global_colorspaces.first; prev_space; prev_space = prev_space->next) {
+  for (prev_space = static_cast<ColorSpace *>(global_colorspaces.first); prev_space;
+       prev_space = prev_space->next)
+  {
     if (KLI_strcasecmp(prev_space->name, colorspace->name) > 0) {
       break;
     }
@@ -776,7 +794,8 @@ ColorSpace *colormanage_colorspace_add(const char *name,
 
   if (!prev_space) {
     KLI_addtail(&global_colorspaces, colorspace);
-  } else {
+  }
+  else {
     KLI_insertlinkbefore(&global_colorspaces, prev_space, colorspace);
   }
 
@@ -792,9 +811,7 @@ ColorSpace *colormanage_colorspace_add(const char *name,
 
 ColorSpace *colormanage_colorspace_get_named(const char *name)
 {
-  ColorSpace *colorspace;
-
-  for (colorspace = global_colorspaces.first; colorspace; colorspace = colorspace->next) {
+  LISTBASE_FOREACH (ColorSpace *, colorspace, &global_colorspaces) {
     if (STREQ(colorspace->name, name)) {
       return colorspace;
     }
@@ -806,7 +823,7 @@ ColorSpace *colormanage_colorspace_get_named(const char *name)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ColorSpace *colormanage_colorspace_get_roled(int role)
@@ -819,7 +836,7 @@ ColorSpace *colormanage_colorspace_get_roled(int role)
 ColorSpace *colormanage_colorspace_get_indexed(int index)
 {
   /* color space indices are 1-based */
-  return KLI_findlink(&global_colorspaces, index - 1);
+  return static_cast<ColorSpace *>(KLI_findlink(&global_colorspaces, index - 1));
 }
 
 int IMB_colormanagement_colorspace_get_named_index(const char *name)
@@ -886,7 +903,7 @@ ColorManagedLook *colormanage_look_add(const char *name, const char *process_spa
   ColorManagedLook *look;
   int index = global_tot_looks;
 
-  look = MEM_callocN(sizeof(ColorManagedLook), "ColorManagedLook");
+  look = MEM_cnew<ColorManagedLook>("ColorManagedLook");
   look->index = index + 1;
   KLI_strncpy(look->name, name, sizeof(look->name));
   KLI_strncpy(look->ui_name, name, sizeof(look->ui_name));
@@ -909,21 +926,19 @@ ColorManagedLook *colormanage_look_add(const char *name, const char *process_spa
 
 ColorManagedLook *colormanage_look_get_named(const char *name)
 {
-  ColorManagedLook *look;
-
-  for (look = global_looks.first; look; look = look->next) {
+  LISTBASE_FOREACH (ColorManagedLook *, look, &global_looks) {
     if (STREQ(look->name, name)) {
       return look;
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 ColorManagedLook *colormanage_look_get_indexed(int index)
 {
   /* look indices are 1-based */
-  return KLI_findlink(&global_looks, index - 1);
+  return static_cast<ColorManagedLook *>(KLI_findlink(&global_looks, index - 1));
 }
 
 int IMB_colormanagement_look_get_named_index(const char *name)
@@ -1033,26 +1048,21 @@ void IMB_colormanagement_check_file_config(Main *kmain)
 void IMB_colormanagement_validate_settings(const ColorManagedDisplaySettings *display_settings,
                                            ColorManagedViewSettings *view_settings)
 {
-  ColorManagedDisplay *display;
-  ColorManagedView *default_view = NULL;
-  LinkData *view_link;
+  ColorManagedDisplay *display = colormanage_display_get_named(display_settings->display_device);
+  ColorManagedView *default_view = colormanage_view_get_default(display);
 
-  display = colormanage_display_get_named(display_settings->display_device);
-
-  default_view = colormanage_view_get_default(display);
-
-  for (view_link = display->views.first; view_link; view_link = view_link->next) {
-    ColorManagedView *view = view_link->data;
+  bool found = false;
+  LISTBASE_FOREACH (LinkData *, view_link, &display->views) {
+    ColorManagedView *view = static_cast<ColorManagedView *>(view_link->data);
 
     if (STREQ(view->name, view_settings->view_transform)) {
+      found = true;
       break;
     }
   }
 
-  if (view_link == NULL && default_view) {
-    KLI_strncpy(view_settings->view_transform,
-                default_view->name,
-                sizeof(view_settings->view_transform));
+  if (!found && default_view) {
+    KLI_strncpy(view_settings->view_transform, default_view->name, sizeof(view_settings->view_transform));
   }
 }
 
@@ -1277,6 +1287,39 @@ void IMB_colormanagement_finish_glsl_draw(void)
     OCIO_gpuDisplayShaderUnbind();
     global_gpu_state.gpu_shader_bound = false;
   }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** @name Internal functions
+ * \{ */
+
+void colormanage_cache_free(ImBuf *ibuf)
+{
+  MEM_SAFE_FREE(ibuf->display_buffer_flags);
+
+  if (ibuf->colormanage_cache) {
+    ColormanageCacheData *cache_data = colormanage_cachedata_get(ibuf);
+    struct MovieCache *moviecache = colormanage_moviecache_get(ibuf);
+
+    if (cache_data) {
+      MEM_freeN(cache_data);
+    }
+
+    // if (moviecache) {
+    //   IMB_moviecache_free(moviecache);
+    // }
+
+    MEM_freeN(ibuf->colormanage_cache);
+
+    ibuf->colormanage_cache = nullptr;
+  }
+}
+
+void colormanage_imbuf_set_default_spaces(ImBuf *ibuf)
+{
+  ibuf->rect_colorspace = colormanage_colorspace_get_named(global_role_default_byte);
 }
 
 /** \} */

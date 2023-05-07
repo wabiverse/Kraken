@@ -51,6 +51,7 @@
 #include "USD_scene.h"
 #include "USD_ID.h"
 
+#include "WM_tokens.h"
 #include "WM_event_system.h"
 #include "WM_msgbus.h"
 
@@ -66,56 +67,55 @@
 
 WABI_NAMESPACE_USING
 
-const KrakenPRIM KrakenPRIM_NULL = {NULL};
-
-KrakenPRIM PRIM_StageData;
-KrakenPRIM PRIM_KrakenPRIM;
-KrakenPRIM PRIM_KrakenPROP;
-KrakenPRIM PRIM_Context;
-KrakenPRIM PRIM_Struct;
-KrakenPRIM PRIM_Window;
-KrakenPRIM PRIM_WindowManager;
-KrakenPRIM PRIM_WorkSpace;
-KrakenPRIM PRIM_World;
-KrakenPRIM PRIM_Screen;
-KrakenPRIM PRIM_Area;
-KrakenPRIM PRIM_Region;
+const KrakenPRIM KrakenPRIM_NULL = {};
 
 KrakenPRIM PRIM_Action;
+KrakenPRIM PRIM_Area;
 KrakenPRIM PRIM_Armature;
 KrakenPRIM PRIM_Brush;
-KrakenPRIM PRIM_Camera;
 KrakenPRIM PRIM_CacheFile;
+KrakenPRIM PRIM_Camera;
 KrakenPRIM PRIM_Collection;
+KrakenPRIM PRIM_Context;
 KrakenPRIM PRIM_Curve;
+KrakenPRIM PRIM_FreestyleLineStyle;
 KrakenPRIM PRIM_GreasePencil;
 KrakenPRIM PRIM_ID;
 KrakenPRIM PRIM_Image;
 KrakenPRIM PRIM_Key;
+KrakenPRIM PRIM_KrakenPRIM;
+KrakenPRIM PRIM_KrakenPROP;
+KrakenPRIM PRIM_Lattice;
+KrakenPRIM PRIM_Library;
 KrakenPRIM PRIM_Light;
 KrakenPRIM PRIM_LightProbe;
-KrakenPRIM PRIM_Library;
-KrakenPRIM PRIM_FreestyleLineStyle;
-KrakenPRIM PRIM_Lattice;
+KrakenPRIM PRIM_Mask;
 KrakenPRIM PRIM_Material;
+KrakenPRIM PRIM_Mesh;
 KrakenPRIM PRIM_MetaBall;
 KrakenPRIM PRIM_MovieClip;
-KrakenPRIM PRIM_Mesh;
-KrakenPRIM PRIM_Mask;
 KrakenPRIM PRIM_NodeTree;
 KrakenPRIM PRIM_Object;
-KrakenPRIM PRIM_ParticleSettings;
-KrakenPRIM PRIM_Palette;
 KrakenPRIM PRIM_PaintCurve;
+KrakenPRIM PRIM_Palette;
+KrakenPRIM PRIM_ParticleSettings;
 KrakenPRIM PRIM_PointCloud;
+KrakenPRIM PRIM_Region;
 KrakenPRIM PRIM_Scene;
+KrakenPRIM PRIM_Screen;
 KrakenPRIM PRIM_Simulation;
 KrakenPRIM PRIM_Sound;
 KrakenPRIM PRIM_Speaker;
-KrakenPRIM PRIM_Texture;
+KrakenPRIM PRIM_Struct;
+KrakenPRIM PRIM_StageData;
 KrakenPRIM PRIM_Text;
+KrakenPRIM PRIM_Texture;
 KrakenPRIM PRIM_VectorFont;
 KrakenPRIM PRIM_Volume;
+KrakenPRIM PRIM_Window;
+KrakenPRIM PRIM_WindowManager;
+KrakenPRIM PRIM_WorkSpace;
+KrakenPRIM PRIM_World;
 
 KrakenSTAGE KRAKEN_STAGE = {};
 
@@ -685,6 +685,13 @@ char *LUXO_prim_name_get_alloc(KrakenPRIM *ptr, char *fixedbuf, int fixedlen, in
   return NULL;
 }
 
+bool LUXO_prop_collection_lookup_string_has_nameprop(KrakenPROP *prop)
+{
+  KLI_assert(LUXO_prop_type(prop) == PROP_COLLECTION);
+  CollectionPrimPROP *cprop = (CollectionPrimPROP *)prim_ensure_property(prop);
+  return (cprop->item_type && cprop->item_type->GetAttribute(WM_ID_(name)));
+}
+
 void LUXO_collection_begin(KrakenPRIM *ptr, const char *name, CollectionPropIT *iter)
 {
   KrakenPROP *prop = LUXO_prim_find_property(ptr, name);
@@ -842,6 +849,11 @@ bool LUXO_prim_idprops_contains_datablock(const KrakenPRIM *type)
 //     NULL,
 //     &prim_PropertyGroupItem_double_array,
 // };
+
+bool LUXO_prop_is_idprop(const KrakenPROP *prop)
+{
+  return (prop->magic != LUXO_MAGIC);
+}
 
 void prim_property_prim_or_id_get(KrakenPROP *prop,
                                   KrakenPRIM *ptr,

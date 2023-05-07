@@ -33,7 +33,8 @@ extern "C" {
 #endif
 
 struct ImBuf;
-struct OCIO_ConstCPUProcessorRcPtr;
+struct OCIO_ConstCPUProcessorRc;
+typedef struct OCIO_ConstCPUProcessorRc *OCIO_ConstCPUProcessorRcPtr;
 
 extern float imbuf_luma_coefficients[3];
 extern float imbuf_scene_linear_to_xyz[3][3];
@@ -53,8 +54,8 @@ typedef struct ColorSpace
   char name[MAX_COLORSPACE_NAME];
   char description[MAX_COLORSPACE_DESCRIPTION];
 
-  struct OCIO_ConstCPUProcessorRcPtr *to_scene_linear;
-  struct OCIO_ConstCPUProcessorRcPtr *from_scene_linear;
+  OCIO_ConstCPUProcessorRcPtr *to_scene_linear;
+  OCIO_ConstCPUProcessorRcPtr *from_scene_linear;
 
   char (*aliases)[MAX_COLORSPACE_NAME];
   int num_aliases;
@@ -78,8 +79,8 @@ typedef struct ColorManagedDisplay
   char name[MAX_COLORSPACE_NAME];
   ListBase views; /* LinkData.data -> ColorManagedView */
 
-  struct OCIO_ConstCPUProcessorRcPtr *to_scene_linear;
-  struct OCIO_ConstCPUProcessorRcPtr *from_scene_linear;
+  OCIO_ConstCPUProcessorRcPtr *to_scene_linear;
+  OCIO_ConstCPUProcessorRcPtr *from_scene_linear;
 } ColorManagedDisplay;
 
 typedef struct ColorManagedView
@@ -102,6 +103,8 @@ typedef struct ColorManagedLook
 
 void colormanagement_init(void);
 void colormanagement_exit(void);
+
+void colormanage_cache_free(struct ImBuf *ibuf);
 
 const char *colormanage_display_get_default_name(void);
 struct ColorManagedDisplay *colormanage_display_get_default(void);
@@ -132,6 +135,8 @@ struct ColorManagedLook *colormanage_look_get_named(const char *name);
 struct ColorManagedLook *colormanage_look_get_indexed(int index);
 
 void colormanage_imbuf_make_linear(struct ImBuf *ibuf, const char *from_colorspace);
+
+void colormanage_imbuf_set_default_spaces(struct ImBuf *ibuf);
 
 
 /* -------------------------------------------------------------------- */

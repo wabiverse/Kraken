@@ -165,7 +165,13 @@ void LUXO_object_find_property(KrakenPRIM *ptr, const TfToken &name, KrakenPROP 
 void **LUXO_prim_instance(KrakenPRIM *ptr);
 bool LUXO_prim_is_a(const KrakenPRIM *type, const KrakenPRIM *sprim);
 
+/**
+ * uses prop.magic bytes to distinguish with IDProperty. */
+bool LUXO_prop_is_idprop(const KrakenPROP *prop);
+
 char *LUXO_prim_name_get_alloc(KrakenPRIM *ptr, char *fixedbuf, int fixedlen, int *r_len);
+KrakenPROP *LUXO_prim_name_property(const KrakenPRIM *prim);
+bool LUXO_prop_collection_lookup_string_has_nameprop(KrakenPROP *prop);
 
 const struct ListBase *LUXO_prim_type_functions(KrakenPRIM *sprim);
 

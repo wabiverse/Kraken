@@ -98,13 +98,21 @@ extern "C" {
 
 #define IM_MAX_SPACE 64
 
+struct ImBuf;
 struct rctf;
 struct rcti;
 
+struct anim;
+
 struct ColorManagedDisplay;
 
+struct RSet;
+
+struct ImageFormatData;
+struct Stereo3dFormat;
+
 #define IMB_MIPMAP_LEVELS 20
-#define IMB_FILENAME_SIZE 1024
+#define IMB_FILEPATH_SIZE 1024
 
 typedef struct ImbFormatOptions
 {
@@ -145,38 +153,95 @@ enum eImbFileType
 
 typedef struct ImBuf
 {
+  /* dimensions */
+  /** Width and Height of our image buffer.
+   * Should be 'unsigned int' since most formats use this.
+   * but this is problematic with texture math in `imagetexture.c`
+   * avoid problems and use int. - campbell */
   int x, y;
+
+  /** Active amount of bits/bit-planes. */
   unsigned char planes;
+  /** Number of channels in `rect_float` (0 = 4 channel default) */
   int channels;
+
+  /* flags */
+  /** Controls which components should exist. */
   int flags;
+  /** what is malloced internal, and can be freed */
   int mall;
+
+  /* pixels */
+
+  /** Image pixel buffer (8bit representation):
+   * - color space defaults to `sRGB`.
+   * - alpha defaults to 'straight'.
+   */
   unsigned int *rect;
+  /** Image pixel buffer (float representation):
+   * - color space defaults to 'linear' (`rec709`).
+   * - alpha defaults to 'premul'.
+   * \note May need gamma correction to `sRGB` when generating 8bit representations.
+   * \note Formats that support higher more than 8 but channels load as floats.
+   */
   float *rect_float;
+
+  /** Resolution in pixels per meter. Multiply by `0.0254` for DPI. */
   double ppm[2];
-  int tilex, tiley;
-  int xtiles, ytiles;
-  unsigned int **tiles;
+
+  /* zbuffer */
+  /** z buffer data, original zbuffer */
   int *zbuf;
+  /** z buffer data, camera coordinates */
   float *zbuf_float;
+
+  /* parameters used by conversion between byte and float */
+  /** random dither value, for conversion from float -> byte rect */
   float dither;
+
+  /* mipmapping */
+  /** MipMap levels, a series of halved images */
   struct ImBuf *mipmap[IMB_MIPMAP_LEVELS];
   int miptot, miplevel;
+
+  /* externally used data */
+  /** reference index for ImBuf lists */
   int index;
+  /** used to set imbuf to dirty and other stuff */
   int userflags;
+  /** image metadata */
   struct IDProperty *metadata;
+  /** temporary storage */
   void *userdata;
+
+  /* file information */
+  /** file type we are going to save as */
   enum eImbFileType ftype;
+  /** file format specific flags */
   ImbFormatOptions foptions;
-  char name[IMB_FILENAME_SIZE];
-  char cachename[IMB_FILENAME_SIZE];
-  struct MEM_CacheLimiterHandle_s *c_handle;
+  /** The absolute file path associated with this image. */
+  char filepath[IMB_FILEPATH_SIZE];
+
+  /* memory cache limiter */
+  /** reference counter for multiple users */
   int refcounter;
+
+  /* some parameters to pass along for packing images */
+  /** Compressed image only used with PNG and EXR currently. */
   unsigned char *encodedbuffer;
+  /** Size of data written to `encodedbuffer`. */
   unsigned int encodedsize;
+  /** Size of `encodedbuffer` */
   unsigned int encodedbuffersize;
+
+  /* color management */
+  /** color space of byte buffer */
   struct ColorSpace *rect_colorspace;
+  /** color space of float buffer, used by sequencer only */
   struct ColorSpace *float_colorspace;
+  /** array of per-display display buffers dirty flags */
   unsigned int *display_buffer_flags;
+  /** cache used by color management */
   struct ColormanageCache *colormanage_cache;
   int colormanage_flag;
   rcti invalid_rect;
@@ -338,6 +403,79 @@ struct ImBuf *IMB_loadiffname(const char *filepath, int flags, char colorspace[I
 struct ImBuf *IMB_thumb_load_image(const char *filepath,
                                    const size_t max_thumb_size,
                                    char colorspace[IM_MAX_SPACE]);
+
+void IMB_freeImBuf(struct ImBuf *ibuf);
+
+struct ImBuf *IMB_allocImBuf(unsigned int x,
+                             unsigned int y,
+                             unsigned char planes,
+                             unsigned int flags);
+
+/**
+ * Initialize given ImBuf.
+ *
+ * Use in cases when temporary image buffer is allocated on stack.
+ *
+ * @attention Defined in allocimbuf.cc
+ */
+bool IMB_initImBuf(struct ImBuf *ibuf, unsigned int x, unsigned int y, unsigned char planes, unsigned int flags);
+
+/**
+ * Create a copy of a pixel buffer and wrap it to a new ImBuf
+ * (transferring ownership to the in imbuf).
+ * @attention Defined in allocimbuf.cc
+ */
+struct ImBuf *IMB_allocFromBufferOwn(unsigned int *rect, float *rectf, unsigned int w, unsigned int h, unsigned int channels);
+
+/**
+ * Create a copy of a pixel buffer and wrap it to a new ImBuf
+ * @attention Defined in allocimbuf.cc
+ */
+struct ImBuf *IMB_allocFromBuffer(const unsigned int *rect,
+                                  const float *rectf,
+                                  unsigned int w,
+                                  unsigned int h,
+                                  unsigned int channels);
+
+/**
+ * Increase reference count to imbuf
+ * (to delete an imbuf you have to call freeImBuf as many times as it
+ * is referenced)
+ *
+ * @attention Defined in allocimbuf.cc
+ */
+
+void IMB_refImBuf(struct ImBuf *ibuf);
+struct ImBuf *IMB_makeSingleUser(struct ImBuf *ibuf);
+
+/**
+ * @attention Defined in allocimbuf.cc
+ */
+struct ImBuf *IMB_dupImBuf(const struct ImBuf *ibuf1);
+
+/**
+ * @attention Defined in allocimbuf.cc
+ */
+bool addzbufImBuf(struct ImBuf *ibuf);
+bool addzbuffloatImBuf(struct ImBuf *ibuf);
+
+/**
+ * Approximate size of ImBuf in memory
+ *
+ * @attention Defined in allocimbuf.cc
+ */
+size_t IMB_get_size_in_memory(struct ImBuf *ibuf);
+
+/**
+ * @brief Get the length of the rect of the given image buffer in terms of pixels.
+ *
+ * This is the width * the height of the image buffer.
+ * This function is preferred over `ibuf->x * ibuf->y` due to overflow issues when
+ * working with large resolution images (30kx30k).
+ *
+ * @attention Defined in allocimbuf.cc
+ */
+size_t IMB_get_rect_len(const struct ImBuf *ibuf);
 
 /**
  * Change the ordering of the color bytes pointed to by rect from

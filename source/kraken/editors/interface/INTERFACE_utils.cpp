@@ -670,11 +670,11 @@ int UI_calc_float_precision(int prec, double value)
 
 bool UI_but_online_manual_id(const uiBut *but, char *r_str, size_t maxlength)
 {
-  if (but->stagepoin->owner_id && but->stagepoin->data && but->stageprop) {
+  if (but->stagepoin.owner_id && but->stagepoin.data && but->stageprop) {
     KLI_snprintf(r_str,
                  maxlength,
                  "%s.%s",
-                 LUXO_prim_identifier(but->stagepoin->type).data(),
+                 LUXO_prim_identifier(but->stagepoin.type).data(),
                  LUXO_prop_identifier(but->stageprop).data());
     return true;
   }

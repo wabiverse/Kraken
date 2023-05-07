@@ -207,8 +207,8 @@ static void imb_cache_filename(char *filepath, const char *name, int flags)
 {
   /* read .tx instead if it exists and is not older */
   if (flags & IB_tilecache) {
-    KLI_strncpy(filepath, name, IMB_FILENAME_SIZE);
-    if (!KLI_path_extension_replace(filepath, IMB_FILENAME_SIZE, ".tx")) {
+    KLI_strncpy(filepath, name, IMB_FILEPATH_SIZE);
+    if (!KLI_path_extension_replace(filepath, IMB_FILEPATH_SIZE, ".tx")) {
       return;
     }
 
@@ -217,14 +217,14 @@ static void imb_cache_filename(char *filepath, const char *name, int flags)
     }
   }
 
-  KLI_strncpy(filepath, name, IMB_FILENAME_SIZE);
+  KLI_strncpy(filepath, name, IMB_FILEPATH_SIZE);
 }
 
 ImBuf *IMB_loadiffname(const char *filepath, int flags, char colorspace[IM_MAX_SPACE])
 {
   ImBuf *ibuf;
   int file;
-  char filepath_tx[IMB_FILENAME_SIZE];
+  char filepath_tx[IMB_FILEPATH_SIZE];
 
   KLI_assert(!KLI_path_is_rel(filepath));
 
@@ -238,10 +238,10 @@ ImBuf *IMB_loadiffname(const char *filepath, int flags, char colorspace[IM_MAX_S
   // ibuf = IMB_loadifffile(file, filepath, flags, colorspace, filepath_tx);
 
   if (ibuf) {
-    KLI_strncpy(ibuf->name, filepath, sizeof(ibuf->name));
-    KLI_strncpy(ibuf->cachename, filepath_tx, sizeof(ibuf->cachename));
+    KLI_strncpy(ibuf->filepath, filepath, sizeof(ibuf->filepath));
+    KLI_strncpy(ibuf->colormanage_cache, filepath_tx, sizeof(ibuf->colormanage_cache));
     for (int a = 1; a < ibuf->miptot; a++) {
-      KLI_strncpy(ibuf->mipmap[a - 1]->cachename, filepath_tx, sizeof(ibuf->cachename));
+      KLI_strncpy(ibuf->mipmap[a - 1]->colormanage_cache, filepath_tx, sizeof(ibuf->colormanage_cache));
     }
   }
 
@@ -308,7 +308,7 @@ ImBuf *IMB_testiffname(const char *filepath, int flags)
 {
   ImBuf *ibuf;
   int file;
-  char filepath_tx[IMB_FILENAME_SIZE];
+  char filepath_tx[IMB_FILEPATH_SIZE];
   char colorspace[IM_MAX_SPACE] = "\0";
 
   KLI_assert(!KLI_path_is_rel(filepath));
@@ -323,8 +323,8 @@ ImBuf *IMB_testiffname(const char *filepath, int flags)
   // ibuf = IMB_loadifffile(file, filepath, flags | IB_test | IB_multilayer, colorspace, filepath_tx);
 
   if (ibuf) {
-    KLI_strncpy(ibuf->name, filepath, sizeof(ibuf->name));
-    KLI_strncpy(ibuf->cachename, filepath_tx, sizeof(ibuf->cachename));
+    KLI_strncpy(ibuf->filepath, filepath, sizeof(ibuf->filepath));
+    KLI_strncpy(ibuf->colormanage_cache, filepath_tx, sizeof(ibuf->colormanage_cache));
   }
 
   close(file);
@@ -369,7 +369,7 @@ void imb_loadtile(ImBuf *ibuf, int tx, int ty, uint *rect)
 {
   int file;
 
-  file = KLI_open(ibuf->cachename, O_BINARY | O_RDONLY, 0);
+  file = KLI_open(ibuf->colormanage_cache, O_BINARY | O_RDONLY, 0);
   if (file == -1) {
     return;
   }

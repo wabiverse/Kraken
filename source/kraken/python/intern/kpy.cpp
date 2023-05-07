@@ -487,7 +487,7 @@ void KPy_init_modules(struct kContext *C)
   PyModule_AddObject(mod, "app", KPY_app_struct());
 
   LUXO_pointer_create(NULL, &PRIM_Context, C, &ctx_ptr);
-  kpy_context_module = (KPy_StagePRIM *)pyprim_prim_CreatePyObject(&ctx_ptr);
+  kpy_context_module = (KPy_USDPRIM *)pyusd_prim_CreatePyObject(&ctx_ptr);
   /* odd that this is needed, 1 ref on creation and another for the module
    * but without we get a crash on exit */
   Py_INCREF(kpy_context_module);

@@ -41,6 +41,8 @@
 
 #include "UI_resources.h"
 
+#define LUXO_MAGIC ((int)~0)
+
 struct IDProperty;
 struct PropertyPRIMOrID;
 

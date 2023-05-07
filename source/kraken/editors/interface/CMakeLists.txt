@@ -33,7 +33,7 @@ set(SRC
   INTERFACE_button_group.cpp
   INTERFACE_drag.cpp
   INTERFACE_handlers.cpp
-  INTERFACE_icons.c
+  INTERFACE_icons.cc
   INTERFACE_kraken.cpp
   INTERFACE_layout.cpp
   INTERFACE_ops.cpp
@@ -44,14 +44,16 @@ set(SRC
   INTERFACE_region_search.cpp
   INTERFACE_region_tooltip.cpp
   INTERFACE_regions.cpp
-  INTERFACE_resources.c
+  INTERFACE_resources.cpp
   INTERFACE_style.cpp
   INTERFACE_templates.cpp
   INTERFACE_tokens.cpp
   INTERFACE_utils.cpp
   INTERFACE_view2d.cpp
 
+  views/abstract_view.cpp
   views/abstract_view_item.cpp
+  views/interface_view.cpp
 
   intern/interface_intern.h
   intern/interface_regions_intern.h

@@ -68,7 +68,7 @@ KRAKEN_NAMESPACE_USING
 struct KPy_DataContext
 {
   PyObject_HEAD /* Required Python macro. */
-    KPy_StagePRIM *data_prim;
+    KPy_USDPRIM *data_prim;
   char filepath[1024];
 };
 
@@ -222,7 +222,7 @@ static PyObject *kpy_pixar_data_context_enter(KPy_DataContext *self)
   KrakenPRIM ptr;
   LUXO_pointer_create(NULL, &PRIM_KrakenPRIM, kmain_temp, &ptr);
 
-  self->data_prim = (KPy_StagePRIM *)pyprim_prim_CreatePyObject(&ptr);
+  self->data_prim = (KPy_USDPRIM *)pyusd_prim_CreatePyObject(&ptr);
 
   PyObject_GC_Track(self);
 

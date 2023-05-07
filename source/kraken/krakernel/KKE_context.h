@@ -32,6 +32,10 @@
 #include "USD_object.h"
 
 #ifdef __cplusplus
+#  include "USD_types.h"
+#endif /* __cplusplus */
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -45,7 +49,6 @@ struct ID;
 struct Image;
 struct KrakenPRIM;
 struct KrakenPROP;
-struct KrakenSTAGE;
 struct LayerCollection;
 struct ListBase;
 struct Main;
@@ -279,7 +282,6 @@ int ctx_data_list_count(const kContext *C, int (*func)(const kContext *, ListBas
 
 struct Main *CTX_data_main(const struct kContext *C);
 struct kScene *CTX_data_scene(const struct kContext *C);
-struct KrakenSTAGE CTX_data_stage(const struct kContext *C);
 struct kUserDef *CTX_data_prefs(const struct kContext *C);
 
 const char *CTX_data_mode_string(const kContext *C);
@@ -299,3 +301,11 @@ struct Object *CTX_data_edit_object(const kContext *C);
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef __cplusplus
+
+/* no c linkage, just cxx. */
+
+KrakenSTAGE CTX_data_stage(const struct kContext *C);
+
+#endif /* __cplusplus */

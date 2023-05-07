@@ -269,6 +269,17 @@ enum
   UI_BUT_OVERRIDDEN = 1u << 31u,
 };
 
+/** #uiBut.dragflag */
+enum {
+  /** By default only the left part of a button triggers dragging. A questionable design to make
+   * the icon but not other parts of the button draggable. Set this flag so the entire button can
+   * be dragged. */
+  UI_BUT_DRAG_FULL_BUT = (1 << 0),
+
+  /* --- Internal flags. --- */
+  UI_BUT_DRAGPOIN_FREE = (1 << 1),
+};
+
 /* Default font size for normal text. */
 #define UI_DEFAULT_TEXT_POINTS 11.0f
 
@@ -352,8 +363,9 @@ enum
  * - bit  8:    for 'bit'
  * - bit  9-15: button type (now 6 bits, 64 types)
  */
-typedef enum
-{
+typedef enum {
+  UI_BUT_POIN_NONE = 0,
+
   UI_BUT_POIN_CHAR = 32,
   UI_BUT_POIN_SHORT = 64,
   UI_BUT_POIN_INT = 96,

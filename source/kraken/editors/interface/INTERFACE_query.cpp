@@ -123,7 +123,7 @@ bool ui_but_is_popover_once_compat(const uiBut *but)
 
 bool ui_but_has_array_value(const uiBut *but)
 {
-  return (but->stagepoin->data && but->stageprop &&
+  return (but->stagepoin.data && but->stageprop &&
           ELEM(LUXO_prop_subtype(but->stageprop),
                PROP_COLOR,
                PROP_TRANSLATION,
@@ -273,7 +273,7 @@ static uiBut *ui_but_find(const ARegion *region,
                           const void *find_custom_data)
 {
   LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
-    for (auto &but : block->buttons) {
+    LISTBASE_FOREACH_BACKWARD (uiBut *, but, &block->buttons) {
       if (find_poll && find_poll(but, find_custom_data) == false) {
         continue;
       }
@@ -300,7 +300,7 @@ uiBut *ui_but_find_mouse_over_ex(const ARegion *region,
     float mx = xy[0], my = xy[1];
     ui_window_to_block_fl(region, block, &mx, &my);
 
-    for (auto &but : block->buttons) {
+    LISTBASE_FOREACH_BACKWARD (uiBut *, but, &block->buttons) {
       if (find_poll && find_poll(but, find_custom_data) == false) {
         continue;
       }
@@ -310,7 +310,8 @@ uiBut *ui_but_find_mouse_over_ex(const ARegion *region,
             butover = but;
             break;
           }
-        } else if (ui_but_contains_pt(but, mx, my)) {
+        }
+        else if (ui_but_contains_pt(but, mx, my)) {
           butover = but;
           break;
         }
@@ -358,7 +359,7 @@ uiBut *ui_but_find_rect_over(const struct ARegion *region, const rcti *rect_px)
     rctf rect_block;
     ui_window_to_block_rctf(region, block, &rect_block, &rect_px_fl);
 
-    for (auto &but : block->buttons) {
+    LISTBASE_FOREACH_BACKWARD (uiBut *, but, &block->buttons) {
       if (ui_but_is_interactive(but, labeledit)) {
         /* No pie menu support. */
         KLI_assert(but->pie_dir == UI_RADIAL_NONE);
@@ -388,10 +389,9 @@ uiBut *ui_list_find_mouse_over_ex(const ARegion *region, const int xy[2])
   LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
     float mx = xy[0], my = xy[1];
     ui_window_to_block_fl(region, block, &mx, &my);
-    const auto &rit = block->buttons.rbegin();
-    while (rit != block->buttons.rend()) {
-      if ((*rit)->type == UI_BTYPE_LISTBOX && ui_but_contains_pt((*rit), mx, my)) {
-        return (*rit);
+    LISTBASE_FOREACH_BACKWARD (uiBut *, but, &block->buttons) {
+      if (but->type == UI_BTYPE_LISTBOX && ui_but_contains_pt(but, mx, my)) {
+        return but;
       }
     }
   }
@@ -525,7 +525,7 @@ uiBut *ui_but_next(uiBut *but)
 
 uiBut *ui_but_first(uiBlock *block)
 {
-  for (auto &but : block->buttons) {
+  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
     if (ui_but_is_editable(but)) {
       return but;
     }
@@ -535,7 +535,7 @@ uiBut *ui_but_first(uiBlock *block)
 
 uiBut *ui_but_last(uiBlock *block)
 {
-  uiBut *but = static_cast<uiBut *>(block->buttons.back());
+  uiBut *but = static_cast<uiBut *>(block->buttons.last);
   while (but) {
     if (ui_but_is_editable(but)) {
       return but;
@@ -612,7 +612,7 @@ size_t ui_but_tip_len_only_first_line(const uiBut *but)
 
 uiBut *ui_block_active_but_get(const uiBlock *block)
 {
-  for (auto &but : block->buttons) {
+  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
     if (but->active) {
       return but;
     }
@@ -655,7 +655,7 @@ static const uiBut *ui_but_next_non_separator(const uiBut *but)
 
 bool UI_block_is_empty_ex(const uiBlock *block, const bool skip_title)
 {
-  const uiBut *but = static_cast<const uiBut *>(block->buttons.front());
+  const uiBut *but = static_cast<const uiBut *>(block->buttons.first);
   if (skip_title) {
     /* Skip the first label, since popups often have a title,
      * we may want to consider the block empty in this case. */
@@ -675,7 +675,7 @@ bool UI_block_is_empty(const uiBlock *block)
 bool UI_block_can_add_separator(const uiBlock *block)
 {
   if (ui_block_is_menu(block) && !ui_block_is_pie_menu(block)) {
-    const uiBut *but = static_cast<const uiBut *>(block->buttons.back());
+    const uiBut *but = static_cast<const uiBut *>(block->buttons.last);
     return (but && !ELEM(but->type, UI_BTYPE_SEPR_LINE, UI_BTYPE_SEPR));
   }
   return true;
@@ -736,7 +736,7 @@ uiBut *ui_region_find_active_but(ARegion *region)
 uiBut *ui_region_find_first_but_test_flag(ARegion *region, int flag_include, int flag_exclude)
 {
   LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
-    for (auto &but : block->buttons) {
+    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
       if (((but->flag & flag_include) == flag_include) && ((but->flag & flag_exclude) == 0)) {
         return but;
       }

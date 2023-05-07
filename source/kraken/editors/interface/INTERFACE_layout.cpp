@@ -63,7 +63,7 @@
  * \{ */
 
 #define UI_OPERATOR_ERROR_RET(_ot, _opname, return_statement) \
-  if (ot == NULL) {                                           \
+  if (ot == nullptr) {                                           \
     ui_item_disabled(layout, _opname);                        \
     TF_WARN("'%s' unknown operator", _opname);                \
     return_statement;                                         \
@@ -518,7 +518,7 @@ static void ui_layer_but_cb(kContext *C, void *arg_but, void *arg_index)
 {
   wmWindow *win = CTX_wm_window(C);
   uiBut *but = static_cast<uiBut *>(arg_but);
-  KrakenPRIM *ptr = but->stagepoin;
+  KrakenPRIM *ptr = &but->stagepoin;
   KrakenPROP *prop = but->stageprop;
   const int index = POINTER_AS_INT(arg_index);
   const bool shift = win->eventstate->modifier & KM_SHIFT;
@@ -539,7 +539,7 @@ static void ui_layer_but_cb(kContext *C, void *arg_but, void *arg_index)
 
     LUXO_prop_update(C, ptr, prop);
 
-    for (auto &cbut : but->block->buttons) {
+    LISTBASE_FOREACH (uiBut *, cbut, &but->block->buttons) {
       ui_but_update(cbut);
     }
   }
@@ -575,7 +575,7 @@ static void ui_item_array(uiLayout *layout,
 
   /* create label */
   if (name[0] && show_text) {
-    uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
+    uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, "");
   }
 
   /* create buttons */
@@ -706,7 +706,7 @@ static void ui_item_array(uiLayout *layout,
                    0,
                    -1,
                    -1,
-                   NULL);
+                   nullptr);
   } else {
     /* NOTE: this block of code is a bit arbitrary and has just been made
      * to work with common cases, but may need to be re-worked */
@@ -727,7 +727,7 @@ static void ui_item_array(uiLayout *layout,
       }
 
       /* Show check-boxes for prim on a non-emboss block (menu for eg). */
-      bool *boolarr = NULL;
+      bool *boolarr = nullptr;
       if (type == PROP_BOOLEAN &&
           ELEM(layout->root->block->emboss, UI_EMBOSS_NONE, UI_EMBOSS_PULLDOWN)) {
         boolarr = (bool *)MEM_callocN(sizeof(bool) * len, __func__);
@@ -827,7 +827,7 @@ static void ui_item_enum_expand_elem_exec(uiLayout *layout,
                                  value,
                                  -1,
                                  -1,
-                                 NULL);
+                                 nullptr);
   } else if (icon) {
     const int w = (is_first) ? itemw : ceilf(itemw - U.pixelsize);
     but = uiDefIconButR_prop(block,
@@ -845,7 +845,7 @@ static void ui_item_enum_expand_elem_exec(uiLayout *layout,
                              value,
                              -1,
                              -1,
-                             NULL);
+                             nullptr);
   } else {
     but = uiDefButR_prop(block,
                          but_type,
@@ -862,13 +862,13 @@ static void ui_item_enum_expand_elem_exec(uiLayout *layout,
                          value,
                          -1,
                          -1,
-                         NULL);
+                         nullptr);
   }
 
   if (prop->flag & PROP_ENUM_FLAG) {
     /* If this is set, assert since we're clobbering someone elses callback. */
     /* Buttons get their block's func by default, so we cannot assert in that case either. */
-    KLI_assert(ELEM(but->func, NULL, block->func));
+    KLI_assert(ELEM(but->func, nullptr, block->func));
     UI_but_func_set(but, ui_item_enum_expand_handle, but, POINTER_FROM_INT(value));
   }
 
@@ -896,7 +896,7 @@ static void ui_item_enum_expand_exec(uiLayout *layout,
    * is insane and inconsistent with general UI API:
    *
    * - uiname is the *enum property* label.
-   * - when it is NULL or empty, we do not draw *enum items* labels,
+   * - when it is nullptr or empty, we do not draw *enum items* labels,
    *   this doubles the icon_only parameter.
    * - we *never* draw (i.e. really use) the enum label uiname, it is just used as a mere flag!
    *
@@ -911,13 +911,13 @@ static void ui_item_enum_expand_exec(uiLayout *layout,
   bool free;
   std::vector<EnumPROP *> item_array;
   if (radial) {
-    // LUXO_prop_enum_items_gettexted_all(block->evil_C, ptr, prop, &item_array, NULL, &free);
+    // LUXO_prop_enum_items_gettexted_all(block->evil_C, ptr, prop, &item_array, nullptr, &free);
   } else {
-    // LUXO_prop_enum_items_gettexted(block->evil_C, ptr, prop, &item_array, NULL, &free);
+    // LUXO_prop_enum_items_gettexted(block->evil_C, ptr, prop, &item_array, nullptr, &free);
   }
 
   /* We don't want nested rows, cols in menus. */
-  uiLayout *layout_radial = NULL;
+  uiLayout *layout_radial = nullptr;
   if (radial) {
     if (layout->root->layout == layout) {
       layout_radial = uiLayoutRadial(layout);
@@ -998,16 +998,16 @@ static void ui_item_enum_expand_tabs(uiLayout *layout,
                                      const int h,
                                      const bool icon_only)
 {
-  uiBut *last = block->buttons.back();
+  uiBut *last = static_cast<uiBut *>(block->buttons.last);
 
   ui_item_enum_expand_exec(layout, block, ptr, prop, uiname, h, UI_BTYPE_TAB, icon_only);
-  KLI_assert(last != block->buttons.back());
+  KLI_assert(last != block->buttons.last);
 
-  for (uiBut *tab = last ? last->next : block->buttons.front(); tab; tab = tab->next) {
+  for (uiBut *tab = last ? last->next : static_cast<uiBut *>(block->buttons.first); tab; tab = tab->next) {
     UI_but_drawflag_enable(tab, ui_but_align_opposite_to_area_align_get(CTX_wm_region(C)));
   }
 
-  const bool use_custom_highlight = (prop_highlight != NULL);
+  const bool use_custom_highlight = (prop_highlight != nullptr);
 
   if (use_custom_highlight) {
     const int highlight_array_len = (int)ptr_highlight->GetAttribute(prop_highlight->GetName())
@@ -1015,11 +1015,12 @@ static void ui_item_enum_expand_tabs(uiLayout *layout,
                                       .GetDimensions()
                                       .size;
     bool *highlight_array = (bool *)alloca(sizeof(bool) * highlight_array_len);
-    // LUXO_prop_boolean_get_array(ptr_highlight, prop_highlight, highlight_array);
+    LUXO_prop_boolean_get_array(ptr_highlight, prop_highlight, highlight_array);
     int i = 0;
-    for (uiBut *tab_but = last ? last->next : block->buttons.front();
-         (tab_but != NULL) && (i < highlight_array_len);
-         tab_but = tab_but->next, i++) {
+    for (uiBut *tab_but = last ? last->next : static_cast<uiBut *>(block->buttons.first);
+         (tab_but != nullptr) && (i < highlight_array_len);
+         tab_but = tab_but->next, i++)
+    {
       SET_FLAG_FROM_TEST(tab_but->flag, !highlight_array[i], UI_BUT_INACTIVE);
     }
   }
@@ -1032,13 +1033,13 @@ static void ui_keymap_but_cb(kContext *UNUSED(C), void *but_v, void *UNUSED(key_
   KLI_assert(but->type == UI_BTYPE_HOTKEY_EVENT);
   const uiButHotkeyEvent *hotkey_but = (uiButHotkeyEvent *)but;
 
-  but->stagepoin->GetAttribute(TfToken("shift"))
+  but->stagepoin.GetAttribute(TfToken("shift"))
     .Set((hotkey_but->modifier_key & KM_SHIFT) ? KM_MOD_HELD : KM_NOTHING);
-  but->stagepoin->GetAttribute(TfToken("ctrl"))
+  but->stagepoin.GetAttribute(TfToken("ctrl"))
     .Set((hotkey_but->modifier_key & KM_CTRL) ? KM_MOD_HELD : KM_NOTHING);
-  but->stagepoin->GetAttribute(TfToken("alt"))
+  but->stagepoin.GetAttribute(TfToken("alt"))
     .Set((hotkey_but->modifier_key & KM_ALT) ? KM_MOD_HELD : KM_NOTHING);
-  but->stagepoin->GetAttribute(TfToken("oskey"))
+  but->stagepoin.GetAttribute(TfToken("oskey"))
     .Set((hotkey_but->modifier_key & KM_OSKEY) ? KM_MOD_HELD : KM_NOTHING);
 }
 
@@ -1064,7 +1065,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
   uiLayout *sub = layout;
   int prop_but_width = w_hint;
 #ifdef UI_PROP_DECORATE
-  uiLayout *layout_prop_decorate = NULL;
+  uiLayout *layout_prop_decorate = nullptr;
   const bool use_prop_sep = ((layout->item.flag & UI_ITEM_PROP_SEP) != 0);
   const bool use_prop_decorate = use_prop_sep && (layout->item.flag & UI_ITEM_PROP_DECORATE) &&
                                  (layout->item.flag & UI_ITEM_PROP_DECORATE_NO_PAD) == 0;
@@ -1107,7 +1108,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
       } else {
         w_label = w_hint / 3;
       }
-      uiDefBut(block, UI_BTYPE_LABEL, 0, name, x, y, w_label, h, NULL, 0.0, 0.0, 0, 0, "");
+      uiDefBut(block, UI_BTYPE_LABEL, 0, name, x, y, w_label, h, nullptr, 0.0, 0.0, 0, 0, "");
     }
   }
 
@@ -1130,7 +1131,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
                   y,
                   UI_UNIT_X,
                   h,
-                  NULL);
+                  nullptr);
   } else if (flag & UI_ITEM_R_EVENT) {
     but = uiDefButR_prop(block,
                          UI_BTYPE_KEY_EVENT,
@@ -1147,7 +1148,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
                          0,
                          -1,
                          -1,
-                         NULL);
+                         nullptr);
   } else if ((flag & UI_ITEM_R_FULL_EVENT) /* && is_keymapitem_ptr*/) {
     char buf[128];
 
@@ -1168,20 +1169,20 @@ static uiBut *ui_item_with_label(uiLayout *layout,
                          0,
                          -1,
                          -1,
-                         NULL);
-    UI_but_func_set(but, ui_keymap_but_cb, but, NULL);
+                         nullptr);
+    UI_but_func_set(but, ui_keymap_but_cb, but, nullptr);
     if (flag & UI_ITEM_R_IMMEDIATE) {
       UI_but_flag_enable(but, UI_BUT_ACTIVATE_ON_INIT);
     }
   } else {
-    const char *str = (type == PROP_ENUM && !(flag & UI_ITEM_R_ICON_ONLY)) ? NULL : "";
+    const char *str = (type == PROP_ENUM && !(flag & UI_ITEM_R_ICON_ONLY)) ? nullptr : "";
     but = uiDefAutoButR(block, ptr, prop, index, str, icon, x, y, prop_but_width, h);
   }
 
 #ifdef UI_PROP_DECORATE
   /* Only for alignment. */
   if (use_prop_decorate) { /* Note that sep flag may have been unset meanwhile. */
-    uiItemL(layout_prop_decorate ? layout_prop_decorate : sub, NULL, ICON_BLANK1);
+    uiItemL(layout_prop_decorate ? layout_prop_decorate : sub, nullptr, ICON_BLANK1);
   }
 #endif /* UI_PROP_DECORATE */
 
@@ -1195,12 +1196,11 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
                                                 bool *r_is_undo,
                                                 bool *r_is_userdef)
 {
-  KrakenPRIM prim;
   ARegion *region = CTX_wm_menu(C) ? CTX_wm_menu(C) : CTX_wm_region(C);
-  uiBut *prevbut = NULL;
+  uiBut *prevbut = nullptr;
 
-  *r_ptr = prim;
-  *r_prop = NULL;
+  memset(r_ptr, 0, sizeof(*r_ptr));
+  *r_prop = nullptr;
   *r_is_undo = false;
   *r_is_userdef = false;
 
@@ -1208,10 +1208,9 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
     return;
   }
 
-  LISTBASE_FOREACH(uiBlock *, block, &region->uiblocks)
-  {
-    for (auto &but : block->buttons) {
-      if (but && but->stagepoin->data) {
+  LISTBASE_FOREACH (uiBlock *, block, &region->uiblocks) {
+    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+      if (but && but->stagepoin.data) {
         if (LUXO_prop_type(but->stageprop) == PROP_STRING) {
           prevbut = but;
         }
@@ -1240,7 +1239,7 @@ void UI_context_active_but_prop_get_filebrowser(const kContext *C,
  */
 static void ui_but_tip_from_enum_item(uiBut *but, const EnumPROP *item)
 {
-  if (but->tip == NULL || but->tip[0] == '\0') {
+  if (but->tip == nullptr || but->tip[0] == '\0') {
     if (item->description && item->description[0] && !(but->optype && but->optype->description)) {
       but->tip = item->description;
     }
@@ -1261,13 +1260,13 @@ static void ui_item_disabled(uiLayout *layout, const char *name)
   const int w = ui_text_icon_width(layout, name, 0, 0);
 
   uiBut *but =
-    uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
+    uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, "");
   UI_but_disable(but, "");
 }
 
 /**
  * Operator Item
- * @param r_opptr: Optional, initialize with operator properties when not NULL.
+ * @param r_opptr: Optional, initialize with operator properties when not nullptr.
  * Will always be written to even in the case of errors.
  */
 static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
@@ -1284,7 +1283,7 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
 
   if (!name) {
     if (ot && ot->prim && (flag & UI_ITEM_R_ICON_ONLY) == 0) {
-      name = WM_operatortype_name(ot, NULL);
+      name = WM_operatortype_name(ot, nullptr);
     } else {
       name = "";
     }
@@ -1318,15 +1317,15 @@ static uiBut *uiItemFullO_ptr_ex(uiLayout *layout,
                                   0,
                                   w,
                                   UI_UNIT_Y,
-                                  NULL);
+                                  nullptr);
     } else {
-      but = uiDefIconButO_ptr(block, UI_BTYPE_BUT, ot, context, icon, 0, 0, w, UI_UNIT_Y, NULL);
+      but = uiDefIconButO_ptr(block, UI_BTYPE_BUT, ot, context, icon, 0, 0, w, UI_UNIT_Y, nullptr);
     }
   } else {
-    but = uiDefButO_ptr(block, UI_BTYPE_BUT, ot, context, name, 0, 0, w, UI_UNIT_Y, NULL);
+    but = uiDefButO_ptr(block, UI_BTYPE_BUT, ot, context, name, 0, 0, w, UI_UNIT_Y, nullptr);
   }
 
-  KLI_assert(but->optype != NULL);
+  KLI_assert(but->optype != nullptr);
 
   if (flag & UI_ITEM_R_NO_BG) {
     layout->emboss = prev_emboss;
@@ -1460,7 +1459,7 @@ static const char *ui_menu_enumpropname(uiLayout *layout,
 {
   bool free;
   const EnumPROP *item;
-  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, NULL, &free);
+  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, nullptr, &free);
 
   const char *name;
   if (item->name) {
@@ -1487,7 +1486,7 @@ void uiItemEnumO_ptr(uiLayout *layout,
   WM_operator_properties_create_ptr(&ptr, ot);
 
   KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
-  if (prop == NULL) {
+  if (prop == nullptr) {
     TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
@@ -1505,7 +1504,7 @@ void uiItemEnumO_ptr(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 void uiItemEnumO(uiLayout *layout,
                  const char *opname,
@@ -1548,7 +1547,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
     return;
   }
 
-  uiLayout *target, *split = NULL;
+  uiLayout *target, *split = nullptr;
   uiBlock *block = layout->root->block;
   const bool radial = ui_layout_is_radial(layout);
 
@@ -1568,12 +1567,12 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                  0,
                  1.25f * UI_UNIT_X,
                  UI_UNIT_Y,
-                 NULL,
+                 nullptr,
                  0,
                  0,
                  0,
                  0,
-                 NULL);
+                 nullptr);
   } else {
     split = uiLayoutSplit(layout, 0.0f, false);
     target = uiLayoutColumn(split, layout->align);
@@ -1618,25 +1617,25 @@ void uiItemsFullEnumO_items(uiLayout *layout,
       WM_operator_properties_create_ptr(&tptr, ot);
       if (properties) {
         if (tptr.data) {
-          // IDP_FreeProperty(tptr.data);
+          IDP_FreeProperty(static_cast<IDProperty *>(tptr.data));
         }
-        // tptr.data = IDP_CopyProperty(properties);
+        tptr.data = IDP_CopyProperty(properties);
       }
-      // LUXO_prop_enum_set(&tptr, prop, item->value);
+      LUXO_prop_enum_set(&tptr, prop, item->value);
 
       uiItemFullO_ptr(target,
                       ot,
-                      (flag & UI_ITEM_R_ICON_ONLY) ? NULL : item->name,
+                      (flag & UI_ITEM_R_ICON_ONLY) ? nullptr : item->name,
                       item->icon,
-                      (IDProperty *)tptr.data,
+                      static_cast<IDProperty *>(tptr.data),
                       context,
                       flag,
-                      NULL);
+                      nullptr);
 
-      ui_but_tip_from_enum_item(block->buttons.back(), item);
+      ui_but_tip_from_enum_item(static_cast<uiBut *>(block->buttons.last), item);
     } else {
       if (item->name) {
-        if (item != item_array && !radial && split != NULL) {
+        if (item != item_array && !radial && split != nullptr) {
           target = uiLayoutColumn(split, layout->align);
 
           /* inconsistent, but menus with labels do not look good flipped */
@@ -1647,7 +1646,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
         if (item->icon || radial) {
           uiItemL(target, item->name, item->icon);
 
-          but = block->buttons.back();
+          but = static_cast<uiBut *>(block->buttons.last);
         } else {
           /* Do not use uiItemL here, as our root layout is a menu one,
            * it will add a fake blank icon! */
@@ -1659,7 +1658,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                          0,
                          UI_UNIT_X * 5,
                          UI_UNIT_Y,
-                         NULL,
+                         nullptr,
                          0.0,
                          0.0,
                          0,
@@ -1704,11 +1703,11 @@ void uiItemsFullEnumO(uiLayout *layout,
   KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
 
   /* don't let bad properties slip through */
-  KLI_assert((prop == NULL) || (LUXO_prop_type(prop) == PROP_ENUM));
+  KLI_assert((prop == nullptr) || (LUXO_prop_type(prop) == PROP_ENUM));
 
-  // uiBlock *block = layout->root->block;
+  uiBlock *block = layout->root->block;
   if (prop && LUXO_prop_type(prop) == PROP_ENUM) {
-    const EnumPROP *item_array = NULL;
+    const EnumPROP *item_array = nullptr;
     int totitem;
     bool free;
 
@@ -1722,12 +1721,14 @@ void uiItemsFullEnumO(uiLayout *layout,
       LUXO_prop_enum_items_gettexted_all(
           block->evil_C, &ptr, prop, &item_array, &totitem, &free);
 #else
-      // LUXO_prop_enum_items_gettexted(block->evil_C, &ptr, prop, &item_array, &totitem,
-      // &free);
+      //LUXO_prop_enum_items_gettexted(static_cast<bContext *>(block->evil_C), &ptr, prop, &item_array, &totitem, &free);
 #endif
     } else {
-      // LUXO_prop_enum_items_gettexted(block->evil_C, &ptr, prop, &item_array, &totitem,
-      // &free);
+      kContext *C = static_cast<kContext *>(block->evil_C);
+      kContextStore *previous_ctx = CTX_store_get(C);
+      CTX_store_set(C, layout->context);
+      //LUXO_prop_enum_items_gettexted(C, &ptr, prop, &item_array, &totitem, &free);
+      CTX_store_set(C, previous_ctx);
     }
 
     /* add items */
@@ -1740,17 +1741,17 @@ void uiItemsFullEnumO(uiLayout *layout,
     /* intentionally don't touch UI_BLOCK_IS_FLIP here,
      * we don't know the context this is called in */
   } else if (prop && LUXO_prop_type(prop) != PROP_ENUM) {
-    TF_WARN("%s.%s, not an enum type", LUXO_prim_identifier(ptr.type).GetText(), propname);
+    TF_WARN("%s.%s, not an enum type", LUXO_prim_identifier(ptr.type).data(), propname);
     return;
   } else {
-    TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
+    TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).data(), propname);
     return;
   }
 }
 
 void uiItemsEnumO(uiLayout *layout, const char *opname, const char *propname)
 {
-  uiItemsFullEnumO(layout, opname, propname, NULL, layout->root->opcontext, 0);
+  uiItemsFullEnumO(layout, opname, propname, nullptr, layout->root->opcontext, 0);
 }
 
 void uiItemEnumO_value(uiLayout *layout,
@@ -1768,7 +1769,7 @@ void uiItemEnumO_value(uiLayout *layout,
 
   /* enum lookup */
   KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
-  if (prop == NULL) {
+  if (prop == nullptr) {
     TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
@@ -1787,7 +1788,7 @@ void uiItemEnumO_value(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 
 void uiItemEnumO_string(uiLayout *layout,
@@ -1804,7 +1805,7 @@ void uiItemEnumO_string(uiLayout *layout,
   WM_operator_properties_create_ptr(&ptr, ot);
 
   KrakenPROP *prop = LUXO_prim_find_property(&ptr, propname);
-  if (prop == NULL) {
+  if (prop == nullptr) {
     TF_WARN("%s.%s not found", LUXO_prim_identifier(ptr.type).GetText(), propname);
     return;
   }
@@ -1813,10 +1814,10 @@ void uiItemEnumO_string(uiLayout *layout,
   /* no need for translations here */
   const EnumPROP *item;
   bool free;
-  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, &ptr, prop, &item, NULL, &free);
+  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, &ptr, prop, &item, nullptr, &free);
 
   int value;
-  if (item == NULL /*|| LUXO_enum_value_from_id(item, value_str, &value) == 0*/) {
+  if (item == nullptr /*|| LUXO_enum_value_from_id(item, value_str, &value) == 0*/) {
     if (free) {
       MEM_freeN((void *)item);
     }
@@ -1845,7 +1846,7 @@ void uiItemEnumO_string(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 
 void uiItemBooleanO(uiLayout *layout,
@@ -1869,7 +1870,7 @@ void uiItemBooleanO(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 
 void uiItemIntO(uiLayout *layout,
@@ -1893,7 +1894,7 @@ void uiItemIntO(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 
 void uiItemFloatO(uiLayout *layout,
@@ -1918,7 +1919,7 @@ void uiItemFloatO(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 
 void uiItemStringO(uiLayout *layout,
@@ -1943,12 +1944,12 @@ void uiItemStringO(uiLayout *layout,
                   (IDProperty *)ptr.data,
                   layout->root->opcontext,
                   0,
-                  NULL);
+                  nullptr);
 }
 
 void uiItemO(uiLayout *layout, const char *name, int icon, const char *opname)
 {
-  uiItemFullO(layout, opname, name, icon, NULL, layout->root->opcontext, 0, NULL);
+  uiItemFullO(layout, opname, name, icon, nullptr, layout->root->opcontext, 0, nullptr);
 }
 
 /* RNA property items */
@@ -1989,7 +1990,7 @@ static void ui_item_luxo_size(uiLayout *layout,
       //                                   ptr,
       //                                   prop,
       //                                   &item_array,
-      //                                   NULL,
+      //                                   nullptr,
       //                                   &free);
 
       for (const EnumPROP *item = item_array; item->identifier.data(); item++) {
@@ -2077,7 +2078,7 @@ static uiLayout *ui_layout_heading_find(uiLayout *cur_layout)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 static void ui_layout_heading_label_add(uiLayout *layout,
@@ -2275,13 +2276,13 @@ void uiItemFullR(uiLayout *layout,
     layout->emboss = UI_EMBOSS_NONE_OR_STATUS;
   }
 
-  uiBut *but = NULL;
+  uiBut *but = nullptr;
 
   /* Split the label / property. */
   uiLayout *layout_parent = layout;
 
   if (use_prop_sep) {
-    uiLayout *layout_row = NULL;
+    uiLayout *layout_row = nullptr;
 #ifdef UI_PROP_DECORATE
     if (ui_decorate.use_prop_decorate) {
       layout_row = uiLayoutRow(layout, true);
@@ -2328,7 +2329,7 @@ void uiItemFullR(uiLayout *layout,
                          0,
                          w,
                          UI_UNIT_Y,
-                         NULL,
+                         nullptr,
                          0.0,
                          0.0,
                          0,
@@ -2342,7 +2343,7 @@ void uiItemFullR(uiLayout *layout,
       } else {
         if (name) {
           but =
-            uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
+            uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, "");
           but->drawflag |= UI_BUT_TEXT_RIGHT;
           but->drawflag &= ~UI_BUT_TEXT_LEFT;
 
@@ -2381,7 +2382,7 @@ void uiItemFullR(uiLayout *layout,
       ui_decorate.layout = uiLayoutColumn(layout_row, true);
       ui_decorate.layout->space = 0;
       UI_block_layout_set_current(block, layout);
-      ui_decorate.but = block->buttons.back();
+      ui_decorate.but = static_cast<uiBut *>(block->buttons.last);
 
       /* Clear after. */
       layout->item.flag |= UI_ITEM_PROP_DECORATE_NO_PAD;
@@ -2440,7 +2441,7 @@ void uiItemFullR(uiLayout *layout,
                              value,
                              -1,
                              -1,
-                             NULL);
+                             nullptr);
     } else if (icon) {
       uiDefIconButR_prop(block,
                          UI_BTYPE_ROW,
@@ -2457,7 +2458,7 @@ void uiItemFullR(uiLayout *layout,
                          value,
                          -1,
                          -1,
-                         NULL);
+                         nullptr);
     } else {
       uiDefButR_prop(block,
                      UI_BTYPE_ROW,
@@ -2474,7 +2475,7 @@ void uiItemFullR(uiLayout *layout,
                      value,
                      -1,
                      -1,
-                     NULL);
+                     nullptr);
     }
   }
   /* expanded enum */
@@ -2491,7 +2492,7 @@ void uiItemFullR(uiLayout *layout,
       // results_are_suggestions = true;
       // }
     }
-    but = ui_but_add_search(but, ptr, prop, NULL, NULL, results_are_suggestions);
+    but = ui_but_add_search(but, ptr, prop, nullptr, nullptr, results_are_suggestions);
 
     if (layout->redalert) {
       UI_but_flag_enable(but, UI_BUT_REDALERT);
@@ -2555,7 +2556,7 @@ void uiItemFullR(uiLayout *layout,
 
 #ifdef UI_PROP_DECORATE
   if (ui_decorate.use_prop_decorate) {
-    uiBut *but_decorate = ui_decorate.but ? ui_decorate.but->next : block->buttons.front();
+    uiBut *but_decorate = ui_decorate.but ? ui_decorate.but->next : static_cast<uiBut *>(block->buttons.first);
     const bool use_blank_decorator = (flag & UI_ITEM_R_FORCE_BLANK_DECORATE);
     uiLayout *layout_col = uiLayoutColumn(ui_decorate.layout, false);
     layout_col->space = 0;
@@ -2563,19 +2564,17 @@ void uiItemFullR(uiLayout *layout,
 
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
-      KrakenPRIM *ptr_dec = use_blank_decorator ? NULL : but_decorate->stagepoin;
-      KrakenPROP *prop_dec = use_blank_decorator ? NULL : but_decorate->stageprop;
+      KrakenPRIM *ptr_dec = use_blank_decorator ? nullptr : &but_decorate->stagepoin;
+      KrakenPROP *prop_dec = use_blank_decorator ? nullptr : but_decorate->stageprop;
 
       /* The icons are set in 'ui_but_anim_flag' */
       uiItemDecoratorR_prop(layout_col, ptr_dec, prop_dec, but_decorate->rnaindex);
-      but = block->buttons.back();
+      but = static_cast<uiBut *>(block->buttons.last);
 
       /* Order the decorator after the button we decorate, this is used so we can always
        * do a quick lookup. */
-      const auto &it = block->buttons.erase(
-        std::remove(block->buttons.begin(), block->buttons.end(), but),
-        block->buttons.end());
-      block->buttons.insert(it + 1, but_decorate);
+      KLI_remlink(&block->buttons, but);
+      KLI_insertlinkafter(&block->buttons, but_decorate, but);
       but_decorate = but->next;
     }
     KLI_assert(ELEM(i, 1, ui_decorate.len));
@@ -2623,7 +2622,7 @@ void uiItemFullR_with_popover(uiLayout *layout,
                               const char *panel_type)
 {
   uiBlock *block = layout->root->block;
-  uiBut *but = block->buttons.back();
+  uiBut *but = static_cast<uiBut *>(block->buttons.last);
   uiItemFullR(layout, ptr, prop, index, value, flag, name, icon);
   but = but->next;
   while (but) {
@@ -2633,11 +2632,11 @@ void uiItemFullR_with_popover(uiLayout *layout,
     }
     but = but->next;
   }
-  if (but == NULL) {
+  if (but == nullptr) {
     const char *propname = LUXO_prop_identifier(prop).GetText();
     ui_item_disabled(layout, panel_type);
     TF_WARN("property could not use a popover: %s.%s (%s)",
-            LUXO_prim_identifier(ptr->type).GetText(),
+            LUXO_prim_identifier(ptr->type).data(),
             propname,
             panel_type);
   }
@@ -2654,7 +2653,7 @@ void uiItemFullR_with_menu(uiLayout *layout,
                            const char *menu_type)
 {
   uiBlock *block = layout->root->block;
-  uiBut *but = block->buttons.back();
+  uiBut *but = static_cast<uiBut *>(block->buttons.last);
   uiItemFullR(layout, ptr, prop, index, value, flag, name, icon);
   but = but->next;
   while (but) {
@@ -2664,7 +2663,7 @@ void uiItemFullR_with_menu(uiLayout *layout,
     }
     but = but->next;
   }
-  if (but == NULL) {
+  if (but == nullptr) {
     const char *propname = LUXO_prop_identifier(prop).GetText();
     ui_item_disabled(layout, menu_type);
     TF_WARN("property could not use a menu: %s.%s (%s)",
@@ -2700,7 +2699,7 @@ void uiItemEnumR(uiLayout *layout,
 {
   KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
 
-  if (prop == NULL) {
+  if (prop == nullptr) {
     ui_item_disabled(layout, propname);
     TF_WARN("property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
@@ -2725,7 +2724,7 @@ void uiItemEnumR_string_prop(uiLayout *layout,
 
   const EnumPROP *item;
   bool free;
-  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, NULL, &free);
+  LUXO_prop_enum_items((kContext *)layout->root->block->evil_C, ptr, prop, &item, nullptr, &free);
 
   int ivalue;
   // if (!LUXO_enum_value_from_id(item, value, &ivalue)) {
@@ -2772,7 +2771,7 @@ void uiItemEnumR_string(uiLayout *layout,
                         int icon)
 {
   KrakenPROP *prop = LUXO_prim_find_property(ptr, propname);
-  if (UNLIKELY(prop == NULL)) {
+  if (UNLIKELY(prop == nullptr)) {
     ui_item_disabled(layout, propname);
     TF_WARN("enum property not found: %s.%s", LUXO_prim_identifier(ptr->type).GetText(), propname);
     return;
@@ -2803,12 +2802,12 @@ void uiItemsEnumR(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname
   int totitem;
   const EnumPROP *item;
   bool free;
-  // LUXO_prop_enum_items_gettexted(block->evil_C, ptr, prop, &item, &totitem, &free);
+  //LUXO_prop_enum_items_gettexted(static_cast<bContext *>(block->evil_C), ptr, prop, &item, &totitem, &free);
 
   for (int i = 0; i < totitem; i++) {
     if (item[i].identifier.data()[0]) {
       uiItemEnumR_prop(column, item[i].name, item[i].icon, ptr, prop, item[i].value);
-      ui_but_tip_from_enum_item(block->buttons.back(), &item[i]);
+      ui_but_tip_from_enum_item(static_cast<uiBut *>(block->buttons.last), &item[i]);
     } else {
       if (item[i].name) {
         if (i != 0) {
@@ -2818,7 +2817,7 @@ void uiItemsEnumR(uiLayout *layout, struct KrakenPRIM *ptr, const char *propname
         }
 
         uiItemL(column, item[i].name, ICON_NONE);
-        uiBut *bt = block->buttons.back();
+        uiBut *bt = static_cast<uiBut *>(block->buttons.last);
         bt->drawflag = UI_BUT_TEXT_LEFT;
 
         ui_but_tip_from_enum_item(bt, &item[i]);
@@ -2844,7 +2843,7 @@ static void search_id_collection(KrakenPRIM *ptype, KrakenPRIM *r_ptr, KrakenPRO
   /* NOTE: using global Main is OK-ish here, UI shall not access other Mains anyway. */
   LUXO_main_pointer_create(G.main, r_ptr);
 
-  *r_prop = NULL;
+  *r_prop = nullptr;
 
   // LUXO_PRIM_BEGIN(r_ptr, iprop)
   // {
@@ -2942,8 +2941,8 @@ uiBut *ui_but_add_search(uiBut *but,
   //                          coll_search,
   //                          false,
   //                          ui_luxo_collection_search_arg_free_fn,
-  //                          NULL,
-  //                          NULL);
+  //                          nullptr,
+  //                          nullptr);
   //   /* If this is called multiple times for the same button, an earlier call may have taken the
   //    * else branch below so the button was disabled. Now we have a searchprop, so it can be
   //    enabled
@@ -3151,7 +3150,7 @@ void uiItemM_ptr(uiLayout *layout, MenuType *mt, const char *name, int icon)
                icon,
                ui_item_menutype_func,
                mt,
-               NULL,
+               nullptr,
                mt->description ? TIP_(mt->description) : "",
                false);
 }
@@ -3159,7 +3158,7 @@ void uiItemM_ptr(uiLayout *layout, MenuType *mt, const char *name, int icon)
 void uiItemM(uiLayout *layout, const char *menuname, const char *name, int icon)
 {
   MenuType *mt = WM_menutype_find(TfToken(menuname), true);
-  if (mt == NULL) {
+  if (mt == nullptr) {
     TF_WARN("not found %s", menuname);
     return;
   }
@@ -3169,7 +3168,7 @@ void uiItemM(uiLayout *layout, const char *menuname, const char *name, int icon)
 void uiItemMContents(uiLayout *layout, const char *menuname)
 {
   MenuType *mt = WM_menutype_find(TfToken(menuname), true);
-  if (mt == NULL) {
+  if (mt == nullptr) {
     TF_WARN("not found %s", menuname);
     return;
   }
@@ -3198,7 +3197,7 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
   col->space = 0;
   col->emboss = UI_EMBOSS_NONE;
 
-  if (ELEM(NULL, ptr, prop) ||
+  if (ELEM(nullptr, ptr, prop) ||
       !(ptr->GetAttribute(prop->GetName()).GetVariability() == SdfVariabilityVarying)) {
     uiBut *but = uiDefIconBut(block,
                               UI_BTYPE_DECORATOR,
@@ -3208,7 +3207,7 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
                               0,
                               UI_UNIT_X,
                               UI_UNIT_Y,
-                              NULL,
+                              nullptr,
                               0.0,
                               0.0,
                               0.0,
@@ -3235,14 +3234,14 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
                                                                    0,
                                                                    UI_UNIT_X,
                                                                    UI_UNIT_Y,
-                                                                   NULL,
+                                                                   nullptr,
                                                                    0.0,
                                                                    0.0,
                                                                    0.0,
                                                                    0.0,
                                                                    TIP_("Animate property"));
 
-    // UI_but_func_set(&decorator_but->but, ui_but_anim_decorate_cb, decorator_but, NULL);
+    // UI_but_func_set(&decorator_but->but, ui_but_anim_decorate_cb, decorator_but, nullptr);
     // decorator_but->but.flag |= UI_BUT_UNDO | UI_BUT_DRAG_LOCK;
     /* Reusing RNA search members, setting actual RNA data has many side-effects. */
     // decorator_but->stagepoin = ptr;
@@ -3254,7 +3253,7 @@ void uiItemDecoratorR_prop(uiLayout *layout, KrakenPRIM *ptr, KrakenPROP *prop, 
 
 void uiItemDecoratorR(uiLayout *layout, KrakenPRIM *ptr, const char *propname, int index)
 {
-  KrakenPROP *prop = NULL;
+  KrakenPROP *prop = nullptr;
 
   if (ptr && propname) {
     /* validate arguments */
@@ -3266,7 +3265,7 @@ void uiItemDecoratorR(uiLayout *layout, KrakenPRIM *ptr, const char *propname, i
     }
   }
 
-  /* ptr and prop are allowed to be NULL here. */
+  /* ptr and prop are allowed to be nullptr here. */
   uiItemDecoratorR_prop(layout, ptr, prop, index);
 }
 
@@ -3284,8 +3283,8 @@ void uiItemPopoverPanel_ptr(uiLayout *layout,
     icon = ICON_BLANK1;
   }
 
-  const bool ok = (pt->poll == NULL) || pt->poll(C, pt);
-  if (ok && (pt->draw_header != NULL)) {
+  const bool ok = (pt->poll == nullptr) || pt->poll(C, pt);
+  if (ok && (pt->draw_header != nullptr)) {
     layout = uiLayoutRow(layout, true);
     Panel panel = {
       .type = pt,
@@ -3295,7 +3294,7 @@ void uiItemPopoverPanel_ptr(uiLayout *layout,
     pt->draw_header(C, &panel);
   }
   uiBut *but =
-    ui_item_menu(layout, name, icon, ui_item_paneltype_func, pt, NULL, pt->description, true);
+    ui_item_menu(layout, name, icon, ui_item_paneltype_func, pt, nullptr, pt->description, true);
   but->type = UI_BTYPE_POPOVER;
   if (!ok) {
     but->flag |= UI_BUT_DISABLED;
@@ -3309,7 +3308,7 @@ void uiItemPopoverPanel(uiLayout *layout,
                         int icon)
 {
   PanelType *pt = WM_paneltype_find(panel_type, true);
-  if (pt == NULL) {
+  if (pt == nullptr) {
     TF_WARN("Panel type not found '%s'", panel_type);
     return;
   }
@@ -3324,12 +3323,12 @@ void uiItemPopoverPanelFromGroup(uiLayout *layout,
                                  const char *category)
 {
   SpaceType *st = KKE_spacetype_from_id(space_id);
-  if (st == NULL) {
+  if (st == nullptr) {
     TF_WARN("space type not found %d", space_id);
     return;
   }
   ARegionType *art = KKE_regiontype_from_id(st, region_id);
-  if (art == NULL) {
+  if (art == nullptr) {
     TF_WARN("region type not found %d", region_id);
     return;
   }
@@ -3340,8 +3339,8 @@ void uiItemPopoverPanelFromGroup(uiLayout *layout,
     if (pt->parent_id[0] == '\0') {
       if (/* (*context == '\0') || */ STREQ(pt->context, context)) {
         if ((*category == '\0') || STREQ(pt->category, category)) {
-          if (pt->poll == NULL || pt->poll(C, pt)) {
-            uiItemPopoverPanel_ptr(layout, C, pt, NULL, ICON_NONE);
+          if (pt->poll == nullptr || pt->poll(C, pt)) {
+            uiItemPopoverPanel_ptr(layout, C, pt, nullptr, ICON_NONE);
           }
         }
       }
@@ -3376,17 +3375,17 @@ static uiBut *uiItemL_(uiLayout *layout, const char *name, int icon)
                            0,
                            w,
                            UI_UNIT_Y,
-                           NULL,
+                           nullptr,
                            0.0,
                            0.0,
                            0,
                            0,
-                           NULL);
+                           nullptr);
   } else if (icon) {
     but =
-      uiDefIconBut(block, UI_BTYPE_LABEL, 0, icon, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, NULL);
+      uiDefIconBut(block, UI_BTYPE_LABEL, 0, icon, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, nullptr);
   } else {
-    but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, NULL);
+    but = uiDefBut(block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, nullptr, 0.0, 0.0, 0, 0, nullptr);
   }
 
   /* to compensate for string size padding in ui_text_icon_width,
@@ -3434,7 +3433,7 @@ void uiItemL(uiLayout *layout, const char *name, int icon)
 
 uiPropertySplitWrapper uiItemPropertySplitWrapperCreate(uiLayout *parent_layout)
 {
-  uiPropertySplitWrapper split_wrapper = {NULL};
+  uiPropertySplitWrapper split_wrapper = {nullptr};
 
   uiLayout *layout_row = uiLayoutRow(parent_layout, true);
   uiLayout *layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
@@ -3484,7 +3483,7 @@ void uiItemV(uiLayout *layout, const char *name, int icon, int argval)
 {
   /* label */
   uiBlock *block = layout->root->block;
-  int *retvalue = (block->handle) ? &block->handle->retvalue : NULL;
+  int *retvalue = (block->handle) ? &block->handle->retvalue : nullptr;
 
   UI_block_layout_set_current(block, layout);
 
@@ -3565,7 +3564,7 @@ void uiItemS_ex(uiLayout *layout, float factor)
            0,
            space,
            space,
-           NULL,
+           nullptr,
            0.0,
            0.0,
            0,
@@ -3602,7 +3601,7 @@ void uiItemSpacer(uiLayout *layout)
            0,
            0.3f * UI_UNIT_X,
            UI_UNIT_Y,
-           NULL,
+           nullptr,
            0.0,
            0.0,
            0,
@@ -3616,7 +3615,7 @@ void uiItemMenuF(uiLayout *layout, const char *name, int icon, uiMenuCreateFunc 
     return;
   }
 
-  ui_item_menu(layout, name, icon, func, arg, NULL, "", false);
+  ui_item_menu(layout, name, icon, func, arg, nullptr, "", false);
 }
 
 void uiItemMenuFN(uiLayout *layout, const char *name, int icon, uiMenuCreateFunc func, void *argN)
@@ -3664,10 +3663,10 @@ void uiItemMenuEnumFullO_ptr(uiLayout *layout,
                              KrakenPRIM *r_opptr)
 {
   /* Caller must check */
-  KLI_assert(ot->prim != NULL);
+  KLI_assert(ot->prim != nullptr);
 
-  if (name == NULL) {
-    name = WM_operatortype_name(ot, NULL);
+  if (name == nullptr) {
+    name = WM_operatortype_name(ot, nullptr);
   }
 
   if (layout->root->type == UI_LAYOUT_MENU && !icon) {
@@ -3679,13 +3678,13 @@ void uiItemMenuEnumFullO_ptr(uiLayout *layout,
   KLI_strncpy(lvl->propname, propname, sizeof(lvl->propname));
   lvl->opcontext = layout->root->opcontext;
 
-  uiBut *but = ui_item_menu(layout, name, icon, menu_item_enum_opname_menu, NULL, lvl, NULL, true);
+  uiBut *but = ui_item_menu(layout, name, icon, menu_item_enum_opname_menu, nullptr, lvl, nullptr, true);
   /* Use the menu button as owner for the operator properties, which will then be passed to the
    * individual menu items. */
   if (r_opptr) {
     but->opptr = (KrakenPRIM *)MEM_callocN(sizeof(KrakenPRIM), "uiButOpPtr");
     WM_operator_properties_create_ptr(but->opptr, ot);
-    KLI_assert(but->opptr->data == NULL);
+    KLI_assert(but->opptr->data == nullptr);
     // WM_operator_properties_alloc(&but->opptr, (IDProperty **)&but->opptr->data, ot->idname);
     *r_opptr = *but->opptr;
   }
@@ -3696,7 +3695,7 @@ void uiItemMenuEnumFullO_ptr(uiLayout *layout,
     if (WM_key_event_operator_string(C,
                                      ot->idname,
                                      layout->root->opcontext,
-                                     NULL,
+                                     nullptr,
                                      false,
                                      keybuf,
                                      sizeof(keybuf))) {
@@ -3733,7 +3732,7 @@ void uiItemMenuEnumO(uiLayout *layout,
                      const char *name,
                      int icon)
 {
-  uiItemMenuEnumFullO(layout, C, opname, propname, name, icon, NULL);
+  uiItemMenuEnumFullO(layout, C, opname, propname, name, icon, nullptr);
 }
 
 static void menu_item_enum_luxo_menu(kContext *UNUSED(C), uiLayout *layout, void *arg)
@@ -3767,7 +3766,7 @@ void uiItemMenuEnumR_prop(uiLayout *layout,
                name,
                icon,
                menu_item_enum_luxo_menu,
-               NULL,
+               nullptr,
                lvl,
                prop->GetDocumentation().c_str(),
                false);
@@ -3807,7 +3806,7 @@ void uiItemTabsEnumR_prop(uiLayout *layout,
                            prop,
                            ptr_highlight,
                            prop_highlight,
-                           NULL,
+                           nullptr,
                            UI_UNIT_Y,
                            icon_only);
 }
@@ -3852,7 +3851,7 @@ static int ui_litem_min_width(int itemw)
 
 static void ui_litem_layout_row(uiLayout *litem)
 {
-  uiItem *last_free_item = NULL;
+  uiItem *last_free_item = nullptr;
   int x, neww, newtotw, itemw, minw, itemh, offset;
   int freew, fixedx, freex, flag = 0, lastw = 0;
   float extra_pixel;
@@ -4425,21 +4424,21 @@ static void ui_litem_grid_flow_compute(std::vector<uiButtonItem *> items,
   float global_avg_w = 0.0f, global_totweight_w = 0.0f;
   int global_max_h = 0;
 
-  float *avg_w = NULL, *totweight_w = NULL;
-  int *max_h = NULL;
+  float *avg_w = nullptr, *totweight_w = nullptr;
+  int *max_h = nullptr;
 
   KLI_assert(
     parameters->tot_columns != 0 ||
-    (results->cos_x_array == NULL && results->widths_array == NULL && results->tot_w == NULL));
+    (results->cos_x_array == nullptr && results->widths_array == nullptr && results->tot_w == nullptr));
   KLI_assert(
     parameters->tot_rows != 0 ||
-    (results->cos_y_array == NULL && results->heights_array == NULL && results->tot_h == NULL));
+    (results->cos_y_array == nullptr && results->heights_array == nullptr && results->tot_h == nullptr));
 
   if (results->tot_items) {
     *results->tot_items = 0;
   }
 
-  if (items.front() == NULL) {
+  if (items.front() == nullptr) {
     if (results->global_avg_w) {
       *results->global_avg_w = 0.0f;
     }
@@ -4509,7 +4508,7 @@ static void ui_litem_grid_flow_compute(std::vector<uiButtonItem *> items,
   }
 
   /* Compute positions and sizes of all cells. */
-  if (results->cos_x_array != NULL && results->widths_array != NULL) {
+  if (results->cos_x_array != nullptr && results->widths_array != nullptr) {
     /* We enlarge/narrow columns evenly to match available width. */
     const float wfac = (float)(parameters->litem_w -
                                (parameters->tot_columns - 1) * parameters->space_x) /
@@ -4534,7 +4533,7 @@ static void ui_litem_grid_flow_compute(std::vector<uiButtonItem *> items,
       }
     }
   }
-  if (results->cos_y_array != NULL && results->heights_array != NULL) {
+  if (results->cos_y_array != nullptr && results->heights_array != nullptr) {
     for (int row = 0; row < parameters->tot_rows; row++) {
       if (parameters->even_rows) {
         results->heights_array[row] = global_max_h;
@@ -4871,7 +4870,7 @@ static void ui_litem_layout_split(uiLayout *litem)
 
   for (auto &item : litem->items) {
     int itemh;
-    ui_item_size(&item->item, NULL, &itemh);
+    ui_item_size(&item->item, nullptr, &itemh);
 
     ui_item_position(&item->item, x, y - itemh, colw, itemh);
     x += colw;
@@ -5049,7 +5048,7 @@ static uiLayoutItemBx *ui_layout_box(uiLayout *layout, int type)
 
   UI_block_layout_set_current(layout->root->block, &box->litem);
 
-  box->roundbox = uiDefBut(layout->root->block, type, 0, "", 0, 0, 0, 0, NULL, 0.0, 0.0, 0, 0, "");
+  box->roundbox = uiDefBut(layout->root->block, type, 0, "", 0, 0, 0, 0, nullptr, 0.0, 0.0, 0, 0, "");
 
   return box;
 }
@@ -5323,7 +5322,7 @@ eUIEmbossType uiLayoutGetEmboss(uiLayout *layout)
 
 static bool block_search_panel_label_matches(const uiBlock *block, const char *search_string)
 {
-  if ((block->panel != NULL) && (block->panel->type != NULL)) {
+  if ((block->panel != nullptr) && (block->panel->type != nullptr)) {
     if (KLI_strcasestr(block->panel->type->label, search_string)) {
       return true;
     }
@@ -5341,13 +5340,13 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
     return true;
   }
 
-  if (but->optype != NULL) {
+  if (but->optype != nullptr) {
     if (KLI_strcasestr(but->optype->name, search_filter)) {
       return true;
     }
   }
 
-  if (but->stageprop != NULL) {
+  if (but->stageprop != nullptr) {
     if (KLI_strcasestr(but->stageprop->GetDisplayName().c_str(), search_filter)) {
       return true;
     }
@@ -5365,17 +5364,17 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
       // KrakenPROP *enum_prop = but->stageprop;
 
       int items_len;
-      const EnumPROP *items_array = NULL;
+      const EnumPROP *items_array = nullptr;
       bool free;
-      // LUXO_prop_enum_items_gettexted(NULL, ptr, enum_prop, &items_array, &items_len, &free);
+      // LUXO_prop_enum_items_gettexted(nullptr, ptr, enum_prop, &items_array, &items_len, &free);
 
-      if (items_array == NULL) {
+      if (items_array == nullptr) {
         return false;
       }
 
       for (int i = 0; i < items_len; i++) {
-        /* Check for NULL name field which enums use for separators. */
-        if (items_array[i].name == NULL) {
+        /* Check for nullptr name field which enums use for separators. */
+        if (items_array[i].name == nullptr) {
           continue;
         }
         if (KLI_strcasestr(items_array[i].name, search_filter)) {
@@ -5394,9 +5393,9 @@ static bool button_matches_search_filter(uiBut *but, const char *search_filter)
 /**
  * Test for a search result within a specific button group.
  */
-static bool button_group_has_search_match(uiButtonGroup *button_group, const char *search_filter)
+static bool button_group_has_search_match(const uiButtonGroup &group, const char *search_filter)
 {
-  for (auto &but : button_group->buttons) {
+  for (uiBut *but : group.buttons) {
     if (button_matches_search_filter(but, search_filter)) {
       return true;
     }
@@ -5417,11 +5416,12 @@ static bool button_group_has_search_match(uiButtonGroup *button_group, const cha
 static bool block_search_filter_tag_buttons(uiBlock *block, const char *search_filter)
 {
   bool has_result = false;
-  for (auto &button_group : block->button_groups) {
-    if (button_group_has_search_match(button_group, search_filter)) {
+  for (const uiButtonGroup &group : block->button_groups) {
+    if (button_group_has_search_match(group, search_filter)) {
       has_result = true;
-    } else {
-      for (auto &but : button_group->buttons) {
+    }
+    else {
+      for (uiBut *but : group.buttons) {
         but->flag |= UI_SEARCH_FILTER_NO_MATCH;
       }
     }
@@ -5431,15 +5431,15 @@ static bool block_search_filter_tag_buttons(uiBlock *block, const char *search_f
 
 bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter)
 {
-  if (search_filter == NULL || search_filter[0] == '\0') {
+  if (search_filter == nullptr || search_filter[0] == '\0') {
     return false;
   }
 
   Panel *panel = block->panel;
 
-  if (panel != NULL && panel->type->flag & PANEL_TYPE_NO_SEARCH) {
+  if (panel != nullptr && panel->type->flag & PANEL_TYPE_NO_SEARCH) {
     /* Panels for active blocks should always have a type, otherwise they wouldn't be created. */
-    KLI_assert(block->panel->type != NULL);
+    KLI_assert(block->panel->type != nullptr);
     if (panel->type->flag & PANEL_TYPE_NO_SEARCH) {
       return false;
     }
@@ -5451,7 +5451,7 @@ bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter)
                             true :
                             block_search_filter_tag_buttons(block, search_filter);
 
-  if (panel != NULL) {
+  if (panel != nullptr) {
     if (has_result) {
       ui_panel_tag_search_filter_match(block->panel);
     }
@@ -5681,7 +5681,7 @@ static void ui_layout_free(uiLayout *layout)
 {
   for (auto &item : layout->items) {
     if (item->item.type == ITEM_BUTTON) {
-      item->but->layout = NULL;
+      item->but->layout = nullptr;
       MEM_freeN(item);
     } else {
       ui_layout_free(layout);
@@ -5707,7 +5707,7 @@ static void ui_layout_add_padding_button(uiLayoutRoot *root)
              0,
              root->padding,
              root->padding,
-             NULL,
+             nullptr,
              0.0,
              0.0,
              0,
@@ -5746,7 +5746,7 @@ uiLayout *UI_block_layout(uiBlock *block,
   layout->space = style->templatespace;
   layout->active = true;
   layout->enabled = true;
-  layout->context = NULL;
+  layout->context = nullptr;
   layout->emboss = UI_EMBOSS_UNDEFINED;
 
   if (ELEM(type, UI_LAYOUT_MENU, UI_LAYOUT_PIEMENU)) {
@@ -5763,7 +5763,7 @@ uiLayout *UI_block_layout(uiBlock *block,
 
   block->curlayout = layout;
   root->layout = layout;
-  block->layouts.push_back(root->layout);
+  KLI_addtail(&block->layouts, root);
 
   ui_layout_add_padding_button(root);
 
@@ -5837,7 +5837,7 @@ static uiButtonItem *ui_layout_find_button_item(const uiLayout *layout, const ui
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void ui_layout_remove_but(uiLayout *layout, const uiBut *but)
@@ -5889,8 +5889,8 @@ void uiLayoutSetFunc(uiLayout *layout, uiMenuHandleFunc handlefunc, void *argv)
 
 void UI_block_layout_free(uiBlock *block)
 {
-  for (auto &root : block->layouts) {
-    ui_layout_free(root);
+  LISTBASE_FOREACH_MUTABLE (uiLayoutRoot *, root, &block->layouts) {
+    ui_layout_free(root->layout);
     MEM_freeN(root);
   }
 }
@@ -5906,18 +5906,18 @@ void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y)
     *r_y = 0;
   }
 
-  block->curlayout = NULL;
+  block->curlayout = nullptr;
 
-  for (auto &layout : block->layouts) {
-    ui_layout_add_padding_button(layout->root);
+  LISTBASE_FOREACH_MUTABLE (uiLayoutRoot *, root, &block->layouts) {
+    ui_layout_add_padding_button(root);
 
-    /* NULL in advance so we don't interfere when adding button */
-    ui_layout_end(block, layout->root->layout, r_x, r_y);
-    ui_layout_free(layout->root->layout);
-    MEM_freeN(layout->root);
+    /* nullptr in advance so we don't interfere when adding button */
+    ui_layout_end(block, root->layout, r_x, r_y);
+    ui_layout_free(root->layout);
+    MEM_freeN(root);
   }
 
-  block->layouts.clear();
+  KLI_listbase_clear(&block->layouts);
 
   /* XXX silly trick, interface_templates.c doesn't get linked
    * because it's not used by other files in this module? */
@@ -5928,7 +5928,7 @@ void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y)
 
 bool UI_block_layout_needs_resolving(const uiBlock *block)
 {
-  return !block->layouts.empty();
+  return !KLI_listbase_is_empty(&block->layouts);
 }
 
 void uiLayoutSetContextPointer(uiLayout *layout, const char *name, KrakenPRIM *ptr)
@@ -5959,7 +5959,7 @@ void uiLayoutSetTooltipFunc(uiLayout *layout,
   for (auto &item : layout->items) {
     /* Each button will call free_arg for "its" argument, so we need to
      * duplicate the allocation for each button after the first. */
-    if (copy_arg != NULL && arg_used) {
+    if (copy_arg != nullptr && arg_used) {
       arg = copy_arg(arg);
     }
     arg_used = true;
@@ -5986,30 +5986,30 @@ void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but)
     uiLayoutSetContextPointer(layout, "button_operator", but->opptr);
   }
 
-  if (but->stagepoin->data && but->stageprop) {
+  if (but->stagepoin.data && but->stageprop) {
     /* TODO: index could be supported as well */
     KrakenPRIM ptr_prop;
-    LUXO_pointer_create(NULL, &PRIM_KrakenPROP, but->stageprop, &ptr_prop);
+    LUXO_pointer_create(nullptr, &PRIM_KrakenPROP, but->stageprop, &ptr_prop);
     uiLayoutSetContextPointer(layout, "button_prop", &ptr_prop);
-    uiLayoutSetContextPointer(layout, "button_pointer", but->stagepoin);
+    uiLayoutSetContextPointer(layout, "button_pointer", &but->stagepoin);
   }
 }
 
 wmOperatorType *UI_but_operatortype_get_from_enum_menu(uiBut *but, KrakenPROP **r_prop)
 {
-  if (r_prop != NULL) {
-    *r_prop = NULL;
+  if (r_prop != nullptr) {
+    *r_prop = nullptr;
   }
 
   if (but->menu_create_func == menu_item_enum_opname_menu) {
     MenuItemLevel *lvl = (MenuItemLevel *)but->func_argN;
     wmOperatorType *ot = WM_operatortype_find(TfToken(lvl->opname));
-    if ((ot != NULL) && (r_prop != NULL)) {
+    if ((ot != nullptr) && (r_prop != nullptr)) {
       *r_prop = MEM_new<KrakenPROP>(__func__, ot->prim->GetAttribute(TfToken(lvl->propname)));
     }
     return ot;
   }
-  return NULL;
+  return nullptr;
 }
 
 MenuType *UI_but_menutype_get(uiBut *but)
@@ -6017,7 +6017,7 @@ MenuType *UI_but_menutype_get(uiBut *but)
   if (but->menu_create_func == ui_item_menutype_func) {
     return (MenuType *)but->poin;
   }
-  return NULL;
+  return nullptr;
 }
 
 PanelType *UI_but_paneltype_get(uiBut *but)
@@ -6025,7 +6025,7 @@ PanelType *UI_but_paneltype_get(uiBut *but)
   if (but->menu_create_func == ui_item_paneltype_func) {
     return (PanelType *)but->poin;
   }
-  return NULL;
+  return nullptr;
 }
 
 void UI_menutype_draw(kContext *C, MenuType *mt, struct uiLayout *layout)
@@ -6046,7 +6046,7 @@ void UI_menutype_draw(kContext *C, MenuType *mt, struct uiLayout *layout)
   mt->draw(C, &menu);
 
   if (layout->context) {
-    CTX_store_set(C, NULL);
+    CTX_store_set(C, nullptr);
   }
 }
 
@@ -6081,7 +6081,7 @@ static void ui_paneltype_draw_impl(kContext *C, PanelType *pt, uiLayout *layout,
     if (pt->draw_header) {
       panel->layout = row;
       pt->draw_header(C, panel);
-      panel->layout = NULL;
+      panel->layout = nullptr;
     }
 
     /* draw_header() is often used to add a checkbox to the header. If we add the label like below
@@ -6094,15 +6094,15 @@ static void ui_paneltype_draw_impl(kContext *C, PanelType *pt, uiLayout *layout,
 
   panel->layout = layout;
   pt->draw(C, panel);
-  panel->layout = NULL;
-  KLI_assert(panel->runtime.custom_data_ptr == NULL);
+  panel->layout = nullptr;
+  KLI_assert(panel->runtime.custom_data_ptr == nullptr);
 
   MEM_freeN(panel);
 
   /* Draw child panels. */
   LISTBASE_FOREACH(PanelType *, child_pt, &pt->children)
   {
-    if (child_pt->poll == NULL || child_pt->poll(C, child_pt)) {
+    if (child_pt->poll == nullptr || child_pt->poll(C, child_pt)) {
       /* Add space if something was added to the layout. */
       if (last_item != layout->items.back()) {
         uiItemS(layout);
@@ -6124,7 +6124,7 @@ void UI_paneltype_draw(kContext *C, PanelType *pt, uiLayout *layout)
   ui_paneltype_draw_impl(C, pt, layout, false);
 
   if (layout->context) {
-    CTX_store_set(C, NULL);
+    CTX_store_set(C, nullptr);
   }
 }
 
@@ -6151,7 +6151,7 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
 
   if (but->optype) {
     char *opstr = WM_operator_pystring_ex((kContext *)but->block->evil_C,
-                                          NULL,
+                                          nullptr,
                                           false,
                                           true,
                                           but->optype,
@@ -6161,11 +6161,11 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
   }
 
   {
-    KrakenPROP *prop = NULL;
+    KrakenPROP *prop = nullptr;
     wmOperatorType *ot = UI_but_operatortype_get_from_enum_menu(but, &prop);
     if (ot) {
       char *opstr =
-        WM_operator_pystring_ex((kContext *)but->block->evil_C, NULL, false, true, ot, NULL);
+        WM_operator_pystring_ex((kContext *)but->block->evil_C, nullptr, false, true, ot, nullptr);
       KLI_dynstr_appendf(ds, "'operator':'''%s''', ", opstr ? opstr : "");
       KLI_dynstr_appendf(ds,
                          "'property':'''%s''', ",
@@ -6177,8 +6177,8 @@ static void ui_layout_introspect_button(DynStr *ds, uiButtonItem *bitem)
   if (but->stageprop) {
     KLI_dynstr_appendf(ds,
                        "'prim':'%s.%s[%d]', ",
-                       LUXO_prim_identifier(but->stagepoin->type).GetText(),
-                       LUXO_prop_identifier(but->stageprop).GetText(),
+                       LUXO_prim_identifier(but->stagepoin.type).data(),
+                       LUXO_prop_identifier(but->stageprop).data(),
                        but->rnaindex);
   }
 }
@@ -6246,8 +6246,8 @@ const char *UI_layout_introspect(uiLayout *layout)
 {
   DynStr *ds = KLI_dynstr_new();
   uiLayout layout_copy = *layout;
-  layout_copy.item.next = NULL;
-  layout_copy.item.prev = NULL;
+  layout_copy.item.next = nullptr;
+  layout_copy.item.prev = nullptr;
   std::vector<uiLayout *> layout_dummy_list;
   layout_dummy_list.push_back(&layout_copy);
   layout_dummy_list.push_back(&layout_copy);

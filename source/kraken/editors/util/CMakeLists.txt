@@ -30,7 +30,6 @@ set(SRC
   ../include/ED_defines.h
   ../include/ED_fileselect.h
   ../include/ED_object.h
-  #../include/ED_resources.h
   ../include/ED_screen.h
   ../include/ED_space_api.h
   ../include/ED_tokens.h
@@ -41,6 +40,7 @@ set(SRC
   ../include/UI_icons.h
   ../include/UI_interface_icons.h
   ../include/UI_interface.h
+  ../include/UI_interface.hh
   ../include/UI_resources.h
   ../include/UI_tokens.h
   ../include/UI_view2d.h

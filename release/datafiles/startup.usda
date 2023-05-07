@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    "File last modified: Sunday, October 23, 2022 11:09:41 AM"
+    "File last modified: Sunday, May 07, 2023 02:14:19 PM"
     colorConfiguration = @/Users/furby/Library/Application Support/Kraken/1.50/datafiles/colormanagement/config.ocio@
     colorManagementSystem = "openColorIO"
     doc = "Kraken v1.50"
@@ -15,12 +15,27 @@ def "WabiAnimationStudios" (
 
     def "Structs"
     {
+        def "Context" (
+            doc = "Current windowmanager and data context"
+        )
+        {
+            custom uniform token ui:name = "Context"
+            custom token usd_data = "" (
+                displayName = "USD Data"
+                doc = "Currently loaded USD stage data"
+            )
+        }
+
         def "WindowManager"
         {
             def "Operator" (
                 doc = "Storage of an operator being executed, or registered after execution"
             )
             {
+                custom string name = "" (
+                    displayName = "Name"
+                    doc = "The name of this operator, used in the UI"
+                )
                 custom uniform token ui:name = "Operator"
             }
         }

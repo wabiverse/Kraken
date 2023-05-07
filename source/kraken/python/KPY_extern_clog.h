@@ -28,5 +28,5 @@
 
 /* kpy_interface.cpp */
 
-extern struct CLG_LogRef *KPY_LOG_PRIM;
+extern struct CLG_LogRef *KPY_LOG_USD;
 extern struct CLG_LogRef *KPY_LOG_CONTEXT;

@@ -42,6 +42,12 @@ typedef struct IconFile {
   int index;
 } IconFile;
 
+typedef struct IconTextOverlay {
+  char text[5];
+} IconTextOverlay;
+
+#define UI_NO_ICON_OVERLAY_TEXT NULL
+
 #define ICON_DEFAULT_HEIGHT 16
 #define ICON_DEFAULT_WIDTH 16
 

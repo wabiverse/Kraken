@@ -30,6 +30,8 @@
 
 #include "KKE_context.h"
 
+#include "LUXO_types.h"
+
 #include "KPY_api.h"
 
 /* --- kpy build options --- */
@@ -48,7 +50,7 @@
 #  define USE_PYUSD_INVALIDATE_WEAKREF
 
 /* support for inter references, currently only needed for corner case */
-#  define USE_PYUSD_OBJECT_REFERENCE
+#  define USE_PYUSD_PRIM_REFERENCE
 
 #else /* WITH_PYTHON_SAFETY */
 
@@ -64,42 +66,42 @@ struct ID;
 extern "C" {
 #endif
 
-extern PyTypeObject pyprim_prim_meta_idprop_Type;
-extern PyTypeObject pyprim_prim_Type;
-extern PyTypeObject pyprim_prop_Type;
-// extern PyTypeObject pyprim_prop_array_Type;
-extern PyTypeObject pyprim_prop_collection_Type;
-extern PyTypeObject pyprim_func_Type;
+extern PyTypeObject pyusd_prim_meta_idprop_Type;
+extern PyTypeObject pyusd_prim_Type;
+extern PyTypeObject pyusd_prop_Type;
+extern PyTypeObject pyusd_prop_array_Type;
+extern PyTypeObject pyusd_prop_collection_Type;
+extern PyTypeObject pyusd_func_Type;
 
-#define KPy_StagePRIM_Check(v) (PyObject_TypeCheck(v, &pyprim_prim_Type))
-#define KPy_StagePRIM_CheckExact(v) (Py_TYPE(v) == &pyprim_prim_Type)
-#define KPy_StagePROP_Check(v) (PyObject_TypeCheck(v, &pyprim_prop_Type))
-#define KPy_StagePROP_CheckExact(v) (Py_TYPE(v) == &pyprim_prop_Type)
+#define KPy_USDPRIM_Check(v) (PyObject_TypeCheck(v, &pyusd_prim_Type))
+#define KPy_USDPRIM_CheckExact(v) (Py_TYPE(v) == &pyusd_prim_Type)
+#define KPy_USDPROP_Check(v) (PyObject_TypeCheck(v, &pyusd_prop_Type))
+#define KPy_USDPROP_CheckExact(v) (Py_TYPE(v) == &pyusd_prop_Type)
 
-#define PYSTAGE_PRIM_CHECK_OBJ(obj)                             \
-  if (ARCH_UNLIKELY(pyprim_prim_validity_check(obj) == -1)) { \
+#define PYUSD_PRIM_CHECK_OBJ(obj)                             \
+  if (ARCH_UNLIKELY(pyusd_prim_validity_check(obj) == -1)) { \
     return nullptr;                                             \
   }                                                             \
   (void)0
-#define PYSTAGE_PRIM_CHECK_INT(obj)                             \
-  if (ARCH_UNLIKELY(pyprim_prim_validity_check(obj) == -1)) { \
+#define PYUSD_PRIM_CHECK_INT(obj)                             \
+  if (ARCH_UNLIKELY(pyusd_prim_validity_check(obj) == -1)) { \
     return -1;                                                  \
   }                                                             \
   (void)0
 
-#define PYSTAGE_PROP_CHECK_OBJ(obj)                           \
-  if (ARCH_UNLIKELY(pyprim_prop_validity_check(obj) == -1)) { \
+#define PYUSD_PROP_CHECK_OBJ(obj)                           \
+  if (ARCH_UNLIKELY(pyusd_prop_validity_check(obj) == -1)) { \
     return nullptr;                                           \
   }                                                           \
   (void)0
-#define PYSTAGE_PROP_CHECK_INT(obj)                           \
-  if (ARCH_UNLIKELY(pyprim_prop_validity_check(obj) == -1)) { \
+#define PYUSD_PROP_CHECK_INT(obj)                           \
+  if (ARCH_UNLIKELY(pyusd_prop_validity_check(obj) == -1)) { \
     return -1;                                                \
   }                                                           \
   (void)0
 
-#define PYSTAGE_PRIM_IS_VALID(pysprim) (LIKELY(((KPy_StagePRIM *)(pysprim))->ptr.type != nullptr))
-#define PYSTAGE_PROP_IS_VALID(pysprim) (LIKELY(((KPy_StagePROP *)(pysprim))->ptr.type != nullptr))
+#define PYUSD_PRIM_IS_VALID(pysprim) (LIKELY(((KPy_USDPRIM *)(pysprim))->ptr.type != nullptr))
+#define PYUSD_PROP_IS_VALID(pysprim) (LIKELY(((KPy_USDPROP *)(pysprim))->ptr.type != nullptr))
 
 typedef struct
 {
@@ -108,7 +110,7 @@ typedef struct
     PyObject *in_weakreflist;
 #endif
   KrakenPRIM ptr;
-} KPy_DummyStagePRIM;
+} KPy_DummyUSDPRIM;
 
 typedef struct
 {
@@ -117,18 +119,18 @@ typedef struct
     PyObject *in_weakreflist;
 #endif
   KrakenPRIM ptr;
-#ifdef USE_PYUSD_OBJECT_REFERENCE
+#ifdef USE_PYUSD_PRIM_REFERENCE
   /**
    * generic PyObject we hold a reference to, example use:
    * hold onto the collection iterator to prevent it from
    * freeing allocated data we may use */
   PyObject *reference;
-#endif /* !USE_PYUSD_OBJECT_REFERENCE */
+#endif /* !USE_PYUSD_PRIM_REFERENCE */
 
 #ifdef PYUSD_FREE_SUPPORT
   bool freeptr; /* needed in some cases if ptr.data is created on the fly, free when deallocing */
 #endif          /* PYUSD_FREE_SUPPORT */
-} KPy_StagePRIM;
+} KPy_USDPRIM;
 
 typedef struct
 {
@@ -138,7 +140,7 @@ typedef struct
 #endif
   KrakenPRIM ptr;
   KrakenPROP *prop;
-} KPy_StagePROP;
+} KPy_USDPROP;
 
 typedef struct
 {
@@ -154,7 +156,17 @@ typedef struct
   int arraydim;
   /** Array first item offset, e.g. if face.uv is [4][2], arrayoffset for face.uv[n] is 2n. */
   int arrayoffset;
-} KPy_StagePropARRAY;
+} KPy_USDPROPS;
+
+typedef struct {
+  PyObject_HEAD /* Required Python macro. */
+#ifdef USE_WEAKREFS
+  PyObject *in_weakreflist;
+#endif
+
+  /* collection iterator specific parts */
+  CollectionPropIT iter;
+} KPy_USDCollectionPropIT;
 
 typedef struct
 {
@@ -164,7 +176,7 @@ typedef struct
 #endif
   KrakenPRIM ptr;
   KrakenFUNC *func;
-} KPy_KrakenFUNC;
+} KPy_USDFUNC;
 
 KrakenPRIM *sprim_from_self(PyObject *self, const char *error_prefix);
 
@@ -173,16 +185,16 @@ PyObject *KPY_prim_types(void);
 PyObject *KPY_prim_module(void);
 void KPY_update_prim_module(void);
 
-KrakenPRIM *pyprim_prim_as_sprim(PyObject *self, const bool parent, const char *error_prefix);
-PyObject *pyprim_prim_CreatePyObject(KrakenPRIM *ptr);
+KrakenPRIM *pyusd_prim_as_sprim(PyObject *self, const bool parent, const char *error_prefix);
+PyObject *pyusd_prim_CreatePyObject(KrakenPRIM *ptr);
 void pyprim_alloc_types(void);
 
 void pyprim_subtype_set_prim(PyObject *newclass, KrakenPRIM *sprim);
 
 int pyprim_deferred_register_class(KrakenPRIM *sprim, PyTypeObject *py_class);
 
-void pyprim_invalidate(KPy_DummyStagePRIM *self);
-int pyprim_prop_validity_check(KPy_StagePROP *self);
+void pyprim_invalidate(KPy_DummyUSDPRIM *self);
+int pyusd_prop_validity_check(KPy_USDPROP *self);
 
 /* kpy.utils.(un)register_class */
 extern PyMethodDef meth_kpy_register_class;
@@ -192,7 +204,7 @@ extern PyMethodDef meth_kpy_unregister_class;
 extern PyMethodDef meth_kpy_owner_id_set;
 extern PyMethodDef meth_kpy_owner_id_get;
 
-extern KPy_StagePRIM *kpy_context_module;
+extern KPy_USDPRIM *kpy_context_module;
 
 #ifdef __cplusplus
 }

@@ -67,7 +67,7 @@
 
 CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_CONTEXT, "kpy.context");
 CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_INTERFACE, "kpy.interface");
-CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_PRIM, "kpy.prim");
+CLG_LOGREF_DECLARE_GLOBAL(KPY_LOG_USD, "kpy.prim");
 
 using namespace boost::python;
 
@@ -411,7 +411,7 @@ void KPY_DECREF_PRIM_INVALIDATE(void *pyob_ptr)
   const bool do_invalidate = (Py_REFCNT((PyObject *)pyob_ptr) > 1);
   Py_DECREF((PyObject *)pyob_ptr);
   if (do_invalidate) {
-    pyprim_invalidate((KPy_DummyStagePRIM *)pyob_ptr);
+    pyprim_invalidate((KPy_DummyUSDPRIM *)pyob_ptr);
   }
   PyGILState_Release(gilstate);
 }
@@ -497,8 +497,8 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
   } else if (item == Py_None) {
     done = true;
 
-  } else if (KPy_StagePRIM_Check(item)) {
-    ptr = &(((KPy_StagePRIM *)item)->ptr);
+  } else if (KPy_USDPRIM_Check(item)) {
+    ptr = &(((KPy_USDPRIM *)item)->ptr);
 
     // result->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
     CTX_data_pointer_set_ptr(result, ptr);
@@ -519,14 +519,14 @@ int KPY_context_member_get(kContext *C, const char *member, kContextDataResult *
       for (i = 0; i < len; i++) {
         PyObject *list_item = seq_fast_items[i];
 
-        if (KPy_StagePRIM_Check(list_item)) {
+        if (KPy_USDPRIM_Check(list_item)) {
 #if 0
           CollectionPrimLINK *link = MEM_callocN(sizeof(CollectionPrimLINK),
                                                     "kpy_context_get");
           link->ptr = ((KPy_KrakenSTAGE *)item)->ptr;
           KLI_addtail(&result->list, link);
 #endif
-          ptr = &(((KPy_StagePRIM *)list_item)->ptr);
+          ptr = &(((KPy_USDPRIM *)list_item)->ptr);
           CTX_data_list_add_ptr(result, ptr);
         } else {
           CLOG_INFO(KPY_LOG_CONTEXT,

@@ -255,4 +255,26 @@ void IDP_ui_data_free(struct IDProperty *prop);
  */
 struct IDPropertyUIData *IDP_ui_data_copy(const struct IDProperty *prop);
 
+
+/**
+ * @param st: The string to assign.
+ * @param maxncpy: The maximum size of the string (including the `\0` terminator).
+ */
+void IDP_AssignStringMaxSize(struct IDProperty *prop, const char *st, int maxncpy) ATTR_NONNULL();
+void IDP_AssignString(struct IDProperty *prop, const char *st) ATTR_NONNULL();
+
+
+/**
+ * Removes the property from the group and frees it.
+ */
+void IDP_FreeFromGroup(struct IDProperty *group, struct IDProperty *prop) ATTR_NONNULL();
+
+/**
+ * @note this does not free the property!
+ *
+ * To free the property, you have to do:
+ * #IDP_FreeProperty(prop);
+ */
+void IDP_RemoveFromGroup(IDProperty *group, IDProperty *prop);
+
 #endif /* __KKE_IDPROP_H__ */

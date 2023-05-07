@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 
+#define UI_SCALE_FAC ((void)0, U.scale_factor)
+
 /**
  * #UserDef.dupflag
  *

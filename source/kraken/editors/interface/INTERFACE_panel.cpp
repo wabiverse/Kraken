@@ -787,7 +787,7 @@ void UI_panel_header_buttons_begin(Panel *panel)
 {
   uiBlock *block = panel->runtime.block;
 
-  // ui_block_new_button_group(block, UI_BUTTON_GROUP_LOCK | UI_BUTTON_GROUP_PANEL_HEADER);
+  UI_block_new_button_group(block, UI_BUTTON_GROUP_LOCK | UI_BUTTON_GROUP_PANEL_HEADER);
 }
 
 void UI_panel_header_buttons_end(Panel *panel)
@@ -795,22 +795,21 @@ void UI_panel_header_buttons_end(Panel *panel)
   uiBlock *block = panel->runtime.block;
 
   /* A button group should always be created in #UI_panel_header_buttons_begin. */
-  KLI_assert(!block->button_groups.empty());
+  KLI_assert(!block->button_groups.is_empty());
 
-  uiButtonGroup *button_group = static_cast<uiButtonGroup *>(block->button_groups.back());
-
-  button_group->flag &= ~UI_BUTTON_GROUP_LOCK;
+  uiButtonGroup &button_group = block->button_groups.last();
+  button_group.flag &= ~UI_BUTTON_GROUP_LOCK;
 
   /* Repurpose the first header button group if it is empty, in case the first button added to
    * the panel doesn't add a new group (if the button is created directly rather than through an
    * interface layout call). */
-  if (((int)block->button_groups.size() == 1) && (button_group->buttons.empty())) {
-    button_group->flag &= ~UI_BUTTON_GROUP_PANEL_HEADER;
+  if (block->button_groups.size() > 0) {
+    button_group.flag &= ~UI_BUTTON_GROUP_PANEL_HEADER;
   } else {
     /* Always add a new button group. Although this may result in many empty groups, without it,
      * new buttons in the panel body not protected with a #ui_block_new_button_group call would
      * end up in the panel header group. */
-    // ui_block_new_button_group(block, (uiButtonGroupFlag)0);
+    UI_block_new_button_group(block, (uiButtonGroupFlag)0);
   }
 }
 
@@ -890,7 +889,7 @@ static void ui_offset_panel_block(uiBlock *block)
 
   const int ofsy = block->panel->sizey - style->panelspace;
 
-  for (auto &but : block->buttons) {
+  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
     but->rect.ymin += ofsy;
     but->rect.ymax += ofsy;
   }
@@ -974,18 +973,18 @@ static void panel_remove_invisible_layouts_recursive(Panel *panel, const Panel *
   if (parent_panel != nullptr && UI_panel_is_closed(parent_panel)) {
     /* The parent panel is closed, so this panel can be completely removed. */
     UI_block_set_search_only(block, true);
-    for (auto &but : block->buttons) {
+    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
       but->flag |= UI_HIDDEN;
     }
   } else if (UI_panel_is_closed(panel)) {
     /* If sub-panels have no search results but the parent panel does, then the parent panel open
      * and the sub-panels will close. In that case there must be a way to hide the buttons in the
      * panel but keep the header buttons. */
-    for (auto &button_group : block->button_groups) {
-      if (button_group->flag & UI_BUTTON_GROUP_PANEL_HEADER) {
+    for (const uiButtonGroup &button_group : block->button_groups) {
+      if (button_group.flag & UI_BUTTON_GROUP_PANEL_HEADER) {
         continue;
       }
-      for (auto &but : button_group->buttons) {
+      for (uiBut *but : button_group.buttons) {
         but->flag |= UI_HIDDEN;
       }
     }
