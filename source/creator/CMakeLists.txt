@@ -144,20 +144,27 @@ endif()
 
 if(APPLE)
   set(KRAKEN_MACOS_DOCC_DIR kraken.docc)
+  set(SRC
+    creator_args.cpp
+    Creator.swift
+    ${KRAKEN_MACOS_DOCC_DIR}
+    creator.h
+  )
   set_property(SOURCE ${KRAKEN_MACOS_DOCC_DIR} PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
+else()
+  set(SRC
+    creator.cpp
+    creator_args.cpp
+    ${KRAKEN_FRAMEWORK}
+    ${WINDOWS_PACKAGE_SRC}
+
+    ${KRAKEN_FRAMEWORKROSOFT_SDK}
+    creator.h
+  )
 endif()
 
 # Setup the exe sources and buildinfo
-set(SRC
-  creator.cpp
-  creator_args.cpp
-  ${KRAKEN_MACOS_DOCC_DIR}
-  ${KRAKEN_FRAMEWORK}
-  ${WINDOWS_PACKAGE_SRC}
 
-  ${KRAKEN_FRAMEWORKROSOFT_SDK}
-  creator.h
-)
 
 # MSVC 2010 gives linking errors with the manifest
 if(WIN32 AND NOT UNIX)
@@ -321,6 +328,8 @@ else()
       list(APPEND ${SRC} rfile)
     endforeach()
     add_executable(kraken MACOSX_BUNDLE ${SRC})
+    target_compile_options(kraken PRIVATE
+      "-enable-experimental-cxx-interop")
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)

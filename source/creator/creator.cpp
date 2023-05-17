@@ -579,9 +579,11 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 
 #else /* ARCH_OS_WINDOWS */
 
+#ifndef __APPLE__
 int main(int argc, const char **argv)
 {
   return CREATOR_kraken_main(argc, argv);
 }
+#endif /* __APPLE__ */
 
 #endif /* ARCH_OS_LINUX || ARCH_OS_DARWIN */
