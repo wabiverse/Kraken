@@ -16,7 +16,7 @@
 
 
 import Foundation
-import Python
+import Pixar
 
 
 /* -------------------------------------------------------------------- */
@@ -50,25 +50,6 @@ struct Creator
    *   or exit immediately when running in background-mode. */
   static func main()
   {
-    pyInit()
-  }
-
-  /* -------------------------------------------------------------------- */
-  /* MARK: - Python Runtime Initialization */
-  /** 
-   * ### Python Initialize
-   *
-   * #### Initializes the embedded Python runtime. */
-  static func pyInit() -> Void
-  {
-    guard let pystd = Bundle.main.path(forResource: "1.50/python/lib/python3.10", ofType: nil)
-    else { return }
-
-    guard let dynload = Bundle.main.path(forResource: "1.50/python/lib/python3.10/lib-dynload", ofType: nil) 
-    else { return }
-
-    setenv("PYTHONHOME", pystd, 1)
-    setenv("PYTHONPATH", "\(pystd):\(dynload)", 1)
-    Py_Initialize()
+    
   }
 }

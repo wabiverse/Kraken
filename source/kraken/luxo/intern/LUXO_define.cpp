@@ -105,7 +105,7 @@ KrakenPRIM *PRIM_def_struct_ptr(const KrakenSTAGE &kstage,
      * top level Kraken prim hierarchy, which is already
      * set above, nothing to do.
      */
-    if (!identifier.GetString().contains("Struct")) {
+    if (identifier.GetString().find("Struct") == std::string::npos) {
       kprim = MEM_new<KrakenPRIM>(K_BEDROCK.AppendPath(path_ctx).GetText(),
                                   kstage->DefinePrim(K_BEDROCK.AppendPath(path_ctx)));
     }

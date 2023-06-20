@@ -46,7 +46,7 @@ open class AnchorWindowApple : NSObject
     let rect = NSRect(origin: CGPoint(x: left, y: bottom), size: CGSize(width: width, height: height))
     let minSize = NSSize(width: 320, height: 240)
 
-    var styleMask: NSWindowStyleMask = NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskTitled + NSWindowStyleMaskClosable + NSWindowStyleMaskResizable)
+    var styleMask: NSWindowStyleMask = NSWindowStyleMask.init(integerLiteral: NSWindow.StyleMask.titled + NSWindow.StyleMask.closable + NSWindow.StyleMask.resizable)
     if (!dialog) {
       styleMask += NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskMiniaturizable)
     }

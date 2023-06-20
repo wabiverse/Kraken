@@ -328,8 +328,23 @@ else()
       list(APPEND ${SRC} rfile)
     endforeach()
     add_executable(kraken MACOSX_BUNDLE ${SRC})
+    target_include_directories(kraken PUBLIC
+      ${TBB_INCLUDE_DIRS}
+      ${PYTHON_INCLUDE_DIRS}
+      ${Boost_INCLUDE_DIRS}
+      ${CMAKE_BINARY_DIR}/bin/include/wabi)
     target_compile_options(kraken PRIVATE
-      "-enable-experimental-cxx-interop")
+      "-Xcc" "-cxx-interoperability-mode=default"
+      "-Xcc" "-DWITH_PYTHON"
+      "-Xcc" "-DWITH_TBB"
+      "-Xcc" "-DWITH_BOOST"
+      "-Xcc" "-DWITH_FREETYPE"
+      "-Xcc" "-DBOOST_NO_CXX98_FUNCTION_BASE"
+      "-Xcc" "-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION"
+      "-static"
+      "-emit-dependencies"
+      "-emit-library"
+      "-emit-module")
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)

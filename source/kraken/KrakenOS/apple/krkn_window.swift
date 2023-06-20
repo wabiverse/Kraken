@@ -32,7 +32,7 @@ public func KRKNCreateWindow(title: String,
                              parent: KRKNWindow?) -> KRKNWindow
 {
   let frame = (NSScreen.main?.visibleFrame)!
-  let contentRect: NSRect = NSWindow.contentRect(forFrameRect: frame, styleMask: NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable)
+  let contentRect: NSRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
 
   var bottom = (contentRect.size.height - 1) - height - top
 
@@ -44,9 +44,9 @@ public func KRKNCreateWindow(title: String,
 
   let rect = NSRect(origin: CGPoint(x: leftAdjust, y: bottom), size: CGSize(width: width, height: height))
 
-  var styleMask: NSWindowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable
+  var styleMask: NSWindow.StyleMask = [.titled, .closable, .resizable]
   if (!dialog) {
-    styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable
+    styleMask = [.titled, .closable, .resizable, .miniaturizable]
   }
 
   return KRKNWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false, title: title)
@@ -62,7 +62,7 @@ open class KRKNMetalView : MTKView
     self.device = device
     self.wantsLayer = true
 
-    self.allowedTouchTypes = (NSTouchTypeMaskDirect | NSTouchTypeMaskIndirect)
+    self.allowedTouchTypes = Int(NSTouch.TouchTypeMask.direct.rawValue | NSTouch.TouchTypeMask.indirect.rawValue)
   }
 
   public required init(coder aDecoder: NSCoder) {
@@ -78,7 +78,7 @@ open class KRKNWindow : NSWindow
 
   @objc
   public init(contentRect: NSRect, 
-              styleMask: NSWindowStyleMask, 
+              styleMask: NSWindow.StyleMask, 
               backing: NSWindow.BackingStoreType, 
               defer flag: Bool,
               title: String)
@@ -107,7 +107,7 @@ open class KRKNWindow : NSWindow
       NSPasteboard.PasteboardType("NSPasteboardTypeTIFF")
     ])
 
-    self.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary
+    self.collectionBehavior = Int(NSWindow.CollectionBehavior.fullScreenPrimary.rawValue)
   }
 }
 

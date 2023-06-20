@@ -170,12 +170,17 @@ if (APPLE)
   set_property(SOURCE ${CMAKE_SOURCE_DIR}/source/creator/kraken.docc PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
   kraken_add_lib(AnchorSystem "${SRC_APPLE_BACKEND}" "${INC}" "${INC_SYS}" "${LIB}")
   target_compile_options(AnchorSystem PRIVATE
-    "-Xcc" "-DWITH_PYTHON=1"
+    "-Xcc" "-cxx-interoperability-mode=default"
+    "-Xcc" "-DWITH_PYTHON"
+    "-Xcc" "-DWITH_TBB"
+    "-Xcc" "-DWITH_BOOST"
+    "-Xcc" "-DWITH_FREETYPE"
+    "-Xcc" "-DBOOST_NO_CXX98_FUNCTION_BASE"
+    "-Xcc" "-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION"
     "-static"
     "-emit-dependencies"
     "-emit-library"
     "-emit-module"
-    "-enable-experimental-cxx-interop"
     "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
   add_dependencies(AnchorSystem kraken_anchor)
   target_link_libraries(AnchorSystem PRIVATE kraken_anchor)

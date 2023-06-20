@@ -515,6 +515,7 @@ list(APPEND BOOST_LIBRARIES
 
 # Disable superfluous Boost Warnings
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Find Eigen

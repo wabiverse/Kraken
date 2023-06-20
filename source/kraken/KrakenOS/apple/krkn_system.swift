@@ -57,7 +57,7 @@ open class KRKNSystem : NSObject
     let frame = (NSScreen.main?.visibleFrame)!
 
     // Returns max window contents (excluding title bar...)
-    let contentRect: NSRect = NSWindow.contentRect(forFrameRect: frame, styleMask: (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable))
+    let contentRect: NSRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
 
     return contentRect
   }
@@ -69,18 +69,20 @@ open class KRKNSystem : NSObject
     var anyProcessed = false
 
     repeat {
-      if let event: NSEvent = self.app.nextEvent(matchingMask: NSEventMaskAny, until: NSDate.distantPast, inMode: RunLoop.Mode.default, dequeue: true) {
+      if let event: NSEvent = self.app.nextEvent(matchingMask: .any, until: .distantPast, inMode: .default, dequeue: true) {
 
         anyProcessed = true
         receivedEvent = true
 
-        if (event.type == .keyDown && 
+        if (event.type == NSEvent.EventType.keyDown && 
             event.keyCode == kVK_Tab && 
-            event.modifierFlags == NSEventModifierFlagControl) {
+            event.modifierFlags == NSEvent.ModifierFlags.control.rawValue) {
           handleEvent(keyEvent: event)
         } else {
-          if (event.type == .keyUp &&
-              (event.modifierFlags == (NSEventModifierFlagCommand | NSEventModifierFlagOption))) {
+          if (event.type == NSEvent.EventType.keyUp &&
+              (event.modifierFlags == NSEvent.ModifierFlags.command.rawValue || 
+               event.modifierFlags == NSEvent.ModifierFlags.option.rawValue))
+          {
             handleEvent(keyEvent: event)
           }
 
@@ -101,7 +103,7 @@ open class KRKNSystem : NSObject
   {
     let event = keyEvent
 
-    var modifiers: NSEventModifierFlags?
+    var modifiers: NSEvent.ModifierFlags?
     var characters: String?
     var convertedCharacters: NSData?
     var charactersIgnoringModifiers: String?
@@ -146,10 +148,10 @@ open class KRKNSystem : NSObject
       //       utf8_buf[0] = '\0';
 
       //     /* no text with command key pressed */
-      //     if (m_modifierMask & NSEventModifierFlagCommand)
+      //     if (m_modifierMask & .command)
       //       utf8_buf[0] = '\0';
 
-      //     if ((keyCode == AnchorKeyQ) && (m_modifierMask & NSEventModifierFlagCommand))
+      //     if ((keyCode == AnchorKeyQ) && (m_modifierMask & .command))
       //       break;  // Cmd-Q is directly handled by Cocoa
 
       //     if ([event type] == NSEventTypeKeyDown) {
@@ -174,37 +176,37 @@ open class KRKNSystem : NSObject
       //   case NSEventTypeFlagsChanged:
       //     modifiers = [event modifierFlags];
 
-      //     if ((modifiers & NSEventModifierFlagShift) != (m_modifierMask & NSEventModifierFlagShift)) {
+      //     if ((modifiers & .shift) != (m_modifierMask & .shift)) {
       //       pushEvent(new AnchorEventKey([event timestamp] * 1000,
-      //                                   (modifiers & NSEventModifierFlagShift) ? AnchorEventTypeKeyDown :
+      //                                   (modifiers & .shift) ? AnchorEventTypeKeyDown :
       //                                                                             AnchorEventTypeKeyUp,
       //                                   window,
       //                                   AnchorKeyLeftShift,
       //                                   false));
       //     }
-      //     if ((modifiers & NSEventModifierFlagControl) !=
-      //         (m_modifierMask & NSEventModifierFlagControl)) {
+      //     if ((modifiers & .control) !=
+      //         (m_modifierMask & .control)) {
       //       pushEvent(new AnchorEventKey(
       //           [event timestamp] * 1000,
-      //           (modifiers & NSEventModifierFlagControl) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+      //           (modifiers & .control) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
       //           window,
       //           AnchorKeyLeftControl,
       //           false));
       //     }
-      //     if ((modifiers & NSEventModifierFlagOption) !=
-      //         (m_modifierMask & NSEventModifierFlagOption)) {
+      //     if ((modifiers & .option) !=
+      //         (m_modifierMask & .option)) {
       //       pushEvent(new AnchorEventKey(
       //           [event timestamp] * 1000,
-      //           (modifiers & NSEventModifierFlagOption) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+      //           (modifiers & .option) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
       //           window,
       //           AnchorKeyLeftAlt,
       //           false));
       //     }
-      //     if ((modifiers & NSEventModifierFlagCommand) !=
-      //         (m_modifierMask & NSEventModifierFlagCommand)) {
+      //     if ((modifiers & .command) !=
+      //         (m_modifierMask & .command)) {
       //       pushEvent(new AnchorEventKey(
       //           [event timestamp] * 1000,
-      //           (modifiers & NSEventModifierFlagCommand) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
+      //           (modifiers & .command) ? AnchorEventTypeKeyDown : AnchorEventTypeKeyUp,
       //           window,
       //           AnchorKeyOS,
       //           false));
@@ -232,22 +234,22 @@ class KRKNAppMenu: NSMenu
     let mainMenu = NSMenuItem()
     mainMenu.submenu = NSMenu(title: "Kraken")
     mainMenu.submenu?.items = [
-      NSMenuItem(title: "About Kraken", target: app, action: #selector(app.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "About Kraken", target: NSApplication.self, action: #selector(app.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Hide Kraken", target: app, action: #selector(app.hide(_:)), keyEquivalent: "h", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Hide Others", target: app, action: #selector(app.hideOtherApplications(_:)), keyEquivalent: "h", modifier: (NSEventModifierFlagOption | NSEventModifierFlagCommand)),
-      NSMenuItem(title: "Show All", target: app, action: #selector(app.unhideAllApplications(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "Hide Kraken", target: NSApplication.self, action: #selector(app.hide(_:)), keyEquivalent: "h", modifier: .command),
+      NSMenuItem(title: "Hide Others", target: NSApplication.self, action: #selector(app.hideOtherApplications(_:)), keyEquivalent: "h", modifier: [.option, .command]),
+      NSMenuItem(title: "Show All", target: NSApplication.self, action: #selector(app.unhideAllApplications(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Quit Kraken", target: app, action: #selector(app.terminate(_:)), keyEquivalent: "q", modifier: NSEventModifierFlagCommand)
+      NSMenuItem(title: "Quit Kraken", target: NSApplication.self, action: #selector(app.terminate(_:)), keyEquivalent: "q", modifier: .command)
     ]
 
     let windowMenu = NSMenuItem()
     windowMenu.submenu = NSMenu(title: "Window")
     windowMenu.submenu?.items = [
-      NSMenuItem(title: "Minimize", target: app, action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m", modifier: NSEventModifierFlagCommand),
-      NSMenuItem(title: "Zoom", target: app, action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
-      NSMenuItem(title: "Enter Full Screen", target: app, action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: (NSEventModifierFlagControl | NSEventModifierFlagCommand)),
-      NSMenuItem(title: "Close", target: app, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: NSEventModifierFlagCommand)
+      NSMenuItem(title: "Minimize", target: NSApplication.self, action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m", modifier: .command),
+      NSMenuItem(title: "Zoom", target: NSApplication.self, action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
+      NSMenuItem(title: "Enter Full Screen", target: NSApplication.self, action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: [.control, .command]),
+      NSMenuItem(title: "Close", target: NSApplication.self, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: .command)
     ]
 
     items = [mainMenu, windowMenu]
@@ -264,12 +266,12 @@ extension NSMenuItem
                    target: AnyObject = NSMenuItem.self, 
                    action selector: Selector?, 
                    keyEquivalent charCode: String, 
-                   modifier: NSEventModifierFlags = 0)
+                   modifier: NSEvent.ModifierFlags = .init(rawValue: 0))
   {
     self.init(title: string, action: selector, keyEquivalent: charCode)
 
-    if (modifier != 0) {
-      self.keyEquivalentModifierMask = modifier
+    if (modifier != .init(rawValue: 0)) {
+      self.keyEquivalentModifierMask = Int(modifier.rawValue)
     }
 
     self.target = target
@@ -317,7 +319,7 @@ class KRKNAppDelegate : NSObject, NSApplicationDelegate
       }
     }
     
-    if let windowNumbers = NSWindow.windowNumbers(withOptions: .init(0)) {
+    if let windowNumbers = NSWindow.windowNumbers(options: .init(rawValue: 0)) {
       for windowNumber in windowNumbers {
         if let currentWindow = NSApp.window(withWindowNumber: windowNumber.intValue) {
 
