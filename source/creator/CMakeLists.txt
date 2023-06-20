@@ -146,6 +146,7 @@ if(APPLE)
   set(KRAKEN_MACOS_DOCC_DIR kraken.docc)
   set(SRC
     creator_args.cpp
+    creator.cpp
     Creator.swift
     ${KRAKEN_MACOS_DOCC_DIR}
     creator.h

@@ -20,7 +20,7 @@ import AppKit
 import IOKit
 
 /* Kraken Anchor. */
-import Anchor
+//import Anchor
 
 open class AnchorWindowApple : NSObject
 {
@@ -28,7 +28,7 @@ open class AnchorWindowApple : NSObject
   var metalDevice: MTLDevice!
   var metalView: MTKView!
   var dialog: Bool = false
-  var state: eAnchorWindowState
+  var state: Int
   var windowDelegate: CocoaWindowDelegate
 
   public init(title: String, 
@@ -36,7 +36,7 @@ open class AnchorWindowApple : NSObject
               bottom: CGFloat, 
               width: CGFloat, 
               height: CGFloat, 
-              state: eAnchorWindowState, 
+              state: Int, 
               dialog: Bool,
               parent: AnchorWindowApple?)
   {
@@ -46,9 +46,9 @@ open class AnchorWindowApple : NSObject
     let rect = NSRect(origin: CGPoint(x: left, y: bottom), size: CGSize(width: width, height: height))
     let minSize = NSSize(width: 320, height: 240)
 
-    var styleMask: NSWindowStyleMask = NSWindowStyleMask.init(integerLiteral: NSWindow.StyleMask.titled + NSWindow.StyleMask.closable + NSWindow.StyleMask.resizable)
+    var styleMask: NSWindow.StyleMask = .init(rawValue: NSWindow.StyleMask.titled.rawValue + NSWindow.StyleMask.closable.rawValue + NSWindow.StyleMask.resizable.rawValue)
     if (!dialog) {
-      styleMask += NSWindowStyleMask.init(integerLiteral: NSWindowStyleMaskMiniaturizable)
+      styleMask = .init(rawValue: NSWindow.StyleMask.titled.rawValue + NSWindow.StyleMask.closable.rawValue + NSWindow.StyleMask.resizable.rawValue + NSWindow.StyleMask.miniaturizable.rawValue)
     }
 
     self.window = NSWindow(contentRect: rect, styleMask: styleMask, backing: .buffered, defer: false)
@@ -101,12 +101,12 @@ open class AnchorWindowApple : NSObject
     self.window.close()
   }
 
-  public func getCocoaState() -> eAnchorWindowState
+  public func getCocoaState() -> Int
   {
     return self.state
   }
 
-  public func setCocoaState(newState: eAnchorWindowState)
+  public func setCocoaState(newState: Int)
   {
     self.state = newState
   }
