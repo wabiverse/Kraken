@@ -334,7 +334,6 @@ else()
       ${Boost_INCLUDE_DIRS}
       ${CMAKE_BINARY_DIR}/bin/include/wabi)
     target_compile_options(kraken PRIVATE
-      "-Xcc" "-cxx-interoperability-mode=default"
       "-Xcc" "-DWITH_PYTHON"
       "-Xcc" "-DWITH_TBB"
       "-Xcc" "-DWITH_BOOST"

@@ -1626,7 +1626,7 @@ static int arg_handle_engine_set(int argc, const char **argv, void *data)
          * Users can match either the plugin name token or the render engine display name. */
         for (const auto &engine : UsdImagingGLEngine::GetRendererPlugins()) {
           if (engine == argv[1] ||
-              UsdImagingGLEngine::GetRendererDisplayName(engine).contains(argv[1])) {
+              UsdImagingGLEngine::GetRendererDisplayName(engine).find(argv[1]) != std::string::npos) {
             KLI_strncpy_utf8(scene->r.engine, argv[1], sizeof(scene->r.engine));
             // DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
             break;
