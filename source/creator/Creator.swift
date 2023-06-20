@@ -16,7 +16,8 @@
 
 
 import Foundation
-//import Pixar
+// import Pixar
+// import Anchor
 
 
 /* -------------------------------------------------------------------- */
@@ -50,6 +51,6 @@ struct Creator
    *   or exit immediately when running in background-mode. */
   static func main()
   {
-    
+    print("Kraken launched. Will exit.")
   }
 }
