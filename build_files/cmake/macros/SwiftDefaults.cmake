@@ -2,7 +2,7 @@
 set(CMAKE_Swift_LANGUAGE_VERSION 5.9)
 
 # Enable experiemental cxx in swift interoperabiliy.
-set(CMAKE_Swift_FLAGS "${CMAKE_Swift_FLAGS} -cxx-interoperability-mode=default")
+set(CMAKE_Swift_FLAGS "${CMAKE_Swift_FLAGS}")
 
 # Static linkage.
 set(CMAKE_Swift_FLAGS "${CMAKE_Swift_FLAGS} -static")

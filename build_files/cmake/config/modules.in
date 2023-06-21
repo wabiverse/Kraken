@@ -1,4 +1,5 @@
 module Pixar {
+  requires cplusplus
   module Base {
     umbrella "base"
     requires cplusplus

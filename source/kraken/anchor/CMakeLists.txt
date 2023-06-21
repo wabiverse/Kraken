@@ -180,6 +180,7 @@ if (APPLE)
     "-emit-dependencies"
     "-emit-library"
     "-emit-module"
+    "SHELL:-cxx-interoperability-mode=default"
     "SHELL:-index-store-path \"${CMAKE_BINARY_DIR}/symbol_index\"")
   add_dependencies(AnchorSystem kraken_anchor)
   target_link_libraries(AnchorSystem PRIVATE kraken_anchor)

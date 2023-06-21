@@ -144,13 +144,14 @@ endif()
 
 if(APPLE)
   set(KRAKEN_MACOS_DOCC_DIR kraken.docc)
-  set(SRC
+  set(SRC Creator.swift)
+  set(KRAKEN_CREATOR_SRC
     creator_args.cpp
     creator.cpp
-    Creator.swift
     ${KRAKEN_MACOS_DOCC_DIR}
     creator.h
   )
+  add_library(kraken_creator STATIC ${KRAKEN_CREATOR_SRC})
   set_property(SOURCE ${KRAKEN_MACOS_DOCC_DIR} PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
 else()
   set(SRC
@@ -274,9 +275,34 @@ if(WITH_BUILDINFO)
   # add deps below, after adding kraken
   # -------------- done with header values.
 
-  list(APPEND SRC
-    buildinfo.cpp
-  )
+  if(NOT APPLE)
+    # Keep this as exe SRC for all other platforms EXCEPT apple...
+    list(APPEND SRC
+      buildinfo.cpp
+    )
+  else()
+    # ---------------------------------------------------------------
+    #
+    #  TODO: follow suit for the other platforms here, as we move
+    #  entirely to the Swift programming language.
+    #
+    #  apple is special here, in that the exectuable source is
+    #  pure Swift, and it's linked (separately) to a 'kraken_creator'
+    #  CXX library target; using -cxx-interoperability-mode=default.
+    #
+    #  We now have official support for cxx <-> swift interop:
+    #  https://www.swift.org/documentation/cxx-interop/
+    #
+    #  .. Which is huge news for bringing Pixar USD to Swift,
+    #   : the language of the (AR/VR) multiverse and all things
+    #   : Wabi Animation, ie, Kraken. Especially as swift support
+    #   : across Linux is solid on server, and even microsoft windows
+    #   : is getting proper Swift support.
+    #
+    list(APPEND KRAKEN_CREATOR_SRC
+      buildinfo.cpp
+    )
+  endif()
 
   # make an object library so can load with it in tests
   add_library(buildinfoobj OBJECT buildinfo.cpp)
@@ -329,10 +355,16 @@ else()
       list(APPEND ${SRC} rfile)
     endforeach()
     add_executable(kraken MACOSX_BUNDLE ${SRC})
+    target_compile_options(maelstrom PRIVATE
+      "-fno-exceptions"
+      "-fignore-exceptions")
+    target_compile_options(maelstrom_static PRIVATE
+      "-fno-exceptions"
+      "-fignore-exceptions")
     target_include_directories(kraken PUBLIC
-      ${TBB_INCLUDE_DIRS}
-      ${PYTHON_INCLUDE_DIRS}
-      ${Boost_INCLUDE_DIRS}
+      ${IMATH_INCLUDE_DIR}
+      ${OPENEXR_INCLUDE_DIR}
+      ${APPLE_CXX_INCLUDE_DIR}
       ${CMAKE_BINARY_DIR}/bin/include/wabi)
     target_compile_options(kraken PRIVATE
       "-Xcc" "-DWITH_PYTHON"
@@ -344,7 +376,9 @@ else()
       "-static"
       "-emit-dependencies"
       "-emit-library"
-      "-emit-module")
+      "-emit-module"
+      "SHELL:-cxx-interoperability-mode=default")
+    target_link_libraries(kraken kraken_creator)
   endif()
   add_dependencies(kraken maelstrom)
   add_dependencies(kraken maelstrom_static)
@@ -1465,7 +1499,7 @@ endif()
 # Setup link libs
 
 if(APPLE)
-  set(ADDITIONAL_FRAMEWORKS 
+  set(ADDITIONAL_FRAMEWORKS
     "-framework IOKit"
     "-framework Foundation"
     "-framework AppKit"

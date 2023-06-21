@@ -1,47 +1,42 @@
-/* -----------------------------------------------------------
- * :: :  K  R  A  K  E  N  :                                ::
- * -----------------------------------------------------------
+/* --------------------------------------------------------------
+ * :: :  K  R  A  K  E  N  :                                   ::
+ * --------------------------------------------------------------
  * @wabistudios :: multiverse :: kraken
  *
  * CREDITS.
  *
- * T.Furby              @furby-tm       <devs@wabi.foundation>
+ * T.Furby                 @furby-tm       <devs@wabi.foundation>
  *
- *
- *         Copyright (C) 2023 Wabi Animation Studios, Ltd. Co.
- *                                        All Rights Reserved.
- * -----------------------------------------------------------
+ *            Copyright (C) 2023 Wabi Animation Studios, Ltd. Co.
+ *                                           All Rights Reserved.
+ * --------------------------------------------------------------
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
- * ----------------------------------------------------------- */
-
+ * -------------------------------------------------------------- */
 
 import Foundation
-// import Pixar
-// import Anchor
-
+import Pixar
 
 /* -------------------------------------------------------------------- */
-/** 
- * # ``Kraken`` 
+/* 
+ * # ``Kraken``
  * The Animation Foundation, built upon a simple principle, to give all
  * artists the tools they need to create great things.
  *
  * ## Overview */
 
-
-/* -------------------------------------------------------------------- */
+/** -------------------------------------------------------------------- */
 /* MARK: - Kraken Runtime Creator */
-/** 
+/**
  * ### Startup
  *
  * Where it all begins.
  * - ``Creator`` */
 @main
-struct Creator
+enum Creator
 {
-  /* -------------------------------------------------------------------- */
+  /** -------------------------------------------------------------------- */
   /* MARK: - Kraken Runtime Initialization */
-  /** 
+  /**
    * ### Main Function
    *
    * #### Kraken's main function responsibilities are:

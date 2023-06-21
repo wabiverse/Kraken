@@ -1,52 +1,47 @@
-/*
- * KrakenOS.System
+/* --------------------------------------------------------------
+ * :: :  K  R  A  K  E  N  :                                   ::
+ * --------------------------------------------------------------
+ * @wabistudios :: multiverse :: kraken
  *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ * CREDITS.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * T.Furby                 @furby-tm       <devs@wabi.foundation>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+ *            Copyright (C) 2023 Wabi Animation Studios, Ltd. Co.
+ *                                           All Rights Reserved.
+ * --------------------------------------------------------------
+ *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ * -------------------------------------------------------------- */
 
-import Foundation
-import MetalKit
 import AppKit
-import IOKit
 import Carbon
+import Foundation
+import IOKit
+import MetalKit
 
 @_cdecl("KRKNCreateSystem")
 public func KRKNCreateSystem() -> KRKNSystem
 {
-  return KRKNSystem()
+  KRKNSystem()
 }
 
-open class KRKNSystem : NSObject
+open class KRKNSystem: NSObject
 {
   let app = NSApplication.shared
   let strongDelegate = KRKNAppDelegate()
   let menu = KRKNAppMenu(title: "Kraken", app: NSApplication.shared)
 
   @objc
-  public override init() 
+  override public init()
   {
-    self.app.delegate = self.strongDelegate
-    self.app.mainMenu = self.menu
-    self.app.windowsMenu = self.menu.items[1].submenu
+    app.delegate = strongDelegate
+    app.mainMenu = menu
+    app.windowsMenu = menu.items[1].submenu
 
     NSWindow.allowsAutomaticWindowTabbing = false
 
-    self.app.setActivationPolicy(NSApplication.ActivationPolicy.regular)
-    self.app.finishLaunching()
+    app.setActivationPolicy(NSApplication.ActivationPolicy.regular)
+    app.finishLaunching()
   }
 
   @objc
@@ -64,36 +59,40 @@ open class KRKNSystem : NSObject
 
   @objc
   public func processEvents() -> Bool
-  { 
+  {
     var receivedEvent = false
     var anyProcessed = false
 
-    repeat {
-      if let event: NSEvent = self.app.nextEvent(matchingMask: .any, until: .distantPast, inMode: .default, dequeue: true) {
-
+    repeat
+    {
+      if let event: NSEvent = app.nextEvent(matching: .any, until: .distantPast, inMode: .default, dequeue: true)
+      {
         anyProcessed = true
         receivedEvent = true
 
-        if (event.type == NSEvent.EventType.keyDown && 
-            event.keyCode == kVK_Tab && 
-            event.modifierFlags == NSEvent.ModifierFlags.control.rawValue) {
+        if event.type == NSEvent.EventType.keyDown,
+           event.keyCode == kVK_Tab,
+           event.modifierFlags == .control
+        {
           handleEvent(keyEvent: event)
-        } else {
-          if (event.type == NSEvent.EventType.keyUp &&
-              (event.modifierFlags == NSEvent.ModifierFlags.command.rawValue || 
-               event.modifierFlags == NSEvent.ModifierFlags.option.rawValue))
+        }
+        else
+        {
+          if event.type == NSEvent.EventType.keyUp,
+             event.modifierFlags == [.command, .option]
           {
             handleEvent(keyEvent: event)
           }
 
-          self.app.sendEvent(event)
+          app.sendEvent(event)
         }
-
-      } else {
+      }
+      else
+      {
         receivedEvent = false
       }
-
-    } while (receivedEvent)
+    }
+    while receivedEvent
 
     return anyProcessed
   }
@@ -108,7 +107,8 @@ open class KRKNSystem : NSObject
     var convertedCharacters: NSData?
     var charactersIgnoringModifiers: String?
 
-    if let window = event.window {
+    if let window = event.window
+    {
       // char utf8_buf[6] = {'\0'};
 
       // switch ([event type]) {
@@ -163,11 +163,11 @@ open class KRKNSystem : NSObject
       //                                   utf8_buf));
       //     }
       //     else {
-      //       pushEvent(new AnchorEventKey([event timestamp] * 1000, 
-      //                                   AnchorEventTypeKeyUp, 
-      //                                   window, 
-      //                                   keyCode, 
-      //                                   false, 
+      //       pushEvent(new AnchorEventKey([event timestamp] * 1000,
+      //                                   AnchorEventTypeKeyUp,
+      //                                   window,
+      //                                   keyCode,
+      //                                   false,
       //                                   NULL));
       //     }
       //     m_ignoreMomentumScroll = true;
@@ -220,15 +220,18 @@ open class KRKNSystem : NSObject
       //     return ANCHOR_FAILURE;
       //     break;
       // }
-    } else {
-      fputs("No window for event " + event.type.rawValue.description + "\n", stderr);
+    }
+    else
+    {
+      fputs("No window for event " + event.type.rawValue.description + "\n", stderr)
     }
   }
 }
 
 class KRKNAppMenu: NSMenu
 {
-  init(title: String, app: NSApplication) {
+  init(title: String, app: NSApplication)
+  {
     super.init(title: title)
 
     let mainMenu = NSMenuItem()
@@ -240,7 +243,7 @@ class KRKNAppMenu: NSMenu
       NSMenuItem(title: "Hide Others", target: NSApplication.self, action: #selector(app.hideOtherApplications(_:)), keyEquivalent: "h", modifier: [.option, .command]),
       NSMenuItem(title: "Show All", target: NSApplication.self, action: #selector(app.unhideAllApplications(_:)), keyEquivalent: ""),
       NSMenuItem.separator(),
-      NSMenuItem(title: "Quit Kraken", target: NSApplication.self, action: #selector(app.terminate(_:)), keyEquivalent: "q", modifier: .command)
+      NSMenuItem(title: "Quit Kraken", target: NSApplication.self, action: #selector(app.terminate(_:)), keyEquivalent: "q", modifier: .command),
     ]
 
     let windowMenu = NSMenuItem()
@@ -249,29 +252,31 @@ class KRKNAppMenu: NSMenu
       NSMenuItem(title: "Minimize", target: NSApplication.self, action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m", modifier: .command),
       NSMenuItem(title: "Zoom", target: NSApplication.self, action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""),
       NSMenuItem(title: "Enter Full Screen", target: NSApplication.self, action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f", modifier: [.control, .command]),
-      NSMenuItem(title: "Close", target: NSApplication.self, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: .command)
+      NSMenuItem(title: "Close", target: NSApplication.self, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w", modifier: .command),
     ]
 
     items = [mainMenu, windowMenu]
   }
 
-  required init(coder: NSCoder) {
+  required init(coder: NSCoder)
+  {
     super.init(coder: coder)
   }
 }
 
 extension NSMenuItem
-{ 
-  convenience init(title string: String, 
-                   target: AnyObject = NSMenuItem.self, 
-                   action selector: Selector?, 
-                   keyEquivalent charCode: String, 
+{
+  convenience init(title string: String,
+                   target: AnyObject = NSMenuItem.self,
+                   action selector: Selector?,
+                   keyEquivalent charCode: String,
                    modifier: NSEvent.ModifierFlags = .init(rawValue: 0))
   {
     self.init(title: string, action: selector, keyEquivalent: charCode)
 
-    if (modifier != .init(rawValue: 0)) {
-      self.keyEquivalentModifierMask = Int(modifier.rawValue)
+    if modifier != .init(rawValue: 0)
+    {
+      keyEquivalentModifierMask = modifier
     }
 
     self.target = target
@@ -280,20 +285,20 @@ extension NSMenuItem
   convenience init(title string: String, submenuItems: [NSMenuItem])
   {
     self.init(title: string, action: nil, keyEquivalent: "")
-    self.submenu = NSMenu()
-    self.submenu?.items = submenuItems
+    submenu = NSMenu()
+    submenu?.items = submenuItems
   }
 }
 
-class KRKNAppDelegate : NSObject, NSApplicationDelegate
+class KRKNAppDelegate: NSObject, NSApplicationDelegate
 {
   private var m_windowFocus = true
   // var cocoa: CocoaAppDelegate!
 
-  override init() 
+  override init()
   {
     super.init()
-    NotificationCenter.default.addObserver(self, selector: #selector(self.windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
     fputs("Kraken is LIVE.\n", stderr)
   }
 
@@ -302,32 +307,41 @@ class KRKNAppDelegate : NSObject, NSApplicationDelegate
   {
     let closingWindow = notification.object as! NSWindow
 
-    if let index = NSApp.orderedWindows.firstIndex(of: closingWindow) {
-      if (index != NSNotFound) {
+    if let index = NSApp.orderedWindows.firstIndex(of: closingWindow)
+    {
+      if index != NSNotFound
+      {
         return
       }
     }
 
-    for currentWindow in NSApp.orderedWindows {
-      if (currentWindow == closingWindow) {
+    for currentWindow in NSApp.orderedWindows
+    {
+      if currentWindow == closingWindow
+      {
         continue
       }
 
-      if (currentWindow.isOnActiveSpace && currentWindow.canBecomeMain) {
+      if currentWindow.isOnActiveSpace, currentWindow.canBecomeMain
+      {
         currentWindow.makeKeyAndOrderFront(nil)
         return
       }
     }
-    
-    if let windowNumbers = NSWindow.windowNumbers(options: .init(rawValue: 0)) {
-      for windowNumber in windowNumbers {
-        if let currentWindow = NSApp.window(withWindowNumber: windowNumber.intValue) {
 
-          if (currentWindow == closingWindow) {
+    if let windowNumbers = NSWindow.windowNumbers(options: .init(rawValue: 0))
+    {
+      for windowNumber in windowNumbers
+      {
+        if let currentWindow = NSApp.window(withWindowNumber: windowNumber.intValue)
+        {
+          if currentWindow == closingWindow
+          {
             continue
           }
 
-          if (currentWindow.canBecomeKey) {
+          if currentWindow.canBecomeKey
+          {
             currentWindow.makeKeyAndOrderFront(nil)
             return
           }
@@ -336,32 +350,33 @@ class KRKNAppDelegate : NSObject, NSApplicationDelegate
     }
   }
 
-  func applicationDidFinishLaunching(_ notification: Notification)
+  func applicationDidFinishLaunching(_: Notification)
   {
     fputs("Kraken launched successfully.\n", stderr)
 
-    if (self.m_windowFocus) {
+    if m_windowFocus
+    {
       NSApp.activate(ignoringOtherApps: true)
     }
 
     NSEvent.isMouseCoalescingEnabled = false
   }
 
-  /**
+  /*
    * @NOTE: Event processing is handled & dispatched in the central Anchor System.
    * This is so all platforms can share the same underlying system, vs rewriting
    * it all for swift. */
 
-  func applicationWillBecomeActive(_ notification: Notification) 
+  func applicationWillBecomeActive(_: Notification)
   {
     /* calls instanced cxx anchor system function. */
     // self.cocoa.handleApplicationBecomeActiveEvent()
   }
 
-  func application(_ sender: NSApplication, openFile filename: String) -> Bool
-  { 
+  func application(_: NSApplication, openFile _: String) -> Bool
+  {
     /* calls instanced cxx anchor system function. */
     // return self.cocoa.handleOpenDocumentRequest(filename)
-    return true
+    true
   }
 }

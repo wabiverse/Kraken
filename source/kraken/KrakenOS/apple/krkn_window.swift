@@ -1,35 +1,30 @@
-/*
- * KrakenOS.Window
+/* --------------------------------------------------------------
+ * :: :  K  R  A  K  E  N  :                                   ::
+ * --------------------------------------------------------------
+ * @wabistudios :: multiverse :: kraken
  *
- * Copyright 2022, Wabi Animation Studios, Ltd. Co.
+ * CREDITS.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * T.Furby                 @furby-tm       <devs@wabi.foundation>
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+ *            Copyright (C) 2023 Wabi Animation Studios, Ltd. Co.
+ *                                           All Rights Reserved.
+ * --------------------------------------------------------------
+ *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ * -------------------------------------------------------------- */
 
+import AppKit
 import Foundation
 import MetalKit
-import AppKit
 
 @_cdecl("KRKNCreateWindow")
-public func KRKNCreateWindow(title: String, 
-                             left: CGFloat, 
-                             top: CGFloat, 
-                             width: CGFloat, 
+public func KRKNCreateWindow(title: String,
+                             left: CGFloat,
+                             top: CGFloat,
+                             width: CGFloat,
                              height: CGFloat,
                              dialog: Bool,
-                             parent: KRKNWindow?) -> KRKNWindow
+                             parent _: KRKNWindow?) -> KRKNWindow
 {
   let frame = (NSScreen.main?.visibleFrame)!
   let contentRect: NSRect = NSWindow.contentRect(forFrameRect: frame, styleMask: [.titled, .closable, .miniaturizable])
@@ -45,81 +40,84 @@ public func KRKNCreateWindow(title: String,
   let rect = NSRect(origin: CGPoint(x: leftAdjust, y: bottom), size: CGSize(width: width, height: height))
 
   var styleMask: NSWindow.StyleMask = [.titled, .closable, .resizable]
-  if (!dialog) {
+  if !dialog
+  {
     styleMask = [.titled, .closable, .resizable, .miniaturizable]
   }
 
   return KRKNWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false, title: title)
 }
 
-open class KRKNMetalView : MTKView
+open class KRKNMetalView: MTKView
 {
   @objc
-  public override init(frame: NSRect, device: MTLDevice?)
+  override public init(frame: NSRect, device: MTLDevice?)
   {
     super.init(frame: frame, device: device)
 
     self.device = device
-    self.wantsLayer = true
+    wantsLayer = true
 
-    self.allowedTouchTypes = Int(NSTouch.TouchTypeMask.direct.rawValue | NSTouch.TouchTypeMask.indirect.rawValue)
+    allowedTouchTypes = [NSTouch.TouchTypeMask.direct, NSTouch.TouchTypeMask.indirect]
   }
 
-  public required init(coder aDecoder: NSCoder) {
+  public required init(coder aDecoder: NSCoder)
+  {
     super.init(coder: aDecoder)
   }
 }
 
-open class KRKNWindow : NSWindow
+open class KRKNWindow: NSWindow
 {
   var metalView: KRKNMetalView?
   var metalDevice: MTLDevice?
   let strongDelegate = KRKNWindowDelegate()
 
   @objc
-  public init(contentRect: NSRect, 
-              styleMask: NSWindow.StyleMask, 
-              backing: NSWindow.BackingStoreType, 
+  public init(contentRect: NSRect,
+              styleMask: NSWindow.StyleMask,
+              backing: NSWindow.BackingStoreType,
               defer flag: Bool,
               title: String)
   {
-    super.init(contentRect: contentRect, 
-               styleMask: styleMask, 
-               backing: backing, 
+    super.init(contentRect: contentRect,
+               styleMask: styleMask,
+               backing: backing,
                defer: flag)
-  
-    self.contentMinSize = NSSize(width: 320, height: 240)
-    self.metalDevice = MTLCreateSystemDefaultDevice()
-    self.metalView = KRKNMetalView(frame: contentRect, device: self.metalDevice)
-    self.initialFirstResponder = self.metalView
-    self.contentView = self.metalView
 
-    self.makeKeyAndOrderFront(nil)
+    contentMinSize = NSSize(width: 320, height: 240)
+    metalDevice = MTLCreateSystemDefaultDevice()
+    metalView = KRKNMetalView(frame: contentRect, device: metalDevice)
+    initialFirstResponder = metalView
+    contentView = metalView
+
+    makeKeyAndOrderFront(nil)
     self.title = title
 
-    self.delegate = strongDelegate
+    delegate = strongDelegate
 
-    self.acceptsMouseMovedEvents = true
+    acceptsMouseMovedEvents = true
 
-    self.registerForDraggedTypes([
+    registerForDraggedTypes([
       NSPasteboard.PasteboardType("NSFilenamesPboardType"),
       NSPasteboard.PasteboardType("NSPasteboardTypeString"),
-      NSPasteboard.PasteboardType("NSPasteboardTypeTIFF")
+      NSPasteboard.PasteboardType("NSPasteboardTypeTIFF"),
     ])
 
-    self.collectionBehavior = Int(NSWindow.CollectionBehavior.fullScreenPrimary.rawValue)
+    collectionBehavior = .fullScreenPrimary
   }
 }
 
-open class KRKNWindowDelegate : NSObject, NSWindowDelegate
+open class KRKNWindowDelegate: NSObject, NSWindowDelegate
 {
   @objc
-  public override init()
+  override public init()
   {
     super.init()
   }
 
-  public func windowDidMove(_ notification: Notification) {
+  public func windowDidMove(_: Notification)
+  {
     fputs("Window moved\n", stderr)
   }
 }
