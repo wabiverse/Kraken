@@ -146,22 +146,22 @@ if(APPLE)
   set(KRAKEN_MACOS_DOCC_DIR kraken.docc)
   set(SRC Creator.swift)
   set(KRAKEN_CREATOR_SRC
-    cxx/creator_args.cpp
-    cxx/creator.cpp
+    creator_args.cpp
+    creator.cpp
     ${KRAKEN_MACOS_DOCC_DIR}
-    cxx/creator.h
+    creator.h
   )
   add_library(kraken_creator STATIC ${KRAKEN_CREATOR_SRC})
   set_property(SOURCE ${KRAKEN_MACOS_DOCC_DIR} PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
 else()
   set(SRC
-    cxx/creator.cpp
-    cxx/creator_args.cpp
+    creator.cpp
+    creator_args.cpp
     ${KRAKEN_FRAMEWORK}
     ${WINDOWS_PACKAGE_SRC}
 
     ${KRAKEN_FRAMEWORKROSOFT_SDK}
-    cxx/creator.h
+    creator.h
   )
 endif()
 
@@ -278,7 +278,7 @@ if(WITH_BUILDINFO)
   if(NOT APPLE)
     # Keep this as exe SRC for all other platforms EXCEPT apple...
     list(APPEND SRC
-      cxx/buildinfo.cpp
+      buildinfo.cpp
     )
   else()
     # ---------------------------------------------------------------
@@ -300,12 +300,12 @@ if(WITH_BUILDINFO)
     #   : is getting proper Swift support.
     #
     list(APPEND KRAKEN_CREATOR_SRC
-      cxx/buildinfo.cpp
+      buildinfo.cpp
     )
   endif()
 
   # make an object library so can load with it in tests
-  add_library(buildinfoobj OBJECT cxx/buildinfo.cpp)
+  add_library(buildinfoobj OBJECT buildinfo.cpp)
   add_dependencies(buildinfoobj buildinfo)
 endif()
 
