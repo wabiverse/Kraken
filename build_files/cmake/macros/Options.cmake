@@ -163,7 +163,7 @@ include(CheckSymbolExists)
 # so check that before defining `HAVE_MALLOC_STATS`.
 check_symbol_exists(malloc_stats "malloc.h" HAVE_MALLOC_STATS_H)
 
-# Used for: `source/creator/creator_args.cpp`.
+# Used for: `source/creator-cxx/creator_args.cpp`.
 # The function `feenableexcept` is not present non-GLIBC systems,
 # hence we need to check if it's available in the `fenv.h` file.
 set(HAVE_FEENABLEEXCEPT OFF)

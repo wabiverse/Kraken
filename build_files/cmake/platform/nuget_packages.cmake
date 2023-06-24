@@ -11,31 +11,32 @@
 # id  : package id
 # out : name of variable to set result
 function(package_version id out packages_config)
-    file(READ ${packages_config} packages_config_contents)
-    string(REGEX MATCH "package[ ]*id[ ]*=[ ]*\"${id}\"" found_package_id ${packages_config_contents})
-    if (NOT(found_package_id))
-        message(FATAL_ERROR "Could not find '${id}' in packages.config!")
-    endif()
+  file(READ ${packages_config} packages_config_contents)
+  string(REGEX MATCH "package[ ]*id[ ]*=[ ]*\"${id}\"" found_package_id ${packages_config_contents})
 
-    set(pattern ".*id[ ]*=[ ]*\"${id}\"[ ]+version=\"([0-9a-zA-Z\\.-]+)\"[ ]+targetFramework.*")
-    string(REGEX REPLACE ${pattern} "\\1" version ${packages_config_contents})
-    set(${out} ${version} PARENT_SCOPE)
+  if(NOT(found_package_id))
+    message(FATAL_ERROR "Could not find '${id}' in packages.config!")
+  endif()
+
+  set(pattern ".*id[ ]*=[ ]*\"${id}\"[ ]+version=\"([0-9a-zA-Z\\.-]+)\"[ ]+targetFramework.*")
+  string(REGEX REPLACE ${pattern} "\\1" version ${packages_config_contents})
+  set(${out} ${version} PARENT_SCOPE)
 endfunction()
 
-# Downloads the nuget packages based on packages.config 
+# Downloads the nuget packages based on packages.config
 function(
-    add_fetch_nuget_target
-    nuget_target # Target to be written to
-    target_dependency # The file in the nuget package that is needed
+  add_fetch_nuget_target
+  nuget_target # Target to be written to
+  target_dependency # The file in the nuget package that is needed
 )
-    # Pull down the nuget packages
-    if (NOT(MSVC) OR NOT(WIN32))
-      message(FATAL_ERROR "NuGet packages are only supported for MSVC on Windows.")
-    endif()
+  # Pull down the nuget packages
+  if(NOT(MSVC) OR NOT(WIN32))
+    message(FATAL_ERROR "NuGet packages are only supported for MSVC on Windows.")
+  endif()
 
-    # Retrieve the latest version of nuget
-    include(ExternalProject)
-    ExternalProject_Add(nuget_exe
+  # Retrieve the latest version of nuget
+  include(ExternalProject)
+  ExternalProject_Add(nuget_exe
     PREFIX nuget_exe
     URL "https://dist.nuget.org/win-x86-commandline/v6.3.0/nuget.exe"
     DOWNLOAD_NO_EXTRACT 1
@@ -44,72 +45,71 @@ function(
     UPDATE_COMMAND ""
     INSTALL_COMMAND "")
 
-    set(NUGET_CONFIG ${CMAKE_BINARY_DIR}/NuGet.config)
-    set(PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
-    get_filename_component(PACKAGES_DIR ${CMAKE_BINARY_DIR}/packages ABSOLUTE)
+  set(NUGET_CONFIG ${CMAKE_BINARY_DIR}/NuGet.config)
+  set(PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
+  get_filename_component(PACKAGES_DIR ${CMAKE_BINARY_DIR}/packages ABSOLUTE)
 
-    # Restore nuget packages
-    add_custom_command(
-      OUTPUT ${target_dependency}
-      DEPENDS ${PACKAGES_CONFIG} ${NUGET_CONFIG}
-      COMMAND ${CMAKE_BINARY_DIR}/nuget_exe/src/nuget restore ${PACKAGES_CONFIG} -PackagesDirectory ${PACKAGES_DIR} -ConfigFile ${NUGET_CONFIG}
-      VERBATIM)
+  # Restore nuget packages
+  add_custom_command(
+    OUTPUT ${target_dependency}
+    DEPENDS ${PACKAGES_CONFIG} ${NUGET_CONFIG}
+    COMMAND ${CMAKE_BINARY_DIR}/nuget_exe/src/nuget restore ${PACKAGES_CONFIG} -PackagesDirectory ${PACKAGES_DIR} -ConfigFile ${NUGET_CONFIG}
+    VERBATIM)
 
-    add_custom_target(${nuget_target} DEPENDS ${target_dependency})
-    add_dependencies(${nuget_target} nuget_exe)
+  add_custom_target(${nuget_target} DEPENDS ${target_dependency})
+  add_dependencies(${nuget_target} nuget_exe)
 endfunction()
 
 function(kraken_import_nuget_packages
   proj_path
 )
+  set(NUGET_PACKAGES_FILE "${CMAKE_BINARY_DIR}/${proj_path}.vcxproj.user")
 
-set(NUGET_PACKAGES_FILE "${CMAKE_BINARY_DIR}/${proj_path}.vcxproj.user")
+  file(TO_CMAKE_PATH
+    "${CMAKE_BINARY_DIR}/packages/Microsoft.NETCore.Platforms.6.0.0-preview.7.21377.19/build/native/Microsoft.NETCore.Platforms"
+    MICROSOFT_NETCORE_PLATFORMS
+  )
+  file(TO_CMAKE_PATH
+    "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.220912.1/build/native/Microsoft.Windows.CppWinRT"
+    MICROSOFT_CPP_WINRT_PROJECT
+  )
+  file(TO_CMAKE_PATH
+    "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.1.5/build/native/Microsoft.WindowsAppSDK"
+    MICROSOFT_APP_SDK
+  )
+  file(TO_CMAKE_PATH
+    "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.8.2-prerelease.220830001/build/native/Microsoft.UI.Xaml"
+    MICROSOFT_UI_XAML
+  )
+  file(TO_CMAKE_PATH
+    "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.1369-prerelease/build/native/Microsoft.Web.WebView2"
+    MICROSOFT_WEB_WEBVIEW
+  )
 
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.NETCore.Platforms.6.0.0-preview.7.21377.19/build/native/Microsoft.NETCore.Platforms"
-  MICROSOFT_NETCORE_PLATFORMS
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Windows.CppWinRT.2.0.220912.1/build/native/Microsoft.Windows.CppWinRT"
-  MICROSOFT_CPP_WINRT_PROJECT
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.WindowsAppSDK.1.1.5/build/native/Microsoft.WindowsAppSDK"
-  MICROSOFT_APP_SDK
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.UI.Xaml.2.8.2-prerelease.220830001/build/native/Microsoft.UI.Xaml"
-  MICROSOFT_UI_XAML
-)
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/packages/Microsoft.Web.WebView2.1.0.1369-prerelease/build/native/Microsoft.Web.WebView2"
-  MICROSOFT_WEB_WEBVIEW
-)
+  file(TO_CMAKE_PATH
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.32.31326\\x64\\Microsoft.VC143.CRT"
+    MICROSOFT_VC143_CRT
+  )
+  file(TO_CMAKE_PATH
+    "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.32.31326\\x64\\Microsoft.VC143.CRT"
+    MICROSOFT_VC143_APP_CRT
+  )
+  file(TO_CMAKE_PATH
+    $ENV{RMANTREE}
+    RENDERMAN_LOCATION
+  )
 
-file(TO_CMAKE_PATH 
-  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.32.31326\\x64\\Microsoft.VC143.CRT"
-  MICROSOFT_VC143_CRT
-)
-file(TO_CMAKE_PATH 
-  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.32.31326\\x64\\Microsoft.VC143.CRT"
-  MICROSOFT_VC143_APP_CRT
-)
-file(TO_CMAKE_PATH
-  $ENV{RMANTREE}
-  RENDERMAN_LOCATION
-)
+  file(TO_CMAKE_PATH
+    "${CMAKE_BINARY_DIR}/source/creator-cxx/ChaosEngine"
+    GENERATED_KRAKEN_SDK
+  )
 
-file(TO_CMAKE_PATH
-  "${CMAKE_BINARY_DIR}/source/creator/ChaosEngine"
-  GENERATED_KRAKEN_SDK
-)
-
-if(${proj_path} STREQUAL "source/creator/kraken")
-  # This is the executable vsproj, so we need to add
-  # dependent DLLs here, and only to this vsproj since
-  # it will otherwise add DLLs for all the other libs
-  # if we are not careful.
-  file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+  if(${proj_path} STREQUAL "source/creator-cxx/kraken")
+    # This is the executable vsproj, so we need to add
+    # dependent DLLs here, and only to this vsproj since
+    # it will otherwise add DLLs for all the other libs
+    # if we are not careful.
+    file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project ToolsVersion=\"15.0\" DefaultTargets=\"Build\" xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <ItemGroup>
@@ -447,8 +447,8 @@ if(${proj_path} STREQUAL "source/creator/kraken")
   </Target>
 </Project>
 ")
-else()
-  file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+  else()
+    file(WRITE ${NUGET_PACKAGES_FILE} "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <Project xmlns=\"http:\/\/schemas.microsoft.com\/developer\/msbuild\/2003\">
   <Import Project=\"${MICROSOFT_CPP_WINRT_PROJECT}.props\" Condition=\"Exists(\'${MICROSOFT_CPP_WINRT_PROJECT}.props\')\" />
   <Import Project=\"${MICROSOFT_APP_SDK}.props\" Condition=\"Exists(\'${MICROSOFT_APP_SDK}.props\')\" />
@@ -493,23 +493,26 @@ else()
   </Target>
 </Project>
 ")
-endif()
+  endif()
 
-cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
-string(TOUPPER ${_host_name} UPPER_HOSTNAME)
-set(WINDOWS_MACHINE_HOSTNAME ${UPPER_HOSTNAME})
-set(WINDOWS_USER_NAME $ENV{USERNAME})
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  set(WINDOWS_CONFIG_MODE "Release")
-else()
-  set(WINDOWS_CONFIG_MODE "Debug")
-endif()
-file(TIMESTAMP ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in GEN_TIME "%Y-%m-%dT%H:%M:%S")
+  cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
+  string(TOUPPER ${_host_name} UPPER_HOSTNAME)
+  set(WINDOWS_MACHINE_HOSTNAME ${UPPER_HOSTNAME})
+  set(WINDOWS_USER_NAME $ENV{USERNAME})
 
-file(SHA256 ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in _current_hash)
-if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/kraken.build.appxrecipe)
-  set(APPX_RECIPE_CHECKSUM_HASH ${_current_hash})
-  set(DEPENDENT_DLLS "    
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(WINDOWS_CONFIG_MODE "Release")
+  else()
+    set(WINDOWS_CONFIG_MODE "Debug")
+  endif()
+
+  file(TIMESTAMP ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in GEN_TIME "%Y-%m-%dT%H:%M:%S")
+
+  file(SHA256 ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in _current_hash)
+
+  if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/kraken.build.appxrecipe)
+    set(APPX_RECIPE_CHECKSUM_HASH ${_current_hash})
+    set(DEPENDENT_DLLS "    
     <!-- ARNOLD RENDER ENGINE -->
     
     <AppxPackagedFile Include=\"${LIBDIR}/arnold/bin/AdClmHub_2.0.0.dll\">
@@ -899,35 +902,34 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/kraken.build.appxrecip
     
 ")
 
-  # configure_file(
-  #   ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in
-  #   ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/AppX/vs.appxrecipe @ONLY
+    # configure_file(
+    # ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in
+    # ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/AppX/vs.appxrecipe @ONLY
+    # )
+    configure_file(
+      ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in
+      ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/kraken.build.appxrecipe @ONLY
+    )
+
+    file(SHA256 ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/kraken.build.appxrecipe _new_hash)
+    set(APPX_RECIPE_CHECKSUM_HASH ${_new_hash} PARENT_SCOPE)
+  endif()
+
+  if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/AppxManifest.xml)
+    configure_file(
+      ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
+      ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/AppxManifest.xml @ONLY
+    )
+  endif()
+
+  # if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/resources.pri)
+  # execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& MakePri.exe new /cf ${CMAKE_BINARY_DIR}/source/creator-cxx/kraken.dir/${CMAKE_BUILD_TYPE}/priconfig.xml /pr ${CMAKE_BINARY_DIR}/source/creator-cxx/ /in Kraken"
+  # WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+  # file(RENAME
+  # ${CMAKE_BINARY_DIR}/resources.pri
+  # ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/resources.pri
   # )
-
-  configure_file(
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/vs.appxrecipe.in
-    ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/kraken.build.appxrecipe @ONLY
-  )
-
-  file(SHA256 ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/kraken.build.appxrecipe _new_hash)
-  set(APPX_RECIPE_CHECKSUM_HASH ${_new_hash} PARENT_SCOPE)
-endif()
-
-if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/AppxManifest.xml)
-  configure_file(
-    ${CMAKE_SOURCE_DIR}/release/windows/appx/Package.appxmanifest
-    ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/AppxManifest.xml @ONLY
-  )
-endif()
-
-# if(NOT EXISTS ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/resources.pri)
-# execute_process(COMMAND pwsh -ExecutionPolicy Unrestricted -Command "& MakePri.exe new /cf ${CMAKE_BINARY_DIR}/source/creator/kraken.dir/${CMAKE_BUILD_TYPE}/priconfig.xml /pr ${CMAKE_BINARY_DIR}/source/creator/ /in Kraken"
-#                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-# file(RENAME
-#   ${CMAKE_BINARY_DIR}/resources.pri
-#   ${CMAKE_BINARY_DIR}/bin/${WINDOWS_CONFIG_MODE}/resources.pri
-# )
-# endif()
+  # endif()
 endfunction()
 
 macro(_run_nuget_config)
@@ -945,11 +947,13 @@ endmacro()
 function(kraken_config_nuget)
   # In case NuGet packages get cleaned out.
   SUBDIRLIST(NUGET_PACKAGES_DIRLIST ${CMAKE_BINARY_DIR}/packages)
+
   foreach(_apkg ${NUGET_PACKAGES_DIRLIST})
     if(NOT EXISTS ${CMAKE_BINARY_DIR}/packages/${_apkg})
       if(EXISTS ${CMAKE_BINARY_DIR}/packages.config)
         file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
       endif()
+
       if(EXISTS ${CMAKE_BINARY_DIR}/NuGet.config)
         file(REMOVE ${CMAKE_BINARY_DIR}/packages.config)
       endif()

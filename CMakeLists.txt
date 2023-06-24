@@ -364,7 +364,7 @@ add_subdirectory(source)
 #          ❤ Open Source
 #          ❤ Blender Foundation -- Furby
 
-add_subdirectory(source/creator)
+add_subdirectory(source/creator-cxx)
 
 #-----------------------------------------------------------------------------
 # CPack for generating packages

@@ -1,9 +1,9 @@
 setup_libdirs()
 
 if(WIN32)
-  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator/ChaosEngine")
+  if(EXISTS "${CMAKE_BINARY_DIR}/source/creator-cxx/ChaosEngine")
     set(KRAKEN_FRAMEWORK_SDK
-      "${CMAKE_BINARY_DIR}/source/creator/ChaosEngine"
+      "${CMAKE_BINARY_DIR}/source/creator-cxx/ChaosEngine"
     )
   endif()
   set(KRAKEN_FRAMEWORK
@@ -146,22 +146,22 @@ if(APPLE)
   set(KRAKEN_MACOS_DOCC_DIR kraken.docc)
   set(SRC Creator.swift)
   set(KRAKEN_CREATOR_SRC
-    creator_args.cpp
-    creator.cpp
+    cxx/creator_args.cpp
+    cxx/creator.cpp
     ${KRAKEN_MACOS_DOCC_DIR}
-    creator.h
+    cxx/creator.h
   )
   add_library(kraken_creator STATIC ${KRAKEN_CREATOR_SRC})
   set_property(SOURCE ${KRAKEN_MACOS_DOCC_DIR} PROPERTY XCODE_LAST_KNOWN_FILE_TYPE folder.documentationcatalog)
 else()
   set(SRC
-    creator.cpp
-    creator_args.cpp
+    cxx/creator.cpp
+    cxx/creator_args.cpp
     ${KRAKEN_FRAMEWORK}
     ${WINDOWS_PACKAGE_SRC}
 
     ${KRAKEN_FRAMEWORKROSOFT_SDK}
-    creator.h
+    cxx/creator.h
   )
 endif()
 
@@ -219,7 +219,7 @@ if(WITH_BUILDINFO)
 
   # --------------------------------------------------------------------------
   # write header for values that change each build
-  # note, generaed file is in build dir's source/creator
+  # note, generaed file is in build dir's source/creator-cxx
   #       except when used as an include path.
 
   add_definitions(-DWITH_BUILDINFO_HEADER)
@@ -278,7 +278,7 @@ if(WITH_BUILDINFO)
   if(NOT APPLE)
     # Keep this as exe SRC for all other platforms EXCEPT apple...
     list(APPEND SRC
-      buildinfo.cpp
+      cxx/buildinfo.cpp
     )
   else()
     # ---------------------------------------------------------------
@@ -300,12 +300,12 @@ if(WITH_BUILDINFO)
     #   : is getting proper Swift support.
     #
     list(APPEND KRAKEN_CREATOR_SRC
-      buildinfo.cpp
+      cxx/buildinfo.cpp
     )
   endif()
 
   # make an object library so can load with it in tests
-  add_library(buildinfoobj OBJECT buildinfo.cpp)
+  add_library(buildinfoobj OBJECT cxx/buildinfo.cpp)
   add_dependencies(buildinfoobj buildinfo)
 endif()
 

@@ -1,5 +1,5 @@
 # This is called by cmake as an external process from
-# ./source/creator/CMakeLists.txt to write ./source/creator/buildinfo.h
+# ./source/creator-cxx/CMakeLists.txt to write ./source/creator-cxx/buildinfo.h
 # Caller must define:
 #   SOURCE_DIR
 # Optional overrides:
@@ -170,7 +170,6 @@ unset(MY_WC_COMMIT_TIMESTAMP)
 unset(MY_WC_BRANCH)
 unset(BUILD_DATE)
 unset(BUILD_TIME)
-
 
 # Copy the file to the final header only if the version changes
 # and avoid needless rebuilds

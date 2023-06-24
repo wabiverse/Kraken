@@ -33,4 +33,4 @@
 
 # rules
 
---enable blankLineAfterImports,docComments,isEmpty,spaceInsideBraces,wrapMultilineStatementBraces
+--enable blankLineAfterImports,isEmpty,spaceInsideBraces,wrapMultilineStatementBraces

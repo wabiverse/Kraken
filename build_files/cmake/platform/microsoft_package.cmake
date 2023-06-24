@@ -42,7 +42,7 @@ macro(gen_app_icons)
 endmacro()
 
 # Application Manifest & Nuget Dependencies.
-set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator/Package.appxmanifest)
+set(KRAKEN_APPX_MANIFEST ${CMAKE_BINARY_DIR}/source/creator-cxx/Package.appxmanifest)
 set(KRAKEN_PACKAGES_CONFIG ${CMAKE_BINARY_DIR}/packages.config)
 set(KRAKEN_NUGET_CONFIG ${CMAKE_BINARY_DIR}/NuGet.config)
 
@@ -94,8 +94,8 @@ endfunction()
 # As Nuget imports have already been added to wabi_library(xxx) macros
 kraken_import_nuget_packages("maelstrom")
 
-kraken_import_nuget_packages("source/creator/buildinfo")
-kraken_import_nuget_packages("source/creator/kraken")
+kraken_import_nuget_packages("source/creator-cxx/buildinfo")
+kraken_import_nuget_packages("source/creator-cxx/kraken")
 kraken_import_nuget_packages("source/kraken/anchor/kraken_anchor")
 kraken_import_nuget_packages("source/kraken/editors/code/kraken_editor_code")
 kraken_import_nuget_packages("source/kraken/editors/screen/kraken_editor_screen")
