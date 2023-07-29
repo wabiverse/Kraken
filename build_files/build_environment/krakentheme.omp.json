@@ -46,7 +46,7 @@
         {
           "foreground": "lightRed",
           "style": "plain",
-          "template": " $ ",
+          "template": "\n$ ",
           "type": "text"
         }
       ],
