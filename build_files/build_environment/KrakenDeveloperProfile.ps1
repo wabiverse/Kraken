@@ -252,6 +252,21 @@ function WabiAnimationPreCommitHook
   }
 }
 
+function DeployWabiWeb
+{
+  if ((Test-Path -Path $IsKrakenCreatorInDirectory) -and (Test-Path -Path $IsKrakenSourceInDirectory)) {
+    Push-Location $KrakenGlobalView/../animation.foundation
+
+    swift run -c release
+    npm install
+    npm run build
+
+    Copy-Item -Path "./Output/*" -Destination "/opt/homebrew/var/www" -Recurse -Force
+
+    Pop-Location
+  }
+}
+
 function WabiFormatAll 
 {
   if ((Test-Path -Path $IsKrakenCreatorInDirectory) -and (Test-Path -Path $IsKrakenSourceInDirectory)) {
@@ -710,6 +725,7 @@ if ($IsWindows) {
 
 # Enter Kraken Server
 Set-Alias wabiserver ConnectKraken
+Set-Alias wabiweb DeployWabiWeb
 
 # Build Unreal Engine 5
 Set-Alias build_unreal BuildUnrealEngine5
