@@ -254,7 +254,7 @@ function WabiAnimationPreCommitHook
 
 function DeployWabiWeb
 {
-  if ((Test-Path -Path $IsKrakenCreatorInDirectory) -and (Test-Path -Path $IsKrakenSourceInDirectory)) {
+  if (Test-Path -Path $KrakenGlobalView/../animation.foundation) {
     Push-Location $KrakenGlobalView/../animation.foundation
 
     swift run -c release
