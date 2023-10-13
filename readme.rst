@@ -3,10 +3,27 @@
    linking to external resources instead of including content in-line.
    See 'release/text/readme.html' for the end user read-me.
 
-
 ******
 Kraken
 ******
+
+
+**Responsible for the Future of the Open Source Metaverse**
+
+
+
+.. figure:: https://media.tenor.com/T0Pn_3X2R18AAAAC/swirl-purple.gif
+   :alt: SwirlPurple
+   :align: center
+
+
+Unleashing the Metaverse: Where Freedom Knows No Bounds.
+
+
+    **10.12.2023**: Excuse our dust at the moment, the Wabi Foundation is on the cusp of ushering in a
+    groundbreaking era in open-source software, custom crafted for global content creation. Some even dare to
+    speculate that it could redefine the very essence of the internet as we know it.
+
 
 .. image:: https://img.shields.io/github/v/release/Wabi-Studios/Kraken?include_prereleases
    :target: https://github.com/Wabi-Studios/Kraken/releases/latest
@@ -28,7 +45,7 @@ Kraken
    :scale: 50 %
    :align: center
 
-*Animators, Developers, Filmmakers, & Artists. This Belongs to You.*
+*Where dreams forge reality, and creativity thrives.*
 
     Documentation is currently **experimental**, so please don't mind the dust over at docs.wabi.foundation_.
     Top level pixar docs can now be found here_, eventually, we can get most pages looking like this_.
