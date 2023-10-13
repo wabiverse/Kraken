@@ -24,6 +24,17 @@ Unleashing the Metaverse: Where Freedom Knows No Bounds.
     groundbreaking era in open-source software, custom crafted for global content creation. Some even dare to
     speculate that it could redefine the very essence of the internet as we know it.
 
+   **Pixar USD's Metaverse Readiness Needs**
+
+   The **Wabi Foundation** must provide and maintain easily accessible:
+   
+     1. **Official** Swift Packages, reflectant of a complete USD build, to be kept in tandem with each official USD release.
+     2. **Early Access** Swift Packages, reflectant of a complete USD build, to be kept in tandem with the active upstream development branch.
+     3. **Full Regression Testing** with each new release, along with easily accessible & comparable results on wabi.foundation_.
+
+     .. _wabi.foundation: https://wabi.foundation
+
+
 
 .. image:: https://img.shields.io/github/v/release/Wabi-Studios/Kraken?include_prereleases
    :target: https://github.com/Wabi-Studios/Kraken/releases/latest
