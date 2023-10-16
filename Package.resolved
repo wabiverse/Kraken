@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swiftusd",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wabiverse/SwiftUSD.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "786f2d9ca8975410ce8a76cf2d95bf0cec000967"
+      }
+    }
+  ],
+  "version" : 2
+}

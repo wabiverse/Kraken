@@ -365,6 +365,31 @@ function CreateKrakenAppIcons
   Pop-Location
 }
 
+function CreateAppICNSFromSVG
+{
+  $build_icns_svg = $Args[0]
+
+  if ($IsMacOS) {
+    $build_icns_dir = $build_icns_svg.split('.svg')[0] + '.iconset'
+
+    New-Item -ItemType Directory -Path $build_icns_dir -Force
+
+    &inkscape -z --export-filename="$build_icns_dir/icon_16x16.png"      -w   16 -h   16 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_16x16@2x.png"   -w   32 -h   32 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_32x32.png"      -w   32 -h   32 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_32x32@2x.png"   -w   64 -h   64 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_128x128.png"    -w  128 -h  128 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_128x128@2x.png" -w  256 -h  256 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_256x256.png"    -w  256 -h  256 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_256x256@2x.png" -w  512 -h  512 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_512x512.png"    -w  512 -h  512 "$build_icns_svg"
+    &inkscape -z --export-filename="$build_icns_dir/icon_512x512@2x.png" -w 1024 -h 1024 "$build_icns_svg"
+    iconutil -c icns "$build_icns_dir"
+
+    Write-Color -Text "Icons Generated: The iconset is located at: $build_icns_dir" -Color Green
+  }
+}
+
 function ReloadDeveloperProfile {
   . $PROFILE
 }
@@ -709,6 +734,7 @@ Set-Alias dbgkrkn RunAndDebugKraken
 
 # Generate Kraken App Icons.
 Set-Alias genicons CreateKrakenAppIcons
+Set-Alias iconmake CreateAppICNSFromSVG
 
 # Run Kraken
 Set-Alias kraken RunDevelopmentReleaseKraken
