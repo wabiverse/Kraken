@@ -1,12 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "metaversekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wabiverse/MetaverseKit.git",
+      "state" : {
+        "revision" : "8dca0d70a9a2d2ad20e8b4046ae4287f10867553",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "swiftusd",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
         "branch" : "main",
-        "revision" : "786f2d9ca8975410ce8a76cf2d95bf0cec000967"
+        "revision" : "4fd5f9def610a3bb0caa35cab986c5071e7453f7"
       }
     }
   ],

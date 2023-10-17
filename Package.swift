@@ -28,7 +28,7 @@ let package = Package(
     .executableTarget(
       name: "Kraken",
       dependencies: [
-        .product(name: "USD", package: "SwiftUSD"),
+        .product(name: "Pixar", package: "SwiftUSD"),
       ]
     ),
   ]
