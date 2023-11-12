@@ -142,6 +142,160 @@ function GenerateUnrealEngine5
   }
 }
 
+# -----------------------------------
+# Removes all GF templates within the
+# Pixar USD source for MetaverseKit.
+#
+# NOTE: We do this as a script vs mucking
+# up the Package.swift file with a bunch
+# of excludes, we also shouldn't generate
+# the templates in the first place, since
+# we want them to match what USD ships.
+function RemoveUSDGFTemplates
+{
+  rm ./pxr/base/gf/dualQuat.template.cpp
+  rm ./pxr/base/gf/dualQuat.template.h
+  rm ./pxr/base/gf/matrix.template.cpp
+  rm ./pxr/base/gf/matrix.template.h
+  rm ./pxr/base/gf/matrix2.template.cpp
+  rm ./pxr/base/gf/matrix2.template.h
+  rm ./pxr/base/gf/matrix3.template.cpp
+  rm ./pxr/base/gf/matrix3.template.h
+  rm ./pxr/base/gf/matrix4.template.cpp
+  rm ./pxr/base/gf/matrix4.template.h
+  rm ./pxr/base/gf/quat.template.cpp
+  rm ./pxr/base/gf/quat.template.h
+  rm ./pxr/base/gf/range.template.cpp
+  rm ./pxr/base/gf/range.template.h
+  rm ./pxr/base/gf/vec.template.cpp
+  rm ./pxr/base/gf/vec.template.h
+  rm ./pxr/base/gf/wrapDualQuat.template.cpp
+  rm ./pxr/base/gf/wrapMatrix.template.cpp
+  rm ./pxr/base/gf/wrapMatrix2.template.cpp
+  rm ./pxr/base/gf/wrapMatrix3.template.cpp
+  rm ./pxr/base/gf/wrapMatrix4.template.cpp
+  rm ./pxr/base/gf/wrapQuat.template.cpp
+  rm ./pxr/base/gf/wrapRange.template.cpp
+  rm ./pxr/base/gf/wrapVec.template.cpp
+}
+
+# -----------------------------------
+# Convenience command to arbitrarily 
+# copy all contents within sourceDir
+# and recusrively iterate through all
+# subdirectories and copy them into the
+# same directory structure within the
+# targetDir.
+function CpSrcToTarget
+{
+  $isDryRun = ($Args[0] -eq "dryrun")
+  $sourceDir = $Args[1]
+  $targetDir = $Args[2]
+
+  if ($sourceDir -eq $null) {
+    Write-Color -Text "ERROR: cannot copy src into target, because src is null." -Color Red
+    return
+  }
+  if ($targetDir -eq $null) {
+    Write-Color -Text "ERROR: cannot copy src into target, because target is null." -Color Red
+    return
+  }
+
+  # -----------------------------------
+  Push-Location $sourceDir
+
+  Get-ChildItem $sourceDir -recurse | `
+  foreach {
+    if($isDryRun) {
+      Write-Color -Text "DRYRUN", "::", "Copying", ": ", $_.FullName, " -> ", "$targetFile" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+    } else {
+      Write-Color -Text "RUNNING", "::", "Copying", ": ", $_.FullName, " -> ", "$targetFile" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+      $targetFile = $targetDir + $_.FullName.SubString($sourceDir.Length);
+
+      $targetInfo = Get-Item -Path $_.FullName
+      if ($targetInfo.Extension -ne "") {
+        New-Item -ItemType File -Path $targetFile -Force;
+      } else {
+        New-Item -ItemType Directory -Path $targetFile -Force;
+      }
+      Copy-Item $_.FullName -destination $targetFile
+      #Remove-Item $_.FullName
+    }
+  }
+
+  Pop-Location
+  # -----------------------------------
+}
+
+# -----------------------------------
+# Copies all MaterialX headers to an 
+# include directory for MetaverseKit.
+#
+# NOTE: It is not implemented for linux
+# and windows, because this will only
+# ever really be done by @furby-tm on
+# macOS, internal stuff for the sake
+# of convenience.
+function CopyMTXHeaders
+{
+  if ($IsMacOS) {
+    $sourceDir = "/Users/$env:USER/Wabi/MetaverseKit/Sources/MaterialX/source"
+    $targetDir = "/Users/$env:USER/Wabi/MetaverseKit/Sources/MaterialX/include/"
+    # -----------------------------------
+    Push-Location $sourceDir
+
+    # FOR COPYING THE (*.H) HEADERS TO THE INCLUDE DIRECTORY
+    Get-ChildItem $sourceDir -filter "*.h" -recurse | `
+    foreach {
+      $targetFile = $targetDir + $_.FullName.SubString($sourceDir.Length);
+      New-Item -ItemType File -Path $targetFile -Force;
+      Copy-Item $_.FullName -destination $targetFile
+      Remove-Item $_.FullName
+    }
+
+    # FOR COPYING THE (*.HPP) HEADERS TO THE INCLUDE DIRECTORY
+    Get-ChildItem $sourceDir -filter "*.hpp" -recurse | `
+    foreach {
+      $targetFile = $targetDir + $_.FullName.SubString($sourceDir.Length);
+      New-Item -ItemType File -Path $targetFile -Force;
+      Copy-Item $_.FullName -destination $targetFile
+      Remove-Item $_.FullName
+    }
+
+    # FOR COPYING THE (*.INL) HEADERS TO THE INCLUDE DIRECTORY
+    Get-ChildItem $sourceDir -filter "*.inl" -recurse | `
+    foreach {
+      $targetFile = $targetDir + $_.FullName.SubString($sourceDir.Length);
+      New-Item -ItemType File -Path $targetFile -Force;
+      Copy-Item $_.FullName -destination $targetFile
+      Remove-Item $_.FullName
+    }
+
+    # FOR REMOVING THE (*.H) HEADERS FROM THE SOURCE DIRECTORY
+    Get-ChildItem $sourceDir -filter "*.h" -recurse | `
+    foreach {
+      Remove-Item $_.FullName
+    }
+
+    # FOR REMOVING THE (*.HPP) HEADERS FROM THE SOURCE DIRECTORY
+    Get-ChildItem $sourceDir -filter "*.hpp" -recurse | `
+    foreach {
+      Remove-Item $_.FullName
+    }
+
+    # FOR REMOVING THE (*.INL) HEADERS FROM THE SOURCE DIRECTORY
+    Get-ChildItem $sourceDir -filter "*.inl" -recurse | `
+    foreach {
+      Remove-Item $_.FullName
+    }
+
+    Pop-Location
+    # -----------------------------------
+  } else {
+    Write-Color -Text "This command is not yet implemented for linux or microsoft windows." -Color Yellow
+  }
+}
+
 function SetupUnrealEngine5Dependencies
 {
   if ($IsMacOS) {
@@ -740,13 +894,13 @@ Set-Alias iconmake CreateAppICNSFromSVG
 Set-Alias kraken RunDevelopmentReleaseKraken
 Set-Alias kraken_d RunDevelopmentDebugKraken
 
-Set-Alias python RunKrakenPythonOfficialRelease
-Set-Alias python3 RunKrakenPythonOfficialRelease
+#Set-Alias python RunKrakenPythonOfficialRelease
+#Set-Alias python3 RunKrakenPythonOfficialRelease
 
 # Run Kraken Python
 if ($IsWindows) {
-  Set-Alias python_r RunKrakenPythonRelease
-  Set-Alias python_d RunKrakenPythonDebug
+  #Set-Alias python_r RunKrakenPythonRelease
+  #Set-Alias python_d RunKrakenPythonDebug
 }
 
 # Enter Kraken Server

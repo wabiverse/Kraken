@@ -6,7 +6,13 @@ import PackageDescription
 // -------------------------------------------------------------------------
 let package = Package(
   name: "Metaverse",
-
+  platforms: [
+    .macOS(.v12),
+    .visionOS(.v1),
+    .iOS(.v12),
+    .tvOS(.v12),
+    .watchOS(.v4),
+  ],
   // --- 📦 Package Products. ---
   products: [
     .executable(
@@ -17,7 +23,7 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", branch: "main"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.0"),
   ],
 
   // --- 🎯 Package Targets. ---
