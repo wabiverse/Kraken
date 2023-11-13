@@ -29,7 +29,7 @@ let package = Package(
   // --- 🎯 Package Targets. ---
   targets: [
     // ---------------------------------------------------------
-    // :: :  🐙 Kraken - The Animation Platform Suite.  :     ::
+    // :: :  🐙 Kraken - The Metaversal Creation Suite.  :     ::
     // ---------------------------------------------------------
     .executableTarget(
       name: "Kraken",

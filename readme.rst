@@ -67,7 +67,7 @@ Unleashing the Metaverse: Where Freedom Knows No Bounds.
     .. _here: https://docs.wabi.foundation/api/wabi_api_root.html
     .. _docs.wabi.foundation: https://docs.wabi.foundation
 
-Home of the Kraken -- The free and open source 3D animation platform redefining
+Home of the Kraken -- The free and open source metaversal creation suite redefining
 animation composition, collaborative workflows, simulation engines, skeletal
 rigging systems, and look development from storyboard to final render. Built on
 the underlying software architecture provided by Pixar, and extended to meet the
