@@ -46,6 +46,9 @@ enum Creator
    *   or exit immediately when running in background-mode. */
   static func main()
   {
+    /* SwiftUSD metaversally says hello. */
+    Pixar.shared.sayHello()
+
     print("Kraken launched. Will exit.")
   }
 }

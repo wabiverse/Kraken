@@ -227,6 +227,27 @@ function CpSrcToTarget
   # -----------------------------------
 }
 
+function MakeMetaversalBoostFramework
+{
+  Push-Location /Users/$env:USER/Wabi/MetaverseBoostFramework
+
+  Write-Color -Text "BUILDING", "::", "BOOST", ": ", "macOS", " -> ", "arm64/x86_64" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+  make SDK=macosx
+  Write-Color -Text "BUILDING", "::", "BOOST", ": ", "visionOS", " -> ", "arm64" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+  make SDK=xros
+  Write-Color -Text "BUILDING", "::", "BOOST", ": ", "visionOS Simulator", " -> ", "arm64" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+  make SDK=xrsimulator
+  Write-Color -Text "BUILDING", "::", "BOOST", ": ", "iOS", " -> ", "arm64" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+  make SDK=iphoneos
+  Write-Color -Text "BUILDING", "::", "BOOST", ": ", "iOS Simulator", " -> ", "arm64/x86_64" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+  make SDK=iphonesimulator
+
+  Write-Color -Text "BUILDING", "::", "BOOST", ": ", "XCFramework", " -> ", "UNIVERSAL" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+  make xcframework
+
+  Pop-Location
+}
+
 # -----------------------------------
 # Copies all MaterialX headers to an 
 # include directory for MetaverseKit.

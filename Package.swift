@@ -1,9 +1,9 @@
 // swift-tools-version: 5.9
 import PackageDescription
 
-// -------------------------------------------------------------------------
-// :: :  💫 The Open Source Metaverse  :   ::
-// -------------------------------------------------------------------------
+// -------------------------------------------
+// :: :  💫 The Open Source Metaverse  :    ::
+// -------------------------------------------
 let package = Package(
   name: "Metaverse",
   platforms: [
@@ -23,18 +23,22 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.3"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.8")
   ],
 
   // --- 🎯 Package Targets. ---
   targets: [
     // ---------------------------------------------------------
-    // :: :  🐙 Kraken - The Metaversal Creation Suite.  :     ::
+    // :: :  🐙 Kraken - The Metaversal Creation Suite.  :    ::
     // ---------------------------------------------------------
     .executableTarget(
       name: "Kraken",
       dependencies: [
         .product(name: "Pixar", package: "SwiftUSD"),
+      ],
+      swiftSettings: [
+        // needed for SwiftUSD.
+        .interoperabilityMode(.Cxx)
       ]
     ),
   ]
