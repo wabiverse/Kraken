@@ -16,39 +16,31 @@
 import Foundation
 import Pixar
 
-/* -------------------------------------------------------------------- */
-/* 
- * # ``Kraken``
- * The Animation Foundation, built upon a simple principle, to give all
- * artists the tools they need to create great things.
- *
- * ## Overview */
+/* --- xxx --- */
 
-/** -------------------------------------------------------------------- */
-/* MARK: - Kraken Runtime Creator */
-/**
- * ### Startup
- *
- * Where it all begins.
- * - ``Creator`` */
 @main
 enum Creator
 {
-  /** -------------------------------------------------------------------- */
-  /* MARK: - Kraken Runtime Initialization */
-  /**
-   * ### Main Function
-   *
-   * #### Kraken's main function responsibilities are:
-   * - setup subsystems.
-   * - handle arguments.
-   * - run #WM_main() event loop,
-   *   or exit immediately when running in background-mode. */
   static func main()
   {
-    /* SwiftUSD metaversally says hello. */
-    Pixar.shared.sayHello()
+    /* Using Pixar's USD from Swift. */
+    let cwd = Pixar.Arch.getCwd()
+    let exePath = Pixar.Arch.getExecutablePath()
+    let isMain = Pixar.Arch.isMainThread()
+    let threadId = Pixar.Arch.getMainThreadId()
+    let pageSize = Pixar.Arch.getPageSize()
+
+    PXRMSG.Log.point("Current working directory", to: cwd)
+    PXRMSG.Log.point("Path to running executable", to: exePath)
+    PXRMSG.Log.point("Are we on the main thread?", to: isMain)
+    PXRMSG.Log.point("The id of the main thread", to: threadId)
+    PXRMSG.Log.point("System memory paging size", to: pageSize)
 
     print("Kraken launched. Will exit.")
   }
 }
+
+/* --- xxx --- */
+
+
+
