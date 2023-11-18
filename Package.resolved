@@ -5,8 +5,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "6b26b6cd46db95b5e3a2e07c8f7097d9b6b1e04a",
-        "version" : "1.2.7"
+        "revision" : "46b38a22dfea04ccf01686a31bb98c3dc6a14d8f",
+        "version" : "1.2.9"
+      }
+    },
+    {
+      "identity" : "metaversepythonframework",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wabiverse/MetaversePythonFramework",
+      "state" : {
+        "revision" : "7e0507f8c9bd4aa18e23b62f896b0ee766d696c1",
+        "version" : "3.11.4"
+      }
+    },
+    {
+      "identity" : "pythonkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pvieito/PythonKit.git",
+      "state" : {
+        "revision" : "41dd1e76bb31661f59efbc1784e8f60ccc32a9d5",
+        "version" : "0.4.1"
       }
     },
     {
@@ -14,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
-        "revision" : "81d1a328c1064b1e29f3e3d93bb5a48567f7e561",
-        "version" : "23.8.9"
+        "revision" : "d3a4162d9afc7bf256846dbfef958bf8c2449a0d",
+        "version" : "23.8.10"
       }
     }
   ],

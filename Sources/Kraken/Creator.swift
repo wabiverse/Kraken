@@ -15,6 +15,8 @@
 
 import Foundation
 import Pixar
+import PyBundle
+import Python
 
 /* --- xxx --- */
 
@@ -23,6 +25,10 @@ enum Creator
 {
   static func main()
   {
+    /* Embed & init python. */
+    PyBundle.shared.pyInit()
+    PyBundle.shared.pyInfo()
+
     /* Using Pixar's USD from Swift. */
     let cwd = Pixar.Arch.getCwd()
     let exePath = Pixar.Arch.getExecutablePath()
@@ -41,6 +47,3 @@ enum Creator
 }
 
 /* --- xxx --- */
-
-
-
