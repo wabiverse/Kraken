@@ -23,7 +23,7 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.10")
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.13")
   ],
 
   // --- 🎯 Package Targets. ---
