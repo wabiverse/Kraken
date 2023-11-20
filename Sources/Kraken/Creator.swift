@@ -48,23 +48,25 @@ enum Creator
     var vecC = vecA + vecB
     vecC *= 2
 
+    PXRMsg.Log.point("The value of vecC", to: vecC)
+
     /* Using Pixar's USD (Gf) from Swift (Pixar.Gf namespace). */
     let pxrVecA = Pixar.Gf.Vec2f(1, 2)
     let pxrVecB = Pixar.Gf.Vec2f(3, 4)
     var pxrVecC = pxrVecA + pxrVecB
     pxrVecC *= 2
 
-    PXRMsg.Log.point("The value of vecC", to: pxrVecC)
+    PXRMsg.Log.point("The value of pxrVecC", to: pxrVecC)
 
     /* Using Pixar's USD (Js) from Swift (no namespace). */
-    let jsValue = Pixar.Js.Value(true)
-
-    PXRMsg.Log.point("The value of jsValue", to: jsValue.GetBool())
-
-    /* Using Pixar's USD (Js) from Swift (Pixar.Gf namespace). */
     let jsonvalue = JsValue(true)
 
     PXRMsg.Log.point("The value of jsonvalue", to: jsonvalue.GetBool())
+
+    /* Using Pixar's USD (Js) from Swift (Pixar.Js namespace). */
+    let pxrValue = Pixar.Js.Value(true)
+
+    PXRMsg.Log.point("The value of pxrValue", to: pxrValue.GetBool())
 
     print("Kraken launched. Will exit.")
   }
