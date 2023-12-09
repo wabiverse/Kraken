@@ -8,7 +8,7 @@ Kraken
 ******
 
 
-**Responsible for the Future of the Open Source Metaverse**
+**The Free and Open Source Metaversal Creation Suite**
 
 
 
@@ -18,6 +18,15 @@ Kraken
 
 
 Unleashing the Metaverse: Where Freedom Knows No Bounds.
+
+
+    Experience the future of computer graphics development by cloning this repository
+    and running the following command in your terminal (ensure the `-p` switch matches
+    your platform ex. **linux**, **visionOS**): 
+
+    .. code-block:: swift
+
+          swift package --disable-sandbox plugin bundler run -p macOS Kraken
 
 
     **10.12.2023**: Excuse our dust at the moment, the Wabi Foundation is on the cusp of ushering in a

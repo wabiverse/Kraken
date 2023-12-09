@@ -34,9 +34,6 @@ import Pixar
 import PyBundle
 import Python
 
-/* kraken python. */
-import KrakenPy
-
 /* --- xxx --- */
 
 @main

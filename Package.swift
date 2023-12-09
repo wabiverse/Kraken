@@ -12,18 +12,20 @@ let package = Package(
   ],
   // --- 📦 Package Products. ---
   products: [
+    .library(
+      name: "KrakenPy",
+      targets: ["KrakenPy"]
+    ),
     .executable(
       name: "Kraken",
-      targets: [
-        "Kraken",
-        "KrakenPy"
-      ]
+      targets: ["Kraken"]
     ),
   ],
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.17")
+    .package(url: "https://github.com/furby-tm/swift-bundler", revision: "cedd7a2"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.18")
   ],
 
   // --- 🎯 Package Targets. ---

@@ -1,0 +1,10 @@
+format_version = 2
+
+[apps.Kraken]
+identifier = 'foundation.wabi.Kraken'
+product = 'Kraken'
+version = '1.0.0'
+category = 'public.app-category.graphics-design'
+
+[apps.Kraken.plist]
+commit = '$(COMMIT_HASH)'
