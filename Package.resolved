@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "c6c4e64b03005e1c43f10448ff1230af53085467",
-        "version" : "1.3.3"
+        "revision" : "0078eaa426bbd4ec30720ddb8e20fa272e0b9467",
+        "version" : "1.3.4"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/furby-tm/swift-bundler",
       "state" : {
-        "branch" : "cedd7a2",
-        "revision" : "cedd7a26a16dce0a630bd9a3c3cfd2ab409cafde"
+        "revision" : "b72140213ab7135922287a48837ced1b2da1457d",
+        "version" : "2.0.8"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
-        "revision" : "ab30043a44fa398ea90cd2d2ec31a69cc57fbf58",
-        "version" : "23.8.18"
+        "revision" : "ba990566b26c4d272831740251e2b2db58a8e223",
+        "version" : "23.8.19"
       }
     },
     {
@@ -210,10 +210,10 @@
     {
       "identity" : "tomlkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LebJe/TOMLKit",
+      "location" : "https://github.com/furby-tm/TOMLKit",
       "state" : {
-        "branch" : "0.5.5",
-        "revision" : "404c4dd011743461bff12d00a5118d0ed59d630c"
+        "revision" : "f2b3e80a19c7fb3d42e3cfda98076cef8f0d1bd7",
+        "version" : "0.5.6"
       }
     },
     {

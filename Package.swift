@@ -24,8 +24,8 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/furby-tm/swift-bundler", revision: "cedd7a2"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.18")
+    .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.8"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.19")
   ],
 
   // --- 🎯 Package Targets. ---
