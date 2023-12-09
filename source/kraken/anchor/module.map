@@ -1,5 +1,0 @@
-module Anchor {
-  header "ANCHOR_api.h"
-  requires cplusplus
-  export *
-} 

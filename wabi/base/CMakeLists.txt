@@ -1,8 +1,0 @@
-add_subdirectory(arch)
-add_subdirectory(tf)
-add_subdirectory(gf)
-add_subdirectory(js)
-add_subdirectory(trace)
-add_subdirectory(work)
-add_subdirectory(plug)
-add_subdirectory(vt)
