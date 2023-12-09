@@ -1,9 +1,6 @@
 // swift-tools-version: 5.9
 import PackageDescription
 
-// -------------------------------------------
-// :: :  💫 The Open Source Metaverse  :    ::
-// -------------------------------------------
 let package = Package(
   name: "Metaverse",
   platforms: [
@@ -17,24 +14,43 @@ let package = Package(
   products: [
     .executable(
       name: "Kraken",
-      targets: ["Kraken"]
+      targets: [
+        "Kraken",
+        "KrakenPy"
+      ]
     ),
   ],
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.14")
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.17")
   ],
 
   // --- 🎯 Package Targets. ---
   targets: [
-    // ---------------------------------------------------------
-    // :: :  🐙 Kraken - The Metaversal Creation Suite.  :    ::
-    // ---------------------------------------------------------
+    .target(
+      name: "KrakenPy",
+      dependencies: [
+        .product(name: "PyTf", package: "SwiftUSD"),
+        .product(name: "PyGf", package: "SwiftUSD"),
+        .product(name: "PyTrace", package: "SwiftUSD"),
+        .product(name: "PyVt", package: "SwiftUSD"),
+        .product(name: "PyWork", package: "SwiftUSD"),
+        .product(name: "PyPlug", package: "SwiftUSD"),
+        .product(name: "PyAr", package: "SwiftUSD"),
+        .product(name: "PyKind", package: "SwiftUSD"),
+        .product(name: "PySdf", package: "SwiftUSD")
+      ],
+      swiftSettings: [
+        // needed for SwiftUSD.
+        .interoperabilityMode(.Cxx)
+      ]
+    ),
+
     .executableTarget(
       name: "Kraken",
       dependencies: [
-        .product(name: "Pixar", package: "SwiftUSD"),
+        .product(name: "Pixar", package: "SwiftUSD")
       ],
       swiftSettings: [
         // needed for SwiftUSD.
