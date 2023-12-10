@@ -25,7 +25,7 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.8"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.19")
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.8.20")
   ],
 
   // --- 🎯 Package Targets. ---
@@ -41,7 +41,9 @@ let package = Package(
         .product(name: "PyPlug", package: "SwiftUSD"),
         .product(name: "PyAr", package: "SwiftUSD"),
         .product(name: "PyKind", package: "SwiftUSD"),
-        .product(name: "PySdf", package: "SwiftUSD")
+        .product(name: "PySdf", package: "SwiftUSD"),
+        .product(name: "PyPcp", package: "SwiftUSD"),
+        .product(name: "PyUsd", package: "SwiftUSD")
       ],
       swiftSettings: [
         // needed for SwiftUSD.
