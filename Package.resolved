@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
-        "revision" : "7a93946701160c17dac0bab9d7873332271a1ac1",
-        "version" : "23.8.20"
+        "revision" : "159f3e5288d20a642c3b521d953d73c03c11ef50",
+        "version" : "23.11.0"
       }
     },
     {
