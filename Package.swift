@@ -16,6 +16,14 @@ let package = Package(
       name: "KrakenPy",
       targets: ["KrakenPy"]
     ),
+    .library(
+      name: "KrakenKit",
+      targets: ["KrakenKit"]
+    ),
+    .library(
+      name: "KrakenUI",
+      targets: ["KrakenUI"]
+    ),
     .executable(
       name: "Kraken",
       targets: ["Kraken"]
@@ -25,7 +33,7 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.8"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.0")
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.1")
   ],
 
   // --- 🎯 Package Targets. ---
@@ -51,10 +59,29 @@ let package = Package(
       ]
     ),
 
+    .target(name: "KrakenKit"),
+
+    .target(
+      name: "KrakenUI",
+      dependencies: [
+        .product(name: "Pixar", package: "SwiftUSD"),
+        .target(name: "KrakenKit"),
+      ],
+      swiftSettings: [
+        // needed for SwiftUSD.
+        .interoperabilityMode(.Cxx)
+      ]
+    ),
+
     .executableTarget(
       name: "Kraken",
       dependencies: [
-        .product(name: "Pixar", package: "SwiftUSD")
+        .product(name: "Pixar", package: "SwiftUSD"),
+        .target(name: "KrakenKit"),
+        .target(name: "KrakenUI"),
+      ],
+      resources: [
+        .process("Resources")
       ],
       swiftSettings: [
         // needed for SwiftUSD.

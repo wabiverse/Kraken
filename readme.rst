@@ -29,6 +29,11 @@ Unleashing the Metaverse: Where Freedom Knows No Bounds.
           swift package --disable-sandbox plugin bundler run -p macOS Kraken
 
 
+    .. figure:: https://www.dropbox.com/scl/fi/to07cplcuwxfqq7hk2ak3/Screenshot-2023-12-14-at-7.20.11-AM.png?rlkey=qjr8c2lcevs7sus9hjiya1rsk&raw=1
+       :alt: Kraken
+       :align: center
+
+
     **10.12.2023**: Excuse our dust at the moment, the Wabi Foundation is on the cusp of ushering in a
     groundbreaking era in open-source software, custom crafted for global content creation. Some even dare to
     speculate that it could redefine the very essence of the internet as we know it.

@@ -1,0 +1,96 @@
+/* --------------------------------------------------------------
+ * :: :  K  R  A  K  E  N  :                                   ::
+ * --------------------------------------------------------------
+ * @wabistudios :: multiverse :: kraken
+ *
+ * This program is free software; you can redistribute it, and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. Check out
+ * the GNU General Public License for more details.
+ *
+ * You should have received a copy for this software license, the
+ * GNU General Public License along with this program; or, if not
+ * write to the Free Software Foundation, Inc., to the address of
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *                            Copyright (C) 2023 Wabi Foundation.
+ *                                           All Rights Reserved.
+ * --------------------------------------------------------------
+ *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
+ * -------------------------------------------------------------- */
+
+import SwiftUI
+
+public struct IntroStack: View
+{
+  public init()
+  {}
+
+  public var body: some View
+  {
+    VStack
+    {
+      Button
+      {}
+      label:
+      {
+        HStack
+        {
+          Image(systemName: "globe.americas.fill")
+            .aspectRatio(contentMode: .fill)
+            .foregroundStyle(.green.opacity(0.8))
+            .font(.system(size: 16))
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(.blue.opacity(0.2)))
+            .frame(width: 85, alignment: .trailing)
+
+          Spacer()
+
+          Text("New Project")
+            .fontWeight(.bold)
+            .foregroundStyle(.secondary)
+            .frame(width: 165, alignment: .leading)
+        }
+        .frame(width: 250, alignment: .center)
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.quaternary))
+      }
+      .buttonStyle(PlainButtonStyle())
+
+      Button
+      {}
+      label:
+      {
+        HStack
+        {
+          Image(systemName: "network")
+            .aspectRatio(contentMode: .fill)
+            .foregroundStyle(.purple.opacity(0.8))
+            .font(.system(size: 16))
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(.purple.opacity(0.2)))
+            .frame(width: 85, alignment: .trailing)
+
+          Spacer()
+
+          Text("Metaverse Portal")
+            .fontWeight(.bold)
+            .foregroundStyle(.secondary)
+            .frame(width: 165, alignment: .leading)
+        }
+        .frame(width: 250, alignment: .center)
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.quaternary))
+      }
+      .buttonStyle(PlainButtonStyle())
+      .padding(.bottom, 4)
+
+      Spacer()
+    }
+  }
+}

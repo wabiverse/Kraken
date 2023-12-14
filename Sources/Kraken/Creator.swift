@@ -24,22 +24,20 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-/* system. */
 import Foundation
-
-/* pixar usd. */
+import KrakenKit
+import KrakenUI
 import Pixar
-
-/* python. */
 import PyBundle
 import Python
+import SwiftUI
 
 /* --- xxx --- */
 
 @main
-enum Creator
+struct Kraken: App
 {
-  static func main()
+  init()
   {
     /* Embed & init python. */
     PyBundle.shared.pyInit()
@@ -84,7 +82,21 @@ enum Creator
 
     PXRMsg.Log.point("The value of pxrValue", to: pxrValue.GetBool())
 
-    print("Kraken launched. Will exit.")
+    print("Kraken launched.")
+  }
+
+  /* --- xxx --- */
+
+  var body: some Scene
+  {
+    MicaWindow(title: "Kraken", id: "kraken")
+    {
+      SplashScreen(
+        image: "Splash",
+        logo: "wabi.hexagon.fill",
+        title: "The Metaversal Creation Suite"
+      )
+    }
   }
 }
 
