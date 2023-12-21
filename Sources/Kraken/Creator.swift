@@ -39,6 +39,9 @@ struct Kraken: App
 {
   init()
   {
+    /* Setup usd plugins & resources. */
+    Pixar.Bundle.shared.setup(.resources)
+
     /* Embed & init python. */
     PyBundle.shared.pyInit()
     PyBundle.shared.pyInfo()
@@ -50,11 +53,11 @@ struct Kraken: App
     let threadId = Pixar.Arch.getMainThreadId()
     let pageSize = Pixar.Arch.getPageSize()
 
-    PXRMsg.Log.point("Current working directory", to: cwd)
-    PXRMsg.Log.point("Path to running executable", to: exePath)
-    PXRMsg.Log.point("Are we on the main thread?", to: isMain)
-    PXRMsg.Log.point("The id of the main thread", to: threadId)
-    PXRMsg.Log.point("System memory paging size", to: pageSize)
+    Msg.Log.point("Current working directory", to: cwd)
+    Msg.Log.point("Path to running executable", to: exePath)
+    Msg.Log.point("Are we on the main thread?", to: isMain)
+    Msg.Log.point("The id of the main thread", to: threadId)
+    Msg.Log.point("System memory paging size", to: pageSize)
 
     /* Using Pixar's USD (Gf) from Swift (no namespace). */
     let vecA = GfVec2f(1, 2)
@@ -62,7 +65,7 @@ struct Kraken: App
     var vecC = vecA + vecB
     vecC *= 2
 
-    PXRMsg.Log.point("The value of vecC", to: vecC)
+    Msg.Log.point("The value of vecC", to: vecC)
 
     /* Using Pixar's USD (Gf) from Swift (Pixar.Gf namespace). */
     let pxrVecA = Pixar.Gf.Vec2f(1, 2)
@@ -70,17 +73,20 @@ struct Kraken: App
     var pxrVecC = pxrVecA + pxrVecB
     pxrVecC *= 2
 
-    PXRMsg.Log.point("The value of pxrVecC", to: pxrVecC)
+    Msg.Log.point("The value of pxrVecC", to: pxrVecC)
 
     /* Using Pixar's USD (Js) from Swift (no namespace). */
     let jsonvalue = JsValue(true)
 
-    PXRMsg.Log.point("The value of jsonvalue", to: jsonvalue.GetBool())
+    Msg.Log.point("The value of jsonvalue", to: jsonvalue.GetBool())
 
     /* Using Pixar's USD (Js) from Swift (Pixar.Js namespace). */
     let pxrValue = Pixar.Js.Value(true)
 
-    PXRMsg.Log.point("The value of pxrValue", to: pxrValue.GetBool())
+    Msg.Log.point("The value of pxrValue", to: pxrValue.GetBool())
+
+    /* Create a new USD stage. */
+    Pixar.Usd.Stage.createNew("Kraken.usda")
 
     print("Kraken launched.")
   }

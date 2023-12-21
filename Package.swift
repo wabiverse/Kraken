@@ -4,18 +4,14 @@ import PackageDescription
 let package = Package(
   name: "Metaverse",
   platforms: [
-    .macOS(.v12),
+    .macOS(.v14),
     .visionOS(.v1),
-    .iOS(.v12),
-    .tvOS(.v12),
-    .watchOS(.v4),
+    .iOS(.v16),
+    .tvOS(.v16),
+    .watchOS(.v9)
   ],
   // --- 📦 Package Products. ---
   products: [
-    .library(
-      name: "KrakenPy",
-      targets: ["KrakenPy"]
-    ),
     .library(
       name: "KrakenKit",
       targets: ["KrakenKit"]
@@ -33,32 +29,11 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.8"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.1")
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.6")
   ],
 
   // --- 🎯 Package Targets. ---
   targets: [
-    .target(
-      name: "KrakenPy",
-      dependencies: [
-        .product(name: "PyTf", package: "SwiftUSD"),
-        .product(name: "PyGf", package: "SwiftUSD"),
-        .product(name: "PyTrace", package: "SwiftUSD"),
-        .product(name: "PyVt", package: "SwiftUSD"),
-        .product(name: "PyWork", package: "SwiftUSD"),
-        .product(name: "PyPlug", package: "SwiftUSD"),
-        .product(name: "PyAr", package: "SwiftUSD"),
-        .product(name: "PyKind", package: "SwiftUSD"),
-        .product(name: "PySdf", package: "SwiftUSD"),
-        .product(name: "PyPcp", package: "SwiftUSD"),
-        .product(name: "PyUsd", package: "SwiftUSD")
-      ],
-      swiftSettings: [
-        // needed for SwiftUSD.
-        .interoperabilityMode(.Cxx)
-      ]
-    ),
-
     .target(name: "KrakenKit"),
 
     .target(
@@ -84,6 +59,7 @@ let package = Package(
         .process("Resources")
       ],
       swiftSettings: [
+        .define("DEBUG", .when(configuration: .debug)),
         // needed for SwiftUSD.
         .interoperabilityMode(.Cxx)
       ]
