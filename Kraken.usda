@@ -1,2 +1,12 @@
 #usda 1.0
 
+def "Hello"
+{
+    def "Metaverse"
+    {
+        def Sphere "World"
+        {
+        }
+    }
+}
+

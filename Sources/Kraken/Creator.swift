@@ -86,7 +86,12 @@ struct Kraken: App
     Msg.Log.point("The value of pxrValue", to: pxrValue.GetBool())
 
     /* Create a new USD stage. */
-    Pixar.Usd.Stage.createNew("Kraken.usda")
+    var stage = Pixar.Usd.Stage.createNew("Kraken.usda")
+
+    /* & hello metaverse. */
+    Pixar.UsdGeom.Sphere.define(&stage, path: "/Hello/Metaverse/World")
+
+    stage.save()
 
     print("Kraken launched.")
   }
