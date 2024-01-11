@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    doc = "Kraken v1.0.3"
+    doc = "\x1b[35mKraken\x1b[0m v\x1b[33m1.0.3\x1b[0m"
 )
 
 def Xform "Hello"

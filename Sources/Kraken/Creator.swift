@@ -37,7 +37,7 @@ import SwiftUI
 @main
 struct Kraken: App
 {
-  static let version = "1.0.3"
+  static let version = Pixar.Gf.Vec3i(1, 0, 3)
 
   init()
   {
@@ -47,6 +47,16 @@ struct Kraken: App
     /* embed & init python. */
     PyBundle.shared.pyInit()
     PyBundle.shared.pyInfo()
+
+    /* -------------------------------------------------------- */
+
+    /* test some usd symbols, ensure @_spi errors are gone. */
+    let stage = Pixar.Usd.Stage.createNew("ExampleScene.usda")
+
+    Pixar.UsdGeom.Xform.define(stage, path: "Hello")
+    Pixar.UsdGeom.Sphere.define(stage, path: "Hello/World")
+
+    /* -------------------------------------------------------- */
 
     /* hello metaverse. */
     UsdStage("Kraken.usda")
@@ -62,7 +72,7 @@ struct Kraken: App
         }
       }
     }
-    .set(doc: "Kraken v\(Kraken.version)")
+    .set(doc: "\("Kraken".magenta) v\(versionStr.yellow)")
     .save()
 
     Msg.logger.log(level: .info, "Kraken launched.")
@@ -80,6 +90,22 @@ struct Kraken: App
         title: "The Metaversal Creation Suite"
       )
     }
+  }
+}
+
+extension Kraken
+{
+  var versionStr: String
+  {
+    let v = Kraken.version.getArray().map
+    {
+      String($0)
+    }
+    .joined(separator: ".")
+
+    Msg.logger.log(level: .info, "Kraken v\(v)")
+
+    return v
   }
 }
 
