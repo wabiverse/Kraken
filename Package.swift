@@ -28,8 +28,8 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.8"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.8")
+    .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.19")
   ],
 
   // --- 🎯 Package Targets. ---
@@ -39,7 +39,7 @@ let package = Package(
     .target(
       name: "KrakenUI",
       dependencies: [
-        .product(name: "Pixar", package: "SwiftUSD"),
+        .product(name: "PixarUSD", package: "SwiftUSD"),
         .target(name: "KrakenKit"),
       ],
       swiftSettings: [
@@ -51,7 +51,7 @@ let package = Package(
     .executableTarget(
       name: "Kraken",
       dependencies: [
-        .product(name: "Pixar", package: "SwiftUSD"),
+        .product(name: "PixarUSD", package: "SwiftUSD"),
         .target(name: "KrakenKit"),
         .target(name: "KrakenUI"),
       ],

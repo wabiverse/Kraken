@@ -27,7 +27,7 @@
 import Foundation
 import KrakenKit
 import KrakenUI
-import Pixar
+import PixarUSD
 import PyBundle
 import Python
 import SwiftUI
@@ -37,63 +37,35 @@ import SwiftUI
 @main
 struct Kraken: App
 {
+  static let version = "1.0.3"
+
   init()
   {
-    /* Setup usd plugins & resources. */
-    Pixar.Bundle.shared.setup(.resources)
+    /* setup usd plugins & resources. */
+    Pixar.Bundler.shared.setup(.resources)
 
-    /* Embed & init python. */
+    /* embed & init python. */
     PyBundle.shared.pyInit()
     PyBundle.shared.pyInfo()
 
-    /* Using Pixar's USD (Arch) from Swift. */
-    let cwd = Pixar.Arch.getCwd()
-    let exePath = Pixar.Arch.getExecutablePath()
-    let isMain = Pixar.Arch.isMainThread()
-    let threadId = Pixar.Arch.getMainThreadId()
-    let pageSize = Pixar.Arch.getPageSize()
+    /* hello metaverse. */
+    UsdStage("Kraken.usda")
+    {
+      // 👋.
+      UsdPrim("Hello", type: .xform)
+      {
+        // 🌌.
+        UsdPrim("Metaverse", type: .xform)
+        {
+          // 🦑.
+          UsdPrim("Kraken", type: .cylinder)
+        }
+      }
+    }
+    .set(doc: "Kraken v\(Kraken.version)")
+    .save()
 
-    Msg.Log.point("Current working directory", to: cwd)
-    Msg.Log.point("Path to running executable", to: exePath)
-    Msg.Log.point("Are we on the main thread?", to: isMain)
-    Msg.Log.point("The id of the main thread", to: threadId)
-    Msg.Log.point("System memory paging size", to: pageSize)
-
-    /* Using Pixar's USD (Gf) from Swift (no namespace). */
-    let vecA = GfVec2f(1, 2)
-    let vecB = GfVec2f(3, 4)
-    var vecC = vecA + vecB
-    vecC *= 2
-
-    Msg.Log.point("The value of vecC", to: vecC)
-
-    /* Using Pixar's USD (Gf) from Swift (Pixar.Gf namespace). */
-    let pxrVecA = Pixar.Gf.Vec2f(1, 2)
-    let pxrVecB = Pixar.Gf.Vec2f(3, 4)
-    var pxrVecC = pxrVecA + pxrVecB
-    pxrVecC *= 2
-
-    Msg.Log.point("The value of pxrVecC", to: pxrVecC)
-
-    /* Using Pixar's USD (Js) from Swift (no namespace). */
-    let jsonvalue = JsValue(true)
-
-    Msg.Log.point("The value of jsonvalue", to: jsonvalue.GetBool())
-
-    /* Using Pixar's USD (Js) from Swift (Pixar.Js namespace). */
-    let pxrValue = Pixar.Js.Value(true)
-
-    Msg.Log.point("The value of pxrValue", to: pxrValue.GetBool())
-
-    /* Create a new USD stage. */
-    var stage = Pixar.Usd.Stage.createNew("Kraken.usda")
-
-    /* & hello metaverse. */
-    Pixar.UsdGeom.Sphere.define(&stage, path: "/Hello/Metaverse/World")
-
-    stage.save()
-
-    print("Kraken launched.")
+    Msg.logger.log(level: .info, "Kraken launched.")
   }
 
   /* --- xxx --- */

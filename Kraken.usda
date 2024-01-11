@@ -1,10 +1,13 @@
 #usda 1.0
+(
+    doc = "Kraken v1.0.3"
+)
 
-def "Hello"
+def Xform "Hello"
 {
-    def "Metaverse"
+    def Xform "Metaverse"
     {
-        def Sphere "World"
+        def Cylinder "Kraken"
         {
         }
     }
