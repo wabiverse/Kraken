@@ -53,8 +53,10 @@ struct Kraken: App
     /* test some usd symbols, ensure @_spi errors are gone. */
     let stage = Pixar.Usd.Stage.createNew("ExampleScene.usda")
 
-    Pixar.UsdGeom.Xform.define(stage, path: "Hello")
-    Pixar.UsdGeom.Sphere.define(stage, path: "Hello/World")
+    Pixar.UsdGeom.Xform.define(stage, path: "/Hello")
+    Pixar.UsdGeom.Sphere.define(stage, path: "/Hello/World")
+
+    stage.save()
 
     /* -------------------------------------------------------- */
 
@@ -72,7 +74,7 @@ struct Kraken: App
         }
       }
     }
-    .set(doc: "\("Kraken".magenta) v\(versionStr.yellow)")
+    .set(doc: "Kraken v\(versionStr)")
     .save()
 
     Msg.logger.log(level: .info, "Kraken launched.")
@@ -103,7 +105,7 @@ extension Kraken
     }
     .joined(separator: ".")
 
-    Msg.logger.log(level: .info, "Kraken v\(v)")
+    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(v.yellow)")
 
     return v
   }
