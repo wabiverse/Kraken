@@ -6,9 +6,9 @@ let package = Package(
   platforms: [
     .macOS(.v14),
     .visionOS(.v1),
-    .iOS(.v16),
-    .tvOS(.v16),
-    .watchOS(.v9)
+    .iOS(.v17),
+    .tvOS(.v17),
+    .watchOS(.v10)
   ],
   // --- 📦 Package Products. ---
   products: [
@@ -29,7 +29,7 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.20")
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.21")
   ],
 
   // --- 🎯 Package Targets. ---

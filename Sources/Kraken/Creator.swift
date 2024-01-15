@@ -37,7 +37,7 @@ import SwiftUI
 @main
 struct Kraken: App
 {
-  static let version = Pixar.Gf.Vec3i(1, 0, 3)
+  static let version = Pixar.Gf.Vec3i(1, 0, 4)
 
   init()
   {
@@ -45,8 +45,8 @@ struct Kraken: App
     Pixar.Bundler.shared.setup(.resources)
 
     /* embed & init python. */
-    PyBundle.shared.pyInit()
-    PyBundle.shared.pyInfo()
+    PyBundler.shared.pyInit()
+    PyBundler.shared.pyInfo()
 
     /* -------------------------------------------------------- */
 
@@ -61,7 +61,7 @@ struct Kraken: App
     /* -------------------------------------------------------- */
 
     /* hello metaverse. */
-    UsdStage("Kraken.usda")
+    UsdStage("Kraken", ext: .usda)
     {
       // 👋.
       UsdPrim("Hello", type: .xform)

@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "d54cecb09aee115361d635134471e5b7dceb72a8",
-        "version" : "1.4.2"
+        "revision" : "85c0b5bc0dae2f94f8dffa99223745fa7fc239ff",
+        "version" : "1.4.3"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaversePythonFramework",
       "state" : {
-        "revision" : "7e0507f8c9bd4aa18e23b62f896b0ee766d696c1",
-        "version" : "3.11.4"
+        "revision" : "fc6d15f768b0a675207aecea248bd4f63f4c4133",
+        "version" : "3.11.6"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseVulkanFramework",
       "state" : {
-        "revision" : "d81c5b35576887a5e04211657cca1535b43ab0a5",
-        "version" : "1.26.1"
+        "revision" : "13c7061599c61a4959c558d8ec1836e5b32b640b",
+        "version" : "1.26.2"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
-        "revision" : "e942c3b7f55462f2d6c60d004ef7a80bb65ac0ed",
-        "version" : "23.11.20"
+        "revision" : "7b6128757848e06b095c2b918986704aff1d6fa4",
+        "version" : "23.11.21"
       }
     },
     {
