@@ -42,6 +42,8 @@ let package = Package(
       name: "KrakenUI",
       dependencies: [
         .product(name: "PixarUSD", package: "SwiftUSD"),
+        .product(name: "SwiftCrossUI", package: "swift-cross-ui", condition: .when(platforms: [.linux, .windows])), 
+        .product(name: "GtkBackend", package: "swift-cross-ui", condition: .when(platforms: [.linux, .windows])), 
         .target(name: "KrakenKit"),
       ],
       swiftSettings: [
