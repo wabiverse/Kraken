@@ -28,9 +28,10 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.21"),
     .package(url: "https://github.com/apple/swift-llbuild.git", revision: "bc3ffd5"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.21")
+    .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
+    .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "dd09e61")
   ],
 
   // --- 🎯 Package Targets. ---
