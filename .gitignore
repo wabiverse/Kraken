@@ -16,3 +16,5 @@ ANCHOR.ini
 compile_commands.json
 
 .DS_Store
+
+.swiftpm

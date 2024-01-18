@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "Metaverse",
+  name: "WabiFoundation",
   platforms: [
     .macOS(.v14),
     .visionOS(.v1),
@@ -29,6 +29,7 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
+    .package(url: "https://github.com/apple/swift-llbuild.git", revision: "bc3ffd5"),
     .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.21")
   ],
 

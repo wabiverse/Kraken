@@ -37,11 +37,11 @@ import SwiftUI
    * make the window appear to be floating
    * above the backdrop.
    */
-  struct MicaMaterial: NSViewRepresentable
+  public struct MicaMaterial: NSViewRepresentable
   {
-    let material: NSVisualEffectView.Material
+    public let material: NSVisualEffectView.Material
 
-    func makeNSView(context _: Context) -> NSVisualEffectView
+    public func makeNSView(context _: Context) -> NSVisualEffectView
     {
       let visualEffectView = NSVisualEffectView()
       visualEffectView.material = material
@@ -49,9 +49,31 @@ import SwiftUI
       return visualEffectView
     }
 
-    func updateNSView(_ visualEffectView: NSVisualEffectView, context _: Context)
+    public func updateNSView(_ visualEffectView: NSVisualEffectView, context _: Context)
     {
       visualEffectView.material = material
     }
   }
+#else /* !os(macOS) */
+/**
+ * # Mica Material
+ *
+ * Does nothing on platforms that are not macOS,
+ * and is provided to be compatible with the macOS
+ * material API without having to use the if #available
+ * syntax to workaround it. */
+public struct MicaMaterial
+{
+  public enum MaterialTypes
+  {
+    case sidebar
+  }
+  
+  public let material: MaterialTypes
+  
+  public func ignoresSafeArea() -> BackgroundStyle
+  {
+    BackgroundStyle()
+  }
+}
 #endif /* os(macOS) */
