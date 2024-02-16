@@ -17,6 +17,10 @@ let package = Package(
       targets: ["KrakenKit"]
     ),
     .library(
+      name: "KrakenLib",
+      targets: ["KrakenLib"]
+    ),
+    .library(
       name: "KrakenUI",
       targets: ["KrakenUI"]
     ),
@@ -38,6 +42,16 @@ let package = Package(
     .target(name: "KrakenKit"),
 
     .target(
+      name: "KrakenLib",
+      dependencies: [
+        .product(name: "PixarUSD", package: "SwiftUSD"),
+      ],
+      swiftSettings: [
+        .interoperabilityMode(.Cxx)
+      ]
+    ),
+
+    .target(
       name: "KrakenUI",
       dependencies: [
         .target(name: "KrakenKit"),
@@ -49,13 +63,13 @@ let package = Package(
       dependencies: [
         .product(name: "PixarUSD", package: "SwiftUSD"),
         .target(name: "KrakenKit"),
+        .target(name: "KrakenLib"),
         .target(name: "KrakenUI"),
       ],
       resources: [
         .process("Resources")
       ],
       swiftSettings: [
-        // needed for SwiftUSD.
         .interoperabilityMode(.Cxx)
       ]
     ),
