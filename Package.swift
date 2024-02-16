@@ -28,7 +28,7 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.21"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.24"),
     .package(url: "https://github.com/apple/swift-llbuild.git", revision: "bc3ffd5"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
   ] + Arch.OS.pkgDeps(),
@@ -40,13 +40,8 @@ let package = Package(
     .target(
       name: "KrakenUI",
       dependencies: [
-        .product(name: "PixarUSD", package: "SwiftUSD"),
         .target(name: "KrakenKit"),
-      ] + Arch.OS.backend(),
-      swiftSettings: [
-        // needed for SwiftUSD.
-        .interoperabilityMode(.Cxx)
-      ]
+      ] + Arch.OS.backend()
     ),
 
     .executableTarget(
@@ -60,7 +55,6 @@ let package = Package(
         .process("Resources")
       ],
       swiftSettings: [
-        .define("DEBUG", .when(configuration: .debug)),
         // needed for SwiftUSD.
         .interoperabilityMode(.Cxx)
       ]
