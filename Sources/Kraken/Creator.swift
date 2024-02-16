@@ -31,25 +31,15 @@
 import Foundation
 import KrakenKit
 import KrakenUI
-import OCIOBundle
-import OpenColorIO
-import OpenImageIO
 import PixarUSD
 import PyBundle
 import Python
 import SwiftUI
 
-/* --- xxx --- */
-
-public typealias OCIO = OpenColorIO_v2_3
-public typealias OIIO = OpenImageIO_v2_5
-
-/* --- xxx --- */
-
 @main
 struct Kraken: App
 {
-  static let version = Pixar.Gf.Vec3i(1, 0, 5)
+  static let version = Pixar.GfVec3i(1, 0, 5)
 
   init()
   {
@@ -62,39 +52,10 @@ struct Kraken: App
 
     /* -------------------------------------------------------- */
 
-    /* test some opencolorio api. */
-    OCIOBundler.shared.ocioInit(config: .aces)
-    OCIO.GetCurrentConfig()
+    let stage = Usd.Stage.createNew("ExampleScene.usda")
 
-    /* test some openimageio api. */
-    let dtp = OIIO.TypeDesc.TypeFloat
-    let fmt = OIIO.ImageSpec(512, 89, 4, dtp)
-
-    var fg = OIIO.ImageBuf(.init(std.string("fg.exr")), fmt, OIIO.InitializePixels.Yes)
-    let bg = OIIO.ImageBuf(.init(std.string("bg.exr")), fmt, OIIO.InitializePixels.Yes)
-
-    fg.set_origin(512, 89, 0)
-
-    let comp = OIIO.ImageBufAlgo.over(fg, bg, fmt.roi(), 0)
-    if !comp.has_error()
-    {
-      if comp.write(.init(std.string("composite.exr")), OIIO.TypeDesc(.init("UNKNOWN")), .init(""), nil, nil) == false || comp.has_error()
-      {
-        Msg.logger.log(level: .info, "Error writing image: \(comp.geterror(true))")
-      }
-    }
-    else
-    {
-      Msg.logger.log(level: .info, "Error writing image: \(comp.geterror(true))")
-    }
-
-    /* -------------------------------------------------------- */
-
-    /* test some usd symbols, ensure @_spi errors are gone. */
-    let stage = Pixar.Usd.Stage.createNew("ExampleScene.usda")
-
-    Pixar.UsdGeom.Xform.define(stage, path: "/Hello")
-    Pixar.UsdGeom.Sphere.define(stage, path: "/Hello/World")
+    UsdGeom.Xform.define(stage, path: "/Hello")
+    UsdGeom.Sphere.define(stage, path: "/Hello/World")
 
     stage.save()
 
