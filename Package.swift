@@ -32,7 +32,7 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", branch: "dev"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.27"),
     .package(url: "https://github.com/apple/swift-llbuild.git", revision: "bc3ffd5"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
   ] + Arch.OS.pkgDeps(),
@@ -73,7 +73,8 @@ let package = Package(
         .interoperabilityMode(.Cxx)
       ]
     ),
-  ]
+  ],
+  cxxLanguageStandard: .cxx17
 )
 
 public enum Arch
