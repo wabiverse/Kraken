@@ -23,16 +23,11 @@ $IsGitDirectory = './.git'
 # zsh <-> pwsh to populate your env up.
 if ($IsMacOS) {
   $ARM_HOMEBREW_PATH = "/opt/homebrew/bin"
-  $INTEL_HOMEBREW_PATH = "/usr/local/bin"
-  $SWIFT_SH_BUILD_PATH = "/Users/$env:USER/Wabi/swift-sh/.build/arm64-apple-macosx/release"
+  $SWIFT_SH_BUILD_PATH = "/usr/local/bin"
 
   # Apple Silicon (M1 Chip ---- /opt/homebrew/bin) 
   if (Test-Path -Path $ARM_HOMEBREW_PATH) {
     $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$ARM_HOMEBREW_PATH
-  
-  # Intel Silicon (Old Chip ---- /usr/local/bin)
-  } elseif(Test-Path -Path $INTEL_HOMEBREW_PATH) {
-    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$INTEL_HOMEBREW_PATH
   }
 
   # swift-sh (Swift will find the swift-sh binary in the path)
