@@ -24,6 +24,7 @@ $IsGitDirectory = './.git'
 if ($IsMacOS) {
   $ARM_HOMEBREW_PATH = "/opt/homebrew/bin"
   $INTEL_HOMEBREW_PATH = "/usr/local/bin"
+  $SWIFT_SH_BUILD_PATH = "/Users/$env:USER/Wabi/swift-sh/.build/arm64-apple-macosx/release"
 
   # Apple Silicon (M1 Chip ---- /opt/homebrew/bin) 
   if (Test-Path -Path $ARM_HOMEBREW_PATH) {
@@ -34,11 +35,10 @@ if ($IsMacOS) {
     $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$INTEL_HOMEBREW_PATH
   }
 
-  # Using beta Swift for the latest and greatest CXX interop features.
-  # $SWIFT_BETA_DIR = "/Library/Developer/Toolchains/swift-5.6.2-RELEASE.xctoolchain/usr/bin"
-  # if (Test-Path -Path $SWIFT_BETA_DIR) {
-  #   $env:PATH = '{0}{1}{2}' -f $SWIFT_BETA_DIR,[IO.Path]::PathSeparator,$env:PATH
-  # }
+  # swift-sh (Swift will find the swift-sh binary in the path)
+  if (Test-Path -Path $SWIFT_SH_BUILD_PATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$SWIFT_SH_BUILD_PATH
+  }
 }
 
 # --------------------------------------- Powershell modules. -----
