@@ -10,11 +10,9 @@ Kraken
 
 **The Free and Open Source Metaversal Creation Suite**
 
+.. raw:: html
 
-
-.. figure:: https://media.tenor.com/T0Pn_3X2R18AAAAC/swirl-purple.gif
-   :alt: SwirlPurple
-   :align: center
+    <img src="https://www.dropbox.com/scl/fi/7hc36locgwlviimqkv05s/maelstrom.png?rlkey=terqr3zzkei7i80iql6y82ymi&raw=1" height="400px">
 
 
 Unleashing the Metaverse: Where Freedom Knows No Bounds.
