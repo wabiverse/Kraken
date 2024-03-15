@@ -54,14 +54,6 @@ Unleashing the Metaverse: Where Freedom Knows No Bounds.
    :target: https://github.com/Wabi-Studios/Kraken/releases/latest
    :alt: GitHub release (latest SemVer including pre-releases)
 
-.. image:: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake_macos_arm64.yml/badge.svg
-   :target: https://github.com/Wabi-Studios/Kraken/actions/workflows/cmake_macos_arm64.yml
-   :alt: Build Status for arch macOS arm64
-
-.. image:: https://github.com/Wabi-Studios/Kraken/actions/workflows/build_docs_macos_arm64.yml/badge.svg
-   :target: https://docs.wabi.foundation
-   :alt: Documentation
-
 .. image:: https://discordapp.com/api/guilds/461556513010483200/widget.png?style=shield
    :target: https://discord.gg/5PYrUu4hqa
    :alt: Discord Community
