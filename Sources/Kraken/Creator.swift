@@ -36,7 +36,7 @@ import SwiftUI
 @main
 struct Kraken: App
 {
-  static let version = Pixar.GfVec3i(1, 0, 6)
+  static let version = Pixar.GfVec3i(1, 0, 7)
 
   init()
   {

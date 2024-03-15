@@ -34,13 +34,16 @@
         {
           "foreground": "magenta",
           "style": "powerline",
-          "template": "<darkGray>on</> <blue>\uf113</> <green>git</><cyan>:</>{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uf692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }}",
+          "template": "<darkGray>on</> <blue>\udb80\udea4</> <green>git</><cyan>:</>{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }}\udb83\udec3 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }}\udb80\udd33 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\udb80\udd93 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}}\udb81\ude45 {{ .WorktreeCount }}{{ end }}",
           "type": "git"
         },
         {
+          "properties": {
+            "time_format": "3:04PM"
+          },
           "foreground": "darkGray",
           "style": "plain",
-          "template": "[{{ .CurrentDate | date .Format }}]",
+          "template": " [{{ .CurrentDate | date .Format }}]",
           "type": "time"
         },
         {

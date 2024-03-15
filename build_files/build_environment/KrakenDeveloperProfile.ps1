@@ -24,6 +24,9 @@ $IsGitDirectory = './.git'
 if ($IsMacOS) {
   $ARM_HOMEBREW_PATH = "/opt/homebrew/bin"
   $SWIFT_SH_BUILD_PATH = "/usr/local/bin"
+  $RUST_CARGO_BINPATH = "/Users/$env:USER/.cargo/bin"
+  $POSTGRES_APP_PATH = "/Applications/Postgres.app/Contents/Versions/latest/bin"
+  $XCODE_TOOLCHAIN_BINPATH = "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
 
   # Apple Silicon (M1 Chip ---- /opt/homebrew/bin) 
   if (Test-Path -Path $ARM_HOMEBREW_PATH) {
@@ -33,6 +36,21 @@ if ($IsMacOS) {
   # swift-sh (Swift will find the swift-sh binary in the path)
   if (Test-Path -Path $SWIFT_SH_BUILD_PATH) {
     $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$SWIFT_SH_BUILD_PATH
+  }
+
+  # swift sourcekit-lsp
+  if (Test-Path -Path $XCODE_TOOLCHAIN_BINPATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$XCODE_TOOLCHAIN_BINPATH
+  }
+
+  # rust cargo
+  if (Test-Path -Path $RUST_CARGO_BINPATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$RUST_CARGO_BINPATH
+  }
+
+  # postgres
+  if (Test-Path -Path $POSTGRES_APP_PATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$POSTGRES_APP_PATH
   }
 }
 
