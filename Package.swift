@@ -32,7 +32,7 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.31"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.32"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
   ] + Arch.OS.pkgDeps(),
 

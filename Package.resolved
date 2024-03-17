@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "f11bfddb41c944264a5d18af37b1b95e2c4931ca",
-        "version" : "1.5.8"
+        "revision" : "de4a89d68a4584a94b3eb2655e658c3474863bc5",
+        "version" : "1.6.7"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
-        "revision" : "1cb37da37dd88a7758473ebc9e06173351e3de08",
-        "version" : "23.11.31"
+        "revision" : "a58439592bfcb279ecfde1287bdc37a6fd0e0227",
+        "version" : "23.11.32"
       }
     },
     {
