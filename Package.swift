@@ -33,13 +33,20 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.31"),
-    .package(url: "https://github.com/apple/swift-llbuild.git", revision: "bc3ffd5"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
   ] + Arch.OS.pkgDeps(),
 
   // --- 🎯 Package Targets. ---
   targets: [
-    .target(name: "KrakenKit"),
+    .target(
+      name: "KrakenKit",
+      dependencies: [
+        .product(name: "PixarUSD", package: "SwiftUSD"),
+      ],
+      swiftSettings: [
+        .interoperabilityMode(.Cxx)
+      ]
+    ),
 
     .target(
       name: "KrakenLib",

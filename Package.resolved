@@ -145,15 +145,6 @@
       }
     },
     {
-      "identity" : "swift-llbuild",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-llbuild.git",
-      "state" : {
-        "branch" : "bc3ffd5",
-        "revision" : "bc3ffd54c2bfa8ce2214d1342860f07ae44922d1"
-      }
-    },
-    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",

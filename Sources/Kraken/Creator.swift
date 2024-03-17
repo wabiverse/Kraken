@@ -29,13 +29,28 @@ import KrakenKit
 import KrakenLib
 import KrakenUI
 import PixarUSD
-import PyBundle
-import Python
-import SwiftUI
+#if canImport(PyBundle)
+  import PyBundle
+  import Python
+#endif /* canImport(PyBundle) */
+#if canImport(SwiftUI)
+  import SwiftUI
+#endif /* canImport(SwiftUI) */
+#if canImport(SwiftCrossUI)
+  import SwiftCrossUI
+  #if canImport(GtkBackend)
+    import GtkBackend
+  #endif /* canImport(GtkBackend) */
+#endif /* canImport(SwiftCrossUI) */
 
 @main
 struct Kraken: App
 {
+  #if canImport(GtkBackend)
+    typealias Backend = GtkBackend
+  #endif /* canImport(GtkBackend) */
+
+  static let identifier = "foundation.wabi.Kraken"
   static let version = Pixar.GfVec3i(1, 0, 7)
 
   init()

@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------
  * :: :  K  R  A  K  E  N  :                                   ::
  * --------------------------------------------------------------
- * @wabistudios :: multiverse :: kraken
+ * @wabistudios :: metaverse :: kraken
  *
  * This program is free software; you can redistribute it, and/or
  * modify it under the terms of the GNU General Public License as
@@ -24,7 +24,15 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import SwiftUI
+#if canImport(SwiftUI)
+  import SwiftUI
+#endif /* canImport(SwiftUI) */
+#if canImport(SwiftCrossUI)
+  import SwiftCrossUI
+  #if canImport(GtkBackend)
+    import GtkBackend
+  #endif /* canImport(GtkBackend) */
+#endif /* canImport(SwiftCrossUI) */
 
 #if os(macOS)
   /**
@@ -55,25 +63,25 @@ import SwiftUI
     }
   }
 #else /* !os(macOS) */
-/**
- * # Mica Material
- *
- * Does nothing on platforms that are not macOS,
- * and is provided to be compatible with the macOS
- * material API without having to use the if #available
- * syntax to workaround it. */
-public struct MicaMaterial
-{
-  public enum MaterialTypes
+  /**
+   * # Mica Material
+   *
+   * Does nothing on platforms that are not macOS,
+   * and is provided to be compatible with the macOS
+   * material API without having to use the if #available
+   * syntax to workaround it. */
+  public struct MicaMaterial
   {
-    case sidebar
+    public enum MaterialTypes
+    {
+      case sidebar
+    }
+
+    public let material: MaterialTypes
+
+    public func ignoresSafeArea() -> BackgroundStyle
+    {
+      BackgroundStyle()
+    }
   }
-  
-  public let material: MaterialTypes
-  
-  public func ignoresSafeArea() -> BackgroundStyle
-  {
-    BackgroundStyle()
-  }
-}
 #endif /* os(macOS) */
