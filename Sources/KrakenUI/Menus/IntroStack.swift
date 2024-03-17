@@ -50,9 +50,11 @@ public struct IntroStack: View
         HStack
         {
           Image(systemName: "globe.americas.fill")
+          #if !os(Linux)
             .aspectRatio(contentMode: .fill)
             .foregroundStyle(.green.opacity(0.8))
             .font(.system(size: 16))
+          #endif /* !os(Linux) */
             .padding(2)
             .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(.blue.opacity(0.2)))
             .frame(width: 85, alignment: .trailing)
@@ -60,7 +62,9 @@ public struct IntroStack: View
           Spacer()
 
           Text("New Project")
+          #if !os(Linux)
             .fontWeight(.bold)
+          #endif /* !os(Linux) */
             .foregroundStyle(.secondary)
             .frame(width: 165, alignment: .leading)
         }
@@ -68,7 +72,9 @@ public struct IntroStack: View
         .padding()
         .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.quaternary))
       }
+      #if !os(Linux)
       .buttonStyle(PlainButtonStyle())
+      #endif
 
       Button
       {}
@@ -77,7 +83,9 @@ public struct IntroStack: View
         HStack
         {
           Image(systemName: "network")
+          #if !os(Linux)
             .aspectRatio(contentMode: .fill)
+          #endif /* !os(Linux) */
             .foregroundStyle(.purple.opacity(0.8))
             .font(.system(size: 16))
             .padding(2)
@@ -87,7 +95,9 @@ public struct IntroStack: View
           Spacer()
 
           Text("Metaverse Portal")
+          #if !os(Linux)
             .fontWeight(.bold)
+          #endif /* !os(Linux) */
             .foregroundStyle(.secondary)
             .frame(width: 165, alignment: .leading)
         }
@@ -95,7 +105,9 @@ public struct IntroStack: View
         .padding()
         .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.quaternary))
       }
+      #if !os(Linux)
       .buttonStyle(PlainButtonStyle())
+      #endif /* !os(Linux) */
       .padding(.bottom, 4)
 
       Spacer()

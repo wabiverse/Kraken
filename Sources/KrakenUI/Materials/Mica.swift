@@ -63,6 +63,58 @@
     }
   }
 #else /* !os(macOS) */
+  #if canImport(SwiftCrossUI)
+    /**
+     * # Background Style
+     *
+     * Does nothing on platforms that do not
+     * import SwiftUI, and is provided to be
+     * compatible with platforms that use SwiftUI */
+    public struct BackgroundStyle
+    {
+      public init()
+      {}
+    }
+
+    /**
+     * # Rounded Rectangle
+     *
+     * Does nothing on platforms that do not
+     * import SwiftUI, and is provided to be
+     * compatible with platforms that use SwiftUI */
+    public struct RoundedRectangle: Shape
+    {
+      public func path(in _: CGRect) -> Path
+      {
+        Path()
+      }
+
+      public enum Style
+      {
+        case continuous
+      }
+
+      public init(cornerRadius _: CGFloat, style _: Style)
+      {}
+
+      public var body: some View
+      {
+        EmptyView()
+      }
+    }
+
+    public extension Image
+    {
+      init(_ name: String, bundle: Bundle?)
+      {
+        guard let bundle
+        else { self.init(name) }
+
+        self.init("\(bundle.resourcePath)/Assets/\(name)")
+      }
+    }
+  #endif /* canImport(SwiftCrossUI) */
+
   /**
    * # Mica Material
    *

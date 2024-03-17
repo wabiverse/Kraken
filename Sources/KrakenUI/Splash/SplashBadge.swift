@@ -54,14 +54,18 @@ public struct SplashBadge: View
       VStack
       {
         Image(logo, bundle: .kraken)
+        #if !os(Linux)
           .aspectRatio(contentMode: .fit)
           .foregroundStyle(.secondary, .ultraThinMaterial)
           .font(.system(size: 42))
           .padding(.top, 17)
+        #endif /* !os(Linux) */
 
         Spacer()
       }
+      #if !os(Linux)
       .frame(alignment: .leading)
+      #endif /* !os(Linux) */
       .padding(2)
 
       Spacer()

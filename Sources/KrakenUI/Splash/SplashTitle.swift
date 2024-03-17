@@ -49,7 +49,9 @@ public struct SplashTitle: View
   public var body: some View
   {
     Text(title)
+    #if !os(Linux)
       .fontWeight(.black)
       .foregroundStyle(.primary)
+    #endif /* !os(Linux) */
   }
 }

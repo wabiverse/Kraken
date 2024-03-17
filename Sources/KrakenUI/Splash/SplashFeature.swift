@@ -53,10 +53,13 @@ public struct SplashFeature: View
   public var body: some View
   {
     SplashImage(image: image)
+    #if !os(Linux)
       .overlay(content:
         {
           SplashBadge(logo: logo)
             .frame(alignment: .leading)
+
         })
+    #endif /* !os(Linux) */
   }
 }

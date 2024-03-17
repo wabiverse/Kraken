@@ -59,13 +59,20 @@ public struct MicaWindow<ContentItems: View>: Scene
   {
     WindowGroup(title, id: id)
     {
-      ZStack
-      {
-        Color.clear.ignoresSafeArea()
+      #if !os(Linux)
+        ZStack
+        {
+          Color.clear.ignoresSafeArea()
 
-        view
-      }
-      .background(MicaMaterial(material: .sidebar).ignoresSafeArea())
+          view
+        }
+        .background(MicaMaterial(material: .sidebar).ignoresSafeArea())
+      #else /* os(Linux) */
+        HStack
+        {
+          view
+        }
+      #endif /* !os(Linux) */
     }
     #if os(macOS)
     .windowStyle(.hiddenTitleBar)

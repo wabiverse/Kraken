@@ -51,7 +51,9 @@ public struct SplashImage: View
   public var body: some View
   {
     Image(image, bundle: .kraken)
+    #if !os(Linux)
       .resizable()
       .aspectRatio(contentMode: .fill)
+    #endif /* !os(Linux) */
   }
 }
