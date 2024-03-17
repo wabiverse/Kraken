@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "WabiFoundation",
+  name: "Kraken",
   platforms: [
     .macOS(.v14),
     .visionOS(.v1),
