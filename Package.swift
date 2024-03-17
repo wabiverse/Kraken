@@ -62,7 +62,10 @@ let package = Package(
       name: "KrakenUI",
       dependencies: [
         .target(name: "KrakenKit"),
-      ] + Arch.OS.backend()
+      ] + Arch.OS.backend(),
+      swiftSettings: [
+        .interoperabilityMode(.Cxx)
+      ]
     ),
 
     .executableTarget(
