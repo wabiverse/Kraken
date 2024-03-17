@@ -53,8 +53,7 @@
    <div align="center">
 
    <h6>
-      Experience the future of computer graphics development by cloning this repository and running the following command in your terminal,<br/>
-      ensure the <b>-p</b> switch matches your platform (ex. <b>linux</b>, <b>visionOS</b>):
+      Experience the future of computer graphics development by cloning this repository and running the following command in your terminal, ensure the <b>-p</b> switch matches your platform (ex. <b>linux</b>, <b>visionOS</b>):
    </h6>
 
    <div align="left">
