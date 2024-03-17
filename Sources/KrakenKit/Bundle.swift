@@ -24,7 +24,7 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import PixarUSD /* For Bundle. */
+import Foundation
 
 public extension Bundle
 {
