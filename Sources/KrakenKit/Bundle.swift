@@ -30,5 +30,5 @@ public extension Bundle
 {
   /**
    * Where application bundle resources are located. */
-  static let kraken = Bundle(path: "WabiFoundation_Kraken.bundle")
+  static let kraken = Bundle(path: "Kraken_Kraken.bundle")
 }
