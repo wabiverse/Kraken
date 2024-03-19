@@ -25,15 +25,7 @@
  * -------------------------------------------------------------- */
 
 import KrakenKit
-#if canImport(SwiftUI)
-  import SwiftUI
-#endif /* canImport(SwiftUI) */
-#if canImport(SwiftCrossUI)
-  import SwiftCrossUI
-  #if canImport(GtkBackend)
-    import GtkBackend
-  #endif /* canImport(GtkBackend) */
-#endif /* canImport(SwiftCrossUI) */
+import SwiftUI
 
 /**
  * A view that displays a logo badge.

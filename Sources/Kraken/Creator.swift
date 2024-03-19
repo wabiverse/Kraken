@@ -33,15 +33,10 @@ import PixarUSD
   import PyBundle
   import Python
 #endif /* canImport(PyBundle) */
-#if canImport(SwiftUI)
-  import SwiftUI
-#endif /* canImport(SwiftUI) */
-#if canImport(SwiftCrossUI)
-  import SwiftCrossUI
-  #if canImport(GtkBackend)
-    import GtkBackend
-  #endif /* canImport(GtkBackend) */
-#endif /* canImport(SwiftCrossUI) */
+import SwiftUI
+#if canImport(GtkBackend)
+  import GtkBackend
+#endif /* canImport(GtkBackend) */
 
 @main
 struct Kraken: App

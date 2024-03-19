@@ -34,7 +34,8 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.32"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
-  ] + Arch.OS.pkgDeps(),
+    .package(url: "https://github.com/furby-tm/swift-cross-ui", revision: "a26353e")
+  ],
 
   // --- 🎯 Package Targets. ---
   targets: [
@@ -62,7 +63,18 @@ let package = Package(
       name: "KrakenUI",
       dependencies: [
         .target(name: "KrakenKit"),
-      ] + Arch.OS.backend(),
+        .product(
+          name: "SwiftCrossUI",
+          package: "swift-cross-ui",
+          moduleAliases: ["SwiftCrossUI": "SwiftUI"],
+          condition: .when(platforms: [.linux, .windows])
+        ),
+        .product(
+          name: "GtkBackend",
+          package: "swift-cross-ui",
+          condition: .when(platforms: [.linux, .windows])
+        ),
+      ],
       swiftSettings: [
         .interoperabilityMode(.Cxx)
       ]
@@ -86,36 +98,3 @@ let package = Package(
   ],
   cxxLanguageStandard: .cxx17
 )
-
-public enum Arch
-{
-  case apple
-  case linux
-  case windows
-
-  public enum OS
-  {
-    public static func pkgDeps() -> [Package.Dependency]
-    {
-      #if os(Linux) || os(Android) || os(OpenBSD) || os(FreeBSD) || os(Windows) || os(Cygwin)
-        [
-          .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "dd09e61")
-        ]
-      #else
-        []
-      #endif
-    }
-
-    public static func backend() -> [Target.Dependency]
-    {
-      #if os(Linux) || os(Android) || os(OpenBSD) || os(FreeBSD) || os(Windows) || os(Cygwin)
-        [
-          .product(name: "SwiftCrossUI", package: "swift-cross-ui", condition: .when(platforms: [.linux, .windows])),
-          .product(name: "GtkBackend", package: "swift-cross-ui", condition: .when(platforms: [.linux, .windows])),
-        ]
-      #else
-        []
-      #endif
-    }
-  }
-}

@@ -24,15 +24,7 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-#if canImport(SwiftUI)
-  import SwiftUI
-#endif /* canImport(SwiftUI) */
-#if canImport(SwiftCrossUI)
-  import SwiftCrossUI
-  #if canImport(GtkBackend)
-    import GtkBackend
-  #endif /* canImport(GtkBackend) */
-#endif /* canImport(SwiftCrossUI) */
+import SwiftUI
 
 #if os(macOS)
   /**
@@ -63,57 +55,55 @@
     }
   }
 #else /* !os(macOS) */
-  #if canImport(SwiftCrossUI)
-    /**
-     * # Background Style
-     *
-     * Does nothing on platforms that do not
-     * import SwiftUI, and is provided to be
-     * compatible with platforms that use SwiftUI */
-    public struct BackgroundStyle
+  /**
+   * # Background Style
+   *
+   * Does nothing on platforms that do not
+   * import SwiftUI, and is provided to be
+   * compatible with platforms that use SwiftUI */
+  public struct BackgroundStyle
+  {
+    public init()
+    {}
+  }
+
+  /**
+   * # Rounded Rectangle
+   *
+   * Does nothing on platforms that do not
+   * import SwiftUI, and is provided to be
+   * compatible with platforms that use SwiftUI */
+  public struct RoundedRectangle: Shape
+  {
+    public func path(in _: CGRect) -> Path
     {
-      public init()
-      {}
+      Path()
     }
 
-    /**
-     * # Rounded Rectangle
-     *
-     * Does nothing on platforms that do not
-     * import SwiftUI, and is provided to be
-     * compatible with platforms that use SwiftUI */
-    public struct RoundedRectangle: Shape
+    public enum Style
     {
-      public func path(in _: CGRect) -> Path
-      {
-        Path()
-      }
-
-      public enum Style
-      {
-        case continuous
-      }
-
-      public init(cornerRadius _: CGFloat, style _: Style)
-      {}
-
-      public var body: some View
-      {
-        EmptyView()
-      }
+      case continuous
     }
 
-    public extension Image
-    {
-      init(_ name: String, bundle: Bundle?)
-      {
-        guard let bundle
-        else { self.init(name) }
+    public init(cornerRadius _: CGFloat, style _: Style)
+    {}
 
-        self.init("\(bundle.resourcePath)/Assets/\(name)")
-      }
+    public var body: some View
+    {
+      EmptyView()
     }
-  #endif /* canImport(SwiftCrossUI) */
+  }
+
+  public extension Image
+  {
+    init(_ name: String, bundle: Bundle?)
+    {
+      guard let bundle
+      else { self.init(name) }
+
+      self.init("\(bundle.resourcePath)/Assets/\(name)")
+    }
+  }
 
   /**
    * # Mica Material
