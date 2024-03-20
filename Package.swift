@@ -1,6 +1,12 @@
 // swift-tools-version: 5.9
 import PackageDescription
 
+#if os(macOS)
+  let crazyToolChainBug: [String: String]? = nil
+#else /* os(macOS) */
+  let crazyToolChainBug: [String: String]? = ["SwiftCrossUI": "SwiftUI"]
+#endif /* !os(macOS) */
+
 let package = Package(
   name: "Kraken",
   platforms: [
@@ -66,7 +72,7 @@ let package = Package(
         .product(
           name: "SwiftCrossUI",
           package: "swift-cross-ui",
-          moduleAliases: ["SwiftCrossUI": "SwiftUI"],
+          moduleAliases: crazyToolChainBug,
           condition: .when(platforms: [.linux, .windows])
         ),
         .product(
