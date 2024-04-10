@@ -109,7 +109,7 @@ extension Kraken
   {
     let v = ".".join(array: Kraken.version)
 
-    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(v.yellow)")
+    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(v.yellow) | \("PixarUSD".magenta) \("v".yellow)\(Pixar.version.yellow)")
 
     return v
   }
