@@ -5,6 +5,7 @@ identifier = 'foundation.wabi.Kraken'
 product = 'Kraken'
 version = '1.0.0'
 category = 'public.app-category.graphics-design'
+icon = "kraken.png"
 
 [apps.Kraken.plist]
 commit = '$(COMMIT_HASH)'
