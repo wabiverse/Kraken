@@ -45,8 +45,11 @@ struct Kraken: App
     typealias Backend = GtkBackend
   #endif /* canImport(GtkBackend) */
 
+  /** The bundle identifier for Kraken. */
   static let identifier = "foundation.wabi.Kraken"
-  static let version = Pixar.GfVec3i(1, 0, 7)
+
+  /** The current version of Kraken. */
+  static let version = ".".join(array: Pixar.GfVec3i(1, 0, 7))
 
   init()
   {
@@ -64,6 +67,7 @@ struct Kraken: App
     UsdGeom.Xform.define(stage, path: "/Hello")
     UsdGeom.Sphere.define(stage, path: "/Hello/World")
 
+    stage.getPseudoRoot().set(doc: "Example Scene | Kraken v\(Kraken.version)")
     stage.save()
 
     /* -------------------------------------------------------- */
@@ -82,9 +86,10 @@ struct Kraken: App
         }
       }
     }
-    .set(doc: "Kraken v\(versionStr)")
+    .set(doc: "Kraken v\(Kraken.version) | PixarUSD v\(Pixar.version)")
     .save()
 
+    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(Kraken.version.yellow) | \("PixarUSD".magenta) \("v".yellow)\(Pixar.version.yellow)")
     Msg.logger.log(level: .info, "Kraken launched.")
   }
 
@@ -100,18 +105,6 @@ struct Kraken: App
         title: "The Metaversal Creation Suite"
       )
     }
-  }
-}
-
-extension Kraken
-{
-  var versionStr: String
-  {
-    let v = ".".join(array: Kraken.version)
-
-    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(v.yellow) | \("PixarUSD".magenta) \("v".yellow)\(Pixar.version.yellow)")
-
-    return v
   }
 }
 

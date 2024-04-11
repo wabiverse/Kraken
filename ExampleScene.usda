@@ -1,4 +1,7 @@
 #usda 1.0
+(
+    doc = "Example Scene | Kraken v1.0.7"
+)
 
 def Xform "Hello"
 {
