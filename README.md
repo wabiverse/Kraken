@@ -87,6 +87,38 @@
 
 <br/>
 
+### **Development**
+
+  > [!TIP]
+  > We recommend installing the [**bundler**](https://github.com/stackotter/swift-bundler.git) locally by running the following commands in your terminal:
+
+<div align="center">
+
+  <div align="left">
+
+  ```pwsh
+  git clone https://github.com/stackotter/swift-bundler
+  cd swift-bundler
+
+  swift build -c release
+  sudo cp .build/release/swift-bundler /usr/local/bin/
+  ```
+
+  </div>
+
+
+  <div align="left">
+
+  Finally, to run Kraken or any other app (such as your own!) with the bundler installed locally instead, run the following command:
+  ```pwsh
+  swift bundler run
+  ```
+
+  </div>
+
+
+</div>
+
 <hr/>
 
 ###### *We speak in pixel, and we come in peace.*

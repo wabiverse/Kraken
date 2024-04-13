@@ -1,5 +1,5 @@
 {
-  "originHash" : "6978d34ca4019560d9da5ef8250080bb5f770f703bf740cce06f1935ba930311",
+  "originHash" : "27b4be194201dd0f1fc1cdcedd77604d56dd31cbcac9ca21f3b5d0eb2cbac27b",
   "pins" : [
     {
       "identity" : "aexml",
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "b398cc73d87ee19c7145926fe20e23b6a2dc81dc",
-        "version" : "1.7.1"
+        "revision" : "736a3abc651e298576bc3574849b55c500128b16",
+        "version" : "1.7.2"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pvieito/PythonKit.git",
       "state" : {
-        "revision" : "41dd1e76bb31661f59efbc1784e8f60ccc32a9d5",
-        "version" : "0.4.1"
+        "revision" : "6fd4817e33c31a57760e285228ef8f81cd359062",
+        "version" : "0.4.2"
       }
     },
     {
@@ -310,8 +310,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD.git",
       "state" : {
-        "revision" : "1bae4ae1645de394409209acb483d74afdd2a306",
-        "version" : "23.11.34"
+        "revision" : "e36e2d011a2c8bcc0b8863a3c80757c176017202",
+        "version" : "23.11.35"
       }
     },
     {
