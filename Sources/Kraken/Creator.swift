@@ -24,6 +24,7 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
+import CxxStdlib
 import Foundation
 import KrakenKit
 import KrakenLib
@@ -46,10 +47,18 @@ struct Kraken: App
   #endif /* canImport(GtkBackend) */
 
   /** The bundle identifier for Kraken. */
-  static let identifier = "foundation.wabi.Kraken"
+  public static let identifier = "foundation.wabi.Kraken"
 
   /** The current version of Kraken. */
-  static let version = ".".join(array: Pixar.GfVec3i(1, 0, 7))
+  public static let version = ".".join(array: Pixar.GfVec3i(1, 0, 7))
+
+  /** The current usd filepath. */
+  public static let filePath = "\(Bundle.main.resourcePath ?? ".")/KrakenExampleScene.usda"
+
+  /** The current stage for Kraken. */
+  @State private var stage: UsdStageRefPtr
+  @State private var showSplash = true
+  @State private var usdFile: String = ""
 
   init()
   {
@@ -62,13 +71,26 @@ struct Kraken: App
 
     /* -------------------------------------------------------- */
 
-    let stage = Usd.Stage.createNew("ExampleScene", ext: .usda)
+    /* validate usd filepath. */
+    StageManager.shared.validate(atPath: Kraken.filePath)
 
+    /* -------------------------------------------------------- */
+
+    /* create a new stage. */
+    _stage = State(initialValue: Usd.Stage.createNew(Kraken.filePath))
+
+    /* add basic scene data. */
     UsdGeom.Xform.define(stage, path: "/Hello")
     UsdGeom.Sphere.define(stage, path: "/Hello/World")
 
+    /* set the stage metadata & save. */
     stage.getPseudoRoot().set(doc: "Example Scene | Kraken v\(Kraken.version)")
     stage.save()
+
+    /* -------------------------------------------------------- */
+
+    /* bind the usd file contents. */
+    _usdFile = State(initialValue: (try? String(contentsOfFile: Kraken.filePath)) ?? "")
 
     /* -------------------------------------------------------- */
 
@@ -99,11 +121,29 @@ struct Kraken: App
   {
     MicaWindow(title: "Kraken", id: "kraken")
     {
-      SplashScreen(
-        image: "Splash",
-        logo: "wabi.hexagon.fill",
-        title: "The Metaversal Creation Suite"
-      )
+      if showSplash
+      {
+        SplashScreen(
+          image: "Splash",
+          logo: "wabi.hexagon.fill",
+          title: "The Metaversal Creation Suite",
+          showSplash: $showSplash
+        )
+      }
+      else
+      {
+        TextEditor(text: $usdFile)
+          .font(.system(size: 11, weight: .bold, design: .monospaced))
+          .onChange(of: usdFile)
+          {
+            /* on usd file changes, update the stage in real time. */
+            StageManager.shared.save(
+              contentsOfFile: usdFile,
+              atPath: Kraken.filePath,
+              stage: &stage
+            )
+          }
+      }
     }
   }
 }

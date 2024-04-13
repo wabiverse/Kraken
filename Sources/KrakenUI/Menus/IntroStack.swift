@@ -28,15 +28,21 @@ import SwiftUI
 
 public struct IntroStack: View
 {
-  public init()
-  {}
+  @Binding public var showSplash: Bool
+
+  public init(showSplash: Binding<Bool>)
+  {
+    self._showSplash = showSplash
+  }
 
   public var body: some View
   {
     VStack
     {
       Button
-      {}
+      {
+        showSplash.toggle()
+      }
       label:
       {
         HStack

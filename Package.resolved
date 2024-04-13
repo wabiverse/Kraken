@@ -1,5 +1,5 @@
 {
-  "originHash" : "27b4be194201dd0f1fc1cdcedd77604d56dd31cbcac9ca21f3b5d0eb2cbac27b",
+  "originHash" : "e58edd2b86f83181d8f33bbf70fa65b018b4bfb4afa07983ce56817d548e7022",
   "pins" : [
     {
       "identity" : "aexml",
@@ -17,6 +17,33 @@
       "state" : {
         "branch" : "linux",
         "revision" : "2218eaa30dbdb39b063e92644fc28ed22e2cb942"
+      }
+    },
+    {
+      "identity" : "codeeditlanguages",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CodeEditApp/CodeEditLanguages.git",
+      "state" : {
+        "revision" : "620b463c88894741e20d4711c9435b33547de5d2",
+        "version" : "0.1.18"
+      }
+    },
+    {
+      "identity" : "codeeditsourceeditor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CodeEditApp/CodeEditSourceEditor",
+      "state" : {
+        "revision" : "7360f00bf7ec8e93b4833357bd254bef7e5c943d",
+        "version" : "0.7.2"
+      }
+    },
+    {
+      "identity" : "codeedittextview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CodeEditApp/CodeEditTextView.git",
+      "state" : {
+        "revision" : "86b980464bcb67693e2053283c7a99bdc6f358bc",
+        "version" : "0.7.3"
       }
     },
     {
@@ -43,6 +70,15 @@
       "location" : "https://github.com/PADL/LVGLSwift",
       "state" : {
         "revision" : "19c19a942153b50d61486faf1d0d45daf79e7be5"
+      }
+    },
+    {
+      "identity" : "mainoffender",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattmassicotte/MainOffender",
+      "state" : {
+        "revision" : "8de872d9256ff7f9913cbc5dd560568ab164be45",
+        "version" : "0.2.1"
       }
     },
     {
@@ -114,6 +150,15 @@
       "state" : {
         "revision" : "626c3d4b6b55354b4af3aa309f998fae9b31a3d9",
         "version" : "3.2.0"
+      }
+    },
+    {
+      "identity" : "rearrange",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChimeHQ/Rearrange",
+      "state" : {
+        "revision" : "5ff7f3363f7a08f77e0d761e38e6add31c2136e1",
+        "version" : "1.8.1"
       }
     },
     {
@@ -297,12 +342,30 @@
       }
     },
     {
+      "identity" : "swiftlintplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lukepistrol/SwiftLintPlugin",
+      "state" : {
+        "revision" : "ea6d3ca895b49910f790e98e4b4ca658e0fe490e",
+        "version" : "0.54.0"
+      }
+    },
+    {
       "identity" : "swiftterm",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/migueldeicaza/SwiftTerm.git",
       "state" : {
         "revision" : "e2b431dbf73f775fb4807a33e4572ffd3dc6933a",
         "version" : "1.2.5"
+      }
+    },
+    {
+      "identity" : "swifttreesitter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChimeHQ/SwiftTreeSitter.git",
+      "state" : {
+        "revision" : "2599e95310b3159641469d8a21baf2d3d200e61f",
+        "version" : "0.8.0"
       }
     },
     {
@@ -338,6 +401,24 @@
       "state" : {
         "revision" : "7f3ed5b1d7288de34ad853544d802647be11cfcf",
         "version" : "0.3.0"
+      }
+    },
+    {
+      "identity" : "textformation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChimeHQ/TextFormation",
+      "state" : {
+        "revision" : "f6faed6abd768ae95b70d10113d4008a7cac57a7",
+        "version" : "0.8.2"
+      }
+    },
+    {
+      "identity" : "textstory",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChimeHQ/TextStory",
+      "state" : {
+        "revision" : "8883fa739aa213e70e6cb109bfbf0a0b551e4cb5",
+        "version" : "0.8.0"
       }
     },
     {

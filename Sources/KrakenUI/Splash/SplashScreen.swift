@@ -34,16 +34,19 @@ import SwiftUI
  */
 public struct SplashScreen: View
 {
-  public init(image: String, logo: String, title: String)
+  public let image: String
+  public let logo: String
+  public let title: String
+
+  @Binding public var showSplash: Bool
+
+  public init(image: String, logo: String, title: String, showSplash: Binding<Bool>)
   {
     self.image = image
     self.logo = logo
     self.title = title
+    self._showSplash = showSplash
   }
-
-  public let image: String
-  public let logo: String
-  public let title: String
 
   public var body: some View
   {
@@ -54,7 +57,7 @@ public struct SplashScreen: View
       SplashTitle(title: title)
         .padding(.top, 7)
 
-      IntroStack()
+      IntroStack(showSplash: $showSplash)
         .padding()
 
       Spacer()
