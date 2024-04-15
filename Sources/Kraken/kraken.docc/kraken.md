@@ -1,4 +1,4 @@
-# ``kraken``
+# ``Kraken``
 
 ## Overview
 
@@ -6,8 +6,4 @@
 
 ### Swift Startup
 
-- ``CreatorMain``
-
-### Shared Anchor System
-
-- ``AnchorSystemApple``
+- ``Kraken/init()``

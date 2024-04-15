@@ -45,7 +45,7 @@ public struct SplashScreen: View
     self.image = image
     self.logo = logo
     self.title = title
-    self._showSplash = showSplash
+    _showSplash = showSplash
   }
 
   public var body: some View

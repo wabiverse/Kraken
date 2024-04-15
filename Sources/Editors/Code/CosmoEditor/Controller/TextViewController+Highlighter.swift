@@ -24,30 +24,60 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import CodeEditSourceEditor
 import Foundation
+import SwiftTreeSitter
 
-extension EditorTheme
+extension TextViewController
 {
-  static var standard: EditorTheme
+  func setUpHighlighter()
   {
-    EditorTheme(
-      text: .init(hex: "D9D9D9"),
-      insertionPoint: .init(hex: "D9D9D9"),
-      invisibles: .init(hex: "424D5B"),
-      background: .init(hex: "1F1F24"),
-      lineHighlight: .init(hex: "23252B"),
-      selection: .init(hex: "515B70"),
-      keywords: .init(hex: "FF7AB3"),
-      commands: .init(hex: "67B7A4"),
-      types: .init(hex: "5DD8FF"),
-      attributes: .init(hex: "D0A8FF"),
-      variables: .init(hex: "41A1C0"),
-      values: .init(hex: "A167E6"),
-      numbers: .init(hex: "D0BF69"),
-      strings: .init(hex: "FC6A5D"),
-      characters: .init(hex: "D0BF69"),
-      comments: .init(hex: "73A74E")
+    if let highlighter
+    {
+      textView.removeStorageDelegate(highlighter)
+      self.highlighter = nil
+    }
+
+    highlighter = Highlighter(
+      textView: textView,
+      highlightProvider: highlightProvider,
+      theme: theme,
+      attributeProvider: self,
+      language: language
     )
+    textView.addStorageDelegate(highlighter!)
+    setHighlightProvider(highlightProvider)
+  }
+
+  func setHighlightProvider(_ highlightProvider: HighlightProviding? = nil)
+  {
+    var provider: HighlightProviding?
+
+    if let highlightProvider
+    {
+      provider = highlightProvider
+    }
+    else
+    {
+      treeSitterClient = TreeSitterClient()
+      provider = treeSitterClient!
+    }
+
+    if let provider
+    {
+      self.highlightProvider = provider
+      highlighter?.setHighlightProvider(provider)
+    }
+  }
+}
+
+extension TextViewController: ThemeAttributesProviding
+{
+  public func attributesFor(_ capture: CaptureName?) -> [NSAttributedString.Key: Any]
+  {
+    [
+      .font: font,
+      .foregroundColor: theme.colorFor(capture),
+      .kern: textView.kern
+    ]
   }
 }

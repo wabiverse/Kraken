@@ -32,7 +32,7 @@ public struct IntroStack: View
 
   public init(showSplash: Binding<Bool>)
   {
-    self._showSplash = showSplash
+    _showSplash = showSplash
   }
 
   public var body: some View

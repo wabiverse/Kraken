@@ -18,6 +18,16 @@ let package = Package(
   ],
   // --- 📦 Package Products. ---
   products: [
+    // --- 🎨 Editors ---
+    .library(
+      name: "CosmoEditor",
+      targets: ["CosmoTextView", "CosmoEditor"]
+    ),
+    .library(
+      name: "CosmoLanguages",
+      targets: ["CosmoLanguagesContainer", "CosmoLanguages"]
+    ),
+    // --- 🦑 Kraken ---
     .library(
       name: "KrakenKit",
       targets: ["KrakenKit"]
@@ -39,13 +49,68 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.35"),
-    .package(url: "https://github.com/CodeEditApp/CodeEditSourceEditor", from: "0.7.2"),
+    .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.8.0"),
+    .package(url: "https://github.com/ChimeHQ/TextFormation", from: "0.8.2"),
+    .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),
+    .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
     .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab")
   ],
 
   // --- 🎯 Package Targets. ---
   targets: [
+    // --- 🎨 Editors ---
+    .target(
+      name: "CosmoLanguagesContainer",
+      path: "Sources/Editors/Code/CosmoLanguagesContainer",
+      publicHeadersPath: "include",
+      cSettings: [
+        .headerSearchPath("TreeSitterC/include"),
+        .headerSearchPath("TreeSitterCPP/include"),
+        .headerSearchPath("TreeSitterJSON/include"),
+        .headerSearchPath("TreeSitterPython/include"),
+        .headerSearchPath("TreeSitterRust/include"),
+        .headerSearchPath("TreeSitterSwift/include"),
+        .headerSearchPath("TreeSitterTOML/include"),
+        // TODO: Create a (.usda) tree sitter.
+      ]
+    ),
+    .target(
+      name: "CosmoLanguages",
+      dependencies: [
+        .target(name: "CosmoLanguagesContainer"),
+        .product(name: "SwiftTreeSitter", package: "SwiftTreeSitter"),
+      ],
+      path: "Sources/Editors/Code/CosmoLanguages",
+      resources: [
+        .copy("Resources"),
+      ]
+    ),
+    .testTarget(
+      name: "CosmoLanguagesTests",
+      dependencies: [
+        .target(name: "CosmoLanguages")
+      ],
+      path: "Tests/Editors/Code/CosmoLanguagesTests"
+    ),
+    .target(
+      name: "CosmoTextView",
+      dependencies: [
+        .product(name: "TextStory", package: "TextStory"),
+        .product(name: "Collections", package: "swift-collections"),
+      ],
+      path: "Sources/Editors/Code/CosmoTextView"
+    ),
+    .target(
+      name: "CosmoEditor",
+      dependencies: [
+        .target(name: "CosmoLanguages"),
+        .target(name: "CosmoTextView"),
+        .product(name: "TextFormation", package: "TextFormation"),
+      ],
+      path: "Sources/Editors/Code/CosmoEditor"
+    ),
+    // --- 🦑 Kraken ---
     .target(
       name: "KrakenKit",
       dependencies: [
@@ -55,7 +120,6 @@ let package = Package(
         .interoperabilityMode(.Cxx)
       ]
     ),
-
     .target(
       name: "KrakenLib",
       dependencies: [
@@ -65,12 +129,11 @@ let package = Package(
         .interoperabilityMode(.Cxx)
       ]
     ),
-
     .target(
       name: "KrakenUI",
       dependencies: [
         .target(name: "KrakenKit"),
-        .product(name: "CodeEditSourceEditor", package: "CodeEditSourceEditor"),
+        .target(name: "CosmoEditor"),
         .product(
           name: "SwiftCrossUI",
           package: "swift-cross-ui",
@@ -87,7 +150,6 @@ let package = Package(
         .interoperabilityMode(.Cxx)
       ]
     ),
-
     .executableTarget(
       name: "Kraken",
       dependencies: [

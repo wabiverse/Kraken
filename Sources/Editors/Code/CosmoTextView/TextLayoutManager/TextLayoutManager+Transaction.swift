@@ -24,70 +24,41 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import CodeEditSourceEditor
 import Foundation
-import SwiftUI
 
-public struct CodeEditor: View
+public extension TextLayoutManager
 {
-  @Binding var text: String
-  @State private var cursorPositions: [CursorPosition]
-
-  public init(text: Binding<String>)
+  /// Begins a transaction, preventing the layout manager from performing layout until the `endTransaction` is called.
+  /// Useful for grouping attribute modifications into one layout pass rather than laying out every update.
+  ///
+  /// You can nest transaction start/end calls, the layout manager will not cause layout until the last transaction
+  /// group is ended.
+  ///
+  /// Ensure there is a balanced number of begin/end calls. If there is a missing endTranscaction call, the layout
+  /// manager will never lay out text. If there is a end call without matching a start call an assertionFailure
+  /// will occur.
+  func beginTransaction()
   {
-    _text = text
-    _cursorPositions = State(initialValue: [])
+    transactionCounter += 1
   }
 
-  public var body: some View
+  /// Ends a transaction. When called, the layout manager will layout any necessary lines.
+  func endTransaction(forceLayout: Bool = false)
   {
-    CodeEditSourceEditor(
-      $text,
-      language: .default,
-      theme: .standard,
-      font: .monospacedSystemFont(ofSize: 11, weight: .bold),
-      tabWidth: 2,
-      indentOption: .spaces(count: 2),
-      lineHeight: 1.2,
-      wrapLines: true,
-      editorOverscroll: 0.3,
-      cursorPositions: $cursorPositions
-    )
+    transactionCounter -= 1
+    if transactionCounter == 0
+    {
+      if forceLayout
+      {
+        setNeedsLayout()
+      }
+      layoutLines()
+    }
+    else if transactionCounter < 0
+    {
+      assertionFailure(
+        "TextLayoutManager.endTransaction called without a matching TextLayoutManager.beginTransaction call"
+      )
+    }
   }
 }
-
-#if canImport(AppKit)
-  extension NSTextView
-  {
-    override open var frame: CGRect
-    {
-      didSet
-      {
-        isAutomaticQuoteSubstitutionEnabled = false
-        isAutomaticDashSubstitutionEnabled = false
-        isAutomaticTextReplacementEnabled = false
-        isAutomaticSpellingCorrectionEnabled = false
-        isAutomaticDataDetectionEnabled = false
-        isAutomaticLinkDetectionEnabled = false
-        isAutomaticTextCompletionEnabled = false
-        isAutomaticTextReplacementEnabled = false
-      }
-    }
-  }
-
-#elseif canImport(UIKit)
-  extension UITextView
-  {
-    override open var frame: CGRect
-    {
-      didSet
-      {
-        autocorrectionType = .no
-        autocapitalizationType = .none
-        smartQuotesType = .no
-        smartDashesType = .no
-        smartInsertDeleteType = .no
-      }
-    }
-  }
-#endif
