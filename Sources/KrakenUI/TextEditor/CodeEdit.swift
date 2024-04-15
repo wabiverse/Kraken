@@ -30,48 +30,27 @@ import SwiftUI
 
 public struct CodeEditor: View
 {
-  @Binding public var text: String
-
-  @State var theme = EditorTheme(
-    text: .orange,
-    insertionPoint: .purple,
-    invisibles: .lightGray,
-    background: .windowBackgroundColor,
-    lineHighlight: .gray,
-    selection: .darkGray,
-    keywords: .red,
-    commands: .green,
-    types: .yellow,
-    attributes: .orange,
-    variables: .white,
-    values: .blue,
-    numbers: .purple,
-    strings: .yellow,
-    characters: .blue,
-    comments: .lightGray
-  )
-  @State var font = NSFont.monospacedSystemFont(ofSize: 11, weight: .bold)
-  @State var tabWidth = 2
-  @State var lineHeight = 1.2
-  @State var editorOverscroll = 0.3
-  @State var cursorPositions = [CursorPosition(range: .notFound)]
+  @Binding var text: String
+  @State private var cursorPositions: [CursorPosition]
 
   public init(text: Binding<String>)
   {
     _text = text
+    _cursorPositions = State(initialValue: [])
   }
 
   public var body: some View
   {
     CodeEditSourceEditor(
       $text,
-      language: .swift,
-      theme: theme,
-      font: font,
-      tabWidth: tabWidth,
-      lineHeight: lineHeight,
+      language: .default,
+      theme: .standard,
+      font: .monospacedSystemFont(ofSize: 11, weight: .bold),
+      tabWidth: 2,
+      indentOption: .spaces(count: 2),
+      lineHeight: 1.2,
       wrapLines: true,
-      editorOverscroll: editorOverscroll,
+      editorOverscroll: 0.3,
       cursorPositions: $cursorPositions
     )
   }

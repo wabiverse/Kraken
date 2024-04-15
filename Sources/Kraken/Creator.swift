@@ -132,8 +132,7 @@ struct Kraken: App
       }
       else
       {
-        TextEditor(text: $usdFile)
-          .font(.system(size: 11, weight: .bold, design: .monospaced))
+        CodeEditor(text: $usdFile)
           .onChange(of: usdFile)
           {
             /* on usd file changes, update the stage in real time. */
