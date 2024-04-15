@@ -46,6 +46,7 @@ public extension CodeLanguage
     .rust,
     .swift,
     .toml,
+    .usd,
   ]
 
   /// A language structure for `C`
@@ -122,6 +123,16 @@ public extension CodeLanguage
     extensions: ["toml"],
     lineCommentString: "#",
     rangeCommentStrings: ("", "")
+  )
+
+  /// A language structure for `USD`
+  static let usd: CodeLanguage = .init(
+    id: .usd,
+    tsName: "usd",
+    extensions: ["usda"],
+    lineCommentString: "#",
+    rangeCommentStrings: ("", ""),
+    documentationCommentStrings: [.pair(("(", ")"))]
   )
 
   /// The default language (plain text)

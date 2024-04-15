@@ -127,6 +127,8 @@ public struct CodeLanguage
         tree_sitter_swift()
       case .toml:
         tree_sitter_toml()
+      case .usd:
+        tree_sitter_usd()
       case .plainText:
         nil
     }

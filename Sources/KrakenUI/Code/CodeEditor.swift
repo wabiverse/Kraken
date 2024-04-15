@@ -31,6 +31,7 @@ import SwiftUI
 public struct CodeEditor: View
 {
   @Binding var text: String
+
   @State private var cursorPositions: [CursorPosition]
 
   public init(text: Binding<String>)
@@ -51,7 +52,8 @@ public struct CodeEditor: View
       lineHeight: 1.2,
       wrapLines: true,
       editorOverscroll: 0.3,
-      cursorPositions: $cursorPositions
+      cursorPositions: $cursorPositions,
+      useThemeBackground: false
     )
   }
 }

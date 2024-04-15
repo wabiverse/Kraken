@@ -55,6 +55,8 @@ public class TreeSitterModel
         swiftQuery
       case .toml:
         tomlQuery
+      case .usd:
+        usdQuery
       case .plainText:
         nil
     }
@@ -80,6 +82,9 @@ public class TreeSitterModel
 
   /// Query for `TOML` files.
   public private(set) lazy var tomlQuery: Query? = queryFor(.toml)
+
+  /// Query for `USD` files.
+  public private(set) lazy var usdQuery: Query? = queryFor(.usd)
 
   private func queryFor(_ codeLanguage: CodeLanguage) -> Query?
   {

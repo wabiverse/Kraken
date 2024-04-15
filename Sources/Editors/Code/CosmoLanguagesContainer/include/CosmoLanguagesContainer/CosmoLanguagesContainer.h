@@ -17,6 +17,7 @@ extern TSLanguage *tree_sitter_python();
 extern TSLanguage *tree_sitter_rust();
 extern TSLanguage *tree_sitter_swift();
 extern TSLanguage *tree_sitter_toml();
+extern TSLanguage *tree_sitter_usd();
 
 #ifdef __cplusplus
 }

@@ -72,7 +72,7 @@ let package = Package(
         .headerSearchPath("TreeSitterRust/include"),
         .headerSearchPath("TreeSitterSwift/include"),
         .headerSearchPath("TreeSitterTOML/include"),
-        // TODO: Create a (.usda) tree sitter.
+        .headerSearchPath("TreeSitterUSD/include"),
       ]
     ),
     .target(

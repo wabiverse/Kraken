@@ -203,6 +203,27 @@ final class CosmoLanguagesTests: XCTestCase
     XCTAssertNotEqual(query?.patternCount, 0)
   }
 
+  // MARK: - USD
+
+  func test_CodeLanguageUSD() throws
+  {
+    let url = URL(fileURLWithPath: "~/path/to/file.usda")
+    let language = CodeLanguage.detectLanguageFrom(url: url)
+
+    XCTAssertEqual(language.id, .usd)
+  }
+
+  func test_FetchQueryUSD() throws
+  {
+    var language = CodeLanguage.usd
+    language.resourceURL = bundleURL
+
+    let data = try Data(contentsOf: language.queryURL!)
+    let query = try? Query(language: language.language!, data: data)
+    XCTAssertNotNil(query)
+    XCTAssertNotEqual(query?.patternCount, 0)
+  }
+
   // MARK: - Unsupported
 
   func test_CodeLanguageUnsupported() throws
