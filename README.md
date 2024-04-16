@@ -48,7 +48,9 @@
 
 <div align="center">
 
-   <image width="500" align=top src="https://www.dropbox.com/scl/fi/7hc36locgwlviimqkv05s/maelstrom.png?rlkey=terqr3zzkei7i80iql6y82ymi&raw=1">
+   <!-- <image width="500" align=top src="https://www.dropbox.com/scl/fi/7hc36locgwlviimqkv05s/maelstrom.png?rlkey=terqr3zzkei7i80iql6y82ymi&raw=1"> -->
+
+   ![](https://github.com/wabiverse/Kraken/blob/main/krakenscreenshot.gif)
 
    <div align="center">
 
