@@ -1,5 +1,5 @@
 {
-  "originHash" : "c15e8aa8884e5c43573b4c6821e6a2d2a6f33b031aae46b8d3f500da1ae16ba1",
+  "originHash" : "86ca3573181d97fb51f834cb8c76d8139ea4570c71591717fff34d96048696a1",
   "pins" : [
     {
       "identity" : "aexml",
@@ -8,15 +8,6 @@
       "state" : {
         "revision" : "38f7d00b23ecd891e1ee656fa6aeebd6ba04ecc3",
         "version" : "4.6.1"
-      }
-    },
-    {
-      "identity" : "asyncextensions",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/lhoward/AsyncExtensions",
-      "state" : {
-        "branch" : "linux",
-        "revision" : "2218eaa30dbdb39b063e92644fc28ed22e2cb942"
       }
     },
     {
@@ -35,14 +26,6 @@
       "state" : {
         "revision" : "128d2ffc22467f69569ef8ff971683e2393191a0",
         "version" : "4.2.0"
-      }
-    },
-    {
-      "identity" : "lvglswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PADL/LVGLSwift",
-      "state" : {
-        "revision" : "19c19a942153b50d61486faf1d0d45daf79e7be5"
       }
     },
     {
@@ -82,15 +65,6 @@
       }
     },
     {
-      "identity" : "opencombine",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/OpenCombine/OpenCombine.git",
-      "state" : {
-        "revision" : "8576f0d579b27020beccbccc3ea6844f3ddfc2c2",
-        "version" : "0.14.0"
-      }
-    },
-    {
       "identity" : "pathkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kylef/PathKit.git",
@@ -106,14 +80,6 @@
       "state" : {
         "revision" : "6fd4817e33c31a57760e285228ef8f81cd359062",
         "version" : "0.4.2"
-      }
-    },
-    {
-      "identity" : "qlift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Longhanks/qlift",
-      "state" : {
-        "revision" : "ddab1f1ecc113ad4f8e05d2999c2734cdf706210"
       }
     },
     {
@@ -198,24 +164,6 @@
       }
     },
     {
-      "identity" : "swift-cross-ui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stackotter/swift-cross-ui",
-      "state" : {
-        "branch" : "f57f7ab",
-        "revision" : "f57f7abc22c7aee3ba642ef714742776e2b767ed"
-      }
-    },
-    {
-      "identity" : "swift-cwinrt",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-cwinrt",
-      "state" : {
-        "branch" : "main",
-        "revision" : "ad451d31fc7c1c60041c146d177cdaf5aaf1cf47"
-      }
-    },
-    {
       "identity" : "swift-format",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-format",
@@ -270,57 +218,12 @@
       }
     },
     {
-      "identity" : "swift-uwp",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-uwp",
-      "state" : {
-        "branch" : "main",
-        "revision" : "cfad0a43469211bf7eb58ed23af3d4a176faec07"
-      }
-    },
-    {
-      "identity" : "swift-windowsappsdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-windowsappsdk",
-      "state" : {
-        "branch" : "main",
-        "revision" : "8d094d4478d0eabcf584fef133b8ce45287ecd72"
-      }
-    },
-    {
-      "identity" : "swift-windowsfoundation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-windowsfoundation",
-      "state" : {
-        "branch" : "main",
-        "revision" : "ba7a8b5000ed3f9f077000d1a31f2a0b19907657"
-      }
-    },
-    {
-      "identity" : "swift-winui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/thebrowsercompany/swift-winui",
-      "state" : {
-        "branch" : "main",
-        "revision" : "4c246a1352accfa5e12f7103bd2725b271730cce"
-      }
-    },
-    {
       "identity" : "swiftcli",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jakeheis/SwiftCLI.git",
       "state" : {
         "revision" : "2e949055d9797c1a6bddcda0e58dada16cc8e970",
         "version" : "6.0.3"
-      }
-    },
-    {
-      "identity" : "swiftterm",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/migueldeicaza/SwiftTerm.git",
-      "state" : {
-        "revision" : "e2b431dbf73f775fb4807a33e4572ffd3dc6933a",
-        "version" : "1.2.5"
       }
     },
     {
@@ -348,23 +251,6 @@
       "state" : {
         "revision" : "46e9b907e3ec66010cf2204594549ff1dc195032",
         "version" : "8.10.1"
-      }
-    },
-    {
-      "identity" : "termkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/migueldeicaza/TermKit",
-      "state" : {
-        "revision" : "3bce85d1bafbbb0336b3b7b7e905c35754cb9adf"
-      }
-    },
-    {
-      "identity" : "textbufferkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/migueldeicaza/TextBufferKit.git",
-      "state" : {
-        "revision" : "7f3ed5b1d7288de34ad853544d802647be11cfcf",
-        "version" : "0.3.0"
       }
     },
     {

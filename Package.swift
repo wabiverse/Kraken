@@ -1,11 +1,11 @@
 // swift-tools-version: 5.10
 import PackageDescription
 
-#if os(macOS)
-  let crazyToolChainBug: [String: String]? = nil
-#else /* os(macOS) */
-  let crazyToolChainBug: [String: String]? = ["SwiftCrossUI": "SwiftUI"]
-#endif /* !os(macOS) */
+// #if os(macOS)
+//   let crazyToolChainBug: [String: String]? = nil
+// #else /* os(macOS) */
+//   let crazyToolChainBug: [String: String]? = ["SwiftCrossUI": "SwiftUI"]
+// #endif /* !os(macOS) */
 
 let package = Package(
   name: "Kraken",
@@ -21,11 +21,11 @@ let package = Package(
     // --- 🎨 Editors ---
     .library(
       name: "CosmoEditor",
-      targets: ["CosmoTextView", "CosmoEditor"]
+      targets: ["CodeView", "CosmoEditor"]
     ),
     .library(
-      name: "CosmoLanguages",
-      targets: ["CosmoLanguagesContainer", "CosmoLanguages"]
+      name: "CodeLanguages",
+      targets: ["LanguagesBundle", "CodeLanguages"]
     ),
     // --- 🦑 Kraken ---
     .library(
@@ -35,10 +35,6 @@ let package = Package(
     .library(
       name: "KrakenLib",
       targets: ["KrakenLib"]
-    ),
-    .library(
-      name: "KrakenUI",
-      targets: ["KrakenUI"]
     ),
     .executable(
       name: "Kraken",
@@ -54,15 +50,15 @@ let package = Package(
     .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
-    .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab")
+    //.package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab")
   ],
 
   // --- 🎯 Package Targets. ---
   targets: [
     // --- 🎨 Editors ---
     .target(
-      name: "CosmoLanguagesContainer",
-      path: "Sources/Editors/Code/CosmoLanguagesContainer",
+      name: "LanguagesBundle",
+      path: "Sources/Editors/Code/LanguagesBundle",
       publicHeadersPath: "include",
       cSettings: [
         .headerSearchPath("TreeSitterC/include"),
@@ -76,39 +72,39 @@ let package = Package(
       ]
     ),
     .target(
-      name: "CosmoLanguages",
+      name: "CodeLanguages",
       dependencies: [
-        .target(name: "CosmoLanguagesContainer"),
+        .target(name: "LanguagesBundle"),
         .product(name: "SwiftTreeSitter", package: "SwiftTreeSitter"),
       ],
-      path: "Sources/Editors/Code/CosmoLanguages",
+      path: "Sources/Editors/Code/Languages",
       resources: [
         .copy("Resources"),
       ]
     ),
     .testTarget(
-      name: "CosmoLanguagesTests",
+      name: "CodeEditorTests",
       dependencies: [
-        .target(name: "CosmoLanguages")
+        .target(name: "CodeLanguages")
       ],
-      path: "Tests/Editors/Code/CosmoLanguagesTests"
+      path: "Tests/Editors/Code"
     ),
     .target(
-      name: "CosmoTextView",
+      name: "CodeView",
       dependencies: [
         .product(name: "TextStory", package: "TextStory"),
         .product(name: "Collections", package: "swift-collections"),
       ],
-      path: "Sources/Editors/Code/CosmoTextView"
+      path: "Sources/Editors/Code/CodeView"
     ),
     .target(
       name: "CosmoEditor",
       dependencies: [
-        .target(name: "CosmoLanguages"),
-        .target(name: "CosmoTextView"),
+        .target(name: "CodeLanguages"),
+        .target(name: "CodeView"),
         .product(name: "TextFormation", package: "TextFormation"),
       ],
-      path: "Sources/Editors/Code/CosmoEditor"
+      path: "Sources/Editors/Code/Cosmo"
     ),
     // --- 🦑 Kraken ---
     .target(
@@ -129,34 +125,13 @@ let package = Package(
         .interoperabilityMode(.Cxx)
       ]
     ),
-    .target(
-      name: "KrakenUI",
-      dependencies: [
-        .target(name: "KrakenKit"),
-        .target(name: "CosmoEditor"),
-        .product(
-          name: "SwiftCrossUI",
-          package: "swift-cross-ui",
-          moduleAliases: crazyToolChainBug,
-          condition: .when(platforms: [.linux, .windows])
-        ),
-        .product(
-          name: "GtkBackend",
-          package: "swift-cross-ui",
-          condition: .when(platforms: [.linux, .windows])
-        ),
-      ],
-      swiftSettings: [
-        .interoperabilityMode(.Cxx)
-      ]
-    ),
     .executableTarget(
       name: "Kraken",
       dependencies: [
         .product(name: "PixarUSD", package: "SwiftUSD"),
         .target(name: "KrakenKit"),
         .target(name: "KrakenLib"),
-        .target(name: "KrakenUI"),
+        .target(name: "CosmoEditor"),
       ],
       resources: [
         .process("Resources")
