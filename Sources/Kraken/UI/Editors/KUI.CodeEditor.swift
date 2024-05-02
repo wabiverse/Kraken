@@ -37,43 +37,29 @@ public extension Kraken.UI
     /** The document contents to edit. */
     @Binding var document: Kraken.IO.USD
 
-    /** The usd file path. */
-    var filePath: String
-
-    /** The stage identified by this file. */
-    @State private var stage: UsdStageRefPtr
-
     /** Whether the document is in binary format. */
-    @State private var isBinary: Bool
-
-    /**
-     * Creates a new code editor and stage for the provided document,
-     * if the file URL is nil or invalid, a new stage will be created.
-     * - Parameters:
-     *   - document: The document to edit.
-     *   - fileURL: The file URL to edit. */
-    public init(document: Binding<Kraken.IO.USD>, fileURL: URL?)
-    {
-      /* set the document. */
-      _document = document
-
-      /* validate usd filepath. */
-      filePath = Kraken.IO.Stage.manager.validate(url: fileURL)
-
-      /* open an existing usd stage. */
-      _stage = State(initialValue: Usd.Stage.open(filePath))
-
-      /* check if the file is binary. */
-      isBinary = fileURL?.pathExtension != "usda"
-    }
+    @State var isBinary: Bool
 
     /* -------------------------------------------------------- */
 
-    @State private var language: Editor.Code.Language = .default
-    @State private var theme: Editor.Code.Theme = .standard
-    @State private var font: NSFont = .monospacedSystemFont(ofSize: 12, weight: .regular)
+    /** perisistent setting whether lines wrap to the editor's width. */
     @AppStorage("wrapLines") private var wrapLines: Bool = true
+
+    /* -------------------------------------------------------- */
+
+    /** default code editor language setting. */
+    @State private var language: Editor.Code.Language = .default
+
+    /** default code editor theme setting for syntax highlighting. */
+    @State private var theme: Editor.Code.Theme = .standard
+
+    /** default code editor font setting for text. */
+    @State private var font: NSFont = .monospacedSystemFont(ofSize: 12, weight: .bold)
+
+    /** default code editor cursor positions. */
     @State private var cursorPositions: [CursorPosition] = []
+
+    /* -------------------------------------------------------- */
 
     public var body: some View
     {
@@ -90,15 +76,6 @@ public extension Kraken.UI
           wrapLines: wrapLines,
           cursorPositions: $cursorPositions
         )
-        .onChange(of: document.text)
-        {
-          /* live visual reloading of stage changes. */
-          // Kraken.IO.Stage.manager.save(
-          //   contentsOfFile: document.text,
-          //   atPath: filePath,
-          //   stage: &stage
-          // )
-        }
       }
     }
   }

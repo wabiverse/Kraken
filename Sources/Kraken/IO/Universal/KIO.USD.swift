@@ -50,6 +50,15 @@ public extension Kraken.IO
       ]
     }
 
+    public static var blacklistedFileExts: [String]
+    {
+      [
+        "usd",
+        "usdc",
+        "usdz"
+      ]
+    }
+
     public init(configuration: ReadConfiguration) throws
     {
       guard let data = configuration.file.regularFileContents,

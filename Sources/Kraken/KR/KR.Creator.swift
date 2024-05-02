@@ -24,77 +24,33 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import CxxStdlib
 import Foundation
-import KrakenKit
-import KrakenLib
 import PixarUSD
-import SceneKit
 #if canImport(PyBundle)
   import PyBundle
   import Python
 #endif /* canImport(PyBundle) */
-import SwiftUI
-#if canImport(GtkBackend)
-  import GtkBackend
-#endif /* canImport(GtkBackend) */
 
+/**
+ * this is the main entry point for Kraken,
+ * it initializes the usd plugins, any/all
+ * resources, and python, which is required
+ * for the application to run. */
 @main
-public struct Kraken: SwiftUI.App
+public enum Creator
 {
-  #if canImport(GtkBackend)
-    typealias Backend = GtkBackend
-  #endif /* canImport(GtkBackend) */
-
-  /** The bundle identifier for Kraken. */
-  public static let identifier = "foundation.wabi.Kraken"
-
-  /** The current version of Kraken. */
-  public static let version = ".".join(array: Pixar.GfVec3i(1, 0, 7))
-
-  /** Whether to show the splash screen. */
-  @State public var showSplash = true
-
-  public init()
+  static func main()
   {
     /* setup usd plugins & resources. */
     Pixar.Bundler.shared.setup(.resources)
 
-    /* embed & init python. */
-    PyBundler.shared.pyInit()
-    PyBundler.shared.pyInfo()
+    #if canImport(PyBundle)
+      /* embed & init python. */
+      PyBundler.shared.pyInit()
+      PyBundler.shared.pyInfo()
+    #endif /* canImport(PyBundle) */
 
-    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(Kraken.version.yellow) | \("PixarUSD".magenta) \("v".yellow)\(Pixar.version.yellow)")
-    Msg.logger.log(level: .info, "Kraken launched.")
+    /* kraken main entry point. */
+    Kraken.main()
   }
-
-  /* --- xxx --- */
-
-  public var body: some SwiftUI.Scene
-  {
-    DocumentGroup(newDocument: Kraken.IO.USD())
-    { stage in
-      HStack
-      {
-        Kraken.UI.CodeEditor(
-          document: stage.$document,
-          fileURL: stage.fileURL
-        )
-
-        if let scene = stage.fileURL
-        {
-          SceneView(
-            scene: try? SCNScene(url: scene),
-            options: [.allowsCameraControl, .autoenablesDefaultLighting]
-          )
-        }
-        else
-        {
-          Text("Create or open a USD file.")
-        }
-      }
-    }
-  }
-
-  /* --- xxx --- */
 }

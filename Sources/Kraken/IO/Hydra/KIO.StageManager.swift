@@ -27,6 +27,7 @@
 import CxxStdlib
 import Foundation
 import PixarUSD
+import SwiftUI
 
 public extension Kraken.IO
 {
@@ -38,11 +39,16 @@ public extension Kraken.IO
     /** The shared instance of the stage manager singleton. */
     public static let manager = Stage()
 
-    private init()
-    {}
-
     /** The underlying file manager for file ops. */
     private let fileManager = FileManager.default
+
+    /** The date formatter for timestamp metadata. */
+    public let formatter = DateFormatter()
+
+    private init()
+    {
+      formatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
+    }
 
     /**
      * Validates the usd file at the given path.
@@ -56,7 +62,13 @@ public extension Kraken.IO
     @discardableResult
     public func validate(url fileURL: URL?) -> String
     {
-      let filePath = fileURL?.absoluteString
+      var isBinary = false
+      if Kraken.IO.USD.blacklistedFileExts.contains(fileURL?.pathExtension ?? "")
+      {
+        isBinary = true
+      }
+
+      let filePath = fileURL?.path
         ?? "\(Bundle.main.resourcePath ?? ".")/Untitled.usda"
 
       guard
@@ -67,13 +79,16 @@ public extension Kraken.IO
       {
         try? fileManager.removeItem(atPath: filePath)
 
-        fileManager.createFile(
-          atPath: filePath,
-          contents: (try? String(
-            contentsOfFile: filePath
-          ).data(using: .utf8)) ?? "".data(using: .utf8),
-          attributes: [.posixPermissions: 0o777]
-        )
+        if !isBinary
+        {
+          fileManager.createFile(
+            atPath: filePath,
+            contents: (try? String(
+              contentsOfFile: filePath
+            ).data(using: .utf8)) ?? "".data(using: .utf8),
+            attributes: [.posixPermissions: 0o777]
+          )
+        }
 
         return filePath
       }
@@ -113,15 +128,39 @@ public extension Kraken.IO
       stage.save()
     }
 
-    func save(_ stage: inout UsdStageRefPtr)
+    /**
+     * Saves usd file and sets timestamp metadata.
+     *
+     * - Parameters:
+     *   - stage: The stage to save. */
+    public func save(_ stage: inout UsdStageRefPtr)
     {
-      let formatter = DateFormatter()
-      formatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
-      let date = formatter.string(from: Date())
+      /* set the timestamp metadata. */
+      let metadata = "Kraken v\(Kraken.version) | \(timestamp())"
 
-      /* set the timestamp metadata & save. */
-      stage.getPseudoRoot().set(doc: "\(date) | Kraken v\(Kraken.version)")
+      /* set the metadata on the stage. */
+      stage.getPseudoRoot().set(doc: metadata)
       stage.save()
+    }
+
+    private func timestamp() -> String
+    {
+      formatter.string(from: Date())
+    }
+
+    /**
+     * Checks if the file is a binary usd file.
+     *
+     * Currently checks if the file extension is
+     * a (.usda) file extension, if it is any other
+     * extension, or none, it is considered binary.
+     *
+     * - Parameters:
+     *   - file: The file configuration to check.
+     * - Returns: Whether the file is binary or not. */
+    public static func isBinary(_ file: FileDocumentConfiguration<Kraken.IO.USD>) -> Bool
+    {
+      file.fileURL?.pathExtension != "usda"
     }
   }
 }
