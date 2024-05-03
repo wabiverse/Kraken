@@ -77,7 +77,7 @@ public struct Kraken: SwiftUI.App
       {
         Kraken.UI.CodeEditor(
           document: usdFile.$document,
-          isBinary: Kraken.IO.Stage.isBinary(usdFile)
+          isBinary: usdFile.isBinary
         )
 
         if let scene = usdFile.fileURL

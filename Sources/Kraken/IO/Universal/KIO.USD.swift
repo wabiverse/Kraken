@@ -78,3 +78,11 @@ public extension Kraken.IO
     }
   }
 }
+
+public extension FileDocumentConfiguration<Kraken.IO.USD>
+{
+  var isBinary: Bool
+  {
+    Kraken.IO.Stage.isBinary(self)
+  }
+}
