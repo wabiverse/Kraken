@@ -34,10 +34,12 @@ public extension Kraken.IO
   struct USD: FileDocument
   {
     var text: String
+    var fileURL: URL?
 
-    public init(text: String = "")
+    public init(text: String = "", fileURL: URL? = nil)
     {
       self.text = text
+      self.fileURL = fileURL
     }
 
     public static var readableContentTypes: [UTType]
@@ -68,6 +70,7 @@ public extension Kraken.IO
       else
       {
         text = ""
+        fileURL = nil
         return
       }
       text = string

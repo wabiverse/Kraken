@@ -96,6 +96,14 @@ public extension Kraken.IO
       return filePath
     }
 
+    public func makeTmp() -> Kraken.IO.USD
+    {
+      var dir = fileManager.temporaryDirectory
+      dir.append(component: "Untitled.usda")
+
+      return Kraken.IO.USD(fileURL: dir)
+    }
+
     /**
      * Saves (.usda) file contents and syncs modifications
      * to the stage in real time.

@@ -30,6 +30,8 @@ public extension Kraken.UI
 {
   struct IntroMenu: View
   {
+    @Environment(\.newDocument) private var newDocument
+
     @Binding public var showSplash: Bool
 
     public var body: some View
@@ -38,9 +40,9 @@ public extension Kraken.UI
       {
         Button
         {
-          showSplash = false
+          newDocument(Kraken.IO.Stage.manager.makeTmp())
 
-          NSWorkspace.shared.open(URL(string: "kraken://create")!)
+          showSplash = false
         }
         label:
         {

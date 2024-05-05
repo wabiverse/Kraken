@@ -44,7 +44,7 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD", branch: "main"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD", from: "23.11.36"),
     .package(url: "https://github.com/wabiverse/SwiftTreeSitter", branch: "hotfix-read-empty-noalloc"),
     .package(url: "https://github.com/ChimeHQ/TextFormation", from: "0.8.2"),
     .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),
