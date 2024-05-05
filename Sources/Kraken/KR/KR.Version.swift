@@ -24,12 +24,33 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import OSLog
+import Foundation
+import PixarUSD
 
-public enum Editor
+public extension Kraken
 {
-  public enum Code
+  /** 
+   * The current version of Kraken. */
+  static let version = ".".join(array: Pixar.GfVec3i(1, 0, 7))
+
+  /** 
+   * Returns version information for Kraken and USD. */
+  static func versionInfo() -> String
   {
-    static let logger: Logger = .init(subsystem: "foundation.wabi.editors", category: "Code")
+    "\(krVersion()) | \(pxrVersion())"
+  }
+
+  /** 
+   * Returns the current version string of Kraken. */
+  private static func krVersion() -> String
+  {
+    "\("Kraken".magenta) \("v".yellow)\(Kraken.version.yellow)"
+  }
+
+  /** 
+   * Returns the current version string of USD. */
+  private static func pxrVersion() -> String
+  {
+    "\("PixarUSD".magenta) \("v".yellow)\(Pixar.version.yellow)"
   }
 }

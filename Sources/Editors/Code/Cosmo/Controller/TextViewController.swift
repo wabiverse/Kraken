@@ -33,16 +33,15 @@ import TextFormation
 
 /// # TextViewController
 ///
-/// A view controller class for managing a source editor. Uses ``CodeView/TextView`` for input and rendering,
+/// A view controller class for managing a source editor. Uses ``CodeView/CodeView`` for input and rendering,
 /// tree-sitter for syntax highlighting, and TextFormation for live editing completions.
-///
 public class TextViewController: NSViewController
 {
   // swiftlint:disable:next line_length
   public static let cursorPositionUpdatedNotification: Notification.Name = .init("TextViewController.cursorPositionNotification")
 
   var scrollView: NSScrollView!
-  var textView: TextView!
+  var textView: CodeView!
   var gutterView: GutterView!
   var _undoManager: CEUndoManager?
   /// Internal reference to any injected layers in the text view.
@@ -269,7 +268,7 @@ public class TextViewController: NSViewController
 
     super.init(nibName: nil, bundle: nil)
 
-    textView = TextView(
+    textView = CodeView(
       string: string,
       font: font,
       textColor: theme.text,

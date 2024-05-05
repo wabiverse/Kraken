@@ -274,7 +274,7 @@ public extension Editor.Code
         NotificationCenter.default.addObserver(
           self,
           selector: #selector(textViewDidChangeText(_:)),
-          name: TextView.textDidChangeNotification,
+          name: CodeView.textDidChangeNotification,
           object: nil
         )
 
@@ -288,7 +288,7 @@ public extension Editor.Code
 
       @objc func textViewDidChangeText(_ notification: Notification)
       {
-        guard let textView = notification.object as? TextView,
+        guard let textView = notification.object as? CodeView,
               let controller,
               controller.textView === textView
         else

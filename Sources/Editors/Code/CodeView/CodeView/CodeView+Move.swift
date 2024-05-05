@@ -26,7 +26,7 @@
 
 import Foundation
 
-public extension TextView
+public extension CodeView
 {
   private func updateAfterMove()
   {

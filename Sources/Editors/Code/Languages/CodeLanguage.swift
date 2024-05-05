@@ -28,7 +28,7 @@ import Foundation
 import LanguagesBundle
 import RegexBuilder
 import SwiftTreeSitter
-import tree_sitter
+import TreeSitter
 
 public extension Editor.Code
 {
@@ -106,8 +106,10 @@ public extension Editor.Code
 
     func queryURL(for highlights: String = "highlights") -> URL?
     {
-      resourceURL?
-        .appendingPathComponent("tree-sitter-\(tsName)/\(highlights).scm")
+      guard let url = resourceURL?.appendingPathComponent("tree-sitter-\(tsName)/\(highlights).scm")
+      else { Editor.Code.logger.warning("Query URL not found for \(tsName) language."); return nil }
+
+      return url
     }
 
     /// Gets the TSLanguage from `tree-sitter`
@@ -119,6 +121,8 @@ public extension Editor.Code
           tree_sitter_c()
         case .cpp:
           tree_sitter_cpp()
+        case .jsdoc:
+          tree_sitter_jsdoc()
         case .json:
           tree_sitter_json()
         case .python:

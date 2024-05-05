@@ -26,7 +26,7 @@
 
 import AppKit
 
-public extension TextView
+public extension CodeView
 {
   override func mouseDown(with event: NSEvent)
   {

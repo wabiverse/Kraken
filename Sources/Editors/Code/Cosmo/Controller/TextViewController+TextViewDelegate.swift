@@ -28,14 +28,14 @@ import CodeView
 import Foundation
 import TextStory
 
-extension TextViewController: TextViewDelegate
+extension TextViewController: CodeViewDelegate
 {
-  public func textView(_: TextView, didReplaceContentsIn _: NSRange, with _: String)
+  public func textView(_: CodeView, didReplaceContentsIn _: NSRange, with _: String)
   {
     gutterView.needsDisplay = true
   }
 
-  public func textView(_ textView: TextView, shouldReplaceContentsIn range: NSRange, with string: String) -> Bool
+  public func textView(_ textView: CodeView, shouldReplaceContentsIn range: NSRange, with string: String) -> Bool
   {
     let mutation = TextMutation(
       string: string,

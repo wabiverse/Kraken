@@ -45,6 +45,8 @@ public class TreeSitterModel
         cQuery
       case .cpp:
         cppQuery
+      case .jsdoc:
+        jsdocQuery
       case .json:
         jsonQuery
       case .python:
@@ -67,6 +69,9 @@ public class TreeSitterModel
 
   /// Query for `C++` files.
   public private(set) lazy var cppQuery: Query? = queryFor(.cpp)
+
+  /// Query for `JSDoc` files.
+  public private(set) lazy var jsdocQuery: Query? = queryFor(.jsdoc)
 
   /// Query for `JSON` files.
   public private(set) lazy var jsonQuery: Query? = queryFor(.json)

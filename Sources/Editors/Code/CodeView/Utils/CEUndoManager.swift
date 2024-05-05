@@ -37,7 +37,7 @@ import TextStory
 public class CEUndoManager
 {
   /// An `UndoManager` subclass that forwards relevant actions to a `CEUndoManager`.
-  /// Allows for objects like `TextView` to use the `UndoManager` API
+  /// Allows for objects like `CodeView` to use the `UndoManager` API
   /// while CETV manages the undo/redo actions.
   public class DelegatedUndoManager: UndoManager
   {
@@ -103,7 +103,7 @@ public class CEUndoManager
   /// A stack of operations that can be redone.
   private var redoStack: [UndoGroup] = []
 
-  private weak var textView: TextView?
+  private weak var textView: CodeView?
   public private(set) var isGrouping: Bool = false
   /// True when the manager is ignoring mutations.
   private var isDisabled: Bool = false
@@ -116,7 +116,7 @@ public class CEUndoManager
     manager.parent = self
   }
 
-  convenience init(textView: TextView)
+  convenience init(textView: CodeView)
   {
     self.init()
     self.textView = textView
@@ -305,7 +305,7 @@ public class CEUndoManager
 
   /// Sets a new text view to use for mutation registration, undo/redo operations.
   /// - Parameter newTextView: The new text view.
-  func setTextView(_ newTextView: TextView)
+  func setTextView(_ newTextView: CodeView)
   {
     textView = newTextView
   }

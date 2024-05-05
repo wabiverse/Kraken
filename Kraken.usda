@@ -1,5 +1,17 @@
 #usda 1.0
 (
-    doc = "Kraken v1.0.7 | 05-02-2024 07:06:13"
+    doc = "Kraken v1.0.7 | 05-04-2024 19:58:31"
 )
 
+def Xform "Geometry"
+{
+    float3 xformOp:scale = (5, 5, 5)
+    double3 xformOp:translate = (0, 0, 0)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+
+    def Cone "Shape"
+    {
+        double3 xformOp:translate = (0, 0, -3)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+}

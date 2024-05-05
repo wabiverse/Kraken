@@ -38,7 +38,7 @@ import TextStory
 ///
 /// The text view maintains multiple helper classes for selecting, editing, and laying out text.
 /// ```
-/// TextView
+/// CodeView
 /// |-> NSTextStorage              Base text storage.
 /// |-> TextLayoutManager          Creates, manages, and lays out text lines.
 /// |  |-> TextLineStorage         Extremely fast object for storing and querying lines of text. Does not store text.
@@ -56,7 +56,7 @@ import TextStory
 /// [`NSTextInputClient`](https://developer.apple.com/documentation/appkit/nstextinputclient) to work well with system
 /// text interactions such as inserting text and marked text.
 ///
-public class TextView: NSView, NSTextContent
+public class CodeView: NSView, NSTextContent
 {
   // MARK: - Statics
 
@@ -70,10 +70,10 @@ public class TextView: NSView, NSTextContent
   }
 
   // swiftlint:disable:next line_length
-  public static let textDidChangeNotification: Notification.Name = .init(rawValue: "com.CodeEdit.TextView.TextDidChangeNotification")
+  public static let textDidChangeNotification: Notification.Name = .init(rawValue: "foundation.wabi.CodeView.TextDidChangeNotification")
 
   // swiftlint:disable:next line_length
-  public static let textWillChangeNotification: Notification.Name = .init(rawValue: "com.CodeEdit.TextView.TextWillChangeNotification")
+  public static let textWillChangeNotification: Notification.Name = .init(rawValue: "foundation.wabi.CodeView.TextWillChangeNotification")
 
   // MARK: - Configuration
 
@@ -258,12 +258,12 @@ public class TextView: NSView, NSTextContent
   open var contentType: NSTextContentType?
 
   /// The text view's delegate.
-  public weak var delegate: TextViewDelegate?
+  public weak var delegate: CodeViewDelegate?
 
   /// The text storage object for the text view.
   /// - Warning: Do not update the text storage object directly. Doing so will very likely break the text view's
-  ///            layout system. Use methods like ``TextView/replaceCharacters(in:with:)-58mt7`` or
-  ///            ``TextView/insertText(_:)`` to modify content.
+  ///            layout system. Use methods like ``CodeView/replaceCharacters(in:with:)-58mt7`` or
+  ///            ``CodeView/insertText(_:)`` to modify content.
   public private(set) var textStorage: NSTextStorage!
   /// The layout manager for the text view.
   public private(set) var layoutManager: TextLayoutManager!
@@ -316,7 +316,7 @@ public class TextView: NSView, NSTextContent
     isSelectable: Bool,
     letterSpacing: Double,
     useSystemCursor: Bool = false,
-    delegate: TextViewDelegate
+    delegate: CodeViewDelegate
   )
   {
     textStorage = NSTextStorage(string: string)
@@ -669,7 +669,7 @@ public class TextView: NSView, NSTextContent
 
 // MARK: - TextSelectionManagerDelegate
 
-extension TextView: TextSelectionManagerDelegate
+extension CodeView: TextSelectionManagerDelegate
 {
   public func setNeedsDisplay()
   {

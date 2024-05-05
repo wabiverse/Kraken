@@ -27,7 +27,7 @@
 import AppKit
 import CodeView
 
-extension TextView
+extension CodeView
 {
   /// Setup context menus
   func setupMenus()

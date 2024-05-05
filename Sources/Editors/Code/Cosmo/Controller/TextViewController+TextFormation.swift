@@ -122,7 +122,7 @@ extension TextViewController
   ///   - mutation: The text mutation.
   ///   - textView: The textView to use.
   /// - Returns: Return whether or not the mutation should be applied.
-  func shouldApplyMutation(_ mutation: TextMutation, to textView: TextView) -> Bool
+  func shouldApplyMutation(_ mutation: TextMutation, to textView: CodeView) -> Bool
   {
     // don't perform any kind of filtering during undo operations
     if textView.undoManager?.isUndoing ?? false || textView.undoManager?.isRedoing ?? false

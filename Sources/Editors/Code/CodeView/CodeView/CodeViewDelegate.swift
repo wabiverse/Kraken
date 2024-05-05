@@ -24,43 +24,18 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import AppKit
+import Foundation
 
-extension TextView: TextLayoutManagerDelegate
+public protocol CodeViewDelegate: AnyObject
 {
-  public func layoutManagerHeightDidUpdate(newHeight _: CGFloat)
-  {
-    updateFrameIfNeeded()
-  }
+  func textView(_ textView: CodeView, willReplaceContentsIn range: NSRange, with string: String)
+  func textView(_ textView: CodeView, didReplaceContentsIn range: NSRange, with string: String)
+  func textView(_ textView: CodeView, shouldReplaceContentsIn range: NSRange, with string: String) -> Bool
+}
 
-  public func layoutManagerMaxWidthDidChange(newWidth _: CGFloat)
-  {
-    updateFrameIfNeeded()
-  }
-
-  public func layoutManagerTypingAttributes() -> [NSAttributedString.Key: Any]
-  {
-    typingAttributes
-  }
-
-  public func textViewportSize() -> CGSize
-  {
-    if let scrollView
-    {
-      var size = scrollView.contentSize
-      size.height -= scrollView.contentInsets.top + scrollView.contentInsets.bottom
-      return size
-    }
-    else
-    {
-      return CGSize(width: CGFloat.infinity, height: CGFloat.infinity)
-    }
-  }
-
-  public func layoutManagerYAdjustment(_ yAdjustment: CGFloat)
-  {
-    var point = scrollView?.documentVisibleRect.origin ?? .zero
-    point.y += yAdjustment
-    scrollView?.documentView?.scroll(point)
-  }
+public extension CodeViewDelegate
+{
+  func textView(_: CodeView, willReplaceContentsIn _: NSRange, with _: String) {}
+  func textView(_: CodeView, didReplaceContentsIn _: NSRange, with _: String) {}
+  func textView(_: CodeView, shouldReplaceContentsIn _: NSRange, with _: String) -> Bool { true }
 }

@@ -95,7 +95,7 @@ public class TextSelectionManager: NSObject
   // MARK: - Properties
 
   // swiftlint:disable:next line_length
-  public static let selectionChangedNotification: Notification.Name = .init("com.CodeEdit.TextSelectionManager.TextSelectionChangedNotification")
+  public static let selectionChangedNotification: Notification.Name = .init("foundation.wabi.TextSelectionManager.TextSelectionChangedNotification")
 
   public var insertionPointColor: NSColor = .labelColor
   {
@@ -119,14 +119,14 @@ public class TextSelectionManager: NSObject
   public internal(set) var textSelections: [TextSelection] = []
   weak var layoutManager: TextLayoutManager?
   weak var textStorage: NSTextStorage?
-  weak var textView: TextView?
+  weak var textView: CodeView?
   weak var delegate: TextSelectionManagerDelegate?
   var cursorTimer: CursorTimer
 
   init(
     layoutManager: TextLayoutManager,
     textStorage: NSTextStorage,
-    textView: TextView?,
+    textView: CodeView?,
     delegate: TextSelectionManagerDelegate?,
     useSystemCursor _: Bool = false
   )

@@ -26,36 +26,20 @@
 
 import AppKit
 
-extension TextView
+public extension CodeView
 {
-  @objc open func copy(_: AnyObject)
+  override func menu(for event: NSEvent) -> NSMenu?
   {
-    guard let textSelections = selectionManager?
-      .textSelections
-      .compactMap({ textStorage.attributedSubstring(from: $0.range) }),
-      !textSelections.isEmpty
-    else
-    {
-      return
-    }
-    NSPasteboard.general.clearContents()
-    NSPasteboard.general.writeObjects(textSelections)
-  }
+    guard event.type == .rightMouseDown else { return nil }
 
-  @objc open func paste(_: AnyObject)
-  {
-    guard let stringContents = NSPasteboard.general.string(forType: .string) else { return }
-    insertText(stringContents, replacementRange: NSRange(location: NSNotFound, length: 0))
-  }
+    let menu = NSMenu()
 
-  @objc open func cut(_ sender: AnyObject)
-  {
-    copy(sender)
-    deleteBackward(sender)
-  }
+    menu.items = [
+      NSMenuItem(title: "Cut", action: #selector(cut(_:)), keyEquivalent: "x"),
+      NSMenuItem(title: "Copy", action: #selector(undo(_:)), keyEquivalent: "c"),
+      NSMenuItem(title: "Paste", action: #selector(undo(_:)), keyEquivalent: "v")
+    ]
 
-  @objc open func delete(_ sender: AnyObject)
-  {
-    deleteBackward(sender)
+    return menu
   }
 }

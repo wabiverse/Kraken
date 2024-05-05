@@ -24,8 +24,8 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import SwiftUI
 import CodeLanguages
+import SwiftUI
 
 public extension Editor.Code
 {

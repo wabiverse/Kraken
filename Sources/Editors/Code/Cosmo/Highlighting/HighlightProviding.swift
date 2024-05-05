@@ -36,13 +36,13 @@ public protocol HighlightProviding: AnyObject
   /// - Parameters:
   ///   - textView: The text view to use as a text source.
   ///   - codeLanguage: The language that should be used by the highlighter.
-  func setUp(textView: TextView, codeLanguage: Editor.Code.Language)
+  func setUp(textView: CodeView, codeLanguage: Editor.Code.Language)
 
   /// Notifies the highlighter that an edit is going to happen in the given range.
   /// - Parameters:
   ///   - textView: The text view to use.
   ///   - range: The range of the incoming edit.
-  func willApplyEdit(textView: TextView, range: NSRange)
+  func willApplyEdit(textView: CodeView, range: NSRange)
 
   /// Notifies the highlighter of an edit and in exchange gets a set of indices that need to be re-highlighted.
   /// The returned `IndexSet` should include all indexes that need to be highlighted, including any inserted text.
@@ -51,7 +51,7 @@ public protocol HighlightProviding: AnyObject
   ///   - range: The range of the edit.
   ///   - delta: The length of the edit, can be negative for deletions.
   /// - Returns: an `IndexSet` containing all Indices to invalidate.
-  func applyEdit(textView: TextView, range: NSRange, delta: Int, completion: @escaping (IndexSet) -> Void)
+  func applyEdit(textView: CodeView, range: NSRange, delta: Int, completion: @escaping (IndexSet) -> Void)
 
   /// Queries the highlight provider for any ranges to apply highlights to. The highlight provider should return an
   /// array containing all ranges to highlight, and the capture type for the range. Any ranges or indexes
@@ -60,10 +60,10 @@ public protocol HighlightProviding: AnyObject
   ///   - textView: The text view to use.
   ///   - range: The range to query.
   /// - Returns: All highlight ranges for the queried ranges.
-  func queryHighlightsFor(textView: TextView, range: NSRange, completion: @escaping ([HighlightRange]) -> Void)
+  func queryHighlightsFor(textView: CodeView, range: NSRange, completion: @escaping ([HighlightRange]) -> Void)
 }
 
 public extension HighlightProviding
 {
-  func willApplyEdit(textView _: TextView, range _: NSRange) {}
+  func willApplyEdit(textView _: CodeView, range _: NSRange) {}
 }

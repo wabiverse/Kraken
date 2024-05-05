@@ -26,4 +26,4 @@
 
 import os
 
-let logger = Logger(subsystem: "foundation.wabi.textview", category: "TextView")
+let logger = Logger(subsystem: "foundation.wabi.CodeView", category: "CodeView")

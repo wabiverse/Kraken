@@ -28,7 +28,7 @@ import CodeView
 import Foundation
 import SwiftTreeSitter
 
-extension TextView
+extension CodeView
 {
   func pointForLocation(_ location: Int) -> Point?
   {

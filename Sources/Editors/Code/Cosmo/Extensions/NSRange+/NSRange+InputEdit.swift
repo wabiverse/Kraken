@@ -30,7 +30,7 @@ import SwiftTreeSitter
 
 extension InputEdit
 {
-  init?(range: NSRange, delta: Int, oldEndPoint: Point, textView: TextView)
+  init?(range: NSRange, delta: Int, oldEndPoint: Point, textView: CodeView)
   {
     let newEndLocation = NSMaxRange(range) + delta
 

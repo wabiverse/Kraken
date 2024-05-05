@@ -26,15 +26,41 @@
 
 import AppKit
 
-public extension TextView
+extension CodeView: TextLayoutManagerDelegate
 {
-  override func insertNewline(_: Any?)
+  public func layoutManagerHeightDidUpdate(newHeight _: CGFloat)
   {
-    insertText(layoutManager.detectedLineEnding.rawValue)
+    updateFrameIfNeeded()
   }
 
-  override func insertTab(_: Any?)
+  public func layoutManagerMaxWidthDidChange(newWidth _: CGFloat)
   {
-    insertText("\t")
+    updateFrameIfNeeded()
+  }
+
+  public func layoutManagerTypingAttributes() -> [NSAttributedString.Key: Any]
+  {
+    typingAttributes
+  }
+
+  public func textViewportSize() -> CGSize
+  {
+    if let scrollView
+    {
+      var size = scrollView.contentSize
+      size.height -= scrollView.contentInsets.top + scrollView.contentInsets.bottom
+      return size
+    }
+    else
+    {
+      return CGSize(width: CGFloat.infinity, height: CGFloat.infinity)
+    }
+  }
+
+  public func layoutManagerYAdjustment(_ yAdjustment: CGFloat)
+  {
+    var point = scrollView?.documentVisibleRect.origin ?? .zero
+    point.y += yAdjustment
+    scrollView?.documentView?.scroll(point)
   }
 }

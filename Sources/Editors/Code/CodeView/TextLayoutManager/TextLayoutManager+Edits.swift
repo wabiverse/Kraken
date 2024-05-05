@@ -32,7 +32,7 @@ extension TextLayoutManager: NSTextStorageDelegate
 {
   /// Notifies the layout manager of an edit.
   ///
-  /// Used by the `TextView` to tell the layout manager about any edits that will happen.
+  /// Used by the `CodeView` to tell the layout manager about any edits that will happen.
   /// Use this to keep the layout manager's line storage in sync with the text storage.
   ///
   /// - Parameters:

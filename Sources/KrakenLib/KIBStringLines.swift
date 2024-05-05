@@ -24,22 +24,59 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import AppKit
+import Foundation
 
-public extension TextView
+public extension String
 {
-  override func menu(for event: NSEvent) -> NSMenu?
+  /// Calculates the first `n` lines and returns them as a new string.
+  /// - Parameters:
+  ///   - lines: The number of lines to return.
+  ///   - maxLength: The maximum number of characters to copy.
+  /// - Returns: A new string containing the lines.
+  func getFirstLines(_ lines: Int = 1, maxLength: Int = 512) -> String
   {
-    guard event.type == .rightMouseDown else { return nil }
+    var string = ""
+    var foundLines = 0
+    var totalLength = 0
+    for char in lazy
+    {
+      if char.isNewline
+      {
+        foundLines += 1
+      }
+      totalLength += 1
+      if foundLines >= lines || totalLength >= maxLength
+      {
+        break
+      }
+      string.append(char)
+    }
+    return string
+  }
 
-    let menu = NSMenu()
-
-    menu.items = [
-      NSMenuItem(title: "Cut", action: #selector(cut(_:)), keyEquivalent: "x"),
-      NSMenuItem(title: "Copy", action: #selector(undo(_:)), keyEquivalent: "c"),
-      NSMenuItem(title: "Paste", action: #selector(undo(_:)), keyEquivalent: "v")
-    ]
-
-    return menu
+  /// Calculates the last `n` lines and returns them as a new string.
+  /// - Parameters:
+  ///   - lines: The number of lines to return.
+  ///   - maxLength: The maximum number of characters to copy.
+  /// - Returns: A new string containing the lines.
+  func getLastLines(_ lines: Int = 1, maxLength: Int = 512) -> String
+  {
+    var string = ""
+    var foundLines = 0
+    var totalLength = 0
+    for char in lazy.reversed()
+    {
+      if char.isNewline
+      {
+        foundLines += 1
+      }
+      totalLength += 1
+      if foundLines >= lines || totalLength >= maxLength
+      {
+        break
+      }
+      string = String(char) + string
+    }
+    return string
   }
 }

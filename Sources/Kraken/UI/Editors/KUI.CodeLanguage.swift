@@ -24,12 +24,27 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import OSLog
+import CosmoEditor
+import CodeLanguages
+import SwiftUI
 
-public enum Editor
+public extension Kraken.UI.CodeEditor
 {
-  public enum Code
+  struct LanguagePicker: View
   {
-    static let logger: Logger = .init(subsystem: "foundation.wabi.editors", category: "Code")
+    @Binding var language: Editor.Code.Language
+
+    public var body: some View
+    {
+      Picker("Language", selection: $language)
+      {
+        ForEach([.default] + Editor.Code.Language.allLanguages, id: \.id)
+        { language in
+          Text(language.id.rawValue)
+            .tag(language)
+        }
+      }
+      .labelsHidden()
+    }
   }
 }

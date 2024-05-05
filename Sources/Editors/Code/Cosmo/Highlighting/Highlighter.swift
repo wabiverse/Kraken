@@ -30,7 +30,7 @@ import CodeView
 import Foundation
 import SwiftTreeSitter
 
-/// The `Highlighter` class handles efficiently highlighting the `TextView` it's provided with.
+/// The `Highlighter` class handles efficiently highlighting the `CodeView` it's provided with.
 /// It will listen for text and visibility changes, and highlight syntax as needed.
 ///
 /// One should rarely have to direcly modify or call methods on this class. Just keep it alive in
@@ -56,7 +56,7 @@ class Highlighter: NSObject
   // MARK: - UI
 
   /// The text view to highlight
-  private weak var textView: TextView?
+  private weak var textView: CodeView?
 
   /// The editor theme
   private var theme: Editor.Code.Theme
@@ -81,7 +81,7 @@ class Highlighter: NSObject
   ///   - treeSitterClient: The tree-sitter client to handle tree updates and highlight queries.
   ///   - theme: The theme to use for highlights.
   init(
-    textView: TextView,
+    textView: CodeView,
     highlightProvider: HighlightProviding?,
     theme: Editor.Code.Theme,
     attributeProvider: ThemeAttributesProviding,
@@ -314,7 +314,7 @@ private extension Highlighter
 
 private extension Highlighter
 {
-  private func updateVisibleSet(textView: TextView)
+  private func updateVisibleSet(textView: CodeView)
   {
     if let newVisibleRange = textView.visibleTextRange
     {
@@ -325,14 +325,14 @@ private extension Highlighter
   /// Updates the view to highlight newly visible text when the textview is scrolled or bounds change.
   @objc func visibleTextChanged(_ notification: Notification)
   {
-    let textView: TextView
+    let textView: CodeView
     if let clipView = notification.object as? NSClipView,
-       let documentView = clipView.enclosingScrollView?.documentView as? TextView
+       let documentView = clipView.enclosingScrollView?.documentView as? CodeView
     {
       textView = documentView
     }
     else if let scrollView = notification.object as? NSScrollView,
-            let documentView = scrollView.documentView as? TextView
+            let documentView = scrollView.documentView as? CodeView
     {
       textView = documentView
     }

@@ -26,32 +26,15 @@
 
 import AppKit
 
-extension TextView
+public extension CodeView
 {
-  public func setUndoManager(_ newManager: CEUndoManager)
+  override func insertNewline(_: Any?)
   {
-    _undoManager = newManager
-    _undoManager?.setTextView(self)
+    insertText(layoutManager.detectedLineEnding.rawValue)
   }
 
-  override public var undoManager: UndoManager?
+  override func insertTab(_: Any?)
   {
-    _undoManager?.manager
-  }
-
-  @objc func undo(_: AnyObject?)
-  {
-    if allowsUndo
-    {
-      undoManager?.undo()
-    }
-  }
-
-  @objc func redo(_: AnyObject?)
-  {
-    if allowsUndo
-    {
-      undoManager?.redo()
-    }
+    insertText("\t")
   }
 }

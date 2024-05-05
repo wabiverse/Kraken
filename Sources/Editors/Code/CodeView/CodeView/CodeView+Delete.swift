@@ -26,7 +26,7 @@
 
 import AppKit
 
-extension TextView
+extension CodeView
 {
   override open func deleteBackward(_: Any?)
   {

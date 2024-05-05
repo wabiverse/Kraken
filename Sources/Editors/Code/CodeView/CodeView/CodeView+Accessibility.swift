@@ -33,7 +33,7 @@ import AppKit
 /// lines from there. The text view would then only handle text input, and lines would handle reading out useful data
 /// to the user.
 /// More research needs to be done for the best option here.
-extension TextView
+extension CodeView
 {
   override open func isAccessibilityElement() -> Bool
   {

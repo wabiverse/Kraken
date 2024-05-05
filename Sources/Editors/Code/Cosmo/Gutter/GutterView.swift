@@ -68,7 +68,7 @@ public class GutterView: NSView
 
   public private(set) var gutterWidth: CGFloat = 0
 
-  private weak var textView: TextView?
+  private weak var textView: CodeView?
   private weak var delegate: GutterViewDelegate?
   private var maxWidth: CGFloat = 0
   /// The maximum number of digits found for a line number.
@@ -82,7 +82,7 @@ public class GutterView: NSView
   public init(
     font: NSFont,
     textColor: NSColor,
-    textView: TextView,
+    textView: CodeView,
     delegate: GutterViewDelegate? = nil
   )
   {

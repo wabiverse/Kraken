@@ -27,7 +27,7 @@
 import AppKit
 import TextStory
 
-public extension TextView
+public extension CodeView
 {
   // MARK: - Replace Characters
 

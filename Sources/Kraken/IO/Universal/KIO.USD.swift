@@ -24,6 +24,8 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
+import CodeLanguages
+import CosmoEditor
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -81,8 +83,23 @@ public extension Kraken.IO
 
 public extension FileDocumentConfiguration<Kraken.IO.USD>
 {
+  /**
+   * Whether the document is in binary format. */
   var isBinary: Bool
   {
     Kraken.IO.Stage.isBinary(self)
+  }
+
+  /**
+   * The detected language of the document.
+   *
+   * Uses the document's file url to detect the
+   * language of the document (swift, usd, etc). */
+  var language: Editor.Code.Language
+  {
+    guard let url = fileURL
+    else { return .default }
+
+    return .detectLanguageFrom(url: url)
   }
 }

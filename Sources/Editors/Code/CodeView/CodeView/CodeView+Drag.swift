@@ -26,13 +26,13 @@
 
 import AppKit
 
-extension TextView: NSDraggingSource
+extension CodeView: NSDraggingSource
 {
   class DragSelectionGesture: NSPressGestureRecognizer
   {
     override func mouseDown(with event: NSEvent)
     {
-      guard isEnabled, let view = view as? TextView, event.type == .leftMouseDown
+      guard isEnabled, let view = view as? CodeView, event.type == .leftMouseDown
       else
       {
         return

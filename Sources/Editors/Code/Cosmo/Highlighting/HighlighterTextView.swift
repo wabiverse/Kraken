@@ -28,7 +28,7 @@ import AppKit
 import CodeView
 import Foundation
 
-public extension TextView
+public extension CodeView
 {
   func stringForRange(_ nsRange: NSRange) -> String?
   {

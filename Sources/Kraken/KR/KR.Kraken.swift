@@ -46,9 +46,6 @@ public struct Kraken: SwiftUI.App
   /** The bundle identifier for Kraken. */
   public static let identifier = "foundation.wabi.Kraken"
 
-  /** The current version of Kraken. */
-  public static let version = ".".join(array: Pixar.GfVec3i(1, 0, 7))
-
   /* --- xxx --- */
 
   /** Whether to show the splash screen. */
@@ -63,8 +60,8 @@ public struct Kraken: SwiftUI.App
   {
     Kraken.IO.Stage.manager.save(&stage)
 
-    Msg.logger.log(level: .info, "\("Kraken".magenta) \("v".yellow)\(Kraken.version.yellow) | \("PixarUSD".magenta) \("v".yellow)\(Pixar.version.yellow)")
-    Msg.logger.log(level: .info, "Kraken launched.")
+    Msg.logger.info("\(Kraken.versionInfo())")
+    Msg.logger.info("Kraken launched.")
   }
 
   /* --- xxx --- */
@@ -73,11 +70,12 @@ public struct Kraken: SwiftUI.App
   {
     DocumentGroup(newDocument: Kraken.IO.USD())
     { usdFile in
+
       HStack
       {
         Kraken.UI.CodeEditor(
           document: usdFile.$document,
-          isBinary: usdFile.isBinary
+          fileURL: usdFile.fileURL
         )
 
         if let scene = usdFile.fileURL
@@ -91,6 +89,19 @@ public struct Kraken: SwiftUI.App
         {
           Text("Create or open a USD file.")
         }
+      }
+    }
+
+    Kraken.UI.MicaWindow(title: "Kraken", id: "kraken")
+    {
+      if showSplash
+      {
+        Kraken.UI.SplashScreen(
+          image: "Splash",
+          logo: "wabi.hexagon.fill",
+          title: "The Metaversal Creation Suite.",
+          showSplash: $showSplash
+        )
       }
     }
   }

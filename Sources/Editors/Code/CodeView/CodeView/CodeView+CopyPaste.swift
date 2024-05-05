@@ -24,12 +24,38 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import OSLog
+import AppKit
 
-public enum Editor
+extension CodeView
 {
-  public enum Code
+  @objc open func copy(_: AnyObject)
   {
-    static let logger: Logger = .init(subsystem: "foundation.wabi.editors", category: "Code")
+    guard let textSelections = selectionManager?
+      .textSelections
+      .compactMap({ textStorage.attributedSubstring(from: $0.range) }),
+      !textSelections.isEmpty
+    else
+    {
+      return
+    }
+    NSPasteboard.general.clearContents()
+    NSPasteboard.general.writeObjects(textSelections)
+  }
+
+  @objc open func paste(_: AnyObject)
+  {
+    guard let stringContents = NSPasteboard.general.string(forType: .string) else { return }
+    insertText(stringContents, replacementRange: NSRange(location: NSNotFound, length: 0))
+  }
+
+  @objc open func cut(_ sender: AnyObject)
+  {
+    copy(sender)
+    deleteBackward(sender)
+  }
+
+  @objc open func delete(_ sender: AnyObject)
+  {
+    deleteBackward(sender)
   }
 }

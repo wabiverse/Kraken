@@ -41,6 +41,7 @@ public extension Editor.Code.Language
   static let allLanguages: [Editor.Code.Language] = [
     .c,
     .cpp,
+    .jsdoc,
     .json,
     .python,
     .rust,
@@ -68,6 +69,15 @@ public extension Editor.Code.Language
     documentationCommentStrings: [.pair(("/**", "*/"))],
     parentURL: Editor.Code.Language.c.queryURL,
     highlights: ["injections"]
+  )
+
+  /// A language structure for `JSDoc`
+  static let jsdoc: Editor.Code.Language = .init(
+      id: .jsdoc,
+      tsName: "jsdoc",
+      extensions: [],
+      lineCommentString: "",
+      rangeCommentStrings: ("/**", "*/")
   )
 
   /// A language structure for `JSON`
@@ -113,7 +123,11 @@ public extension Editor.Code.Language
     extensions: ["swift"],
     lineCommentString: "//",
     rangeCommentStrings: ("/*", "*/"),
-    documentationCommentStrings: [.single("///"), .pair(("/**", "*/"))]
+    documentationCommentStrings: [
+      .single("///"), 
+      .pair(("/**", "*/"))
+    ],
+    highlights: ["injections"]
   )
 
   /// A language structure for `TOML`

@@ -114,12 +114,16 @@ public final class TreeSitterClient: HighlightProviding
   ///   - textView: The text view to use as a data source.
   ///               A weak reference will be kept for the lifetime of this object.
   ///   - codeLanguage: The language to use for parsing.
-  public func setUp(textView: TextView, codeLanguage: Editor.Code.Language)
+  public func setUp(textView: CodeView, codeLanguage: Editor.Code.Language)
   {
     Self.logger.debug("TreeSitterClient setting up with language: \(codeLanguage.id.rawValue, privacy: .public)")
 
     readBlock = textView.createReadBlock()
     readCallback = textView.createReadCallback()
+
+    guard readBlock != nil,
+          readCallback != nil
+    else { return }
 
     setState(
       language: codeLanguage,
@@ -223,7 +227,7 @@ public final class TreeSitterClient: HighlightProviding
   ///   - range: The range of the edit.
   ///   - delta: The length of the edit, can be negative for deletions.
   ///   - completion: The function to call with an `IndexSet` containing all Indices to invalidate.
-  public func applyEdit(textView: TextView, range: NSRange, delta: Int, completion: @escaping (IndexSet) -> Void)
+  public func applyEdit(textView: CodeView, range: NSRange, delta: Int, completion: @escaping (IndexSet) -> Void)
   {
     let oldEndPoint: Point = if self.oldEndPoint != nil
     {
@@ -268,7 +272,7 @@ public final class TreeSitterClient: HighlightProviding
     }
   }
 
-  public func willApplyEdit(textView: TextView, range: NSRange)
+  public func willApplyEdit(textView: CodeView, range: NSRange)
   {
     oldEndPoint = textView.pointForLocation(range.max)
   }
@@ -279,7 +283,7 @@ public final class TreeSitterClient: HighlightProviding
   ///   - range: The range to limit the highlights to.
   ///   - completion: Called when the query completes.
   public func queryHighlightsFor(
-    textView: TextView,
+    textView: CodeView,
     range: NSRange,
     completion: @escaping ([HighlightRange]) -> Void
   )

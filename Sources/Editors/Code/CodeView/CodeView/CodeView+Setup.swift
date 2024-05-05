@@ -26,7 +26,7 @@
 
 import AppKit
 
-extension TextView
+extension CodeView
 {
   func setUpLayoutManager(lineHeightMultiplier: CGFloat, wrapLines: Bool) -> TextLayoutManager
   {

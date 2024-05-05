@@ -45,67 +45,16 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     .package(url: "https://github.com/wabiverse/SwiftUSD", branch: "main"),
-    .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.8.0"),
+    .package(url: "https://github.com/wabiverse/SwiftTreeSitter", branch: "hotfix-read-empty-noalloc"),
     .package(url: "https://github.com/ChimeHQ/TextFormation", from: "0.8.2"),
     .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
     .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
-    //.package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab")
+    // .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab")
   ],
 
   // --- 🎯 Package Targets. ---
   targets: [
-    // --- 🎨 Editors ---
-    .target(
-      name: "LanguagesBundle",
-      path: "Sources/Editors/Code/LanguagesBundle",
-      publicHeadersPath: "include",
-      cSettings: [
-        .headerSearchPath("TreeSitterC/include"),
-        .headerSearchPath("TreeSitterCPP/include"),
-        .headerSearchPath("TreeSitterJSON/include"),
-        .headerSearchPath("TreeSitterPython/include"),
-        .headerSearchPath("TreeSitterRust/include"),
-        .headerSearchPath("TreeSitterSwift/include"),
-        .headerSearchPath("TreeSitterTOML/include"),
-        .headerSearchPath("TreeSitterUSD/include"),
-      ]
-    ),
-    .target(
-      name: "CodeLanguages",
-      dependencies: [
-        .target(name: "LanguagesBundle"),
-        .product(name: "SwiftTreeSitter", package: "SwiftTreeSitter"),
-      ],
-      path: "Sources/Editors/Code/Languages",
-      resources: [
-        .copy("Resources"),
-      ]
-    ),
-    .testTarget(
-      name: "CodeEditorTests",
-      dependencies: [
-        .target(name: "CodeLanguages")
-      ],
-      path: "Tests/Editors/Code"
-    ),
-    .target(
-      name: "CodeView",
-      dependencies: [
-        .product(name: "TextStory", package: "TextStory"),
-        .product(name: "Collections", package: "swift-collections"),
-      ],
-      path: "Sources/Editors/Code/CodeView"
-    ),
-    .target(
-      name: "CosmoEditor",
-      dependencies: [
-        .target(name: "CodeLanguages"),
-        .target(name: "CodeView"),
-        .product(name: "TextFormation", package: "TextFormation"),
-      ],
-      path: "Sources/Editors/Code/Cosmo"
-    ),
     // --- 🦑 Kraken ---
     .target(
       name: "KrakenKit",
@@ -139,6 +88,67 @@ let package = Package(
       swiftSettings: [
         .interoperabilityMode(.Cxx)
       ]
+    ),
+    // --- 🎨 Editors ---
+    .target(
+      name: "CosmoEditor",
+      dependencies: [
+        .target(name: "CodeView"),
+        .target(name: "CodeLanguages"),
+        .product(name: "TextFormation", package: "TextFormation"),
+      ],
+      path: "Sources/Editors/Code/Cosmo"
+    ),
+    .target(
+      name: "CodeView",
+      dependencies: [
+        .product(name: "TextStory", package: "TextStory"),
+        .product(name: "Collections", package: "swift-collections"),
+      ],
+      path: "Sources/Editors/Code/CodeView"
+    ),
+    .target(
+      name: "LanguagesBundle",
+      path: "Sources/Editors/Code/LanguagesBundle",
+      publicHeadersPath: "include",
+      cSettings: [
+        .headerSearchPath("TreeSitterC/include"),
+        .headerSearchPath("TreeSitterCPP/include"),
+        .headerSearchPath("TreeSitterJSDoc/include"),
+        .headerSearchPath("TreeSitterJSON/include"),
+        .headerSearchPath("TreeSitterPython/include"),
+        .headerSearchPath("TreeSitterRust/include"),
+        .headerSearchPath("TreeSitterSwift/include"),
+        .headerSearchPath("TreeSitterTOML/include"),
+        .headerSearchPath("TreeSitterUSD/include"),
+      ]
+    ),
+    .target(
+      name: "CodeLanguages",
+      dependencies: [
+        .target(name: "LanguagesBundle"),
+        .product(name: "SwiftTreeSitter", package: "SwiftTreeSitter"),
+      ],
+      path: "Sources/Editors/Code/Languages",
+      resources: [
+        .copy("Resources/tree-sitter-c"),
+        .copy("Resources/tree-sitter-cpp"),
+        .copy("Resources/tree-sitter-jsdoc"),
+        .copy("Resources/tree-sitter-json"),
+        .copy("Resources/tree-sitter-python"),
+        .copy("Resources/tree-sitter-rust"),
+        .copy("Resources/tree-sitter-swift"),
+        .copy("Resources/tree-sitter-toml"),
+        .copy("Resources/tree-sitter-usd"),
+      ]
+    ),
+    .testTarget(
+      name: "CodeEditorTests",
+      dependencies: [
+        .target(name: "CosmoEditor"),
+        .target(name: "CodeLanguages"),
+      ],
+      path: "Tests/Editors/Code"
     ),
   ],
   cxxLanguageStandard: .cxx17

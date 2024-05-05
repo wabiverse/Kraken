@@ -27,6 +27,7 @@
 import RegexBuilder
 import XCTest
 @testable import CodeLanguages
+@testable import CosmoEditor
 
 // swiftlint:disable all
 final class LanguageDetectionTests: XCTestCase

@@ -29,7 +29,7 @@ import Foundation
 import TextFormation
 import TextStory
 
-extension TextView: TextInterface
+extension CodeView: TextInterface
 {
   public var selectedRange: NSRange
   {

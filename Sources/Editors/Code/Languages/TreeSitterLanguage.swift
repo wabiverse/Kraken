@@ -31,6 +31,7 @@ public enum TreeSitterLanguage: String
 {
   case c
   case cpp
+  case jsdoc
   case json
   case python
   case rust

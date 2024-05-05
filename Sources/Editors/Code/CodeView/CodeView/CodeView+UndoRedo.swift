@@ -24,18 +24,34 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import Foundation
+import AppKit
 
-public protocol TextViewDelegate: AnyObject
+extension CodeView
 {
-  func textView(_ textView: TextView, willReplaceContentsIn range: NSRange, with string: String)
-  func textView(_ textView: TextView, didReplaceContentsIn range: NSRange, with string: String)
-  func textView(_ textView: TextView, shouldReplaceContentsIn range: NSRange, with string: String) -> Bool
-}
+  public func setUndoManager(_ newManager: CEUndoManager)
+  {
+    _undoManager = newManager
+    _undoManager?.setTextView(self)
+  }
 
-public extension TextViewDelegate
-{
-  func textView(_: TextView, willReplaceContentsIn _: NSRange, with _: String) {}
-  func textView(_: TextView, didReplaceContentsIn _: NSRange, with _: String) {}
-  func textView(_: TextView, shouldReplaceContentsIn _: NSRange, with _: String) -> Bool { true }
+  override public var undoManager: UndoManager?
+  {
+    _undoManager?.manager
+  }
+
+  @objc func undo(_: AnyObject?)
+  {
+    if allowsUndo
+    {
+      undoManager?.undo()
+    }
+  }
+
+  @objc func redo(_: AnyObject?)
+  {
+    if allowsUndo
+    {
+      undoManager?.redo()
+    }
+  }
 }
