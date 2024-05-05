@@ -103,7 +103,7 @@ final class CodeLanguagesTests: XCTestCase
 
   func test_FetchQueryJSDoc() throws
   {
-    var language = CodeLanguage.jsdoc
+    var language = Editor.Code.Language.jsdoc
     language.resourceURL = bundleURL
 
     let data = try Data(contentsOf: language.queryURL!)
@@ -219,24 +219,24 @@ final class CodeLanguagesTests: XCTestCase
 
   // MARK: - USD
 
-  // func test_CodeLanguageUSD() throws
-  // {
-  //   let url = URL(fileURLWithPath: "~/path/to/file.usda")
-  //   let language = Editor.Code.Language.detectLanguageFrom(url: url)
+  func test_CodeLanguageUSD() throws
+  {
+    let url = URL(fileURLWithPath: "~/path/to/file.usda")
+    let language = Editor.Code.Language.detectLanguageFrom(url: url)
 
-  //   XCTAssertEqual(language.id, .usd)
-  // }
+    XCTAssertEqual(language.id, .usd)
+  }
 
-  // func test_FetchQueryUSD() throws
-  // {
-  //   var language = Editor.Code.Language.usd
-  //   language.resourceURL = bundleURL
+  func test_FetchQueryUSD() throws
+  {
+    var language = Editor.Code.Language.usd
+    language.resourceURL = bundleURL
 
-  //   let data = try Data(contentsOf: language.queryURL!)
-  //   let query = try? Query(language: language.language!, data: data)
-  //   XCTAssertNotNil(query)
-  //   XCTAssertNotEqual(query?.patternCount, 0)
-  // }
+    let data = try Data(contentsOf: language.queryURL!)
+    let query = try? Query(language: language.language!, data: data)
+    XCTAssertNotNil(query)
+    XCTAssertNotEqual(query?.patternCount, 0)
+  }
 
   // MARK: - Unsupported
 
