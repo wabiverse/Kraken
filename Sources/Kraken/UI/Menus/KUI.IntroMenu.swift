@@ -39,6 +39,8 @@ public extension Kraken.UI
         Button
         {
           showSplash = false
+
+          NSWorkspace.shared.open(URL(string: "kraken://create")!)
         }
         label:
         {

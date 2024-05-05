@@ -9,3 +9,5 @@ icon = "kraken.png"
 
 [apps.Kraken.plist]
 commit = '$(COMMIT_HASH)'
+CFBundleURLTypes = [ { type = "dict", value = { CFBundleTypeRole = 'Viewer', CFBundleURLName = 'Kraken', CFBundleURLSchemes = [ 'kraken' ] } } ]
+

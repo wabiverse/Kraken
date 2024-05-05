@@ -54,6 +54,9 @@ public struct Kraken: SwiftUI.App
   /**  The currently opened stage. */
   @State private var stage: UsdStageRefPtr = Usd.Stage.createNew("Kraken", ext: .usda)
 
+  /** The currently opened USD file. */
+  @State private var fileURL: URL?
+
   /* --- xxx --- */
 
   public init()
@@ -68,30 +71,6 @@ public struct Kraken: SwiftUI.App
 
   public var body: some SwiftUI.Scene
   {
-    DocumentGroup(newDocument: Kraken.IO.USD())
-    { usdFile in
-
-      HStack
-      {
-        Kraken.UI.CodeEditor(
-          document: usdFile.$document,
-          fileURL: usdFile.fileURL
-        )
-
-        if let scene = usdFile.fileURL
-        {
-          SceneView(
-            scene: try? SCNScene(url: scene),
-            options: [.allowsCameraControl, .autoenablesDefaultLighting]
-          )
-        }
-        else
-        {
-          Text("Create or open a USD file.")
-        }
-      }
-    }
-
     Kraken.UI.MicaWindow(title: "Kraken", id: "kraken")
     {
       if showSplash
@@ -102,6 +81,29 @@ public struct Kraken: SwiftUI.App
           title: "The Metaversal Creation Suite.",
           showSplash: $showSplash
         )
+      }
+      else
+      {
+        if let usdFile = fileURL
+        {
+          SceneView(
+            scene: try? SCNScene(url: usdFile),
+            options: [.allowsCameraControl, .autoenablesDefaultLighting]
+          )
+        }
+      }
+    }
+
+    DocumentGroup(newDocument: Kraken.IO.USD())
+    { usdFile in
+
+      Kraken.UI.CodeEditor(
+        document: usdFile.$document,
+        fileURL: usdFile.fileURL
+      )
+      .onAppear
+      {
+        fileURL = usdFile.fileURL
       }
     }
   }
