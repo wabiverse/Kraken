@@ -101,7 +101,7 @@ extension TextViewController
       print("There are no characters/lineInfo \(#function)")
       return
     }
-    guard let lineString = textView.textStorage.substring(from: lineInfo.range)
+    guard let _ = textView.textStorage.substring(from: lineInfo.range)
     else
     {
       print("There are no characters/lineString \(#function)")

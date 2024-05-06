@@ -225,11 +225,9 @@ public class TextSelectionManager: NSObject
       {
         let cursorOrigin = (layoutManager?.rectForOffset(textSelection.range.location) ?? .zero).origin
 
-        var doesViewNeedReposition: Bool
-
-          // If using the system cursor, macOS will change the origin and height by about 0.5, so we do an
-          // approximate equals in that case to avoid extra updates.
-          = if useSystemCursor, #available(macOS 14.0, *)
+        // If using the system cursor, macOS will change the origin and height by about 0.5,
+        // so we do an approximate equals in that case to avoid extra updates.
+        let doesViewNeedReposition: Bool = if useSystemCursor, #available(macOS 14.0, *)
         {
           !textSelection.boundingRect.origin.approxEqual(cursorOrigin)
             || !textSelection.boundingRect.height.approxEqual(layoutManager?.estimateLineHeight() ?? 0)

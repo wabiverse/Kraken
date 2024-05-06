@@ -73,11 +73,11 @@ public extension Editor.Code.Language
 
   /// A language structure for `JSDoc`
   static let jsdoc: Editor.Code.Language = .init(
-      id: .jsdoc,
-      tsName: "jsdoc",
-      extensions: [],
-      lineCommentString: "",
-      rangeCommentStrings: ("/**", "*/")
+    id: .jsdoc,
+    tsName: "jsdoc",
+    extensions: [],
+    lineCommentString: "",
+    rangeCommentStrings: ("/**", "*/")
   )
 
   /// A language structure for `JSON`
@@ -124,7 +124,7 @@ public extension Editor.Code.Language
     lineCommentString: "//",
     rangeCommentStrings: ("/*", "*/"),
     documentationCommentStrings: [
-      .single("///"), 
+      .single("///"),
       .pair(("/**", "*/"))
     ],
     highlights: ["injections"]

@@ -42,7 +42,7 @@ public extension Kraken.UI
       {
         VStack
         {
-          Image(logo, bundle: .kraken)
+          Image(logo, bundle: .module)
           #if !os(Linux)
             .aspectRatio(contentMode: .fit)
             .foregroundStyle(.secondary, .ultraThinMaterial)

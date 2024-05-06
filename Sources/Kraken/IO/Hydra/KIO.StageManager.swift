@@ -39,15 +39,23 @@ public extension Kraken.IO
     /** The shared instance of the stage manager singleton. */
     public static let manager = Stage()
 
-    /** The underlying file manager for file ops. */
-    private let fileManager = FileManager.default
+    /** Temp directory for saving user data. */
+    public var tmpDir: URL
 
     /** The date formatter for timestamp metadata. */
-    public let formatter = DateFormatter()
+    private let formatter: DateFormatter
+
+    /** The underlying file manager for file ops. */
+    private let fileManager: FileManager
 
     private init()
     {
+      formatter = DateFormatter()
       formatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
+
+      fileManager = FileManager.default
+
+      tmpDir = fileManager.temporaryDirectory
     }
 
     /**
@@ -96,12 +104,14 @@ public extension Kraken.IO
       return filePath
     }
 
+    public func getTmpURL() -> URL
+    {
+      tmpDir.appending(component: "Untitled.usda")
+    }
+
     public func makeTmp() -> Kraken.IO.USD
     {
-      var dir = fileManager.temporaryDirectory
-      dir.append(component: "Untitled.usda")
-
-      return Kraken.IO.USD(fileURL: dir)
+      Kraken.IO.USD(fileURL: getTmpURL())
     }
 
     /**
@@ -119,20 +129,18 @@ public extension Kraken.IO
      *   - stage: The stage to save and reload. */
     public func save(contentsOfFile stageData: String, atPath file: String, stage: inout UsdStageRefPtr)
     {
-      let path = URL(fileURLWithPath: file)
-      validate(url: path)
+      let fileURL = URL(fileURLWithPath: file)
 
       do
       {
-        try stageData.write(to: path, atomically: true, encoding: .utf8)
+        try stageData.write(to: fileURL, atomically: true, encoding: .utf8)
       }
       catch
       {
-        print("Error writing to file: \(path.absoluteString)")
+        print("Error writing to file: \(fileURL.absoluteString)")
       }
 
-      stage.pointee.Reload()
-
+      stage.reload()
       stage.save()
     }
 

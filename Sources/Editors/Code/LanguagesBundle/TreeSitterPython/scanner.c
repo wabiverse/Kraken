@@ -383,7 +383,7 @@ unsigned tree_sitter_python_external_scanner_serialize(void *payload, char *buff
         buffer[size++] = (char)*array_get(&scanner->indents, iter);
     }
 
-    return size;
+    return (unsigned int)size;
 }
 
 void tree_sitter_python_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
@@ -400,8 +400,8 @@ void tree_sitter_python_external_scanner_deserialize(void *payload, const char *
 
         size_t delimiter_count = (uint8_t)buffer[size++];
         if (delimiter_count > 0) {
-            array_reserve(&scanner->delimiters, delimiter_count);
-            scanner->delimiters.size = delimiter_count;
+            array_reserve(&scanner->delimiters, (unsigned int)delimiter_count);
+            scanner->delimiters.size = (unsigned int)delimiter_count;
             memcpy(scanner->delimiters.contents, &buffer[size], delimiter_count);
             size += delimiter_count;
         }

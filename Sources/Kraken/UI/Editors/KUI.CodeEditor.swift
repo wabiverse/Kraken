@@ -38,6 +38,9 @@ public extension Kraken.UI
     /** The document contents to edit. */
     @Binding var document: Kraken.IO.USD
 
+    /** The stage to persist these changes. */
+    @Binding var stage: UsdStageRefPtr
+
     /** The file url to this document. */
     let fileURL: URL?
 
@@ -94,6 +97,16 @@ public extension Kraken.UI
           cursorPositions: $cursorPositions,
           useThemeBackground: false
         )
+        .onChange(of: document.text)
+        {
+          let bakDir = Kraken.IO.Stage.manager.getTmpURL()
+
+          Kraken.IO.Stage.manager.save(
+            contentsOfFile: document.text,
+            atPath: fileURL?.path ?? bakDir.path,
+            stage: &stage
+          )
+        }
       }
       .onAppear
       {

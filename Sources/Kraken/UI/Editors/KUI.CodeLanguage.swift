@@ -24,8 +24,8 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * -------------------------------------------------------------- */
 
-import CosmoEditor
 import CodeLanguages
+import CosmoEditor
 import SwiftUI
 
 public extension Kraken.UI.CodeEditor

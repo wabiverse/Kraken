@@ -143,7 +143,7 @@ public extension TextViewController
     NSEvent.addLocalMonitorForEvents(matching: .keyDown)
     { event in
       guard self.view.window?.firstResponder == self.textView else { return event }
-      let charactersIgnoringModifiers = event.charactersIgnoringModifiers
+      _ = event.charactersIgnoringModifiers
       let commandKey = NSEvent.ModifierFlags.command.rawValue
       let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue
       if modifierFlags == commandKey, event.charactersIgnoringModifiers == "/"

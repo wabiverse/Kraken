@@ -29,25 +29,25 @@ import PixarUSD
 
 public extension Kraken
 {
-  /** 
+  /**
    * The current version of Kraken. */
   static let version = ".".join(array: Pixar.GfVec3i(1, 0, 9))
 
-  /** 
+  /**
    * Returns version information for Kraken and USD. */
   static func versionInfo() -> String
   {
     "\(krVersion()) | \(pxrVersion())"
   }
 
-  /** 
+  /**
    * Returns the current version string of Kraken. */
   private static func krVersion() -> String
   {
     "\("Kraken".magenta) \("v".yellow)\(Kraken.version.yellow)"
   }
 
-  /** 
+  /**
    * Returns the current version string of USD. */
   private static func pxrVersion() -> String
   {

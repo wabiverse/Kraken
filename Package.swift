@@ -1,12 +1,6 @@
 // swift-tools-version: 5.10
 import PackageDescription
 
-// #if os(macOS)
-//   let crazyToolChainBug: [String: String]? = nil
-// #else /* os(macOS) */
-//   let crazyToolChainBug: [String: String]? = ["SwiftCrossUI": "SwiftUI"]
-// #endif /* !os(macOS) */
-
 let package = Package(
   name: "Kraken",
   platforms: [
@@ -44,13 +38,12 @@ let package = Package(
 
   // --- 🦄 Package Dependencies. ---
   dependencies: [
-    .package(url: "https://github.com/wabiverse/SwiftUSD", from: "23.11.36"),
-    .package(url: "https://github.com/wabiverse/SwiftTreeSitter", branch: "hotfix-read-empty-noalloc"),
-    .package(url: "https://github.com/ChimeHQ/TextFormation", from: "0.8.2"),
+    // .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.36"),
+    .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", revision: "96ad58b"),
+    .package(url: "https://github.com/ChimeHQ/TextFormation.git", from: "0.8.2"),
     .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),
     .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
-    .package(url: "https://github.com/furby-tm/swift-bundler", from: "2.0.9"),
-    // .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab")
   ],
 
   // --- 🎯 Package Targets. ---

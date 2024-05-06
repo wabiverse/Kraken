@@ -52,10 +52,15 @@ public struct Kraken: SwiftUI.App
   @State public var showSplash = true
 
   /**  The currently opened stage. */
-  @State private var stage: UsdStageRefPtr = Usd.Stage.createNew("Kraken", ext: .usda)
+  @State private var stage: UsdStageRefPtr = Usd.Stage.createNew(Kraken.IO.Stage.manager.getTmpURL().path, ext: .usda)
 
-  /** The currently opened USD file. */
-  @State private var fileURL: URL?
+  /** The currently opened usd file. */
+  @State private var usdFile = Kraken.IO.Stage.manager.makeTmp()
+
+  /* --- xxx --- */
+
+  /** An action in the environment that presents a new document. */
+  @Environment(\.newDocument) private var newDocument
 
   /* --- xxx --- */
 
@@ -84,26 +89,27 @@ public struct Kraken: SwiftUI.App
       }
       else
       {
-        if let usdFile = fileURL
+        HStack
         {
-          SceneView(
-            scene: try? SCNScene(url: usdFile),
-            options: [.allowsCameraControl, .autoenablesDefaultLighting]
+          Kraken.UI.CodeEditor(
+            document: $usdFile,
+            stage: $stage,
+            fileURL: usdFile.fileURL
           )
+
+          VStack
+          {
+            SceneView(
+              scene: try? SCNScene(url: usdFile.fileURL ?? Kraken.IO.Stage.manager.getTmpURL()),
+              options: [
+                .allowsCameraControl,
+                .autoenablesDefaultLighting,
+              ],
+              antialiasingMode: .multisampling4X
+            )
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
         }
-      }
-    }
-
-    DocumentGroup(newDocument: Kraken.IO.USD())
-    { usdFile in
-
-      Kraken.UI.CodeEditor(
-        document: usdFile.$document,
-        fileURL: usdFile.fileURL
-      )
-      .onAppear
-      {
-        fileURL = usdFile.fileURL
       }
     }
   }
