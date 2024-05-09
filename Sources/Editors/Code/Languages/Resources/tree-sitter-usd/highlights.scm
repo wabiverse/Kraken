@@ -36,6 +36,10 @@
   "="
 ] @operator
 
+[
+  "prepend"
+] @type
+
 (attribute_type) @type
 (
  ;; Reference: https://openusd.org/release/api/sdf_page_front.html

@@ -50,7 +50,7 @@ public extension Kraken.UI
     @State private var language: Editor.Code.Language = .default
 
     /** default code editor theme setting for syntax highlighting. */
-    @State private var theme: Editor.Code.Theme = .standard
+    @State private var theme: Editor.Code.Theme = .gruvbox
 
     /** default code editor font setting for text. */
     @State private var font: NSFont = .monospacedSystemFont(ofSize: 12, weight: .bold)

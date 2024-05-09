@@ -44,10 +44,15 @@ public enum CaptureName: String, CaseIterable, Sendable
   case string
   case type
   case parameter
+  case namespace
+  case functionBuiltin = "function.builtin"
+  case typeBuiltin = "type.builtin"
   case typeAlternate = "type_alternate"
   case variableBuiltin = "variable.builtin"
   case keywordReturn = "keyword.return"
   case keywordFunction = "keyword.function"
+  case stringSpecial = "string.special"
+  case textUri = "text.uri"
 
   /// Returns a specific capture name case from a given string.
   /// - Parameter string: A string to get the capture name from

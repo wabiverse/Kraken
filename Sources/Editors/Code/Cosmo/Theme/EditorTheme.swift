@@ -97,13 +97,18 @@ public extension Editor.Code
              .keywordReturn, .keywordFunction, .repeat, .conditional, .tag:
           keywords
         case .comment: comments
-        case .variable, .property: variables
-        case .function, .method: variables
+        case .variable: variables
+        case .property: commands
+        case .function, .method: commands
         case .number, .float: numbers
         case .string: strings
         case .type: types
-        case .parameter: variables
+        case .parameter: attributes
         case .typeAlternate: attributes
+        case .namespace: numbers
+        case .typeBuiltin, .functionBuiltin: characters
+        case .textUri: strings
+        case .stringSpecial: attributes
         default: text
       }
     }

@@ -51,4 +51,26 @@ extension Editor.Code.Theme
       comments: .init(hex: "73A74E")
     )
   }
+
+  static var gruvbox: Editor.Code.Theme
+  {
+    Editor.Code.Theme(
+      text: .init(hex: "DDC7A1"),
+      insertionPoint: .init(hex: "E78A4E"),
+      invisibles: .init(hex: "32302f"),
+      background: .init(hex: "282828"),
+      lineHighlight: .init(hex: "32302F"),
+      selection: .init(hex: "374141"),
+      keywords: .init(hex: "EA6962"),
+      commands: .init(hex: "A9B665"),
+      types: .init(hex: "D8A657"),
+      attributes: .init(hex: "89B482"),
+      variables: .init(hex: "7DAEA3"),
+      values: .init(hex: "89B482"),
+      numbers: .init(hex: "D3869B"),
+      strings: .init(hex: "A9B665"),
+      characters: .init(hex: "E78A4E"),
+      comments: .init(hex: "7C6F64")
+    )
+  }
 }
