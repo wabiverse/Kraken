@@ -28,39 +28,35 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * ---------------------------------------------------------------- */
 
-import CodeLanguages
-import CosmoEditor
+import Foundation
+import SceneKit
 import SwiftUI
 
-public extension Kraken.UI.CodeEditor
+public extension Kraken.UI
 {
-  struct LanguagePicker: View
+  struct SceneView: NSViewRepresentable
   {
-    @Binding var language: Editor.Code.Language
+    public typealias NSViewType = SCNView
 
-    public var body: some View
+    public var fileURL: URL
+
+    public init(fileURL: URL)
     {
-      Menu
-      {
-        Picker("Language", selection: $language)
-        {
-          ForEach([.default] + Editor.Code.Language.allLanguages, id: \.id)
-          { language in
-            Text(language.id.rawValue)
-              .font(.system(size: 11, weight: .bold, design: .monospaced))
-              .tag(language)
-          }
-        }
-      } label:
-      {
-        HStack
-        {
-          Text(language.id.rawValue)
-            .font(.system(size: 8, weight: .bold, design: .monospaced))
-        }
-      }
-      .labelsHidden()
-      .buttonStyle(.borderless)
+      self.fileURL = fileURL
+    }
+
+    public func updateNSView(_: NSViewType, context _: Context)
+    {}
+
+    public func makeNSView(context _: Context) -> NSViewType
+    {
+      let view = SCNView()
+      view.backgroundColor = NSColor.clear
+      view.allowsCameraControl = true
+      view.autoenablesDefaultLighting = true
+
+      view.scene = try? SCNScene(url: fileURL)
+      return view
     }
   }
 }

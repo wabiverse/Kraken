@@ -9,9 +9,29 @@ def Xform "Geometry"
     double3 xformOp:translate = (0, 5, 0)
     uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
 
-    def Capsule "Sphere"
+    def Sphere "Sphere" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
     {
-        double3 xformOp:translate = (0, 0, -3)
+        rel material:binding = </Materials/RedMaterial>
+        double3 xformOp:translate = (0, 0, -5)
         uniform token[] xformOpOrder = ["xformOp:translate"]
-    }  
+    }
+}
+
+def "Materials"
+{
+    def Material "RedMaterial"
+    {
+        token outputs:surface.connect = </Materials/RedMaterial/PBRShader.outputs:surface>
+
+        def Shader "PBRShader"
+        {
+            uniform token info:id = "UsdPreviewSurface"
+            color3f inputs:diffuseColor = (0.992, 0.207, 0.061)
+            float inputs:metallic = 0
+            float inputs:roughness = 0.4
+            token outputs:surface
+        }
+    }
 }
