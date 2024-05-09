@@ -89,6 +89,11 @@
 
 <br/>
 
+### **Code Editor**
+
+<img width="745" alt="Screenshot 2024-05-09 at 12 12 51 AM" src="https://github.com/wabiverse/Kraken/assets/18516968/a150eabb-714e-4920-88d7-cbd1daceedab">
+
+
 ### **Development**
 
   > [!TIP]
