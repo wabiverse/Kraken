@@ -132,5 +132,5 @@
 
 <hr/>
 
-###### *We speak in pixel, and we come in peace.*
+###### *if you can `mmap` a **pixel**, you can `mmap` a **metaverse**.*
 ###### Kraken uses the GNU General Public License, which describes the rights to distribute or change the code. Apart from the GNU GPL, Kraken is not available under other licenses.
