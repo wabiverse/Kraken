@@ -13,8 +13,8 @@ $PIXAR_BUILDING_VERSION = 22.05
 
 # System Paths.
 $KrakenGlobalView = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$IsKrakenCreatorInDirectory = './source/creator'
-$IsKrakenSourceInDirectory = './source/kraken/ChaosEngine'
+$IsKrakenCreatorInDirectory = './Sources/Kraken'
+$IsKrakenSourceInDirectory = './Sources/Kraken'
 $IsGitDirectory = './.git'
 
 # MacOS Environment.
