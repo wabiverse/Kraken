@@ -3,11 +3,10 @@
 
 # ----------------------------------------------- Versioning. -----
 
-$KRAKEN_BUILDING_VERSION_MAJOR = 1
-$KRAKEN_BUILDING_VERSION_MINOR = 50
+$KRAKEN_BUILDING_VERSION = 1.09
 $KRAKEN_BUILDING_VERSION_CYCLE = "a"
-$KRAKEN_DEVELOPMENT_MILESTONE = "Initial Release Sprint"
-$PIXAR_BUILDING_VERSION = 22.05
+$KRAKEN_DEVELOPMENT_MILESTONE = "Open Metaverse"
+$PIXAR_BUILDING_VERSION = 23.11
 
 # ---------------------------------------------- Environment. -----
 
@@ -112,14 +111,14 @@ function HopIntoRootDir
 # Using Blender's script for this...
 function AppleBundleAndNotarize
 {
-  $KRAKEN_DMG_NAME = "kraken-$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR$KRAKEN_BUILDING_VERSION_CYCLE-macos-arm64.dmg"
-  zsh $KrakenGlobalView/release/darwin/bundle.sh `
-  --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release `
-  --dmg /Users/furby/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME `
-  --bundle-id $env:N_BUNDLE_ID `
-  --username $env:N_USERNAME `
-  --password $env:N_PASSWORD `
-  --codesign $env:C_CERT
+  # $KRAKEN_DMG_NAME = "kraken-$KRAKEN_BUILDING_VERSION-macos-arm64.dmg"
+  # zsh $KrakenGlobalView/release/darwin/bundle.sh `
+  # --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release `
+  # --dmg /Users/furby/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME `
+  # --bundle-id $env:N_BUNDLE_ID `
+  # --username $env:N_USERNAME `
+  # --password $env:N_PASSWORD `
+  # --codesign $env:C_CERT
 }
 
 function RunUnrealEngine5WithDebugger
@@ -506,22 +505,15 @@ function InstallKrakenPackage {
 }
 
 function RunKraken {
-  # import-module AppX -usewindowspowershell
-  Remove-AppXPackage Kraken_1.50.0.0_x64__k8b6ffsk23gvw
-  Add-AppXPackage $env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/kraken_1.50.0.0_x64.msix
-  & "kraken"
+  # # import-module AppX -usewindowspowershell
+  # Remove-AppXPackage Kraken_1.50.0.0_x64__k8b6ffsk23gvw
+  # Add-AppXPackage $env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/kraken_1.50.0.0_x64.msix
+  # & "kraken"
+  & swift run -c release Kraken
 }
 
 function RunDevelopmentDebugKraken {
-  if($IsWindows) {
-    & "$env:USERPROFILE\dev\build_KRAKEN_Debug\bin\Debug\kraken.exe" $args
-  }
-  if($IsMacOS) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
-  }
-  if($IsLinux) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
-  }
+  & swift run -c debug Kraken
 }
 
 # Build kraken app icons, eventually cross platoform, currently just macOS.
@@ -604,27 +596,11 @@ function RunKrakenPythonOfficialRelease {
 }
 
 function RunKrakenPythonRelease {
-  if($IsWindows) {
-    & "$env:USERPROFILE/dev/build_KRAKEN_Release/bin/Release/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python.exe" $args
-  }
-  if($IsMacOS) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
-  }
-  if($IsLinux) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
-  }
+  & swift run -c release Kraken
 }
 
 function RunKrakenPythonDebug {
-  if($IsWindows) {
-    & "$env:USERPROFILE/dev/build_KRAKEN_Debug/bin/Debug/$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR/python/bin/python_d.exe" $args
-  }
-  if($IsMacOS) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red
-  }
-  if($IsLinux) {
-    Write-Color -Text "KrakenDeveloperProfile: Please configure paths for your platform." -Color Red    
-  }
+  & swift run -c debug Kraken
 }
 
 function ConnectKraken {
@@ -896,7 +872,7 @@ function ShowBanner {
     Write-Output " "
     Write-Color -Text $KRAKEN_BANNER -Color Yellow, DarkMagenta, Cyan, DarkBlue
     Write-Output " "
-    Write-Color -Text "Kraken ", "v$KRAKEN_BUILDING_VERSION_MAJOR.$KRAKEN_BUILDING_VERSION_MINOR ", "| ", "Pixar ", "v$PIXAR_BUILDING_VERSION ", "| ", "$KRAKEN_DEVELOPMENT_MILESTONE" -Color DarkMagenta, Cyan, Yellow, Green, Blue, Yellow, DarkMagenta
+    Write-Color -Text "Kraken ", "v$KRAKEN_BUILDING_VERSION ", "| ", "Pixar ", "v$PIXAR_BUILDING_VERSION ", "| ", "$KRAKEN_DEVELOPMENT_MILESTONE" -Color DarkMagenta, Cyan, Yellow, Green, Blue, Yellow, DarkMagenta
     ShowPrettyGitRevision
   }
 }

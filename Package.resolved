@@ -1,5 +1,5 @@
 {
-  "originHash" : "e786d580815d634c789f07dfa2930a1d775f5bc9b8a148ca62197594cc383569",
+  "originHash" : "b5c41ecafe2bba971ba777399bfa246022d949ec1523346d9c63bb089437c382",
   "pins" : [
     {
       "identity" : "mainoffender",
@@ -15,35 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "736a3abc651e298576bc3574849b55c500128b16",
-        "version" : "1.7.2"
-      }
-    },
-    {
-      "identity" : "metaversepythonframework",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wabiverse/MetaversePythonFramework",
-      "state" : {
-        "revision" : "fc6d15f768b0a675207aecea248bd4f63f4c4133",
-        "version" : "3.11.6"
-      }
-    },
-    {
-      "identity" : "metaversevulkanframework",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wabiverse/MetaverseVulkanFramework",
-      "state" : {
-        "revision" : "13c7061599c61a4959c558d8ec1836e5b32b640b",
-        "version" : "1.26.2"
-      }
-    },
-    {
-      "identity" : "pythonkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pvieito/PythonKit.git",
-      "state" : {
-        "revision" : "6fd4817e33c31a57760e285228ef8f81cd359062",
-        "version" : "0.4.2"
+        "revision" : "1532e878d0b27d756d06432586d577cb2351a268",
+        "version" : "1.7.5"
       }
     },
     {
@@ -62,6 +35,15 @@
       "state" : {
         "revision" : "5ff7f3363f7a08f77e0d761e38e6add31c2136e1",
         "version" : "1.8.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "41982a3656a71c768319979febd796c6fd111d5c",
+        "version" : "1.5.0"
       }
     },
     {
@@ -105,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD",
       "state" : {
-        "revision" : "6428fb0a80191de799fdfeb3b0891f906502031e",
-        "version" : "23.11.36"
+        "revision" : "187488950e215af85ca3ae21e38651c5d48eb3c4",
+        "version" : "23.11.42"
       }
     },
     {
@@ -134,6 +116,15 @@
       "state" : {
         "revision" : "98be227227af10cc7a269cb3ffb23686c0610b17",
         "version" : "0.20.9"
+      }
+    },
+    {
+      "identity" : "version",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mxcl/Version.git",
+      "state" : {
+        "revision" : "1fe824b80d89201652e7eca7c9252269a1d85e25",
+        "version" : "2.0.1"
       }
     }
   ],

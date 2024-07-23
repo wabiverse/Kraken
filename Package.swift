@@ -39,7 +39,7 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     // .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.36"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "23.11.42"),
     .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", revision: "96ad58b"),
     .package(url: "https://github.com/ChimeHQ/TextFormation.git", from: "0.8.2"),
     .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),
