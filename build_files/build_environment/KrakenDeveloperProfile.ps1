@@ -53,6 +53,24 @@ if ($IsMacOS) {
   }
 }
 
+# Windows Environment.
+if ($IsWindows) {
+  $WINDOWS_SWIFTFORMAT_PATH = "$env:USERPROFILE/Wabi/SwiftFormat/.build/x86_64-unknown-windows-msvc/release"
+
+  # swiftformat (built from source)
+  #
+  # cd ~/
+  # mkdir Wabi
+  #
+  # git clone https://github.com/nicklockwood/SwiftFormat.git
+  # cd SwiftFormat
+  #
+  # swift build -c release
+  if (Test-Path -Path $WINDOWS_SWIFTFORMAT_PATH) {
+    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$WINDOWS_SWIFTFORMAT_PATH
+  }
+}
+
 # --------------------------------------- Powershell modules. -----
 
 if (Get-Module -ListAvailable -Name PSWriteColor) {
