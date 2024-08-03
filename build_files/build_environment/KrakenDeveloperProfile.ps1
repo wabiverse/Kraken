@@ -172,6 +172,53 @@ function GenerateUnrealEngine5
   }
 }
 
+function CreateTBBCompatibilityHeaders
+{
+  $targetDir = "$env:USERPROFILE/Wabi/MetaverseKit/Sources/tbb/include/tbb/"
+
+  @("cache_aligned_allocator.h",
+    "combinable.h",
+    "concurrent_hash_map.h",
+    "collaborative_call_once.h",
+    "concurrent_priority_queue.h",
+    "concurrent_queue.h",
+    "concurrent_unordered_map.h",
+    "concurrent_unordered_set.h",
+    "concurrent_map.h",
+    "concurrent_set.h",
+    "concurrent_vector.h",
+    "enumerable_thread_specific.h",
+    "flow_graph.h",
+    "global_control.h",
+    "info.h",
+    "null_mutex.h",
+    "null_rw_mutex.h",
+    "parallel_for.h",
+    "parallel_for_each.h",
+    "parallel_invoke.h",
+    "parallel_pipeline.h",
+    "parallel_reduce.h",
+    "parallel_scan.h",
+    "parallel_sort.h",
+    "partitioner.h",
+    "queuing_mutex.h",
+    "queuing_rw_mutex.h",
+    "spin_mutex.h",
+    "spin_rw_mutex.h",
+    "task.h",
+    "task_arena.h",
+    "task_group.h",
+    "task_scheduler_observer.h",
+    "tbb_allocator.h",
+    "tick_count.h",
+    "version.h") | foreach-object {
+      $targetFile = $targetDir + $_;
+      Write-Color -Text "ADDING TBB", "::", "HEADER", ": ", $_, " -> ", "$targetFile" -Color Blue, DarkGray, Yellow, DarkGray, Cyan, DarkGray, Cyan
+      New-Item -ItemType File -Path $targetFile -Force;
+      Add-Content -Path "$targetFile" -Value "#pragma once`n`n#include <OneTBB/oneapi/tbb/$_>`n"
+  }
+}
+
 # -----------------------------------
 # Removes all GF templates within the
 # Pixar USD source for MetaverseKit.
