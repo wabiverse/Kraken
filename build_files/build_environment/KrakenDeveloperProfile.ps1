@@ -334,11 +334,11 @@ function MakeMetaversalBoostFramework
 # ever really be done by @furby-tm on
 # macOS, internal stuff for the sake
 # of convenience.
-function CopyMTXHeaders
+function CopyHeaders
 {
   if ($IsMacOS) {
-    $sourceDir = "/Users/$env:USER/Wabi/MetaverseKit/Sources/MaterialX/source"
-    $targetDir = "/Users/$env:USER/Wabi/MetaverseKit/Sources/MaterialX/include/"
+    $sourceDir = $Args[0]
+    $targetDir = $Args[1]
     # -----------------------------------
     Push-Location $sourceDir
 
@@ -366,24 +366,6 @@ function CopyMTXHeaders
       $targetFile = $targetDir + $_.FullName.SubString($sourceDir.Length);
       New-Item -ItemType File -Path $targetFile -Force;
       Copy-Item $_.FullName -destination $targetFile
-      Remove-Item $_.FullName
-    }
-
-    # FOR REMOVING THE (*.H) HEADERS FROM THE SOURCE DIRECTORY
-    Get-ChildItem $sourceDir -filter "*.h" -recurse | `
-    foreach {
-      Remove-Item $_.FullName
-    }
-
-    # FOR REMOVING THE (*.HPP) HEADERS FROM THE SOURCE DIRECTORY
-    Get-ChildItem $sourceDir -filter "*.hpp" -recurse | `
-    foreach {
-      Remove-Item $_.FullName
-    }
-
-    # FOR REMOVING THE (*.INL) HEADERS FROM THE SOURCE DIRECTORY
-    Get-ChildItem $sourceDir -filter "*.inl" -recurse | `
-    foreach {
       Remove-Item $_.FullName
     }
 
@@ -518,6 +500,21 @@ function DeployWabiWeb
     Pop-Location
   }
 }
+
+function ClangFormatAll
+{
+  # clang-format (*.cpp) (*.h) (*.json)
+  Get-ChildItem -Path . -Recurse | Where-Object {
+    $_ -match '(\.cpp)|(\.cc)|(\.c)|(\.hpp)|(\.h)'
+  } | ForEach-Object {
+    $relativePath = Get-Item $_.FullName | Resolve-Path -Relative
+    Write-Color -Text "Formatting", ": ", "$relativePath" -Color Yellow, DarkGray, Cyan
+    & clang-format -i -verbose -style=file $relativePath 2>&1>$null
+  }
+}
+
+Set-Alias clangformat ClangFormatAll
+
 
 function WabiFormatAll 
 {
@@ -954,6 +951,28 @@ if($KrakenGlobalView) {
   oh-my-posh init pwsh --config './build_files/build_environment/krakentheme.omp.json' | Invoke-Expression
   Pop-Location
 }
+
+# stackys fork of swiftpm.
+# this fork allows swiftpm targets to depend on products:
+# https://github.com/stackotter/swift-package-manager/tree/same_package_product_dependencies
+function StackotterPM {
+  $ArgRest = ($Args).Where({$_ -ne 'build' -and $_ -ne 'run' -and $_ -ne 'test' -and $_ -ne 'package'})
+
+  if(($Args[0] -eq 'build')) {
+    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-build $ArgRest
+  } elseif(($Args[0] -eq 'run')) {
+    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-run $ArgRest
+  } elseif(($Args[0] -eq 'test')) {
+    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-test $ArgRest
+  } elseif(($Args[0] -eq 'package')) {
+    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-package $ArgRest
+  } else {
+    Write-Color -Text "stackypm: available options are (", "build ", "run ", "test ", "or ", "package", ")" -Color Blue, Yellow, Yellow, Yellow, Blue, Yellow, Blue
+  }
+}
+
+# Run stackys fork of swiftpm.
+Set-Alias stackypm StackotterPM
 
 # Hop Into Kraken Root
 Set-Alias krkn HopIntoRootDir
