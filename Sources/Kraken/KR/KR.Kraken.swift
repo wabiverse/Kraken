@@ -47,6 +47,11 @@ public struct Kraken: SwiftUI.App
 
   /* --- xxx --- */
 
+  /** The kraken universal scene description context. */
+  @State private var C = Kraken.IO.USD()
+
+  /* --- xxx --- */
+
   /** The bundle identifier for Kraken. */
   public static let identifier = "foundation.wabi.Kraken"
 
@@ -54,12 +59,6 @@ public struct Kraken: SwiftUI.App
 
   /** Whether to show the splash screen. */
   @State public var showSplash = true
-
-  /**  The currently opened stage. */
-  @State private var stage: UsdStageRefPtr = Usd.Stage.createNew(Kraken.IO.Stage.manager.getTmpURL().path, ext: .usda)
-
-  /** The currently opened usd file. */
-  @State private var usdFile = Kraken.IO.Stage.manager.makeTmp()
 
   /* --- xxx --- */
 
@@ -70,7 +69,7 @@ public struct Kraken: SwiftUI.App
 
   public init()
   {
-    Kraken.IO.Stage.manager.save(&stage)
+    Kraken.IO.Stage.manager.save(&C.stage)
 
     Msg.logger.info("\(Kraken.versionInfo())")
     Msg.logger.info("Kraken launched.")
@@ -95,76 +94,10 @@ public struct Kraken: SwiftUI.App
       {
         VStack(spacing: 0)
         {
-          Divider()
+          createMainMenu()
 
-          HStack(spacing: 0)
-          {
-            Button
-            {} label:
-            {
-              Image("wabi.hexagon.fill", bundle: .kraken)
-            }
-            .buttonStyle(.borderless)
-            .font(.system(size: 12, weight: .medium))
-            .padding(.init(top: 4, leading: 12, bottom: 4, trailing: 12))
-            .foregroundStyle(.white.opacity(0.7))
-            .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(.clear))
-
-            Button("File")
-            {}
-            .buttonStyle(.borderless)
-            .font(.system(size: 12, weight: .medium))
-            .padding(.init(top: 4, leading: 12, bottom: 4, trailing: 12))
-            .foregroundStyle(.white.opacity(0.7))
-            .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(.clear))
-
-            Button("Edit")
-            {}
-            .buttonStyle(.borderless)
-            .font(.system(size: 12, weight: .medium))
-            .padding(.init(top: 4, leading: 12, bottom: 4, trailing: 12))
-            .foregroundStyle(.white.opacity(0.7))
-            .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(.clear))
-
-            Button("Render")
-            {}
-            .buttonStyle(.borderless)
-            .font(.system(size: 12, weight: .medium))
-            .padding(.init(top: 4, leading: 12, bottom: 4, trailing: 12))
-            .foregroundStyle(.white.opacity(0.7))
-            .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(.clear))
-
-            Button("Window")
-            {}
-            .buttonStyle(.borderless)
-            .font(.system(size: 12, weight: .medium))
-            .padding(.init(top: 4, leading: 12, bottom: 4, trailing: 12))
-            .foregroundStyle(.white.opacity(0.7))
-            .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(.clear))
-
-            Spacer()
-          }
-          .frame(height: 17)
-          .padding(4)
-          .zIndex(2)
-          .background(.black.opacity(0.3))
-
-          Divider()
-
-          HStack(spacing: 0)
-          {
-            Kraken.UI.CodeEditor(
-              document: $usdFile,
-              stage: $stage,
-              fileURL: usdFile.fileURL
-            )
-
-            Divider()
-
-            Kraken.UI.SceneView(
-              fileURL: usdFile.fileURL ?? Kraken.IO.Stage.manager.getTmpURL()
-            )
-          }
+          Kraken.UI.UniversalContext()
+            .environment(C)
         }
       }
     }

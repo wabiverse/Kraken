@@ -39,14 +39,8 @@ public extension Kraken.UI
 {
   struct CodeEditor: View
   {
-    /** The document contents to edit. */
-    @Binding var document: Kraken.IO.USD
-
-    /** The stage to persist these changes. */
-    @Binding var stage: UsdStageRefPtr
-
-    /** The file url to this document. */
-    let fileURL: URL?
+    /** The kraken universal scene description context. */
+    @Bindable var context: Kraken.IO.USD
 
     /* -------------------------------------------------------- */
 
@@ -74,7 +68,7 @@ public extension Kraken.UI
       VStack(spacing: 0)
       {
         Editor.Code.Cosmo(
-          $document.text,
+          $context.text,
           language: language,
           theme: theme,
           font: font,
@@ -84,14 +78,12 @@ public extension Kraken.UI
           cursorPositions: $cursorPositions,
           useThemeBackground: false
         )
-        .onChange(of: document.text)
+        .onChange(of: context.text)
         {
-          let bakDir = Kraken.IO.Stage.manager.getTmpURL()
-
           Kraken.IO.Stage.manager.save(
-            contentsOfFile: document.text,
-            atPath: fileURL?.path ?? bakDir.path,
-            stage: &stage
+            contentsOfFile: context.text,
+            atPath: context.fileURL.path,
+            stage: &context.stage
           )
         }
 
@@ -113,28 +105,28 @@ public extension Kraken.UI
       }
       .onAppear
       {
-        language = detectLanguage(fileURL: fileURL) ?? .default
+        language = detectLanguage(fileURL: context.fileURL) ?? .default
       }
     }
 
     /**
-     * Automatically detect the language of the document from it's file url.
-     * - Parameter fileURL: The file url to the document.
-     * - Returns: The detected language of the document. */
+     * Automatically detect the language of the context from it's file url.
+     * - Parameter fileURL: The file url to the context.
+     * - Returns: The detected language of the context. */
     private func detectLanguage(fileURL: URL?) -> Editor.Code.Language?
     {
       guard let fileURL else { return nil }
       return Editor.Code.Language.detectLanguageFrom(
         url: fileURL,
-        prefixBuffer: document.text.getFirstLines(5),
-        suffixBuffer: document.text.getLastLines(5)
+        prefixBuffer: context.text.getFirstLines(5),
+        suffixBuffer: context.text.getLastLines(5)
       )
     }
 
     /**
      * Create a label string for cursor positions.
      * - Parameter cursorPositions: The cursor positions to create the label for.
-     * - Returns: A string describing the user's location in a document. */
+     * - Returns: A string describing the user's location in a context. */
     func getLabel(_ cursorPositions: [CursorPosition]) -> String
     {
       if cursorPositions.isEmpty

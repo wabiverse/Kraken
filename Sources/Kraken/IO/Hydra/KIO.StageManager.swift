@@ -141,7 +141,7 @@ public extension Kraken.IO
       }
 
       stage.reload()
-      stage.save()
+      save(&stage)
     }
 
     /**
@@ -152,16 +152,17 @@ public extension Kraken.IO
     public func save(_ stage: inout UsdStageRefPtr)
     {
       /* set the timestamp metadata. */
-      let metadata = "Kraken v\(Kraken.version) | \(timestamp())"
+      let time = timestamp()
+      let metadata = "Kraken v\(Kraken.version) | \(time)"
 
       /* set the metadata on the stage. */
       stage.getPseudoRoot().set(doc: metadata)
       stage.save()
     }
 
-    private func timestamp() -> String
+    public func timestamp() -> String
     {
-      formatter.string(from: Date())
+      formatter.string(from: Date.now)
     }
 
     /**
@@ -174,7 +175,7 @@ public extension Kraken.IO
      * - Parameters:
      *   - file: The file configuration to check.
      * - Returns: Whether the file is binary or not. */
-    public static func isBinary(_ file: FileDocumentConfiguration<Kraken.IO.USD>) -> Bool
+    public static func isBinary(_ file: ReferenceFileDocumentConfiguration<Kraken.IO.USD>) -> Bool
     {
       file.fileURL?.pathExtension != "usda"
     }

@@ -28,18 +28,36 @@ import CodeLanguages
 import CosmoEditor
 import SwiftUI
 import UniformTypeIdentifiers
+import PixarUSD
 
 public extension Kraken.IO
 {
-  struct USD: FileDocument
+  @Observable
+  final class USD: ReferenceFileDocument
   {
     var text: String
-    var fileURL: URL?
+    var fileURL: URL
+    var stage: UsdStageRefPtr
 
-    public init(text: String = "", fileURL: URL? = nil)
+    public init(text: String = "", fileURL: URL = Kraken.IO.Stage.manager.getTmpURL())
     {
-      self.text = text
       self.fileURL = fileURL
+      self.text = text
+
+      if FileManager.default.fileExists(atPath: fileURL.path)
+      {
+        self.stage = Usd.Stage.open(fileURL.path)
+      }
+      else
+      {
+        self.stage = Usd.Stage.createNew(fileURL.path)
+      }
+
+      Kraken.IO.Stage.manager.save(&stage)
+
+      var contents = ""
+      self.stage.exportToString(&contents, addSourceFileComment: false)
+      self.text = contents
     }
 
     public static var readableContentTypes: [UTType]
@@ -65,26 +83,56 @@ public extension Kraken.IO
 
     public init(configuration: ReadConfiguration) throws
     {
+      let url = Kraken.IO.Stage.manager.getTmpURL()
+      self.stage = Usd.Stage.open(url.path)
+      self.fileURL = url
+      self.text = ""
+
       guard let data = configuration.file.regularFileContents,
             let string = String(data: data, encoding: .utf8)
       else
       {
-        text = ""
-        fileURL = nil
+        var contents: String = ""
+        self.stage.exportToString(&contents, addSourceFileComment: false)
+        Kraken.IO.Stage.manager.save(
+          contentsOfFile: contents,
+          atPath: url.path,
+          stage: &stage
+        )
+
+        self.text = contents
         return
       }
-      text = string
+
+      Kraken.IO.Stage.manager.save(
+        contentsOfFile: string,
+        atPath: url.path,
+        stage: &stage
+      )
+
+      var contents: String = ""
+      self.stage.exportToString(&contents, addSourceFileComment: false)
+
+      self.text = contents
     }
 
-    public func fileWrapper(configuration _: WriteConfiguration) throws -> FileWrapper
+    public func fileWrapper(snapshot: UsdStageRefPtr, configuration: WriteConfiguration) throws -> FileWrapper
     {
-      let data = text.data(using: .utf8) ?? "".data(using: .utf8)!
-      return .init(regularFileWithContents: data)
+      var usda = ""
+      stage.exportToString(&usda, addSourceFileComment: false)
+      text = usda
+
+      return .init(regularFileWithContents: usda.data(using: .utf8)!)
+    }
+
+    public func snapshot(contentType: UTType) throws -> UsdStageRefPtr
+    {
+      return self.stage
     }
   }
 }
 
-public extension FileDocumentConfiguration<Kraken.IO.USD>
+public extension ReferenceFileDocumentConfiguration<Kraken.IO.USD>
 {
   /**
    * Whether the document is in binary format. */
@@ -104,5 +152,15 @@ public extension FileDocumentConfiguration<Kraken.IO.USD>
     else { return .default }
 
     return .detectLanguageFrom(url: url)
+  }
+}
+
+extension Kraken.IO.USD: Equatable
+{
+  public static func == (lhs: Kraken.IO.USD, rhs: Kraken.IO.USD) -> Bool
+  {
+    return
+      lhs.fileURL == rhs.fileURL &&
+      lhs.text == rhs.text
   }
 }

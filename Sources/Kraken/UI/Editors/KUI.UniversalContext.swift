@@ -28,31 +28,36 @@
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
  * ---------------------------------------------------------------- */
 
+import CxxStdlib
 import Foundation
-import SceneKit
+import KrakenKit
+import KrakenLib
+import PixarUSD
 import SwiftUI
 
 public extension Kraken.UI
 {
-  struct SceneView: NSViewRepresentable
+  /**
+   * The Kraken Universal Scene Description Context
+   *
+   * Represents the root of the UX/UI hierarchy of
+   * its data-driven and highly collaborative suite
+   * of digital content creation tools. */
+  struct UniversalContext: View
   {
-    public typealias NSViewType = SCNView
-
     /** The kraken universal scene description context. */
-    @Bindable var context: Kraken.IO.USD
+    @Environment(Kraken.IO.USD.self) private var C
 
-    public func updateNSView(_: NSViewType, context _: Context)
-    {}
-
-    public func makeNSView(context _: Context) -> NSViewType
+    public var body: some View
     {
-      let view = SCNView()
-      view.backgroundColor = NSColor.clear
-      view.allowsCameraControl = true
-      view.autoenablesDefaultLighting = true
+      HStack(spacing: 0)
+      {
+        Kraken.UI.CodeEditor(context: C)
 
-      view.scene = try? SCNScene(url: context.fileURL)
-      return view
+        Divider()
+
+        Kraken.UI.SceneView(context: C)
+      }
     }
   }
 }
