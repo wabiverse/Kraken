@@ -31,7 +31,7 @@ public extension Kraken
 {
   /**
    * The current version of Kraken. */
-  static let version = ".".join(array: Pixar.GfVec3i(1, 0, 9))
+  static let version = ".".join(array: Pixar.GfVec3i(1, 1, 0))
 
   /**
    * Returns version information for Kraken and USD. */

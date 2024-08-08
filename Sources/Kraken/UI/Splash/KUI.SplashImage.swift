@@ -39,7 +39,7 @@ public extension Kraken.UI
 
     public var body: some View
     {
-      Image(image, bundle: .module)
+      Image(image, bundle: .kraken)
       #if !os(Linux)
         .resizable()
         .aspectRatio(contentMode: .fill)

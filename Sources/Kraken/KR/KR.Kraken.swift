@@ -102,7 +102,7 @@ public struct Kraken: SwiftUI.App
             Button
             {} label:
             {
-              Image("wabi.hexagon.fill", bundle: .module)
+              Image("wabi.hexagon.fill", bundle: .kraken)
             }
             .buttonStyle(.borderless)
             .font(.system(size: 12, weight: .medium))
