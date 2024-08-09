@@ -109,6 +109,19 @@ public extension Kraken.IO
       tmpDir.appending(component: "Untitled.usda")
     }
 
+    public func getRandomTmpURL() -> URL
+    {
+      let uuid = UUID().uuidString.suffix(5)
+      let rdmDir = tmpDir.appending(component: uuid)
+
+      return rdmDir.appending(component: "Untitled.usda")
+    }
+
+    public func getStartupURL() -> URL
+    {
+      tmpDir.appending(component: "Startup.usda")
+    }
+
     public func makeTmp() -> Kraken.IO.USD
     {
       Kraken.IO.USD(fileURL: getTmpURL())
@@ -127,19 +140,8 @@ public extension Kraken.IO
      *   - stageData: The stage data to save to the file.
      *   - file: The usd filepath to save the data to.
      *   - stage: The stage to save and reload. */
-    public func save(contentsOfFile stageData: String, atPath file: String, stage: inout UsdStageRefPtr)
+    public func reloadAndSave(stage: inout UsdStageRefPtr)
     {
-      let fileURL = URL(fileURLWithPath: file)
-
-      do
-      {
-        try stageData.write(to: fileURL, atomically: true, encoding: .utf8)
-      }
-      catch
-      {
-        print("Error writing to file: \(fileURL.absoluteString)")
-      }
-
       stage.reload()
       save(&stage)
     }

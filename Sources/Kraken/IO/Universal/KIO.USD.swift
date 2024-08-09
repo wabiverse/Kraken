@@ -26,38 +26,20 @@
 
 import CodeLanguages
 import CosmoEditor
+import PixarUSD
 import SwiftUI
 import UniformTypeIdentifiers
-import PixarUSD
 
 public extension Kraken.IO
 {
   @Observable
   final class USD: ReferenceFileDocument
   {
-    var text: String
-    var fileURL: URL
-    var stage: UsdStageRefPtr
+    var context: Kraken.IO.USD.Context
 
-    public init(text: String = "", fileURL: URL = Kraken.IO.Stage.manager.getTmpURL())
+    public init(fileURL: URL = Kraken.IO.Stage.manager.getRandomTmpURL())
     {
-      self.fileURL = fileURL
-      self.text = text
-
-      if FileManager.default.fileExists(atPath: fileURL.path)
-      {
-        self.stage = Usd.Stage.open(fileURL.path)
-      }
-      else
-      {
-        self.stage = Usd.Stage.createNew(fileURL.path)
-      }
-
-      Kraken.IO.Stage.manager.save(&stage)
-
-      var contents = ""
-      self.stage.exportToString(&contents, addSourceFileComment: false)
-      self.text = contents
+      context = Kraken.IO.USD.Context(fileURL: fileURL)
     }
 
     public static var readableContentTypes: [UTType]
@@ -83,51 +65,73 @@ public extension Kraken.IO
 
     public init(configuration: ReadConfiguration) throws
     {
-      let url = Kraken.IO.Stage.manager.getTmpURL()
-      self.stage = Usd.Stage.open(url.path)
-      self.fileURL = url
-      self.text = ""
+      context = Kraken.IO.USD.Context()
 
       guard let data = configuration.file.regularFileContents,
             let string = String(data: data, encoding: .utf8)
       else
       {
-        var contents: String = ""
-        self.stage.exportToString(&contents, addSourceFileComment: false)
-        Kraken.IO.Stage.manager.save(
-          contentsOfFile: contents,
-          atPath: url.path,
-          stage: &stage
-        )
+        Kraken.IO.Stage.manager.reloadAndSave(stage: &context.stage)
 
-        self.text = contents
+        var contents = ""
+        context.stage.exportToString(&contents, addSourceFileComment: false)
+        context.usda = contents
         return
       }
-
-      Kraken.IO.Stage.manager.save(
-        contentsOfFile: string,
-        atPath: url.path,
-        stage: &stage
-      )
-
-      var contents: String = ""
-      self.stage.exportToString(&contents, addSourceFileComment: false)
-
-      self.text = contents
+      context.usda = string
     }
 
-    public func fileWrapper(snapshot: UsdStageRefPtr, configuration: WriteConfiguration) throws -> FileWrapper
+    public func fileWrapper(snapshot _: Kraken.IO.USD.Context, configuration _: WriteConfiguration) throws -> FileWrapper
     {
-      var usda = ""
+      context.stage.exportToString(&context.usda, addSourceFileComment: false)
+
+      return .init(regularFileWithContents: context.usda.data(using: .utf8)!)
+    }
+
+    public func snapshot(contentType _: UTType) throws -> Kraken.IO.USD.Context
+    {
+      context
+    }
+  }
+}
+
+public extension Kraken.IO.USD
+{
+  @Observable
+  class Context: Identifiable
+  {
+    public var usda: String
+    public var fileURL: URL
+    public var stage: UsdStageRefPtr
+    public var stageCache: UsdStageCache
+
+    public var id: Int
+    {
+      stageCache.GetId(stage).ToLongInt()
+    }
+
+    public init(fileURL: URL = Kraken.IO.Stage.manager.getRandomTmpURL())
+    {
+      self.fileURL = fileURL
+      usda = ""
+      stage = Usd.Stage.createNew(fileURL.path)
+
+      stageCache = UsdStageCache()
+      UsdStageCacheContext.bind(cache: &stageCache)
+
+      stage = Usd.Stage.open(fileURL.path)
+
+      Kraken.IO.Stage.manager.save(&stage)
       stage.exportToString(&usda, addSourceFileComment: false)
-      text = usda
-
-      return .init(regularFileWithContents: usda.data(using: .utf8)!)
     }
 
-    public func snapshot(contentType: UTType) throws -> UsdStageRefPtr
+    public func open(fileURL: URL)
     {
-      return self.stage
+      self.fileURL = fileURL
+      stage = Usd.Stage.open(fileURL.path)
+
+      Kraken.IO.Stage.manager.save(&stage)
+      stage.exportToString(&self.usda, addSourceFileComment: false)
     }
   }
 }
@@ -155,12 +159,20 @@ public extension ReferenceFileDocumentConfiguration<Kraken.IO.USD>
   }
 }
 
+extension Kraken.IO.USD: Hashable
+{
+  public func hash(into hasher: inout Hasher)
+  {
+    hasher.combine(context.fileURL)
+  }
+}
+
 extension Kraken.IO.USD: Equatable
 {
   public static func == (lhs: Kraken.IO.USD, rhs: Kraken.IO.USD) -> Bool
   {
-    return
-      lhs.fileURL == rhs.fileURL &&
-      lhs.text == rhs.text
+    lhs.context.fileURL == rhs.context.fileURL &&
+      lhs.context.id == rhs.context.id &&
+      lhs.context.usda == rhs.context.usda
   }
 }

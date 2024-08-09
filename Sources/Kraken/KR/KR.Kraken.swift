@@ -48,7 +48,7 @@ public struct Kraken: SwiftUI.App
   /* --- xxx --- */
 
   /** The kraken universal scene description context. */
-  @State private var C = Kraken.IO.USD()
+  @State private var C = Kraken.IO.USD(fileURL: Kraken.IO.Stage.manager.getStartupURL())
 
   /* --- xxx --- */
 
@@ -69,7 +69,7 @@ public struct Kraken: SwiftUI.App
 
   public init()
   {
-    Kraken.IO.Stage.manager.save(&C.stage)
+    Kraken.IO.Stage.manager.save(&C.context.stage)
 
     Msg.logger.info("\(Kraken.versionInfo())")
     Msg.logger.info("Kraken launched.")
@@ -80,7 +80,8 @@ public struct Kraken: SwiftUI.App
   public var body: some SwiftUI.Scene
   {
     Kraken.UI.MicaWindow(title: "Kraken", id: "kraken")
-    {
+    { context in
+
       if showSplash
       {
         Kraken.UI.SplashScreen(
@@ -96,7 +97,7 @@ public struct Kraken: SwiftUI.App
         {
           createMainMenu()
 
-          Kraken.UI.UniversalContext()
+          Kraken.UI.UniversalContext(context: context)
             .environment(C)
         }
       }

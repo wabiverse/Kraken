@@ -1,32 +1,28 @@
-/* ----------------------------------------------------------------
- * :: :  M  E  T  A  V  E  R  S  E  :                            ::
- * ----------------------------------------------------------------
- * This software is Licensed under the terms of the Apache License,
- * version 2.0 (the "Apache License") with the following additional
- * modification; you may not use this file except within compliance
- * of the Apache License and the following modification made to it.
- * Section 6. Trademarks. is deleted and replaced with:
+/* --------------------------------------------------------------
+ * :: :  K  R  A  K  E  N  :                                   ::
+ * --------------------------------------------------------------
+ * @wabistudios :: metaverse :: kraken
  *
- * Trademarks. This License does not grant permission to use any of
- * its trade names, trademarks, service marks, or the product names
- * of this Licensor or its affiliates, except as required to comply
- * with Section 4(c.) of this License, and to reproduce the content
- * of the NOTICE file.
+ * This program is free software; you can redistribute it, and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND without even an
- * implied warranty of MERCHANTABILITY, or FITNESS FOR A PARTICULAR
- * PURPOSE. See the Apache License for more details.
+ * This program is distributed in the hope that it will be useful
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. Check out
+ * the GNU General Public License for more details.
  *
- * You should have received a copy for this software license of the
- * Apache License along with this program; or, if not, please write
- * to the Free Software Foundation Inc., with the following address
+ * You should have received a copy for this software license, the
+ * GNU General Public License along with this program; or, if not
+ * write to the Free Software Foundation, Inc., to the address of
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *         Copyright (C) 2024 Wabi Foundation. All Rights Reserved.
- * ----------------------------------------------------------------
+ *                            Copyright (C) 2023 Wabi Foundation.
+ *                                           All Rights Reserved.
+ * --------------------------------------------------------------
  *  . x x x . o o o . x x x . : : : .    o  x  o    . : : : .
- * ---------------------------------------------------------------- */
+ * -------------------------------------------------------------- */
 
 import CodeLanguages
 import CosmoEditor
@@ -40,7 +36,7 @@ public extension Kraken.UI
   struct CodeEditor: View
   {
     /** The kraken universal scene description context. */
-    @Bindable var context: Kraken.IO.USD
+    @Bindable var C: Kraken.IO.USD
 
     /* -------------------------------------------------------- */
 
@@ -68,7 +64,7 @@ public extension Kraken.UI
       VStack(spacing: 0)
       {
         Editor.Code.Cosmo(
-          $context.text,
+          $C.context.usda,
           language: language,
           theme: theme,
           font: font,
@@ -78,14 +74,6 @@ public extension Kraken.UI
           cursorPositions: $cursorPositions,
           useThemeBackground: false
         )
-        .onChange(of: context.text)
-        {
-          Kraken.IO.Stage.manager.save(
-            contentsOfFile: context.text,
-            atPath: context.fileURL.path,
-            stage: &context.stage
-          )
-        }
 
         Divider()
 
@@ -96,6 +84,10 @@ public extension Kraken.UI
 
           Spacer()
 
+          Text(C.context.fileURL.lastPathComponent)
+            .font(.system(size: 8, weight: .bold, design: .monospaced))
+            .padding(.trailing, 4)
+
           Text(getLabel(cursorPositions))
             .font(.system(size: 8, weight: .bold, design: .monospaced))
         }
@@ -103,9 +95,24 @@ public extension Kraken.UI
         .zIndex(2)
         .background(.ultraThinMaterial)
       }
+      .onChange(of: C)
+      {
+        Task
+        {
+          Kraken.IO.Stage.manager.reloadAndSave(stage: &C.context.stage)
+
+          var contents = ""
+          C.context.stage.exportToString(&contents, addSourceFileComment: false)
+
+          if C.context.usda != contents
+          {
+            C.context.usda = contents
+          }
+        }
+      }
       .onAppear
       {
-        language = detectLanguage(fileURL: context.fileURL) ?? .default
+        language = detectLanguage(fileURL: C.context.fileURL) ?? .default
       }
     }
 
@@ -118,8 +125,8 @@ public extension Kraken.UI
       guard let fileURL else { return nil }
       return Editor.Code.Language.detectLanguageFrom(
         url: fileURL,
-        prefixBuffer: context.text.getFirstLines(5),
-        suffixBuffer: context.text.getLastLines(5)
+        prefixBuffer: C.context.usda.getFirstLines(5),
+        suffixBuffer: C.context.usda.getLastLines(5)
       )
     }
 

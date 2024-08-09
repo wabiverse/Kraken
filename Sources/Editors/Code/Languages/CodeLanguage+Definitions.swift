@@ -143,7 +143,7 @@ public extension Editor.Code.Language
   static let usd: Editor.Code.Language = .init(
     id: .usd,
     tsName: "usd",
-    extensions: ["usda"],
+    extensions: ["usd", "usda", "usdc", "usdz"],
     lineCommentString: "#",
     rangeCommentStrings: ("", ""),
     documentationCommentStrings: [.pair(("\"", "\""))]

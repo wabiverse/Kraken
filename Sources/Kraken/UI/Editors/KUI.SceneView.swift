@@ -39,7 +39,7 @@ public extension Kraken.UI
     public typealias NSViewType = SCNView
 
     /** The kraken universal scene description context. */
-    @Bindable var context: Kraken.IO.USD
+    @Bindable var C: Kraken.IO.USD
 
     public func updateNSView(_: NSViewType, context _: Context)
     {}
@@ -50,8 +50,13 @@ public extension Kraken.UI
       view.backgroundColor = NSColor.clear
       view.allowsCameraControl = true
       view.autoenablesDefaultLighting = true
+      view.antialiasingMode = .multisampling4X
 
-      view.scene = try? SCNScene(url: context.fileURL)
+      view.scene = try? SCNScene(
+        url: C.context.fileURL,
+        options: [.preserveOriginalTopology: true]
+      )
+
       return view
     }
   }
