@@ -100,14 +100,6 @@ public extension Kraken.UI
         Task
         {
           Kraken.IO.Stage.manager.reloadAndSave(stage: &C.context.stage)
-
-          var contents = ""
-          C.context.stage.exportToString(&contents, addSourceFileComment: false)
-
-          if C.context.usda != contents
-          {
-            C.context.usda = contents
-          }
         }
       }
       .onAppear

@@ -32,6 +32,12 @@ import UniformTypeIdentifiers
 
 public extension Kraken.IO
 {
+  /// temporary maximum number of characters (6000 lines * 90 wide)
+  /// for treesitter, since it becomes unstable with massive files
+  /// TODO: find the culprit in treesitter, and remove the maximum
+  /// threshold once fixed.
+  static let TREE_SITTER_MAX = 6000 * 90
+
   @Observable
   final class USD: ReferenceFileDocument
   {
@@ -75,15 +81,17 @@ public extension Kraken.IO
 
         var contents = ""
         context.stage.exportToString(&contents, addSourceFileComment: false)
-        context.usda = contents
+        context.usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
         return
       }
-      context.usda = string
+      context.usda = String(string.prefix(Kraken.IO.TREE_SITTER_MAX))
     }
 
     public func fileWrapper(snapshot _: Kraken.IO.USD.Context, configuration _: WriteConfiguration) throws -> FileWrapper
     {
-      context.stage.exportToString(&context.usda, addSourceFileComment: false)
+      var contents = ""
+      context.stage.exportToString(&contents, addSourceFileComment: false)
+      context.usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
 
       return .init(regularFileWithContents: context.usda.data(using: .utf8)!)
     }
@@ -122,7 +130,10 @@ public extension Kraken.IO.USD
       stage = Usd.Stage.open(fileURL.path)
 
       Kraken.IO.Stage.manager.save(&stage)
-      stage.exportToString(&usda, addSourceFileComment: false)
+
+      var contents = ""
+      stage.exportToString(&contents, addSourceFileComment: false)
+      usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
     }
 
     public func open(fileURL: URL)
@@ -131,7 +142,10 @@ public extension Kraken.IO.USD
       stage = Usd.Stage.open(fileURL.path)
 
       Kraken.IO.Stage.manager.save(&stage)
-      stage.exportToString(&self.usda, addSourceFileComment: false)
+
+      var contents = ""
+      stage.exportToString(&contents, addSourceFileComment: false)
+      usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
     }
   }
 }
