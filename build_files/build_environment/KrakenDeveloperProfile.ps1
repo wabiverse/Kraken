@@ -3,10 +3,9 @@
 
 # ----------------------------------------------- Versioning. -----
 
-$KRAKEN_BUILDING_VERSION = 1.09
-$KRAKEN_BUILDING_VERSION_CYCLE = "a"
+$KRAKEN_BUILDING_VERSION = "UNKNOWN"
+$PIXAR_BUILDING_VERSION = "UNKNOWN"
 $KRAKEN_DEVELOPMENT_MILESTONE = "Open Metaverse"
-$PIXAR_BUILDING_VERSION = 23.11
 
 # ---------------------------------------------- Environment. -----
 
@@ -15,6 +14,32 @@ $KrakenGlobalView = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $IsKrakenCreatorInDirectory = './Sources/Kraken'
 $IsKrakenSourceInDirectory = './Sources/Kraken'
 $IsGitDirectory = './.git'
+
+# Automatically get Kraken version.
+if ((Test-Path -Path $KrakenGlobalView) -and (Test-Path -Path "$KrakenGlobalView/Sources/Kraken"))
+{
+  $KRAKEN_CURRENT_VERSION_LINE = (Get-Content -Path "$KrakenGlobalView/Sources/Kraken/KR/KR.version.swift" -TotalCount 34)[-1]
+  $KRAKEN_BUILDING_VERSION_VECTOR = $KRAKEN_CURRENT_VERSION_LINE.split("Pixar.GfVec3i(")[1].split("))")[0]
+  $KRAKEN_BUILDING_VERSION = $KRAKEN_BUILDING_VERSION_VECTOR -replace ', ', '.'
+}
+
+# Automatically get Pixar USD version.
+if ((Test-Path -Path $KrakenGlobalView) -and (Test-Path -Path "$KrakenGlobalView/../SwiftUSD/Sources/pxr/include/pxr/pxrns.h"))
+{
+  # we use PXR_MINOR_VERSION as the major version (ex. 24).
+  $SWIFTUSD_CURRENT_VERSION_MAJOR_LINE = (Get-Content -Path "$KrakenGlobalView/../SwiftUSD/Sources/pxr/include/pxr/pxrns.h" -TotalCount 18)[-1]
+  $SWIFTUSD_CURRENT_VERSION_MAJOR = $SWIFTUSD_CURRENT_VERSION_MAJOR_LINE.split("#define PXR_MINOR_VERSION ")[1]
+  # we use PXR_PATCH_VERSION as the minor version (ex. 8).
+  $SWIFTUSD_CURRENT_VERSION_MINOR_LINE = (Get-Content -Path "$KrakenGlobalView/../SwiftUSD/Sources/pxr/include/pxr/pxrns.h" -TotalCount 19)[-1]
+  $SWIFTUSD_CURRENT_VERSION_MINOR = $SWIFTUSD_CURRENT_VERSION_MINOR_LINE.split("#define PXR_PATCH_VERSION ")[1]
+  # if the minor version is a single digit, we prefix with 0 (ex. 8 -> 08).
+  if ($SWIFTUSD_CURRENT_VERSION_MINOR.length -eq 1) {
+    $SWIFTUSD_CURRENT_VERSION_MINOR = "0$SWIFTUSD_CURRENT_VERSION_MINOR"
+  }
+
+  # finally put them together (ex. 24.08).
+  $PIXAR_BUILDING_VERSION = "$SWIFTUSD_CURRENT_VERSION_MAJOR.$SWIFTUSD_CURRENT_VERSION_MINOR"
+}
 
 # MacOS Environment.
 # since not all paths get scraped on init,
