@@ -131,8 +131,8 @@ function AppleBundleAndNotarize
 {
   # $KRAKEN_DMG_NAME = "kraken-$KRAKEN_BUILDING_VERSION-macos-arm64.dmg"
   # zsh $KrakenGlobalView/release/darwin/bundle.sh `
-  # --source /Users/furby/actions-runner/_work/Kraken/build_darwin_release/bin/Release `
-  # --dmg /Users/furby/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME `
+  # --source /Users/$env:USER/actions-runner/_work/Kraken/build_darwin_release/bin/Release `
+  # --dmg /Users/$env:USER/actions-runner/_work/Kraken/build_darwin_release/$KRAKEN_DMG_NAME `
   # --bundle-id $env:N_BUNDLE_ID `
   # --username $env:N_USERNAME `
   # --password $env:N_PASSWORD `
@@ -959,17 +959,36 @@ function StackotterPM {
   $ArgRest = ($Args).Where({$_ -ne 'build' -and $_ -ne 'run' -and $_ -ne 'test' -and $_ -ne 'package'})
 
   if(($Args[0] -eq 'build')) {
-    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-build $ArgRest
+    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-build $ArgRest
   } elseif(($Args[0] -eq 'run')) {
-    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-run $ArgRest
+    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-run $ArgRest
   } elseif(($Args[0] -eq 'test')) {
-    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-test $ArgRest
+    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-test $ArgRest
   } elseif(($Args[0] -eq 'package')) {
-    & /Users/furby/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-package $ArgRest
+    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-package $ArgRest
   } else {
     Write-Color -Text "stackypm: available options are (", "build ", "run ", "test ", "or ", "package", ")" -Color Blue, Yellow, Yellow, Yellow, Blue, Yellow, Blue
   }
 }
+
+function BuildOpenUSD
+{
+  $OPENUSD_DEV_BUILD_SCRIPT = "/Users/$env:USER/Wabi/OpenUSD/build_scripts/build_usd.py"
+  $OPENUSD_BUILD_DIR = "/Users/$env:USER/Wabi/buildopenusd"
+
+  if (Test-Path -Path $OPENUSD_DEV_BUILD_SCRIPT) {
+    if (!(Test-Path -Path $OPENUSD_BUILD_DIR)) {
+      New-Item -ItemType Directory -Path $OPENUSD_BUILD_DIR -Force;
+    }
+
+    python3 $OPENUSD_DEV_BUILD_SCRIPT $OPENUSD_BUILD_DIR
+  } else {
+    Write-Color -Text "buildusd: missing openusd project at '/Users/$env:USER/Wabi/OpenUSD'." -Color Red
+  }
+}
+
+# Build the openusd project.
+Set-Alias buildusd BuildOpenUSD
 
 # Run stackys fork of swiftpm.
 Set-Alias stackypm StackotterPM
