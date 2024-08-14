@@ -65,7 +65,7 @@
    <div align="left">
       
    ```pwsh
-   swift bundler run -p macOS Kraken
+   swift bundler run -c release -p macOS Kraken
    ```
 
    </div>
