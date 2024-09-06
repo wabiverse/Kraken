@@ -107,6 +107,7 @@ let package = Package(
       cSettings: [
         .headerSearchPath("TreeSitterC/include"),
         .headerSearchPath("TreeSitterCPP/include"),
+        .headerSearchPath("TreeSitterGalah/include"),
         .headerSearchPath("TreeSitterJSDoc/include"),
         .headerSearchPath("TreeSitterJSON/include"),
         .headerSearchPath("TreeSitterPython/include"),
@@ -126,6 +127,7 @@ let package = Package(
       resources: [
         .copy("Resources/tree-sitter-c"),
         .copy("Resources/tree-sitter-cpp"),
+        .copy("Resources/tree-sitter-galah"),
         .copy("Resources/tree-sitter-jsdoc"),
         .copy("Resources/tree-sitter-json"),
         .copy("Resources/tree-sitter-python"),

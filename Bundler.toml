@@ -10,4 +10,8 @@ icon = "kraken.png"
 [apps.Kraken.plist]
 commit = '$(COMMIT_HASH)'
 CFBundleURLTypes = [ { type = "dict", value = { CFBundleTypeRole = 'Viewer', CFBundleURLName = 'Kraken', CFBundleURLSchemes = [ 'kraken' ] } } ]
-CFBundleDocumentTypes = [ { type = "dict", value = { CFBundleTypeExtensions = [ 'usd', 'usda', 'usdc', 'usdz' ], CFBundleTypeIconFile = 'AppIcon.icns', CFBundleTypeName = 'Universal Scene Description File', CFBundleTypeRole = 'Editor', LSIsAppleDefaultForType = true, LSItemContentTypes = [ 'com.pixar.universal-scene-description', 'com.pixar.universal-scene-description-mobile', 'com.pixar.usd.ascii', 'com.pixar.usd.crate' ], CFBundleTypeIconSystemGenerated = true } } ]
+CFBundleDocumentTypes = [ 
+  { type = "dict", value = { CFBundleTypeExtensions = [ 'usd', 'usda', 'usdc', 'usdz' ], CFBundleTypeIconFile = 'AppIcon.icns', CFBundleTypeName = 'Universal Scene Description File', CFBundleTypeRole = 'Editor', LSIsAppleDefaultForType = true, LSItemContentTypes = [ 'com.pixar.universal-scene-description', 'com.pixar.universal-scene-description-mobile', 'com.pixar.usd.ascii', 'com.pixar.usd.crate' ], CFBundleTypeIconSystemGenerated = true } },
+  { type = "dict", value = { CFBundleTypeExtensions = [ 'galah' ], CFBundleTypeIconFile = 'AppIcon.icns', CFBundleTypeName = 'Galah File', CFBundleTypeRole = 'Editor', LSIsAppleDefaultForType = true, LSItemContentTypes = [ 'dev.stackotter.galah' ], CFBundleTypeIconSystemGenerated = true } } 
+]
+UTExportedTypeDeclarations = [ { type = "dict", value = { UTTypeConformsTo = [ 'public.data', 'public.source-code' ], UTTypeIdentifier = 'dev.stackotter.galah', UTTypeDescription = 'Galah File', UTTypeIcons = { type = "dict", value = { UTTypeIconName = "Galah File", UTTypeIconText = "galah" } }, UTTypeTagSpecification = { type = "dict", value = { 'public.filename-extension' = [ 'galah' ] } } } } ]

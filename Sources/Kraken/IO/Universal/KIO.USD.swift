@@ -51,6 +51,7 @@ public extension Kraken.IO
     public static var readableContentTypes: [UTType]
     {
       [
+        .galahSource,
         .sourceCode,
         .plainText,
         .usd,
@@ -101,6 +102,17 @@ public extension Kraken.IO
       context
     }
   }
+}
+
+public extension UTType
+{
+  /**
+   * Galah source code (.galah)
+   *
+   * **UTI:** dev.stackotter.galah
+   *
+   * **conforms to:** public.source-code */
+  static var galahSource: UTType = UTType("dev.stackotter.galah") ?? .swiftSource
 }
 
 public extension Kraken.IO.USD

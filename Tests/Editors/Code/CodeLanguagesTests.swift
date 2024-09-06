@@ -99,6 +99,27 @@ final class CodeLanguagesTests: XCTestCase
     XCTAssertNotEqual(query?.patternCount, 0)
   }
 
+  // MARK: - Galah
+
+  func test_CodeLanguageGalah() throws
+  {
+    let url = URL(fileURLWithPath: "~/path/to/file.galah")
+    let language = Editor.Code.Language.detectLanguageFrom(url: url)
+
+    XCTAssertEqual(language.id, .galah)
+  }
+
+  func test_FetchQueryGalah() throws
+  {
+    var language = Editor.Code.Language.galah
+    language.resourceURL = bundleURL
+
+    let data = try Data(contentsOf: language.queryURL!)
+    let query = try? Query(language: language.language!, data: data)
+    XCTAssertNotNil(query)
+    XCTAssertNotEqual(query?.patternCount, 0)
+  }
+
   // MARK: - JSDoc
 
   func test_FetchQueryJSDoc() throws

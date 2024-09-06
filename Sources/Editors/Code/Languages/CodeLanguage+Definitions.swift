@@ -41,6 +41,7 @@ public extension Editor.Code.Language
   static let allLanguages: [Editor.Code.Language] = [
     .c,
     .cpp,
+    .galah,
     .jsdoc,
     .json,
     .python,
@@ -68,6 +69,20 @@ public extension Editor.Code.Language
     rangeCommentStrings: Editor.Code.Language.c.rangeCommentStrings,
     documentationCommentStrings: [.pair(("/**", "*/"))],
     parentURL: Editor.Code.Language.c.queryURL,
+    highlights: ["injections"]
+  )
+
+  /// A language structure for `Galah`
+  static let galah: Editor.Code.Language = .init(
+    id: .galah,
+    tsName: "galah",
+    extensions: ["galah"],
+    lineCommentString: "//",
+    rangeCommentStrings: ("/*", "*/"),
+    documentationCommentStrings: [
+      .single("///"),
+      .pair(("/**", "*/"))
+    ],
     highlights: ["injections"]
   )
 

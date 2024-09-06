@@ -12,6 +12,7 @@ extern "C" {
 
 extern TSLanguage *tree_sitter_c();
 extern TSLanguage *tree_sitter_cpp();
+extern TSLanguage *tree_sitter_galah();
 extern TSLanguage *tree_sitter_jsdoc();
 extern TSLanguage *tree_sitter_json();
 extern TSLanguage *tree_sitter_python();

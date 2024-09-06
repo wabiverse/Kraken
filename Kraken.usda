@@ -1,6 +1,6 @@
 #usda 1.0
 (
-    doc = "Kraken v1.1.0 | 08-09-2024 09:20:10"
+    doc = "Kraken v1.1.0 | 09-06-2024 09:23:39"
 )
 
 def Xform "Geometry"

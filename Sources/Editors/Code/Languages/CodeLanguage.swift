@@ -121,6 +121,8 @@ public extension Editor.Code
           tree_sitter_c()
         case .cpp:
           tree_sitter_cpp()
+        case .galah:
+          tree_sitter_galah()
         case .jsdoc:
           tree_sitter_jsdoc()
         case .json:
