@@ -25,63 +25,59 @@
  * -------------------------------------------------------------- */
 
 import Foundation
+import MetaversePlugin
 import PixarUSD
-#if canImport(PyBundle)
-  import PyBundle
-  import Python
-#endif /* canImport(PyBundle) */
 
-/**
- * this is the main entry point for Kraken,
- * it initializes the usd plugins, any/all
- * resources, and python, which is required
- * for the application to run. */
-@main
-public enum Creator
+public extension Kraken
 {
-  static func main()
+  enum Plugin
   {
-    /* setup usd plugins & resources. */
-    Pixar.Bundler.shared.setup(.resources)
+    public typealias InitFunction = @convention(c) () -> UnsafeMutableRawPointer
 
-    /* setup kraken plugins. */
-    #if os(macOS)
-      let plugins = "\(Bundle.main.bundlePath)/Contents/Libraries"
-    #else
-      let plugins = "\(Bundle.main.bundlePath)/Libraries"
-    #endif
-
-    #if os(Linux)
-      let plugExt = "so"
-    #elseif os(Windows)
-      let plugExt = "dll"
-    #else
-      let plugExt = "dylib"
-    #endif
-
-    Msg.logger.info("Kraken plugins path: \(plugins)")
-    if FileManager.default.fileExists(atPath: plugins)
+    public static func load(at path: String) -> MetaversePlugin
     {
-      let krakenPlug = "\(plugins)/libKrakenPlug.\(plugExt)"
-      if FileManager.default.fileExists(atPath: krakenPlug)
+      let openRes = dlopen(path, RTLD_NOW | RTLD_LOCAL)
+      if openRes != nil
       {
-        Kraken.Plugin.info(at: krakenPlug)
+        defer
+        {
+          dlclose(openRes)
+        }
+
+        let symbolName = "createPlugin"
+        let sym = dlsym(openRes, symbolName)
+
+        if sym != nil
+        {
+          let f: InitFunction = unsafeBitCast(sym, to: InitFunction.self)
+          let pluginPointer = f()
+          let builder = Unmanaged<MetaversePluginBuilder>.fromOpaque(pluginPointer).takeRetainedValue()
+          return builder.build()
+        }
+        else
+        {
+          fatalError("error loading lib: symbol \(symbolName) not found, path: \(path)")
+        }
+      }
+      else
+      {
+        if let err = dlerror()
+        {
+          fatalError("error opening lib: \(String(format: "%s", err)), path: \(path)")
+        }
+        else
+        {
+          fatalError("error opening lib: unknown error, path: \(path)")
+        }
       }
     }
 
-    #if canImport(PyBundle) && DEBUG
-      /*
-         embed & init python.
-         TODO: for some reason python
-         crashes release builds, figure
-         out why (its likely improper
-         resource bundle paths).
-       */
-      PyBundler.shared.pyInit()
-      PyBundler.shared.pyInfo()
-    #endif /* canImport(PyBundle) */
+    public static func info(at path: String)
+    {
+      let plugin = Kraken.Plugin.load(at: path)
+      let name = plugin.name
 
-    /* kraken main entry point. */
-    Kraken.main()
+      Msg.logger.info("Loaded plugin { name: \(name), path: \(path) }")
+    }
   }
 }

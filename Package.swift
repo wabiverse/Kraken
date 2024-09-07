@@ -39,6 +39,8 @@ let package = Package(
   // --- 🦄 Package Dependencies. ---
   dependencies: [
     // .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab"),
+    .package(url: "https://github.com/wabiverse/MetaversePlugin.git", from: "1.0.0"),
+    .package(url: "https://github.com/wabiverse/KrakenPlugs.git", from: "1.0.0"),
     .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "24.8.0"),
     .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", revision: "96ad58b"),
     .package(url: "https://github.com/ChimeHQ/TextFormation.git", from: "0.8.2"),
@@ -71,6 +73,8 @@ let package = Package(
       name: "Kraken",
       dependencies: [
         .product(name: "PixarUSD", package: "SwiftUSD"),
+        .product(name: "MetaversePlugin", package: "MetaversePlugin"),
+        .product(name: "KrakenPlug", package: "KrakenPlugs"),
         .target(name: "KrakenKit"),
         .target(name: "KrakenLib"),
         .target(name: "CosmoEditor"),

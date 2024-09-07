@@ -1,5 +1,5 @@
 {
-  "originHash" : "921dba52a8c494676d11c4dd9440867fd2ee6b3d86ea02c679523d82c4edf548",
+  "originHash" : "15f7851235948e80635869fd5e8b8fb8b839f1c60452c7a73645f71b257ffebd",
   "pins" : [
     {
       "identity" : "galah",
@@ -7,6 +7,15 @@
       "location" : "https://github.com/wabiverse/galah.git",
       "state" : {
         "revision" : "a90d086184e8e0fb3d32803b051acf75ff50d66d",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "krakenplugs",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wabiverse/KrakenPlugs.git",
+      "state" : {
+        "revision" : "522989cec1fb7f8015694a5c79671fc8ab39e7ac",
         "version" : "1.0.0"
       }
     },
@@ -26,6 +35,15 @@
       "state" : {
         "revision" : "52fa7685761b1c5f7691b15de6bc96da79befe47",
         "version" : "1.7.7"
+      }
+    },
+    {
+      "identity" : "metaverseplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wabiverse/MetaversePlugin.git",
+      "state" : {
+        "revision" : "c5b20ae3e9ee715914bf7701cb1f75cfac0e638c",
+        "version" : "1.0.0"
       }
     },
     {
