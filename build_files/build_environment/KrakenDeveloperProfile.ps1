@@ -50,7 +50,7 @@ if ($IsMacOS) {
   $SWIFT_SH_BUILD_PATH = "/usr/local/bin"
   $RUST_CARGO_BINPATH = "/Users/$env:USER/.cargo/bin"
   $POSTGRES_APP_PATH = "/Applications/Postgres.app/Contents/Versions/latest/bin"
-  $XCODE_TOOLCHAIN_BINPATH = "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+  # $XCODE_TOOLCHAIN_BINPATH = "/Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
 
   # Apple Silicon (M1 Chip ---- /opt/homebrew/bin) 
   if (Test-Path -Path $ARM_HOMEBREW_PATH) {
@@ -63,9 +63,9 @@ if ($IsMacOS) {
   }
 
   # swift sourcekit-lsp
-  if (Test-Path -Path $XCODE_TOOLCHAIN_BINPATH) {
-    $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$XCODE_TOOLCHAIN_BINPATH
-  }
+  # if (Test-Path -Path $XCODE_TOOLCHAIN_BINPATH) {
+  #   $env:PATH = '{0}{1}{2}' -f $env:PATH,[IO.Path]::PathSeparator,$XCODE_TOOLCHAIN_BINPATH
+  # }
 
   # rust cargo
   if (Test-Path -Path $RUST_CARGO_BINPATH) {
@@ -482,6 +482,56 @@ function BuildUnrealEngine5
 
       Push-Location $KrakenGlobalView
       Pop-Location
+    }
+  }
+}
+
+# cross compile swift packages for android.
+function WabiCrossCompileAndroidSwiftPackage
+{
+  if(($Args[0] -eq 'build')) {
+    if(($Args[1] -eq '-c') -and ($Args[2] -eq 'release')) {
+      $targ = $Args[2]
+      $hasTarg = $false
+      if(($Args[1] -eq '--target')) {
+        $targ = $Args[2]
+        $hasTarg = $true
+      }
+      if(($Args[3] -eq '--target')) {
+        $targ = $Args[4]
+        $hasTarg = $true
+      }
+
+      if ($hasTarg) {
+        swift build -c release --target $targ `
+        --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+      } else {
+        swift build -c release `
+        --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+      }
+    } else {
+      $targ = $Args[2]
+      $hasTarg = $false
+      if(($Args[1] -eq '--target')) {
+        $targ = $Args[2]
+        $hasTarg = $true
+      }
+      if(($Args[3] -eq '--target')) {
+        $targ = $Args[4]
+        $hasTarg = $true
+      }
+
+      if ($hasTarg) {
+        swift build -c debug --target $targ `
+        --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+      } else {
+        swift build -c debug `
+        --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+      }
     }
   }
 }
@@ -1011,6 +1061,9 @@ function BuildOpenUSD
     Write-Color -Text "buildusd: missing openusd project at '/Users/$env:USER/Wabi/OpenUSD'." -Color Red
   }
 }
+
+# Cross compile swift package for android.
+Set-Alias swiftcross WabiCrossCompileAndroidSwiftPackage
 
 # Build the openusd project.
 Set-Alias buildusd BuildOpenUSD
