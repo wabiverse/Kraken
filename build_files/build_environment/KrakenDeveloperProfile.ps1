@@ -1056,7 +1056,11 @@ function BuildOpenUSD
       New-Item -ItemType Directory -Path $OPENUSD_BUILD_DIR -Force;
     }
 
-    python3 $OPENUSD_DEV_BUILD_SCRIPT $OPENUSD_BUILD_DIR
+    if(($Args[0] -eq 'release')) {
+      python3 $OPENUSD_DEV_BUILD_SCRIPT --tests --build-shared --build-variant release $OPENUSD_BUILD_DIR
+    } else {
+      python3 $OPENUSD_DEV_BUILD_SCRIPT --tests --build-shared --build-variant debug $OPENUSD_BUILD_DIR
+    }
   } else {
     Write-Color -Text "buildusd: missing openusd project at '/Users/$env:USER/Wabi/OpenUSD'." -Color Red
   }
