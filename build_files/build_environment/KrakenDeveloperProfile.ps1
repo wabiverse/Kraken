@@ -1034,13 +1034,13 @@ function StackotterPM {
   $ArgRest = ($Args).Where({$_ -ne 'build' -and $_ -ne 'run' -and $_ -ne 'test' -and $_ -ne 'package'})
 
   if(($Args[0] -eq 'build')) {
-    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-build $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-build $ArgRest
   } elseif(($Args[0] -eq 'run')) {
-    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-run $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-run $ArgRest
   } elseif(($Args[0] -eq 'test')) {
-    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-test $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-test $ArgRest
   } elseif(($Args[0] -eq 'package')) {
-    & /Users/$env:USER/Wabi/swift-package-manager/.build/arm64-apple-macosx/release/swift-package $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-package $ArgRest
   } else {
     Write-Color -Text "stackypm: available options are (", "build ", "run ", "test ", "or ", "package", ")" -Color Blue, Yellow, Yellow, Yellow, Blue, Yellow, Blue
   }
