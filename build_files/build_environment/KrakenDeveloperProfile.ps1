@@ -505,11 +505,11 @@ function WabiCrossCompileAndroidSwiftPackage
       if ($hasTarg) {
         swift build -c release --target $targ `
         --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
-        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2>&1 | xcbeautify --disable-logging
       } else {
         swift build -c release `
         --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
-        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2>&1 | xcbeautify --disable-logging
       }
     } else {
       $targ = $Args[2]
@@ -526,11 +526,11 @@ function WabiCrossCompileAndroidSwiftPackage
       if ($hasTarg) {
         swift build -c debug --target $targ `
         --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
-        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2>&1 | xcbeautify --disable-logging
       } else {
         swift build -c debug `
         --destination /Users/$env:USER/Wabi/swift-android-sdk/android-aarch64.json `
-        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2> $null | xcbeautify --disable-logging
+        -Xlinker -rpath="`$ORIGIN/swift-5.10-android-24-sdk/usr/lib/aarch64-linux-android" 2>&1 | xcbeautify --disable-logging
       }
     }
   }
@@ -1034,13 +1034,13 @@ function StackotterPM {
   $ArgRest = ($Args).Where({$_ -ne 'build' -and $_ -ne 'run' -and $_ -ne 'test' -and $_ -ne 'package'})
 
   if(($Args[0] -eq 'build')) {
-    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-build $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-build $ArgRest 2>&1 | xcbeautify --disable-logging
   } elseif(($Args[0] -eq 'run')) {
-    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-run $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-run $ArgRest 2>&1 | xcbeautify --disable-logging
   } elseif(($Args[0] -eq 'test')) {
-    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-test $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-test $ArgRest 2>&1 | xcbeautify --disable-logging
   } elseif(($Args[0] -eq 'package')) {
-    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-package $ArgRest
+    & /Users/$env:USER/Wabi/SwiftPM/.build/arm64-apple-macosx/release/swift-package $ArgRest 2>&1 | xcbeautify --disable-logging
   } else {
     Write-Color -Text "stackypm: available options are (", "build ", "run ", "test ", "or ", "package", ")" -Color Blue, Yellow, Yellow, Yellow, Blue, Yellow, Blue
   }
