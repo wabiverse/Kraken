@@ -1046,6 +1046,18 @@ function StackotterPM {
   }
 }
 
+# cleanup a swiftpm environment.
+# cd  into '~/Wabi/Utils' and clone the following repo:
+# https://github.com/brokenhandsio/swiftpm-cleanup.git
+function SwiftPMCleanup {
+  $SWIFT_CLEANUP_SCRIPT = "/Users/$env:USER/Wabi/Utils/swiftpm-cleanup/cleanup.swift"
+  if (Test-Path -Path $SWIFT_CLEANUP_SCRIPT) {
+    & swift $SWIFT_CLEANUP_SCRIPT --path . --clean-derived-data
+  } else {
+    Write-Color -Text "swiftclean: missing swiftpm-cleanup project at '/Users/$env:USER/Wabi/Utils/swiftpm-cleanup'." -Color Red
+  }
+}
+
 function BuildOpenUSD
 {
   $OPENUSD_DEV_BUILD_SCRIPT = "/Users/$env:USER/Wabi/OpenUSD/build_scripts/build_usd.py"
@@ -1071,6 +1083,9 @@ Set-Alias swiftcross WabiCrossCompileAndroidSwiftPackage
 
 # Build the openusd project.
 Set-Alias buildusd BuildOpenUSD
+
+# Cleanup a swiftpm environment.
+Set-Alias swiftclean SwiftPMCleanup
 
 # Run stackys fork of swiftpm.
 Set-Alias stackypm StackotterPM
