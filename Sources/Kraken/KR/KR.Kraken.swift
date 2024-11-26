@@ -30,7 +30,6 @@
 
 import CxxStdlib
 import Foundation
-import KrakenKit
 import KrakenLib
 import PixarUSD
 import SceneKit

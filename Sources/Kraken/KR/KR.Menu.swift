@@ -25,7 +25,6 @@
  * -------------------------------------------------------------- */
 
 import Foundation
-import KrakenKit
 import KrakenLib
 import SwiftUI
 

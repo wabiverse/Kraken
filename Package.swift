@@ -23,10 +23,6 @@ let package = Package(
     ),
     // --- 🦑 Kraken ---
     .library(
-      name: "KrakenKit",
-      targets: ["KrakenKit"]
-    ),
-    .library(
       name: "KrakenLib",
       targets: ["KrakenLib"]
     ),
@@ -52,15 +48,6 @@ let package = Package(
   targets: [
     // --- 🦑 Kraken ---
     .target(
-      name: "KrakenKit",
-      dependencies: [
-        .product(name: "PixarUSD", package: "SwiftUSD"),
-      ],
-      swiftSettings: [
-        .interoperabilityMode(.Cxx)
-      ]
-    ),
-    .target(
       name: "KrakenLib",
       dependencies: [
         .product(name: "PixarUSD", package: "SwiftUSD"),
@@ -75,7 +62,6 @@ let package = Package(
         .product(name: "PixarUSD", package: "SwiftUSD"),
         .product(name: "MetaversePlugin", package: "MetaversePlugin"),
         .product(name: "KrakenPlug", package: "KrakenPlugs"),
-        .target(name: "KrakenKit"),
         .target(name: "KrakenLib"),
         .target(name: "CosmoEditor"),
       ],
