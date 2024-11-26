@@ -1,10 +1,6 @@
 #ifndef __TREE_SITTER_C_ARRAY_H__
 #define __TREE_SITTER_C_ARRAY_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "TreeSitterC/Alloc.h"
 
 #include <assert.h>
@@ -12,6 +8,10 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4101)

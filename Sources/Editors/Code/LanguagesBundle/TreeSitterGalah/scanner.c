@@ -67,7 +67,7 @@ enum IllegalTerminatorGroup {
     NON_WHITESPACE
 };
 
-const enum IllegalTerminatorGroup OP_ILLEGAL_TERMINATORS[OPERATOR_COUNT] = {
+const enum IllegalTerminatorGroup GALAH_OP_ILLEGAL_TERMINATORS[OPERATOR_COUNT] = {
     OPERATOR_SYMBOLS, // ->
     OPERATOR_OR_DOT,  // .
     OPERATOR_SYMBOLS, // &&
@@ -172,7 +172,7 @@ const char* RESERVED_GALAH_OPS[RESERVED_OP_COUNT] = {
     "..<"
 };
 
-bool is_cross_semi_token(enum TokenType op) {
+bool is_galah_cross_semi_token(enum TokenType op) {
     switch(op) {
     case ARROW_OPERATOR:
     case DOT_OPERATOR:
@@ -202,7 +202,7 @@ bool is_cross_semi_token(enum TokenType op) {
 }
 
 #define NON_CONSUMING_CROSS_SEMI_CHAR_COUNT 3
-const uint32_t NON_CONSUMING_CROSS_SEMI_CHARS[NON_CONSUMING_CROSS_SEMI_CHAR_COUNT] = { '?', ':', '{' };
+const uint32_t GALAH_NON_CONSUMING_CROSS_SEMI_CHARS[NON_CONSUMING_CROSS_SEMI_CHAR_COUNT] = { '?', ':', '{' };
 
 /**
  * All possible results of having performed some sort of parsing.
@@ -398,7 +398,7 @@ static bool eat_operators(
 
             if (GALAH_OPERATORS[op_idx][str_idx] == '\0') {
                 // Make sure that the operator is allowed to have the next character as its lookahead.
-                enum IllegalTerminatorGroup illegal_terminators = OP_ILLEGAL_TERMINATORS[op_idx];
+                enum IllegalTerminatorGroup illegal_terminators = GALAH_OP_ILLEGAL_TERMINATORS[op_idx];
                 switch (lexer->lookahead) {
                 // See "Operators":
                 // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID418
@@ -683,7 +683,7 @@ static enum ParseDirective eat_whitespace(
     // check for a set of characters that we do not consume, but that still suppress the semi.
     if (ws_directive == CONTINUE_PARSING_TOKEN_FOUND) {
         for (int i = 0; i < NON_CONSUMING_CROSS_SEMI_CHAR_COUNT; i++) {
-            if (NON_CONSUMING_CROSS_SEMI_CHARS[i] == lookahead) {
+            if (GALAH_NON_CONSUMING_CROSS_SEMI_CHARS[i] == lookahead) {
                 return CONTINUE_PARSING_NOTHING_FOUND;
             }
         }
@@ -830,7 +830,7 @@ bool tree_sitter_galah_external_scanner_scan(
                             &operator_result
                         );
 
-    if (saw_operator && (!has_ws_result || is_cross_semi_token(operator_result))) {
+    if (saw_operator && (!has_ws_result || is_galah_cross_semi_token(operator_result))) {
         lexer->result_symbol = operator_result;
         if (has_ws_result) lexer->mark_end(lexer);
         return true;

@@ -1,13 +1,13 @@
 {
-  "originHash" : "15f7851235948e80635869fd5e8b8fb8b839f1c60452c7a73645f71b257ffebd",
+  "originHash" : "c7e17f383f90aef908ec4c1fc52ec7ff5e1d88f71ae8d5d0d0437dd4547ac8b4",
   "pins" : [
     {
       "identity" : "galah",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/galah.git",
       "state" : {
-        "revision" : "a90d086184e8e0fb3d32803b051acf75ff50d66d",
-        "version" : "1.0.0"
+        "revision" : "9d829bdd244676ef77b2bd219093c59a6315adaf",
+        "version" : "1.0.1"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "52fa7685761b1c5f7691b15de6bc96da79befe47",
-        "version" : "1.7.7"
+        "revision" : "e381050a3b9606ffd592ad9612e615a9ed670650",
+        "version" : "1.8.5"
       }
     },
     {
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stackotter/swift-macro-toolkit",
       "state" : {
-        "revision" : "106daeb38eb3f52b1540aed981fc63fa22274576",
-        "version" : "0.3.1"
+        "revision" : "2eded9c9a98cba42d70fb179d516231fffcff1e4",
+        "version" : "0.5.0"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
       "state" : {
-        "revision" : "74203046135342e4a4a627476dd6caf8b28fe11b",
-        "version" : "509.0.0"
+        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
+        "version" : "510.0.3"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ChimeHQ/SwiftTreeSitter",
       "state" : {
-        "branch" : "96ad58b",
-        "revision" : "96ad58b4ac532b9ef9319056d057b3c22682adf4"
+        "revision" : "36aa61d1b531f744f35229f010efba9c6d6cbbdd",
+        "version" : "0.9.0"
       }
     },
     {
@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD",
       "state" : {
-        "revision" : "8097f5e7e2a4126e39e50ba5a0e967273b615fa8",
-        "version" : "24.8.0"
+        "revision" : "bb5959fed9ccdd1a575b036b193e2f0f9d27f420",
+        "version" : "24.8.7"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tree-sitter/tree-sitter",
       "state" : {
-        "revision" : "98be227227af10cc7a269cb3ffb23686c0610b17",
-        "version" : "0.20.9"
+        "revision" : "d97db6d63507eb62c536bcb2c4ac7d70c8ec665e",
+        "version" : "0.23.2"
       }
     },
     {

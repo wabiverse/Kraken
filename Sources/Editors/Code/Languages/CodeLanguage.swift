@@ -113,7 +113,7 @@ public extension Editor.Code
     }
 
     /// Gets the TSLanguage from `tree-sitter`
-    private var tsLanguage: UnsafeMutablePointer<TSLanguage>?
+    private var tsLanguage: OpaquePointer?
     {
       switch id
       {

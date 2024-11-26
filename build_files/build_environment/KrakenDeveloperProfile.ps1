@@ -563,14 +563,14 @@ function WabiAnimationPreCommitHook
 
 function DeployWabiWeb
 {
-  if (Test-Path -Path $KrakenGlobalView/../animation.foundation) {
-    Push-Location $KrakenGlobalView/../animation.foundation
+  if (Test-Path -Path $KrakenGlobalView/../../the-swift-collective/theswiftcollective.com) {
+    Push-Location $KrakenGlobalView/../../the-swift-collective/theswiftcollective.com
 
     swift run -c release
     npm install
     npm run build
 
-    Copy-Item -Path "./Output/*" -Destination "/opt/homebrew/var/www" -Recurse -Force
+    # Copy-Item -Path "./Output/*" -Destination "/opt/homebrew/var/www" -Recurse -Force
 
     Pop-Location
   }
