@@ -117,9 +117,71 @@ public extension Kraken.IO
       return rdmDir.appending(component: "Untitled.usda")
     }
 
+    enum AppSupportDirectory
+    {
+      case kraken
+      case other(String)
+
+      public var rawValue: String
+      {
+        switch self
+        {
+          case .kraken: "Kraken"
+          case let .other(custom): custom
+        }
+      }
+    }
+
+    func getAppSupportDirectory(for application: AppSupportDirectory) -> URL?
+    {
+      do
+      {
+        let appDirectory: URL
+
+        // get the user's application support directory.
+        let appSupportURL = try fileManager.url(
+          for: .applicationSupportDirectory,
+          in: .userDomainMask,
+          appropriateFor: nil,
+          create: true
+        )
+
+        switch application
+        {
+          case .kraken:
+            // append kraken subdirectory.
+            appDirectory = appSupportURL.appendingPathComponent("\(application.rawValue)/\(Kraken.version)")
+            // create the directory if it doesn't exist.
+            if !fileManager.fileExists(atPath: appDirectory.path)
+            {
+              try fileManager.createDirectory(at: appDirectory, withIntermediateDirectories: true, attributes: nil)
+            }
+          case let .other(appName):
+            // append other subdirectory.
+            appDirectory = appSupportURL.appendingPathComponent("\(appName)")
+        }
+
+        return appDirectory
+      }
+      catch
+      {
+        print("Error accessing or creating app support directory: \(error)")
+        return nil
+      }
+    }
+
+    public func getUserPrefURL() -> URL
+    {
+      if let userPref = getAppSupportDirectory(for: .kraken)?.appendingPathComponent("config/userpref.usd") {
+        return userPref
+      }
+
+      return tmpDir.appendingPathComponent("config/userpref.usd")
+    }
+
     public func getStartupURL() -> URL
     {
-      tmpDir.appending(component: "Startup.usda")
+      tmpDir.appending(component: "Startup.usd")
     }
 
     public func makeTmp() -> Kraken.IO.USD
@@ -128,8 +190,8 @@ public extension Kraken.IO
     }
 
     /**
-     * Saves (.usda) file contents and syncs modifications
-     * to the stage in real time.
+     * Reloads and saves (.usd) file contents and syncs
+     * modifications to the stage in real time.
      *
      * When this method is called, it will validate
      * the file at the given path, write the stage data
@@ -143,6 +205,25 @@ public extension Kraken.IO
     public func reloadAndSave(stage: inout UsdStageRefPtr)
     {
       stage.reload()
+      save(&stage)
+    }
+
+    /**
+     * Loads and saves (.usda) file contents and syncs
+     * modifications to the stage in real time.
+     *
+     * When this method is called, it will validate
+     * the file at the given path, write the stage data
+     * to the file, and then reload the stage in real
+     * time to ensure the changes are reflected.
+     *
+     * - Parameters:
+     *   - stageData: The stage data to save to the file.
+     *   - file: The usd filepath to save the data to.
+     *   - stage: The stage to save and reload. */
+    public func loadAndSave(stage: inout UsdStageRefPtr)
+    {
+      stage.pointee.Load()
       save(&stage)
     }
 

@@ -1,13 +1,22 @@
 {
-  "originHash" : "c7e17f383f90aef908ec4c1fc52ec7ff5e1d88f71ae8d5d0d0437dd4547ac8b4",
+  "originHash" : "313cf647b653f0d495da23fb96896f4a19e9e8b6f43b309ecfcf6abc98f9c57c",
   "pins" : [
     {
       "identity" : "galah",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/galah.git",
       "state" : {
-        "revision" : "9d829bdd244676ef77b2bd219093c59a6315adaf",
-        "version" : "1.0.1"
+        "revision" : "49cd69c9af968c034b345e39956ad458ce9bd27d",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "icu",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wabiverse/icu.git",
+      "state" : {
+        "revision" : "07ddbe4cab45175e70b22ed05240bac5ec7e0421",
+        "version" : "76.1.2"
       }
     },
     {
@@ -20,21 +29,12 @@
       }
     },
     {
-      "identity" : "mainoffender",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattmassicotte/MainOffender",
-      "state" : {
-        "revision" : "8de872d9256ff7f9913cbc5dd560568ab164be45",
-        "version" : "0.2.1"
-      }
-    },
-    {
       "identity" : "metaversekit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/MetaverseKit.git",
       "state" : {
-        "revision" : "e381050a3b9606ffd592ad9612e615a9ed670650",
-        "version" : "1.8.5"
+        "revision" : "2a39a3fb7b6cded055c46b69faa89387338eb7c1",
+        "version" : "1.8.7"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pvieito/PythonKit.git",
       "state" : {
-        "revision" : "6fd4817e33c31a57760e285228ef8f81cd359062",
-        "version" : "0.4.2"
+        "revision" : "43647b36cacb99558e57ef98e97ef598f91d1164",
+        "version" : "0.5.0"
       }
     },
     {
@@ -103,10 +103,10 @@
     {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-collections.git",
+      "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
-        "version" : "1.1.0"
+        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
+        "version" : "1.1.4"
       }
     },
     {
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
-        "version" : "1.5.4"
+        "revision" : "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
+        "version" : "1.6.2"
       }
     },
     {
@@ -123,17 +123,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stackotter/swift-macro-toolkit",
       "state" : {
-        "revision" : "2eded9c9a98cba42d70fb179d516231fffcff1e4",
-        "version" : "0.5.0"
+        "revision" : "e706aa98bc28f82677923f7b8f560bba6f90fac2",
+        "version" : "0.6.0"
       }
     },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-syntax.git",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
-        "version" : "510.0.3"
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     },
     {
@@ -150,26 +150,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wabiverse/SwiftUSD",
       "state" : {
-        "revision" : "bb5959fed9ccdd1a575b036b193e2f0f9d27f420",
-        "version" : "24.8.7"
+        "revision" : "2e3bc873fae3a66d2f0f754edbdc89e24b7cd1db",
+        "version" : "24.8.10"
       }
     },
     {
       "identity" : "textformation",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ChimeHQ/TextFormation",
+      "location" : "https://github.com/ChimeHQ/TextFormation.git",
       "state" : {
-        "revision" : "f6faed6abd768ae95b70d10113d4008a7cac57a7",
-        "version" : "0.8.2"
+        "revision" : "b1ce9a14bd86042bba4de62236028dc4ce9db6a1",
+        "version" : "0.9.0"
       }
     },
     {
       "identity" : "textstory",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ChimeHQ/TextStory",
+      "location" : "https://github.com/ChimeHQ/TextStory.git",
       "state" : {
-        "revision" : "8883fa739aa213e70e6cb109bfbf0a0b551e4cb5",
-        "version" : "0.8.0"
+        "revision" : "8dc9148b46fcf93b08ea9d4ef9bdb5e4f700e008",
+        "version" : "0.9.0"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mxcl/Version.git",
       "state" : {
-        "revision" : "1fe824b80d89201652e7eca7c9252269a1d85e25",
-        "version" : "2.0.1"
+        "revision" : "303a0f916772545e1e8667d3104f83be708a723c",
+        "version" : "2.1.0"
       }
     }
   ],

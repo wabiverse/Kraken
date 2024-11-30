@@ -99,7 +99,7 @@ public extension Kraken.UI
       {
         Task
         {
-          Kraken.IO.Stage.manager.reloadAndSave(stage: &C.context.stage)
+          Kraken.IO.Stage.manager.loadAndSave(stage: &C.context.krakenStage)
         }
       }
       .onAppear

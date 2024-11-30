@@ -78,10 +78,10 @@ public extension Kraken.IO
             let string = String(data: data, encoding: .utf8)
       else
       {
-        Kraken.IO.Stage.manager.reloadAndSave(stage: &context.stage)
+        Kraken.IO.Stage.manager.loadAndSave(stage: &context.krakenStage)
 
         var contents = ""
-        context.stage.exportToString(&contents, addSourceFileComment: false)
+        context.krakenStage.exportToString(&contents, addSourceFileComment: false)
         context.usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
         return
       }
@@ -91,7 +91,7 @@ public extension Kraken.IO
     public func fileWrapper(snapshot _: Kraken.IO.USD.Context, configuration _: WriteConfiguration) throws -> FileWrapper
     {
       var contents = ""
-      context.stage.exportToString(&contents, addSourceFileComment: false)
+      context.krakenStage.exportToString(&contents, addSourceFileComment: false)
       context.usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
 
       return .init(regularFileWithContents: context.usda.data(using: .utf8)!)
@@ -122,41 +122,58 @@ public extension Kraken.IO.USD
   {
     public var usda: String
     public var fileURL: URL
+    public var krakenStage: UsdStageRefPtr
     public var stage: UsdStageRefPtr
-    public var stageCache: UsdStageCache
 
-    public var id: Int
+    public var id: String
     {
-      stageCache.GetId(stage).ToLongInt()
+      fileURL.path
     }
 
     public init(fileURL: URL = Kraken.IO.Stage.manager.getRandomTmpURL())
     {
       self.fileURL = fileURL
       usda = ""
+      krakenStage = Usd.Stage.createNew(Kraken.IO.Stage.manager.getUserPrefURL().path)
       stage = Usd.Stage.createNew(fileURL.path)
 
-      stageCache = UsdStageCache()
-      UsdStageCacheContext.bind(cache: &stageCache)
-
       stage = Usd.Stage.open(fileURL.path)
-
+      for prim in stage.traverse() {
+        stage.pointee.SetDefaultPrim(prim)
+        break
+      }
       Kraken.IO.Stage.manager.save(&stage)
 
+      // reference in the usd project file as a kraken scene.
+      krakenStage = Usd.Stage.open(Kraken.IO.Stage.manager.getUserPrefURL().path)
+      var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").GetReferences()
+      sceneRef.AddReference(Pixar.SdfReference(std.string(fileURL.path), Sdf.Path(), Pixar.SdfLayerOffset(0.0, 1.0), Pixar.VtDictionary()))
+      Kraken.IO.Stage.manager.loadAndSave(stage: &krakenStage)
+
       var contents = ""
-      stage.exportToString(&contents, addSourceFileComment: false)
+      krakenStage.exportToString(&contents, addSourceFileComment: false)
       usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
     }
 
     public func open(fileURL: URL)
     {
       self.fileURL = fileURL
-      stage = Usd.Stage.open(fileURL.path)
 
+      stage = Usd.Stage.open(fileURL.path)
+      for prim in stage.traverse() {
+        stage.pointee.SetDefaultPrim(prim)
+        break
+      }
       Kraken.IO.Stage.manager.save(&stage)
 
+      // reference in the usd project file as a kraken scene.
+      krakenStage = Usd.Stage.open(Kraken.IO.Stage.manager.getUserPrefURL().path)
+      var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").GetReferences()
+      sceneRef.AddReference(Pixar.SdfReference(std.string(fileURL.path), Sdf.Path(), Pixar.SdfLayerOffset(0.0, 1.0), Pixar.VtDictionary()))
+      Kraken.IO.Stage.manager.loadAndSave(stage: &krakenStage)
+
       var contents = ""
-      stage.exportToString(&contents, addSourceFileComment: false)
+      krakenStage.exportToString(&contents, addSourceFileComment: false)
       usda = String(contents.prefix(Kraken.IO.TREE_SITTER_MAX))
     }
   }

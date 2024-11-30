@@ -47,7 +47,7 @@ public struct Kraken: SwiftUI.App
   /* --- xxx --- */
 
   /** The kraken universal scene description context. */
-  @State private var C = Kraken.IO.USD(fileURL: Kraken.IO.Stage.manager.getStartupURL())
+  @State private var C = Kraken.IO.USD()
 
   /* --- xxx --- */
 
@@ -68,7 +68,7 @@ public struct Kraken: SwiftUI.App
 
   public init()
   {
-    Kraken.IO.Stage.manager.save(&C.context.stage)
+    Kraken.IO.Stage.manager.save(&C.context.krakenStage)
 
     Msg.logger.info("\(Kraken.versionInfo())")
     Msg.logger.info("Kraken launched.")
