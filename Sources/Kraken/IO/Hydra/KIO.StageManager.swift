@@ -223,7 +223,7 @@ public extension Kraken.IO
      *   - stage: The stage to save and reload. */
     public func loadAndSave(stage: inout UsdStageRefPtr)
     {
-      stage.pointee.Load()
+      stage.load()
       save(&stage)
     }
 

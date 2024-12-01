@@ -37,7 +37,7 @@ let package = Package(
     // .package(url: "https://github.com/stackotter/swift-cross-ui", revision: "f57f7ab"),
     .package(url: "https://github.com/wabiverse/MetaversePlugin.git", from: "1.0.0"),
     .package(url: "https://github.com/wabiverse/KrakenPlugs.git", from: "1.0.0"),
-    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "24.8.10"),
+    .package(url: "https://github.com/wabiverse/SwiftUSD.git", from: "24.8.12"),
     .package(url: "https://github.com/ChimeHQ/SwiftTreeSitter", from: "0.9.0"),
     .package(url: "https://github.com/ChimeHQ/TextFormation.git", from: "0.8.2"),
     .package(url: "https://github.com/ChimeHQ/TextStory.git", from: "0.8.0"),

@@ -136,22 +136,23 @@ public extension Kraken.IO.USD
       usda = ""
       stage = Usd.Stage.createNew(fileURL.path)
 
-      if FileManager.default.fileExists(atPath: Kraken.IO.Stage.manager.getUserPrefURL().path) {
-        krakenStage = Usd.Stage.open(Kraken.IO.Stage.manager.getUserPrefURL().path)
+      let uprefs = Kraken.IO.Stage.manager.getUserPrefURL().path
+      if FileManager.default.fileExists(atPath: uprefs) {
+        krakenStage = Usd.Stage.open(uprefs)
       } else {
-        krakenStage = Usd.Stage.createNew(Kraken.IO.Stage.manager.getUserPrefURL().path)
+        krakenStage = Usd.Stage.createNew(uprefs)
       }
 
       UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
       for prim in stage.traverse() {
-        stage.pointee.SetDefaultPrim(prim)
+        stage.setDefaultPrim(prim)
         break
       }
       Kraken.IO.Stage.manager.save(&stage)
 
       // reference in the usd project file as a kraken scene.
-      var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").GetReferences()
-      sceneRef.AddReference(Pixar.SdfReference(std.string(fileURL.path), Sdf.Path(), Pixar.SdfLayerOffset(0.0, 1.0), Pixar.VtDictionary()))
+      var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").getReferences()
+      sceneRef.addReference(assetPath: fileURL.path)
       Kraken.IO.Stage.manager.loadAndSave(stage: &krakenStage)
 
       var contents = ""
@@ -165,14 +166,14 @@ public extension Kraken.IO.USD
 
       stage = Usd.Stage.open(fileURL.path)
       for prim in stage.traverse() {
-        stage.pointee.SetDefaultPrim(prim)
+        stage.setDefaultPrim(prim)
         break
       }
       Kraken.IO.Stage.manager.save(&stage)
 
       // reference in the usd project file as a kraken scene.
-      var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").GetReferences()
-      sceneRef.AddReference(Pixar.SdfReference(std.string(fileURL.path), Sdf.Path(), Pixar.SdfLayerOffset(0.0, 1.0), Pixar.VtDictionary()))
+      var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").getReferences()
+      sceneRef.addReference(assetPath: fileURL.path)
       Kraken.IO.Stage.manager.loadAndSave(stage: &krakenStage)
 
       var contents = ""
