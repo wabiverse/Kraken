@@ -134,10 +134,15 @@ public extension Kraken.IO.USD
     {
       self.fileURL = fileURL
       usda = ""
-      krakenStage = Usd.Stage.createNew(Kraken.IO.Stage.manager.getUserPrefURL().path)
       stage = Usd.Stage.createNew(fileURL.path)
 
-      stage = Usd.Stage.open(fileURL.path)
+      if FileManager.default.fileExists(atPath: Kraken.IO.Stage.manager.getUserPrefURL().path) {
+        krakenStage = Usd.Stage.open(Kraken.IO.Stage.manager.getUserPrefURL().path)
+      } else {
+        krakenStage = Usd.Stage.createNew(Kraken.IO.Stage.manager.getUserPrefURL().path)
+      }
+
+      UsdGeom.Sphere.define(stage, path: "/Geometry/Sphere")
       for prim in stage.traverse() {
         stage.pointee.SetDefaultPrim(prim)
         break
@@ -145,7 +150,6 @@ public extension Kraken.IO.USD
       Kraken.IO.Stage.manager.save(&stage)
 
       // reference in the usd project file as a kraken scene.
-      krakenStage = Usd.Stage.open(Kraken.IO.Stage.manager.getUserPrefURL().path)
       var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").GetReferences()
       sceneRef.AddReference(Pixar.SdfReference(std.string(fileURL.path), Sdf.Path(), Pixar.SdfLayerOffset(0.0, 1.0), Pixar.VtDictionary()))
       Kraken.IO.Stage.manager.loadAndSave(stage: &krakenStage)
@@ -167,7 +171,6 @@ public extension Kraken.IO.USD
       Kraken.IO.Stage.manager.save(&stage)
 
       // reference in the usd project file as a kraken scene.
-      krakenStage = Usd.Stage.open(Kraken.IO.Stage.manager.getUserPrefURL().path)
       var sceneRef = krakenStage.overridePrim(path: "/Kraken/Scene").GetReferences()
       sceneRef.AddReference(Pixar.SdfReference(std.string(fileURL.path), Sdf.Path(), Pixar.SdfLayerOffset(0.0, 1.0), Pixar.VtDictionary()))
       Kraken.IO.Stage.manager.loadAndSave(stage: &krakenStage)
