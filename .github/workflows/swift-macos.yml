@@ -23,4 +23,4 @@ jobs:
           sudo defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
           sudo defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
       - name: 📦 Build & Bundle
-        run: swift bundler bundle -c release --xcodebuild Kraken --Xswiftpm -jobs --Xswiftpm 2
+        run: swift bundler bundle -c release --xcodebuild Kraken --Xswiftpm -jobs --Xswiftpm 1
