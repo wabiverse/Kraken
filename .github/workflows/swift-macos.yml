@@ -25,4 +25,4 @@ jobs:
       - name: 🛰️ Resolve Package Dependencies
         run: xcodebuild -resolvePackageDependencies && swift package resolve
       - name: 📦 Build & Bundle
-        run: swift bundler bundle -c release --xcodebuild
+        run: swift bundler -v bundle -c release --xcodebuild
