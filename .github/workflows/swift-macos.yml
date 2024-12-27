@@ -25,6 +25,6 @@ jobs:
       - name: 🔥 Dumb Xcode IDE Hack
         run: |
           open -a "/Applications/Xcode.app" ./Package.swift
-          sleep 300
+          sleep 600
       - name: 📦 Build & Bundle
         run: swift bundler bundle -c release --xcodebuild
