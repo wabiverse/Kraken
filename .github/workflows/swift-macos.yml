@@ -18,5 +18,9 @@ jobs:
           chmod +x ./swift-bundler
           sudo cp ./swift-bundler /usr/local/bin/
           rm ./swift-bundler
+      - name: 🧰 Enable Swift Macros
+        run: |
+          sudo defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
+          sudo defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
       - name: 📦 Build & Bundle
         run: swift bundler bundle -c release --xcodebuild
