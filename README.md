@@ -108,8 +108,8 @@
   <div align="left">
 
   ```pwsh
-  git clone https://github.com/stackotter/swift-bundler
-  cd swift-bundler
+  git clone https://github.com/wabiverse/wabi-swift-bundler
+  cd wabi-swift-bundler
 
   swift build -c release
   sudo cp .build/release/swift-bundler /usr/local/bin/
