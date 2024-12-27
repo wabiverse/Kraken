@@ -2,59 +2,73 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
+      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "foreground": "lightBlue",
-          "style": "plain",
+          "properties": {
+            "cache_duration": "none"
+          },
           "template": " ",
-          "type": "text"
+          "foreground": "lightBlue",
+          "type": "text",
+          "style": "plain"
         }
-      ],
-      "type": "prompt"
+      ]
     },
     {
+      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "foreground": "cyan",
-          "style": "plain",
+          "properties": {
+            "cache_duration": "none"
+          },
           "template": "\n{{ if .SSHSession }}\uf817 {{ end }}<cyan>{{ .UserName }}</><darkGray>@</><green>{{ .HostName }}</> ",
-          "type": "session"
+          "foreground": "cyan",
+          "type": "session",
+          "style": "plain"
         },
         {
-          "foreground": "lightYellow",
           "properties": {
+            "cache_duration": "none",
             "style": "full"
           },
-          "style": "plain",
           "template": "<darkGray>in </>{{ .Path }} ",
-          "type": "path"
-        },
-        {
-          "foreground": "magenta",
-          "style": "powerline",
-          "template": "<darkGray>on</> <blue>\udb80\udea4</> <green>git</><cyan>:</>{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }}\udb83\udec3 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }}\udb80\udd33 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\udb80\udd93 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}}\udb81\ude45 {{ .WorktreeCount }}{{ end }}",
-          "type": "git"
+          "foreground": "lightYellow",
+          "type": "path",
+          "style": "plain"
         },
         {
           "properties": {
-            "time_format": "3:04PM"
+            "cache_duration": "none"
           },
-          "foreground": "darkGray",
-          "style": "plain",
-          "template": " [{{ .CurrentDate | date .Format }}]",
-          "type": "time"
+          "template": "<darkGray>on</> <blue>\udb80\udea4</> <green>git</><cyan>:</>{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }}\udb83\udec3 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }}\udb80\udd33 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\udb80\udd93 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}}\udb81\ude45 {{ .WorktreeCount }}{{ end }}",
+          "foreground": "magenta",
+          "type": "git",
+          "style": "powerline"
         },
         {
-          "foreground": "lightRed",
-          "style": "plain",
+          "properties": {
+            "cache_duration": "none",
+            "time_format": "3:04PM"
+          },
+          "template": " [{{ .CurrentDate | date .Format }}]",
+          "foreground": "darkGray",
+          "type": "time",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
           "template": "\n$ ",
-          "type": "text"
+          "foreground": "lightRed",
+          "type": "text",
+          "style": "plain"
         }
-      ],
-      "type": "prompt"
+      ]
     }
   ],
-  "version": 2
+  "version": 3
 }
