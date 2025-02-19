@@ -18,7 +18,7 @@ $IsGitDirectory = './.git'
 # Automatically get Kraken version.
 if ((Test-Path -Path $KrakenGlobalView) -and (Test-Path -Path "$KrakenGlobalView/Sources/Kraken"))
 {
-  $KRAKEN_CURRENT_VERSION_LINE = (Get-Content -Path "$KrakenGlobalView/Sources/Kraken/KR/KR.version.swift" -TotalCount 34)[-1]
+  $KRAKEN_CURRENT_VERSION_LINE = (Get-Content -Path "$KrakenGlobalView/Sources/Kraken/KR/KR.Version.swift" -TotalCount 34)[-1]
   $KRAKEN_BUILDING_VERSION_VECTOR = $KRAKEN_CURRENT_VERSION_LINE.split("Pixar.GfVec3i(")[1].split("))")[0]
   $KRAKEN_BUILDING_VERSION = $KRAKEN_BUILDING_VERSION_VECTOR -replace ', ', '.'
 }
